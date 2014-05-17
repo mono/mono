@@ -19,6 +19,15 @@ public class C
 	{
 	}
 
+	static void TestParams2 (string s, params int[] i)
+	{
+		throw new ApplicationException ();
+	}
+
+	static void TestParams2 (string s, int i = 4)
+	{
+	}
+
 	static void TestStruct (int? s = new int ())
 	{
 		if (!s.HasValue)
@@ -43,6 +52,7 @@ public class C
 		Foo<string> ("2", "3");
 		
 		TestParams ();
+		TestParams2 ("a");
 		
 		TestStruct ();
 		TestStruct2 ();

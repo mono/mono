@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SafeRegistryHandle" FullName="Microsoft.Win32.SafeHandles.SafeRegistryHandle">
   <TypeSignature Language="C#" Value="public sealed class SafeRegistryHandle : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SafeRegistryHandle extends Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use platform invoke on the native RegCreateKeyEx Windows function to obtain a <see cref="T:Microsoft.Win32.SafeHandles.SafeRegistryHandle" /> object, and then use it to create registry keys with the <see cref="M:Microsoft.Win32.RegistryKey.FromHandle(Microsoft.Win32.SafeHandles.SafeRegistryHandle,Microsoft.Win32.RegistryView)" /> method.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a safe handle to the Windows registry.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SafeRegistryHandle (IntPtr preexistingHandle, bool ownsHandle);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(native int preexistingHandle, bool ownsHandle) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -24,14 +33,23 @@
         <Parameter Name="ownsHandle" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="preexistingHandle">To be added.</param>
-        <param name="ownsHandle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying false for <paramref name="ownsHandle" /> is not recommended.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Win32.SafeHandles.SafeRegistryHandle" /> class. </para>
+        </summary>
+        <param name="preexistingHandle">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the pre-existing handle to use.</param>
+        <param name="ownsHandle">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to reliably release the handle during the finalization phase; false to prevent reliable release.</param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseHandle">
       <MemberSignature Language="C#" Value="protected override bool ReleaseHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool ReleaseHandle() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

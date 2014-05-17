@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AppDomainSetup" FullName="System.AppDomainSetup">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AppDomainSetup : IAppDomainSetup" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit AppDomainSetup extends System.Object implements class System.IAppDomainSetup" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -25,78 +27,117 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Changing the properties of an <see cref="T:System.AppDomainSetup" /> instance does not affect any existing <see cref="T:System.AppDomain" />. It can affect only the creation of a new <see cref="T:System.AppDomain" />, when the <see cref="M:System.AppDomain.CreateDomain(System.String,System.Security.Policy.Evidence)" /> method is called with the <see cref="T:System.AppDomainSetup" /> instance as a parameter.</para>
+      <para>This class implements the <see cref="T:System.IAppDomainSetup" /> interface.</para>
+      <block subset="none" type="note">
+        <para>The default value for the <see cref="P:System.AppDomainSetup.DisallowCodeDownload" /> property is false. This setting is unsafe for services. To help prevent services from downloading partially trusted code, set this property to true</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents assembly binding information that can be added to an instance of <see cref="T:System.AppDomain" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AppDomainSetup ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.AppDomainSetup" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AppDomainSetup (ActivationContext activationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ActivationContext activationContext) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="activationContext" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="activationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ActivationContext" /> object specified for <paramref name="activationContext" /> is used to generate an <see cref="T:System.Runtime.Hosting.ActivationArguments" /> object containing information required to activate a new application domain. This <see cref="T:System.Runtime.Hosting.ActivationArguments" /> object can be accessed by using the <see cref="P:System.AppDomainSetup.ActivationArguments" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.AppDomainSetup" /> class with the specified activation context to use for manifest-based activation of an application domain.</para>
+        </summary>
+        <param name="activationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The activation context to be used for an application domain.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AppDomainSetup (System.Runtime.Hosting.ActivationArguments activationArguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Hosting.ActivationArguments activationArguments) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public AppDomainSetup (System.Runtime.Hosting.ActivationArguments activationArguments);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="activationArguments" Type="System.Runtime.Hosting.ActivationArguments" />
       </Parameters>
       <Docs>
-        <param name="activationArguments">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object specified for <paramref name="activationArguments" /> can be accessed by using the <see cref="P:System.AppDomainSetup.ActivationArguments" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.AppDomainSetup" /> class with the specified activation arguments required for manifest-based activation of an application domain.</para>
+        </summary>
+        <param name="activationArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies information required for the manifest-based activation of a new application domain.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ActivationArguments">
+      <MemberSignature Language="C#" Value="public System.Runtime.Hosting.ActivationArguments ActivationArguments { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Hosting.ActivationArguments ActivationArguments" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ActivationArguments">
-      <MemberSignature Language="C#" Value="public System.Runtime.Hosting.ActivationArguments ActivationArguments { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Hosting.ActivationArguments</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No exception is thrown if this property is set to null.</para>
+          <para>The information provided by the <see cref="T:System.Runtime.Hosting.ActivationArguments" /> object supports manifest-based activation. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets data about the activation of an application domain.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AppDomainInitializer">
-      <MemberSignature Language="C#" Value="public AppDomainInitializer AppDomainInitializer { set; get; }" />
+      <MemberSignature Language="C#" Value="public AppDomainInitializer AppDomainInitializer { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.AppDomainInitializer AppDomainInitializer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,13 +147,21 @@
         <ReturnType>System.AppDomainInitializer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To pass information to the callback method, assign an array of strings to the <see cref="P:System.AppDomainSetup.AppDomainInitializerArguments" /> property. The array is passed to the callback method each time an <see cref="T:System.AppDomain" /> is initialized.</para>
+          <para>The callback method is executed in the context of the newly created application domain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.AppDomainInitializer" /> delegate, which represents a callback method that is invoked when the application domain is initialized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AppDomainInitializerArguments">
-      <MemberSignature Language="C#" Value="public string[] AppDomainInitializerArguments { set; get; }" />
+      <MemberSignature Language="C#" Value="public string[] AppDomainInitializerArguments { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] AppDomainInitializerArguments" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,51 +171,71 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.AppDomainSetup.AppDomainInitializer" /> property to specify a callback method that is invoked during <see cref="T:System.AppDomain" /> initialization. If the <see cref="P:System.AppDomainSetup.AppDomainInitializer" /> property is not set, the array assigned to this property is not used.</para>
+          <para>The callback method is executed in the context of the newly created application domain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the arguments passed to the callback method represented by the <see cref="T:System.AppDomainInitializer" /> delegate. The callback method is invoked when the application domain is initialized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationBase">
-      <MemberSignature Language="C#" Value="public string ApplicationBase { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ApplicationBase { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ApplicationBase" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application base directory is where the assembly manager begins probing for assemblies.</para>
+          <para>The <see cref="P:System.AppDomainSetup.ApplicationBase" /> property can influence which permissions are granted to an application domain. For example, an application domain originating from the local computer normally receives full trust based on its location of origin. However, if the <see cref="P:System.AppDomainSetup.ApplicationBase" /> property of that <see cref="T:System.AppDomain" /> is set to the full name of an intranet directory, the <see cref="P:System.AppDomainSetup.ApplicationBase" /> setting restricts the permissions granted to the application domain to a LocalIntranet grant even though the application domain actually originates from the local computer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the directory containing the application.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ApplicationName">
-      <MemberSignature Language="C#" Value="public string ApplicationName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ApplicationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ApplicationName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the application.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ApplicationTrust">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust ApplicationTrust { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust ApplicationTrust { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.ApplicationTrust ApplicationTrust" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,51 +245,74 @@
         <ReturnType>System.Security.Policy.ApplicationTrust</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is null when the <see cref="T:System.AppDomainSetup" /> is created. Once changed, it cannot be reset to a null reference.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object containing security and trust information.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CachePath">
-      <MemberSignature Language="C#" Value="public string CachePath { set; get; }" />
+      <MemberSignature Language="C#" Value="public string CachePath { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CachePath" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order for this property to have an effect, the <see cref="P:System.AppDomainSetup.ApplicationName" /> property must also be set. If the <see cref="P:System.AppDomainSetup.ApplicationName" /> property is not set, the <see cref="P:System.AppDomainSetup.CachePath" /> property is ignored and the shadow copy cache location defaults to the download cache.</para>
+          <para>For more information on shadow copying, see <format type="text/html"><a href="de8b8759-fca7-4260-896b-5a4973157672">Shadow Copying Assemblies</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of an area specific to the application where files are shadow copied. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConfigurationFile">
-      <MemberSignature Language="C#" Value="public string ConfigurationFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ConfigurationFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConfigurationFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The configuration file describes the search rules and configuration data for the application domain. The host that creates the application domain is responsible for supplying this data because the meaningful values vary from situation to situation.</para>
+          <para>For example, the configuration data for ASP.NET applications is stored for each application, site, and computer, while the configuration data for an executable is stored for each application, user, and computer. Only the host knows the specifics of the configuration data for a particular circumstance. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the configuration file for an application domain.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisallowApplicationBaseProbing">
-      <MemberSignature Language="C#" Value="public bool DisallowApplicationBaseProbing { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisallowApplicationBaseProbing { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowApplicationBaseProbing" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,85 +322,131 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.AppDomainSetup.DisallowApplicationBaseProbing" /> property is true, the value of the <see cref="P:System.AppDomainSetup.ApplicationBase" /> property is ignored. That is, no assemblies are probed for in the directories specified by the <see cref="P:System.AppDomainSetup.ApplicationBase" /> property.</para>
+          <para>If the <see cref="P:System.AppDomainSetup.DisallowApplicationBaseProbing" /> property is true, the values of the <see cref="P:System.AppDomainSetup.PrivateBinPath" /> property and the <see cref="P:System.AppDomainSetup.PrivateBinPathProbe" /> property are ignored. No assemblies are probed for in the directories specified by the <see cref="P:System.AppDomainSetup.PrivateBinPath" /> property.</para>
+          <para>The <see cref="P:System.AppDomainSetup.DisallowApplicationBaseProbing" /> property provides an additional layer of control over the loading process. In the normal assembly loading sequence, the application base is probed before the <see cref="E:System.AppDomain.AssemblyResolve" /> event is raised. However, some applications might need to load assemblies from an OLE compound file within a document, or from a unique known location that is neither in the global assembly cache nor in the directories specified by the <see cref="P:System.AppDomainSetup.ApplicationBase" /> and <see cref="P:System.AppDomainSetup.PrivateBinPath" /> properties. Such applications can use the <see cref="P:System.AppDomainSetup.DisallowApplicationBaseProbing" /> property to avoid the delay caused by normal probing, and to avoid loading copies of the necessary assembly that might be located in the normal probing paths. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the application base path and private binary path are probed when searching for assemblies to load.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisallowBindingRedirects">
-      <MemberSignature Language="C#" Value="public bool DisallowBindingRedirects { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisallowBindingRedirects { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowBindingRedirects" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.AppDomainSetup.DisallowBindingRedirects" /> property is designed to be used by services and server applications where assembly binding redirection is not part of the application scenario.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether an application domain allows assembly binding redirection.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DisallowCodeDownload">
-      <MemberSignature Language="C#" Value="public bool DisallowCodeDownload { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisallowCodeDownload { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowCodeDownload" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.AppDomainSetup.DisallowCodeDownload" /> property is designed to be used by services and server applications where downloading code from an intranet or the Internet is not part of the application scenario.</para>
+          <block subset="none" type="note">
+            <para>The default value for the <see cref="P:System.AppDomainSetup.DisallowCodeDownload" /> property is false. This setting is unsafe for services. To help prevent services from downloading partially trusted code, set this property to true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether HTTP download of assemblies is allowed for an application domain.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DisallowPublisherPolicy">
-      <MemberSignature Language="C#" Value="public bool DisallowPublisherPolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisallowPublisherPolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowPublisherPolicy" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.AppDomainSetup.DisallowPublisherPolicy" /> property specifically applies to a Web application that is loaded locally. Use this property to help prevent a malicious attempt to execute an unsafe Web application in safe mode.</para>
+          <para>For more information about bypassing publisher policy, see the <format type="text/html"><a href="88fb1a17-6ac9-4b57-8028-193aec1f727c">Redirecting Assembly Versions</a></format> topic. For more information about safe mode, see the <format type="text/html"><a href="04ce6178-9199-400c-8d28-245a1a01803d">Step 1: Examining the Configuration Files</a></format> topic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <format type="text/html"><a href="4613407e-d0a8-4ef2-9f81-a6acb9fdc7d4">&lt;publisherPolicy&gt;</a></format> section of the configuration file is applied to an application domain.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="DynamicBase">
+      <MemberSignature Language="C#" Value="public string DynamicBase { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DynamicBase" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DynamicBase">
-      <MemberSignature Language="C#" Value="public string DynamicBase { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to set the base directory where the dynamic directory for the new application domain will be located. When code in the new application domain loads an assembly, assembly resolution looks first in the normal probing paths. If it does not find the assembly, it looks in the dynamic directory, which is returned by the <see cref="P:System.AppDomain.DynamicDirectory" /> property. Dynamic assemblies that will be loaded and executed by the new application domain can be placed there.</para>
+          <para>When you assign a path to the <see cref="P:System.AppDomainSetup.DynamicBase" /> property, an additional subdirectory is added; the name of this subdirectory is the hash code of the value assigned to the <see cref="P:System.AppDomainSetup.ApplicationName" /> property. Thus, the base directory subsequently returned by this property is always different from the value assigned. </para>
+          <block subset="none" type="note">
+            <para>Assigning a value to this property does not create any directories. The directories must be created or verified by the code that uses them. </para>
+          </block>
+          <para>The dynamic directory is a subdirectory of <see cref="P:System.AppDomainSetup.DynamicBase" />. Its simple name is the value returned by the <see cref="P:System.AppDomainSetup.ApplicationName" /> property, so its format is original path\hash code\application name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the base directory where the directory for dynamically generated files is located.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetConfigurationBytes">
       <MemberSignature Language="C#" Value="public byte[] GetConfigurationBytes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetConfigurationBytes() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -319,89 +457,126 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method provides a way to override the configuration information of an application that creates a new application domain. The configuration file information in <paramref name="value" /> overrides the configuration file information for the application. For example, when the Example.exe application creates a new application domain, it can override the configuration information originally obtained from Example.exe.config file.</para>
+          <block subset="none" type="note">
+            <para>Some consumers of configuration file information do not use the information stored by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method. The runtime does not enforce this. To ensure that all configuration file information is overridden in a new application domain, use the <see cref="P:System.AppDomainSetup.ConfigurationFile" /> property to specify a configuration file. The <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method does affect assembly binding.</para>
+          </block>
+          <para>The XML in <paramref name="value" /> is the same as the XML in a normal configuration file, except that it is stored as a <see cref="T:System.Byte" /> array. </para>
+          <para>To access the configuration bytes for an application domain, use the <see cref="P:System.AppDomain.SetupInformation" /> property to get the <see cref="T:System.AppDomainSetup" /> object for the application domain, then use the <see cref="M:System.AppDomainSetup.GetConfigurationBytes" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML configuration information set by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method, which overrides the application's XML configuration information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the XML configuration information that was set by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method, or null if the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method has not been called.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LicenseFile">
-      <MemberSignature Language="C#" Value="public string LicenseFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string LicenseFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LicenseFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location of the license file associated with this domain.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="LoaderOptimization">
+      <MemberSignature Language="C#" Value="public LoaderOptimization LoaderOptimization { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.LoaderOptimization LoaderOptimization" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LoaderOptimization">
-      <MemberSignature Language="C#" Value="public LoaderOptimization LoaderOptimization { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.LoaderOptimization</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LoaderOptimization'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the optimization policy used to load an executable.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PrivateBinPath">
-      <MemberSignature Language="C#" Value="public string PrivateBinPath { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PrivateBinPath { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PrivateBinPath" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Private assemblies are deployed in the same directory structure as the application. If the directories specified for <see cref="P:System.AppDomainSetup.PrivateBinPath" /> are not under <see cref="P:System.AppDomainSetup.ApplicationBase" />, they are ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the list of directories under the application base directory that are probed for private assemblies.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PrivateBinPathProbe">
-      <MemberSignature Language="C#" Value="public string PrivateBinPathProbe { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PrivateBinPathProbe { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PrivateBinPathProbe" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to any non-null string value, including <see cref="F:System.String.Empty" /> (""), to exclude the application directory path — that is, <see cref="P:System.AppDomainSetup.ApplicationBase" /> — from the search path for the application, and to search for assemblies only in <see cref="P:System.AppDomainSetup.PrivateBinPath" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string value that includes or excludes <see cref="P:System.AppDomainSetup.ApplicationBase" /> from the search path for the application, and searches only <see cref="P:System.AppDomainSetup.PrivateBinPath" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCompatibilitySwitches">
       <MemberSignature Language="C#" Value="public void SetCompatibilitySwitches (System.Collections.Generic.IEnumerable&lt;string&gt; switches);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCompatibilitySwitches(class System.Collections.Generic.IEnumerable`1&lt;string&gt; switches) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -413,13 +588,69 @@
         <Parameter Name="switches" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="switches">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Major versions of the .NET Framework sometimes introduce breaking changes from the previous version. For example, the net_v40_long introduces a small number of breaking changes from the net_v35_long. Use the <see cref="M:System.AppDomainSetup.SetCompatibilitySwitches(System.Collections.Generic.IEnumerable{System.String})" /> method to specify that one or more of these breaking changes should be rolled back for the application domain, to make the behavior compatible with the previous version of the .NET Framework.</para>
+          <para>Each time you call this method, it replaces the existing switch settings. To erase the settings, specify null for the <paramref name="switches" /> parameter.</para>
+          <para>The set of string values you provide for <paramref name="switches" /> can be a simple string array, because arrays implement the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+          <para>The following table provides examples of compatibility switches that can be set to restore the behavior of earlier versions of the .NET Framework.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Switch</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>"NetFx40_LegacySecurityPolicy"</para>
+              </term>
+              <description>
+                <para>Code access security (CAS) for the net_v35_short is enabled in this application domain. See <format type="text/html"><a href="07132b9c-4a72-4710-99d7-e702405e02d4">&lt;NetFx40_LegacySecurityPolicy&gt; Element</a></format>. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"NetFx40_Legacy20SortingBehavior"</para>
+              </term>
+              <description>
+                <para>String sorting defaults for the net_v35_short are enabled in this application domain. Successfully restoring legacy sorting behavior also requires the sort00001000.dll dynamic link library to be available on the local system.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"NetFx40_Legacy40SortingBehavior"</para>
+              </term>
+              <description>
+                <para>String sorting defaults for the net_v40_short and Unicode 5.0 are enabled in this application domain. Successfully restoring legacy sorting behavior also requires the sort00060101.dll dynamic link library to be available on the local system.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"NetFx40_TimeSpanLegacyFormatMode"</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.TimeSpan" /> formatting behavior for the net_v35_short is enabled in this application domain.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified switches, making the application domain compatible with previous versions of the .NET Framework for the specified issues.</para>
+        </summary>
+        <param name="switches">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable set of string values that specify compatibility switches, or null to erase the existing compatibility switches.</param>
       </Docs>
     </Member>
     <Member MemberName="SetConfigurationBytes">
       <MemberSignature Language="C#" Value="public void SetConfigurationBytes (byte[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetConfigurationBytes(unsigned int8[] value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -432,48 +663,77 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method provides a way to replace the configuration information of an application that creates a new application domain. The configuration file information in <paramref name="value" /> replaces the configuration file information for the application. For example, when the Example.exe application creates a new application domain, it can replace the configuration information originally obtained from the Example.exe.config file.</para>
+          <block subset="none" type="note">
+            <para>Some consumers of configuration file information do not use the information stored by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method. The runtime does not enforce this. To ensure that all configuration file information is replaced in a new application domain, use the <see cref="P:System.AppDomainSetup.ConfigurationFile" /> property to specify a configuration file. The <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method does affect assembly binding.</para>
+          </block>
+          <para>The XML in <paramref name="value" /> is the same as the XML in a normal configuration file, except that it is stored as a <see cref="T:System.Byte" /> array. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides XML configuration information for the application domain, replacing the application's XML configuration information.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the XML configuration information to be used for the application domain.</param>
       </Docs>
     </Member>
     <Member MemberName="ShadowCopyDirectories">
-      <MemberSignature Language="C#" Value="public string ShadowCopyDirectories { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ShadowCopyDirectories { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ShadowCopyDirectories" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When shadow copying is enabled, the default is to shadow copy all assemblies found through probing; that is, in the directories specified by the <see cref="P:System.AppDomainSetup.PrivateBinPath" /> and <see cref="P:System.AppDomainSetup.ApplicationBase" /> properties. The <see cref="P:System.AppDomainSetup.ShadowCopyDirectories" /> property restricts the shadow copy to the assemblies in the directories specified by <see cref="P:System.AppDomainSetup.ShadowCopyDirectories" />.</para>
+          <block subset="none" type="note">
+            <para>Directory paths must not contain semicolons, because the semicolon is the delimiter character. There is no escape character for semicolons.</para>
+          </block>
+          <para>When shadow copying is in effect, assembly files are copied to another location before the assemblies are loaded. The original assembly file is not locked, so it can be updated. For more information on shadow copying, see <format type="text/html"><a href="de8b8759-fca7-4260-896b-5a4973157672">Shadow Copying Assemblies</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the names of the directories containing assemblies to be shadow copied.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShadowCopyFiles">
-      <MemberSignature Language="C#" Value="public string ShadowCopyFiles { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ShadowCopyFiles { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ShadowCopyFiles" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on shadow copying, see <format type="text/html"><a href="de8b8759-fca7-4260-896b-5a4973157672">Shadow Copying Assemblies</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that indicates whether shadow copying is turned on or off.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

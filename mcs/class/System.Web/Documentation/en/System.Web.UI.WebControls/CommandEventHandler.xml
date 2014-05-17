@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CommandEventHandler" FullName="System.Web.UI.WebControls.CommandEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void CommandEventHandler(object sender, CommandEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Command event is raised when a <see cref="T:System.Web.UI.WebControls.Button" />, <see cref="T:System.Web.UI.WebControls.ImageButton" />, or <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+      <para>When you create a <see cref="T:System.Web.UI.WebControls.CommandEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the Command event. </para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

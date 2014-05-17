@@ -25,7 +25,8 @@
 
 void
 mono_threads_init_platform (void)
-{	
+{
+	mono_threads_init_dead_letter ();
 }
 
 void
@@ -57,7 +58,7 @@ mono_threads_core_suspend (MonoThreadInfo *info)
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 	res = mono_threads_get_runtime_callbacks ()->
-		thread_state_init_from_handle (&info->suspend_state, mono_thread_info_get_tid (info), info->native_handle);
+		thread_state_init_from_handle (&info->suspend_state, info);
 	if (!res)
 		thread_resume (info->native_handle);
 	return res;
@@ -86,7 +87,11 @@ mono_threads_core_resume (MonoThreadInfo *info)
 			return FALSE;
 
 		mono_mach_arch_thread_state_to_mcontext (state, mctx);
+#ifdef TARGET_ARM64
+		g_assert_not_reached ();
+#else
 		uctx.uc_mcontext = mctx;
+#endif
 		mono_monoctx_to_sigctx (&tmp, &uctx);
 
 		mono_mach_arch_mcontext_to_thread_state (mctx, state);
@@ -105,6 +110,7 @@ void
 mono_threads_platform_register (MonoThreadInfo *info)
 {
 	info->native_handle = mach_thread_self ();
+	mono_threads_install_dead_letter ();
 }
 
 void
@@ -134,6 +140,12 @@ gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
 	return pthread_create (tid, NULL, func, arg) == 0;
+}
+
+void
+mono_threads_core_set_name (MonoNativeThreadId tid, const char *name)
+{
+	/* pthread_setnmae_np() on Mac is not documented and doesn't receive thread id. */
 }
 
 #endif

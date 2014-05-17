@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="EnvelopeVersion" FullName="System.ServiceModel.EnvelopeVersion">
+  <TypeSignature Language="C#" Value="public sealed class EnvelopeVersion" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EnvelopeVersion extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The SOAP versions currently available are SOAP 1.1 and SOAP 1.2. There is an <see cref="T:System.ServiceModel.EnvelopeVersion" /> for each of these versions of SOAP that can be recovered using the <see cref="P:System.ServiceModel.EnvelopeVersion.Soap11" /> and <see cref="P:System.ServiceModel.EnvelopeVersion.Soap12" /> properties. There is also a <see cref="P:System.ServiceModel.EnvelopeVersion.None" /> message version that is used to sent and receive XML messages that do not use SOAP formatting. The processing roles associated with each message version can be recovered using the <see cref="P:System.ServiceModel.EnvelopeVersion.NextDestinationActorValue" /> property and the <see cref="M:System.ServiceModel.EnvelopeVersion.GetUltimateDestinationActorValues" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information related to the version of SOAP associated with a message and its exchange.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetUltimateDestinationActorValues">
+      <MemberSignature Language="C#" Value="public string[] GetUltimateDestinationActorValues ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetUltimateDestinationActorValues() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ultimate receiver is null if <see cref="P:System.ServiceModel.EnvelopeVersion.None" /> is specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that contains the URI name for the SOAP role associated with the current message version for the ultimate destination.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty string if SOAP1.1 is used; a string that contains http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver if SOAP1.2 is used.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="NextDestinationActorValue">
+      <MemberSignature Language="C#" Value="public string NextDestinationActorValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NextDestinationActorValue" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that contains the URI name for the SOAP role associated with the current message version for the next destination.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.EnvelopeVersion None { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.EnvelopeVersion None" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EnvelopeVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.ServiceModel.EnvelopeVersion.None" /> message version is used this means that a SOAP envelope is not written out and the message emits the contents of the body. This enables an indigo1 channel to communicate with an endpoint that is expecting XML with no SOAP formatting. The XML payload lives in the body of a message and is the only thing emitted when it hits the encoder. </para>
+          <para>Similarly, when the arbitrary chunk of XML is received it is wrapped up in a Message for propagation up the channel stack. The required headers are inserted and the message is processed as if it had been a SOAP message. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the envelope version not using a version of SOAP.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Soap11">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.EnvelopeVersion Soap11 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.EnvelopeVersion Soap11" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EnvelopeVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>crdefault the schema for <see cref="http://go.microsoft.com/fwlink/?LinkID=96641">SOAP 1.1</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the SOAP1.1 envelope version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Soap12">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.EnvelopeVersion Soap12 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.EnvelopeVersion Soap12" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EnvelopeVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>crdefault the schema for <see cref="http://go.microsoft.com/fwlink/?LinkID=96642">SOAP 1.2</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the SOAP1.2 envelope version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a human-readable string that is culture-sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that represents the current envelope version.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current envelope version.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

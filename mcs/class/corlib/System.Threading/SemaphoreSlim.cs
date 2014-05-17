@@ -171,9 +171,11 @@ namespace System.Threading
 					if (stopCondition ())
 						return false;
 
-					if (wait.Count > spinCount)
-						handle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)sw.ElapsedMilliseconds, 1), deepSleepTime));
-					else
+					if (wait.Count > spinCount) {
+						int timeout = millisecondsTimeout < 0 ? deepSleepTime :
+							Math.Min (Math.Max (millisecondsTimeout - (int)sw.ElapsedMilliseconds, 1), deepSleepTime);
+						handle.WaitOne (timeout);
+					} else
 						wait.SpinOnce ();
 				}
 			} while (true);

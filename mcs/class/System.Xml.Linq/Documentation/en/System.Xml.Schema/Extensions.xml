@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Extensions" FullName="System.Xml.Schema.Extensions">
+  <TypeSignature Language="C#" Value="public static class Extensions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Extensions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class also contains methods to get the post-schema-validation infoset (PSVI) of a validated XML node. </para>
+      <para>When you validate an <see cref="T:System.Xml.Linq.XDocument" />, <see cref="T:System.Xml.Linq.XElement" />, or <see cref="T:System.Xml.Linq.XAttribute" />, you can also optionally populate the XML tree with the post-schema-validation infoset. PSVI information is added as an annotation of type <see cref="T:System.Xml.Schema.XmlSchemaInfo" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains the sqltecxlinq extension methods for XSD validation. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetSchemaInfo">
+      <MemberSignature Language="C#" Value="public static System.Xml.Schema.IXmlSchemaInfo GetSchemaInfo (this System.Xml.Linq.XAttribute source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Schema.IXmlSchemaInfo GetSchemaInfo(class System.Xml.Linq.XAttribute source) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XAttribute" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> returned by this method to determine certain characteristics of a validated attribute. For example, you can determine if the attribute came from a default attribute value in an XSD.</para>
+          <para>You use the <see cref="P:System.Xml.Schema.IXmlSchemaInfo.SchemaAttribute" /> property to get a partial validation type (<see cref="T:System.Xml.Schema.XmlSchemaAttribute" />). You can use it to revalidate an attribute without validating an entire document.</para>
+          <para>For an example of this property, see <see cref="Overload:System.Xml.Schema.Extensions.Validate" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post-schema-validation infoset (PSVI) of a validated attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> that contains the post-schema-validation infoset for an <see cref="T:System.Xml.Linq.XAttribute" />.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XAttribute" /> that has been previously validated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchemaInfo">
+      <MemberSignature Language="C#" Value="public static System.Xml.Schema.IXmlSchemaInfo GetSchemaInfo (this System.Xml.Linq.XElement source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Schema.IXmlSchemaInfo GetSchemaInfo(class System.Xml.Linq.XElement source) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XElement" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> returned by this method to determine certain characteristics of a validated element. For example, you can determine the dynamic schema type of the element.</para>
+          <para>You use the <see cref="P:System.Xml.Schema.IXmlSchemaInfo.SchemaElement" /> property to get a partial validation type (<see cref="T:System.Xml.Schema.XmlSchemaElement" />). You can use it to revalidate a sub-tree with an element at its root without validating an entire document.</para>
+          <para>For an example of this property, see <see cref="Overload:System.Xml.Schema.Extensions.Validate" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post-schema-validation infoset (PSVI) of a validated element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> that contains the post-schema-validation infoset (PSVI) for an <see cref="T:System.Xml.Linq.XElement" />.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XElement" /> that has been previously validated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public static void Validate (this System.Xml.Linq.XDocument source, System.Xml.Schema.XmlSchemaSet schemas, System.Xml.Schema.ValidationEventHandler validationEventHandler);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Validate(class System.Xml.Linq.XDocument source, class System.Xml.Schema.XmlSchemaSet schemas, class System.Xml.Schema.ValidationEventHandler validationEventHandler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XDocument" RefType="this" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This extension method validates that the <see cref="T:System.Xml.Linq.XDocument" /> conforms to the schema content model in <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method validates that an <see cref="T:System.Xml.Linq.XDocument" /> conforms to an XSD in an <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XDocument" /> to validate.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to validate against.</param>
+        <param name="validationEventHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.ValidationEventHandler" /> for an event that occurs when the reader encounters validation errors. If null, throws an exception upon validation errors.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public static void Validate (this System.Xml.Linq.XAttribute source, System.Xml.Schema.XmlSchemaObject partialValidationType, System.Xml.Schema.XmlSchemaSet schemas, System.Xml.Schema.ValidationEventHandler validationEventHandler);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Validate(class System.Xml.Linq.XAttribute source, class System.Xml.Schema.XmlSchemaObject partialValidationType, class System.Xml.Schema.XmlSchemaSet schemas, class System.Xml.Schema.ValidationEventHandler validationEventHandler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XAttribute" RefType="this" />
+        <Parameter Name="partialValidationType" Type="System.Xml.Schema.XmlSchemaObject" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to validate that an <see cref="T:System.Xml.Linq.XAttribute" /> conforms to a schema. You typically use this method when you have modified an attribute, and you want to make sure that it still conforms to its schema. You could validate the entire document, but it takes less processing time to validate just the attribute.</para>
+          <para>If you pass null for <paramref name="validationEventHandler" />, this method raises an exception upon validation errors. Validation warnings will not raise an exception.</para>
+          <para>To validate an attribute, you use an instance of <see cref="T:System.Xml.Schema.XmlSchemaObject" />. You can obtain this instance in various ways. An easy way is as follows:</para>
+          <list type="ordered">
+            <item>
+              <para>Validate that a document conforms to a schema.</para>
+            </item>
+            <item>
+              <para>Add the post-schema-validation infoset (PSVI) by calling the <see cref="Overload:System.Xml.Schema.Extensions.Validate" /> extension method. </para>
+            </item>
+            <item>
+              <para>Call the <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" /> extension method to retrieve an object that implements <see cref="T:System.Xml.Schema.IXmlSchemaInfo" />. From the retrieved object, you can get an <see cref="T:System.Xml.Schema.XmlSchemaObject" />. </para>
+              <list type="bullet">
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XElement" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaElement" />. </para>
+                </item>
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XAttribute" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaAttribute" />.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>After you have an instance of an <see cref="T:System.Xml.Schema.XmlSchemaObject" />, you can use this method to validate an attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method validates that an <see cref="T:System.Xml.Linq.XAttribute" /> conforms to a specified <see cref="T:System.Xml.Schema.XmlSchemaObject" /> and an <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XAttribute" /> to validate.</param>
+        <param name="partialValidationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that specifies the sub-tree to validate.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to validate against.</param>
+        <param name="validationEventHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.ValidationEventHandler" /> for an event that occurs when the reader encounters validation errors. If null, throws an exception upon validation errors.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public static void Validate (this System.Xml.Linq.XDocument source, System.Xml.Schema.XmlSchemaSet schemas, System.Xml.Schema.ValidationEventHandler validationEventHandler, bool addSchemaInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Validate(class System.Xml.Linq.XDocument source, class System.Xml.Schema.XmlSchemaSet schemas, class System.Xml.Schema.ValidationEventHandler validationEventHandler, bool addSchemaInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XDocument" RefType="this" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
+        <Parameter Name="addSchemaInfo" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This extension method validates that the <see cref="T:System.Xml.Linq.XDocument" /> conforms to the schema content model in <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+          <para>If <paramref name="addSchemaInfo" /> is true, this method populates the XML tree with the post-schema-validation infoset (PSVI).</para>
+          <para>There are two steps to populating the XML tree with the PSVI.</para>
+          <list type="ordered">
+            <item>
+              <para>First, an annotation is added to all nodes in the tree to enable you to call <see cref="M:System.Xml.Schema.Extensions.GetSchemaInfo(System.Xml.Linq.XAttribute)" /> or <see cref="M:System.Xml.Schema.Extensions.GetSchemaInfo(System.Xml.Linq.XElement)" /> on an element or attribute in the tree.</para>
+            </item>
+            <item>
+              <para>Second, default elements and attributes defined in the XSD are added to the XML tree. By calling one of the <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" /> methods, you can determine if a specific element or attribute was added from the XSD as a default element or attribute.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates that an <see cref="T:System.Xml.Linq.XDocument" /> conforms to an XSD in an <see cref="T:System.Xml.Schema.XmlSchemaSet" />, optionally populating the XML tree with the post-schema-validation infoset (PSVI).</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XDocument" /> to validate.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to validate against.</param>
+        <param name="validationEventHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.ValidationEventHandler" /> for an event that occurs when the reader encounters validation errors. If null, throws an exception upon validation errors.</param>
+        <param name="addSchemaInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> indicating whether to populate the post-schema-validation infoset (PSVI).</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public static void Validate (this System.Xml.Linq.XElement source, System.Xml.Schema.XmlSchemaObject partialValidationType, System.Xml.Schema.XmlSchemaSet schemas, System.Xml.Schema.ValidationEventHandler validationEventHandler);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Validate(class System.Xml.Linq.XElement source, class System.Xml.Schema.XmlSchemaObject partialValidationType, class System.Xml.Schema.XmlSchemaSet schemas, class System.Xml.Schema.ValidationEventHandler validationEventHandler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XElement" RefType="this" />
+        <Parameter Name="partialValidationType" Type="System.Xml.Schema.XmlSchemaObject" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to validate that a sub-tree (with an <see cref="T:System.Xml.Linq.XElement" /> at its root) conforms to a schema. You typically use this method when you have modified a sub-tree, and you want to make sure that it still conforms to its schema. You could validate the entire document, but it takes less processing time to validate a just a sub-tree.</para>
+          <para>If you pass null for <paramref name="validationEventHandler" />, then this method raises an exception upon validation errors. Validation warnings will not raise an exception.</para>
+          <para>To validate a sub-tree, you use an instance of <see cref="T:System.Xml.Schema.XmlSchemaObject" />. You can obtain this instance in various ways. An easy way is as follows:</para>
+          <list type="ordered">
+            <item>
+              <para>Validate that a document conforms to a schema.</para>
+            </item>
+            <item>
+              <para>Add the post-schema-validation infoset (PSVI) by calling the <see cref="Overload:System.Xml.Schema.Extensions.Validate" /> extension method. </para>
+            </item>
+            <item>
+              <para>Call the <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" /> extension method to retrieve an object that implements <see cref="T:System.Xml.Schema.IXmlSchemaInfo" />. From the retrieved object, you can get an <see cref="T:System.Xml.Schema.XmlSchemaObject" />. </para>
+              <list type="bullet">
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XElement" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaElement" />. </para>
+                </item>
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XAttribute" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaAttribute" />.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>After you have an instance of an <see cref="T:System.Xml.Schema.XmlSchemaObject" />, you can use this method to validate an sub-tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method validates that an <see cref="T:System.Xml.Linq.XElement" /> sub-tree conforms to a specified <see cref="T:System.Xml.Schema.XmlSchemaObject" /> and an <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XElement" /> to validate.</param>
+        <param name="partialValidationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that specifies the sub-tree to validate.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to validate against.</param>
+        <param name="validationEventHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.ValidationEventHandler" /> for an event that occurs when the reader encounters validation errors. If null, throws an exception upon validation errors.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public static void Validate (this System.Xml.Linq.XAttribute source, System.Xml.Schema.XmlSchemaObject partialValidationType, System.Xml.Schema.XmlSchemaSet schemas, System.Xml.Schema.ValidationEventHandler validationEventHandler, bool addSchemaInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Validate(class System.Xml.Linq.XAttribute source, class System.Xml.Schema.XmlSchemaObject partialValidationType, class System.Xml.Schema.XmlSchemaSet schemas, class System.Xml.Schema.ValidationEventHandler validationEventHandler, bool addSchemaInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XAttribute" RefType="this" />
+        <Parameter Name="partialValidationType" Type="System.Xml.Schema.XmlSchemaObject" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
+        <Parameter Name="addSchemaInfo" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to validate that an <see cref="T:System.Xml.Linq.XAttribute" /> conforms to a schema. You typically use this method when you have modified an attribute, and you want to make sure that it still conforms to its schema. You could validate the entire document, but it takes less processing time to validate just the attribute.</para>
+          <para>If <paramref name="addSchemaInfo" /> is true, this method populates the attribute with the post-schema-validation infoset (PSVI). After you have populated the XML tree with the PSVI, you can call <see cref="M:System.Xml.Schema.Extensions.GetSchemaInfo(System.Xml.Linq.XAttribute)" /> on the validated attribute. This is useful if you are writing code that relies on data returned by <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" />.</para>
+          <para>If you pass null for <paramref name="validationEventHandler" />, then this method raises an exception upon validation errors. Validation warnings will not raise an exception.</para>
+          <para>To validate an attribute, you use an instance of <see cref="T:System.Xml.Schema.XmlSchemaObject" />. You can obtain this instance in various ways. An easy way is as follows:</para>
+          <list type="ordered">
+            <item>
+              <para>Validate that a document conforms to a schema.</para>
+            </item>
+            <item>
+              <para>Add the post-schema-validation infoset (PSVI) by calling the <see cref="Overload:System.Xml.Schema.Extensions.Validate" /> extension method. </para>
+            </item>
+            <item>
+              <para>Call the <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" /> extension method to retrieve an object that implements <see cref="T:System.Xml.Schema.IXmlSchemaInfo" />. From the retrieved object, you can get an <see cref="T:System.Xml.Schema.XmlSchemaObject" />. </para>
+              <list type="bullet">
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XElement" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaElement" />. </para>
+                </item>
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XAttribute" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaAttribute" />.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>After you have an instance of an <see cref="T:System.Xml.Schema.XmlSchemaObject" />, you can use this method to validate an attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates that an <see cref="T:System.Xml.Linq.XAttribute" /> conforms to a specified <see cref="T:System.Xml.Schema.XmlSchemaObject" /> and an <see cref="T:System.Xml.Schema.XmlSchemaSet" />, optionally populating the XML tree with the post-schema-validation infoset (PSVI).</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XAttribute" /> to validate.</param>
+        <param name="partialValidationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that specifies the sub-tree to validate.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to validate against.</param>
+        <param name="validationEventHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.ValidationEventHandler" /> for an event that occurs when the reader encounters validation errors. If null, throws an exception upon validation errors.</param>
+        <param name="addSchemaInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> indicating whether to populate the post-schema-validation infoset (PSVI).</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public static void Validate (this System.Xml.Linq.XElement source, System.Xml.Schema.XmlSchemaObject partialValidationType, System.Xml.Schema.XmlSchemaSet schemas, System.Xml.Schema.ValidationEventHandler validationEventHandler, bool addSchemaInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Validate(class System.Xml.Linq.XElement source, class System.Xml.Schema.XmlSchemaObject partialValidationType, class System.Xml.Schema.XmlSchemaSet schemas, class System.Xml.Schema.ValidationEventHandler validationEventHandler, bool addSchemaInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="System.Xml.Linq.XElement" RefType="this" />
+        <Parameter Name="partialValidationType" Type="System.Xml.Schema.XmlSchemaObject" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
+        <Parameter Name="addSchemaInfo" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to validate that a sub-tree (with an <see cref="T:System.Xml.Linq.XElement" /> at the root of the sub-tree) conforms to a schema. You typically use this method when you have modified a sub-tree, and you want to make sure that it still conforms to its schema. You could validate the entire document, but it takes less processing time to validate a just a sub-tree.</para>
+          <para>If <paramref name="addSchemaInfo" /> is true, then this method populates the XML tree with the post-schema-validation infoset (PSVI).</para>
+          <para>There are two aspects of populating the XML tree with the PSVI.</para>
+          <para>First, an annotation is added to all nodes in the tree such that you can now call <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" /> on an element or attribute in the tree.</para>
+          <para>Second, default elements and attributes defined in the XSD are added to the XML tree. By calling one of the <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" /> methods, you can determine if a specific element or attribute was added from the XSD as a default element or attribute.</para>
+          <para>If you pass null for <paramref name="validationEventHandler" />, then this method raises an exception upon validation errors. Validation warnings will not raise an exception.</para>
+          <para>To validate a sub-tree, you use an instance of <see cref="T:System.Xml.Schema.XmlSchemaObject" />. You can obtain this instance in various ways. An easy way is as follows:</para>
+          <list type="ordered">
+            <item>
+              <para>Validate that a document conforms to a schema.</para>
+            </item>
+            <item>
+              <para>Add the post-schema-validation infoset (PSVI) by calling the <see cref="Overload:System.Xml.Schema.Extensions.Validate" /> extension method. </para>
+            </item>
+            <item>
+              <para>Call the <see cref="Overload:System.Xml.Schema.Extensions.GetSchemaInfo" /> extension method to retrieve an object that implements <see cref="T:System.Xml.Schema.IXmlSchemaInfo" />. From the retrieved object, you can get an <see cref="T:System.Xml.Schema.XmlSchemaObject" />. </para>
+              <list type="bullet">
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XElement" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaElement" />. </para>
+                </item>
+                <item>
+                  <para>If you get an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> for an <see cref="T:System.Xml.Linq.XAttribute" />, the type will be <see cref="T:System.Xml.Schema.XmlSchemaAttribute" />.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>After you have an instance of an <see cref="T:System.Xml.Schema.XmlSchemaObject" />, you can use this method to validate a sub-tree..</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates that an <see cref="T:System.Xml.Linq.XElement" /> sub-tree conforms to a specified <see cref="T:System.Xml.Schema.XmlSchemaObject" /> and an <see cref="T:System.Xml.Schema.XmlSchemaSet" />, optionally populating the XML tree with the post-schema-validation infoset (PSVI).</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XElement" /> to validate.</param>
+        <param name="partialValidationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that specifies the sub-tree to validate.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to validate against.</param>
+        <param name="validationEventHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.ValidationEventHandler" /> for an event that occurs when the reader encounters validation errors. If null, throws an exception upon validation errors.</param>
+        <param name="addSchemaInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> indicating whether to populate the post-schema-validation infoset (PSVI).</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

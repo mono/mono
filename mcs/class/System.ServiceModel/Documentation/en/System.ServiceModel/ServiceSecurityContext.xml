@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceSecurityContext" FullName="System.ServiceModel.ServiceSecurityContext">
+  <TypeSignature Language="C#" Value="public class ServiceSecurityContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceSecurityContext extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The data is part of the <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" /> for a message. </para>
+      <para>Use this class to obtain information about a remote <newTerm>security context</newTerm> at runtime. A security context is created when a client is successfully authenticated and authorized to access a method. When a message is successfully authenticated and authorized, the security information from the client and for the current service instance can be obtained from an instance of this class. </para>
+      <para>You can retrieve an instance of the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> from the <see cref="P:System.ServiceModel.OperationContext.Current" /> property of the <see cref="T:System.ServiceModel.OperationContext" /> class, or use it from within a service operation method, as shown in the following example.</para>
+      <format type="text/html">
+        <h2>Parsing a ClaimSet</h2>
+      </format>
+      <para>A common use of the class is to retrieve the current set of claims for the purpose of identifying or authorizing a client when accessing a method. The <see cref="T:System.IdentityModel.Claims.ClaimSet" /> class contains a collection of <see cref="T:System.IdentityModel.Claims.Claim" /> objects, and each can be parsed to determine whether a specific claim is present. If the specified claim is provided, authorization can be granted. This functionality is provided by overriding the <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccessCore(System.ServiceModel.OperationContext)" /> method of the <see cref="T:System.ServiceModel.ServiceAuthorizationManager" /> class.  For a complete example, see the <format type="text/html"><a href="1db325ec-85be-47d0-8b6e-3ba2fdf3dda0">Authorization Policy Sample</a></format>.</para>
+      <format type="text/html">
+        <h2>Cookie Mode and IsAuthenticated</h2>
+      </format>
+      <para>Note that under some circumstances, the <see cref="P:System.Security.Principal.IIdentity.IsAuthenticated" /> property of the <see cref="T:System.Security.Principal.IIdentity" /> interface returns true even if the remote client is authenticated as an anonymous user. (The <see cref="P:System.ServiceModel.ServiceSecurityContext.PrimaryIdentity" /> property returns an implementation of the <see cref="T:System.Security.Principal.IIdentity" /> interface.) The following circumstances must be true for this to occur: </para>
+      <list type="bullet">
+        <item>
+          <para>The service uses Windows authentication.</para>
+        </item>
+        <item>
+          <para>The service allows anonymous logons.</para>
+        </item>
+        <item>
+          <para>The binding is a <format type="text/html"><a href="9da4f960-f64e-4d8a-894d-2b09eba5ce4b">customBinding Element</a></format>.</para>
+        </item>
+        <item>
+          <para>The custom binding includes a &lt;security&gt; element.</para>
+        </item>
+        <item>
+          <para>The &lt;security&gt; element includes a <format type="text/html"><a href="66b46f95-fa2d-4b5b-b6ce-0572ab0cdd50">secureConversationBootstrap element</a></format> with the requireSecurityContextCancellation attribute set to false.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the security context of a remote party. On the client, represents the service identity and, on the service, represents the client identity.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceSecurityContext (System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the default policy-chaining engine.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> class with the collection of policies object.</para>
+        </summary>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" />  of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> that contains the authorization policies.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceSecurityContext (System.IdentityModel.Policy.AuthorizationContext authorizationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IdentityModel.Policy.AuthorizationContext authorizationContext) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="authorizationContext" Type="System.IdentityModel.Policy.AuthorizationContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is typically used in scenarios where an application runs its own policy-chaining engine, which results in an <see cref="T:System.IdentityModel.Policy.AuthorizationContext" />. For the default policy engine, use the constructors that take a collection of <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> as parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> class with the specified authorization parameters.</para>
+        </summary>
+        <param name="authorizationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IdentityModel.Policy.AuthorizationContext" /> that contains authorization information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceSecurityContext (System.IdentityModel.Policy.AuthorizationContext authorizationContext, System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IdentityModel.Policy.AuthorizationContext authorizationContext, class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="authorizationContext" Type="System.IdentityModel.Policy.AuthorizationContext" />
+        <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> class with the specified authorization parameters and collection of policies.</para>
+        </summary>
+        <param name="authorizationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IdentityModel.Policy.AuthorizationContext" /> that contains authorization settings.</param>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" />  of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> that contains the authorization policies.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Anonymous">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.ServiceSecurityContext Anonymous { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.ServiceSecurityContext Anonymous" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceSecurityContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an instance of the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> class that contains an empty collection of claims, identities, and other context data that is usually used to represent an anonymous party.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthorizationContext">
+      <MemberSignature Language="C#" Value="public System.IdentityModel.Policy.AuthorizationContext AuthorizationContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IdentityModel.Policy.AuthorizationContext AuthorizationContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Policy.AuthorizationContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the authorization information for an instance of this class.  The <see cref="T:System.IdentityModel.Policy.AuthorizationContext" /> contains a collection of <see cref="T:System.IdentityModel.Claims.ClaimSet" /> that the application can interrogate and retrieve the information of the party.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthorizationPolicies">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; AuthorizationPolicies { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; AuthorizationPolicies" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of policies associated with an instance of this class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Current">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.ServiceSecurityContext Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.ServiceSecurityContext Current" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceSecurityContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.ServiceModel.ServiceSecurityContext" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsAnonymous">
+      <MemberSignature Language="C#" Value="public bool IsAnonymous { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAnonymous" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current client has provided credentials to the service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PrimaryIdentity">
+      <MemberSignature Language="C#" Value="public System.Security.Principal.IIdentity PrimaryIdentity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Principal.IIdentity PrimaryIdentity" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.IIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The primary identity is obtained from the credentials used to authenticate the current user. If the credential is an X.509 certificate, the identity is a concatenation of the subject name and the thumbprint (in that order). The subject name is separated from the thumbprint with a semicolon and a space. If the subject field of the certificate is null, the primary identity includes just a semicolon, a space, and the thumbprint. </para>
+          <para>When a duplex message exchange pattern is used with Kerberos direct authentication, this property becomes empty on the callback and the claimset is also empty. This does not happen when <newTerm>SspiNegotiated</newTerm> is used instead of Kerberos.</para>
+          <para>The Kerberos Requester Token is used only on the client to represent the service. The authorization policy that it generates contains one claim, an SPN; hence, no identity in the claim. In most cases there is no problem, because <see cref="T:System.ServiceModel.ServiceSecurityContext" /> is not used on the client. In a duplex scenario during callback, if the callback inspects this property, it gets an anonymous identity.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the primary identity associated with the current setting.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WindowsIdentity">
+      <MemberSignature Language="C#" Value="public System.Security.Principal.WindowsIdentity WindowsIdentity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Principal.WindowsIdentity WindowsIdentity" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WindowsIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the remote party cannot be associated with a Windows account, the <see cref="P:System.Security.Principal.WindowsIdentity.IsAnonymous" /> property is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Windows identity of the current setting. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

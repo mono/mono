@@ -1,108 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MailAddress" FullName="System.Net.Mail.MailAddress">
   <TypeSignature Language="C#" Value="public class MailAddress" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MailAddress extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Mail.MailAddress" /> class is used by the <see cref="T:System.Net.Mail.SmtpClient" /> and <see cref="T:System.Net.Mail.MailMessage" /> classes to store address information for e-mail messages.</para>
+      <para>A mail address is composed of a <see cref="P:System.Net.Mail.MailAddress.User" /> name, <see cref="P:System.Net.Mail.MailAddress.Host" /> name and optionally, a <see cref="P:System.Net.Mail.MailAddress.DisplayName" />. The <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> can contain non-ASCII characters if you encode them.</para>
+      <para>The <see cref="T:System.Net.Mail.MailAddress" /> class supports the following mail address formats:</para>
+      <list type="bullet">
+        <item>
+          <para>A simple address format of user@host. If a <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> is not set, this is the mail address format generated.</para>
+        </item>
+        <item>
+          <para>A standard quoted display name format of "display name" &lt;user@host&gt;. If a <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> is set, this is the format generated.</para>
+        </item>
+        <item>
+          <para>Angle brackets are added around the <see cref="P:System.Net.Mail.MailAddress.User" /> name, <see cref="P:System.Net.Mail.MailAddress.Host" /> name for "display name" user@host if these are not included. </para>
+        </item>
+        <item>
+          <para>Quotes are added around the <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> for display name &lt;user@host&gt;, if these are not included.</para>
+        </item>
+        <item>
+          <para>Unicode characters are supported in the <see cref="P:System.Net.Mail.MailAddress.DisplayName" />. property. </para>
+        </item>
+        <item>
+          <para>A <see cref="P:System.Net.Mail.MailAddress.User" /> name with quotes. For example, "user name"@host.</para>
+        </item>
+        <item>
+          <para>Consecutive and trailing dots in user names. For example, user...name..@host.</para>
+        </item>
+        <item>
+          <para>Bracketed domain literals. For example, &lt;user@[my domain]&gt;.</para>
+        </item>
+        <item>
+          <para>Comments. For example, (comment)"display name"(comment)&lt;(comment)user(comment)@(comment)domain(comment)&gt;(comment). Comments are removed before transmission.</para>
+        </item>
+      </list>
+      <para>A comma is used to separate elements in a list of mail addresses. As a result, a comma should not be used in unquoted display names in a list. The following mail addresses would be allowed</para>
+      <para>"John, Doe" &lt;user@host&gt;, "Bob, Smith" &lt;user2@host&gt;</para>
+      <para>The following mail address would not be allowed:</para>
+      <para>John, Doe &lt;user@host&gt;, Bob, Smith &lt;user2@host&gt;</para>
+      <para>Quotes can be embedded in a quoted string, but they must be escaped. The following mail addresses would be allowed</para>
+      <para>"John \"Jr\" Doe" &lt;user@host&gt;</para>
+      <para>"\"John \\\"Jr\\\" Doe\" &lt;user@host&gt;"</para>
+      <para>The following mail address would not be allowed:</para>
+      <para>"John "Jr" Doe" &lt;user@host&gt;</para>
+      <para>When the username is note quoted, all text between the start of the string (or comma) and the address are considered part of the <see cref="P:System.Net.Mail.MailAddress.DisplayName" />, including comments.</para>
+      <para>-- Example: (non comment) unquoted display (non comment) name (non comment) &lt;user@host&gt;</para>
+      <para>Although the <see cref="T:System.Net.Mail.MailAddress" /> class accepts a mail address as valid, other mail servers may not accept the mail address.</para>
+      <para>The <see cref="T:System.Net.Mail.MailAddress" /> class does not support the following mail address formats:</para>
+      <para>Mixed quoted and unquoted display names. For example, display "name" &lt;user@host&gt;</para>
+      <para>Groups, as defined in RFC 2822 Section 3.4 published by the IETF.</para>
+      <para>The obsolete user name formats of "user"."name"@host, user."name"@host or "user".name@host</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the address of an electronic mail sender or recipient.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MailAddress (string address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string address) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="address" /> parameter can contain a display name and the associated e-mail address if you enclose the address in angle brackets. For example: </para>
+          <para>"Tom Smith &lt;tsmith@contoso.com&gt;"</para>
+          <para>White space is permitted between the display name and the angle brackets. </para>
+          <para>The following table shows the property values for a <see cref="T:System.Net.Mail.MailAddress" /> object constructed using the preceding example address.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Net.Mail.MailAddress.DisplayName" />
+                </para>
+              </term>
+              <description>
+                <para>"Tom Smith"</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Net.Mail.MailAddress.Host" />
+                </para>
+              </term>
+              <description>
+                <para>"contoso.com"</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Net.Mail.MailAddress.User" />
+                </para>
+              </term>
+              <description>
+                <para>"tsmith"</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Net.Mail.MailAddress.Address" />
+                </para>
+              </term>
+              <description>
+                <para>"tsmith@contoso.com"</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mail.MailAddress" /> class using the specified address. </para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an e-mail address.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MailAddress (string address, string displayName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string address, string displayName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="address" Type="System.String" />
         <Parameter Name="displayName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="displayName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Leading and trailing white space in the display name is preserved.</para>
+          <para>If <paramref name="displayName" /> contains non-ASCII characters, the iso-8859-1 character set is used for the <paramref name="displayName" /> encoding. Encoding non-ASCII characters is discussed in RFC 1522, which is available at <see cref="http://www.ietf.org">http://www.ietf.org</see>.</para>
+          <para>If <paramref name="address" /> contains a display name, and <paramref name="displayName" /> is not null and is not equal to <see cref="F:System.String.Empty" />, <paramref name="displayName" /> overrides the value specified in <paramref name="address" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mail.MailAddress" /> class using the specified address and display name.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an e-mail address.</param>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the display name associated with <paramref name="address" />. This parameter can be null.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MailAddress (string address, string displayName, System.Text.Encoding displayNameEncoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string address, string displayName, class System.Text.Encoding displayNameEncoding) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("We don't do anything with displayNameEncoding")</AttributeName>
+        </Attribute>
+      </Attributes>
       <Parameters>
         <Parameter Name="address" Type="System.String" />
         <Parameter Name="displayName" Type="System.String" />
         <Parameter Name="displayNameEncoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="displayName">To be added.</param>
-        <param name="displayNameEncoding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Leading and trailing white space in the display name is preserved.</para>
+          <para>If <paramref name="address" /> contains a display name, and <paramref name="displayName" /> is not null and is not equal to <see cref="F:System.String.Empty" />, <paramref name="displayName" /> overrides the value specified in <paramref name="address" />. </para>
+          <para>The <see cref="M:System.Net.Mail.MailAddress.#ctor(System.String,System.String,System.Text.Encoding)" /> method does not check if the <paramref name="displayName" /> parameter is valid. This method removes surrounding quotes not displayed by the <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> property. Quotes will be added before transmission, except where <see cref="P:System.Text.Encoding.ASCII" /> or <see cref="P:System.Text.Encoding.Unicode" /> is specified in the <paramref name="displayNameEncoding" /> parameter. The encoding specified in the <paramref name="displayNameEncoding" /> parameter will be applied to the <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> property before transmission <see cref="P:System.Text.Encoding.ASCII" /> or <see cref="P:System.Text.Encoding.Unicode" /> is specified in the <paramref name="displayNameEncoding" /> parameter. <see cref="P:System.Text.Encoding.UTF8" /> is the default encoding if none is specified.</para>
+          <para>For more information on supported mail address formats, see <see cref="T:System.Net.Mail.MailAddress" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mail.MailAddress" /> class using the specified address, display name, and encoding.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an e-mail address.</param>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the display name associated with <paramref name="address" />.</param>
+        <param name="displayNameEncoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> that defines the character set used for <paramref name="displayName" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Address">
       <MemberSignature Language="C#" Value="public string Address { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Address" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by this property does not include the <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the e-mail address specified when this instance was created.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisplayName">
       <MemberSignature Language="C#" Value="public string DisplayName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DisplayName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Display names that contain non-ASCII characters are returned in human-readable form. Use the <see cref="M:System.Net.Mail.MailAddress.ToString" /> method to get the encoded form of the <see cref="P:System.Net.Mail.MailAddress.DisplayName" />. </para>
+          <para>Some software programs that are used to read e-mail display the <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> property value instead of, or in addition to, the e-mail address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the display name composed from the display name and address information specified when this instance was created.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -111,80 +284,124 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two mail addresses.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two mail addresses are equal; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Mail.MailAddress.GetHashCode" /> method returns a hash code of the mail address. This value can be used as a key in hash tables.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash value for a mail address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Host">
       <MemberSignature Language="C#" Value="public string Host { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Host" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a typical e-mail address, the host string includes all information following the "@" sign. For example, in "tsmith@contoso.com", the host is "contoso.com". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the host portion of the address specified when this instance was created.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this method is not necessarily identical to the string specified when the instance was created. If the <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> property is not null and not equal to <see cref="F:System.String.Empty" /> (""), <see cref="M:System.Net.Mail.MailAddress.ToString" /> returns a string composed using the following syntax:</para>
+          <para>
+            <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> &lt;<see cref="P:System.Net.Mail.MailAddress.User" />@<see cref="P:System.Net.Mail.MailAddress.Host" />&gt;</para>
+          <para>If <see cref="P:System.Net.Mail.MailAddress.DisplayName" /> is null or is equal to <see cref="F:System.String.Empty" />, <see cref="M:System.Net.Mail.MailAddress.ToString" /> returns the value of the <see cref="P:System.Net.Mail.MailAddress.Address" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the contents of this <see cref="T:System.Net.Mail.MailAddress" />.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="User">
       <MemberSignature Language="C#" Value="public string User { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string User" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a typical e-mail address, the user string includes all information preceding the "@" sign. For example, in "tsmith@contoso.com", the user is "tsmith". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user information from the address specified when this instance was created.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

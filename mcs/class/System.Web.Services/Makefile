@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
-MOBILE := $(filter monotouch monodroid mobile mobile_static, $(PROFILE))
+MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_MCS_FLAGS = \
 	-nowarn:649 -nowarn:169			\
@@ -21,6 +21,12 @@ LIB_MCS_FLAGS = \
 	-r:System.EnterpriseServices.dll	\
 	-r:System.Xml.dll			\
 	-r:System.Web.dll
+
+plainweb_dir = $(the_libdir_base)plainweb
+LOCAL_MCS_FLAGS = -lib:$(plainweb_dir)
+
+plainweb = $(plainweb_dir)/System.Web.dll
+system_web_services_deps = $(plainweb)
 
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += \
@@ -41,3 +47,10 @@ EXTRA_DISTFILES = \
 	Test/System.Web.Services.Description/*.wsdl
 
 include ../../build/library.make
+
+$(the_libdir_base)$(LIBRARY): $(system_web_services_deps)
+
+$(plainweb):
+	(cd ../System.Web; $(MAKE) $@)
+
+.NOTPARALLEL: $(plainweb)

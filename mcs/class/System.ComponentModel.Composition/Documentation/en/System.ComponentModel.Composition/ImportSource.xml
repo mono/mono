@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ImportSource" FullName="System.ComponentModel.Composition.ImportSource">
+  <TypeSignature Language="C#" Value="public enum ImportSource" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ImportSource extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies values that indicate how the MEF composition engine searches for imports.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Any">
+      <MemberSignature Language="C#" Value="Any" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.ImportSource Any = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.ImportSource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports may be satisfied from the current scope or any ancestor scope.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Local">
+      <MemberSignature Language="C#" Value="Local" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.ImportSource Local = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.ImportSource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports may be satisfied only from the current scope.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NonLocal">
+      <MemberSignature Language="C#" Value="NonLocal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.ImportSource NonLocal = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.ImportSource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports may be satisfied only from an ancestor scope.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

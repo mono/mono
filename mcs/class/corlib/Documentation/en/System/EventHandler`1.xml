@@ -1,16 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventHandler&lt;TEventArgs&gt;" FullName="System.EventHandler&lt;TEventArgs&gt;">
-  <TypeSignature Language="C#" Value="public delegate void EventHandler&lt;TEventArgs&gt;(object sender, TEventArgs e) where TEventArgs : EventArgs;" />
+  <TypeSignature Language="C#" Value="public delegate void EventHandler&lt;TEventArgs&gt;(object sender, TEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed EventHandler`1&lt;TEventArgs&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="TEventArgs">
-      <Constraints>
-        <BaseTypeName>System.EventArgs</BaseTypeName>
-      </Constraints>
-    </TypeParameter>
+    <TypeParameter Name="TEventArgs" />
   </TypeParameters>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -26,8 +24,27 @@
     <typeparam name="TEventArgs">To be added.</typeparam>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The event model in the .NET Framework is based on having an event delegate that connects an event with its handler. To raise an event, two elements are needed: </para>
+      <list type="bullet">
+        <item>
+          <para>A delegate that refers to a method that provides the response to the event. </para>
+        </item>
+        <item>
+          <para>Optionally, a class that holds the event data, if the event provides data. </para>
+        </item>
+      </list>
+      <para>The delegate is a type that defines a signature, that is, the return value type and parameter list types for a method. You can use the delegate type to declare a variable that can refer to any method with the same signature as the delegate. </para>
+      <para>The standard signature of an event handler delegate defines a method that does not return a value. This method's first parameter is of type <see cref="T:System.Object" /> and refers to the instance that raises the event. Its second parameter is derived from type <see cref="T:System.EventArgs" /> and holds the event data. If the event does not generate event data, the second parameter is simply the value of the <see cref="F:System.EventArgs.Empty" /> field. Otherwise, the second parameter is a type derived from <see cref="T:System.EventArgs" /> and supplies any fields or properties needed to hold the event data.</para>
+      <para>The <see cref="T:System.EventHandler`1" /> delegate is a predefined delegate that represents an event handler method for an event that generates data. The advantage of using <see cref="T:System.EventHandler`1" /> is that you do not need to code your own custom delegate if your event generates event data. You simply provide the type of the event data object as the generic parameter. </para>
+      <para>To associate the event with the method that will handle the event, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. </para>
+      <para>For more information about event handler delegates, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle an event when the event provides data. </para>
+    </summary>
   </Docs>
 </Type>

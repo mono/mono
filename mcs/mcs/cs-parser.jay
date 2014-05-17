@@ -35,7 +35,8 @@ namespace Mono.CSharp
 			Arglist	= 1 << 5,
 			DefaultValue = 1 << 6,
 			
-			All = Ref | Out | This | Params | Arglist | DefaultValue
+			All = Ref | Out | This | Params | Arglist | DefaultValue,
+			PrimaryConstructor = Ref | Out | Params | DefaultValue
 		}
 		
 		static readonly object ModifierNone = 0;
@@ -739,7 +740,7 @@ attribute_section_cont
 	  }
 	| error
 	  {
- 		CheckAttributeTarget (GetTokenName (yyToken), GetLocation ($1)); 
+ 		CheckAttributeTarget (yyToken, GetTokenName (yyToken), GetLocation ($1)); 
  		$$ = null;
 	  }
 	;	
@@ -748,7 +749,7 @@ attribute_target
 	: IDENTIFIER
 	  {
 		var lt = (LocatedToken) $1;
-		$$ = CheckAttributeTarget (lt.Value, lt.Location);
+		$$ = CheckAttributeTarget (yyToken, lt.Value, lt.Location);
 	  }
 	| EVENT  { $$ = "event"; }
 	| RETURN { $$ = "return"; }
@@ -904,10 +905,12 @@ class_member_declarations
 	: class_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	| class_member_declarations class_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	;
 	
@@ -943,15 +946,21 @@ struct_declaration
 	  type_declaration_name
 	  { 
 		lexer.ConstraintsParsing = true;
+		valid_param_mod = ParameterModifierType.PrimaryConstructor;
 		push_current_container (new Struct (current_container, (MemberName) $6, (Modifiers) $2, (Attributes) $1), $3);
 	  }
+	  opt_primary_parameters
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
+		valid_param_mod = 0;
 		lexer.ConstraintsParsing = false;
 
-		if ($9 != null)
-			current_container.SetConstraints ((List<Constraints>) $9);
+		if ($8 != null)
+			current_type.PrimaryConstructorParameters = (ParametersCompiled) $8;
+
+		if ($10 != null)
+			current_container.SetConstraints ((List<Constraints>) $10);
 
 		if (doc_support)
 			current_container.PartialContainer.DocComment = Lexer.consume_doc_comment ();
@@ -974,9 +983,9 @@ struct_declaration
 	  opt_semicolon
 	  {
 		if ($16 == null) {
-			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($14));
+			lbag.AppendToMember (current_container, GetLocation ($12), GetLocation ($15));
 		} else {
-			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($14), GetLocation ($16));
+			lbag.AppendToMember (current_container, GetLocation ($12), GetLocation ($15), GetLocation ($17));
 		}
 		$$ = pop_current_class ();
 	  }
@@ -1968,10 +1977,12 @@ interface_member_declarations
 	: interface_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	| interface_member_declarations interface_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	;
 
@@ -2601,6 +2612,8 @@ enum_declaration
 	  }
 	  opt_enum_member_declarations
 	  {
+		lexer.parsing_modifiers = true;
+	  
 	  	// here will be evaluated after CLOSE_BLACE is consumed.
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -3189,6 +3202,12 @@ member_access
 		$$ = new MemberAccess (new BaseThis (GetLocation ($1)), lt.Value, (TypeArguments) $4, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| AWAIT DOT identifier_inside_body opt_type_argument_list
+	  {
+		var lt = (LocatedToken) $3;
+		$$ = new MemberAccess (new SimpleName ("await", ((LocatedToken) $1).Location), lt.Value, (TypeArguments) $4, lt.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	| qualified_alias_member identifier_inside_body opt_type_argument_list
 	  {
 		var lt1 = (LocatedToken) $1;
@@ -3596,6 +3615,10 @@ anonymous_type_expression
 		// TODO: lbag comma location
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| NEW OPEN_BRACE GENERATE_COMPLETION
+	  {
+		$$ = new EmptyCompletion ();
+	  }
 	;
 
 anonymous_type_parameters_opt_comma
@@ -3620,6 +3643,14 @@ anonymous_type_parameters
 	  	var a = (List<AnonymousTypeParameter>) $1;
 	  	a.Add ((AnonymousTypeParameter) $3);
 	  	$$ = a;
+	  }
+	| COMPLETE_COMPLETION
+	  {
+		$$ = new EmptyCompletion ();
+	  }
+	| anonymous_type_parameter COMPLETE_COMPLETION
+	  {
+	  	$$ = $1;
 	  }
 	;
 
@@ -3938,7 +3969,7 @@ unary_expression
 			 if (current_anonymous_method is LambdaExpression) {
 				report.Error (4034, GetLocation ($1),
 					"The `await' operator can only be used when its containing lambda expression is marked with the `async' modifier");
-			} else if (current_anonymous_method is AnonymousMethodExpression) {
+			} else if (current_anonymous_method != null) {
 				report.Error (4035, GetLocation ($1),
 					"The `await' operator can only be used when its containing anonymous method is marked with the `async' modifier");
 			} else if (interactive_async != null) {
@@ -4620,6 +4651,51 @@ boolean_expression
 	  }
 	;
 
+opt_primary_parameters
+	: /* empty */
+	  {
+	  	$$ = null;
+	  }
+	| primary_parameters
+	;
+
+primary_parameters
+	: OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  {
+		$$ = $2;
+
+		// Cannot use opt_formal_parameter_list because it can be shared instance for empty parameters
+	  	lbag.AppendToMember (current_container, GetLocation ($1), GetLocation ($3));
+	  }
+	;
+
+opt_primary_parameters_with_class_base
+	: /* empty */
+	  {
+	  	$$ = null;
+	  }
+	| class_base
+	  {
+		$$ = null;
+	  }
+	| primary_parameters
+	  {
+		$$ = $1;
+	  }
+	| primary_parameters class_base OPEN_PARENS
+	  {
+		++lexer.parsing_block;
+	  }
+	  opt_argument_list CLOSE_PARENS
+	  {
+		lbag.AppendToMember (current_container, GetLocation ($3), GetLocation ($6));
+		((Class)current_type).PrimaryConstructorBaseArguments = (Arguments) $5;
+		--lexer.parsing_block;
+
+		$$ = $1;
+	  }
+	;
+
 //
 // 10 classes
 //
@@ -4640,11 +4716,16 @@ class_declaration
 		}
 			
 		push_current_container (c, $3);
+		valid_param_mod = ParameterModifierType.PrimaryConstructor;
 	  }
-	  opt_class_base
+	  opt_primary_parameters_with_class_base
 	  opt_type_parameter_constraints_clauses
 	  {
+		valid_param_mod = 0;
 		lexer.ConstraintsParsing = false;
+
+		if ($8 != null)
+			current_type.PrimaryConstructorParameters = (ParametersCompiled) $8;
 
 		if ($9 != null)
 			current_container.SetConstraints ((List<Constraints>) $9);
@@ -4799,7 +4880,11 @@ modifier
 	
 opt_class_base
 	: /* empty */
-	| COLON type_list
+	| class_base
+	;
+
+class_base
+	: COLON type_list
 	 {
 		current_type.SetBaseTypes ((List<FullNamedExpression>) $2);
 	 }
@@ -5900,12 +5985,12 @@ try_statement
 	  }
 	| TRY block FINALLY block
 	  {
-		$$ = new TryFinally ((Statement) $2, (Block) $4, GetLocation ($1));
+		$$ = new TryFinally ((Statement) $2, (ExplicitBlock) $4, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
 	  }
 	| TRY block catch_clauses FINALLY block
 	  {
-		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, Location.Null, true), (Block) $5, GetLocation ($1));
+		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, Location.Null, true), (ExplicitBlock) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($4));
 	  }
 	| TRY block error
@@ -5928,7 +6013,8 @@ catch_clauses
 		var l = (List<Catch>) $1;
 		
 		Catch c = (Catch) $2;
-		if (l [l.Count - 1].IsGeneral) {
+		var prev_catch = l [l.Count - 1];
+		if (prev_catch.IsGeneral && prev_catch.Filter == null) {
 			report.Error (1017, c.loc, "Try statement already has an empty catch block");
 		}
 		
@@ -5943,14 +6029,16 @@ opt_identifier
 	;
 
 catch_clause 
-	: CATCH block
+	: CATCH opt_catch_filter block
 	  {
-		$$ = new Catch ((Block) $2, GetLocation ($1));
+	  	var c = new Catch ((ExplicitBlock) $3, GetLocation ($1));
+	  	c.Filter = (CatchFilterExpression) $2;
+	  	$$ = c;
 	  }
 	| CATCH open_parens_any type opt_identifier CLOSE_PARENS
 	  {
 		start_block (GetLocation ($2));
-		var c = new Catch (current_block, GetLocation ($1));
+		var c = new Catch ((ExplicitBlock) current_block, GetLocation ($1));
 		c.TypeExpression = (FullNamedExpression) $3;
 
 		if ($4 != null) {
@@ -5962,8 +6050,9 @@ catch_clause
 		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
 		$$ = c;
 	  }
-	  block_prepared
+	  opt_catch_filter block_prepared
 	  {
+	  	((Catch) $6).Filter = (CatchFilterExpression) $7;
 		$$ = $6;
 	  }
 	| CATCH open_parens_any error
@@ -5994,6 +6083,18 @@ catch_clause
 		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
 
 		$$ = c;
+	  }
+	;
+
+opt_catch_filter
+	: /* empty */
+	| IF open_parens_any expression CLOSE_PARENS
+	  {
+		if (lang_version <= LanguageVersion.V_5)
+			FeatureIsNotAvailable (GetLocation ($1), "exception filter");
+
+	  	$$ = new CatchFilterExpression ((Expression) $3, GetLocation ($1));
+	  	lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
 	;
 
@@ -6978,15 +7079,20 @@ Location PopLocation ()
 	return location_stack.Pop ();
 }
 
-string CheckAttributeTarget (string a, Location l)
+string CheckAttributeTarget (int token, string a, Location l)
 {
 	switch (a) {
 	case "assembly" : case "module" : case "field" : case "method" : case "param" : case "property" : case "type" :
 			return a;
 	}
 
-	report.Warning (658, 1, l,
-		 "`{0}' is invalid attribute target. All attributes in this attribute section will be ignored", a);
+	if (!Tokenizer.IsValidIdentifier (a)) {
+		Error_SyntaxError (token);
+	} else {
+		report.Warning (658, 1, l,
+			 "`{0}' is invalid attribute target. All attributes in this attribute section will be ignored", a);
+	}
+
 	return string.Empty;
 }
 
@@ -7038,7 +7144,7 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Re
 	lang_version = settings.Version;
 	yacc_verbose_flag = settings.VerboseParserFlag;
 	doc_support = settings.DocumentationFile != null;
-	lexer = new Tokenizer (reader, file, session);
+	lexer = new Tokenizer (reader, file, session, report);
 	oob_stack = new Stack<object> ();
 	lbag = session.LocationsBag;
 	use_global_stacks = session.UseJayGlobalArrays;

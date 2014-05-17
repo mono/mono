@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ActiveDesignSurfaceChangedEventArgs" FullName="System.ComponentModel.Design.ActiveDesignSurfaceChangedEventArgs">
   <TypeSignature Language="C#" Value="public class ActiveDesignSurfaceChangedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.ComponentModel.Design.DesignSurfaceManager.ActiveDesignSurfaceChanged" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +28,15 @@
         <Parameter Name="newSurface" Type="System.ComponentModel.Design.DesignSurface" />
       </Parameters>
       <Docs>
-        <param name="oldSurface">To be added.</param>
-        <param name="newSurface">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.ActiveDesignSurfaceChangedEventArgs" /> class.</para>
+        </summary>
+        <param name="oldSurface">
+          <attribution license="cc4" from="Microsoft" modified="false" />The design surface that is losing activation.</param>
+        <param name="newSurface">
+          <attribution license="cc4" from="Microsoft" modified="false" />The design surface that is gaining activation.</param>
       </Docs>
     </Member>
     <Member MemberName="NewSurface">
@@ -40,9 +49,12 @@
         <ReturnType>System.ComponentModel.Design.DesignSurface</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design surface that is gaining activation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OldSurface">
@@ -55,9 +67,12 @@
         <ReturnType>System.ComponentModel.Design.DesignSurface</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design surface that is losing activation.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

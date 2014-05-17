@@ -1,208 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Stopwatch" FullName="System.Diagnostics.Stopwatch">
   <TypeSignature Language="C#" Value="public class Stopwatch" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Stopwatch extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Diagnostics.Stopwatch" /> instance can measure elapsed time for one interval, or the total of elapsed time across multiple intervals. In a typical <see cref="T:System.Diagnostics.Stopwatch" /> scenario, you call the <see cref="M:System.Diagnostics.Stopwatch.Start" /> method, then eventually call the <see cref="M:System.Diagnostics.Stopwatch.Stop" /> method, and then you check elapsed time using the <see cref="P:System.Diagnostics.Stopwatch.Elapsed" /> property.</para>
+      <para>A <see cref="T:System.Diagnostics.Stopwatch" /> instance is either running or stopped; use <see cref="P:System.Diagnostics.Stopwatch.IsRunning" /> to determine the current state of a <see cref="T:System.Diagnostics.Stopwatch" />. Use <see cref="M:System.Diagnostics.Stopwatch.Start" /> to begin measuring elapsed time; use <see cref="M:System.Diagnostics.Stopwatch.Stop" /> to stop measuring elapsed time. Query the elapsed time value through the properties <see cref="P:System.Diagnostics.Stopwatch.Elapsed" />, <see cref="P:System.Diagnostics.Stopwatch.ElapsedMilliseconds" />, or <see cref="P:System.Diagnostics.Stopwatch.ElapsedTicks" />. You can query the elapsed time properties while the instance is running or stopped. The elapsed time properties steadily increase while the <see cref="T:System.Diagnostics.Stopwatch" /> is running; they remain constant when the instance is stopped.</para>
+      <para>By default, the elapsed time value of a <see cref="T:System.Diagnostics.Stopwatch" /> instance equals the total of all measured time intervals. Each call to <see cref="M:System.Diagnostics.Stopwatch.Start" /> begins counting at the cumulative elapsed time; each call to <see cref="M:System.Diagnostics.Stopwatch.Stop" /> ends the current interval measurement and freezes the cumulative elapsed time value. Use the <see cref="M:System.Diagnostics.Stopwatch.Reset" /> method to clear the cumulative elapsed time in an existing <see cref="T:System.Diagnostics.Stopwatch" /> instance.</para>
+      <para>The <see cref="T:System.Diagnostics.Stopwatch" /> measures elapsed time by counting timer ticks in the underlying timer mechanism. If the installed hardware and operating system support a high-resolution performance counter, then the <see cref="T:System.Diagnostics.Stopwatch" /> class uses that counter to measure elapsed time. Otherwise, the <see cref="T:System.Diagnostics.Stopwatch" /> class uses the system timer to measure elapsed time. Use the <see cref="F:System.Diagnostics.Stopwatch.Frequency" /> and <see cref="F:System.Diagnostics.Stopwatch.IsHighResolution" /> fields to determine the precision and resolution of the <see cref="T:System.Diagnostics.Stopwatch" /> timing implementation.</para>
+      <para>The <see cref="T:System.Diagnostics.Stopwatch" /> class assists the manipulation of timing-related performance counters within managed code. Specifically, the <see cref="F:System.Diagnostics.Stopwatch.Frequency" /> field and <see cref="M:System.Diagnostics.Stopwatch.GetTimestamp" /> method can be used in place of the unmanaged Win32 APIs QueryPerformanceFrequency and QueryPerformanceCounter.</para>
+      <block subset="none" type="note">
+        <para>On a multiprocessor computer, it does not matter which processor the thread runs on. However, because of bugs in the BIOS or the Hardware Abstraction Layer (HAL), you can get different timing results on different processors. To specify processor affinity for a thread, use the <see cref="P:System.Diagnostics.ProcessThread.ProcessorAffinity" /> method.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of methods and properties that you can use to accurately measure elapsed time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Stopwatch ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Diagnostics.Stopwatch" /> instance is stopped, and the elapsed time property of the instance is zero.</para>
+          <para>Use the <see cref="M:System.Diagnostics.Stopwatch.Start" /> method to begin measuring elapsed time with the new <see cref="T:System.Diagnostics.Stopwatch" /> instance. Use the <see cref="M:System.Diagnostics.Stopwatch.StartNew" /> method to initialize a new <see cref="T:System.Diagnostics.Stopwatch" /> instance and immediately start it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Stopwatch" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Elapsed">
       <MemberSignature Language="C#" Value="public TimeSpan Elapsed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan Elapsed" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a typical <see cref="T:System.Diagnostics.Stopwatch" /> scenario, you call the <see cref="M:System.Diagnostics.Stopwatch.Start" /> method, then eventually call the <see cref="M:System.Diagnostics.Stopwatch.Stop" /> method, and then you check elapsed time using the <see cref="P:System.Diagnostics.Stopwatch.Elapsed" /> property.</para>
+          <para>Use the <see cref="P:System.Diagnostics.Stopwatch.Elapsed" /> property to retrieve the elapsed time value using <see cref="T:System.TimeSpan" /> methods and properties. For example, you can format the returned <see cref="T:System.TimeSpan" /> instance into a text representation, or pass it to another class that requires a <see cref="T:System.TimeSpan" /> parameter.</para>
+          <para>You can query the properties <see cref="P:System.Diagnostics.Stopwatch.Elapsed" />, <see cref="P:System.Diagnostics.Stopwatch.ElapsedMilliseconds" />, and <see cref="P:System.Diagnostics.Stopwatch.ElapsedTicks" /> while the <see cref="T:System.Diagnostics.Stopwatch" /> instance is running or stopped. The elapsed time properties steadily increase while the <see cref="T:System.Diagnostics.Stopwatch" /> is running; they remain constant when the instance is stopped.</para>
+          <para>By default, the elapsed time value of a <see cref="T:System.Diagnostics.Stopwatch" /> instance equals the total of all measured time intervals. Each call to <see cref="M:System.Diagnostics.Stopwatch.Start" /> begins counting at the cumulative elapsed time; each call to <see cref="M:System.Diagnostics.Stopwatch.Stop" /> ends the current interval measurement and freezes the cumulative elapsed time value. Use the <see cref="M:System.Diagnostics.Stopwatch.Reset" /> method to clear the cumulative elapsed time in an existing <see cref="T:System.Diagnostics.Stopwatch" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total elapsed time measured by the current instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ElapsedMilliseconds">
       <MemberSignature Language="C#" Value="public long ElapsedMilliseconds { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ElapsedMilliseconds" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents elapsed time rounded down to the nearest whole millisecond value. For higher precision measurements, use the <see cref="P:System.Diagnostics.Stopwatch.Elapsed" /> or <see cref="P:System.Diagnostics.Stopwatch.ElapsedTicks" /> properties.</para>
+          <para>You can query the properties <see cref="P:System.Diagnostics.Stopwatch.Elapsed" />, <see cref="P:System.Diagnostics.Stopwatch.ElapsedMilliseconds" />, and <see cref="P:System.Diagnostics.Stopwatch.ElapsedTicks" /> while the <see cref="T:System.Diagnostics.Stopwatch" /> instance is running or stopped. The elapsed time properties steadily increase while the <see cref="T:System.Diagnostics.Stopwatch" /> is running; they remain constant when the instance is stopped.</para>
+          <para>By default, the elapsed time value of a <see cref="T:System.Diagnostics.Stopwatch" /> instance equals the total of all measured time intervals. Each call to <see cref="M:System.Diagnostics.Stopwatch.Start" /> begins counting at the cumulative elapsed time; each call to <see cref="M:System.Diagnostics.Stopwatch.Stop" /> ends the current interval measurement and freezes the cumulative elapsed time value. Use the <see cref="M:System.Diagnostics.Stopwatch.Reset" /> method to clear the cumulative elapsed time in an existing <see cref="T:System.Diagnostics.Stopwatch" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total elapsed time measured by the current instance, in milliseconds.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ElapsedTicks">
       <MemberSignature Language="C#" Value="public long ElapsedTicks { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ElapsedTicks" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents the number of elapsed ticks in the underlying timer mechanism. A tick is the smallest unit of time that the <see cref="T:System.Diagnostics.Stopwatch" /> timer can measure. Use the <see cref="F:System.Diagnostics.Stopwatch.Frequency" /> field to convert the <see cref="P:System.Diagnostics.Stopwatch.ElapsedTicks" /> value into a number of seconds.</para>
+          <para>You can query the properties <see cref="P:System.Diagnostics.Stopwatch.Elapsed" />, <see cref="P:System.Diagnostics.Stopwatch.ElapsedMilliseconds" />, and <see cref="P:System.Diagnostics.Stopwatch.ElapsedTicks" /> while the <see cref="T:System.Diagnostics.Stopwatch" /> instance is running or stopped. The elapsed time properties steadily increase while the <see cref="T:System.Diagnostics.Stopwatch" /> is running; they remain constant when the instance is stopped.</para>
+          <para>By default, the elapsed time value of a <see cref="T:System.Diagnostics.Stopwatch" /> instance equals the total of all measured time intervals. Each call to <see cref="M:System.Diagnostics.Stopwatch.Start" /> begins counting at the cumulative elapsed time; each call to <see cref="M:System.Diagnostics.Stopwatch.Stop" /> ends the current interval measurement and freezes the cumulative elapsed time value. Use the <see cref="M:System.Diagnostics.Stopwatch.Reset" /> method to clear the cumulative elapsed time in an existing <see cref="T:System.Diagnostics.Stopwatch" /> instance.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="T:System.Diagnostics.Stopwatch" /> ticks are different from <see cref="P:System.DateTime.Ticks" />. Each tick in the <see cref="P:System.DateTime.Ticks" /> value represents one 100-nanosecond interval. Each tick in the <see cref="P:System.Diagnostics.Stopwatch.ElapsedTicks" /> value represents the time interval equal to 1 second divided by the <see cref="F:System.Diagnostics.Stopwatch.Frequency" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total elapsed time measured by the current instance, in timer ticks.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Frequency">
-      <MemberSignature Language="C#" Value="public static readonly long Frequency = 10000000;" />
+      <MemberSignature Language="C#" Value="public static readonly long Frequency;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int64 Frequency" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <MemberValue>10000000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The timer frequency indicates the timer precision and resolution. For example, a timer frequency of 2 million ticks per second equals a timer resolution of 500 nanoseconds per tick. In other words, because one second equals 1 billion nanoseconds, a timer frequency of 2 million ticks per second is equivalent to 2 million ticks per 1 billion nanoseconds, which can be further simplified to 1 tick per 500 nanoseconds.</para>
+          <para>The <see cref="F:System.Diagnostics.Stopwatch.Frequency" /> value depends on the resolution of the underlying timing mechanism. If the installed hardware and operating system support a high-resolution performance counter, then the <see cref="F:System.Diagnostics.Stopwatch.Frequency" /> value reflects the frequency of that counter. Otherwise, the <see cref="F:System.Diagnostics.Stopwatch.Frequency" /> value is based on the system timer frequency.</para>
+          <para>Because the <see cref="T:System.Diagnostics.Stopwatch" /> frequency depends on the installed hardware and operating system, the <see cref="F:System.Diagnostics.Stopwatch.Frequency" /> value remains constant while the system is running.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the frequency of the timer as the number of ticks per second. This field is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetTimestamp">
       <MemberSignature Language="C#" Value="public static long GetTimestamp ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 GetTimestamp() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Diagnostics.Stopwatch" /> class uses a high-resolution performance counter, <see cref="M:System.Diagnostics.Stopwatch.GetTimestamp" /> returns the current value of that counter. If the <see cref="T:System.Diagnostics.Stopwatch" /> class uses the system timer, <see cref="M:System.Diagnostics.Stopwatch.GetTimestamp" /> returns the current <see cref="P:System.DateTime.Ticks" /> property of the <see cref="P:System.DateTime.Now" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current number of ticks in the timer mechanism.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long integer representing the tick counter value of the underlying timer mechanism.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsHighResolution">
       <MemberSignature Language="C#" Value="public static readonly bool IsHighResolution;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly bool IsHighResolution" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The timer used by the <see cref="T:System.Diagnostics.Stopwatch" /> class depends on the system hardware and operating system. <see cref="F:System.Diagnostics.Stopwatch.IsHighResolution" /> is true if the <see cref="T:System.Diagnostics.Stopwatch" /> timer is based on a high-resolution performance counter. Otherwise, <see cref="F:System.Diagnostics.Stopwatch.IsHighResolution" /> is false, which indicates that the <see cref="T:System.Diagnostics.Stopwatch" /> timer is based on the system timer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the timer is based on a high-resolution performance counter. This field is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsRunning">
       <MemberSignature Language="C#" Value="public bool IsRunning { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsRunning" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Stopwatch" /> instance begins running with a call to <see cref="M:System.Diagnostics.Stopwatch.Start" /> or <see cref="M:System.Diagnostics.Stopwatch.StartNew" />. The instance stops running with a call to <see cref="M:System.Diagnostics.Stopwatch.Stop" /> or <see cref="M:System.Diagnostics.Stopwatch.Reset" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Diagnostics.Stopwatch" /> timer is running.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Stopwatch" /> instance calculates and retains the cumulative elapsed time across multiple time intervals, until the instance is reset. Use <see cref="M:System.Diagnostics.Stopwatch.Stop" /> to stop the current interval measurement and retain the cumulative elapsed time value. Use <see cref="M:System.Diagnostics.Stopwatch.Reset" /> to stop any interval measurement in progress and clear the elapsed time value. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops time interval measurement and resets the elapsed time to zero.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Restart">
+      <MemberSignature Language="C#" Value="public void Restart ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Restart() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Stopwatch" /> instance calculates and retains the cumulative elapsed time across multiple time intervals, until the instance is reset or restarted. Use <see cref="M:System.Diagnostics.Stopwatch.Stop" /> to stop the current interval measurement and retain the cumulative elapsed time value. Use <see cref="M:System.Diagnostics.Stopwatch.Reset" /> to stop any interval measurement in progress and clear the elapsed time value. Use <see cref="M:System.Diagnostics.Stopwatch.Restart" /> to stop current interval measurement and start a new interval measurement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops time interval measurement, resets the elapsed time to zero, and starts measuring elapsed time.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Start">
       <MemberSignature Language="C#" Value="public void Start ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Start() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a typical <see cref="T:System.Diagnostics.Stopwatch" /> scenario, you call the <see cref="M:System.Diagnostics.Stopwatch.Start" /> method, then eventually call the <see cref="M:System.Diagnostics.Stopwatch.Stop" /> method, and then you check elapsed time using the <see cref="P:System.Diagnostics.Stopwatch.Elapsed" /> property.</para>
+          <para>Once started, a <see cref="T:System.Diagnostics.Stopwatch" /> timer measures the current interval, in elapsed timer ticks, until the instance is stopped or reset. Starting a <see cref="T:System.Diagnostics.Stopwatch" /> that is already running does not change the timer state or reset the elapsed time properties.</para>
+          <para>When a <see cref="T:System.Diagnostics.Stopwatch" /> instance measures more than one interval, the <see cref="M:System.Diagnostics.Stopwatch.Start" /> method resumes measuring time from the current elapsed time value. A <see cref="T:System.Diagnostics.Stopwatch" /> instance calculates and retains the cumulative elapsed time across multiple time intervals, until the instance is reset. Use the <see cref="M:System.Diagnostics.Stopwatch.Reset" /> method before calling <see cref="M:System.Diagnostics.Stopwatch.Start" /> to clear the cumulative elapsed time in a <see cref="T:System.Diagnostics.Stopwatch" /> instance. Use the <see cref="M:System.Diagnostics.Stopwatch.Restart" /> method to <see cref="M:System.Diagnostics.Stopwatch.Reset" /> and <see cref="M:System.Diagnostics.Stopwatch.Start" /> the <see cref="T:System.Diagnostics.Stopwatch" /> with a single command.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts, or resumes, measuring elapsed time for an interval.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StartNew">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.Stopwatch StartNew ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.Stopwatch StartNew() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.Stopwatch</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is equivalent to calling the <see cref="T:System.Diagnostics.Stopwatch" /> constructor and then calling <see cref="M:System.Diagnostics.Stopwatch.Start" /> on the new instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Diagnostics.Stopwatch" /> instance, sets the elapsed time property to zero, and starts measuring elapsed time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Stopwatch" /> that has just begun measuring elapsed time.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Stop">
       <MemberSignature Language="C#" Value="public void Stop ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Stop() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a typical <see cref="T:System.Diagnostics.Stopwatch" /> scenario, you call the <see cref="M:System.Diagnostics.Stopwatch.Start" /> method, then eventually call the <see cref="M:System.Diagnostics.Stopwatch.Stop" /> method, and then you check elapsed time using the <see cref="P:System.Diagnostics.Stopwatch.Elapsed" /> property.</para>
+          <para>The <see cref="M:System.Diagnostics.Stopwatch.Stop" /> method ends the current time interval measurement. Stopping a <see cref="T:System.Diagnostics.Stopwatch" /> that is not running does not change the timer state or reset the elapsed time properties.</para>
+          <para>When a <see cref="T:System.Diagnostics.Stopwatch" /> instance measures more than one interval, the <see cref="M:System.Diagnostics.Stopwatch.Stop" /> method is equivalent to pausing the elapsed time measurement. A subsequent call to <see cref="M:System.Diagnostics.Stopwatch.Start" /> resumes measuring time from the current elapsed time value. Use the <see cref="M:System.Diagnostics.Stopwatch.Reset" /> method to clear the cumulative elapsed time in a <see cref="T:System.Diagnostics.Stopwatch" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops measuring elapsed time for an interval.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

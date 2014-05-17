@@ -1,35 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContainerFilterService" FullName="System.ComponentModel.ContainerFilterService">
   <TypeSignature Language="C#" Value="public abstract class ContainerFilterService" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ContainerFilterService extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Container" /> and <see cref="T:System.ComponentModel.NestedContainer" /> classes call the <see cref="M:System.ComponentModel.ContainerFilterService.FilterComponents(System.ComponentModel.ComponentCollection)" /> method each time they need to construct a component collection for return to a caller. <see cref="M:System.ComponentModel.ContainerFilterService.FilterComponents(System.ComponentModel.ComponentCollection)" /> may return an updated collection of components. This enables an external service to modify the view of components that are returned from a container.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for the container filter service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected ContainerFilterService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ContainerFilterService" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FilterComponents">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.ComponentCollection FilterComponents (System.ComponentModel.ComponentCollection components);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.ComponentCollection FilterComponents(class System.ComponentModel.ComponentCollection components) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ComponentCollection</ReturnType>
@@ -38,10 +54,20 @@
         <Parameter Name="components" Type="System.ComponentModel.ComponentCollection" />
       </Parameters>
       <Docs>
-        <param name="components">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.ContainerFilterService.FilterComponents(System.ComponentModel.ComponentCollection)" /> method filters the component collection by optionally returning a new, modified collection. The default implementation returns the input collection, thereby performing no filtering.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the component collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.ComponentCollection" /> that represents a modified collection.</para>
+        </returns>
+        <param name="components">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component collection to filter.</param>
       </Docs>
     </Member>
   </Members>

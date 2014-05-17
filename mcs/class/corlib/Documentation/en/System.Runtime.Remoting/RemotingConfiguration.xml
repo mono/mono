@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RemotingConfiguration" FullName="System.Runtime.Remoting.RemotingConfiguration">
   <TypeSignature Maintainer="auto" Language="C#" Value="public static class RemotingConfiguration" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit RemotingConfiguration extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,61 +14,73 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides various static methods for configuring the remoting infrastructure.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ApplicationId">
       <MemberSignature Language="C#" Value="public static string ApplicationId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string ApplicationId" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application ID is prepended to the URI of the objects created by the currently executing application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ID of the currently executing application.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ApplicationName">
-      <MemberSignature Language="C#" Value="public static string ApplicationName { set; get; }" />
+      <MemberSignature Language="C#" Value="public static string ApplicationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property string ApplicationName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An application name can be set only once, either through the current property or through a configuration file. If an application is running inside a hosted environment, such as Internet Information Services (IIS), this value might have already been set (usually to the virtual directory). The current property will return null if the application name has not been set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of a remoting application.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Configure">
       <MemberSignature Language="C#" Value="public static void Configure (string filename);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Configure(string filename) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="filename" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +91,41 @@
           <AttributeName>System.Obsolete("Use Configure(String,Boolean)")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>
+              <see cref="M:System.Runtime.Remoting.RemotingConfiguration.Configure(System.String)" /> is obsolete. Please use <see cref="M:System.Runtime.Remoting.RemotingConfiguration.Configure(System.String,System.Boolean)" /> instead.</para>
+          </block>
+          <para>Passing null as the <paramref name="filename" /> parameter will cause default remoting initialization without requiring the existence of a configuration file.</para>
+          <para>For configuration file syntax, see <format type="text/html"><a href="DC2D1E62-9AF7-4CA1-99FD-98B93BB4DB9E">[&lt;topic://gnconremotingsettingsschema&gt;]</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Marshal-by-reference objects (MBRs) do not reside in memory forever. Instead, unless the type overrides <see cref="M:System.MarshalByRefObject.InitializeLifetimeService" /> to control its own lifetime policies, each MBR has a finite lifetime before the .NET Framework remoting system begins the process of deleting it and reclaiming the memory. For more information, see <format type="text/html"><a href="c72d561c-1266-4c8b-b258-2c168c08da9a">Lifetime Leases</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the configuration file and configures the remoting infrastructure. <see cref="M:System.Runtime.Remoting.RemotingConfiguration.Configure(System.String)" /> is obsolete. Please use <see cref="M:System.Runtime.Remoting.RemotingConfiguration.Configure(System.String,System.Boolean)" /> instead.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the remoting configuration file. Can be null. </param>
+      </Docs>
     </Member>
     <Member MemberName="Configure">
       <MemberSignature Language="C#" Value="public static void Configure (string filename, bool ensureSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Configure(string filename, bool ensureSecurity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -89,20 +134,34 @@
         <Parameter Name="ensureSecurity" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added.</param>
-        <param name="ensureSecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Passing null as the <paramref name="filename" /> parameter will cause default remoting initialization without requiring the existence of a configuration file. For more information about remoting and security see <format type="text/html"><a href="9574262c-d4b1-41c5-8600-24ff147c0add">Security in Remoting.</a></format></para>
+          <para>For configuration file syntax, see <format type="text/html"><a href="DC2D1E62-9AF7-4CA1-99FD-98B93BB4DB9E">[&lt;topic://gnconremotingsettingsschema&gt;]</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Marshal-by-reference objects (MBRs) do not reside in memory forever. Instead, unless the type overrides <see cref="M:System.MarshalByRefObject.InitializeLifetimeService" /> to control its own lifetime policies, each MBR has a finite lifetime before the .NET Framework remoting system begins the process of deleting it and reclaiming the memory. For more information, see <format type="text/html"><a href="c72d561c-1266-4c8b-b258-2c168c08da9a">Lifetime Leases</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the configuration file and configures the remoting infrastructure.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the remoting configuration file. Can be null.</param>
+        <param name="ensureSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />If set to true security is required. If set to false, security is not required but still may be used.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CustomErrorsEnabled">
       <MemberSignature Language="C#" Value="public static bool CustomErrorsEnabled (bool isLocalRequest);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool CustomErrorsEnabled(bool isLocalRequest) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -110,19 +169,167 @@
         <Parameter Name="isLocalRequest" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isLocalRequest">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Complete exception information includes the exact server exception and the server stack trace. Filtered information includes a standard remoting exception but no server stack trace.</para>
+          <para>The CustomErrorsEnabled method reflects configuration settings that were specified in the mode attribute of the &lt;customErrors&gt; element of the application configuration file. For more information about configuration options, see <format type="text/html"><a href="92C0C097-D984-4315-835B-7490ECDF1097">[&lt;topic://cpconconfiguration&gt;]</a></format>.</para>
+          <para>The following table shows the three server channel property values that specify which callers receive exception information and what type of information they receive.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>off </para>
+              </term>
+              <description>
+                <para>All callers receive complete exception information. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>on </para>
+              </term>
+              <description>
+                <para>All callers receive filtered exception information. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>remoteOnly </para>
+              </term>
+              <description>
+                <para>Local callers receive complete exception information; remote callers receive filtered exception information. </para>
+              </description>
+            </item>
+          </list>
+          <para>The following table shows the interaction of the <paramref name="isLocalRequest" /> parameter and the server channel property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>isLocalRequest </para>
+                </description>
+                <description>
+                  <para>Return value </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>on </para>
+              </term>
+              <description>
+                <para>true </para>
+              </description>
+              <description>
+                <para>true </para>
+              </description>
+              <description>
+                <para>Local callers receive filtered exception information. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>on </para>
+              </term>
+              <description>
+                <para>false </para>
+              </description>
+              <description>
+                <para>true </para>
+              </description>
+              <description>
+                <para>Remote callers receive filtered exception information. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>off </para>
+              </term>
+              <description>
+                <para>true </para>
+              </description>
+              <description>
+                <para>false </para>
+              </description>
+              <description>
+                <para>Local callers receive complete exception information. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>off </para>
+              </term>
+              <description>
+                <para>false </para>
+              </description>
+              <description>
+                <para>false </para>
+              </description>
+              <description>
+                <para>Remote callers receive complete exception information. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>remoteOnly </para>
+              </term>
+              <description>
+                <para>true </para>
+              </description>
+              <description>
+                <para>false </para>
+              </description>
+              <description>
+                <para>Local callers receive complete exception information. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>remoteOnly </para>
+              </term>
+              <description>
+                <para>false </para>
+              </description>
+              <description>
+                <para>true </para>
+              </description>
+              <description>
+                <para>Remote callers receive filtered exception information. </para>
+              </description>
+            </item>
+          </list>
+          <para>For information about using application configuration files to control the return of exception information to callers, see the &lt;customErrors&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the server channels in this application domain return filtered or complete exception information to local or remote callers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if only filtered exception information is returned to local or remote callers, as specified by the <paramref name="isLocalRequest" /> parameter; false if complete exception information is returned.</para>
+        </returns>
+        <param name="isLocalRequest">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify local callers; false to specify remote callers. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CustomErrorsMode">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.CustomErrorsModes CustomErrorsMode { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.CustomErrorsModes CustomErrorsMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Runtime.Remoting.CustomErrorsModes CustomErrorsMode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,86 +339,137 @@
         <ReturnType>System.Runtime.Remoting.CustomErrorsModes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets value that indicates how custom errors are handled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetRegisteredActivatedClientTypes">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedClientTypeEntry[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ActivatedClientTypeEntry []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of object types registered on the client as types that will be activated remotely.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the client as types that will be activated remotely.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetRegisteredActivatedServiceTypes">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedServiceTypeEntry[] GetRegisteredActivatedServiceTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedServiceTypeEntry[] GetRegisteredActivatedServiceTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRegisteredActivatedServiceTypes">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedServiceTypeEntry[] GetRegisteredActivatedServiceTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedServiceTypeEntry[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ActivatedServiceTypeEntry []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of object types registered on the service end that can be activated on request from a client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the service end that can be activated on request from a client.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetRegisteredWellKnownClientTypes">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry[] GetRegisteredWellKnownClientTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownClientTypeEntry[] GetRegisteredWellKnownClientTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRegisteredWellKnownClientTypes">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry[] GetRegisteredWellKnownClientTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownClientTypeEntry[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'WellKnownClientTypeEntry []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Well-known object types can be either single call or singleton. If an object type is single call, then a new instance of it is created each time a call from the client comes in. All calls to a singleton object are handled by one instance of that object.</para>
+          <para>For a more detailed description of well-known objects, see <format type="text/html"><a href="77DED6E2-4CA8-448B-ACF2-562D27FD4396">[&lt;topic://cpconServerActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of object types registered on the client end as well-known types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the client end as well-known types.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetRegisteredWellKnownServiceTypes">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownServiceTypeEntry[] GetRegisteredWellKnownServiceTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownServiceTypeEntry[] GetRegisteredWellKnownServiceTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRegisteredWellKnownServiceTypes">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownServiceTypeEntry[] GetRegisteredWellKnownServiceTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownServiceTypeEntry[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'WellKnownServiceTypeEntry []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Well-known object types can be either single call or singleton. If an object type is single call, then a new instance of it is created each time a call from the client comes in. All calls to a singleton object are handled by one instance of that object.</para>
+          <para>For a more detailed description of well-known objects, see <format type="text/html"><a href="77DED6E2-4CA8-448B-ACF2-562D27FD4396">[&lt;topic://cpconServerActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of object types registered on the service end as well-known types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the service end as well-known types.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="IsActivationAllowed">
+      <MemberSignature Language="C#" Value="public static bool IsActivationAllowed (Type svrType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsActivationAllowed(class System.Type svrType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsActivationAllowed">
-      <MemberSignature Language="C#" Value="public static bool IsActivationAllowed (Type svrType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -219,20 +477,31 @@
         <Parameter Name="svrType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="svrType">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method is used at the server end to determine whether an activation of the object <see cref="T:System.Type" /> is explicitly allowed by the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the specified <see cref="T:System.Type" /> is allowed to be client activated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Type" /> is allowed to be client activated; otherwise, false.</para>
+        </returns>
+        <param name="svrType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object <see cref="T:System.Type" /> to check. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsRemotelyActivatedClientType">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType (Type svrType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType(class System.Type svrType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -240,20 +509,28 @@
         <Parameter Name="svrType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="svrType">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ActivatedClientTypeEntry'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the specified object <see cref="T:System.Type" /> is registered as a remotely activated client type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.ActivatedClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
+        <param name="svrType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object type to check. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsRemotelyActivatedClientType">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType (string typeName, string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType(string typeName, string assemblyName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -262,21 +539,30 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ActivatedClientTypeEntry'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the object specified by its type name and assembly name is registered as a remotely activated client type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.ActivatedClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type name of the object to check. </param>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly name of the object to check. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (Type svrType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType(class System.Type svrType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (Type svrType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -284,20 +570,28 @@
         <Parameter Name="svrType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="svrType">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'WellKnownClientTypeEntry'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the specified object <see cref="T:System.Type" /> is registered as a well-known client type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.WellKnownClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
+        <param name="svrType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object <see cref="T:System.Type" /> to check. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (string typeName, string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType(string typeName, string assemblyName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (string typeName, string assemblyName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -306,38 +600,51 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'WellKnownClientTypeEntry'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the object specified by its type name and assembly name is registered as a well-known client type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.WellKnownClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type name of the object to check. </param>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly name of the object to check. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ProcessId">
+      <MemberSignature Language="C#" Value="public static string ProcessId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string ProcessId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ProcessId">
-      <MemberSignature Language="C#" Value="public static string ProcessId { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ID of the currently executing process.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (System.Runtime.Remoting.ActivatedClientTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedClientType(class System.Runtime.Remoting.ActivatedClientTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (System.Runtime.Remoting.ActivatedClientTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -345,19 +652,29 @@
         <Parameter Name="entry" Type="System.Runtime.Remoting.ActivatedClientTypeEntry" />
       </Parameters>
       <Docs>
-        <param name="entry">To be added: an object of type 'ActivatedClientTypeEntry'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create an instance of a client-activated object on the server, you must know its <see cref="T:System.Type" /> and it must be registered on the server end by using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedServiceType(System.Type)" /> method. To obtain a proxy for a new instance of the client-activated object, the client must first register a channel with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" /> and then activate the object by calling new.</para>
+          <para>To activate a client-activated object type with the new keyword, you must first register the object type on the client end using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote application where new attempts to create it. If, on the other hand, you use the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method to create a new instance of the client-activated object, you must supply the remote application's URL as a parameter, so no prior registration on the client end is necessary. To supply the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method with the URL of the server where you want to create the object, you must encapsulate the URL in an instance of the <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> class.</para>
+          <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object <see cref="T:System.Type" /> recorded in the provided <see cref="T:System.Runtime.Remoting.ActivatedClientTypeEntry" /> on the client end as a type that can be activated on the server.</para>
+        </summary>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />Configuration settings for the client-activated type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (Type type, string appUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedClientType(class System.Type type, string appUrl) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (Type type, string appUrl);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -366,20 +683,31 @@
         <Parameter Name="appUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="appUrl">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create an instance of a client-activated object on the server, you must know its <see cref="T:System.Type" /> and it must be registered on the server end by using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedServiceType(System.Type)" /> method. To obtain a proxy for a new instance of the client-activated object, the client must first register a channel with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" /> and then activate the object by calling new.</para>
+          <para>To activate a client-activated object type with the new keyword, you must first register the object type on the client end using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote application where new attempts to create it. If, on the other hand, you use the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method to create a new instance of the client-activated object, you must supply the remote application's URL as a parameter, so no prior registration on the client end is necessary. To supply the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method with the URL of the server where you want to create the object, you must encapsulate the URL in an instance of the <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> class.</para>
+          <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object <see cref="T:System.Type" /> on the client end as a type that can be activated on the server, using the given parameters to initialize a new instance of the <see cref="T:System.Runtime.Remoting.ActivatedClientTypeEntry" /> class.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object <see cref="T:System.Type" />. </param>
+        <param name="appUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />URL of the application where this type is activated. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (System.Runtime.Remoting.ActivatedServiceTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedServiceType(class System.Runtime.Remoting.ActivatedServiceTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (System.Runtime.Remoting.ActivatedServiceTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -387,19 +715,29 @@
         <Parameter Name="entry" Type="System.Runtime.Remoting.ActivatedServiceTypeEntry" />
       </Parameters>
       <Docs>
-        <param name="entry">To be added: an object of type 'ActivatedServiceTypeEntry'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create an instance of a client-activated object on the server, you must know its <see cref="T:System.Type" /> and it must be registered on the server end by using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedServiceType(System.Type)" /> method. To obtain a proxy for a new instance of the client-activated object, the client must first register a channel with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" /> and then activate the object by calling new or <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" />.</para>
+          <para>To activate a client-activated object type with the new keyword, you must first register the object type on the client end using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote application, where new attempts to create it. If, on the other hand, you use the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method to create a new instance of the client-activated object, you must supply the remote application's URL as a parameter, so no prior registration on the client end is necessary. To supply the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method with the URL of the server where you want to create the object, you must encapsulate the URL in an instance of the <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> class.</para>
+          <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object type recorded in the provided <see cref="T:System.Runtime.Remoting.ActivatedServiceTypeEntry" /> on the service end as one that can be activated on request from a client.</para>
+        </summary>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />Configuration settings for the client-activated type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedServiceType(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -407,19 +745,29 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create an instance of a client-activated object on the server, you must know its <see cref="T:System.Type" /> and it must be registered on the server end by using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedServiceType(System.Type)" /> method. To obtain a proxy for a new instance of the client-activated object, the client must first register a channel with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" /> and then activate the object by calling new or <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" />.</para>
+          <para>To activate a client-activated object type with the new keyword, you must first register the object type on the client end using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterActivatedClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote application, where new attempts to create it. If, on the other hand, you use the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method to create a new instance of the client-activated object, you must supply the remote application's URL as a parameter, so no prior registration on the client end is necessary. To supply the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method with the URL of the server where you want to create the object, you must encapsulate the URL in an instance of the <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> class.</para>
+          <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a specified object type on the service end as a type that can be activated on request from a client.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of object to register. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (System.Runtime.Remoting.WellKnownClientTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownClientType(class System.Runtime.Remoting.WellKnownClientTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (System.Runtime.Remoting.WellKnownClientTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -427,19 +775,28 @@
         <Parameter Name="entry" Type="System.Runtime.Remoting.WellKnownClientTypeEntry" />
       </Parameters>
       <Docs>
-        <param name="entry">To be added: an object of type 'WellKnownClientTypeEntry'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any client that knows the URI of a registered well-known object can obtain a proxy for the object by registering the channel it prefers with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" />, and activating the object by calling new or <see cref="M:System.Activator.GetObject(System.Type,System.String)" />. To activate a well-known object with new, you must first register the well-known object type on the client using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote object, which allows the new keyword to create it. If, on the other hand, you use the <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> method to activate the well-known object, you must supply it with the object's URL as an argument, so no prior registration on the client end is necessary.</para>
+          <para>For a detailed description of well-known objects, see <format type="text/html"><a href="77DED6E2-4CA8-448B-ACF2-562D27FD4396">[&lt;topic://cpconServerActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object <see cref="T:System.Type" /> recorded in the provided <see cref="T:System.Runtime.Remoting.WellKnownClientTypeEntry" /> on the client end as a well-known type that can be activated on the server.</para>
+        </summary>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />Configuration settings for the well-known type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (Type type, string objectUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownClientType(class System.Type type, string objectUrl) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (Type type, string objectUrl);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -448,20 +805,30 @@
         <Parameter Name="objectUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="objectUrl">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any client that knows the URI of a registered well-known object can obtain a proxy for the object by registering the channel it prefers with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" />, and activating the object by calling new or <see cref="M:System.Activator.GetObject(System.Type,System.String)" />. To activate a well-known object with new, you must first register the well-known object type on the client using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote object, which allows the new keyword to create it. If, on the other hand, you use the <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> method to activate the well-known object, you must supply it with the object's URL as an argument, so no prior registration on the client end is necessary.</para>
+          <para>For a detailed description of well-known objects, see <format type="text/html"><a href="77DED6E2-4CA8-448B-ACF2-562D27FD4396">[&lt;topic://cpconServerActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object <see cref="T:System.Type" /> on the client end as a well-known type that can be activated on the server, using the given parameters to initialize a new instance of the <see cref="T:System.Runtime.Remoting.WellKnownClientTypeEntry" /> class.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object <see cref="T:System.Type" />. </param>
+        <param name="objectUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />URL of a well-known client object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (System.Runtime.Remoting.WellKnownServiceTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownServiceType(class System.Runtime.Remoting.WellKnownServiceTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (System.Runtime.Remoting.WellKnownServiceTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -469,19 +836,30 @@
         <Parameter Name="entry" Type="System.Runtime.Remoting.WellKnownServiceTypeEntry" />
       </Parameters>
       <Docs>
-        <param name="entry">To be added: an object of type 'WellKnownServiceTypeEntry'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any client that knows the URI of a registered well-known object can obtain a proxy for the object by registering the channel it prefers with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" />, and activating the object by calling new or the <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> method. To activate a well-known object with new, you must first register the well-known object type on the client using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote object, which allows the new keyword to create it. If, on the other hand, you use the <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> method to activate the well-known object, you must supply it with the object's URL as an argument, so no prior registration on the client end is necessary.</para>
+          <para>When the call arrives at the server, the .NET Framework extracts the URI from the message, examines the remoting tables to locate the reference for the object that matches the URI, and then instantiates the object if necessary, forwarding the method call to the object. If the object is registered as <see cref="F:System.Runtime.Remoting.WellKnownObjectMode.SingleCall" />, it is destroyed after the method call is completed. A new instance of the object is created for each method called. The only difference between <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> and new is that the former allows you to specify a URL as a parameter, and the latter obtains the URL from the configuration.</para>
+          <para>The remote object itself is not instantiated by the registration process. This only happens when a client attempts to call a method on the object or activates the object from the client side.</para>
+          <para>For a detailed description of well-known objects, see <format type="text/html"><a href="77DED6E2-4CA8-448B-ACF2-562D27FD4396">[&lt;topic://cpconServerActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object <see cref="T:System.Type" /> recorded in the provided <see cref="T:System.Runtime.Remoting.WellKnownServiceTypeEntry" /> on the service end as a well-known type.</para>
+        </summary>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />Configuration settings for the well-known type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (Type type, string objectUri, System.Runtime.Remoting.WellKnownObjectMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownServiceType(class System.Type type, string objectUri, valuetype System.Runtime.Remoting.WellKnownObjectMode mode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (Type type, string objectUri, System.Runtime.Remoting.WellKnownObjectMode mode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -491,22 +869,24 @@
         <Parameter Name="mode" Type="System.Runtime.Remoting.WellKnownObjectMode" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="objectUri">To be added.</param>
-        <param name="mode">To be added: an object of type 'WellKnownObjectMode'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any client that knows the URI of a registered well-known object can obtain a proxy for the object by registering the channel it prefers with <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" />, and activating the object by calling new or the <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> method. To activate a well-known object with new, you must first register the well-known object type on the client using the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method. Calling the <see cref="M:System.Runtime.Remoting.RemotingConfiguration.RegisterWellKnownClientType(System.Type,System.String)" /> method gives the remoting infrastructure the location of the remote object, which allows the new keyword to create it. If, on the other hand, you use the <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> method to activate the well-known object, you must supply it with the object's URL as an argument, so no prior registration on the client end is necessary.</para>
+          <para>When the call arrives at the server, the .NET Framework extracts the URI from the message, examines the remoting tables to locate the reference for the object that matches the URI, and then instantiates the object if necessary, forwarding the method call to the object. If the object is registered as <see cref="F:System.Runtime.Remoting.WellKnownObjectMode.SingleCall" />, it is destroyed after the method call is completed. A new instance of the object is created for each method called. The only difference between <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> and new is that the former allows you to specify a URL as a parameter, and the latter obtains the URL from the configuration.</para>
+          <para>The remote object itself is not instantiated by the registration process. This only happens when a client attempts to call a method on the object or activates the object from the client side.</para>
+          <para>For a detailed description of well-known objects, see <format type="text/html"><a href="77DED6E2-4CA8-448B-ACF2-562D27FD4396">[&lt;topic://cpconServerActivation&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object <see cref="T:System.Type" /> on the service end as a well-known type, using the given parameters to initialize a new instance of <see cref="T:System.Runtime.Remoting.WellKnownServiceTypeEntry" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object <see cref="T:System.Type" />. </param>
+        <param name="objectUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object URI. </param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The activation mode of the well-known object type being registered. (See <see cref="T:System.Runtime.Remoting.WellKnownObjectMode" />.) </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

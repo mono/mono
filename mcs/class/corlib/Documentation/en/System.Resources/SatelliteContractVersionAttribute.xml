@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SatelliteContractVersionAttribute" FullName="System.Resources.SatelliteContractVersionAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SatelliteContractVersionAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SatelliteContractVersionAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,44 +23,75 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <format type="text/html">
+        <h2>Desktop Apps</h2>
+      </format>
+      <para>In desktop apps, the <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> attribute establishes a contract between a main assembly and all its satellites. You apply this  attribute to your main assembly, and pass it the version number of the satellite assemblies that will work with this version of the main assembly. When the resource manager (<see cref="T:System.Resources.ResourceManager" /> object) looks up resources, it explicitly loads the satellite version specified by this attribute on the main assembly.</para>
+      <para>When you update the main assembly, you increment its assembly version number. However, you might not want to ship new copies of your satellite assemblies if the existing ones are compatible with your app. In this case, increment the main assembly's version number but leave the satellite contract version number the same. The resource manager will use your existing satellite assemblies.</para>
+      <para>If you want to revise a satellite assembly but not the main assembly, increment the version number on your satellite. In this case, ship a publisher policy assembly along with your satellite assembly stating that your new satellite assembly has backward compatibility with your old satellite assembly. The resource manager will still use the old contract number written into your main assembly based on the <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> attribute; however, the loader will bind to the satellite assembly version that is specified by the policy assembly.</para>
+      <para>A vendor of a shared component uses a publisher policy assembly to make a compatibility statement about a particular version of a released assembly. A publisher policy assembly is a strongly named assembly that has a name in the format policy.&lt;major&gt;.&lt;minor&gt;.&lt;ComponentAssemblyName&gt;, and is registered in the <format type="text/html"><a href="cf5eacd0-d3ec-4879-b6da-5fd5e4372202">global assembly cache</a></format>. The publisher policy is generated from an XML configuration file (see the <format type="text/html"><a href="67784ecd-9663-434e-bd6a-26975e447ac0">&lt;bindingRedirect&gt; element</a></format>) by using the <format type="text/html"><a href="b5382965-0053-47cf-b92f-862860275a01">Al.exe (Assembly Linker)</a></format> tool. The Assembly Linker is used with the /link option to link the XML configuration file to a manifest assembly, which is then stored in the global assembly cache. The publisher policy assemblies can be used when a vendor ships a maintenance release (service pack) that contains bug fixes.</para>
+      <format type="text/html">
+        <h2>win8_appname_long Apps</h2>
+      </format>
+      <para>This attribute is ignored in win8_appname_long apps, because package resource index (PRI) files do not have versioning semantics. In addition, the win8_appname_long packaging model requires all resources to ship in the same package, with no possibility of redeploying satellite assemblies or PRI files. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instructs a <see cref="T:System.Resources.ResourceManager" /> object to ask for a particular version of a satellite assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SatelliteContractVersionAttribute (string version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string version) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="version">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Resources.SatelliteContractVersionAttribute.Version" /> property with the <paramref name="version" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> class.</para>
+        </summary>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the version of the satellite assemblies to load. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="C#" Value="public string Version { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Version" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Version">
-      <MemberSignature Language="C#" Value="public string Version { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current property indicates the version of the satellite assemblies that will be used with the main assembly marked with this attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the satellite assemblies with the required resources.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

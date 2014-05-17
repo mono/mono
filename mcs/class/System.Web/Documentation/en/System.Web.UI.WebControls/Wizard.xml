@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Wizard" FullName="System.Web.UI.WebControls.Wizard">
   <TypeSignature Language="C#" Value="public class Wizard : System.Web.UI.WebControls.CompositeControl" />
   <AssemblyInfo>
@@ -23,9 +24,369 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#components">Wizard Components</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#wizard_steps">Wizard Steps</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#collecting_wizard_data">Collecting Wizard Data</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#wizard_command_names">Wizard Command Names</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#dynamically_changing_steps">Dynamically Changing Steps</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#wizard_appearance">Wizard Appearance</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#formatting_using_layout_templates">Formatting Using Layout Templates</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>You can use the <see cref="T:System.Web.UI.WebControls.Wizard" /> control to: </para>
+      <list type="bullet">
+        <item>
+          <para>Collect related data across multiple steps. </para>
+        </item>
+        <item>
+          <para>Break up a larger Web page used to collect user input into smaller logical steps.</para>
+        </item>
+        <item>
+          <para>Allow for either linear or nonlinear navigation through the steps.</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#components" />
+      </format>
+      <format type="text/html">
+        <h2>Wizard Components</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.Wizard" /> control is made up of the following components:</para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collection of steps that contain the user interface for each step, as defined by the page developer.</para>
+        </item>
+        <item>
+          <para>Built-in navigation capabilities that determine the appropriate buttons to display based on the <see cref="P:System.Web.UI.WebControls.WizardStepBase.StepType" /> value.</para>
+        </item>
+        <item>
+          <para>A header area that can be customized to display information specific to the step that the user is currently on.</para>
+        </item>
+        <item>
+          <para>A sidebar area that can be used to quickly navigate to steps in the control.</para>
+          <block subset="none" type="note">
+            <para>If you are using Microsoft Visual Studio 2005, note that the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> is persisted in Source view. If you change the <see cref="P:System.Web.UI.WebControls.Wizard.WizardSteps" /> property in Design view by clicking the sidebar buttons, and you then run the page, the first step of the Wizard control might not be shown because the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> might be pointing to a different step.</para>
+          </block>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#wizard_steps" />
+      </format>
+      <format type="text/html">
+        <h2>Wizard Steps</h2>
+      </format>
+      <para>Each of the steps in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control has a <see cref="P:System.Web.UI.WebControls.WizardStepBase.StepType" /> property that determines the kind of navigation functionality that the step has. If you do not specify a value for the <see cref="P:System.Web.UI.WebControls.WizardStepBase.StepType" /> property, the default value is <see cref="F:System.Web.UI.WebControls.WizardStepType.Auto" />. The following table lists the available settings for the <see cref="P:System.Web.UI.WebControls.WizardStepBase.StepType" /> property and the resulting behavior of the step.</para>
+      <list type="table">
+        <item>
+          <term>WizardStepType.Auto</term>
+          <description>
+            <para>The navigation UI that is rendered for the step is determined by the order in which the step is declared.</para>
+          </description>
+        </item>
+        <item>
+          <term>WizardStepType.Complete</term>
+          <description>
+            <para>The step is the last one to appear. No navigation buttons are rendered.</para>
+          </description>
+        </item>
+        <item>
+          <term>WizardStepType.Finish</term>
+          <description>
+            <para>The step is the last one that collects user data. The <ui>Finish</ui> button is rendered for navigation.</para>
+          </description>
+        </item>
+        <item>
+          <term>WizardStepType.Start</term>
+          <description>
+            <para>The step is the first one to appear. A <ui>Previous</ui> button is not rendered.</para>
+          </description>
+        </item>
+        <item>
+          <term>WizardStepType.Step</term>
+          <description>
+            <para>The step is any step between the first and last. <ui>Previous</ui> and <ui>Next</ui> buttons are rendered for navigation.</para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#collecting_wizard_data" />
+      </format>
+      <format type="text/html">
+        <h2>Collecting Wizard Data</h2>
+      </format>
+      <para>Using the <see cref="T:System.Web.UI.WebControls.Wizard" /> control, data can be collected through linear or nonlinear navigation. Some examples of nonlinear navigation are skipping unnecessary steps or returning to a previously completed step to change some value. The <see cref="T:System.Web.UI.WebControls.Wizard" /> control maintains its state between steps, so the data entered on a step does not need to be persisted to a data store until all the steps of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control have been completed.</para>
+      <para>Alternatively, if you want to persist the collected data to a data store as each step is completed, such as when the <see cref="E:System.Web.UI.WebControls.Wizard.NextButtonClick" /> event is raised, you should set the <see cref="P:System.Web.UI.WebControls.WizardStepBase.AllowReturn" /> property of the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object to false so that the user cannot return to a previously completed step and change the data once it has been submitted.</para>
+      <format type="text/html">
+        <a href="#wizard_command_names" />
+      </format>
+      <format type="text/html">
+        <h2>Wizard Command Names</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.Wizard" /> control inherits the following command names from the <see cref="T:System.Web.UI.WebControls.View" /> class and <see cref="T:System.Web.UI.WebControls.MultiView" /> class: <see cref="F:System.Web.UI.WebControls.MultiView.NextViewCommandName" />, <see cref="F:System.Web.UI.WebControls.MultiView.PreviousViewCommandName" />, <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIDCommandName" />, and <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIndexCommandName" />. The Wizard control ignores these command names and does not include any special logic to enable these commands to automatically work for navigation. If a command name is removed or is missing from a button in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control, no exception is thrown. For example, if the <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> button is missing a value for <see cref="P:System.Web.UI.WebControls.Button.CommandName" />, no exception is thrown.</para>
+      <format type="text/html">
+        <a href="#dynamically_changing_steps" />
+      </format>
+      <format type="text/html">
+        <h2>Dynamically Changing Steps</h2>
+      </format>
+      <para>You can use the <see cref="M:System.Web.UI.WebControls.Wizard.MoveTo(System.Web.UI.WebControls.WizardStepBase)" /> method or the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> property to dynamically change the step that is currently displayed in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+      <block subset="none" type="note">
+        <para>If you programmatically add a <see cref="T:System.Web.UI.WebControls.WizardStep" /> in the Page_Load event handler, you must add the navigation to that step prior to the page loading.</para>
+      </block>
+      <format type="text/html">
+        <a href="#wizard_appearance" />
+      </format>
+      <format type="text/html">
+        <h2>Wizard Appearance</h2>
+      </format>
+      <para>The appearance of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control is fully customizable through templates, skins, and style settings. For example, you can use the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" />, <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" />, <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" />, <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" />, and <see cref="P:System.Web.UI.WebControls.Wizard.StepNavigationTemplate" /> properties to customize the interface of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+      <block subset="none" type="note">
+        <para>Setting the <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" />, <see cref="P:System.Web.UI.WebControls.Wizard.DisplaySideBar" />, <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" />, <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" />, <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" />, or <see cref="P:System.Web.UI.WebControls.Wizard.StepNavigationTemplate" /> property recreates the child controls of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. As a result, the view state for the child controls is lost in the process. To avoid this situation, explicitly maintain the control state of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control's child controls explicitly, or avoid putting controls inside of templates.</para>
+      </block>
+      <para>Note that the <see cref="T:System.Web.UI.WebControls.Wizard" /> control does not support special Microsoft Internet Explorer rendering for non-standard or quirks mode. To get the best Internet Explorer rendering using the <see cref="T:System.Web.UI.WebControls.Wizard" /> control, use the XHTML doc type, which is added by default in Visual Web Developer and Visual Studio.</para>
+      <format type="text/html">
+        <a href="#formatting_using_layout_templates" />
+      </format>
+      <format type="text/html">
+        <h2>Formatting Using Layout Templates</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.Wizard" /> control lets you specify the layout of the control without requiring you to use an HTML table element. Instead, you can use a LayoutTemplate element to specify the layout. In the template, you create placeholder controls to indicate where items should be dynamically inserted into the control. (This is similar to how the template model for the <see cref="T:System.Web.UI.WebControls.ListView" /> control works.) For more information, see the <see cref="P:System.Web.UI.WebControls.Wizard.LayoutTemplate" /> property.</para>
+      <format type="text/html">
+        <a href="#accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:Wizard
+    AccessKey="string"
+    ActiveStepIndex="integer"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CancelButtonImageUrl="uri"
+    CancelButtonText="string"
+    CancelButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    CancelDestinationPageUrl="uri"
+    CellPadding="integer"
+    CellSpacing="integer"
+    CssClass="string"
+    DisplayCancelButton="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    DisplaySideBar="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    FinishCompleteButtonImageUrl="uri"
+    FinishCompleteButtonText="string"
+    FinishCompleteButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    FinishDestinationPageUrl="uri"
+    FinishPreviousButtonImageUrl="uri"
+    FinishPreviousButtonText="string"
+    FinishPreviousButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    HeaderText="string"
+    Height="size"
+    ID="string"
+    OnActiveStepChanged="ActiveStepChanged event handler"
+    OnCancelButtonClick="CancelButtonClick event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnFinishButtonClick="FinishButtonClick event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnNextButtonClick="NextButtonClick event handler"
+    OnPreRender="PreRender event handler"
+    OnPreviousButtonClick="PreviousButtonClick event handler"
+    OnSideBarButtonClick="SideBarButtonClick event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    SkipLinkText="string"
+    StartNextButtonImageUrl="uri"
+    StartNextButtonText="string"
+    StartNextButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    StepNextButtonImageUrl="uri"
+    StepNextButtonText="string"
+    StepNextButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    StepPreviousButtonImageUrl="uri"
+    StepPreviousButtonText="string"
+    StepPreviousButtonType="<codeFeaturedElement>Button</codeFeaturedElement>|Image|Link"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+        &lt;CancelButtonStyle /&gt;
+        &lt;FinishCompleteButtonStyle /&gt;
+        &lt;FinishNavigationTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/FinishNavigationTemplate&gt;
+        &lt;FinishPreviousButtonStyle /&gt;
+        &lt;HeaderStyle /&gt;
+        &lt;HeaderTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/HeaderTemplate&gt;
+        &lt;NavigationButtonStyle /&gt;
+        &lt;NavigationStyle /&gt;
+        &lt;SideBarButtonStyle /&gt;
+        &lt;SideBarStyle /&gt;
+        &lt;SideBarTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/SideBarTemplate&gt;
+        &lt;StartNavigationTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/StartNavigationTemplate&gt;
+        &lt;StartNextButtonStyle /&gt;
+        &lt;StepNavigationTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/StepNavigationTemplate&gt;
+        &lt;StepNextButtonStyle /&gt;
+        &lt;StepPreviousButtonStyle /&gt;
+        &lt;StepStyle /&gt;
+        &lt;WizardSteps&gt;
+                &lt;asp:TemplatedWizardStep
+                    AllowReturn="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    ContentTemplateContainer="string"
+                    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    ID="string"
+                    OnActivate="Activate event handler"
+                    OnDataBinding="DataBinding event handler"
+                    OnDeactivate="Deactivate event handler"
+                    OnDisposed="Disposed event handler"
+                    OnInit="Init event handler"
+                    OnLoad="Load event handler"
+                    OnPreRender="PreRender event handler"
+                    OnUnload="Unload event handler"
+                    runat="server"
+                    SkinID="string"
+                    StepType="<codeFeaturedElement>Auto</codeFeaturedElement>|Complete|Finish|Start|Step"
+                    Title="string"
+                    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+&gt;
+                        &lt;ContentTemplate&gt;
+                            &lt;!-- child controls --&gt;
+                        &lt;/ContentTemplate&gt;
+                        &lt;CustomNavigationTemplate&gt;
+                            &lt;!-- child controls --&gt;
+                        &lt;/CustomNavigationTemplate&gt;
+                &lt;/asp:TemplatedWizardStep&gt;
+                &lt;asp:WizardStep
+                    AllowReturn="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                    ID="string"
+                    OnActivate="Activate event handler"
+                    OnDataBinding="DataBinding event handler"
+                    OnDeactivate="Deactivate event handler"
+                    OnDisposed="Disposed event handler"
+                    OnInit="Init event handler"
+                    OnLoad="Load event handler"
+                    OnPreRender="PreRender event handler"
+                    OnUnload="Unload event handler"
+                    runat="server"
+                    SkinID="string"
+                    StepType="<codeFeaturedElement>Auto</codeFeaturedElement>|Complete|Finish|Start|Step"
+                    Title="string"
+                    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                /&gt;
+        &lt;/WizardSteps&gt;
+&lt;/asp:Wizard&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides navigation and a user interface (UI) to collect related data across multiple steps.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,9 +394,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Wizard.#ctor" /> constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Wizard" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Wizard" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +423,16 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property returns the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object that is currently displayed in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property is read-only; however, you can use the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property to access the properties of the current <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object. Use the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> property to dynamically change the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> to a different <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object. Alternatively, you can use the <see cref="M:System.Web.UI.WebControls.Wizard.MoveTo(System.Web.UI.WebControls.WizardStepBase)" /> method to dynamically set the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the step in the <see cref="P:System.Web.UI.WebControls.Wizard.WizardSteps" /> collection that is currently displayed to the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,9 +445,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.ActiveStepChanged" /> event is raised when the current step that is displayed in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control changes. Use the <see cref="E:System.Web.UI.WebControls.Wizard.ActiveStepChanged" /> event to provide additional processing when the current step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control changes.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user switches to a new step in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,10 +475,29 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> property provides the zero-based index of the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object that is currently displayed in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. You can programmatically set the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> property to control which step is displayed to the user at run time.</para>
+          <block subset="none" type="note">
+            <para>If you are using Microsoft Visual Studio 2005, note that the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> is persisted in Source view. If you change the <see cref="P:System.Web.UI.WebControls.Wizard.WizardSteps" /> property in Design view by clicking the sidebar buttons, and you then run the page, the first step of the Wizard control might not be shown because the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> might be pointing to a different step.</para>
+          </block>
+          <para>If you set the value of <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> to -1 to support a wizard with no steps by default, the following behavior occurs:</para>
+          <list type="bullet">
+            <item>
+              <para>If you declaratively set <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> to -1 or set it to -1 as a default value, the control will always try to render the first step in the wizard.</para>
+            </item>
+            <item>
+              <para>If you programmatically set <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> to -1, the control will not render.</para>
+            </item>
+          </list>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the current <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -114,11 +513,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.AllowNavigationToStep(System.Int32)" /> method can be accessed from a derived class only because of its protected modifier. In a derived class, you can use the <see cref="M:System.Web.UI.WebControls.Wizard.AllowNavigationToStep(System.Int32)" /> method to determine whether the index that is passed in can be used to set the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> property. The <see cref="M:System.Web.UI.WebControls.Wizard.AllowNavigationToStep(System.Int32)" /> method will return false if the index that is passed in refers to a <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object that has already been accessed and has its <see cref="P:System.Web.UI.WebControls.WizardStepBase.AllowReturn" /> property set to false; otherwise, it will return true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses a Boolean value to determine whether the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property can be set to the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object that corresponds to the index that is passed in.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false if the index passed in refers to a <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> that has already been accessed and its <see cref="P:System.Web.UI.WebControls.WizardStepBase.AllowReturn" /> property is set to false; otherwise, true.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object being checked.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -131,9 +540,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.CancelButtonClick" /> event is raised when the <ui>Cancel</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control is clicked. Use the <see cref="E:System.Web.UI.WebControls.Wizard.CancelButtonClick" /> event to provide additional processing when the <ui>Cancel</ui> button is clicked.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <ui>Cancel</ui> button is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,9 +562,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.CancelButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.CancelButtonID" /> is "CancelButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the identifier for the <ui>Cancel</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -172,10 +594,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonType" /> property is set to <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />, use the <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonImageUrl" /> property to specify the image to display for the <ui>Cancel</ui> button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image displayed for the <ui>Cancel</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,10 +630,17 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonStyle" /> property defines the appearance for the <ui>Cancel</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonStyle" /> property are merged with the style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property. Any setting that is applied in the <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonStyle" /> property overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of style properties that define the appearance of the <ui>Cancel</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -223,10 +658,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonText" /> property contains the text that is displayed for the <ui>Cancel</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Depending on the value of the <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image, or as the text of a link. The following table lists the <see cref="P:System.Web.UI.WebControls.Wizard.CancelButtonType" /> values and their respective effects on the <ui>Cancel</ui> button text.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as a link.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption that is displayed for the <ui>Cancel</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,10 +712,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button that is rendered as the <ui>Cancel</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -260,9 +731,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.CancelCommandName" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.CancelCommandName" /> is "Cancel".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the command name for the <ui>Cancel</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -286,10 +763,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.CancelDestinationPageUrl" /> property specifies the step that is displayed when the user clicks the <ui>Cancel</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. If the <see cref="P:System.Web.UI.WebControls.Wizard.DisplayCancelButton" /> property is set to true and the <see cref="P:System.Web.UI.WebControls.Wizard.CancelDestinationPageUrl" /> property is not set, the Web page is refreshed and the <see cref="M:System.Web.UI.WebControls.Wizard.OnCancelButtonClick(System.EventArgs)" /> event is raised.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL that the user is directed to when they click the <ui>Cancel</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -307,10 +791,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.CellPadding" /> property to control the spacing between the contents of a cell and the cell border. The padding amount that is specified is added to all four sides of the cell. All cells in a column share the same cell width; therefore, the spacing is applied to the widest cell in the column. Similarly, all cells in the same row share the same cell height. Thus, the spacing is applied to the tallest cell in the row. Individual cell sizes cannot be specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of space between the contents of the cell and the cell border.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -328,10 +818,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.CellSpacing" /> property to control the spacing between adjacent cells in a Wizard control. This spacing is applied both vertically and horizontally.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of space between cells.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -348,8 +844,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates child controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateControlCollection">
@@ -360,10 +859,13 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates control collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -377,9 +879,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the hierarchy of child controls that make up the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -393,10 +898,13 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates control style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -409,9 +917,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.CustomFinishButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.CustomFinishButtonID" /> is "CustomFinishButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier for a custom <ui>Finish</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -424,9 +938,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.CustomNextButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.CustomNextButtonID" /> is "CustomNextButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier for a custom <ui>Next</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -439,9 +959,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.CustomPreviousButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.CustomPreviousButtonID" /> is "CustomPreviousButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier for a custom <ui>Previous</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -454,9 +980,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.DataListID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.DataListID" /> is "SideBarList".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier for the sidebar <see cref="T:System.Web.UI.WebControls.DataList" /> collection. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -477,10 +1009,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value indicating whether to display a <ui>Cancel</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -501,10 +1036,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There can be a difference in the rendering of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control depending on whether this property is set to true or false. When this property value is set to true and the sidebar is displayed, cell spacing is not applied to the HeadCell, StepCell, or NavigationCell elements of the control's table. When this value is false, cell spacing is applied. This may affect how the control is rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value indicating whether to display the sidebar area on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -517,9 +1058,16 @@
         <ReturnType>System.Web.UI.WebControls.WizardNavigationEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.FinishButtonClick" /> event is raised when the <ui>Finish</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control is clicked. Use the <see cref="E:System.Web.UI.WebControls.Wizard.FinishButtonClick" /> event to provide additional processing when the <ui>Finish</ui> button is clicked.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <ui>Finish</ui> button is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -532,9 +1080,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.FinishButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.FinishButtonID" /> is "FinishButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier for the <ui>Finish</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -558,10 +1112,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonType" /> property is set to the <see cref="F:System.Web.UI.WebControls.ButtonType.Image" /> field, use the <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonImageUrl" /> property to specify the image to display for the <ui>Finish</ui> button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image that is displayed for the <ui>Finish</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -588,10 +1148,17 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonStyle" /> property defines the appearance for the <ui>Finish</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonStyle" /> property are merged with the style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property. Any setting that is applied in the <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonStyle" /> property overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the <ui>Finish</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -609,10 +1176,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonText" /> property contains the text that is displayed for the <ui>Finish</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Depending on the value of the <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image in browsers that do not render images, or as the text of a link. The following table lists the field values for the <see cref="P:System.Web.UI.WebControls.Wizard.FinishCompleteButtonType" /> property and the respective effect of each on the <ui>Finish</ui> button text.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as link text.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption that is displayed for the <ui>Finish</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -630,10 +1230,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button that is rendered as the <ui>Finish</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -657,10 +1260,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.FinishDestinationPageUrl" /> property specifies the step that is displayed when the user clicks the <ui>Finish</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL that the user is redirected to when they click the <ui>Finish</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -687,10 +1297,21 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" /> property to specify the custom content that is displayed for the navigation area on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Define the content by creating a template that specifies how the navigation area is rendered on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step.</para>
+          <para>The custom content for the template is contained within the <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" /> object. You can add custom content to the <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" /> object either by using template-editing mode in design view or by defining the <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" /> object inline using FinishNavigationTemplate tags. The content can be as simple as plain text or more complex (embedding other controls in the template, for example).</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" /> object that is contained in the <see cref="P:System.Web.UI.WebControls.Wizard.FinishNavigationTemplate" /> property must contain two <see cref="T:System.Web.UI.WebControls.IButtonControl" /> controls, one with its <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandName" /> property set to "MoveComplete" and the other with its <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandName" /> property set to "MovePrevious", to enable the navigation feature.</para>
+          </block>
+          <para>To access a control that is defined in a template programmatically, use the <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> collection of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object. You can also use the <see cref="Overload:System.Web.UI.Control.FindControl" /> method of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object to find the control, if the control has an <see cref="P:System.Web.UI.Control.ID" /> property specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template that is used to display the navigation area on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -703,9 +1324,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.FinishPreviousButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.FinishPreviousButtonID" /> "FinishPreviousButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier for the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -729,10 +1356,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonType" /> property is set to the <see cref="F:System.Web.UI.WebControls.ButtonType.Image" /> field, use the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonImageUrl" /> property to specify the image to display for the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image that is displayed for the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -759,10 +1392,17 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonStyle" /> property defines the appearance for the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonStyle" /> property are merged with the style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property. Any setting that is applied in the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonStyle" /> property overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -780,10 +1420,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonText" /> property contains the text that is displayed for the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Depending on the value of the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image in browsers that do not render images, or as the text of a link. The following table lists the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonType" /> property field values and the respective effects on the <ui>Previous</ui> button text.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as a link.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption that is displayed for the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -801,10 +1474,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button that is rendered as the <ui>Previous</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -818,10 +1494,13 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design mode state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -835,10 +1514,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.GetHistory" /> method returns a collection containing the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects that have been accessed. The <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects are arranged in the order in which they were accessed: the first item in the collection is the previous <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object, the second item in the collection is the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object that was accessed before the previous step, and so on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects that have been accessed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> containing the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects that have been accessed.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -855,12 +1543,23 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="wizardStep">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Wizard.GetStepType(System.Web.UI.WebControls.WizardStepBase,System.Int32)" /> method to determine the <see cref="T:System.Web.UI.WebControls.WizardStepType" /> value of the specified <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Web.UI.WebControls.WizardStepType" /> value for the specified <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Web.UI.WebControls.WizardStepType" /> values.</para>
+        </returns>
+        <param name="wizardStep">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> for which the associated <see cref="T:System.Web.UI.WebControls.WizardStepType" />  is returned.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> for which the associated <see cref="T:System.Web.UI.WebControls.WizardStepType" />  is returned.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -887,10 +1586,17 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.HeaderStyle" /> property defines the appearance for the header area on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.HeaderStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the header area on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -917,10 +1623,18 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" /> property to specify the custom content that is displayed for the header area on a <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Define the content by creating a template that specifies how the header area is rendered.</para>
+          <para>The custom content for the template is contained within the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" /> object. You can add custom content to the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" /> object either by using template-editing mode in design view or by defining the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" /> object inline using HeaderTemplate tags. The content can be as simple as plain text or more complex (embedding other controls in the template, for example).</para>
+          <para>To access a control that is defined in a template programmatically, use the <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> collection of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object. You can also use the <see cref="Overload:System.Web.UI.Control.FindControl" /> method of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object to find the control, if the control has an <see cref="P:System.Web.UI.Control.ID" /> property specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template that is used to display the header area on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -941,10 +1655,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.HeaderText" /> property defines the text caption that is displayed for the header area on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+          <para>To control the style of the header area, use the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderStyle" /> property. Alternatively, you can define your own custom UI for the header row by setting the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" /> property instead of the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderText" /> property.</para>
+          <block subset="none" type="note">
+            <para>If both the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderText" /> and <see cref="P:System.Web.UI.WebControls.Wizard.HeaderTemplate" /> properties are defined, the <see cref="P:System.Web.UI.WebControls.Wizard.HeaderText" /> property has no effect.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption that is displayed for the header area on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -964,8 +1689,11 @@
       </Parameters>
       <Docs>
         <param name="ob">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores control state information.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadViewState">
@@ -978,10 +1706,14 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads view-state information.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control state to be restored.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -994,9 +1726,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.MoveCompleteCommandName" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.MoveCompleteCommandName" /> is "MoveComplete". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the command name that is associated with the <ui>Finish</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1009,9 +1747,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.MoveNextCommandName" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.MoveNextCommandName" /> is "MoveNext".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the command name that is associated with the <ui>Next</ui> button. This field is static and read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1024,9 +1768,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.MovePreviousCommandName" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.MovePreviousCommandName" /> is "MovePrevious".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the command name that is associated with the <ui>Previous</ui> button. This field is static and read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1042,10 +1792,17 @@
         <Parameter Name="wizardStep" Type="System.Web.UI.WebControls.WizardStepBase" />
       </Parameters>
       <Docs>
-        <param name="wizardStep">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Wizard.MoveTo(System.Web.UI.WebControls.WizardStepBase)" /> method to control which <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object is set as the value for the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control programmatically. This way, you can change the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property dynamically based on other conditions during run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object as the value for the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+        </summary>
+        <param name="wizardStep">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object to set as the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1058,9 +1815,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.MoveToCommandName" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.MoveToCommandName" /> is "Move".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the command name that is associated with each of the sidebar buttons. This field is static and read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1087,10 +1850,52 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property defines the appearance for the buttons in the navigation area on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property are merged with the individual button styles. Any setting that is applied in the individual button style properties overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property. For example, if you set the FinishPreviousButtonStyle.ForeColor property to "red" and the NavigationButtonStyle.ForeColor property to "green", the color for the button will be red because the individual style settings of the <see cref="P:System.Web.UI.WebControls.Wizard.FinishPreviousButtonStyle" /> property override the settings of the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property.</para>
+          <para>The following <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property styles are overridden by individual button style settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" /> </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the buttons in the navigation area on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1117,10 +1922,53 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.NavigationStyle" /> property defines the appearance for the navigation area on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.NavigationStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Any settings that are applied in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationStyle" /> property override the corresponding settings in the properties of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.Wizard" /> style properties are overridden by the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" /> </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the navigation area on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1133,9 +1981,16 @@
         <ReturnType>System.Web.UI.WebControls.WizardNavigationEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.NextButtonClick" /> event is raised when the <ui>Next</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control is clicked. Use the <see cref="E:System.Web.UI.WebControls.Wizard.NextButtonClick" /> event to provide additional processing when the <ui>Next</ui> button is clicked.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <ui>Next</ui> button is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1152,11 +2007,21 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.OnActiveStepChanged(System.Object,System.EventArgs)" /> method raises the <see cref="E:System.Web.UI.WebControls.Wizard.ActiveStepChanged" /> event when the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStep" /> property of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control is changed. Use the <see cref="E:System.Web.UI.WebControls.Wizard.ActiveStepChanged" /> event to provide additional processing when the current step that is displayed in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control changes.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.OnActiveStepChanged(System.Object,System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.Wizard.ActiveStepChanged" /> event.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1173,12 +2038,20 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the event for the server control is passed up the page’s user interface server control hierarchy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event for the server control is passed up the page’s user interface server control hierarchy; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contains event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1194,10 +2067,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.CancelButtonClick" /> event is raised when the <ui>Cancel</ui> button is clicked.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.OnCancelButtonClick(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.Wizard.CancelButtonClick" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> containing the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1213,10 +2095,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.WizardNavigationEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.FinishButtonClick" /> event is raised when the <ui>Finish</ui> button is clicked.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.OnFinishButtonClick(System.Web.UI.WebControls.WizardNavigationEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.Wizard.FinishButtonClick" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WizardNavigationEventArgs" /> containing the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1235,9 +2126,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the Init event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The raised event.</param>
       </Docs>
     </Member>
     <Member MemberName="OnNextButtonClick">
@@ -1250,10 +2145,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.WizardNavigationEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.NextButtonClick" /> event is raised when the <ui>Next</ui> button is clicked.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.OnNextButtonClick(System.Web.UI.WebControls.WizardNavigationEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.Wizard.NextButtonClick" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WizardNavigationEventArgs" /> containing the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1269,10 +2173,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.WizardNavigationEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.PreviousButtonClick" /> event is raised when the <ui>Previous</ui> button is clicked.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.OnPreviousButtonClick(System.Web.UI.WebControls.WizardNavigationEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.Wizard.PreviousButtonClick" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WizardNavigationEventArgs" /> containing event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1288,10 +2201,22 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.WizardNavigationEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.SideBarButtonClick" /> event is raised when a button on the sidebar area is clicked.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.Wizard.SideBarButtonClick" /> event does not raise an event if a <see cref="T:System.Web.UI.WebControls.Button" /> control with the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> property set to Move is outside of the <see cref="T:System.Web.UI.WebControls.DataList" /> control's sidebar list for the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" /> object.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Wizard.OnSideBarButtonClick(System.Web.UI.WebControls.WizardNavigationEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.Wizard.SideBarButtonClick" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WizardNavigationEventArgs" /> containing event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1304,9 +2229,16 @@
         <ReturnType>System.Web.UI.WebControls.WizardNavigationEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.PreviousButtonClick" /> event is raised when the <ui>Previous</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control is clicked. Use the <see cref="E:System.Web.UI.WebControls.Wizard.PreviousButtonClick" /> event to provide additional processing when the <ui>Previous</ui> button is clicked.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <ui>Previous</ui> button is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1325,9 +2257,13 @@
         <Parameter Name="button" Type="System.Web.UI.WebControls.IButtonControl" />
       </Parameters>
       <Docs>
-        <param name="button">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a new instance of the <see cref="T:System.Web.UI.WebControls.CommandEventHandler" /> class for the specified <see cref="T:System.Web.UI.WebControls.IButtonControl" /> object.</para>
+        </summary>
+        <param name="button">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.IButtonControl" /> for which the new instance of <see cref="T:System.Web.UI.WebControls.CommandEventHandler" /> is registered.</param>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -1343,9 +2279,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the control to the specified writer.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTML writer.</param>
       </Docs>
     </Member>
     <Member MemberName="SaveControlState">
@@ -1359,9 +2299,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Save the control state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control state.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SaveViewState">
@@ -1372,10 +2318,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the view state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The view state.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1388,9 +2340,19 @@
         <ReturnType>System.Web.UI.WebControls.WizardNavigationEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Wizard.SideBarButtonClick" /> event is raised when a button in the sidebar area on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control is clicked. Use the <see cref="E:System.Web.UI.WebControls.Wizard.SideBarButtonClick" /> event to provide additional processing when a button in the sidebar area is clicked.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.Wizard.SideBarButtonClick" /> event does not raise an event if a <see cref="T:System.Web.UI.WebControls.Button" /> control with the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> property set to Move is outside of the <see cref="T:System.Web.UI.WebControls.DataList" /> control's sidebar list for the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" /> object.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a button in the sidebar area is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1403,9 +2365,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.SideBarButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.SideBarButtonID" /> is "SideBarButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier that is associated with each of the sidebar buttons. This field is static and read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1432,10 +2400,54 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.SideBarButtonStyle" /> property defines the appearance of the buttons on the sidebar of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.SideBarButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarButtonStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Any settings that are applied in the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarButtonStyle" /> property override the corresponding settings in the properties of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+          <para>The following <see cref="T:System.Web.UI.WebControls.Wizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.Wizard.SideBarButtonStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" /> </para>
+            </item>
+          </list>
+          <para>However, when you use templates to define the appearance of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control sidebar, the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarButtonStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the buttons on the sidebar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1462,10 +2474,56 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.SideBarStyle" /> property defines the appearance for the sidebar area on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.SideBarStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties.</para>
+          <para>The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarStyle" /> property are merged with the style settings for the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Any settings that are applied in the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarStyle" /> property override the corresponding settings in the properties of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+          <block subset="none" type="note">
+            <para>The height property for <see cref="P:System.Web.UI.WebControls.Wizard.SideBarStyle" /> is ignored if the height is set to less than the height of the wizard. Values set for <see cref="P:System.Web.UI.WebControls.Wizard.NavigationStyle" /> height and <see cref="P:System.Web.UI.WebControls.Wizard.HeaderStyle" /> height add to the total height of the wizard. For example, if the Wizard height is set to 500px and <see cref="P:System.Web.UI.WebControls.Wizard.NavigationStyle" /> height or <see cref="P:System.Web.UI.WebControls.Wizard.HeaderStyle" /> height is set to 50px or 10%, then the total wizard height is 550px.</para>
+          </block>
+          <para>The following <see cref="T:System.Web.UI.WebControls.Wizard" /> style properties are overridden by <see cref="P:System.Web.UI.WebControls.Wizard.SideBarStyle" /> settings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" /> </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the sidebar area on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1492,10 +2550,21 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" /> property to specify the custom content that is displayed for the sidebar area on a <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Define the content by creating a template that specifies how the sidebar area is rendered.</para>
+          <para>The custom content for the template is contained within the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" /> object. You can add custom content to the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" /> object either by using template-editing mode in design view or by defining the <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" /> object inline using SideBarTemplate tags. The content can be as simple as plain text or more complex (embedding other controls in the template, for example).</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.Wizard.SideBarTemplate" /> object must contain a <see cref="T:System.Web.UI.WebControls.DataList" /> control or <see cref="T:System.Web.UI.WebControls.ListView" /> control whose <see cref="P:System.Web.UI.Control.ID" /> property is set to "SideBarList" to enable the sidebar navigation feature. Also, the "SideBarList" on the <see cref="T:System.Web.UI.WebControls.DataList" /> or <see cref="T:System.Web.UI.WebControls.ListView" /> control must contain an <see cref="T:System.Web.UI.WebControls.IButtonControl" /> control.</para>
+          </block>
+          <para>To access a control that is defined in a template programmatically, use the <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> collection of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object. You can also use the <see cref="Overload:System.Web.UI.Control.FindControl" /> method of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object to find the control, if the control has an <see cref="P:System.Web.UI.Control.ID" /> property specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template that is used to display the sidebar area on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1513,10 +2582,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.SkipLinkText" /> property to specify the alternate text for a hidden image that is read by screen readers to provide the ability to skip the content  for a sidebar area. The text that you specify provides assistive technology devices with a description of the hidden image that can be used to make the control more accessible.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.Wizard.DisplaySideBar" /> property is set to false, the <see cref="P:System.Web.UI.WebControls.Wizard.SkipLinkText" /> property does not create a hidden image with alternate text.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that is used to render alternate text that notifies screen readers to skip the content in the sidebar area.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1543,10 +2622,21 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> property to specify the custom content that is displayed for the navigation area on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Define the content by creating a template that specifies how the navigation area is rendered on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step.</para>
+          <para>The custom content for the template is contained within the <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> object. You can add custom content to the <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> object either by using template-editing mode in design view or by defining the <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> object inline using StartNavigationTemplate tags. The content can be as simple as plain text or more complex (embedding other controls in the template, for example).</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> object that is contained in the <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> property must contain an <see cref="T:System.Web.UI.WebControls.IButtonControl" /> control with the <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandName" /> property set to "MoveNext" to enable the navigation feature.</para>
+          </block>
+          <para>To access a control that is defined in a template programmatically, use the <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> collection of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object. You can also use the <see cref="Overload:System.Web.UI.Control.FindControl" /> method of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object to find the control, if the control has an <see cref="P:System.Web.UI.Control.ID" /> property specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template that is used to display the navigation area on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1559,9 +2649,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.StartNextButtonID" /> is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.StartNextButtonID" /> is "StartNextButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier that is associated with the <ui>Next</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step. This field is static and read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1585,10 +2681,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonType" /> property is set to the <see cref="F:System.Web.UI.WebControls.ButtonType.Image" /> field, use the <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonImageUrl" /> property to specify the image to display for the <ui>Next</ui> button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image that is displayed for the <ui>Next</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1615,10 +2717,17 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonStyle" /> property defines the appearance for the <ui>Next</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonStyle" /> property are merged with the style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property. Any setting that is applied in the <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonStyle" /> property overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the <ui>Next</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1636,10 +2745,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonText" /> property contains the text that is displayed for the <ui>Next</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Depending on the value of the <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image in browsers that do not render images, or as the text of a link. The following table lists the field values for the <see cref="P:System.Web.UI.WebControls.Wizard.StartNextButtonType" /> property and the respective effect of each on the <ui>Next</ui> button text.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as a link.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption that is displayed for the <ui>Next</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1657,10 +2799,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button that is rendered as the <ui>Next</ui> button on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1687,10 +2832,21 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Wizard.StartNavigationTemplate" /> property to specify the custom content that is displayed for the navigation area on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Step" /> step of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Define the content by creating a template that specifies how the navigation area is rendered on the <see cref="F:System.Web.UI.WebControls.WizardStepType.Step" /> step.</para>
+          <para>The custom content for the template is contained within the <see cref="P:System.Web.UI.WebControls.Wizard.StepNavigationTemplate" /> object. You can add custom content to the <see cref="P:System.Web.UI.WebControls.Wizard.StepNavigationTemplate" /> object either by using template-editing mode in design view or by defining the <see cref="P:System.Web.UI.WebControls.Wizard.StepNavigationTemplate" /> object inline using StepNavigationTemplate tags. The content can be as simple as plain text or more complex (embedding other controls in the template, for example).</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StepNavigationTemplate" /> object that is contained in the <see cref="P:System.Web.UI.WebControls.Wizard.StepNavigationTemplate" /> property must contain two <see cref="T:System.Web.UI.WebControls.IButtonControl" /> controls, one with its <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandName" /> property set to "MoveNext" and one with its <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandName" /> property set to "MovePrevious", to enable the navigation feature.</para>
+          </block>
+          <para>To access a control that is defined in a template programmatically, use the <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> collection of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object. You can also use the <see cref="Overload:System.Web.UI.Control.FindControl" /> method of the <see cref="T:System.Web.UI.WebControls.Wizard" /> object to find the control, if the control has an <see cref="P:System.Web.UI.Control.ID" /> property specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template that is used to display the navigation area on any <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived objects other than the <see cref="F:System.Web.UI.WebControls.WizardStepType.Start" />, the <see cref="F:System.Web.UI.WebControls.WizardStepType.Finish" />, or <see cref="F:System.Web.UI.WebControls.WizardStepType.Complete" /> step.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1703,9 +2859,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.StepNextButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.StepNextButtonID" /> is "StepNextButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier that is associated with the <ui>Next</ui> button. This field is static and read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1729,10 +2891,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonType" /> property is set to the <see cref="F:System.Web.UI.WebControls.ButtonType.Image" /> field, use the <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonImageUrl" /> property to specify the image to display for the <ui>Next</ui> button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image that is displayed for the <ui>Next</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1759,10 +2927,17 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonStyle" /> property defines the appearance for the <ui>Next</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonStyle" /> property are merged with the style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property. Any setting that is applied in the <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonStyle" /> property overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the <ui>Next</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1780,10 +2955,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonText" /> property contains the text that is displayed for the <ui>Next</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Depending on the value of the <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image, or as the text of a link. The following table lists the field values for the <see cref="P:System.Web.UI.WebControls.Wizard.StepNextButtonType" /> property and the respective effect of each on the <ui>Next</ui> button text.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as a link.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption that is displayed for the <ui>Next</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1801,10 +3009,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button that is rendered as the <ui>Next</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1817,9 +3028,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.Wizard.StepPreviousButtonID" /> field is used primarily by control developers. The value for the <see cref="F:System.Web.UI.WebControls.Wizard.StepPreviousButtonID" /> is "StepPreviousButton".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the identifier that is associated with the <ui>Previous</ui> button. This field is static and read-only. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1843,10 +3060,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonType" /> property is set to the <see cref="F:System.Web.UI.WebControls.ButtonType.Image" /> field, use the <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonImageUrl" /> property to specify the image to display for the <ui>Previous</ui> button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image that is displayed for the <ui>Previous</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1873,10 +3096,17 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonStyle" /> property defines the appearance of the <ui>Previous</ui> button on a <see cref="F:System.Web.UI.WebControls.WizardStepType.Step" /> step for the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonStyle" /> property are merged with the style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property. Any setting that is applied in the <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonStyle" /> property overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.Wizard.NavigationButtonStyle" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the <ui>Previous</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1894,10 +3124,43 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonText" /> property contains the text that is displayed for the <ui>Previous</ui> button on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Depending on the value of the <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonType" /> property, the <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonText" /> property can appear as text on a button, as text displayed as an alternative to an image in browsers that do not render images, or as the text of a link. The following table lists the field values for the <see cref="P:System.Web.UI.WebControls.Wizard.StepPreviousButtonType" /> property and the respective effect of each on the <ui>Previous</ui> button text.</para>
+          <list type="table">
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Button" />
+              </term>
+              <description>
+                <para>Text appears on the button.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Image" />
+              </term>
+              <description>
+                <para>Text appears as alternative text for the image.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <see cref="F:System.Web.UI.WebControls.ButtonType.Link" />
+              </term>
+              <description>
+                <para>Text appears as a link.</para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption that is displayed for the <ui>Previous</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1915,10 +3178,13 @@
         <ReturnType>System.Web.UI.WebControls.ButtonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button that is rendered as the <ui>Previous</ui> button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1945,10 +3211,66 @@
         <ReturnType>System.Web.UI.WebControls.TableItemStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.StepStyle" /> property gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the appearance for the <see cref="T:System.Web.UI.WebControls.WizardStep" /> objects on the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. The <see cref="P:System.Web.UI.WebControls.Wizard.StepStyle" /> property is read-only; however, you can set the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object that it returns. You can set these properties declaratively in the form Property-Subproperty, where <paramref name="Subproperty" /> represents a property of the <see cref="T:System.Web.UI.WebControls.Style" /> class (for example, CancelButtonStyle-ForeColor). You can set a property programmatically in the form Property.Subproperty (for example, CancelButtonStyle.ForeColor).</para>
+          <para>Common settings include custom background color, text color, and font properties. The style settings for the <see cref="P:System.Web.UI.WebControls.Wizard.StepStyle" /> property are merged with the style settings for the <see cref="P:System.Web.UI.WebControls.WebControl.Style" /> property of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. Any setting that is applied in the <see cref="P:System.Web.UI.WebControls.Wizard.StepStyle" /> property overrides the corresponding setting in the <see cref="P:System.Web.UI.WebControls.WebControl.Style" /> property of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+          <para>The following <see cref="P:System.Web.UI.WebControls.Wizard.StepStyle" /> properties can be set to override the <see cref="P:System.Web.UI.WebControls.WebControl.Style" /> properties of the <see cref="T:System.Web.UI.WebControls.Wizard" /> control:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BackColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.CssClass" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Font" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Height" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Style.Width" />
+              </para>
+            </item>
+          </list>
+          <para>When you use a <see cref="T:System.Web.UI.WebControls.TemplatedWizardStep" /> template to define the appearance for the <see cref="T:System.Web.UI.WebControls.WizardStep" /> objects, the <see cref="P:System.Web.UI.WebControls.Wizard.StepStyle" /> property has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a <see cref="T:System.Web.UI.WebControls.Style" /> object that defines the settings for the <see cref="T:System.Web.UI.WebControls.WizardStep" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1961,10 +3283,16 @@
         <ReturnType>System.Web.UI.HtmlTextWriterTag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.TagKey" /> property is used primarily by control developers to extend the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value that corresponds to the <see cref="T:System.Web.UI.WebControls.Wizard" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1978,9 +3306,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tracks view state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2007,10 +3338,21 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Wizard.WizardSteps" /> property returns a collection of <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects that make up the <see cref="T:System.Web.UI.WebControls.Wizard" /> control. You can use the <see cref="P:System.Web.UI.WebControls.Wizard.WizardSteps" /> collection to access the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects that are contained in the <see cref="T:System.Web.UI.WebControls.Wizard" /> control programmatically. Use the <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Add(System.Web.UI.WebControls.WizardStepBase)" />, <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Remove(System.Web.UI.WebControls.WizardStepBase)" />, <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Clear" />, and <see cref="M:System.Web.UI.WebControls.WizardStepCollection.Insert(System.Int32,System.Web.UI.WebControls.WizardStepBase)" /> methods to manipulate the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects in the collection programmatically.</para>
+          <block subset="none" type="note">
+            <para>If you are using Microsoft Visual Studio 2005, note that the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> is persisted in Source view. If you change the <see cref="P:System.Web.UI.WebControls.Wizard.WizardSteps" /> property in Design view by clicking the sidebar buttons, and you then run the page, the first step of the Wizard control might not be shown because the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> might be pointing to a different step.</para>
+          </block>
+          <para>If the <see cref="T:System.Web.UI.WebControls.Wizard" /> control contains multiple <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collections, the collections will be merged.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection containing all the <see cref="T:System.Web.UI.WebControls.WizardStepBase" /> objects that are defined for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -7,5 +7,9 @@ public class 쯠쯡쯢
 	public static void Main ()
 	{
 	}
+
+	static void P̀ः०‿ ()
+	{
+	}
 }
 

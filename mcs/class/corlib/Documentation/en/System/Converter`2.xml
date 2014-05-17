@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Converter&lt;TInput,TOutput&gt;" FullName="System.Converter&lt;TInput,TOutput&gt;">
   <TypeSignature Language="C#" Value="public delegate TOutput Converter&lt;in TInput,out TOutput&gt;(TInput input);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Converter`2&lt;- TInput, + TOutput&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -30,21 +32,21 @@
     <typeparam name="TInput">To be added.</typeparam>
     <typeparam name="TOutput">To be added.</typeparam>
     <param name="input">To be added.</param>
-    <summary>
-      <para>Represents the method that converts an object from one type to another.</para>
-    </summary>
-    <value>
+    <returns>
       <para>The object converted to the target type.</para>
-    </value>
-    <value>
+    </returns>
+    <returns>
       <para>The object converted to the target type.</para>
-    </value>
-    <value>To be added.</value>
-    <remarks>
-      <block subset="none" type="note">
-        <para>This delegate is used by the method <see cref="M:System.Array.ConvertAll" /><see langword="(T[], Converter&lt;T,U&gt;)" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt; " /> to convert each elements of the collection from one type to another.</para>
-      </block>
-    </remarks>
+    </returns>
+    <returns>To be added.</returns>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate is used by the <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /> method of the <see cref="T:System.Array" /> class and the <see cref="M:System.Collections.Generic.List`1.ConvertAll``1(System.Converter{`0,``0})" /> method of the <see cref="T:System.Collections.Generic.List`1" /> class to convert each element of the collection from one type to another.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a method that converts an object from one type to another type.</para>
+    </summary>
   </Docs>
 </Type>

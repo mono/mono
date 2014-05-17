@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBindingList" FullName="System.ComponentModel.IBindingList">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IBindingList : System.Collections.IList" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindingList implements class System.Collections.ICollection, class System.Collections.IEnumerable, class System.Collections.IList" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces>
@@ -14,13 +17,28 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is implemented by the <see cref="T:System.Data.DataView" /> class. Implementation of a method should exhibit the same behavior as the implementation of that method in the <see cref="T:System.Data.DataView" /> class.</para>
+      <para>When you call the <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> or <see cref="M:System.ComponentModel.IBindingList.RemoveSort" /> methods, you should raise a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event with the <see cref="F:System.ComponentModel.ListChangedType.Reset" /> enumeration.</para>
+      <para>When you call the <see cref="M:System.ComponentModel.IBindingList.AddNew" /> method, you should raise a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event with the <see cref="F:System.ComponentModel.ListChangedType.ItemAdded" /> enumeration carrying the appropriate index. The added row is in a state where pressing the ESC on a <see cref="T:System.Windows.Forms.DataGridView" /> control can remove the new row. Raising the <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event with the <see cref="F:System.ComponentModel.ListChangedType.ItemAdded" /> enumeration a second time on this row indicates that the item is now a row not in the "new" state.</para>
+      <para>When you remove an item or call the <see cref="M:System.ComponentModel.IEditableObject.CancelEdit" /> method on a new row (if that row implements <see cref="T:System.ComponentModel.IEditableObject" />), you should raise a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event with the <see cref="F:System.ComponentModel.ListChangedType.ItemDeleted" /> enumeration carrying the appropriate index.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the features required to support both complex and simple scenarios when binding to a data source.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddIndex">
       <MemberSignature Language="C#" Value="public void AddIndex (System.ComponentModel.PropertyDescriptor property);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddIndex(class System.ComponentModel.PropertyDescriptor property) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -28,83 +46,132 @@
         <Parameter Name="property" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="property">To be added: an object of type 'PropertyDescriptor'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list must support this method. However, support for this method can be a nonoperation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the <see cref="T:System.ComponentModel.PropertyDescriptor" /> to the indexes used for searching.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to add to the indexes used for searching. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNew">
       <MemberSignature Language="C#" Value="public object AddNew ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object AddNew() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is supported only if <see cref="P:System.ComponentModel.IBindingList.AllowNew" /> is true; otherwise, a <see cref="T:System.NotSupportedException" /> is thrown.</para>
+          <para>Implementing this method means that the <see cref="T:System.ComponentModel.IBindingList" /> list must understand the type of objects to add to the list and must understand how to create a new instance of that type. For example, if you have a collection of myCustomer objects, the <see cref="M:System.ComponentModel.IBindingList.AddNew" /> method should add a new myCustomer object to the list.</para>
+          <block subset="none" type="note">
+            <para>If the objects in this list implement the <see cref="T:System.ComponentModel.IEditableObject" /> interface, calling the <see cref="M:System.ComponentModel.IEditableObject.CancelEdit" /> method should discard an object, not add it to the list, when the object was created using the <see cref="M:System.ComponentModel.IBindingList.AddNew" /> method. The object should only be added to the list when the <see cref="M:System.ComponentModel.IEditableObject.EndEdit" /> method is called. Therefore, you must sychronize the object and the list carefully.</para>
+          </block>
+          <para>When this method is called, you should raise a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event with the <see cref="F:System.ComponentModel.ListChangedType.ItemAdded" /> enumeration carrying the appropriate index. The added row is in a state where hitting Esc on a <see cref="T:System.Windows.Forms.DataGridView" /> control can remove the new row. Raising the <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event with the <see cref="F:System.ComponentModel.ListChangedType.ItemAdded" /> enumeration a second time on this row indicates that the item is now a normal row (not in new state).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new item to the list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item added to the list.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AllowEdit">
       <MemberSignature Language="C#" Value="public bool AllowEdit { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowEdit" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether you can update items in the list.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AllowNew">
       <MemberSignature Language="C#" Value="public bool AllowNew { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowNew" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Collections.IList.IsFixedSize" /> or <see cref="P:System.Collections.IList.IsReadOnly" /> is true, this property returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AllowRemove">
       <MemberSignature Language="C#" Value="public bool AllowRemove { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowRemove" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Collections.IList.IsFixedSize" /> or <see cref="P:System.Collections.IList.IsReadOnly" /> is true, this property returns false.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.ComponentModel.IBindingList.AllowRemove" /> returns false, <see cref="M:System.Collections.IList.Remove(System.Object)" /> and <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" /> throw a <see cref="T:System.NotSupportedException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether you can remove items from the list, using <see cref="M:System.Collections.IList.Remove(System.Object)" /> or <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ApplySort">
       <MemberSignature Language="C#" Value="public void ApplySort (System.ComponentModel.PropertyDescriptor property, System.ComponentModel.ListSortDirection direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ApplySort(class System.ComponentModel.PropertyDescriptor property, valuetype System.ComponentModel.ListSortDirection direction) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -113,19 +180,30 @@
         <Parameter Name="direction" Type="System.ComponentModel.ListSortDirection" />
       </Parameters>
       <Docs>
-        <param name="property">To be added: an object of type 'PropertyDescriptor'</param>
-        <param name="direction">To be added: an object of type 'ListSortDirection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If items are added or removed, these items are placed in the order of the sort.</para>
+          <para>This method is supported if <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" /> is true; otherwise, this method throws a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the list based on a <see cref="T:System.ComponentModel.PropertyDescriptor" /> and a <see cref="T:System.ComponentModel.ListSortDirection" />.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to sort by. </param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.ListSortDirection" /> values. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Find">
       <MemberSignature Language="C#" Value="public int Find (System.ComponentModel.PropertyDescriptor property, object key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Find(class System.ComponentModel.PropertyDescriptor property, object key) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -134,52 +212,83 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="property">To be added: an object of type 'PropertyDescriptor'</param>
-        <param name="key">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will select the first row where the value of the <paramref name="property" /> parameter equals the value of the <paramref name="key" /> parameter.</para>
+          <para>This method is supported if <see cref="P:System.ComponentModel.IBindingList.SupportsSearching" /> is true, otherwise this method throws a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </returns>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to search on. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the <paramref name="property" /> parameter to search for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSorted">
       <MemberSignature Language="C#" Value="public bool IsSorted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSorted" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is supported if <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" /> is true; otherwise, this property throws a <see cref="T:System.NotSupportedException" />.</para>
+          <para>If <see cref="P:System.ComponentModel.IBindingList.IsSorted" /> returns true, items are added or removed in the order of the sort.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the items in the list are sorted.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ListChanged">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.ListChangedEventHandler ListChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.ListChangedEventHandler ListChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ListChangedEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised only if the <see cref="P:System.ComponentModel.IBindingList.SupportsChangeNotification" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the list changes or an item in the list changes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveIndex">
       <MemberSignature Language="C#" Value="public void RemoveIndex (System.ComponentModel.PropertyDescriptor property);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveIndex(class System.ComponentModel.PropertyDescriptor property) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -187,110 +296,159 @@
         <Parameter Name="property" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="property">To be added: an object of type 'PropertyDescriptor'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list must support this method. However, support for this method can be a nonoperation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.ComponentModel.PropertyDescriptor" /> from the indexes used for searching.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to remove from the indexes used for searching. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveSort">
       <MemberSignature Language="C#" Value="public void RemoveSort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveSort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is supported if <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" /> is true; otherwise, this property throws a <see cref="T:System.NotSupportedException" />.</para>
+          <para>When you call this method, you should raise a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event with the <see cref="F:System.ComponentModel.ListChangedType.Reset" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes any sort applied using <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SortDirection">
       <MemberSignature Language="C#" Value="public System.ComponentModel.ListSortDirection SortDirection { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ComponentModel.ListSortDirection SortDirection" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ListSortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ListSortDirection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is supported if <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" /> is true; otherwise, this property throws a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the direction of the sort.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SortProperty">
       <MemberSignature Language="C#" Value="public System.ComponentModel.PropertyDescriptor SortProperty { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.PropertyDescriptor SortProperty" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PropertyDescriptor'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is supported if <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" /> is true; otherwise, this property throws a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.PropertyDescriptor" /> that is being used for sorting.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SupportsChangeNotification">
       <MemberSignature Language="C#" Value="public bool SupportsChangeNotification { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsChangeNotification" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Objects in the list must notify the list when they change, so the list can raise a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event is raised when the list changes or an item in the list changes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SupportsSearching">
       <MemberSignature Language="C#" Value="public bool SupportsSearching { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsSearching" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the list supports searching using the <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SupportsSorting">
       <MemberSignature Language="C#" Value="public bool SupportsSorting { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsSorting" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is true, then <see cref="P:System.ComponentModel.IBindingList.IsSorted" />, <see cref="P:System.ComponentModel.IBindingList.SortProperty" />, <see cref="P:System.ComponentModel.IBindingList.SortDirection" />, <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" />, and <see cref="M:System.ComponentModel.IBindingList.RemoveSort" /> are supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the list supports sorting.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

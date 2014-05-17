@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="UriTemplate" FullName="System.UriTemplate">
+  <TypeSignature Language="C#" Value="public class UriTemplate" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UriTemplate extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A URI template allows you to define a set of structurally similar URIs. Templates are composed of two parts, a path and a query. A path consists of a series of segments delimited by a slash (/). Each segment can have a literal value, a variable value (written within curly braces [{ }], constrained to match the contents of exactly one segment), or a wildcard (written as an asterisk [*], which matches "the rest of the path"), which must appear at the end of the path. The query expression can be omitted entirely. If present, it specifies an unordered series of name/value pairs. Elements of the query expression can be either literal pairs (?x=2) or variable pairs (?x={val}). Unpaired values are not permitted. The following examples show valid template strings:</para>
+      <list type="bullet">
+        <item>
+          <para>"weather/WA/Seattle"</para>
+        </item>
+        <item>
+          <para>"weather/{state}/{city}"</para>
+        </item>
+        <item>
+          <para>"weather/*"</para>
+        </item>
+        <item>
+          <para>"weather/{state}/{city}?forecast=today</para>
+        </item>
+        <item>
+          <para>"weather/{state}/{city}?forecast={day}</para>
+        </item>
+      </list>
+      <para>The preceding URI templates might be used for organizing weather reports. Segments enclosed in curly braces are variables, everything else is a literal. You can convert a <see cref="T:System.UriTemplate" /> instance into a <see cref="T:System.Uri" /> by replacing variables with actual values. For example, taking the template "weather/{state}/{city}" and putting in values for the variables "{state}" and "{city}" gives you "weather/WA/Seattle". Given a candidate URI, you can test whether it matches a given URI template by calling <see cref="M:System.UriTemplate.Match(System.Uri,System.Uri)" />. You can also use <see cref="T:System.UriTemplate" /> instances to create a <see cref="T:System.Uri" /> from a set of variable values by calling <see cref="M:System.UriTemplate.BindByName(System.Uri,System.Collections.Specialized.NameValueCollection)" /> or <see cref="M:System.UriTemplate.BindByPosition(System.Uri,System.String[])" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class that represents a Uniform Resource Identifier (URI) template.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplate (string template);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string template) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="template" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplate" /> class with the specified template string.</para>
+        </summary>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplate (string template, bool ignoreTrailingSlash);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string template, bool ignoreTrailingSlash) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="template" Type="System.String" />
+        <Parameter Name="ignoreTrailingSlash" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <paramref name="ignoreTrailingSlash" /> is set to true, trailing slashes on the end of template are ignored when matching a candidate URI. For example, a template such as “http://www.microsoft.com/customer/” would match the following candidate URIs: </para>
+          <list type="bullet">
+            <item>
+              <para>"http://www.microsoft.com/customer/"</para>
+            </item>
+            <item>
+              <para>"http://www.microsoft.com/customer"</para>
+            </item>
+            <item>
+              <para>"http://www.microsoft.com/customer/?wsdl"</para>
+            </item>
+            <item>
+              <para>"http://www.microsoft.com/customer?wsdl"</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplate" /> class.</para>
+        </summary>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template string.</param>
+        <param name="ignoreTrailingSlash">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether trailing slash “/” characters should be ignored.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplate (string template, System.Collections.Generic.IDictionary&lt;string,string&gt; additionalDefaults);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string template, class System.Collections.Generic.IDictionary`2&lt;string, string&gt; additionalDefaults) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="template" Type="System.String" />
+        <Parameter Name="additionalDefaults" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplate" /> class.</para>
+        </summary>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template string.</param>
+        <param name="additionalDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a list of default values for the template parameters.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplate (string template, bool ignoreTrailingSlash, System.Collections.Generic.IDictionary&lt;string,string&gt; additionalDefaults);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string template, bool ignoreTrailingSlash, class System.Collections.Generic.IDictionary`2&lt;string, string&gt; additionalDefaults) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="template" Type="System.String" />
+        <Parameter Name="ignoreTrailingSlash" Type="System.Boolean" />
+        <Parameter Name="additionalDefaults" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplate" /> class.</para>
+        </summary>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template string.</param>
+        <param name="ignoreTrailingSlash">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the trailing slash “/” characters are ignored; otherwise false.</param>
+        <param name="additionalDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a list of default values for the template parameters.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BindByName">
+      <MemberSignature Language="C#" Value="public Uri BindByName (Uri baseAddress, System.Collections.Generic.IDictionary&lt;string,string&gt; parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Uri BindByName(class System.Uri baseAddress, class System.Collections.Generic.IDictionary`2&lt;string, string&gt; parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+        <Parameter Name="parameters" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Generic.IDictionary{System.String,System.String}" /> parameter contains a collection of parameter name and value pairs. The parameters are matched up against the variables within the template by a case-insensitive comparison.</para>
+          <block subset="none" type="note">
+            <para>The name/value collection passed to this method must contain a key for every template variable. Extra name/value pairs that do not match template variables are appended to the query string of the final URI. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>It is possible to pass in text within the name/value pairs that prevent the generated URI from matching the template that is used to generate it. Examples of such text includes: '/', '..', '*', '{', and '}'.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new URI from the template and the collection of parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A URI.</para>
+        </returns>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a collection of parameter name/value pairs.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BindByName">
+      <MemberSignature Language="C#" Value="public Uri BindByName (Uri baseAddress, System.Collections.Specialized.NameValueCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Uri BindByName(class System.Uri baseAddress, class System.Collections.Specialized.NameValueCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+        <Parameter Name="parameters" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Specialized.NameValueCollection" /> parameter contains a collection of parameter name/value pairs. The parameters are matched up against the variables within the template by a case-insensitive comparison. Values passed in this collection are escaped.</para>
+          <block subset="none" type="note">
+            <para>The name/value collection passed to <see cref="M:System.UriTemplate.BindByName(System.Uri,System.Collections.Specialized.NameValueCollection)" /> must contain a key for every template variable. Extra name/value pairs that do not match template variables are appended to the query string of the final URI. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>It is possible to pass in text within the name/value pairs that prevent the generated URI from matching the template that is used to generate it. Examples of such text includes: '/', '..', '*', '{', and '}'.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new URI from the template and the collection of parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance.</para>
+        </returns>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter values.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BindByName">
+      <MemberSignature Language="C#" Value="public Uri BindByName (Uri baseAddress, System.Collections.Generic.IDictionary&lt;string,string&gt; parameters, bool omitDefaults);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Uri BindByName(class System.Uri baseAddress, class System.Collections.Generic.IDictionary`2&lt;string, string&gt; parameters, bool omitDefaults) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+        <Parameter Name="parameters" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
+        <Parameter Name="omitDefaults" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new URI from the template and the collection of parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A URI.</para>
+        </returns>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI that contains the base address.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a collection of parameter name/value pairs.</param>
+        <param name="omitDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />true is the default values are ignored; otherwise false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BindByName">
+      <MemberSignature Language="C#" Value="public Uri BindByName (Uri baseAddress, System.Collections.Specialized.NameValueCollection parameters, bool omitDefaults);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Uri BindByName(class System.Uri baseAddress, class System.Collections.Specialized.NameValueCollection parameters, bool omitDefaults) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+        <Parameter Name="parameters" Type="System.Collections.Specialized.NameValueCollection" />
+        <Parameter Name="omitDefaults" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new URI from the template and the collection of parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A URI.</para>
+        </returns>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of parameter name/value pairs. </param>
+        <param name="omitDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the default values are ignored; otherwise false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BindByPosition">
+      <MemberSignature Language="C#" Value="public Uri BindByPosition (Uri baseAddress, string[] values);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Uri BindByPosition(class System.Uri baseAddress, string[] values) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+        <Parameter Name="values" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter values are bound by position left to right. The first parameter value replaces the first variable found in the template, the second parameter value replaces the second variable, and so on. Variables passed to this method are escaped.</para>
+          <block subset="none" type="note">
+            <para>The number of parameters passed in the values parameter must match the number of variables in the template. If not, a <see cref="T:System.FormatException" /> is thrown.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>It is possible to pass in text within the parameter values array that prevents the generated URI from matching the template that is used to generate it. Examples of such text includes: '/', '.','..', '*', '{', and '}'. The following code demonstrates this.</para>
+          </block>
+          <para>UriTemplate template = new UriTemplate("far/{bat}/baz");</para>
+          <para>Uri uri = new Uri("http://localhost/Base");</para>
+          <para>Uri result = template.BindByPosition(uri, ".");   // returns Base/form/baz</para>
+          <para>Uri result = template.BindByPosition(uri, "..");  // returns Base/baz</para>
+          <para>Uri result = template.BindByPosition(uri, "x/y");  // returns Base/form/x/y/baz</para>
+          <para>Uri result = template.BindByPosition(uri, "{x}");  // returns Base/form/{x}/baz</para>
+          <para>Uri result = template.BindByPosition(uri, "*");  // returns Base/form/*/baz</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new URI from the template and an array of parameter values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Uri" /> instance.</para>
+        </returns>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> that contains the base address.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter values.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Defaults">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IDictionary&lt;string,string&gt; Defaults { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IDictionary`2&lt;string, string&gt; Defaults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of name/value pairs for any default parameter values.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IgnoreTrailingSlash">
+      <MemberSignature Language="C#" Value="public bool IgnoreTrailingSlash { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreTrailingSlash" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether trailing slashes “/” in the template should be ignored when matching candidate URIs.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsEquivalentTo">
+      <MemberSignature Language="C#" Value="public bool IsEquivalentTo (UriTemplate other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsEquivalentTo(class System.UriTemplate other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.UriTemplate" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.UriTemplate" /> instances are equivalent if their literal strings are identical and the variables appear in the same segments. For example "weather/{state}/{city}" is equivalent to "weather/{country}/{village}".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a <see cref="T:System.UriTemplate" /> is structurally equivalent to another.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.UriTemplate" /> is structurally equivalent to another; otherwise false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.UriTemplate" /> to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public UriTemplateMatch Match (Uri baseAddress, Uri candidate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.UriTemplateMatch Match(class System.Uri baseAddress, class System.Uri candidate) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UriTemplateMatch</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+        <Parameter Name="candidate" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the match is successful the <see cref="T:System.UriTemplateMatch" /> is populated with the URI segments, variable values, query string values, and wildcard segments from the candidate URI. If the match is unsuccessful, null is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to match a <see cref="T:System.URI" /> to a <see cref="T:System.UriTemplate" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance.</para>
+        </returns>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
+        <param name="candidate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> to match against the template.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="PathSegmentVariableNames">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;string&gt; PathSegmentVariableNames { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;string&gt; PathSegmentVariableNames" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection excludes the names of variables that appear in the query portion of the template.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of variable names used within path segments in the template.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="QueryValueVariableNames">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;string&gt; QueryValueVariableNames { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;string&gt; QueryValueVariableNames" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection excludes variable names that appear in the path section of the template string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of variable names used within the query string in the template.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the <see cref="T:System.UriTemplate" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The representation of the <see cref="T:System.UriTemplate" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,195 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FtpWebResponse" FullName="System.Net.FtpWebResponse">
   <TypeSignature Language="C#" Value="public class FtpWebResponse : System.Net.WebResponse" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FtpWebResponse extends System.Net.WebResponse" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Net.WebResponse</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instances of <see cref="T:System.Net.FtpWebResponse" /> are obtained by calling the <see cref="M:System.Net.FtpWebRequest.GetResponse" /> method. The returned object must be cast to an <see cref="T:System.Net.FtpWebResponse" />. When your application no longer needs the <see cref="T:System.Net.FtpWebResponse" /> object, call the <see cref="M:System.Net.FtpWebResponse.Close" /> method to free the resources held by the <see cref="T:System.Net.FtpWebResponse" />.</para>
+      <para>The <see cref="P:System.Net.FtpWebResponse.StatusCode" /> property contains the status code returned by the server, and the <see cref="P:System.Net.FtpWebResponse.StatusDescription" /> property returns the status code and a message that describes the status. The values returned by these properties change as the messages are returned by the server.</para>
+      <para>Any data returned by the request, such as the list of file names returned for a <see cref="F:System.Net.WebRequestMethods.Ftp.ListDirectory" /> request, is available in the stream returned by the <see cref="M:System.Net.FtpWebResponse.GetResponseStream" /> method. The length of the stream data can be obtained from the <see cref="P:System.Net.FtpWebResponse.ContentLength" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a File Transfer Protocol (FTP) server's response to a request.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BannerMessage">
       <MemberSignature Language="C#" Value="public string BannerMessage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BannerMessage" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message sent by the FTP server when a connection is established prior to logon.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.FtpWebResponse.Close" /> method closes the data stream returned by the <see cref="M:System.Net.FtpWebResponse.GetResponseStream" /> method if the <see cref="P:System.Net.FtpWebRequest.KeepAlive" /> property is false. During the close, data might be sent to the server on the control connection.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees the resources held by the response.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentLength">
       <MemberSignature Language="C#" Value="public override long ContentLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ContentLength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a response stream is returned by the FTP server, the <see cref="P:System.Net.FtpWebResponse.ContentLength" /> property contains the number of bytes in the stream. <see cref="P:System.Net.FtpWebResponse.ContentLength" /> returns −1 if no data was returned in the response or if the server did not send content length information. The return value is greater than or equal to zero if data was or should have been returned. For example, for requests that use the <see cref="F:System.Net.WebRequestMethods.Ftp.ListDirectory" /> field, the <see cref="P:System.Net.FtpWebResponse.ContentLength" /> property always returns −1. For requests that use the <see cref="F:System.Net.WebRequestMethods.Ftp.UploadFile" /> method, the <see cref="P:System.Net.FtpWebResponse.ContentLength" /> property is always zero. For requests that use the <see cref="F:System.Net.WebRequestMethods.Ftp.DownloadFile" /> method, the property is greater than zero if the downloaded file contained data and is zero if it was empty. </para>
+          <para>For requests that use the <see cref="F:System.Net.WebRequestMethods.Ftp.GetFileSize" /> method, <see cref="P:System.Net.FtpWebResponse.ContentLength" /> returns the size of the specified file on the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the data received from the FTP server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExitMessage">
       <MemberSignature Language="C#" Value="public string ExitMessage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ExitMessage" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebResponse.ExitMessage" /> property is not available until the connection to the server is closed or reused. If the <see cref="P:System.Net.FtpWebRequest.KeepAlive" /> property is true, the connection used by this request is not closed, which prevents the server from sending an exit message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message sent by the server when the FTP session is ending.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetResponseStream">
       <MemberSignature Language="C#" Value="public override System.IO.Stream GetResponseStream ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetResponseStream() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After reading the data, you must close the stream. The stream is automatically closed when you close the <see cref="T:System.Net.FtpWebResponse" /> object that contains it.</para>
+          <para>An exception is thrown unless the request method is <see cref="F:System.Net.WebRequestMethods.Ftp.DownloadFile" /> or <see cref="F:System.Net.WebRequestMethods.Ftp.ListDirectory" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the stream that contains response data sent from an FTP server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A readable <see cref="T:System.IO.Stream" /> instance that contains data returned with the response; otherwise, <see cref="F:System.IO.Stream.Null" /> if no response data was returned by the server.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Headers">
       <MemberSignature Language="C#" Value="public override System.Net.WebHeaderCollection Headers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.WebHeaderCollection Headers" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebHeaderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebResponse.Headers" /> property is provided only for compatibility with other implementations of the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an empty <see cref="T:System.Net.WebHeaderCollection" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastModified">
       <MemberSignature Language="C#" Value="public DateTime LastModified { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastModified" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebResponse.LastModified" /> property returns the data requested by the <see cref="F:System.Net.WebRequestMethods.Ftp.GetDateTimeStamp" /> method. For requests sent using any other method, <see cref="P:System.Net.FtpWebResponse.LastModified" /> returns <see cref="F:System.DateTime.MinValue" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the date and time that a file on an FTP server was last modified.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResponseUri">
       <MemberSignature Language="C#" Value="public override Uri ResponseUri { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri ResponseUri" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because of server- and resource-specific behaviors, such as redirection, the value returned by the <see cref="P:System.Net.FtpWebRequest.RequestUri" /> property is not always the same as the value returned by the <see cref="P:System.Net.FtpWebResponse.ResponseUri" /> property.</para>
+          <para>For requests that use the <see cref="F:System.Net.WebRequestMethods.Ftp.UploadFileWithUniqueName" /> method, <see cref="P:System.Net.FtpWebResponse.ResponseUri" /> returns the name of the file on the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI that sent the response to the request.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StatusCode">
       <MemberSignature Language="C#" Value="public System.Net.FtpStatusCode StatusCode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.FtpStatusCode StatusCode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.FtpStatusCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the <see cref="P:System.Net.FtpWebResponse.StatusCode" /> property is included in the <see cref="P:System.Net.FtpWebResponse.StatusDescription" /> property. When you are downloading data, the value of <see cref="P:System.Net.FtpWebResponse.StatusCode" /> changes as status codes are returned by the FTP server. After you call the <see cref="M:System.Net.FtpWebRequest.GetResponse" /> method, <see cref="P:System.Net.FtpWebResponse.StatusCode" /> contains an intermediate status code. When you call the <see cref="M:System.Net.FtpWebResponse.Close" /> method, <see cref="P:System.Net.FtpWebResponse.StatusCode" /> contains the final status.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the most recent status code sent from the FTP server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StatusDescription">
       <MemberSignature Language="C#" Value="public string StatusDescription { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StatusDescription" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text returned by the <see cref="P:System.Net.FtpWebResponse.StatusDescription" /> property includes the 3-digit <see cref="P:System.Net.FtpWebResponse.StatusCode" /> property value. When downloading data, the value of <see cref="P:System.Net.FtpWebResponse.StatusDescription" /> changes as status codes are returned by the FTP server. After you call the <see cref="M:System.Net.FtpWebRequest.GetResponse" /> method, <see cref="P:System.Net.FtpWebResponse.StatusDescription" /> contains an intermediate status code. When you call the <see cref="M:System.Net.FtpWebResponse.Close" /> method, <see cref="P:System.Net.FtpWebResponse.StatusDescription" /> contains the final status.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets text that describes a status code sent from the FTP server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WelcomeMessage">
       <MemberSignature Language="C#" Value="public string WelcomeMessage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string WelcomeMessage" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the connection is being reused (the <see cref="P:System.Net.FtpWebRequest.KeepAlive" /> property is set to true), the <see cref="P:System.Net.FtpWebResponse.WelcomeMessage" /> property returns the first welcome message received with the connection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message sent by the FTP server when authentication is complete.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

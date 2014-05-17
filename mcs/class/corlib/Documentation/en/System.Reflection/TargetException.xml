@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TargetException" FullName="System.Reflection.TargetException" FullNameSP="System_Reflection_TargetException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable TargetException extends System.ApplicationException" />
   <TypeSignature Language="C#" Value="public class TargetException : ApplicationException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit TargetException extends System.ApplicationException" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,137 +16,225 @@
     <BaseTypeName>System.ApplicationException</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Represents the error that occurs when an attempt is made to invoke a member
-      on an invalid target.
-      </para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">A <see cref="T:System.Reflection.TargetException" /> is
-   thrown when an attempt is made to invoke a non-static method using a
-<see langword="null" /> 
-object. This exception can also be thrown if the
-target does not implement the member.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A TargetException is thrown when an attempt is made to invoke a non-static method on a null object. This may occur because the caller does not have access to the member, or because the target does not define the member, and so on.</para>
+      <block subset="none" type="note">
+        <para>This exception is not included in the <see cref="http://go.microsoft.com/fwlink/?LinkID=247912">.NET for Windows Store apps</see> or the <format type="text/html"><a href="c31e1663-c164-4e65-b66d-d3aa8750a154">Portable Class Library</a></format>, but it is thrown by some members that are. To catch the exception in that case, write a catch statement for <see cref="T:System.Exception" /> instead.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the exception that is thrown when an attempt is made to invoke an invalid target.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public TargetException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Reflection.TargetException" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="!:System.Reflection.TargetException.Message" /> property of the new instance to a system-supplied message that describes the
-   error, such as "Instance method cannot be invoked on a null target."
-   This message takes into account the current system culture.</para>
-          <para>The <see cref="!:System.Reflection.TargetException.InnerException" /> property of the new instance is initialized to <see langword="null" />
-.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The InnerException property is set to null and the HRESULT error code is set to COR_E_TARGET.</para>
+          <para>TargetException inherits from the <see cref="T:System.Exception" />. This constructor sets the properties of the Exception object as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>null </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The empty string (""). </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.TargetException" /> class with an empty message and the root cause of the exception.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
       <MemberSignature Language="C#" Value="public TargetException (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Reflection.TargetException" />
-class.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="!:System.Reflection.TargetException.Message" /> property of the new instance using <paramref name="message" />. If <paramref name="message" /> is 
-<see langword="null" />, the <see cref="!:System.Reflection.TargetException.Message" /> property is initialized to 
-   the system-supplied message provided by the constructor that takes no
-   arguments. </para>
-          <para> The <see cref="!:System.Reflection.TargetException.InnerException" /> property is initialized to <see langword="null" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>TargetException inherits from the <see cref="T:System.Exception" />. This constructor sets the properties of the Exception object as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>null </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.TargetException" /> class with the given message and the root cause exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A String describing the reason why the exception occurred. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected TargetException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected TargetException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.TargetException" /> class with the specified serialization and context information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data for serializing or deserializing the object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of and destination for the object. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public TargetException (string message, Exception inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception inner) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
-      <MemberSignature Language="C#" Value="public TargetException (string message, Exception inner);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current Exception. If <paramref name="inner" /> is non-null, then the current Exception was raised in a catch block handling <paramref name="inner" /> .</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Reflection.TargetException" />
-class.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="!:System.Reflection.TargetException.Message" /> property of the new instance using <paramref name="message" />, and
-   the <see cref="!:System.Reflection.TargetException.InnerException" /> property using <paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />,
-   the <see cref="!:System.Reflection.TargetException.Message" /> property is initialized to the
-   system-supplied message provided by the constructor that takes no
-   arguments. </para>
-          <para>
-            <block subset="none" type="note"> For information on inner exceptions,
-   see <see cref="P:System.Exception.InnerException" />.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Reflection.TargetException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The inner exception reference. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.TargetException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="inner" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

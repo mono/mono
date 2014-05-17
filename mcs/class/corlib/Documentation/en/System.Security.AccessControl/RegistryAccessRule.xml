@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegistryAccessRule" FullName="System.Security.AccessControl.RegistryAccessRule">
   <TypeSignature Language="C#" Value="public sealed class RegistryAccessRule : System.Security.AccessControl.AccessRule" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RegistryAccessRule extends System.Security.AccessControl.AccessRule" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,56 +12,104 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> class is one of a set of classes that the .NET Framework provides for managing Windows access control security on registry keys. For an overview of these classes, and their relationship to the underlying Windows access control structures, see <see cref="T:System.Security.AccessControl.RegistrySecurity" />.</para>
+      <block subset="none" type="note">
+        <para>Windows access control security can only be applied to registry keys. It cannot be applied to individual key/value pairs stored in a key. </para>
+      </block>
+      <para>To get a list of the rules currently applied to a registry key, use the <see cref="M:Microsoft.Win32.RegistryKey.GetAccessControl" /> method to get a <see cref="T:System.Security.AccessControl.RegistrySecurity" /> object, and then use its <see cref="M:System.Security.AccessControl.CommonObjectSecurity.GetAccessRules(System.Boolean,System.Boolean,System.Type)" /> method to obtain a collection of <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> objects.</para>
+      <para>
+        <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> objects do not map one-to-one with access control entries in the underlying discretionary control access list (DACL). When you get the set of all access rules for a registry key, the set contains the minimum number of rules currently required to express all the access control entries. </para>
+      <block subset="none" type="note">
+        <para>The underlying access control entries change as you apply and remove rules. The information in rules is merged if possible, to maintain the smallest number of access control entries. Thus, when you read the current list of rules, it might not look exactly like the list of all the rules you have added.</para>
+      </block>
+      <para>Use <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> objects to specify access rights to allow or deny to a user or group. A <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> object always represents either allowed access or denied access, never both.</para>
+      <para>To apply a rule to a registry key, use the <see cref="M:Microsoft.Win32.RegistryKey.GetAccessControl" /> method to get the <see cref="T:System.Security.AccessControl.RegistrySecurity" /> object. Modify the <see cref="T:System.Security.AccessControl.RegistrySecurity" /> object by using its methods to add the rule, and then use the <see cref="M:Microsoft.Win32.RegistryKey.SetAccessControl(System.Security.AccessControl.RegistrySecurity)" /> method to reattach the security object.</para>
+      <block subset="none" type="note">
+        <para>Changes you make to a <see cref="T:System.Security.AccessControl.RegistrySecurity" /> object do not affect the access levels of the registry key until you call the <see cref="M:Microsoft.Win32.RegistryKey.SetAccessControl(System.Security.AccessControl.RegistrySecurity)" /> method to assign the altered security object to the registry key.</para>
+      </block>
+      <para>
+        <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> objects are immutable. Security for a registry key is modified using the methods of the <see cref="T:System.Security.AccessControl.RegistrySecurity" /> class to add or remove rules; as you do this, the underlying access control entries are modified. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public RegistryAccessRule (System.Security.Principal.IdentityReference identity, System.Security.AccessControl.RegistryRights registryRights, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.IdentityReference identity, valuetype System.Security.AccessControl.RegistryRights registryRights, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
         <Parameter Name="registryRights" Type="System.Security.AccessControl.RegistryRights" />
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <param name="registryRights">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor specifies default propagation and inheritance. That is, <see cref="F:System.Security.AccessControl.InheritanceFlags.None" /> and <see cref="F:System.Security.AccessControl.PropagationFlags.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> class, specifying the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+        <param name="registryRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.RegistryRights" /> values indicating the rights allowed or denied.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values indicating whether the rights are allowed or denied.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public RegistryAccessRule (string identity, System.Security.AccessControl.RegistryRights registryRights, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string identity, valuetype System.Security.AccessControl.RegistryRights registryRights, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="identity" Type="System.String" />
         <Parameter Name="registryRights" Type="System.Security.AccessControl.RegistryRights" />
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <param name="registryRights">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor specifies default propagation and inheritance. That is, <see cref="F:System.Security.AccessControl.InheritanceFlags.None" /> and <see cref="F:System.Security.AccessControl.PropagationFlags.None" />.</para>
+          <para>This constructor is equivalent to creating an <see cref="T:System.Security.Principal.NTAccount" /> object, by passing <paramref name="identity" /> to the <see cref="M:System.Security.Principal.NTAccount.#ctor(System.String)" /> constructor, and passing the newly created <see cref="T:System.Security.Principal.NTAccount" /> object to the <see cref="M:System.Security.AccessControl.RegistryAccessRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.RegistryRights,System.Security.AccessControl.AccessControlType)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> class, specifying the name of the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user or group the rule applies to.</param>
+        <param name="registryRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.RegistryRights" /> values indicating the rights allowed or denied.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values indicating whether the rights are allowed or denied.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RegistryAccessRule (System.Security.Principal.IdentityReference identity, System.Security.AccessControl.RegistryRights registryRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.IdentityReference identity, valuetype System.Security.AccessControl.RegistryRights registryRights, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public RegistryAccessRule (System.Security.Principal.IdentityReference identity, System.Security.AccessControl.RegistryRights registryRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
         <Parameter Name="registryRights" Type="System.Security.AccessControl.RegistryRights" />
@@ -68,23 +118,121 @@
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <param name="registryRights">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All registry keys are containers, so the only inheritance flag that is meaningful for registry keys is the <see cref="F:System.Security.AccessControl.InheritanceFlags.ContainerInherit" /> flag. If this flag is not specified, the propagation flags are ignored, and only the immediate key is affected. If the flag is present, the rule is propagated as shown in the following table. The table assumes there is a subkey S with child subkey CS and grandchild subkey GS. That is, the path for the grandchild subkey is S\CS\GS.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Propagation flags</para>
+                </term>
+                <description>
+                  <para>S</para>
+                </description>
+                <description>
+                  <para>CS</para>
+                </description>
+                <description>
+                  <para>GS</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.None" />
+                </para>
+              </term>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.NoPropagateInherit" />
+                </para>
+              </term>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" />
+                </para>
+              </term>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.NoPropagateInherit" />, <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" /></para>
+              </term>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+            </item>
+          </list>
+          <para>The pattern for the grandchild subkey governs all subkeys contained by the grandchild subkey. </para>
+          <para>For example, if the <see cref="F:System.Security.AccessControl.InheritanceFlags.ContainerInherit" /> flag is specified for <paramref name="inheritanceFlags" /> and the <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" /> propagation flag is specified for <paramref name="propagationFlags" />, this rule does not apply to the immediate subkey, but does apply to all its immediate child subkeys and to all subkeys they contain. </para>
+          <block subset="none" type="note">
+            <para>Although you can specify the <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag for <paramref name="inheritanceFlags" />, there is no point in doing so. For the purposes of access control, the name/value pairs in a subkey are not separate objects. The access rights to name/value pairs are controlled by the rights of the subkey. Furthermore, since all subkeys are containers (that is, they can contain other subkeys), they are not affected by the <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag. Finally, specifying the <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag needlessly complicates the maintenance of rules, because it interferes with the combination of otherwise compatible rules.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> class, specifying the user or group the rule applies to, the access rights, the inheritance flags, the propagation flags, and whether the specified access rights are allowed or denied.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+        <param name="registryRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.RegistryRights" /> values specifying the rights allowed or denied.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.InheritanceFlags" /> flags specifying how access rights are inherited from other objects.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.PropagationFlags" /> flags specifying how access rights are propagated to other objects.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RegistryAccessRule (string identity, System.Security.AccessControl.RegistryRights registryRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string identity, valuetype System.Security.AccessControl.RegistryRights registryRights, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public RegistryAccessRule (string identity, System.Security.AccessControl.RegistryRights registryRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="identity" Type="System.String" />
         <Parameter Name="registryRights" Type="System.Security.AccessControl.RegistryRights" />
@@ -93,36 +241,138 @@
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <param name="registryRights">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All registry keys are containers, so the only inheritance flag that is meaningful for registry keys is the <see cref="F:System.Security.AccessControl.InheritanceFlags.ContainerInherit" /> flag. If this flag is not specified, the propagation flags are ignored, and only the immediate key is affected. If the flag is present, the rule is propagated as shown in the following table. The table assumes there is a subkey S with child subkey CS and grandchild subkey GS. That is, the path for the grandchild subkey is S\CS\GS.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Propagation flags</para>
+                </term>
+                <description>
+                  <para>S</para>
+                </description>
+                <description>
+                  <para>CS</para>
+                </description>
+                <description>
+                  <para>GS</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.None" />
+                </para>
+              </term>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.NoPropagateInherit" />
+                </para>
+              </term>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" />
+                </para>
+              </term>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.AccessControl.PropagationFlags.NoPropagateInherit" />, <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" /></para>
+              </term>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para>X</para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+            </item>
+          </list>
+          <para>The pattern for the grandchild subkey governs all subkeys contained by the grandchild subkey. </para>
+          <para>For example, if the <see cref="F:System.Security.AccessControl.InheritanceFlags.ContainerInherit" /> flag is specified for <paramref name="inheritanceFlags" /> and the <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" /> propagation flag is specified for <paramref name="propagationFlags" />, this rule does not apply to the immediate subkey, but does apply to all its immediate child subkeys and to all subkeys they contain. </para>
+          <block subset="none" type="note">
+            <para>Although you can specify the <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag for <paramref name="inheritanceFlags" />, there is no point in doing so. For the purposes of access control, the name/value pairs in a subkey are not separate objects. The access rights to name/value pairs are controlled by the rights of the subkey. Furthermore, since all subkeys are containers (that is, they can contain other subkeys), they are not affected by the <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag. Finally, specifying the <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag needlessly complicates the maintenance of rules, because it interferes with the combination of otherwise compatible rules.</para>
+          </block>
+          <para>This constructor is equivalent to creating an <see cref="T:System.Security.Principal.NTAccount" /> object, by passing <paramref name="identity" /> to the <see cref="M:System.Security.Principal.NTAccount.#ctor(System.String)" /> constructor, and passing the newly created <see cref="T:System.Security.Principal.NTAccount" /> object to the <see cref="M:System.Security.AccessControl.RegistryAccessRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.RegistryRights,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AccessControlType)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> class, specifying the name of the user or group the rule applies to, the access rights, the inheritance flags, the propagation flags, and whether the specified access rights are allowed or denied.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user or group the rule applies to.</param>
+        <param name="registryRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.RegistryRights" /> values indicating the rights allowed or denied.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.InheritanceFlags" /> flags specifying how access rights are inherited from other objects.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.PropagationFlags" /> flags specifying how access rights are propagated to other objects.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
       </Docs>
+    </Member>
+    <Member MemberName="RegistryRights">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.RegistryRights RegistryRights { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.AccessControl.RegistryRights RegistryRights" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegistryRights">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.RegistryRights RegistryRights { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.RegistryRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> objects are immutable. You can create a new access rule representing a different user, different rights, or a different <see cref="T:System.Security.AccessControl.AccessControlType" />, but you cannot modify an existing access rule.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the rights allowed or denied by the access rule.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

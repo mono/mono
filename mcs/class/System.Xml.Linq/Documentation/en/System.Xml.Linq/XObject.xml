@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XObject" FullName="System.Xml.Linq.XObject">
+  <TypeSignature Language="C#" Value="public abstract class XObject : System.Xml.IXmlLineInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XObject extends System.Object implements class System.Xml.IXmlLineInfo" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Xml.IXmlLineInfo</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is the abstract common base class for <see cref="T:System.Xml.Linq.XNode" /> and <see cref="T:System.Xml.Linq.XAttribute" />. It provides some basic functionality that is common to both classes, such as annotations, and raising events when nodes have changed.</para>
+      <para>Note that annotations are not part of the XML infoset; they are not serialized or deserialized.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a node or an attribute in an XML tree. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AddAnnotation">
+      <MemberSignature Language="C#" Value="public void AddAnnotation (object annotation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAnnotation(object annotation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="annotation" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that annotations are not part of the infoset; they are not persisted, or displayed by <see cref="Overload:System.Xml.Linq.XNode.ToString" />. Also, if you import an XML Namespace into your VB project and call AddAnnotation with the SaveOptions.OmitDuplicateNamespaces enumeration value, then only one element will contain the XML Namespace attribute instead of every element. For more information, see <see cref="http://blogs.msdn.com/b/vbteam/archive/2010/06/09/removing-duplicate-namespaces-in-xml-literals-shyam-namboodiripad.aspx">Removing duplicate namespaces in XML Literals</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an object to the annotation list of this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+        <param name="annotation">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains the annotation to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Annotation">
+      <MemberSignature Language="C#" Value="public object Annotation (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object Annotation(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first annotation object of the specified type from this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the first annotation object that matches the specified type, or null if no annotation is of the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the annotation to retrieve.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Annotation&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T Annotation&lt;T&gt; () where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T Annotation&lt;class T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get the first annotation object of the specified type from this <see cref="T:System.Xml.Linq.XObject" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first annotation object that matches the specified type, or null if no annotation is of the specified type.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the annotation to retrieve.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Annotations">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;object&gt; Annotations (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;object&gt; Annotations(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of annotations of the specified type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Object" /> that contains the annotations that match the specified type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the annotations to retrieve.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Annotations&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;T&gt; Annotations&lt;T&gt; () where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; Annotations&lt;class T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of annotations of the specified type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that contains the annotations for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the annotations to retrieve.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BaseUri">
+      <MemberSignature Language="C#" Value="public string BaseUri { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BaseUri" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using LINQ to XML, you can deserialize XML in a number of fashions. You can parse it from a string, load it from a file, or read it from a <see cref="T:System.IO.TextReader" /> or an <see cref="T:System.Xml.XmlReader" />. In all of these cases, LINQ to XML uses one or another of the concrete subclasses of <see cref="T:System.Xml.XmlReader" />.</para>
+          <para>Sometimes the <see cref="T:System.Xml.XmlReader" /> has the base URI, and sometimes it does not. For instance, when loading from a file, the <see cref="T:System.Xml.XmlReader" /> knows the base URI, but when reading from an <see cref="T:System.Xml.XmlReader" /> that was created because of calling the <see cref="Overload:System.Xml.Linq.XElement.Parse" /> method, there is no possibility of the <see cref="T:System.Xml.XmlReader" /> reporting a base URI; the XML was in a string.</para>
+          <para>If, when parsing or loading the XML, you specify <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" />, LINQ to XML will request the base URI for each node as the <see cref="T:System.Xml.XmlReader" /> returns the node. If the reader has the base URI, LINQ to XML will save the information with the LINQ to XML node. This property returns that information. If the underlying <see cref="T:System.Xml.XmlReader" /> does not have the base URI, then this property will return an empty string.</para>
+          <para>Setting <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" /> when loading an XML tree will result in slower parsing.</para>
+          <para>When setting the base URI for an XML tree, LINQ to XML puts an annotation on the root of the tree. This property is a computed property, and navigates up the tree to find the base URI. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base URI for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Changed">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.Xml.Linq.XObjectChangeEventArgs&gt; Changed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Xml.Linq.XObjectChangeEventArgs&gt; Changed" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.Xml.Linq.XObjectChangeEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Events are raised only when an XML tree is modified, not when it is constructed. This is because you have to add an event handler to an event before you can receive events, and you cannot add an event handler before you have a reference to an <see cref="T:System.Xml.Linq.XObject" />. You cannot get a reference to an <see cref="T:System.Xml.Linq.XObject" /> before the XML tree is constructed. This means that during functional construction of an XML tree, you will not receive events.</para>
+          <para>You should be careful when modifying an XML tree within one of these events, because doing this might lead to unexpected results. For example, if you receive a <see cref="E:System.Xml.Linq.XObject.Changing" /> event, and while the event is being processed you remove the node from the tree, you might not receive the <see cref="E:System.Xml.Linq.XObject.Changed" /> event. When an event is being processed, it is valid to modify an XML tree other than the one that contains the node that is receiving the event; it is even valid to modify the same tree provided the modifications do not affect the specific nodes on which the event was raised. However, if you modify the area of the tree that contains the node receiving the event, the events that you receive and the impact to the tree are undefined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raised when this <see cref="T:System.Xml.Linq.XObject" /> or any of its descendants have changed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Changing">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.Xml.Linq.XObjectChangeEventArgs&gt; Changing;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Xml.Linq.XObjectChangeEventArgs&gt; Changing" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.Xml.Linq.XObjectChangeEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Events are raised only from modification of an XML tree, not from construction of an XML tree. You have to add an event handler to an event before you can receive events, and you can't add an event handler before you have a reference to an <see cref="T:System.Xml.Linq.XObject" />. You can't get a reference to an <see cref="T:System.Xml.Linq.XObject" /> before the XML tree is constructed. This means that during functional construction of an XML tree, you will not receive events.</para>
+          <para>You should be careful when modifying an XML tree within one of these events, because doing this might lead to unexpected results. For example, if you receive a <see cref="E:System.Xml.Linq.XObject.Changing" /> event, and while the event is being processed you remove the node from the tree, you might not receive the <see cref="E:System.Xml.Linq.XObject.Changed" /> event. When an event is being processed, it is valid to modify an XML tree other than the one that contains the node that is receiving the event; it is even valid to modify the same tree provided the modifications do not affect the specific nodes on which the event was raised. However, if you modify the area of the tree that contains the node receiving the event, the events that you receive and the impact to the tree are undefined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raised when this <see cref="T:System.Xml.Linq.XObject" /> or any of its descendants are about to change.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Document">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XDocument Document { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XDocument Document" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Linq.XDocument" /> for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NodeType">
+      <MemberSignature Language="C#" Value="public abstract System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlNodeType NodeType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because all classes that derive from <see cref="T:System.Xml.Linq.XObject" /> contain a <see cref="P:System.Xml.Linq.XObject.NodeType" /> property, you can write code that operates on collections of concrete subclass of <see cref="T:System.Xml.Linq.XObject" />. Your code can then test for the node type of each node in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Parent">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XElement Parent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XElement Parent" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XElement</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this <see cref="T:System.Xml.Linq.XObject" /> has no parent element, this property returns null.</para>
+          <block subset="none" type="note">
+            <para>This property returns the parent element, and as children nodes of an <see cref="T:System.Xml.Linq.XDocument" /> have no parent element, this property returns null for them.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent <see cref="T:System.Xml.Linq.XElement" /> of this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAnnotations">
+      <MemberSignature Language="C#" Value="public void RemoveAnnotations (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAnnotations(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the annotations of the specified type from this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of annotations to remove.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAnnotations&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public void RemoveAnnotations&lt;T&gt; () where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAnnotations&lt;class T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the annotations of the specified type from this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of annotations to remove.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Xml.IXmlLineInfo.HasLineInfo">
+      <MemberSignature Language="C#" Value="bool IXmlLineInfo.HasLineInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Xml.IXmlLineInfo.HasLineInfo() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can call this method to determine whether the <see cref="T:System.Xml.Linq.XObject" /> contains valid line information.</para>
+          <para>This method is an explicit interface member implementation of a method in the <see cref="T:System.Xml.IXmlLineInfo" /> interface, so in order to call this method, it is necessary to cast to <see cref="T:System.Xml.IXmlLineInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether or not this <see cref="T:System.Xml.Linq.XObject" /> has line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.Linq.XObject" /> has line information, otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Xml.IXmlLineInfo.LineNumber">
+      <MemberSignature Language="C#" Value="int System.Xml.IXmlLineInfo.LineNumber { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 System.Xml.IXmlLineInfo.LineNumber" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation of a method in the <see cref="T:System.Xml.IXmlLineInfo" /> interface, so in order to call this method, it is necessary to cast to <see cref="T:System.Xml.IXmlLineInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line number that the underlying <see cref="T:System.Xml.XmlReader" /> reported for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Xml.IXmlLineInfo.LinePosition">
+      <MemberSignature Language="C#" Value="int System.Xml.IXmlLineInfo.LinePosition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 System.Xml.IXmlLineInfo.LinePosition" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an explicit interface member implementation of a method in the <see cref="T:System.Xml.IXmlLineInfo" /> interface, so in order to call this method, it is necessary to cast to <see cref="T:System.Xml.IXmlLineInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line position that the underlying <see cref="T:System.Xml.XmlReader" /> reported for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

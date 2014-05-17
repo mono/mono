@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="HttpClientHandler" FullName="System.Net.Http.HttpClientHandler">
+  <TypeSignature Language="C#" Value="public class HttpClientHandler : System.Net.Http.HttpMessageHandler" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpClientHandler extends System.Net.Http.HttpMessageHandler" />
+  <AssemblyInfo>
+    <AssemblyName>System.Net.Http</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Net.Http.HttpMessageHandler</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Http.HttpClientHandler" /> class and classes derived from it enable developers to configure a variety of options ranging from proxies to authentication.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The default message handler used by <see cref="T:System.Net.Http.HttpClient" />.  </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public HttpClientHandler ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a <see cref="T:System.Net.Http.HttpClientHandler" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AllowAutoRedirect">
+      <MemberSignature Language="C#" Value="public bool AllowAutoRedirect { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowAutoRedirect" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> to true if you want the handler to automatically follow HTTP redirection headers to the new location of the resource. The maximum number of redirections to follow is set by the <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" /> property.</para>
+          <para>If <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> is set to false, all HTTP responses with an HTTP status code from 300 to 399 are  returned to the application.</para>
+          <para>The Authorization header is cleared on auto-redirects and the handler automatically tries to re-authenticate to the redirected location. In practice, this means that an application can't put custom authentication information into the Authorization header if it is possible to encounter redirection. Instead, the application must implement and register a custom authentication module.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the handler should follow redirection responses.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AutomaticDecompression">
+      <MemberSignature Language="C#" Value="public System.Net.DecompressionMethods AutomaticDecompression { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.DecompressionMethods AutomaticDecompression" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.DecompressionMethods</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of decompression method used by the handler for automatic decompression of the HTTP content response.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCertificateOptions">
+      <MemberSignature Language="C#" Value="public System.Net.Http.ClientCertificateOption ClientCertificateOptions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Http.ClientCertificateOption ClientCertificateOptions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Http.ClientCertificateOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the collection of security certificates that are associated with this handler.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CookieContainer">
+      <MemberSignature Language="C#" Value="public System.Net.CookieContainer CookieContainer { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.CookieContainer CookieContainer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.CookieContainer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> property provides an instance of the <see cref="T:System.Net.CookieContainer" />  class that contains the cookies associated with this handler.</para>
+          <para>If the <see cref="P:System.Net.Http.HttpClientHandler.UseCookies" /> property is true, the <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> property represents the cookie container used to store the server cookies. The user can set custom cookies before sending requests using this property. If the  <see cref="P:System.Net.Http.HttpClientHandler.UseCookies" /> property is false and the user adds cookies to <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" />, cookies are ignored and not sent to the server. Setting the <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> to null will throw an exception. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cookie container used to store server cookies by the handler.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Credentials">
+      <MemberSignature Language="C#" Value="public System.Net.ICredentials Credentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentials Credentials" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.ICredentials</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets authentication information used by this handler.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Net.Http.HttpClientHandler" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Net.Http.HttpClientHandler" /> and optionally disposes of the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to releases only unmanaged resources.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxAutomaticRedirections">
+      <MemberSignature Language="C#" Value="public int MaxAutomaticRedirections { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxAutomaticRedirections" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" /> property sets the maximum number of redirections for the request to follow if the <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of redirects that the handler follows.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxRequestContentBufferSize">
+      <MemberSignature Language="C#" Value="public long MaxRequestContentBufferSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 MaxRequestContentBufferSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An app can set the <see cref="P:System.Net.Http.HttpClientHandler.MaxRequestContentBufferSize" /> property to a lower value to limit the size of the request buffer. If the size of the request content is greater than the <see cref="P:System.Net.Http.HttpClientHandler.MaxRequestContentBufferSize" /> property, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum request content buffer size used by the handler.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PreAuthenticate">
+      <MemberSignature Language="C#" Value="public bool PreAuthenticate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PreAuthenticate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After a client request to a specific <see cref="T:System.Uri" /> is successfully authenticated, if the <see cref="P:System.Net.Http.HttpClientHandler.PreAuthenticate" /> property is true and credentials are supplied, <see cref="T:System.Net.Http.HttpClientHandler" /> matches against the credential list supplied in the  <see cref="P:System.Net.Http.HttpClientHandler.Credentials" /> property. The Authorization header is sent with each request to any <see cref="T:System.Uri" /> that matches the specific <see cref="T:System.Uri" /> up to the last forward slash. </para>
+          <para>If the client request to a specific <see cref="T:System.Uri" /> is not successfully authenticated, the request uses standard authentication procedures. </para>
+          <para>With the exception of the first request, the <see cref="P:System.Net.Http.HttpClientHandler.PreAuthenticate" /> property indicates whether to send authentication information with subsequent requests to a <see cref="T:System.Uri" /> that matches the specific <see cref="T:System.Uri" /> up to the last forward slash without waiting to be challenged by the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the handler sends an Authorization header with the request.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Proxy">
+      <MemberSignature Language="C#" Value="public System.Net.IWebProxy Proxy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.IWebProxy Proxy" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.IWebProxy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Http.HttpClientHandler.Proxy" />  property identifies the <see cref="T:System.Net.WebProxy" /> object to use to process requests to Internet resources. To specify that no proxy should be used, set the <see cref="P:System.Net.Http.HttpClientHandler.Proxy" /> property to the proxy instance returned by the <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" /> method.</para>
+          <para>The local computer or application config file may specify that a default proxy be used. If the <see cref="P:System.Net.Http.HttpClientHandler.Proxy" /> property is specified, then the proxy settings from the <see cref="P:System.Net.Http.HttpClientHandler.Proxy" /> property override the local computer or application config file and the handler will use the proxy settings specified. If no proxy is specified in a config file and the <see cref="P:System.Net.Http.HttpClientHandler.Proxy" /> property is unspecified, the handler uses the proxy settings inherited from Internet Explorer on the local computer. If there are no proxy settings in Internet Explorer, the request is sent directly to the server.</para>
+          <para>The <see cref="T:System.Net.Http.HttpClientHandler" /> class parses a proxy bypass list with wildcard characters inherited from Internet Explorer the same as the bypass list is parsed directly by Internet Explorer. For example, the <see cref="T:System.Net.Http.HttpClientHandler" /> class will parse a bypass list of "nt*" from Internet Explorer as a regular expression of "nt.*". So a URL of " http://nt.com" would bypass the proxy using the <see cref="T:System.Net.Http.HttpClientHandler" />  class and using Internet Explorer.</para>
+          <para>The <see cref="T:System.Net.Http.HttpClientHandler" /> class supports local proxy bypass. The class considers a destination to be local if any of the following conditions are met:</para>
+          <list type="ordered">
+            <item>
+              <para>The destination contains a flat name (no dots in the URL).</para>
+            </item>
+            <item>
+              <para>The destination contains a loopback address (<see cref="F:System.Net.IPAddress.Loopback" /> or <see cref="F:System.Net.IPAddress.IPv6Loopback" />) or the destination contains an <see cref="T:System.Net.IPAddress" /> assigned to the local computer.</para>
+            </item>
+            <item>
+              <para>The domain suffix of the destination matches the local computer's domain suffix (<see cref="P:System.Net.NetworkInformation.IPGlobalProperties.DomainName" />).</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets proxy information used by the handler.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SendAsync">
+      <MemberSignature Language="C#" Value="protected override System.Threading.Tasks.Task&lt;System.Net.Http.HttpResponseMessage&gt; SendAsync (System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.Threading.Tasks.Task`1&lt;class System.Net.Http.HttpResponseMessage&gt; SendAsync(class System.Net.Http.HttpRequestMessage request, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.AsyncStateMachine(typeof(System.Net.Http.HttpClientHandler/&lt;SendAsync&gt;c__async0))</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.Http.HttpResponseMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.Http.HttpRequestMessage" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation is does not block. It returns an instance of <see cref="T:System.Threading.Tasks.Task`1" /> to represent the asynchronous operation. When the operation completes, <see cref="P:System.Threading.Tasks.Task`1.Result" /> contains the response message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of  <see cref="T:System.Net.Http.HttpResponseMessage" /> based on the information provided in the <see cref="T:System.Net.Http.HttpRequestMessage" /> as an operation that will not block.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="request">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request message.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A cancellation token to cancel the operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsAutomaticDecompression">
+      <MemberSignature Language="C#" Value="public virtual bool SupportsAutomaticDecompression { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsAutomaticDecompression" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the handler supports automatic response content decompression.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsProxy">
+      <MemberSignature Language="C#" Value="public virtual bool SupportsProxy { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsProxy" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the handler supports proxy settings.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsRedirectConfiguration">
+      <MemberSignature Language="C#" Value="public virtual bool SupportsRedirectConfiguration { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsRedirectConfiguration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the handler supports configuration settings for the <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> and <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" /> properties.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseCookies">
+      <MemberSignature Language="C#" Value="public bool UseCookies { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseCookies" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the handler uses the  <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> property  to store server cookies and uses these cookies when sending requests.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseDefaultCredentials">
+      <MemberSignature Language="C#" Value="public bool UseDefaultCredentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseDefaultCredentials" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to true when requests made by the <see cref="T:System.Net.Http.HttpClientHandler" /> object should, if requested by the server, be authenticated using the credentials of the currently logged on user. For client applications, this is the desired behavior in most scenarios. For middle-tier applications, such as ASP.NET applications, instead of using this property, you would typically set the <see cref="P:System.Net.Http.HttpClientHandler.Credentials" /> property to the credentials of the client on whose behalf the request is made.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that controls whether default credentials are sent with requests by the handler.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseProxy">
+      <MemberSignature Language="C#" Value="public bool UseProxy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseProxy" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the handler uses a proxy for requests. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

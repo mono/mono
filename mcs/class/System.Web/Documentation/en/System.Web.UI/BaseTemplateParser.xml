@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BaseTemplateParser" FullName="System.Web.UI.BaseTemplateParser">
   <TypeSignature Language="C#" Value="public abstract class BaseTemplateParser : System.Web.UI.TemplateParser" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.BaseTemplateParser" /> class provides parser functionality for the <see cref="T:System.Web.UI.TemplateControl" /> and <see cref="T:System.Web.UI.PageTheme" /> classes. Because the <see cref="T:System.Web.UI.BaseTemplateParser" /> class is abstract, an instance of this class is not created directly. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements ASP.NET template parsing for template files.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.BaseTemplateParser" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +67,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a <see cref="T:System.Web.UI.PageParserFilter" /> object is defined and its <see cref="M:System.Web.UI.PageParserFilter.AllowVirtualReference(System.String,System.Web.UI.VirtualReferenceType)" /> property is false, the <see cref="M:System.Web.UI.BaseTemplateParser.GetUserControlType(System.String)" /> method raises an <see cref="T:System.Web.HttpException" /> exception.</para>
+          <para>Additionally, if the <see cref="T:System.Web.UI.UserControl" /> object that is referenced by the virtual path is marked as a no-compile control, an <see cref="T:System.Web.HttpException" /> exception will be thrown. To force a <see cref="T:System.Web.UI.UserControl" /> to be compiled, set the compilation mode attribute in its <format type="text/html"><a href="5fd824c2-7d70-4f8a-ab47-0c7e0e43578b">@ Control</a></format> directive to the <see cref="F:System.Web.UI.CompilationMode.Always" /> field. To set the compilation mode for pages and controls across an application, set the compilationMode attribute of the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages Element (ASP.NET Settings Schema)</a></format> in the Web.config file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles and returns the type of the <see cref="T:System.Web.UI.UserControl" /> object that is specified by the virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the user control. </para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path of the <see cref="T:System.Web.UI.UserControl" />. </param>
       </Docs>
     </Member>
   </Members>

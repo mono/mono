@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Runtime.InteropServices.WindowsRuntime">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.InteropServices.WindowsRuntime" /> namespace contains classes that support interoperation between managed code and the wrt, and that enable the creation of wrt types with managed code. </para>
+    </summary>
+  </Docs>
+</Namespace>

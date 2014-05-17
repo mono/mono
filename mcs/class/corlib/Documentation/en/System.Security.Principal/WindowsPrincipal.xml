@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WindowsPrincipal" FullName="System.Security.Principal.WindowsPrincipal">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class WindowsPrincipal : System.Security.Principal.IPrincipal" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit WindowsPrincipal extends System.Object implements class System.Security.Principal.IPrincipal" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,118 +18,75 @@
       <InterfaceName>System.Security.Principal.IPrincipal</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>This class represents the group membership of an operating system user.</summary>
     <remarks>
-      <para>The WindowsPrincipal class can also be used on POSIX compliant operating system.</para>
-      <example>
-        <code lang="C#">
-using System;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
-
-class WinPrincipal {
-
-     [DllImport ("advapi32.dll", CallingConvention=CallingConvention.StdCall)]
-     public static extern bool LogonUser (string lpszUsername, 
-          string lpszDomain, string lpszPassword, int dwLogonType,
-          int dwLogonProvider, ref IntPtr phToken);
-
-     static void Principal (WindowsIdentity user) 
-     {
-          WindowsPrincipal wp = new WindowsPrincipal (user);
-          while (true) {
-               Console.Write ("Enter group name: ");
-               string group = Console.ReadLine ();
-               if (group == String.Empty)
-                    break;
-
-               Console.WriteLine ("\t{0} is {1}a member of {2}{3}", 
-                    user.Name,
-                    (wp.IsInRole (group) ? String.Empty : "NOT "),
-                    group,
-                    Environment.NewLine);
-          }
-     }
-
-     [STAThread]
-     static void Main (string[] args)
-     {
-          bool posix = ((int) Environment.OSVersion.Platform == 128);
-          while (true) {
-               Console.Write ("Enter username:\t");
-               string username = Console.ReadLine ();
-               if (username == String.Empty)
-                    break;
-
-               WindowsIdentity user = null;
-               // check for Posix versus Windows
-               if (posix) {
-                    user = new WindowsIdentity (username);
-               }
-               else {
-                    Console.Write ("Enter domain:\t");
-                    string domain = Console.ReadLine ();
-                    Console.Write ("Enter password:\t");
-                    string password = Console.ReadLine ();
-
-                    IntPtr token = IntPtr.Zero;
-                    // note: we should close that handle
-                    LogonUser (username, domain, password, 2, 0, ref token);
-                    if (token == IntPtr.Zero) {
-                         Console.WriteLine ("Invalid username/domain/password");
-                         continue;
-                    }
-
-                    user = new WindowsIdentity (token);
-               }
-
-               Principal (user);
-          }
-     }
-}  </code>
-      </example>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Principal.WindowsPrincipal" /> class is primarily used to check the role of a Windows user. The <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method overloads let you check the user role by using different role contexts.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables code to check the Windows group membership of a Windows user.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public WindowsPrincipal (System.Security.Principal.WindowsIdentity ntIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.WindowsIdentity ntIdentity) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="ntIdentity" Type="System.Security.Principal.WindowsIdentity" />
       </Parameters>
       <Docs>
-        <param name="ntIdentity">The identity for which the principal will be created.</param>
-        <summary>Creates the corresponding principal of a WindowsIdentity instance.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Principal.WindowsPrincipal" /> class by using the specified <see cref="T:System.Security.Principal.WindowsIdentity" /> object.</para>
+        </summary>
+        <param name="ntIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object from which to construct the new instance of <see cref="T:System.Security.Principal.WindowsPrincipal" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Identity">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Principal.IIdentity Identity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Principal.IIdentity Identity" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Identity">
-      <MemberSignature Language="C#" Value="public virtual System.Security.Principal.IIdentity Identity { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Principal.IIdentity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The operating system identity associated with the current principal.</summary>
         <value>The current identity of the principal. </value>
         <remarks>The returned identity will always be a <see cref="T:System.Security.Principal.WindowsIdentity" /> instance.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identity of the current principal.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (int rid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(int32 rid) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsInRole">
-      <MemberSignature Language="C#" Value="public virtual bool IsInRole (int rid);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -135,35 +94,173 @@ class WinPrincipal {
         <Parameter Name="rid" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rid">An integer representing the group.</param>
-        <summary>Return the membership of the current principal in the specified role.</summary>
-        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
-        <remarks>The role id, is mapped like this:
-
-<list type="table"><listheader><term>Role ID</term><description>Description</description></listheader><item><term>544</term><description>BUILTIN\\Administrators</description></item><item><term>545</term><description>BUILTIN\\Users</description></item><item><term>546</term><description>BUILTIN\\Guests</description></item><item><term>547</term><description>BUILTIN\\Power Users</description></item><item><term>548</term><description>BUILTIN\\Account Operators</description></item><item><term>549</term><description>BUILTIN\\System Operators</description></item><item><term>550</term><description>BUILTIN\\Print Operators</description></item><item><term>551</term><description>BUILTIN\\Backup Operators</description></item><item><term>552</term><description>BUILTIN\\Replicator</description></item></list></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When testing for newly created role information, such as a new user or a new group, it is important to log out and log in to force the propagation of role information within the domain. Not doing so can cause the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> test to return false. This method is not supported on Windows 98 or Windows Millennium Edition.</para>
+          <para>For performance reasons, the <see cref="M:System.Security.Principal.WindowsPrincipal.IsInRole(System.Security.Principal.SecurityIdentifier)" /> overload is recommended as the preferable overload for determining the user's role.</para>
+          <block subset="none" type="note">
+            <para>In Windows Vista, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. When you attempt to perform a task that requires administrative privileges, you can dynamically elevate your role by using the Consent dialog box. The code that executes the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method does not display the Consent dialog box. The code returns false if you are in the standard user role, even if you are in the Built-in Administrators group. You can elevate your privileges before you execute the code by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+          <para>Relative identifiers (RIDs) are components of a Windows user group's security identifier (SID) and are supported to help prevent cross-platform localization issues. Many user accounts, local groups, and global groups have a default RID value that is constant across all versions of Windows. </para>
+          <para>For example, the RID for the BUILTIN\Administrators role is 0x220. Using 0x220 as the input parameter for the <see cref="M:System.Security.Principal.WindowsPrincipal.IsInRole(System.Security.Principal.SecurityIdentifier)" /> method results in true being returned if the current principal is an administrator. </para>
+          <para>The following tables list the default RID values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Built-in users</para>
+                </term>
+                <description>
+                  <para>RID</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>DOMAINNAME\Administrator</para>
+              </term>
+              <description>
+                <para>0x1F4</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DOMAINNAME\Guest</para>
+              </term>
+              <description>
+                <para>0x1F5</para>
+              </description>
+            </item>
+          </list>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Built-in global groups</para>
+                </term>
+                <description>
+                  <para>RID</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>DOMAINNAME\Domain Admins</para>
+              </term>
+              <description>
+                <para>0x200</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DOMAINNAME\Domain Users   </para>
+              </term>
+              <description>
+                <para>0x201</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DOMAINNAME\Domain Guests     </para>
+              </term>
+              <description>
+                <para>0x202</para>
+              </description>
+            </item>
+          </list>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Built-in local groups</para>
+                </term>
+                <description>
+                  <para>RID</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>BUILTIN\Administrators    </para>
+              </term>
+              <description>
+                <para>0x220</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Users         </para>
+              </term>
+              <description>
+                <para>0x221</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Guests      </para>
+              </term>
+              <description>
+                <para>0x222</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Account Operators  </para>
+              </term>
+              <description>
+                <para>0x224</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Server Operators   </para>
+              </term>
+              <description>
+                <para>0x225</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Print Operators    </para>
+              </term>
+              <description>
+                <para>0x226</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Backup Operators  </para>
+              </term>
+              <description>
+                <para>0x227</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Replicator        </para>
+              </term>
+              <description>
+                <para>0x228</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current principal belongs to the Windows user group with the specified relative identifier (RID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group, that is, in a particular role; otherwise, false.</para>
+        </returns>
+        <param name="rid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The RID of the Windows user group in which to check for the principal’s membership status. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsInRole">
       <MemberSignature Language="C#" Value="public virtual bool IsInRole (System.Security.Principal.SecurityIdentifier sid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(class System.Security.Principal.SecurityIdentifier sid) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
-      </Parameters>
-      <Docs>
-        <param name="sid">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -173,10 +270,43 @@ class WinPrincipal {
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Principal.SecurityIdentifier" /> uniquely identifies a user or group on Windows 2000, Windows Server, and Windows XP implementations. When testing for newly created role information, such as a new user or a new group, it is important to log out and log in to force the propagation of role information within the domain. Not doing so can cause the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> test to return false. This method is not supported on Windows 98 or Windows Millennium Edition.</para>
+          <block subset="none" type="note">
+            <para>In Windows Vista, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. When you attempt to perform a task that requires administrative privileges, you can dynamically elevate your role by using the Consent dialog box. The code that executes the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method does not display the Consent dialog box. The code returns false if you are in the standard user role, even if you are in the Built-in Administrators group. You can elevate your privileges before you execute the code by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+          <para>For performance reasons, this is the preferable overload to determine a user's role.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current principal belongs to the Windows user group with the specified security identifier (SID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group; otherwise, false.</para>
+        </returns>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Principal.SecurityIdentifier" />  that uniquely identifies a Windows user group.</param>
+      </Docs>
     </Member>
     <Member MemberName="IsInRole">
       <MemberSignature Language="C#" Value="public virtual bool IsInRole (System.Security.Principal.WindowsBuiltInRole role);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(valuetype System.Security.Principal.WindowsBuiltInRole role) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -184,20 +314,35 @@ class WinPrincipal {
         <Parameter Name="role" Type="System.Security.Principal.WindowsBuiltInRole" />
       </Parameters>
       <Docs>
-        <param name="role">A member of the <see cref="T:System.Security.Principal.WindowsBuiltInRole" /> enumeration.</param>
-        <summary>Return the membership of the current principal in the specified role.</summary>
-        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
-        <remarks>On POSIX compliant systems the <see cref="M:System.Security.Principal.WindowsBuiltInRole.Administrators" /> group is mapped to the "root" group. All other groups will return false.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When testing for newly created role information, such as a new user or a new group, it is important to log out and log in to force the propagation of role information within the domain. Not doing so can cause the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> test to return false. This method is not supported on Windows 98 or Windows Millennium Edition.</para>
+          <para>For performance reasons, the <see cref="M:System.Security.Principal.WindowsPrincipal.IsInRole(System.Security.Principal.SecurityIdentifier)" /> overload is recommended as the preferable overload for determining the user's role.</para>
+          <block subset="none" type="note">
+            <para>In Windows Vista, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. When you attempt to perform a task that requires administrative privileges, you can dynamically elevate your role by using the Consent dialog box. The code that executes the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method does not display the Consent dialog box. The code returns false if you are in the standard user role, even if you are in the Built-in Administrators group. You can elevate your privileges before you execute the code by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current principal belongs to the Windows user group with the specified <see cref="T:System.Security.Principal.WindowsBuiltInRole" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group; otherwise, false.</para>
+        </returns>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Principal.WindowsBuiltInRole" /> values. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (string role);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(string role) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsInRole">
-      <MemberSignature Language="C#" Value="public virtual bool IsInRole (string role);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -205,29 +350,83 @@ class WinPrincipal {
         <Parameter Name="role" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="role">The group name.</param>
-        <summary>Return the membership of the current principal in the specified role.</summary>
-        <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
-        <remarks>On Unix systems, the role is mapped to Unix groups.   For users to be considered to have a certain role, the role must be listed in the Unix groups (the /etc/group file) and it must contain a list of users that belong to that group.
-
-<para>
-For example, if you want to check that the user is in role "USAGNT\\UGR_RBP" the file /etc/group should contain a line like this:
-</para><example><code lang="/etc/group">
-USAGNT\UGR_RBP:x:300:miguel,don,jon,julia
-  </code></example><para>
-In this particular example, the users miguel, don, jon and julia belong to the "USAGNT\UGR_RBP" role.
-</para></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When testing for newly created role information, such as a new user or a new group, it is important to log out and log in to force the propagation of role information within the domain. Not doing so can cause the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> test to return false. This method is not supported on Windows 98 or Windows Millennium Edition.</para>
+          <para>For performance reasons, the <see cref="M:System.Security.Principal.WindowsPrincipal.IsInRole(System.Security.Principal.SecurityIdentifier)" /> overload is recommended as the preferable overload for determining the user's role.</para>
+          <block subset="none" type="note">
+            <para>In Windows Vista, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. When you attempt to perform a task that requires administrative privileges, you can dynamically elevate your role by using the Consent dialog box. The code that executes the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method does not display the Consent dialog box. The code returns false if you are in the standard user role, even if you are in the Built-in Administrators group. You can elevate your privileges before you execute the code by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+          <para>For built-in roles, the <paramref name="role" /> string should be in the form "BUILTIN\RoleNameHere". For example, to test for membership in the Windows administrator role, the string representing the role should be "BUILTIN\Administrators". Note that the backslash might need to be escaped. The following table lists the built-in roles.</para>
+          <block subset="none" type="note">
+            <para>The spelling for the BUILTIN roles in string format differs from the spelling used in the <see cref="T:System.Security.Principal.WindowsBuiltInRole" /> enumeration. For example, the spelling for an administrator in the enumeration is "Administrator", not "Administrators". When using this overload, use the spelling for the role from the following table.</para>
+          </block>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Built-in local groups</para>
+                </term>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>BUILTIN\Administrators    </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Users         </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Guests      </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Account Operators  </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Server Operators   </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Print Operators    </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Backup Operators  </para>
+              </term>
+            </item>
+            <item>
+              <term>
+                <para>BUILTIN\Replicator        </para>
+              </term>
+            </item>
+          </list>
+          <para>For machine-specific roles, the <paramref name="role" /> string should be in the form "MachineName\RoleNameHere".</para>
+          <para>For domain-specific roles, the <paramref name="role" /> string should be in the form "DomainName\RoleNameHere"; for example, "SomeDomain\Domain Users". </para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework version 1.0, the <paramref name="role" /> parameter is case-sensitive. In the .NET Framework version 1.1 and later, the <paramref name="role" /> parameter is case-insensitive.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current principal belongs to the Windows user group with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current principal is a member of the specified Windows user group; otherwise, false.</para>
+        </returns>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the Windows user group for which to check membership. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageHeaderArrayAttribute" FullName="System.ServiceModel.MessageHeaderArrayAttribute">
+  <TypeSignature Language="C#" Value="public sealed class MessageHeaderArrayAttribute : System.ServiceModel.MessageHeaderAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MessageHeaderArrayAttribute extends System.ServiceModel.MessageHeaderAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.MessageHeaderAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.MessageHeaderArrayAttribute" /> attribute to turn off the standard array wrapper element when you want to emit an unbounded number of identical elements either inside the &lt;soap:Header&gt; directly or inside the first and only child of &lt;soap:Header&gt; without the default wrapper element for array types. </para>
+      <para>
+        <see cref="T:System.ServiceModel.MessageHeaderArrayAttribute" /> can be applied only to members of an array type. If specified, the <see cref="P:System.ServiceModel.MessageContractMemberAttribute.Name" /> and <see cref="P:System.ServiceModel.MessageContractMemberAttribute.Namespace" /> are used as the name and namespace of the element of each array item. If not specified, the array item elements are named using the same convention used for naming non-repeating body parts. For more information, see <see cref="P:System.ServiceModel.MessageContractMemberAttribute.Name" /> and <see cref="P:System.ServiceModel.MessageContractMemberAttribute.Namespace" />.</para>
+      <para>For information about controlling the serialization of the contents of a SOAP body without modifying the default SOAP envelope itself, see <see cref="T:System.Runtime.Serialization.DataContractAttribute" />, <format type="text/html"><a href="7c5a26c8-89c9-4bcb-a4bc-7131e6d01f0c">Specifying Data Transfer in Service Contracts</a></format>, and <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Data Contracts Overview</a></format>.</para>
+      <para>For more information about creating message contracts, see <format type="text/html"><a href="1e19c64a-ae84-4c2f-9155-91c54a77c249">Using Message Contracts</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that the default wrapper element in the SOAP message must not be written around array types in a header element.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageHeaderArrayAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use to suppress the default array wrapper element when you want to include unbounded array items in a SOAP message header. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.MessageHeaderArrayAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

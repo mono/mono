@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ValidatedControlConverter" FullName="System.Web.UI.WebControls.ValidatedControlConverter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ValidatedControlConverter : System.Web.UI.WebControls.ControlIDConverter" />
   <AssemblyInfo>
@@ -13,8 +14,36 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Not all controls can be validated with a validation control. This class creates a collection of control IDs on the Web Forms page that can be associated with a validation control. This collection is commonly used in a designer to display a list of controls on the Web Forms page that can be associated with a validation control.</para>
+      <para>When creating your own validation control, you can enable the designer to display a list of controls that support validation controls. Simply add an attribute to the string property that represents the control to validate, as follows: </para>
+      <code>&lt;TypeConverter(GetType(ValidatedControlConverter))&gt; _
+ Public Property ControlToValidate() As String
+    Get    
+       // Add code to get the ID of the control to validate.
+    End Get
+    Set
+       // Add code to set the ID of the control to validate.
+    End Set
+ End Property</code>
+      <code>[TypeConverter(typeof(ValidatedControlConverter))]
+ public string ControlToValidate
+ {
+    get 
+    {
+       // Add code to get the ID of the control to validate.
+    }
+    set
+    {
+       // Add code to set the ID of the control to validate.
+    }
+ }</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts a control on the Web Forms page that can be validated with a validation control to a string containing the control's ID.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +52,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ValidatedControlConverter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,10 +76,20 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.Web.UI.WebControls.ValidatedControlConverter.FilterControl(System.Web.UI.Control)" /> method returns true, the <see cref="T:System.Web.UI.WebControls.ValidatedControlConverter" /> instance will add the ID of the control specified in the control parameter to the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned by the <see cref="M:System.Web.UI.WebControls.ControlIDConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified control should be added to the list of controls that can be validated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control should be added to the list of controls that can be validated; otherwise, false.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to check. </param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValues">

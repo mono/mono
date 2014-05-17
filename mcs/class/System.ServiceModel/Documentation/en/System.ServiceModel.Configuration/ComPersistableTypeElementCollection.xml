@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ComPersistableTypeElementCollection" FullName="System.ServiceModel.Configuration.ComPersistableTypeElementCollection">
+  <TypeSignature Language="C#" Value="public sealed class ComPersistableTypeElementCollection : System.ServiceModel.Configuration.ServiceModelEnhancedConfigurationElementCollection&lt;System.ServiceModel.Configuration.ComPersistableTypeElement&gt;, System.Collections.ICollection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ComPersistableTypeElementCollection extends System.ServiceModel.Configuration.ServiceModelEnhancedConfigurationElementCollection`1&lt;class System.ServiceModel.Configuration.ComPersistableTypeElement&gt; implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.ServiceModelEnhancedConfigurationElementCollection&lt;System.ServiceModel.Configuration.ComPersistableTypeElement&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="TConfigurationElement">System.ServiceModel.Configuration.ComPersistableTypeElement</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.ICollection</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Configuration.ConfigurationCollection(typeof(System.ServiceModel.Configuration.ComPersistableTypeElement), AddItemName="type", ClearItemsName="clear", CollectionType=System.Configuration.ConfigurationElementCollectionType.AddRemoveClearMap, RemoveItemName="remove")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ServiceModel.Configuration.ComPersistableTypeElement" /> objects. This class cannot be inherited.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComPersistableTypeElementCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ComPersistableTypeElementCollection" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetElementKey">
+      <MemberSignature Language="C#" Value="protected override object GetElementKey (System.Configuration.ConfigurationElement element);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance object GetElementKey(class System.Configuration.ConfigurationElement element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
+      </Parameters>
+      <Docs>
+        <param name="element">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

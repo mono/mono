@@ -1,161 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceSource" FullName="System.Diagnostics.TraceSource">
   <TypeSignature Language="C#" Value="public class TraceSource" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TraceSource extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.TraceSource" /> class is used by applications to produce traces that can be associated with the application. <see cref="T:System.Diagnostics.TraceSource" /> provides tracing methods that allow you to easily trace events, trace data, and issue informational traces. Trace output from <see cref="T:System.Diagnostics.TraceSource" /> can be controlled by configuration file settings. The configuration file is located in the folder with the application executable and has the name of the application with the .config file name extension added. For example, the name of the configuration file for TraceSourceSample.exe is TraceSourceSample.exe.config. The configuration file can be used to determine where the trace information is to be sent and what levels of activity are to be traced. The following example shows the contents of a sample application configuration file.</para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;sources&gt;
+      &lt;source name="TraceTest" switchName="SourceSwitch" 
+        switchType="System.Diagnostics.SourceSwitch" &gt;
+        &lt;listeners&gt;
+          &lt;add name="console" /&gt;
+          &lt;remove name ="Default" /&gt;
+        &lt;/listeners&gt;
+      &lt;/source&gt;
+    &lt;/sources&gt;
+    &lt;switches&gt;
+      &lt;!-- You can set the level at which tracing is to occur --&gt;
+      &lt;add name="SourceSwitch" value="Warning" /&gt;
+        &lt;!-- You can turn tracing off --&gt;
+        &lt;!--add name="SourceSwitch" value="Off" --&gt;
+    &lt;/switches&gt;
+    &lt;sharedListeners&gt;
+      &lt;add name="console" 
+        type="System.Diagnostics.ConsoleTraceListener" 
+        initializeData="false"/&gt;
+    &lt;/sharedListeners&gt;
+    &lt;trace autoflush="true" indentsize="4"&gt;
+      &lt;listeners&gt;
+        &lt;add name="console" /&gt;
+      &lt;/listeners&gt;
+    &lt;/trace&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+      <para>The <see cref="T:System.Diagnostics.TraceSource" /> class is identified by the name of a source, typically the name of the application.  The trace messages coming from a particular component can be initiated by a particular trace source, allowing all messages coming from that component to be easily identified.</para>
+      <para>
+        <see cref="T:System.Diagnostics.TraceSource" /> defines tracing methods but does not actually provide any specific mechanism for generating and storing tracing data. The tracing data is produced by trace listeners, which are plug-ins that can be loaded by trace sources. </para>
+      <block subset="none" type="note">
+        <para>You should not call the tracing methods during finalization. Doing so can result in an <see cref="T:System.ObjectDisposedException" /> being thrown.</para>
+      </block>
+      <para>You can customize the tracing output's target by adding or removing <see cref="T:System.Diagnostics.TraceListener" /> instances to or from the collection stored in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> property. By default, trace output is produced using an instance of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> class. The preceding configuration file example demonstrates removing the <see cref="T:System.Diagnostics.DefaultTraceListener" /> and adding a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> to produce the trace output for the trace source. For more information, see <format type="text/html"><a href="a2991f43-b4d3-4614-a8e7-da392de9697f">&lt;listeners&gt; Element for &lt;source&gt;</a></format> and <format type="text/html"><a href="de200534-19dd-4156-86cf-c50521802c4c">&lt;sharedListeners&gt; Element</a></format>.</para>
+      <block subset="none" type="note">
+        <para>Adding a trace listener to the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection can cause an exception to be thrown while tracing, if a resource used by the trace listener is not available. The conditions and the exception thrown depend on the trace listener and cannot be enumerated in this topic. It may be useful to place calls to the <see cref="T:System.Diagnostics.TraceSource" /> methods in try/catch blocks to detect and handle any exceptions from trace listeners.</para>
+      </block>
+      <para>The <see cref="T:System.Diagnostics.SourceSwitch" /> class provides the means to dynamically control the tracing output. The preceding configuration file example shows how you can turn off tracing from a trace source and control the level at which tracing occurs.  You can modify the value of the source switch without recompiling your application. For information on using the configuration file to set a switch, see <see cref="T:System.Diagnostics.Switch" /> and <format type="text/html"><a href="5a0e41bf-f99c-4692-8799-f89617f5bcf9">How to: Configure Trace Switches</a></format>.</para>
+      <block subset="none" type="note">
+        <para>If you modify a configuration file while an application is executing, the application must be stopped and restarted or the <see cref="M:System.Diagnostics.Trace.Refresh" /> method must be called before the new settings take effect.</para>
+      </block>
+      <para>The <see cref="T:System.Diagnostics.TraceEventType" /> enumeration is used to define the event type of the trace message. Trace filters use the <see cref="T:System.Diagnostics.TraceEventType" /> to determine if a trace listener should produce the trace message.</para>
+      <para>The trace listeners can optionally have an additional layer of filtering through a trace filter.  If a trace listener has an associated filter, the listener calls the <see cref="M:System.Diagnostics.TraceFilter.ShouldTrace(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[],System.Object,System.Object[])" /> method on that filter to determine whether or not to produce the trace information.</para>
+      <para>The trace listeners use the values of the <see cref="T:System.Diagnostics.Trace" /> class properties <see cref="M:System.Diagnostics.Trace.Indent" />, <see cref="P:System.Diagnostics.Trace.IndentSize" />, and <see cref="P:System.Diagnostics.Trace.AutoFlush" /> to format trace output. You can use configuration file attributes to set the <see cref="M:System.Diagnostics.Trace.Indent" />, <see cref="P:System.Diagnostics.Trace.IndentSize" />, and <see cref="P:System.Diagnostics.Trace.AutoFlush" /> properties. The following example sets the <see cref="P:System.Diagnostics.Trace.AutoFlush" /> property to false and the <see cref="P:System.Diagnostics.Trace.IndentSize" /> property to 3. </para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="3" /&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of methods and properties that enable applications to trace the execution of code and associate trace messages with their source. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TraceSource (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source name is used to identify traces. It is used by a <see cref="T:System.Diagnostics.SourceFilter" /> to determine whether a trace listener should produce the trace. The recommended practice is to use the name of the application for the source name.</para>
+          <block subset="none" type="note">
+            <para>It is not necessary to create a new <see cref="T:System.Diagnostics.TraceSource" /> instance for each trace request. Create one <see cref="T:System.Diagnostics.TraceSource" /> instance and use it for all trace requests for the application.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.TraceSource" /> class, using the specified name for the source. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source (typically, the name of the application).</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public TraceSource (string name, System.Diagnostics.SourceLevels sourceLevels);" />
+      <MemberSignature Language="C#" Value="public TraceSource (string name, System.Diagnostics.SourceLevels defaultLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Diagnostics.SourceLevels defaultLevel) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
-        <Parameter Name="sourceLevels" Type="System.Diagnostics.SourceLevels" />
+        <Parameter Name="defaultLevel" Type="System.Diagnostics.SourceLevels" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="sourceLevels">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source name is used to identify traces. It can be used by a <see cref="T:System.Diagnostics.SourceSwitch" /> to determine if tracing is to occur and by a <see cref="T:System.Diagnostics.SourceFilter" /> to determine whether to produce the trace. The default source level is used by an <see cref="T:System.Diagnostics.EventTypeFilter" /> to determine if tracing is to occur based on the source level of the message to be traced.</para>
+          <block subset="none" type="note">
+            <para>It is not necessary to create a new <see cref="T:System.Diagnostics.TraceSource" /> instance for each trace request. Create one <see cref="T:System.Diagnostics.TraceSource" /> instance and use it for all trace requests for the application.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.TraceSource" /> class, using the specified name for the source and the default source level at which tracing is to occur.  </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source, typically the name of the application.</param>
+        <param name="defaultLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specifies the default source level at which to trace.</param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringDictionary Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringDictionary Attributes" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.TraceSource.Attributes" /> property identifies the custom attributes referenced in the application's configuration file. Unreferenced custom attributes are not enumerated. Classes that inherit from the <see cref="T:System.Diagnostics.TraceSource" /> class can add custom attributes by overriding the <see cref="M:System.Diagnostics.Switch.GetSupportedAttributes" /> method and returning a string array of custom attribute names.</para>
+          <para>The following is a sample of a trace source element specifying the custom attribute SecondTraceSourceAttribute:</para>
+          <code>&lt;sources&gt;
+  &lt;source name="TraceTest" switchName="TestSourceSwitch" 
+    switchType="Testing.MySourceSwitch, TraceSample" 
+    SecondTraceSourceAttribute="two"&gt;
+  &lt;/source&gt;
+&lt;/sources&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom switch attributes defined in the application configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.Close" /> method calls the <see cref="M:System.Diagnostics.TraceListener.Close" /> method of each trace listener in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes all the trace listeners in the trace listener collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Flush">
       <MemberSignature Language="C#" Value="public void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Flush() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.Flush" /> method calls the <see cref="M:System.Diagnostics.TraceListener.Flush" /> method of each trace listener in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushes all the trace listeners in the trace listener collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetSupportedAttributes">
       <MemberSignature Language="C#" Value="protected virtual string[] GetSupportedAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance string[] GetSupportedAttributes() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation for <see cref="M:System.Diagnostics.TraceSource.GetSupportedAttributes" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom attributes supported by the trace source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array naming the custom attributes supported by the trace source, or null if there are no custom attributes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Listeners">
       <MemberSignature Language="C#" Value="public System.Diagnostics.TraceListenerCollection Listeners { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Diagnostics.TraceListenerCollection Listeners" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.TraceListenerCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to access and perform operations on the trace listeners.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of trace listeners for the trace source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name is set by the <paramref name="name" /> parameter passed to the constructor or by the trace source name attribute in the configuration file.</para>
+          <para>The following XML element shows the naming of a trace source in the configuration file.</para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;sources&gt;
+      &lt;source name="TraceTest"&gt;
+      &lt;/source&gt;
+    &lt;/sources&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the trace source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Switch">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceSwitch Switch { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceSwitch Switch { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Diagnostics.SourceSwitch Switch" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceSwitch</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.TraceSource.Switch" /> property allows the filtering of messages before the trace source calls the listeners.</para>
+          <para>The switch is used to check whether trace calls should be generated or ignored. Each trace method calls the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method of the <see cref="T:System.Diagnostics.SourceSwitch" /> to determine whether to proceed with the trace. If the call returns true, the listeners are called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the source switch value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TraceData">
       <MemberSignature Language="C#" Value="public void TraceData (System.Diagnostics.TraceEventType eventType, int id, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceData(valuetype System.Diagnostics.TraceEventType eventType, int32 id, object data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -171,18 +334,33 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object)" /> method, like the <see cref="Overload:System.Diagnostics.TraceSource.TraceEvent" /> method, is intended for automated tools, but it also allows the attaching of an additional object, such as an exception instance, to the trace.</para>
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object)" /> method calls the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method of the <see cref="T:System.Diagnostics.SourceSwitch" /> object returned by the <see cref="P:System.Diagnostics.TraceSource.Switch" /> property. If <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> returns true, <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object)" /> calls the corresponding <see cref="Overload:System.Diagnostics.TraceListener.TraceData" /> method on all listeners. Otherwise, <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object)" /> returns without calling the listeners' methods.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Diagnostics.EventLogTraceListener" /> object is limited to a maximum <paramref name="id" /> value of 65,535. If the <paramref name="id" /> value specified is greater than 65,535, the <see cref="T:System.Diagnostics.EventLogTraceListener" /> object uses 65,535.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace data to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified event type, event identifier, and trace data.</para>
+        </summary>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the event type of the trace data.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace data.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceData">
       <MemberSignature Language="C#" Value="public void TraceData (System.Diagnostics.TraceEventType eventType, int id, object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceData(valuetype System.Diagnostics.TraceEventType eventType, int32 id, object[] data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -204,18 +382,33 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object[])" /> method, like the <see cref="Overload:System.Diagnostics.TraceSource.TraceEvent" /> method, is intended for automated tools, but it also allows the attaching of additional objects, such as an exception instance and a stack trace, to the trace.</para>
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object[])" /> method calls the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method of the <see cref="T:System.Diagnostics.SourceSwitch" /> object returned by the <see cref="P:System.Diagnostics.TraceSource.Switch" /> property. If <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> returns true, <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object[])" /> calls the corresponding <see cref="Overload:System.Diagnostics.TraceListener.TraceData" /> method on all listeners. Otherwise, <see cref="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object[])" /> returns without calling the listeners' methods.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Diagnostics.EventLogTraceListener" /> object is limited to a maximum <paramref name="id" /> value of 65,535. If the <paramref name="id" /> value specified is greater than 65,535, the <see cref="T:System.Diagnostics.EventLogTraceListener" /> object uses 65,535.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace data to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified event type, event identifier, and trace data array.</para>
+        </summary>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the event type of the trace data.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object array containing the trace data.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public void TraceEvent (System.Diagnostics.TraceEventType eventType, int id);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceEvent(valuetype System.Diagnostics.TraceEventType eventType, int32 id) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -230,17 +423,32 @@
         <Parameter Name="id" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32)" /> method is intended to trace events that can be processed automatically by tools. For example, a monitoring tool can notify an administrator if a specific event is traced by a specific source.</para>
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32)" /> method calls the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method of the <see cref="T:System.Diagnostics.SourceSwitch" /> object returned by the <see cref="P:System.Diagnostics.TraceSource.Switch" /> property. If <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> returns true, <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32)" /> calls the corresponding <see cref="Overload:System.Diagnostics.TraceListener.TraceEvent" /> method of each listener. Otherwise, <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32)" /> returns without calling the listeners' methods.</para>
+          <para>The trace content is listener specific. If the method is not overridden by the listener implementation, the default output is the name of the trace source, its numeric identity, and the event type.  Additional trace content is dependent upon the listener's <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property value.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Diagnostics.EventLogTraceListener" /> object is limited to a maximum <paramref name="id" /> value of 65,535. If the <paramref name="id" /> value specified is greater than 65,535, the <see cref="T:System.Diagnostics.EventLogTraceListener" /> uses 65,535.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a trace event message to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified event type and event identifier.</para>
+        </summary>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the event type of the trace data.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public void TraceEvent (System.Diagnostics.TraceEventType eventType, int id, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceEvent(valuetype System.Diagnostics.TraceEventType eventType, int32 id, string message) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -256,18 +464,34 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String)" /> method is intended to trace events that can be processed automatically by tools. For example, a monitoring tool can notify an administrator if a specific event is traced by a specific source.</para>
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String)" /> method calls the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method of the <see cref="T:System.Diagnostics.SourceSwitch" /> object returned by the <see cref="P:System.Diagnostics.TraceSource.Switch" /> property. If <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> returns true, <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String)" /> calls the corresponding <see cref="Overload:System.Diagnostics.TraceListener.TraceEvent" /> method of each listener. Otherwise, <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String)" /> returns without calling the listeners' methods.</para>
+          <para>The trace content is listener specific. If the method is not overridden by the listener implementation, the default output is the name of the trace source, its numeric identity, the event type, and the message.  Additional trace content is dependent upon the listener's <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property value.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Diagnostics.EventLogTraceListener" /> object is limited to a maximum <paramref name="id" /> value of 65,535. If the <paramref name="id" /> value specified is greater than 65,535, the <see cref="T:System.Diagnostics.EventLogTraceListener" /> object uses 65,535.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a trace event message to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified event type, event identifier, and message.</para>
+        </summary>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the event type of the trace data.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public void TraceEvent (System.Diagnostics.TraceEventType eventType, int id, string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceEvent(valuetype System.Diagnostics.TraceEventType eventType, int32 id, string format, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -290,19 +514,37 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="format">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the <paramref name="format" /> parameter, see <format type="text/html"><a href="87b7d528-73f6-43c6-b71a-f23043039a49">Composite Formatting</a></format>.</para>
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> method is intended to trace events that can be processed automatically by tools. For example, a monitoring tool can notify an administrator if a specific event is traced by a specific source.</para>
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> method calls the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method of the <see cref="T:System.Diagnostics.SourceSwitch" /> object returned by the <see cref="P:System.Diagnostics.TraceSource.Switch" /> property. If <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> returns true, <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> calls the corresponding <see cref="Overload:System.Diagnostics.TraceListener.TraceEvent" /> method of each listener. Otherwise, <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> returns without calling the listeners' methods.</para>
+          <para>The trace content is listener specific. The default <see cref="M:System.Diagnostics.TraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> method writes the source name, event type, and numeric identity in the trace header, then calls the <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" /> method, passing the <paramref name="format" /> string and <paramref name="args" /> array and using the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to format the string as the message output. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Diagnostics.EventLogTraceListener" /> object is limited to a maximum <paramref name="id" /> value of 65,535. If the <paramref name="id" /> value specified is greater than 65,535, the <see cref="T:System.Diagnostics.EventLogTraceListener" /> object uses 65,535.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a trace event to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified event type, event identifier, and argument array and format.</para>
+        </summary>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the event type of the trace data.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A composite format string (see Remarks) that contains text intermixed with zero or more format items, which correspond to objects in the <paramref name="args" /> array.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object array containing zero or more objects to format.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceInformation">
       <MemberSignature Language="C#" Value="public void TraceInformation (string format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceInformation(string format) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -317,15 +559,25 @@
       </Parameters>
       <Docs>
         <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceInformation(System.String)" /> method provides an informational message intended to be read by users and not by tools.</para>
+          <para>
+            <see cref="M:System.Diagnostics.TraceSource.TraceInformation(System.String)" /> calls the <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String)" /> method, setting <paramref name="eventType" /> to <see cref="F:System.Diagnostics.TraceEventType.Information" /> and passing the informative message as the message string. The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String)" /> method in turn calls the <see cref="M:System.Diagnostics.TraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String)" /> method of each trace listener.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an informational message to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TraceInformation">
       <MemberSignature Language="C#" Value="public void TraceInformation (string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceInformation(string format, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -346,17 +598,30 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the <paramref name="format" /> parameter, see <format type="text/html"><a href="87b7d528-73f6-43c6-b71a-f23043039a49">Composite Formatting</a></format>.</para>
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceInformation(System.String,System.Object[])" /> method provides an informational message intended to be read by users and not by tools.</para>
+          <para>
+            <see cref="M:System.Diagnostics.TraceSource.TraceInformation(System.String,System.Object[])" /> calls the <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> method, setting <paramref name="eventType" /> to <see cref="F:System.Diagnostics.TraceEventType.Information" /> and passing the message content as an object array with formatting information. The <see cref="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> method in turn calls the <see cref="M:System.Diagnostics.TraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> method of each trace listener.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an informational message to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified object array and formatting information.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A composite format string (see Remarks) that contains text intermixed with zero or more format items, which correspond to objects in the <paramref name="args" /> array.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array containing zero or more objects to format.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceTransfer">
       <MemberSignature Language="C#" Value="public void TraceTransfer (int id, string message, Guid relatedActivityId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceTransfer(int32 id, string message, valuetype System.Guid relatedActivityId) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -372,11 +637,22 @@
         <Parameter Name="relatedActivityId" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="id">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="relatedActivityId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.TraceSource.TraceTransfer(System.Int32,System.String,System.Guid)" /> method calls the <see cref="M:System.Diagnostics.TraceListener.TraceTransfer(System.Diagnostics.TraceEventCache,System.String,System.Int32,System.String,System.Guid)" /> method of each trace listener in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> property to write the trace information. The default <see cref="M:System.Diagnostics.TraceListener.TraceTransfer(System.Diagnostics.TraceEventCache,System.String,System.Int32,System.String,System.Guid)" /> method in the base <see cref="T:System.Diagnostics.TraceListener" /> class calls the <see cref="M:System.Diagnostics.TraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String)" /> method to process the call, setting <paramref name="eventType" /> to <see cref="F:System.Diagnostics.TraceEventType.Transfer" /> and appending a string representation of the <paramref name="relatedActivityId" /> GUID to <paramref name="message" />.</para>
+          <para>
+            <see cref="M:System.Diagnostics.TraceSource.TraceTransfer(System.Int32,System.String,System.Guid)" /> is intended to be used with the logical operations of a <see cref="T:System.Diagnostics.CorrelationManager" />. The <paramref name="relatedActivityId" /> parameter relates to the <see cref="P:System.Diagnostics.CorrelationManager.ActivityId" /> property of a <see cref="T:System.Diagnostics.CorrelationManager" /> object. If a logical operation begins in one activity and transfers to another, the second activity logs the transfer by calling the <see cref="M:System.Diagnostics.TraceSource.TraceTransfer(System.Int32,System.String,System.Guid)" /> method. The <see cref="M:System.Diagnostics.TraceSource.TraceTransfer(System.Int32,System.String,System.Guid)" /> call relates the new activity identity to the previous identity. The most likely consumer of this functionality is a trace viewer that can report logical operations that span multiple activities.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a trace transfer message to the trace listeners in the <see cref="P:System.Diagnostics.TraceSource.Listeners" /> collection using the specified numeric identifier, message, and related activity identifier.</para>
+        </summary>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace message to write.</param>
+        <param name="relatedActivityId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A structure that identifies the related activity.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Executor" FullName="System.CodeDom.Compiler.Executor">
-  <TypeSignature Language="C#" Value="public sealed class Executor" Maintainer="auto" />
+  <TypeSignature Language="C#" Value="public static class Executor" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Executor extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,13 +16,28 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides a collection of methods that can be used to invoke a compiler, typically from an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the immediate caller does not have full-trust permission. For more information, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides command execution functions for invoking compilers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ExecWait">
       <MemberSignature Language="C#" Value="public static void ExecWait (string cmd, System.CodeDom.Compiler.TempFileCollection tempFiles);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ExecWait(string cmd, class System.CodeDom.Compiler.TempFileCollection tempFiles) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -28,19 +46,30 @@
         <Parameter Name="tempFiles" Type="System.CodeDom.Compiler.TempFileCollection" />
       </Parameters>
       <Docs>
-        <param name="cmd">To be added: an object of type 'string'</param>
-        <param name="tempFiles">To be added: an object of type 'TempFileCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the command using the specified temporary files and waits for the call to return.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value from the compiler.</para>
+        </returns>
+        <param name="cmd">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command to execute. </param>
+        <param name="tempFiles">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.TempFileCollection" /> with which to manage and store references to intermediate files generated during compilation. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExecWaitWithCapture">
       <MemberSignature Language="C#" Value="public static int ExecWaitWithCapture (string cmd, System.CodeDom.Compiler.TempFileCollection tempFiles, ref string outputName, ref string errorName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 ExecWaitWithCapture(string cmd, class System.CodeDom.Compiler.TempFileCollection tempFiles, string outputName, string errorName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -59,14 +88,16 @@
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExecWaitWithCapture">
       <MemberSignature Language="C#" Value="public static int ExecWaitWithCapture (IntPtr userToken, string cmd, System.CodeDom.Compiler.TempFileCollection tempFiles, ref string outputName, ref string errorName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 ExecWaitWithCapture(native int userToken, string cmd, class System.CodeDom.Compiler.TempFileCollection tempFiles, string outputName, string errorName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -87,14 +118,16 @@
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExecWaitWithCapture">
       <MemberSignature Language="C#" Value="public static int ExecWaitWithCapture (string cmd, string currentDir, System.CodeDom.Compiler.TempFileCollection tempFiles, ref string outputName, ref string errorName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 ExecWaitWithCapture(string cmd, string currentDir, class System.CodeDom.Compiler.TempFileCollection tempFiles, string outputName, string errorName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -115,14 +148,16 @@
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExecWaitWithCapture">
       <MemberSignature Language="C#" Value="public static int ExecWaitWithCapture (IntPtr userToken, string cmd, string currentDir, System.CodeDom.Compiler.TempFileCollection tempFiles, ref string outputName, ref string errorName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 ExecWaitWithCapture(native int userToken, string cmd, string currentDir, class System.CodeDom.Compiler.TempFileCollection tempFiles, string outputName, string errorName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -145,10 +180,6 @@
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

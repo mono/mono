@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Metafile" FullName="System.Drawing.Imaging.Metafile">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class Metafile : System.Drawing.Image" />
   <AssemblyInfo>
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you use the <see cref="M:System.Drawing.Image.Save(System.String)" /> method to save a graphic image as a Windows Metafile Format (WMF) or Enhanced Metafile Format (EMF) file, the resulting file is saved as a Portable Network Graphics (PNG) file instead. This behavior occurs because the ndptecgdiplus component of the dnprdnshort does not have an encoder that you can use to save files as .wmf or .emf files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a graphic metafile. A metafile contains records that describe a sequence of graphics operations that can be recorded (constructed) and played back (displayed). This class is not inheritable.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +38,13 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> from which to create the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +59,13 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified file name.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name from which to create the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,10 +81,15 @@
         <Parameter Name="deleteEmf" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="henhmetafile">To be added: an object of type 'IntPtr'</param>
-        <param name="deleteEmf">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified handle.</para>
+        </summary>
+        <param name="henhmetafile">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to an enhanced metafile. </param>
+        <param name="deleteEmf">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to delete the enhanced metafile handle when the <see cref="T:System.Drawing.Imaging.Metafile" /> is deleted; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,10 +105,15 @@
         <Parameter Name="emfType" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="emfType">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified handle to a device context and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="emfType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,10 +129,15 @@
         <Parameter Name="wmfHeader" Type="System.Drawing.Imaging.WmfPlaceableFileHeader" />
       </Parameters>
       <Docs>
-        <param name="hmetafile">To be added: an object of type 'IntPtr'</param>
-        <param name="wmfHeader">To be added: an object of type 'WmfPlaceableFileHeader'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified handle and a <see cref="T:System.Drawing.Imaging.WmfPlaceableFileHeader" />.</para>
+        </summary>
+        <param name="hmetafile">
+          <attribution license="cc4" from="Microsoft" modified="false" />A windows handle to a <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="wmfHeader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.WmfPlaceableFileHeader" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,10 +153,15 @@
         <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,10 +177,15 @@
         <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,10 +201,15 @@
         <Parameter Name="referenceHdc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,10 +225,15 @@
         <Parameter Name="referenceHdc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -200,11 +250,17 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="emfType">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified handle to a device context and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A string can be supplied to name the file.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="emfType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -221,11 +277,17 @@
         <Parameter Name="deleteWmf" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="hmetafile">To be added: an object of type 'IntPtr'</param>
-        <param name="wmfHeader">To be added: an object of type 'WmfPlaceableFileHeader'</param>
-        <param name="deleteWmf">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified handle and a <see cref="T:System.Drawing.Imaging.WmfPlaceableFileHeader" />. Also, the <paramref name="deleteWmf" /> parameter can be used to delete the handle when the metafile is deleted.</para>
+        </summary>
+        <param name="hmetafile">
+          <attribution license="cc4" from="Microsoft" modified="false" />A windows handle to a <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="wmfHeader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.WmfPlaceableFileHeader" />. </param>
+        <param name="deleteWmf">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to delete the handle to the new <see cref="T:System.Drawing.Imaging.Metafile" /> when the <see cref="T:System.Drawing.Imaging.Metafile" /> is deleted; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,11 +304,17 @@
         <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle that uses the supplied unit of measure.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -263,11 +331,17 @@
         <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle that uses the supplied unit of measure.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -284,11 +358,17 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -305,11 +385,17 @@
         <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, and a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -326,11 +412,17 @@
         <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, and a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -347,11 +439,17 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -368,11 +466,17 @@
         <Parameter Name="frameRect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, and a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -389,11 +493,17 @@
         <Parameter Name="frameRect" Type="System.Drawing.RectangleF" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, and a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -411,12 +521,19 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle that uses the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -434,12 +551,19 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle that uses the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -457,12 +581,19 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. Also, a string that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" /> can be added.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -480,12 +611,19 @@
         <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, and the supplied unit of measure.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -503,12 +641,19 @@
         <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, and the supplied unit of measure.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -526,12 +671,19 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A descriptive string can be added, as well.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -549,12 +701,19 @@
         <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, and the supplied unit of measure.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -572,12 +731,19 @@
         <Parameter Name="frameUnit" Type="System.Drawing.Imaging.MetafileFrameUnit" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, and the supplied unit of measure.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -596,13 +762,20 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
         <param name="description">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle that uses the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A string can be provided to name the file.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -621,13 +794,21 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified device context, bounded by the specified rectangle that uses the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A string can be provided to name the file.</para>
+        </summary>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -646,13 +827,21 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -671,13 +860,21 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -696,13 +893,21 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -721,13 +926,21 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, and the supplied unit of measure. A descriptive string can also be added.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -746,13 +959,21 @@
         <Parameter Name="type" Type="System.Drawing.Imaging.EmfType" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -771,13 +992,20 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
         <param name="description">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, and the supplied unit of measure. A descriptive string can also be added.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -797,14 +1025,23 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A string that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" /> can be added.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -824,14 +1061,23 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class from the specified data stream, a Windows handle to a device context, a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A string that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" /> can be added.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -851,14 +1097,23 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.Rectangle" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A descriptive string can also be added.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -878,14 +1133,23 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="referenceHdc">To be added: an object of type 'IntPtr'</param>
-        <param name="frameRect">To be added: an object of type 'Drawing.RectangleF'</param>
-        <param name="frameUnit">To be added: an object of type 'MetafileFrameUnit'</param>
-        <param name="type">To be added: an object of type 'EmfType'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Imaging.Metafile" /> class with the specified file name, a Windows handle to a device context, a <see cref="T:System.Drawing.RectangleF" /> structure that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />, the supplied unit of measure, and an <see cref="T:System.Drawing.Imaging.EmfType" /> enumeration that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. A descriptive string can also be added.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the file name of the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="referenceHdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a device context. </param>
+        <param name="frameRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> that represents the rectangle that bounds the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="frameUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.MetafileFrameUnit" /> that specifies the unit of measure for <paramref name="frameRect" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EmfType" /> that specifies the format of the <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a descriptive name for the new <see cref="T:System.Drawing.Imaging.Metafile" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -900,9 +1164,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Windows handle to an enhanced <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows handle to this enhanced <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -917,9 +1187,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with this <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with this <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -936,10 +1212,17 @@
         <Parameter Name="henhmetafile" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="henhmetafile">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
+        <param name="henhmetafile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to the enhanced <see cref="T:System.Drawing.Imaging.Metafile" /> for which a header is returned. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -956,10 +1239,17 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> containing the <see cref="T:System.Drawing.Imaging.Metafile" /> for which a header is retrieved. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -976,10 +1266,17 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the name of the <see cref="T:System.Drawing.Imaging.Metafile" /> for which a header is retrieved. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -998,10 +1295,17 @@
       </Parameters>
       <Docs>
         <param name="henhmetafile">To be added.</param>
-        <param name="wmfHeader">To be added: an object of type 'WmfPlaceableFileHeader'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
+        <param name="wmfHeader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.WmfPlaceableFileHeader" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1021,12 +1325,19 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="recordType">To be added: an object of type 'EmfPlusRecordType'</param>
-        <param name="flags">To be added: an object of type 'int'</param>
-        <param name="dataSize">To be added: an object of type 'int'</param>
-        <param name="data">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Plays an individual metafile record.</para>
+        </summary>
+        <param name="recordType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Element of the <see cref="T:System.Drawing.Imaging.EmfPlusRecordType" /> that specifies the type of metafile record being played. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of flags that specify attributes of the record. </param>
+        <param name="dataSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the record data. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes that contains the record data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

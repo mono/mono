@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="UIHintAttribute" FullName="System.ComponentModel.DataAnnotations.UIHintAttribute">
+  <TypeSignature Language="C#" Value="public class UIHintAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UIHintAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, AllowMultiple=true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A Visual Studio project with source code is available to accompany this topic: <see cref="http://go.microsoft.com/fwlink/?linkid=158686">Download</see>. </para>
+      <para>MVC uses the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> class to associate a model with a data field. Dynamic Data uses the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> class to associate a user control with a data field. Dynamic Data uses the <see cref="P:System.ComponentModel.DataAnnotations.UIHintAttribute.UIHint" /> property to determine which user control to use in order to display a data field.</para>
+      <para>For more information about how to use attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the template or user control that Dynamic Data uses to display a data field. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UIHintAttribute (string uiHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uiHint) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="uiHint" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> object that is created with this constructor is initialized using the specified <paramref name="uiHint" />, which specifies the user control (field template) to use in order to display the data field. </para>
+          <para>ASP.NET Dynamic Data provides field templates, page templates, and data controls to render data fields in a data model. You can modify these templates and controls to customize them, or you can create a custom user control. If you create a custom user control, you use the <see cref="P:System.ComponentModel.DataAnnotations.UIHintAttribute.UIHint" /> property to specify the user control to use to display a data field. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> class by using a specified user control. </para>
+        </summary>
+        <param name="uiHint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user control to use to display the data field. </param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UIHintAttribute (string uiHint, string presentationLayer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uiHint, string presentationLayer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="uiHint" Type="System.String" />
+        <Parameter Name="presentationLayer" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> class using the specified user control and specified presentation layer. </para>
+        </summary>
+        <param name="uiHint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user control (field template) to use to display the data field.</param>
+        <param name="presentationLayer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The presentation layer that uses the class. Can be set to "HTML", "Silverlight", "WPF", or "WinForms".</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UIHintAttribute (string uiHint, string presentationLayer, object[] controlParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uiHint, string presentationLayer, object[] controlParameters) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="uiHint" Type="System.String" />
+        <Parameter Name="presentationLayer" Type="System.String" />
+        <Parameter Name="controlParameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> class by using the specified user control, presentation layer, and control parameters.</para>
+        </summary>
+        <param name="uiHint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user control (field template) to use to display the data field.</param>
+        <param name="presentationLayer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The presentation layer that uses the class. Can be set to "HTML", "Silverlight", "WPF", or "WinForms".</param>
+        <param name="controlParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to use to retrieve values from any data sources. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="ControlParameters">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IDictionary&lt;string,object&gt; ControlParameters { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IDictionary`2&lt;string, object&gt; ControlParameters" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.DataAnnotations.UIHintAttribute.ControlParameters" /> property lets you retrieve data from a data model, tracks updates to the data model, and notifies the model of any changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Web.DynamicData.DynamicControlParameter" /> object to use to retrieve values from any data source.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this instance is equal to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equal to this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance, or a null reference.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code for the current instance of the attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attribute instance hash code.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="PresentationLayer">
+      <MemberSignature Language="C#" Value="public string PresentationLayer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PresentationLayer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents the presentation layer that uses the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> class. This property can be set to "HTML", "Silverlight", "WPF", or "WinForms".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the presentation layer that uses the <see cref="T:System.ComponentModel.DataAnnotations.UIHintAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TypeId">
+      <MemberSignature Language="C#" Value="public override object TypeId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object TypeId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier for the attribute.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UIHint">
+      <MemberSignature Language="C#" Value="public string UIHint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string UIHint" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET Dynamic Data provides field templates and page templates for rendering data fields in a data model. Field templates are user controls (.ascx files) that are mapped to data fields in the model. You can modify the default user controls that Dynamic Data provides, or you can create a custom user controls to use as field template. If you create a custom user control, you use the <see cref="P:System.ComponentModel.DataAnnotations.UIHintAttribute.UIHint" /> property on a property so that the property is rendered using the custom user control. The <see cref="P:System.ComponentModel.DataAnnotations.UIHintAttribute.UIHint" /> property specifies which field template to use when a specific column is rendered. The <see cref="P:System.ComponentModel.DataAnnotations.UIHintAttribute.UIHint" /> property can point to one of the templates provided in Dynamic Data or to a custom template. For example, you can create a custom field template named RedText_Edit.ascx, and then use the <see cref="P:System.ComponentModel.DataAnnotations.UIHintAttribute.UIHint" /> property to specify that the RedText_Edit.ascx control should be used to render a specified data field instead of the default Text_Edit.ascx template that is provided in Dynamic Data.</para>
+          <para>The following example shows how to specify that the UnitsInStock column in a database will be rendered by using the specified custom field template.</para>
+          <para>code reference: DynamicData.CustomFieldTemplate#5</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field template to use to display the data field.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

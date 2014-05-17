@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceExposureAttribute" FullName="System.Runtime.Versioning.ResourceExposureAttribute">
   <TypeSignature Language="C#" Value="public sealed class ResourceExposureAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ResourceExposureAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,44 +20,60 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Versioning.ResourceConsumptionAttribute" /> attribute must be applied to a member calling a member that has the <see cref="T:System.Runtime.Versioning.ResourceExposureAttribute" /> attribute applied. Public members cannot expose <see cref="F:System.Runtime.Versioning.ResourceScope.Assembly" /> or <see cref="F:System.Runtime.Versioning.ResourceScope.Private" /> resources.  Members with <see cref="F:System.Runtime.Versioning.ResourceScope.Assembly" /> scope cannot expose <see cref="F:System.Runtime.Versioning.ResourceScope.Private" /> resources.</para>
+      <para>The graph of methods terminates when an <see cref="T:System.Runtime.Versioning.ResourceExposureAttribute" /> attribute with a resource scope of <see cref="F:System.Runtime.Versioning.ResourceScope.None" /> is applied to a method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the resource exposure for a member of a class. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ResourceExposureAttribute (System.Runtime.Versioning.ResourceScope exposureLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.Versioning.ResourceScope exposureLevel) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="exposureLevel" Type="System.Runtime.Versioning.ResourceScope" />
       </Parameters>
       <Docs>
-        <param name="exposureLevel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Versioning.ResourceExposureAttribute" /> class with the specified exposure level.</para>
+        </summary>
+        <param name="exposureLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scope of the resource.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ResourceExposureLevel">
+      <MemberSignature Language="C#" Value="public System.Runtime.Versioning.ResourceScope ResourceExposureLevel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.Versioning.ResourceScope ResourceExposureLevel" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ResourceExposureLevel">
-      <MemberSignature Language="C#" Value="public System.Runtime.Versioning.ResourceScope ResourceExposureLevel { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the resource exposure scope.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

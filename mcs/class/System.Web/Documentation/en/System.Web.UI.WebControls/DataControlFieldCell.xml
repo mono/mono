@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataControlFieldCell" FullName="System.Web.UI.WebControls.DataControlFieldCell">
   <TypeSignature Language="C#" Value="public class DataControlFieldCell : System.Web.UI.WebControls.TableCell" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> class is a strongly typed <see cref="T:System.Web.UI.WebControls.TableCell" /> class that represents a cell in ASP.NET data-bound controls that render their contents in a tabular layout, such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlField" /> object that contains the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object controls how the cell is rendered by applying styles to the cell. You can access the containing <see cref="T:System.Web.UI.WebControls.DataControlField" /> object using the <see cref="P:System.Web.UI.WebControls.DataControlFieldCell.ContainingField" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a cell in the rendered table of a tabular ASP.NET data-bound control, such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> or <see cref="T:System.Web.UI.WebControls.GridView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +30,15 @@
       </Parameters>
       <Docs>
         <param name="containerField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the <see cref="F:System.Web.UI.HtmlTextWriterTag.Td" /> element defined by its base class to render the cell. The <see cref="T:System.Web.UI.WebControls.DataControlField" /> object passed in the <paramref name="containingField" /> parameter is used to determine whether to show headers and what styles to apply to the cell when it is rendered. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> class, setting the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object as the cell's container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,11 +52,18 @@
         <Parameter Name="containerField" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="tagKey">To be added.</param>
         <param name="containerField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="tagKey" /> parameter is passed to the <see cref="T:System.Web.UI.WebControls.WebControl" /> base class constructor, and controls the HTML tag that is emitted by the control. The <see cref="T:System.Web.UI.WebControls.DataControlField" /> passed in the <paramref name="containingField" /> parameter is used to determine whether to show headers and what styles to apply to the cell when it is rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> class, setting the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object as the cell's container.</para>
+        </summary>
+        <param name="tagKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriterTag" /> that specifies the HTML tag to render for the cell. The default tag used by the <see cref="T:System.Web.UI.WebControls.TableCell" /> class is <see cref="F:System.Web.UI.HtmlTextWriterTag.Td" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +76,16 @@
         <ReturnType>System.Web.UI.WebControls.DataControlField</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content rendering for the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object might be affected by the various <see cref="T:System.Web.UI.WebControls.DataControlField" /> properties of the containing field, such as <see cref="P:System.Web.UI.WebControls.DataControlField.ItemStyle" />, <see cref="P:System.Web.UI.WebControls.DataControlField.ControlStyle" />, and <see cref="P:System.Web.UI.WebControls.DataControlField.ShowHeader" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object that contains the current cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

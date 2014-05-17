@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MultiView" FullName="System.Web.UI.WebControls.MultiView">
   <TypeSignature Language="C#" Value="public class MultiView : System.Web.UI.Control" />
   <AssemblyInfo>
@@ -23,9 +24,128 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.MultiView" /> control is a container for a group of <see cref="T:System.Web.UI.WebControls.View" /> controls. It allows you to define a group of <see cref="T:System.Web.UI.WebControls.View" /> controls, where each <see cref="T:System.Web.UI.WebControls.View" /> control contains child controls. Your application can then render a specific <see cref="T:System.Web.UI.WebControls.View" /> control to the client based on criteria such as user identity, user preferences, and information passed in a query-string parameter. You can also use the <see cref="T:System.Web.UI.WebControls.MultiView" /> control to create wizards. In this scenario, each <see cref="T:System.Web.UI.WebControls.View" /> control contained in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control represents a different step or page in the wizard. You should also use this control to develop multiple-screen applications for mobile devices. This control provides the same functionality as the ASP.NET mobile <see cref="T:System.Web.UI.MobileControls.Form" /> control in .NET Framework version 1.1.</para>
+      <para>Only one <see cref="T:System.Web.UI.WebControls.View" /> control at a time can be defined as the active view within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. When a <see cref="T:System.Web.UI.WebControls.View" /> control is defined as the active view, the child controls that it contains are rendered to the client. You can use either the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property or the <see cref="M:System.Web.UI.WebControls.MultiView.SetActiveView(System.Web.UI.WebControls.View)" /> method to define the active view. If the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property is empty, the <see cref="T:System.Web.UI.WebControls.MultiView" /> control does not render any content to the client. If the active view is set to a <see cref="T:System.Web.UI.WebControls.View" /> that does not exist within the <see cref="T:System.Web.UI.WebControls.MultiView" /> control, an <see cref="T:System.ArgumentOutOfRangeException" /> is raised at run time.</para>
+      <para>You can define the active view declaratively or programmatically. Setting the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property declaratively when you define the <see cref="T:System.Web.UI.WebControls.MultiView" /> control causes the <see cref="T:System.Web.UI.WebControls.View" /> control that is set as the active view to render to the client the first time the <see cref="T:System.Web.UI.WebControls.MultiView" /> control is called. The following code example demonstrates how to set the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property declaratively.</para>
+      <code>&lt;asp:MultiView id="MultiView1" ActiveViewIndex=0 runat="Server"&gt; </code>
+      <para>Setting the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property programmatically, or calling the <see cref="M:System.Web.UI.WebControls.MultiView.SetActiveView(System.Web.UI.WebControls.View)" /> method, allows the application to determine which <see cref="T:System.Web.UI.WebControls.View" /> control to render to the client at run time based on criteria such as a user's identity or preferences.</para>
+      <para>To allow users to navigate between <see cref="T:System.Web.UI.WebControls.View" /> controls within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control, you can add a <see cref="T:System.Web.UI.WebControls.LinkButton" /> or <see cref="T:System.Web.UI.WebControls.Button" /> control to each <see cref="T:System.Web.UI.WebControls.View" /> control. To take advantage of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control's automatic updating of the currently active <see cref="T:System.Web.UI.WebControls.View" />, set the CommandName property on the button or link button to the value of one of the following command-name fields that corresponds to the desired navigation behavior: <see cref="F:System.Web.UI.WebControls.MultiView.PreviousViewCommandName" />, <see cref="F:System.Web.UI.WebControls.MultiView.NextViewCommandName" />, <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIDCommandName" />, or <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIndexCommandName" />.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:MultiView
+    ActiveViewIndex="integer"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ID="string"
+    OnActiveViewChanged="ActiveViewChanged event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+&gt;
+            &lt;asp:TemplatedWizardStep
+                AllowReturn="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                ContentTemplateContainer="string"
+                EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                ID="string"
+                OnActivate="Activate event handler"
+                OnDataBinding="DataBinding event handler"
+                OnDeactivate="Deactivate event handler"
+                OnDisposed="Disposed event handler"
+                OnInit="Init event handler"
+                OnLoad="Load event handler"
+                OnPreRender="PreRender event handler"
+                OnUnload="Unload event handler"
+                runat="server"
+                SkinID="string"
+                StepType="<codeFeaturedElement>Auto</codeFeaturedElement>|Complete|Finish|Start|Step"
+                Title="string"
+                Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+&gt;
+                        &lt;ContentTemplate&gt;
+                            &lt;!-- child controls --&gt;
+                        &lt;/ContentTemplate&gt;
+                        &lt;CustomNavigationTemplate&gt;
+                            &lt;!-- child controls --&gt;
+                        &lt;/CustomNavigationTemplate&gt;
+            &lt;/asp:TemplatedWizardStep&gt;
+            &lt;asp:View
+                EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                ID="string"
+                OnActivate="Activate event handler"
+                OnDataBinding="DataBinding event handler"
+                OnDeactivate="Deactivate event handler"
+                OnDisposed="Disposed event handler"
+                OnInit="Init event handler"
+                OnLoad="Load event handler"
+                OnPreRender="PreRender event handler"
+                OnUnload="Unload event handler"
+                runat="server"
+                SkinID="string"
+                Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            /&gt;
+            &lt;asp:WizardStep
+                AllowReturn="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                ID="string"
+                OnActivate="Activate event handler"
+                OnDataBinding="DataBinding event handler"
+                OnDeactivate="Deactivate event handler"
+                OnDisposed="Disposed event handler"
+                OnInit="Init event handler"
+                OnLoad="Load event handler"
+                OnPreRender="PreRender event handler"
+                OnUnload="Unload event handler"
+                runat="server"
+                SkinID="string"
+                StepType="<codeFeaturedElement>Auto</codeFeaturedElement>|Complete|Finish|Start|Step"
+                Title="string"
+                Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+            /&gt;
+&lt;/asp:MultiView&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a control that acts as a container for a group of <see cref="T:System.Web.UI.WebControls.View" /> controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,9 +153,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.MultiView" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MultiView" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,9 +174,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.MultiView.ActiveViewChanged" /> event is raised when the active <see cref="T:System.Web.UI.WebControls.View" /> control within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control changes between posts to the server.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the active <see cref="T:System.Web.UI.WebControls.View" /> control of a <see cref="T:System.Web.UI.WebControls.MultiView" /> control changes between posts to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -68,10 +201,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property to set a <see cref="T:System.Web.UI.WebControls.View" /> control within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control as the active view. You can also use this property to return the index of the <see cref="T:System.Web.UI.WebControls.View" /> control that is currently set as the active view. The index of a <see cref="T:System.Web.UI.WebControls.View" /> control is determined by the order in which it is declared within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. For example, the first <see cref="T:System.Web.UI.WebControls.View" /> control declared within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control has an index of 0.</para>
+          <para>Only one <see cref="T:System.Web.UI.WebControls.View" /> control at a time can be defined as active within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. The <see cref="T:System.Web.UI.WebControls.View" /> control that is set to the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property will be rendered to the client. If the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property is set to a <see cref="T:System.Web.UI.WebControls.View" /> that does not exist within the <see cref="T:System.Web.UI.WebControls.MultiView" /> control, a <see cref="T:System.ArgumentOutOfRangeException" /> is raised at run time. If the property is empty, the <see cref="T:System.Web.UI.WebControls.MultiView" /> control does not render any content to the client.</para>
+          <para>You can set the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property either declaratively at development time or programmatically at run time. Setting the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property declaratively when you define the <see cref="T:System.Web.UI.WebControls.MultiView" /> control causes the <see cref="T:System.Web.UI.WebControls.View" /> control that is set as the active view to render to the client the first time the <see cref="T:System.Web.UI.WebControls.MultiView" /> control is called. Setting the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property programmatically allows the application to determine which <see cref="T:System.Web.UI.WebControls.View" /> control to render to the client at run time based on criteria such as a user's identity or their preferences.</para>
+          <para>Alternately, you can use the <see cref="M:System.Web.UI.WebControls.MultiView.SetActiveView(System.Web.UI.WebControls.View)" /> and <see cref="M:System.Web.UI.WebControls.MultiView.GetActiveView" /> methods to set or get the active view within the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the active <see cref="T:System.Web.UI.WebControls.View" /> control within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -88,9 +230,15 @@
       </Parameters>
       <Docs>
         <param name="ob">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the base class implementation to allow only <see cref="T:System.Web.UI.WebControls.View" /> controls to be added to the <see cref="T:System.Web.UI.WebControls.ViewCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.Web.UI.WebControls.MultiView" /> control that an XML or HTML element was parsed, and adds the element to the <see cref="T:System.Web.UI.WebControls.ViewCollection" /> collection of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,10 +252,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the base implementation to always return a <see cref="T:System.Web.UI.WebControls.ViewCollection" /> to contain the <see cref="T:System.Web.UI.WebControls.View" /> controls of the current <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.ControlCollection" /> to hold the child controls of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ViewCollection" /> to contain the <see cref="T:System.Web.UI.WebControls.View" /> controls of the current <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +282,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.MultiView.EnableTheming" /> property indicates whether themes are enabled for the <see cref="T:System.Web.UI.WebControls.MultiView" /> control. The <see cref="P:System.Web.UI.WebControls.MultiView.EnableTheming" /> property also affects whether themes are enabled for the controls contained in its <see cref="P:System.Web.UI.Control.Controls" /> collection. When the <see cref="P:System.Web.UI.WebControls.MultiView.EnableTheming" /> property is true, the application's theme directory is searched for control skins to apply. If no skin for the particular control exists in the theme directory, a skin is not applied. When the <see cref="P:System.Web.UI.WebControls.MultiView.EnableTheming" /> property is false, the theme directory is not searched and the contents of the <see cref="P:System.Web.UI.Control.SkinID" /> property are not used.</para>
+          <para>A control can override the <see cref="P:System.Web.UI.WebControls.MultiView.EnableTheming" /> value set by its parent control or the containing page. For example, if a <see cref="T:System.Web.UI.WebControls.MultiView" /> control has <see cref="P:System.Web.UI.WebControls.MultiView.EnableTheming" /> set to false, you can selectively apply themes to individual <see cref="T:System.Web.UI.WebControls.View" /> controls contained within the <see cref="T:System.Web.UI.WebControls.MultiView" /> control by setting the <see cref="P:System.Web.UI.Control.EnableTheming" /> property to true on the individual child controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether themes apply to the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -142,10 +306,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to return the <see cref="T:System.Web.UI.WebControls.View" /> control within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control that is currently set as the active view. This method returns a <see cref="T:System.Web.UI.WebControls.View" /> control and therefore can be used to access the properties of the active view. For example, MultiView1.GetActiveView.ID returns the value of the <see cref="P:System.Web.UI.Control.ID" /> property of the current active view in MultiView1.</para>
+          <para>Alternately, you can use the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property to get or set the zero-based index of the current active view in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. This property can be accessed either declaratively or programmatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the current active <see cref="T:System.Web.UI.WebControls.View" /> control within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.View" /> control that represents the active view within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -164,9 +338,13 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the current state of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the state of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control. </param>
       </Docs>
     </Member>
     <Member MemberName="NextViewCommandName">
@@ -176,9 +354,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.MultiView.NextViewCommandName" /> field to represent the "NextView" command name.</para>
+          <para>You can use the value of this field to take advantage of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control's automatic updating of the active <see cref="T:System.Web.UI.WebControls.View" /> control. For example, if a <see cref="T:System.Web.UI.WebControls.View" /> control contains a <see cref="T:System.Web.UI.WebControls.Button" /> control that navigates to the previous <see cref="T:System.Web.UI.WebControls.View" />, you can set the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> property to the value of the <see cref="F:System.Web.UI.WebControls.MultiView.NextViewCommandName" /> field, which is "NextView". This causes the <see cref="T:System.Web.UI.WebControls.MultiView" /> control to automatically decrement the value of the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property when the button is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the command name associated with the next <see cref="T:System.Web.UI.WebControls.View" /> control to display in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -194,10 +379,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.MultiView.ActiveViewChanged" /> event is raised when the active <see cref="T:System.Web.UI.WebControls.View" /> control within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control changes between posts to the server, and you can provide a custom handler for this event.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.MultiView.OnActiveViewChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.MultiView.ActiveViewChanged" /> event of a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -214,12 +408,23 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.MultiView" /> control contains <see cref="T:System.Web.UI.WebControls.View" /> controls that raise events. This method overrides the base implementation to handle navigation between <see cref="T:System.Web.UI.WebControls.View" /> controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the event for the <see cref="T:System.Web.UI.WebControls.MultiView" /> control is passed to the page's UI server control hierarchy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event has been canceled; otherwise, false. The default is false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,9 +443,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When notified by this method, a <see cref="T:System.Web.UI.WebControls.MultiView" /> control must perform any initialization steps that are required to create and set up an instance. In this stage of the server control's lifecycle, the control's view state has yet to be populated. You cannot access another server control when this method is called, even if it is a child or parent of this control. Other server controls are not certain to be created and ready for access.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="PreviousViewCommandName">
@@ -250,9 +462,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.MultiView.PreviousViewCommandName" /> field to represent the "PrevView" command name. </para>
+          <para>You can use the value of this field to take advantage of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control's automatic updating of the active <see cref="T:System.Web.UI.WebControls.View" /> control. For example, if a <see cref="T:System.Web.UI.WebControls.View" /> control contains a <see cref="T:System.Web.UI.WebControls.Button" /> control that navigates to the next <see cref="T:System.Web.UI.WebControls.View" />, you can set the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> property to the value of the <see cref="F:System.Web.UI.WebControls.MultiView.PreviousViewCommandName" /> field, which is "PrevView". This causes the <see cref="T:System.Web.UI.WebControls.MultiView" /> control to automatically increment the value of the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property when the button is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the command name associated with the previous <see cref="T:System.Web.UI.WebControls.View" /> control to display in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -271,9 +490,16 @@
         <Parameter Name="ctl" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="ctl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.RemovedControl(System.Web.UI.Control)" /> method is called immediately after a <see cref="T:System.Web.UI.WebControls.View" /> control is removed from the <see cref="P:System.Web.UI.Control.Controls" /> collection of a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called after a <see cref="T:System.Web.UI.WebControls.View" /> control is removed from the <see cref="P:System.Web.UI.Control.Controls" /> collection of a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
+        <param name="ctl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.View" /> control that has been removed. </param>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -289,9 +515,18 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.MultiView.Render(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.MultiView.Render(System.Web.UI.HtmlTextWriter)" /> method writes the rendered content of the active view to the client using the supplied <see cref="T:System.Web.UI.HtmlTextWriter" />. You can set the active view in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control using the <see cref="M:System.Web.UI.WebControls.MultiView.SetActiveView(System.Web.UI.WebControls.View)" /> method or the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property. You can determine which one of the <see cref="T:System.Web.UI.WebControls.View" /> controls in the <see cref="P:System.Web.UI.WebControls.MultiView.Views" /> collection is the active view, if any, by using the <see cref="M:System.Web.UI.WebControls.MultiView.GetActiveView" /> method or the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property.</para>
+          <para>If an active view is set for the <see cref="T:System.Web.UI.WebControls.MultiView" /> control, the active <see cref="T:System.Web.UI.WebControls.View" /> control is used to render content for that view and its child controls. If an active view is not set for the <see cref="T:System.Web.UI.WebControls.MultiView" /> control, no content is rendered to the <see cref="T:System.Web.UI.HtmlTextWriter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the <see cref="T:System.Web.UI.WebControls.MultiView" /> control content to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object, for display on the client. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
     </Member>
     <Member MemberName="SaveControlState">
@@ -305,9 +540,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the current state of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the state of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control. If there is no state associated with the <see cref="T:System.Web.UI.WebControls.MultiView" /> control, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetActiveView">
@@ -320,10 +561,19 @@
         <Parameter Name="view" Type="System.Web.UI.WebControls.View" />
       </Parameters>
       <Docs>
-        <param name="view">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to set a <see cref="T:System.Web.UI.WebControls.View" /> control within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control as the active view. Only one <see cref="T:System.Web.UI.WebControls.View" /> control at a time can be defined as active within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. The <see cref="T:System.Web.UI.WebControls.View" /> control that is set as the active view is rendered to the client. If a <see cref="T:System.Web.UI.WebControls.View" /> control that does not exist within the <see cref="T:System.Web.UI.WebControls.MultiView" /> control is set as active, an exception is raised at run time. If no <see cref="T:System.Web.UI.WebControls.View" /> control is set as the active view, the <see cref="T:System.Web.UI.WebControls.MultiView" /> control does not render any content to the client.</para>
+          <para>Using the <see cref="M:System.Web.UI.WebControls.MultiView.SetActiveView(System.Web.UI.WebControls.View)" /> method to programmatically set the active view allows the application to determine which <see cref="T:System.Web.UI.WebControls.View" /> control to render to the client at run time based on criteria such as a user's identity and preferences.</para>
+          <para>Alternately, you can use the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property to get or set the zero-based index of the current active view in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. This property can be accessed either declaratively or programmatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified <see cref="T:System.Web.UI.WebControls.View" /> control to the active view within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
+        <param name="view">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.View" /> control to set as the active view within a <see cref="T:System.Web.UI.WebControls.MultiView" /> control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -336,9 +586,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIDCommandName" /> field to represent the "SwitchViewByID" command name.</para>
+          <para>You can use the value of this field to take advantage of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control's automatic updating of the active <see cref="T:System.Web.UI.WebControls.View" /> control. For example, if a <see cref="T:System.Web.UI.WebControls.View" /> control contains a <see cref="T:System.Web.UI.WebControls.Button" /> control that navigates to the first <see cref="T:System.Web.UI.WebControls.View" /> when clicked, you can set the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> property to the value of the <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIDCommandName" /> field, which is "SwitchViewByID". Set the <see cref="P:System.Web.UI.WebControls.Button.CommandArgument" /> property to the ID of the first <see cref="T:System.Web.UI.WebControls.View" /> in the <see cref="T:System.Web.UI.WebControls.MultiView" /> control, such as "Page1". This causes the <see cref="T:System.Web.UI.WebControls.MultiView" /> control to automatically set "Page1" as the active <see cref="T:System.Web.UI.WebControls.View" /> when the button is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the command name associated with changing the active <see cref="T:System.Web.UI.WebControls.View" /> control in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control, based on a specified <see cref="T:System.Web.UI.WebControls.View" /> id. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -351,9 +608,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIndexCommandName" /> field to represent the "SwitchViewByIndex" command name.</para>
+          <para>You can use the value of this field to take advantage of the <see cref="T:System.Web.UI.WebControls.MultiView" /> control's automatic updating of the active <see cref="T:System.Web.UI.WebControls.View" /> control. For example, if a <see cref="T:System.Web.UI.WebControls.View" /> control contains a <see cref="T:System.Web.UI.WebControls.Button" /> control that navigates to the first <see cref="T:System.Web.UI.WebControls.View" /> when clicked, you can set the <see cref="P:System.Web.UI.WebControls.Button.CommandName" /> property to the value of the <see cref="F:System.Web.UI.WebControls.MultiView.SwitchViewByIndexCommandName" /> field, which is "SwitchViewByIndex". Set the <see cref="P:System.Web.UI.WebControls.Button.CommandArgument" /> property to the index of the first <see cref="T:System.Web.UI.WebControls.View" /> in the <see cref="T:System.Web.UI.WebControls.MultiView" /> control, which is 0. This causes the <see cref="T:System.Web.UI.WebControls.MultiView" /> control to automatically set the <see cref="P:System.Web.UI.WebControls.MultiView.ActiveViewIndex" /> property to 0 when the button is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the command name associated with changing the active <see cref="T:System.Web.UI.WebControls.View" /> control in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control based on a specified <see cref="T:System.Web.UI.WebControls.View" /> index. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -374,10 +638,16 @@
         <ReturnType>System.Web.UI.WebControls.ViewCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to programmatically manage the <see cref="T:System.Web.UI.WebControls.View" /> controls in a <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.UI.WebControls.View" /> controls in the <see cref="T:System.Web.UI.WebControls.MultiView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

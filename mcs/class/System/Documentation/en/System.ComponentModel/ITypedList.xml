@@ -1,22 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITypedList" FullName="System.ComponentModel.ITypedList">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ITypedList" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypedList" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this interface if, for instance, you are using a <see cref="T:System.Data.DataView" /> object that represents a customer table, you want to bind to the properties on the customer object that the <see cref="T:System.Data.DataView" /> represents, not the properties of the <see cref="T:System.Data.DataView" />.</para>
+      <para>This interface is not required for design-time support of a bindable list.</para>
+      <para>Binding to data can occur either at run time or in a designer, but there are rules for both. At run time, you can bind to data in any of the following: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Array" /> </para>
+        </item>
+        <item>
+          <para>Implementer of <see cref="T:System.Collections.IList" />, provided the implementer has a strongly typed <see cref="P:System.Collections.IList.Item(System.Int32)" /> property (that is, the <see cref="T:System.Type" /> is anything but <see cref="T:System.Object" />). You can accomplish this by making the default implementation of <see cref="P:System.Collections.IList.Item(System.Int32)" /> private. If you want to create an <see cref="T:System.Collections.IList" /> that follows the rules of a strongly typed collection, you should derive from <see cref="T:System.Collections.CollectionBase" />.</para>
+        </item>
+        <item>
+          <para>Implementer of <see cref="T:System.ComponentModel.ITypedList" />.</para>
+        </item>
+      </list>
+      <para>In a designer, you can initialize binding to <see cref="T:System.ComponentModel.Component" /> objects by following the same rules.</para>
+      <para>For more information on binding to a data source, see the <see cref="T:System.Windows.Forms.Binding" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality to discover the schema for a bindable list, where the properties available for binding differ from the public properties of the object to bind to. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetItemProperties">
       <MemberSignature Language="C#" Value="public System.ComponentModel.PropertyDescriptorCollection GetItemProperties (System.ComponentModel.PropertyDescriptor[] listAccessors);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.PropertyDescriptorCollection GetItemProperties(class System.ComponentModel.PropertyDescriptor[] listAccessors) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -24,19 +55,31 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="listAccessors">To be added: an object of type 'PropertyDescriptor []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="listAccessors" /> parameter is not null, it typically contains a property descriptor that identifies a list of containers to retrieve for the object that implements <see cref="T:System.ComponentModel.ITypedList" />. For example, a <see cref="T:System.Data.DataSet" /> containing two tables, myCustomers and myOrders, with a relationship between them called myCustOrders. If you create a <see cref="T:System.Data.DataView" /> object to view myCustomers, then calling the <see cref="M:System.ComponentModel.ITypedList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])" /> method with null returns the property descriptors for the columns in myCustomers. As a result, one of the returned property descriptors is a property descriptor for myCustOrders, just as calling the <see cref="M:System.ComponentModel.ITypedList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])" /> method with a list accessor array containing the property descriptors for myCustOrders will return the property descriptors for myOrders.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties on each item used to bind data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties on each item used to bind data.</para>
+        </returns>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects to find in the collection as bindable. This can be null. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetListName">
       <MemberSignature Language="C#" Value="public string GetListName (System.ComponentModel.PropertyDescriptor[] listAccessors);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetListName(class System.ComponentModel.PropertyDescriptor[] listAccessors) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -44,15 +87,21 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="listAccessors">To be added: an object of type 'PropertyDescriptor []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used only in the design-time framework and by the obsolete <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the list.</para>
+        </returns>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects, for which the list name is returned. This can be null. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

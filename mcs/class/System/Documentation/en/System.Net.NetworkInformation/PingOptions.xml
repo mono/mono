@@ -1,81 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PingOptions" FullName="System.Net.NetworkInformation.PingOptions">
   <TypeSignature Language="C#" Value="public class PingOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PingOptions extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.NetworkInformation.PingOptions" /> class provides the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> and <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> properties to control how Internet Control Message Protocol (ICMP) echo request packets are transmitted.  </para>
+      <para>The <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property specifies the Time to Live for packets sent by the <see cref="T:System.Net.NetworkInformation.Ping" /> class. This value indicates the number of routing nodes that can forward a <see cref="T:System.Net.NetworkInformation.Ping" /> packet before it is discarded. Setting this option is useful if you want to test the number of forwards, also known as hops, are required to send a packet from a source computer to a destination computer.</para>
+      <para>The <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" />  property controls whether data sent to a remote host can be divided into multiple packets.  This option is useful if you want to test the maximum transmission unit (MTU) of the routers and gateways used to transmit the packet.</para>
+      <para>Instances of the <see cref="T:System.Net.NetworkInformation.PingOptions" /> class are passed to the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> and <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods, and the <see cref="T:System.Net.NetworkInformation.PingReply" /> class returns instances of <see cref="T:System.Net.NetworkInformation.PingOptions" /> via the <see cref="P:System.Net.NetworkInformation.PingReply.Options" /> property.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Net.NetworkInformation.PingOptions" />, see the <see cref="Overload:System.Net.NetworkInformation.PingOptions.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used to control how <see cref="T:System.Net.NetworkInformation.Ping" /> data packets are transmitted.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PingOptions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Net.NetworkInformation.PingOptions" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" />
+                </para>
+              </term>
+              <description>
+                <para>128</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" />
+                </para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+          </list>
+          <para>You can set the properties to new values before calling <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> or <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.PingOptions" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PingOptions (int ttl, bool dontFragment);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 ttl, bool dontFragment) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="ttl" Type="System.Int32" />
         <Parameter Name="dontFragment" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="ttl">To be added.</param>
-        <param name="dontFragment">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="ttl" /> parameter limits the number of routers and gateways that can forward the data. This is useful for testing the length of the route between the local and remote computers. The <paramref name="dontFragment" /> parameter allows you to test the maximum transmission unit (MTU) of the routers and gateways used to transmit the packet.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.PingOptions" /> class and sets the Time to Live and fragmentation values.</para>
+        </summary>
+        <param name="ttl">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value greater than zero that specifies the number of times that the <see cref="T:System.Net.NetworkInformation.Ping" /> data packets can be forwarded.</param>
+        <param name="dontFragment">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to prevent data sent to the remote host from being fragmented; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DontFragment">
-      <MemberSignature Language="C#" Value="public bool DontFragment { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DontFragment { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DontFragment" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applications use this property to control whether data sent to a remote host by the <see cref="T:System.Net.NetworkInformation.Ping" /> class can be divided into multiple packets.  This option is useful if you want to test the maximum transmission unit (MTU) of the routers and gateways used to transmit the packet. If this property is true and the data sent to the remote host is larger then the MTU of a gateway or router between the sender and the remote host, the ping operation fails with status <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that controls fragmentation of the data sent to the remote host.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Ttl">
-      <MemberSignature Language="C#" Value="public int Ttl { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Ttl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Ttl" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As gateways and routers transmit packets through a network, they decrement the current Time-to-Live (TTL) value found in the packet header. If the TTL value reaches zero, the packet is deemed undeliverable and is discarded. This option is useful if you want to test the number of routers and gateways used to transmit the data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of routing nodes that can forward the <see cref="T:System.Net.NetworkInformation.Ping" /> data before it is discarded.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

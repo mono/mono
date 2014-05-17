@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ApplicationTrustCollection" FullName="System.Security.Policy.ApplicationTrustCollection">
   <TypeSignature Language="C#" Value="public sealed class ApplicationTrustCollection : System.Collections.ICollection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ApplicationTrustCollection extends System.Object implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -19,14 +21,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Security.Policy.ApplicationTrust" /> objects encapsulate security decisions about an application. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Security.Policy.ApplicationTrust" /> objects. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public int Add (System.Security.Policy.ApplicationTrust trust);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Add(class System.Security.Policy.ApplicationTrust trust) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -34,20 +48,31 @@
         <Parameter Name="trust" Type="System.Security.Policy.ApplicationTrust" />
       </Parameters>
       <Docs>
-        <param name="trust">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Policy.ApplicationTrust" /> object is added to the end of the collection.  To remove an application trust that you previously added, use the <see cref="Overload:System.Security.Policy.ApplicationTrustCollection.Remove" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the new element was inserted.</para>
+        </returns>
+        <param name="trust">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.ApplicationTrust" /> object to add.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="C#" Value="public void AddRange (System.Security.Policy.ApplicationTrust[] trusts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddRange(class System.Security.Policy.ApplicationTrust[] trusts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddRange">
-      <MemberSignature Language="C#" Value="public void AddRange (System.Security.Policy.ApplicationTrust[] trusts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -55,19 +80,28 @@
         <Parameter Name="trusts" Type="System.Security.Policy.ApplicationTrust[]" />
       </Parameters>
       <Docs>
-        <param name="trusts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Policy.ApplicationTrust" /> objects contained in the <paramref name="trusts" /> array are appended to the end of the collection.</para>
+          <para>To remove a range of application trusts that you previously added, use the <see cref="Overload:System.Security.Policy.ApplicationTrustCollection.RemoveRange" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the specified <see cref="T:System.Security.Policy.ApplicationTrust" /> array to the end of the collection.</para>
+        </summary>
+        <param name="trusts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Security.Policy.ApplicationTrust" /> containing the objects to add to the collection.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="C#" Value="public void AddRange (System.Security.Policy.ApplicationTrustCollection trusts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddRange(class System.Security.Policy.ApplicationTrustCollection trusts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddRange">
-      <MemberSignature Language="C#" Value="public void AddRange (System.Security.Policy.ApplicationTrustCollection trusts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -75,36 +109,53 @@
         <Parameter Name="trusts" Type="System.Security.Policy.ApplicationTrustCollection" />
       </Parameters>
       <Docs>
-        <param name="trusts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Policy.ApplicationTrust" /> objects contained in <paramref name="trusts" /> are appended to the end of the collection.</para>
+          <para>You can use the <see cref="M:System.Security.Policy.ApplicationTrustCollection.AddRange(System.Security.Policy.ApplicationTrustCollection)" /> method to quickly add another collection of application trust objects to the collection instead of manually adding each application trust to the collection using the <see cref="M:System.Security.Policy.ApplicationTrustCollection.Add(System.Security.Policy.ApplicationTrust)" /> method.</para>
+          <para>To remove a range of application trusts that you previously added, use the <see cref="Overload:System.Security.Policy.ApplicationTrustCollection.RemoveRange" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the specified <see cref="T:System.Security.Policy.ApplicationTrustCollection" /> to the end of the collection.</para>
+        </summary>
+        <param name="trusts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Policy.ApplicationTrustCollection" /> containing the objects to add to the collection.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clear">
-      <MemberSignature Language="C#" Value="public void Clear ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each <see cref="T:System.Security.Policy.ApplicationTrust" /> in the collection is identified by its <see cref="P:System.Security.Policy.ApplicationTrust.ApplicationIdentity" /> property. If the value of the <see cref="P:System.Security.Policy.ApplicationTrust.ApplicationIdentity" /> property for any <see cref="T:System.Security.Policy.ApplicationTrust" /> object in the collection is null, an <see cref="T:System.ArgumentException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the application trusts from the collection.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (System.Security.Policy.ApplicationTrust[] array, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(class System.Security.Policy.ApplicationTrust[] array, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (System.Security.Policy.ApplicationTrust[] array, int index);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -113,37 +164,52 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>All the application trusts in the collection are copied into the array starting at the specified index location, overwriting any existing data within the range of objects copied into the array.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire collection to a compatible one-dimensional array, starting at the specified index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional array of type <see cref="T:System.Security.Policy.ApplicationTrust" /> that is the destination of the elements copied from the current collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public int Count { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of items contained in the collection.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Find">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrustCollection Find (ApplicationIdentity applicationIdentity, System.Security.Policy.ApplicationVersionMatch versionMatch);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Policy.ApplicationTrustCollection Find(class System.ApplicationIdentity applicationIdentity, valuetype System.Security.Policy.ApplicationVersionMatch versionMatch) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Find">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrustCollection Find (ApplicationIdentity applicationIdentity, System.Security.Policy.ApplicationVersionMatch versionMatch);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.ApplicationTrustCollection</ReturnType>
       </ReturnValue>
@@ -152,56 +218,88 @@
         <Parameter Name="versionMatch" Type="System.Security.Policy.ApplicationVersionMatch" />
       </Parameters>
       <Docs>
-        <param name="applicationIdentity">To be added.</param>
-        <param name="versionMatch">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application trust is optionally selected by an exact version match, based on the value of the <paramref name="versionMatch" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application trusts in the collection that match the specified application identity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Policy.ApplicationTrustCollection" /> containing all matching <see cref="T:System.Security.Policy.ApplicationTrust" /> objects.</para>
+        </returns>
+        <param name="applicationIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ApplicationIdentity" /> object describing the application to find.</param>
+        <param name="versionMatch">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Policy.ApplicationVersionMatch" /> values. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrustEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Policy.ApplicationTrustEnumerator GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrustEnumerator GetEnumerator ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.ApplicationTrustEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Policy.ApplicationTrustEnumerator" /> implements the <see cref="T:System.Collections.IEnumerator" /> interface that allows you to move within a collection.</para>
+          <para>Use the <see cref="P:System.Collections.IEnumerator.Current" /> property to get the item currently pointed to in the collection.</para>
+          <para>Use the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to move to the next item in the collection.</para>
+          <para>Use the <see cref="M:System.Collections.IEnumerator.Reset" /> method to move the enumerator to its initial position.</para>
+          <block subset="none" type="note">
+            <para>After you create the enumerator, or use the <see cref="M:System.Collections.IEnumerator.Reset" /> method to reposition the enumerator to the start of the collection, you must then call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to position the enumerator to the first item. Otherwise, the item represented by the <see cref="P:System.Collections.IEnumerator.Current" /> property is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that can be used to iterate over the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Policy.ApplicationTrustEnumerator" /> that can be used to iterate over the collection.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="C#" Value="public bool IsSynchronized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSynchronized" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsSynchronized">
-      <MemberSignature Language="C#" Value="public bool IsSynchronized { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.ApplicationTrust Item(int32)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust this[int index] { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.ApplicationTrust</ReturnType>
       </ReturnValue>
@@ -215,14 +313,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust this[string appFullName] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.ApplicationTrust Item(string)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust this[string appFullName] { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.ApplicationTrust</ReturnType>
       </ReturnValue>
@@ -236,14 +335,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove (System.Security.Policy.ApplicationTrust trust);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Remove(class System.Security.Policy.ApplicationTrust trust) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remove">
-      <MemberSignature Language="C#" Value="public void Remove (System.Security.Policy.ApplicationTrust trust);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -251,19 +351,28 @@
         <Parameter Name="trust" Type="System.Security.Policy.ApplicationTrust" />
       </Parameters>
       <Docs>
-        <param name="trust">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The entire collection is searched, and all instances of the specified application trust are removed. </para>
+          <para>The objects that follow the removed objects move up to occupy the vacated positions. The indexes of the objects that are moved are also updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified application trust from the collection.</para>
+        </summary>
+        <param name="trust">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.ApplicationTrust" /> object to remove.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove (ApplicationIdentity applicationIdentity, System.Security.Policy.ApplicationVersionMatch versionMatch);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Remove(class System.ApplicationIdentity applicationIdentity, valuetype System.Security.Policy.ApplicationVersionMatch versionMatch) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remove">
-      <MemberSignature Language="C#" Value="public void Remove (ApplicationIdentity applicationIdentity, System.Security.Policy.ApplicationVersionMatch versionMatch);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -272,20 +381,30 @@
         <Parameter Name="versionMatch" Type="System.Security.Policy.ApplicationVersionMatch" />
       </Parameters>
       <Docs>
-        <param name="applicationIdentity">To be added.</param>
-        <param name="versionMatch">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application trust can be identified by an exact version match, dependent upon the value of the <paramref name="versionMatch" /> parameter. The <see cref="M:System.Security.Policy.ApplicationTrustCollection.Find(System.ApplicationIdentity,System.Security.Policy.ApplicationVersionMatch)" /> method is used to locate all matching application trusts, and the matching items are removed from the collection.</para>
+          <para>The objects that follow the removed objects move up to occupy the vacated positions. The indexes of the objects that are moved are also updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all application trust objects that match the specified criteria from the collection.</para>
+        </summary>
+        <param name="applicationIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ApplicationIdentity" /> of the <see cref="T:System.Security.Policy.ApplicationTrust" /> object to be removed.</param>
+        <param name="versionMatch">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Policy.ApplicationVersionMatch" /> values.</param>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveRange">
+      <MemberSignature Language="C#" Value="public void RemoveRange (System.Security.Policy.ApplicationTrust[] trusts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveRange(class System.Security.Policy.ApplicationTrust[] trusts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveRange">
-      <MemberSignature Language="C#" Value="public void RemoveRange (System.Security.Policy.ApplicationTrust[] trusts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -293,19 +412,27 @@
         <Parameter Name="trusts" Type="System.Security.Policy.ApplicationTrust[]" />
       </Parameters>
       <Docs>
-        <param name="trusts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The objects that follow the removed objects move up to occupy the vacated positions. The indexes of the objects that are moved are also updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the application trust objects in the specified array from the collection.</para>
+        </summary>
+        <param name="trusts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A one-dimensional array of type <see cref="T:System.Security.Policy.ApplicationTrust" /> that contains items to be removed from the current collection. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveRange">
+      <MemberSignature Language="C#" Value="public void RemoveRange (System.Security.Policy.ApplicationTrustCollection trusts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveRange(class System.Security.Policy.ApplicationTrustCollection trusts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveRange">
-      <MemberSignature Language="C#" Value="public void RemoveRange (System.Security.Policy.ApplicationTrustCollection trusts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -313,36 +440,51 @@
         <Parameter Name="trusts" Type="System.Security.Policy.ApplicationTrustCollection" />
       </Parameters>
       <Docs>
-        <param name="trusts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The objects that follow the removed objects move up to occupy the vacated positions. The indexes of the objects that are moved are also updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the application trust objects in the specified collection from the collection.</para>
+        </summary>
+        <param name="trusts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Policy.ApplicationTrustCollection" /> that contains items to be removed from the currentcollection.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="C#" Value="public object SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SyncRoot">
-      <MemberSignature Language="C#" Value="public object SyncRoot { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation returns the current application trust object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.ICollection.CopyTo">
+      <MemberSignature Language="C#" Value="void ICollection.CopyTo (Array array, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.ICollection.CopyTo(class System.Array array, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.ICollection.CopyTo">
-      <MemberSignature Language="C#" Value="void ICollection.CopyTo (Array array, int index);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -351,34 +493,42 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the <see cref="T:System.Collections.ICollection" /> to the specified <see cref="T:System.Array" />, starting at the specified <see cref="T:System.Array" /> index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from the <see cref="T:System.Collections.ICollection" />. The <see cref="T:System.Array" /> must have zero-based indexing. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins. </param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
-      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CoClassAttribute" FullName="System.Runtime.InteropServices.CoClassAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class CoClassAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CoClassAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,44 +23,61 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to coclass interfaces, although the <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrfTypeLibraryImporterTlbimpexe&gt;]</a></format> typically applies it for you when it imports a type library.</para>
+      <para>When Tlbimp.exe imports a coclass, it produces a managed class and an interface to represent the coclass. The coclass interface has the same interface identifier (IID) as the default interface of the original coclass. The imported coclass interface also retains the name of the coclass. Tlbimp.exe appends the original coclass name with "class" to identify the imported class.</para>
+      <para>You rarely apply this attribute. However, if plan to write source code that produces metadata that closely simulates metadata produced by Tlbimp.exe, you should create a coclass interface for each coclass. Use the name of the original coclass to name the coclass interface and derive it from the default interface. In addition to the <see cref="T:System.Runtime.InteropServices.CoClassAttribute" />, you must also apply the <see cref="T:System.Runtime.InteropServices.ComImportAttribute" /> and <see cref="T:System.Runtime.InteropServices.GuidAttribute" /> to the coclass interface. For additional information about how Tlbimp.exe imports interfaces and coclasses from a type library, see <format type="text/html"><a href="CB1EE67D-8EF0-4E40-B2A5-13714B9F33C3">[&lt;topic://cpcontlbimptypeconversion&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the class identifier of a coclass imported from a type library.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CoClassAttribute (Type coClass);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type coClass) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="coClass" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="coClass">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes new instance of the <see cref="T:System.Runtime.InteropServices.CoClassAttribute" /> with the class identifier of the original coclass.</para>
+        </summary>
+        <param name="coClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that contains the class identifier of the original coclass. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CoClass">
+      <MemberSignature Language="C#" Value="public Type CoClass { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type CoClass" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CoClass">
-      <MemberSignature Language="C#" Value="public Type CoClass { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class identifier of the original coclass.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

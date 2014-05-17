@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XNodeDocumentOrderComparer" FullName="System.Xml.Linq.XNodeDocumentOrderComparer">
+  <TypeSignature Language="C#" Value="public sealed class XNodeDocumentOrderComparer : System.Collections.Generic.IComparer&lt;System.Xml.Linq.XNode&gt;, System.Collections.IComparer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XNodeDocumentOrderComparer extends System.Object implements class System.Collections.Generic.IComparer`1&lt;class System.Xml.Linq.XNode&gt;, class System.Collections.IComparer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IComparer&lt;System.Xml.Linq.XNode&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IComparer</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class implements <unmanagedCodeEntityReference>IComparer</unmanagedCodeEntityReference> and <unmanagedCodeEntityReference>IComparer&lt;XNode&gt;</unmanagedCodeEntityReference>. </para>
+      <para>We recommend that instead of using this class directly, you use the <see cref="M:System.Xml.Linq.Extensions.InDocumentOrder``1(System.Collections.Generic.IEnumerable{``0})" /> method. This class is used internally by that method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains functionality to compare nodes for their document order. This class cannot be inherited. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XNodeDocumentOrderComparer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>We recommend that instead of using this class directly, you use the <see cref="M:System.Xml.Linq.Extensions.InDocumentOrder``1(System.Collections.Generic.IEnumerable{``0})" /> method. This class is used internally by that method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XNodeDocumentOrderComparer" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public int Compare (System.Xml.Linq.XNode x, System.Xml.Linq.XNode y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Compare(class System.Xml.Linq.XNode x, class System.Xml.Linq.XNode y) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="System.Xml.Linq.XNode" />
+        <Parameter Name="y" Type="System.Xml.Linq.XNode" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>We recommend that instead of using this class directly, you use the <see cref="M:System.Xml.Linq.Extensions.InDocumentOrder``1(System.Collections.Generic.IEnumerable{``0})" /> method. This class is used internally by that method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two nodes to determine their relative document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int32" /> that contains 0 if the nodes are equal; -1 if <paramref name="x" /> is before <paramref name="y" />; 1 if <paramref name="x" /> is after <paramref name="y" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IComparer.Compare">
+      <MemberSignature Language="C#" Value="int IComparer.Compare (object n1, object n2);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IComparer.Compare(object n1, object n2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="n1" Type="System.Object" />
+        <Parameter Name="n2" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="n1">To be added.</param>
+        <param name="n2">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>We recommend that instead of using this class directly, you use the <see cref="M:System.Xml.Linq.Extensions.InDocumentOrder``1(System.Collections.Generic.IEnumerable{``0})" /> method. This class is used internally by that method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two nodes to determine their relative document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int32" /> that contains 0 if the nodes are equal; -1 if <paramref name="x" /> is before <paramref name="y" />; 1 if <paramref name="x" /> is after <paramref name="y" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

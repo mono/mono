@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ISecureConversationSession" FullName="System.ServiceModel.Security.ISecureConversationSession">
+  <TypeSignature Language="C#" Value="public interface ISecureConversationSession : System.ServiceModel.Security.ISecuritySession" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISecureConversationSession implements class System.ServiceModel.Channels.ISession, class System.ServiceModel.Security.ISecuritySession" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Security.ISecuritySession</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a secure conversation security session. The communicating parties secure all messages on the session using a SecurityContextToken that is issued by the server as part of session establishment.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="TryReadSessionTokenIdentifier">
+      <MemberSignature Language="C#" Value="public bool TryReadSessionTokenIdentifier (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryReadSessionTokenIdentifier(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful for sessions like WS-RM sessions that build on top of the security session and refer to the security session token's identifier as part of their session establishment protocol.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to read the session token identifier pointed to by the XML reader.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the XML pointed to by the XML reader corresponds to a SecurityKeyIdentifierClause that matches the security session's token; otherwise, false.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> with which to try to read the token.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteSessionTokenIdentifier">
+      <MemberSignature Language="C#" Value="public void WriteSessionTokenIdentifier (System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteSessionTokenIdentifier(class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to write the SecurityKeyIdentifierClause corresponding to the security session's token. This method is useful for sessions like WS-RM sessions that build on top of the security session and refer to the security session token's identifier as part of their session establishment protocol.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> with which to try to write the token.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

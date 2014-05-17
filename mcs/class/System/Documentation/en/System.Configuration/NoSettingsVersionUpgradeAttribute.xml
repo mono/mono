@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NoSettingsVersionUpgradeAttribute" FullName="System.Configuration.NoSettingsVersionUpgradeAttribute">
   <TypeSignature Language="C#" Value="public sealed class NoSettingsVersionUpgradeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NoSettingsVersionUpgradeAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -14,23 +17,41 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To create a fully featured application settings provider that supports application versioning, the provider must implement the <see cref="T:System.Configuration.IApplicationSettingsProvider" /> interface. One of the members in this interface, the <see cref="M:System.Configuration.IApplicationSettingsProvider.Upgrade(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection)" /> method, is called to notify the provider that a new version of the application has been installed. In response, the provider is expected to perform an appropriate action, typically migrating past application settings.</para>
+      <para>The <see cref="T:System.Configuration.NoSettingsVersionUpgradeAttribute" /> informs the provider to suppress the upgrade logic associated with the current settings class. Therefore, the value of the previous version of this property group should not be migrated to the new installation.</para>
+      <block subset="none" type="note">
+        <para>This attribute can only be applied to individual application settings properties.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a settings provider should disable any logic that gets invoked when an application upgrade is detected. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public NoSettingsVersionUpgradeAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the compiler-supplied default constructor for the <see cref="T:System.Configuration.NoSettingsVersionUpgradeAttribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.NoSettingsVersionUpgradeAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

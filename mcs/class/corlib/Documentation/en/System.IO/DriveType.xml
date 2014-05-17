@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DriveType" FullName="System.IO.DriveType">
   <TypeSignature Language="C#" Value="public enum DriveType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed DriveType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -8,121 +10,156 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version=".NET 2.0" />
-  </Docs>
-  <Members>
-    <Member MemberName="CDRom">
-      <MemberSignature Language="C#" Value="CDRom" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DriveType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Fixed">
-      <MemberSignature Language="C#" Value="Fixed" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DriveType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Network">
-      <MemberSignature Language="C#" Value="Network" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DriveType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="NoRootDirectory">
-      <MemberSignature Language="C#" Value="NoRootDirectory" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DriveType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Ram">
-      <MemberSignature Language="C#" Value="Ram" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DriveType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Removable">
-      <MemberSignature Language="C#" Value="Removable" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DriveType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unknown">
-      <MemberSignature Language="C#" Value="Unknown" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DriveType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.IO.DriveType" /> is used by the <see cref="T:System.IO.DriveInfo" /> class to indicate drive type. It can be used with the <see cref="T:System.IO.DriveType" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines constants for drive types, including CDRom, Fixed, Network, NoRootDirectory, Ram, Removable, and Unknown.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CDRom">
+      <MemberSignature Language="C#" Value="CDRom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.DriveType CDRom = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is an optical disc device, such as a CD or DVD-ROM.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Fixed">
+      <MemberSignature Language="C#" Value="Fixed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.DriveType Fixed = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a fixed disk.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Network">
+      <MemberSignature Language="C#" Value="Network" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.DriveType Network = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a network drive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NoRootDirectory">
+      <MemberSignature Language="C#" Value="NoRootDirectory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.DriveType NoRootDirectory = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive does not have a root directory.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Ram">
+      <MemberSignature Language="C#" Value="Ram" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.DriveType Ram = int32(6)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a RAM disk.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Removable">
+      <MemberSignature Language="C#" Value="Removable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.DriveType Removable = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a removable storage device, such as a floppy disk drive or a USB flash drive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Unknown">
+      <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.DriveType Unknown = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DriveType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of drive is unknown.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

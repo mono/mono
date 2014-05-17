@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IBindingMulticastCapabilities" FullName="System.ServiceModel.Channels.IBindingMulticastCapabilities">
+  <TypeSignature Language="C#" Value="public interface IBindingMulticastCapabilities" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindingMulticastCapabilities" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class has a single property that is use to indicate whether or not the service has multicast capabilities.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the optional interface that a binding can implement to specify whether the service it configures has multicast capabilities.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="IsMulticast">
+      <MemberSignature Language="C#" Value="public bool IsMulticast { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsMulticast" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the binding configures the service to have multicast capabilities.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

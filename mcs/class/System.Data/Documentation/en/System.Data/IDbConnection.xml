@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDbConnection" FullName="System.Data.IDbConnection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDbConnection : IDisposable" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.IDbConnection" /> interface enables an inheriting class to implement a Connection class, which represents a unique session with a data source (for example, a network connection to a server). For more information about Connection classes, see <format type="text/html"><a href="9ABC3F92-1BE3-4E1A-B360-762DC689650E">[&lt;topic://cpconadonetconnections&gt;]</a></format>. </para>
+      <para>An application does not create an instance of the <see cref="T:System.Data.IDbConnection" /> interface directly, but creates an instance of a class that inherits <see cref="T:System.Data.IDbConnection" />.</para>
+      <para>Classes that inherit <see cref="T:System.Data.IDbConnection" /> must implement all inherited members, and typically define additional members to add provider-specific functionality. For example, the <see cref="T:System.Data.IDbConnection" /> interface defines the <see cref="P:System.Data.IDbConnection.ConnectionTimeout" /> property. In turn, the <see cref="T:System.Data.SqlClient.SqlConnection" /> class inherits this property, and also defines the <see cref="P:System.Data.SqlClient.SqlConnection.PacketSize" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an open connection to a data source, and is implemented by .NET Framework data providers that access relational databases.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BeginTransaction">
@@ -26,9 +35,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IDbTransaction'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once the transaction has completed, you must explicitly commit or roll back the transaction by using the <see cref="M:System.Data.IDbTransaction.Commit" /> or <see cref="M:System.Data.IDbTransaction.Rollback" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins a database transaction.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the new transaction.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,10 +63,20 @@
         <Parameter Name="il" Type="System.Data.IsolationLevel" />
       </Parameters>
       <Docs>
-        <param name="il">To be added: an object of type 'IsolationLevel'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IDbTransaction'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once the transaction has completed, you must explicitly commit or roll back the transaction using the <see cref="M:System.Data.IDbTransaction.Commit" /> or <see cref="M:System.Data.IDbTransaction.Rollback" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins a database transaction with the specified <see cref="T:System.Data.IsolationLevel" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the new transaction.</para>
+        </returns>
+        <param name="il">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.IsolationLevel" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,9 +93,13 @@
         <Parameter Name="databaseName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="databaseName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the current database for an open Connection object.</para>
+        </summary>
+        <param name="databaseName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the database to use in place of the current database. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,8 +114,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Close the connection to the database</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.IDbConnection.Close" /> method rolls back any pending transactions. It then releases the connection to the connection pool, or closes the connection if connection pooling is disabled.</para>
+          <para>An application can call Close more than one time without generating an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the connection to the database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,9 +138,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ConnectionString property can be set only while the connection is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string used to open a database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +160,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value of 0 indicates no limit to the wait time, rather than no wait time, and should be avoided in a <see cref="P:System.Data.IDbConnection.ConnectionString" /> because it would cause the connection attempt to wait indefinitely.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time to wait while trying to establish a connection before terminating the attempt and generating an error.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,9 +183,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Create an IDbCommand to be executed against this database</summary>
-        <returns>To be added: an object of type 'IDbCommand'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a Command object associated with the connection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Command object associated with the connection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,9 +205,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Database property can be dynamically updated by using the <see cref="M:System.Data.IDbConnection.ChangeDatabase(System.String)" /> method or by passing an SQL statement using one of the Execute methods. (Initially the database is set by means of the connection string.) If you change the current database using an SQL statement or the ChangeDatabase method, an informational message is sent and then the property is updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the current database or the database to be used after a connection is opened.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,8 +228,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a database connection with the settings specified by the ConnectionString property of the provider-specific Connection object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,9 +246,23 @@
         <ReturnType>System.Data.ConnectionState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ConnectionState'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allowed state changes are: </para>
+          <list type="bullet">
+            <item>
+              <para>From Closed to Open, using the Open method of the Connection object.</para>
+            </item>
+            <item>
+              <para>From Open to Closed, using either the Close method or the Dispose method of the Connection object.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of the connection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

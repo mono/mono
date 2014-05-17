@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CustomValidationAttribute" FullName="System.ComponentModel.DataAnnotations.CustomValidationAttribute">
+  <TypeSignature Language="C#" Value="public sealed class CustomValidationAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CustomValidationAttribute extends System.ComponentModel.DataAnnotations.ValidationAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ComponentModel.DataAnnotations.ValidationAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.All, AllowMultiple=true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.DataAnnotations.CustomValidationAttribute" /> attribute is used to perform custom validation when the  <see cref="M:System.ComponentModel.DataAnnotations.ValidationAttribute.IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)" />method is invoked to perform validation. The <see cref="M:System.ComponentModel.DataAnnotations.ValidationAttribute.IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)" /> method then redirects the call to the method that is identified by the <see cref="P:System.ComponentModel.DataAnnotations.CustomValidationAttribute.Method" /> property, which in turn performs the actual validation.</para>
+      <para>The <see cref="T:System.ComponentModel.DataAnnotations.CustomValidationAttribute" /> attribute can be applied to types, properties, fields, methods, and method parameters. When it is applied to a property, the attribute is invoked whenever a value is assigned to that property. When it is applied to a method, the attribute is invoked whenever the program calls that method. When it is applied to a method parameter, the attribute is invoked before the method is called.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a custom validation method that is used to validate a property or class instance.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomValidationAttribute (Type validatorType, string method);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type validatorType, string method) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="validatorType" Type="System.Type" />
+        <Parameter Name="method" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method specifies a custom class and a related method to call at run time in order to execute custom validation logic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.CustomValidationAttribute" /> class.</para>
+        </summary>
+        <param name="validatorType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that contains the method that performs custom validation.</param>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method that performs custom validation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FormatErrorMessage">
+      <MemberSignature Language="C#" Value="public override string FormatErrorMessage (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string FormatErrorMessage(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The error message is formatted at run time to include the <paramref name="name" /> value that is passed to this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Formats a validation error message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the formatted error message.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to include in the formatted message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsValid">
+      <MemberSignature Language="C#" Value="protected override System.ComponentModel.DataAnnotations.ValidationResult IsValid (object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.ComponentModel.DataAnnotations.ValidationResult IsValid(object value, class System.ComponentModel.DataAnnotations.ValidationContext validationContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.DataAnnotations.ValidationResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="validationContext">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Method">
+      <MemberSignature Language="C#" Value="public string Method { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Method" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The custom method specified by this property must be public and static, and it must return a Boolean value. It must also take at least one input parameter that specifies the object to validate. This parameter can be strongly typed. If a process passes a value of a different type, type conversion will be attempted.</para>
+          <para>The specified method should return true if a given object is valid. Otherwise it should return false.</para>
+          <para>The custom method can also take parameters that specify a <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> input value and a <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> output value. The <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> parameter provides additional context information that the method can use to determine the context that it is used in. The <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> output parameter enables the method to return an error message.</para>
+          <para>If the method returns null for the <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> parameter or if it returns an empty value for the <see cref="P:System.ComponentModel.DataAnnotations.ValidationResult.ErrorMessage" /> property, the default <see cref="M:System.ComponentModel.DataAnnotations.ValidationAttribute.FormatErrorMessage(System.String)" /> method will be called to compose the error message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validation method.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TypeId">
+      <MemberSignature Language="C#" Value="public override object TypeId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object TypeId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique identifier for this attribute.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidatorType">
+      <MemberSignature Language="C#" Value="public Type ValidatorType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ValidatorType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the type that is passed to the ctor <see cref="M:System.ComponentModel.DataAnnotations.CustomValidationAttribute.#ctor(System.Type,System.String)" /> constructor overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type that performs custom validation.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

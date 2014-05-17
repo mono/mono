@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViewTechnology" FullName="System.ComponentModel.Design.ViewTechnology">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum ViewTechnology" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ViewTechnology extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -17,64 +20,101 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The view adapter model replaces and adds functionality to the <see cref="T:System.ComponentModel.Design.ViewTechnology" /> feature; however, the <see cref="T:System.ComponentModel.Design.ViewTechnology" /> feature is retained for both backward compatibility and future use, if you choose. For more information, see ".NET Shape Library: A Sample Designer" in the Windows Forms Knowledge Base at http://windowsforms.net/articles/shapedesigner.aspx.</para>
+      <para>
+        <see cref="T:System.ComponentModel.Design.ViewTechnology" /> defines identifiers that can indicate the mode to use for controlling the display of a designer-hosted document.</para>
+      <para>You should only use the <see cref="F:System.ComponentModel.Design.ViewTechnology.Default" /> value in your designer hosting environment. In previous versions of the dnprdnshort, the <see cref="T:System.ComponentModel.Design.ViewTechnology" /> enumeration specified the type of UI model supported by a root designer. Because this model is not extensible, you should instead use a <newTerm>view adapter</newTerm> model. A view adapter is a type that adapts an object of one type to another. </para>
+      <para>For example, an HTML designer might return a DemoDOM tree as its view. The HTML designer returns a view technology of <see cref="F:System.ComponentModel.Design.ViewTechnology.Default" />. A Windows Forms hosting environment would have one or more view adapter classes available. If one such class could convert the DemoDOM into a Windows Forms control, the hosting application can support this type of designer. If no adapter can handle the data type returned from the designer’s <see cref="M:System.ComponentModel.Design.IRootDesigner.GetView(System.ComponentModel.Design.ViewTechnology)" /> method, the load of the designer will fail, and the user will be presented with an error.</para>
+      <para>vsprvs has an extensible scheme for providing view adapters, so it can adapt to any UI technology. Third-party technology providers can also offer an appropriate view adapter, and their object models are immediately consumable. </para>
+      <para>For an example that uses view adapters, see ".NET Shape Library: A Sample Designer" in the Windows Forms Knowledge Base at http://windowsforms.net/articles/shapedesigner.aspx. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers for a set of technologies that designer hosts support.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Design.ViewTechnology Default = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ViewTechnology</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The root designer may return any type of object, but the object must be compatible with an adapter for the technology of the host. Hosting environments such as vsprvs provide a way to plug in new view technology adapters. The default view object for the Windows Forms designer is a <see cref="T:System.Windows.Forms.Control" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default view technology support. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Passthrough">
       <MemberSignature Language="C#" Value="Passthrough" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Design.ViewTechnology Passthrough = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ComponentModel.Design.ViewTechnology</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("Use ViewTechnology.Default.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Design.ViewTechnology</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The view object must implement any interfaces the development environment requires. The vsprvs development environment supports view objects that are either an ActiveX control, active document, or an object that implements the IVsWindowPane interface that is available through vsprvs VSI (vsprvs Integration) program. The vsprvs development environment provides support for this view technology. Support for this view technology is not necessarily available in all development environments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a mode in which the view object is passed directly to the development environment. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WindowsForms">
       <MemberSignature Language="C#" Value="WindowsForms" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Design.ViewTechnology WindowsForms = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ComponentModel.Design.ViewTechnology</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("Use ViewTechnology.Default.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Design.ViewTechnology</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The designer host fills the development environment document window with the Windows Forms control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a mode in which a Windows Forms control object provides the display for the root designer. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

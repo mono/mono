@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProvidersHelper" FullName="System.Web.Configuration.ProvidersHelper">
   <TypeSignature Language="C#" Value="public static class ProvidersHelper" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for creating provider instances, either singly or in a batch.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InstantiateProvider">
@@ -25,12 +29,20 @@
         <Parameter Name="providerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="providerSettings">To be added.</param>
-        <param name="providerType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes and returns a single provider of the given type using the supplied settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new provider of the given type using the supplied settings.</para>
+        </returns>
+        <param name="providerSettings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The settings to be passed to the provider upon initialization.</param>
+        <param name="providerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the provider to be initialized.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,12 +60,21 @@
         <Parameter Name="providerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="configProviders">To be added.</param>
-        <param name="providers">To be added.</param>
-        <param name="providerType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls the <see cref="M:System.Web.Configuration.ProvidersHelper.InstantiateProvider(System.Configuration.ProviderSettings,System.Type)" /> method, and any exceptions thrown by that method will bubble up through the <see cref="M:System.Web.Configuration.ProvidersHelper.InstantiateProviders(System.Configuration.ProviderSettingsCollection,System.Configuration.Provider.ProviderCollection,System.Type)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a collection of providers of the given type using the supplied settings.</para>
+        </summary>
+        <param name="configProviders">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of settings to be passed to the provider upon initialization.</param>
+        <param name="providers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection used to contain the initialized providers after the method returns.</param>
+        <param name="providerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the providers to be initialized.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

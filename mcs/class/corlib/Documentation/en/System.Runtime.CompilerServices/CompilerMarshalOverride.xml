@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilerMarshalOverride" FullName="System.Runtime.CompilerServices.CompilerMarshalOverride">
   <TypeSignature Language="C#" Value="public static class CompilerMarshalOverride" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CompilerMarshalOverride extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.CompilerServices.CompilerMarshalOverride" /> class allows the common language runtime to marshal using the correct sizes.</para>
+      <para>Some behaviors of the common language runtime are incompatible with some languages. For example, C++ treats Boolean variables as single-byte values, while the common language runtime marshals them as four-byte values to match the BOOLEAN type defined by the Microsoft Win32 API.  To work around such issues, the C++ compiler emits this modifier on any wchar_t or bool parameter or function return.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the modified instance of a variable differs from its true type when marshaling. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

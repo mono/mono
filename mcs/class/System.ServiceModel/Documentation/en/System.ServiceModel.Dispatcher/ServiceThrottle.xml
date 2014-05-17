@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceThrottle" FullName="System.ServiceModel.Dispatcher.ServiceThrottle">
+  <TypeSignature Language="C#" Value="public sealed class ServiceThrottle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ServiceThrottle extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Dispatcher.ServiceThrottle" /> to tune the performance characteristics of a service. The easiest way to configure the <see cref="T:System.ServiceModel.Dispatcher.ServiceThrottle" /> for a service is to use the <see cref="T:System.ServiceModel.Description.ServiceThrottlingBehavior" />, especially from an application configuration file.</para>
+      <para>The <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentCalls" /> property specifies the maximum number of messages actively processing across all the dispatcher objects in a <see cref="T:System.ServiceModel.ServiceHost" /> object.</para>
+      <para>The <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentInstances" /> property specifies the maximum number of <see cref="T:System.ServiceModel.InstanceContext" /> objects in the service.</para>
+      <para>The <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentSessions" /> property specifies the maximum number of sessions a <see cref="T:System.ServiceModel.ServiceHost" /> can accept.</para>
+      <block subset="none" type="note">
+        <para>A trace is written when the first call, <see cref="T:System.ServiceModel.InstanceContext" />, or session is queued on the waitlist. The first trace is written as a warning.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls the throughput of a service to optimize availability and performance.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="MaxConcurrentCalls">
+      <MemberSignature Language="C#" Value="public int MaxConcurrentCalls { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxConcurrentCalls" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentCalls" /> property specifies the maximum number of messages actively processing across all the dispatcher objects in a <see cref="T:System.ServiceModel.ServiceHost" /> object. Each channel can have one pending message that does not count against the value of <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentCalls" /> until indigo1 begins to process it. </para>
+          <block subset="none" type="note">
+            <para>A trace is written every time the value of this property is exceeded. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of messages actively processing across all dispatcher objects in a <see cref="T:System.ServiceModel.ServiceHost" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxConcurrentInstances">
+      <MemberSignature Language="C#" Value="public int MaxConcurrentInstances { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxConcurrentInstances" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentInstances" /> property specifies the maximum number of <see cref="T:System.ServiceModel.InstanceContext" /> objects in the service. It is important to keep in mind the relationship between the <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentInstances" /> property and the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property. If <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> is <see cref="F:System.ServiceModel.InstanceContextMode.PerSession" />  the resulting value is the total number of sessions. If <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> is <see cref="F:System.ServiceModel.InstanceContextMode.PerCall" />, the resulting value is the number of concurrent calls. If a message arrives while the maximum number of <see cref="T:System.ServiceModel.InstanceContext" /> objects already exist, the message is held until an <see cref="T:System.ServiceModel.InstanceContext" /> object closes.</para>
+          <block subset="none" type="note">
+            <para>A trace is written every time the value of this property is exceeded. The first trace is written as a warning.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of service objects that can execute at one time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxConcurrentSessions">
+      <MemberSignature Language="C#" Value="public int MaxConcurrentSessions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxConcurrentSessions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentSessions" /> property specifies the maximum number of channels a <see cref="T:System.ServiceModel.ServiceHost" /> can accept. Each listener object can have one pending channel that does not count against the value of <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentSessions" /> until indigo2 accepts the channel and begins processing messages on it. This property is most useful in scenarios that make use of sessions.</para>
+          <block subset="none" type="note">
+            <para>A trace is written every time the value of this property is exceeded. The first trace is written as a warning.</para>
+          </block>
+          <para>For more information about sessions, see <format type="text/html"><a href="864ba12f-3331-4359-a359-6d6d387f1035">Using Sessions</a></format>.</para>
+          <para>Typically, this property is set using the <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentSessions" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the maximum number of sessions a <see cref="T:System.ServiceModel.ServiceHost" /> object can accept at one time.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

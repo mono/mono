@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormatterServices" FullName="System.Runtime.Serialization.FormatterServices">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class FormatterServices" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit FormatterServices extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,14 +14,28 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides static methods to aid with the implementation of a <see cref="T:System.Runtime.Serialization.Formatter" /> for serialization. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CheckTypeSecurity">
       <MemberSignature Language="C#" Value="public static void CheckTypeSecurity (Type t, System.Runtime.Serialization.Formatters.TypeFilterLevel securityLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void CheckTypeSecurity(class System.Type t, valuetype System.Runtime.Serialization.Formatters.TypeFilterLevel securityLevel) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -28,20 +44,30 @@
         <Parameter Name="securityLevel" Type="System.Runtime.Serialization.Formatters.TypeFilterLevel" />
       </Parameters>
       <Docs>
-        <param name="t">To be added.</param>
-        <param name="securityLevel">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine whether a specified type can be deserialized when the <see cref="T:System.Runtime.Serialization.Formatters.TypeFilterLevel" /> property is set to Low.</para>
+          <para>.NET Framework remoting provides two levels of automatic deserialization, <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> and <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Full" />. <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> helps protect against deserialization attacks by deserializing only the types associated with the most basic remoting functionality. The <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Full" /> deserialization level supports automatic deserialization of all types that remoting supports in all situations. For more information about the.NET Framework remoting types that <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> and <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Full" /> support, see <format type="text/html"><a href="313A0E88-5B2B-4A17-8391-0DDF9F7A787B">[&lt;topic://cpconAutomaticDeserializationInNETRemoting&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Type" /> can be deserialized with the <see cref="T:System.Runtime.Serialization.Formatters.TypeFilterLevel" /> property set to Low.</para>
+        </summary>
+        <param name="t">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to check for the ability to deserialize. </param>
+        <param name="securityLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.Formatters.TypeFilterLevel" /> property value. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public static object[] GetObjectData (object obj, System.Reflection.MemberInfo[] members);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object[] GetObjectData(object obj, class System.Reflection.MemberInfo[] members) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public static object[] GetObjectData (object obj, System.Reflection.MemberInfo[] members);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
@@ -50,21 +76,33 @@
         <Parameter Name="members" Type="System.Reflection.MemberInfo[]" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="members">To be added: an object of type 'Reflection.MemberInfo []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For each supplied member of the <paramref name="members" /> array the <see cref="M:System.Runtime.Serialization.FormatterServices.GetObjectData(System.Object,System.Reflection.MemberInfo[])" /> method extracts the value associated with the <paramref name="obj" /> object, and returns it. The length of the returned array is the same as the length of the <paramref name="members" /> array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Extracts the data from the specified object and returns it as an array of objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Object" /> that contains data stored in <paramref name="members" /> and associated with <paramref name="obj" />.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to write to the formatter. </param>
+        <param name="members">
+          <attribution license="cc4" from="Microsoft" modified="false" />The members to extract from the object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSafeUninitializedObject">
+      <MemberSignature Language="C#" Value="public static object GetSafeUninitializedObject (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetSafeUninitializedObject(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSafeUninitializedObject">
-      <MemberSignature Language="C#" Value="public static object GetSafeUninitializedObject (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -72,20 +110,33 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the new instance of the object is initialized to zero and no constructors are run, the object might not represent a state that is regarded as valid by that object. <see cref="M:System.Runtime.Serialization.FormatterServices.GetSafeUninitializedObject(System.Type)" /> should only be used for deserialization when the user intends to immediately populate all fields. It does not create an uninitialized string, since creating an empty instance of an immutable type serves no purpose.</para>
+          <para>
+            <see cref="M:System.Runtime.Serialization.FormatterServices.GetSafeUninitializedObject(System.Type)" /> converts all class level <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> to <format type="text/html"><a href="E5283E28-2366-4519-B27D-EF5C1DDC1F48">[&lt;topic://cpconDemands&gt;]</a></format> to ensure that all direct and indirect callers have the permissions that the demand specifies. Use <see cref="M:System.Runtime.Serialization.FormatterServices.GetSafeUninitializedObject(System.Type)" /> to increase the level of security when deserializing from a partially trusted source. For better performance in full trust scenarios, use <see cref="M:System.Runtime.Serialization.FormatterServices.GetUninitializedObject(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the specified object type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zeroed object of the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSerializableMembers">
+      <MemberSignature Language="C#" Value="public static System.Reflection.MemberInfo[] GetSerializableMembers (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.MemberInfo[] GetSerializableMembers(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSerializableMembers">
-      <MemberSignature Language="C#" Value="public static System.Reflection.MemberInfo[] GetSerializableMembers (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MemberInfo[]</ReturnType>
       </ReturnValue>
@@ -93,20 +144,31 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.MemberInfo []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generally, the serializable members of a class are the non-transient, non-static members such as fields and properties. To be included, properties must have both a getter and a setter. A class that implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface or has a serialization surrogate does not have to serialize all these members, or can serialize additional members.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the serializable members for a class of the specified <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Reflection.MemberInfo" /> of the non-transient, non-static members.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type being serialized. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSerializableMembers">
+      <MemberSignature Language="C#" Value="public static System.Reflection.MemberInfo[] GetSerializableMembers (Type type, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.MemberInfo[] GetSerializableMembers(class System.Type type, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSerializableMembers">
-      <MemberSignature Language="C#" Value="public static System.Reflection.MemberInfo[] GetSerializableMembers (Type type, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MemberInfo[]</ReturnType>
       </ReturnValue>
@@ -115,21 +177,66 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="context">To be added: an object of type 'StreamingContext'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.MemberInfo []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generally, the serializable members of a class are the non-transient, non-static members such as fields and properties. To be included, properties must have both a getter and a setter. A class that implements <see cref="T:System.Runtime.Serialization.ISerializable" /> or has a serialization surrogate does not have to serialize all these members, or can serialize additional members.</para>
+          <para>Currently, you do not need to do anything different unless <paramref name="context" /> has the <see cref="T:System.Runtime.Serialization.StreamingContextStates" /> value <see cref="F:System.Runtime.Serialization.StreamingContextStates.Clone" /> set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the serializable members for a class of the specified <see cref="T:System.Type" /> and in the provided <see cref="T:System.Runtime.Serialization.StreamingContext" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Reflection.MemberInfo" /> of the non-transient, non-static members.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type being serialized or cloned. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context where the serialization occurs. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSurrogateForCyclicalReference">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Serialization.ISerializationSurrogate GetSurrogateForCyclicalReference (System.Runtime.Serialization.ISerializationSurrogate innerSurrogate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Serialization.ISerializationSurrogate GetSurrogateForCyclicalReference(class System.Runtime.Serialization.ISerializationSurrogate innerSurrogate) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.ISerializationSurrogate</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="innerSurrogate" Type="System.Runtime.Serialization.ISerializationSurrogate" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a serialization surrogate for the specified <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" /> for the specified <paramref name="innerSurrogate" />.</para>
+        </returns>
+        <param name="innerSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified surrogate.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTypeFromAssembly">
+      <MemberSignature Language="C#" Value="public static Type GetTypeFromAssembly (System.Reflection.Assembly assem, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetTypeFromAssembly(class System.Reflection.Assembly assem, string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetTypeFromAssembly">
-      <MemberSignature Language="C#" Value="public static Type GetTypeFromAssembly (System.Reflection.Assembly assem, string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -138,21 +245,30 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assem">To be added: an object of type 'Reflection.Assembly'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Looks up the <see cref="T:System.Type" /> of the specified object in the provided <see cref="T:System.Reflection.Assembly" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the named object.</para>
+        </returns>
+        <param name="assem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly where you want to look up the object. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetUninitializedObject">
+      <MemberSignature Language="C#" Value="public static object GetUninitializedObject (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetUninitializedObject(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetUninitializedObject">
-      <MemberSignature Language="C#" Value="public static object GetUninitializedObject (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -160,20 +276,34 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the new instance of the object is initialized to zero and no constructors are run, the object might not represent a state that is regarded as valid by that object. The current method should only be used for deserialization when the user intends to immediately populate all fields. It does not create an uninitialized string, since creating an empty instance of an immutable type serves no purpose.</para>
+          <block subset="none" type="note">
+            <para>You cannot use the <see cref="M:System.Runtime.Serialization.FormatterServices.GetUninitializedObject(System.Type)" /> method to create instances of types that derive from the <see cref="T:System.ContextBoundObject" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the specified object type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zeroed object of the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
       </Docs>
+    </Member>
+    <Member MemberName="PopulateObjectMembers">
+      <MemberSignature Language="C#" Value="public static object PopulateObjectMembers (object obj, System.Reflection.MemberInfo[] members, object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object PopulateObjectMembers(object obj, class System.Reflection.MemberInfo[] members, object[] data) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PopulateObjectMembers">
-      <MemberSignature Language="C#" Value="public static object PopulateObjectMembers (object obj, System.Reflection.MemberInfo[] members, object[] data);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -183,23 +313,25 @@
         <Parameter Name="data" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="members">To be added: an object of type 'Reflection.MemberInfo []'</param>
-        <param name="data">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an element in <paramref name="data" /> is null, <see cref="M:System.Runtime.Serialization.FormatterServices.PopulateObjectMembers(System.Object,System.Reflection.MemberInfo[],System.Object[])" /> does not write anything to that field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates the specified object with values for each field drawn from the data array of objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly populated object.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to populate. </param>
+        <param name="members">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.MemberInfo" /> that describes which fields and properties to populate. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> that specifies the values for each field and property to populate. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

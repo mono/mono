@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ApplicationSecurityManager" FullName="System.Security.Policy.ApplicationSecurityManager">
   <TypeSignature Language="C#" Value="public static class ApplicationSecurityManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit ApplicationSecurityManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,31 +17,49 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Policy.ApplicationSecurityManager" /> class provides essential information for the execution of a manifest-based application. The <see cref="P:System.Security.Policy.ApplicationSecurityManager.ApplicationTrustManager" /> property identifies the trust manager responsible for determining whether an application is trusted. The <see cref="M:System.Security.Policy.ApplicationSecurityManager.DetermineApplicationTrust(System.ActivationContext,System.Security.Policy.TrustManagerContext)" /> method calls the application trust manager to determine whether an application is trusted. The <see cref="P:System.Security.Policy.ApplicationSecurityManager.UserApplicationTrusts" /> property contains the cached trust decisions for the user.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages trust decisions for manifest-activated applications. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ApplicationTrustManager">
       <MemberSignature Language="C#" Value="public static System.Security.Policy.IApplicationTrustManager ApplicationTrustManager { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Policy.IApplicationTrustManager ApplicationTrustManager" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Policy.IApplicationTrustManager</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Policy.IApplicationTrustManager</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the current release there is only one trust manager, which can be a custom implementation of the <see cref="T:System.Security.Policy.IApplicationTrustManager" /> interface. The default trust manager implementation prompts the user for permission to install the application and elevate the permissions granted to the application. Other trust manager implementations might have different user experiences. For example, an implementation might check an enterprise list for trusted applications, rather than prompting the user for that information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current application trust manager.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DetermineApplicationTrust">
       <MemberSignature Language="C#" Value="public static bool DetermineApplicationTrust (ActivationContext activationContext, System.Security.Policy.TrustManagerContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool DetermineApplicationTrust(class System.ActivationContext activationContext, class System.Security.Policy.TrustManagerContext context) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -48,34 +68,49 @@
         <Parameter Name="context" Type="System.Security.Policy.TrustManagerContext" />
       </Parameters>
       <Docs>
-        <param name="activationContext">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Security.Policy.ApplicationSecurityManager.DetermineApplicationTrust(System.ActivationContext,System.Security.Policy.TrustManagerContext)" /> uses the configured <see cref="P:System.Security.Policy.ApplicationSecurityManager.ApplicationTrustManager" /> property to determine whether to allow execution of the specified application with the permission set requested in the application manifest. The trust manager's behavior is dependent on the trust manager implementation and the information passed in the <paramref name="context" /> parameter. The default behavior of the trust manager is to establish a user interface (UI) dialog box to determine the user's approval. However, a trust manager can also determine an application's trust status based on other criteria, such as decisions provided by a corporate database. The trust decision can be persisted, depending upon the <paramref name="context" /> parameters properties and the trust manager implementation. If the trust for the application is persisted for a decision based on a user dialog box, future calls to the <see cref="T:System.Security.Policy.ApplicationSecurityManager" /> will not present the UI dialog box for every request for that application. <see cref="M:System.Security.Policy.ApplicationSecurityManager.DetermineApplicationTrust(System.ActivationContext,System.Security.Policy.TrustManagerContext)" /> is called after the manifest, but before the application has been downloaded to the local system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the user approves the specified application to execute with the requested permission set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to execute the specified application; otherwise, false.</para>
+        </returns>
+        <param name="activationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ActivationContext" /> identifying the activation context for the application.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Policy.TrustManagerContext" />  identifying the trust manager context for the application.</param>
       </Docs>
+    </Member>
+    <Member MemberName="UserApplicationTrusts">
+      <MemberSignature Language="C#" Value="public static System.Security.Policy.ApplicationTrustCollection UserApplicationTrusts { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Policy.ApplicationTrustCollection UserApplicationTrusts" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UserApplicationTrusts">
-      <MemberSignature Language="C#" Value="public static System.Security.Policy.ApplicationTrustCollection UserApplicationTrusts { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.ApplicationTrustCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The trust decisions in the collection are maintained using the methods of the collection, such as the <see cref="M:System.Security.Policy.ApplicationTrustCollection.Add(System.Security.Policy.ApplicationTrust)" /> method or the <see cref="Overload:System.Security.Policy.ApplicationTrustCollection.Remove" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an application trust collection that contains the cached trust decisions for the user.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

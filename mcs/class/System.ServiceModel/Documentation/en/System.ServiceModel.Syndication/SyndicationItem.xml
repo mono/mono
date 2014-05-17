@@ -1,0 +1,1280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SyndicationItem" FullName="System.ServiceModel.Syndication.SyndicationItem">
+  <TypeSignature Language="C#" Value="public class SyndicationItem : System.ServiceModel.Syndication.ISyndicationElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SyndicationItem extends System.Object implements class System.ServiceModel.Syndication.ISyndicationElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Syndication.ISyndicationElement</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When serialized to Atom 1.0, a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance is written to an &lt;entry&gt; element. The following table shows how each property defined for <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> is serialized for Atom 1.0.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>SyndicationItem property</para>
+            </term>
+            <description>
+              <para>Serialized form</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.AttributeExtensions" />
+            </para>
+          </term>
+          <description>
+            <para>Attribute in the &lt;entry&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Authors" />
+            </para>
+          </term>
+          <description>
+            <para>An &lt;author&gt; element for each author in the collection.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Categories" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;category&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Content" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;content&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Contributors" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;contributor&gt; element for each contributor in the collection.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Copyright" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;rights&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.ElementExtensions" />
+            </para>
+          </term>
+          <description>
+            <para>Element in the &lt;entry&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Id" />
+            </para>
+          </term>
+          <description>
+            <para>An &lt;id&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.LastUpdatedTime" />
+            </para>
+          </term>
+          <description>
+            <para>An &lt;updated&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Links" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;link&gt; element for each link in the collection.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.PublishDate" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;published&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.SourceFeed" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;source&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Summary" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;summary&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Title" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;title&gt; element.</para>
+          </description>
+        </item>
+      </list>
+      <para>When serialized to RSS 2.0, a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance is written to an &lt;item&gt; element. The following table shows how each property defined for <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> is serialized for RSS 2.0.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>SyndicationItem property</para>
+            </term>
+            <description>
+              <para>Serialized form</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.AttributeExtensions" />
+            </para>
+          </term>
+          <description>
+            <para>Attribute in the &lt;item&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Authors" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;managingEditor&gt; if only one <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> is in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Authors" /> collection; otherwise, the &lt;a10:author&gt; element for each author in the collection.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Categories" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;category&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Content" />
+            </para>
+          </term>
+          <description>
+            <para>An &lt;a10:content&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Contributors" />
+            </para>
+          </term>
+          <description>
+            <para>An &lt;a10:contributor&gt; element for each <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Contributors" /> collection.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Copyright" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;copyright&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.ElementExtensions" />
+            </para>
+          </term>
+          <description>
+            <para>Element in the &lt;item&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Id" />
+            </para>
+          </term>
+          <description>
+            <para>An &lt;a10:id&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.LastUpdatedTime" />
+            </para>
+          </term>
+          <description>
+            <para>An &lt;a10:updated&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Links" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;link&gt; element for each <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Links" /> collection.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.PublishDate" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;pubDate&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.SourceFeed" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;source&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Summary" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;description&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Title" />
+            </para>
+          </term>
+          <description>
+            <para>A &lt;title&gt; element.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a feed item, for example an RSS &lt;item&gt; or an Atom &lt;entry&gt;.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SyndicationItem ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SyndicationItem (System.ServiceModel.Syndication.SyndicationItem source);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Syndication.SyndicationItem source) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="source" Type="System.ServiceModel.Syndication.SyndicationItem" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to initialize the new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SyndicationItem (string title, string content, Uri feedAlternateLink);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string title, string content, class System.Uri feedAlternateLink) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="title" Type="System.String" />
+        <Parameter Name="content" Type="System.String" />
+        <Parameter Name="feedAlternateLink" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="feedAlternateLink">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class with the specified title, content, and link.</para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item title.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item content.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SyndicationItem (string title, System.ServiceModel.Syndication.SyndicationContent content, Uri feedAlternateLink, string id, DateTimeOffset lastUpdatedTime);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string title, class System.ServiceModel.Syndication.SyndicationContent content, class System.Uri feedAlternateLink, string id, valuetype System.DateTimeOffset lastUpdatedTime) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="title" Type="System.String" />
+        <Parameter Name="content" Type="System.ServiceModel.Syndication.SyndicationContent" />
+        <Parameter Name="feedAlternateLink" Type="System.Uri" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="lastUpdatedTime" Type="System.DateTimeOffset" />
+      </Parameters>
+      <Docs>
+        <param name="feedAlternateLink">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the syndication item.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Syndication.SyndicationContent" /> instance containing the content of the syndication item.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the syndication item.</param>
+        <param name="lastUpdatedTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTimeOffset" /> that contains the last time the syndication item was last updated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SyndicationItem (string title, string content, Uri feedAlternateLink, string id, DateTimeOffset lastUpdatedTime);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string title, string content, class System.Uri feedAlternateLink, string id, valuetype System.DateTimeOffset lastUpdatedTime) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="title" Type="System.String" />
+        <Parameter Name="content" Type="System.String" />
+        <Parameter Name="feedAlternateLink" Type="System.Uri" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="lastUpdatedTime" Type="System.DateTimeOffset" />
+      </Parameters>
+      <Docs>
+        <param name="feedAlternateLink">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the syndication item.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The content of the syndication item.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the syndication item.</param>
+        <param name="lastUpdatedTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTimeOffset" /> that contains the last time the syndication item was last updated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddPermalink">
+      <MemberSignature Language="C#" Value="public void AddPermalink (Uri link);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddPermalink(class System.Uri link) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="link" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="link">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A permalink is a static URI that points to some content on the Web.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <newTerm>permalink</newTerm> to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AttributeExtensions">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;System.Xml.XmlQualifiedName,string&gt; AttributeExtensions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.Dictionary`2&lt;class System.Xml.XmlQualifiedName, string&gt; AttributeExtensions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;System.Xml.XmlQualifiedName,System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Syndication object model allows you to add custom attributes to a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance. When serialized for Atom 1.0, the custom attribute is written to an &lt;entry&gt; element. When serialized for RSS 2.0, the custom attribute is written to an &lt;item&gt; element. For a complete example that shows how to add an attribute extension, see the <format type="text/html"><a href="56ce265b-8163-4b85-98e7-7692a12c4357">Loosely-Typed Extensions Sample</a></format> sample.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attribute extensions for the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Authors">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationPerson&gt; Authors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Syndication.SyndicationPerson&gt; Authors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationPerson&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serializing to Atom 1.0, an &lt;author&gt; element is written for each <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Authors" /> collection.</para>
+          <para>When serializing to RSS 2.0. a &lt;managingEditor&gt; element is written if the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Authors" /> collection has only one <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" />, otherwise a &lt;a10:author&gt; element is written for each <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Authors" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the authors of the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BaseUri">
+      <MemberSignature Language="C#" Value="public Uri BaseUri { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri BaseUri" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the base Uniform Resource Identifier (URI) for the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Categories">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationCategory&gt; Categories { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Syndication.SyndicationCategory&gt; Categories" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationCategory&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0 or RSS 2.0, a &lt;category&gt; element is created for each category in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Categories" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the syndication categories for the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Syndication.SyndicationItem Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Syndication.SyndicationItem Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationItem</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Content">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.SyndicationContent Content { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.SyndicationContent Content" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationContent</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.Syndication.SyndicationContent" /> is a base class for all syndication content types. The netfx35_short defines the following syndication content types:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Syndication.TextSyndicationContent" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Syndication.UrlSyndicationContent" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />
+              </para>
+            </item>
+          </list>
+          <para>You can assign this property to any of these content types (or possibly a user-defined type derived from <see cref="T:System.ServiceModel.Syndication.SyndicationContent" />).</para>
+          <para>For Atom 1.0, the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Content" /> property is serialized to a &lt;content&gt; element.</para>
+          <para>For RSS 2.0, the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Content" /> property is serialized to a &lt;description&gt; element for <see cref="T:System.ServiceModel.Syndication.TextSyndicationContent" />, a &lt;a10:content&gt; element for <see cref="T:System.ServiceModel.Syndication.UrlSyndicationContent" /> and <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the content of the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Contributors">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationPerson&gt; Contributors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Syndication.SyndicationPerson&gt; Contributors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationPerson&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0, a &lt;contributor&gt; element is created for each <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Contributors" /> collection.</para>
+          <para>When serialized to RSS 2.0, a &lt;a10:contributor&gt; element is created for each <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> in the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Contributors" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contributors of the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Copyright">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.TextSyndicationContent Copyright { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.TextSyndicationContent Copyright" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.TextSyndicationContent</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0, this property is written to a &lt;rights&gt; element. When serialized to RSS 2.0, this property is written to a &lt;a10:rights&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the copyright information for the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateCategory">
+      <MemberSignature Language="C#" Value="protected virtual System.ServiceModel.Syndication.SyndicationCategory CreateCategory ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.ServiceModel.Syndication.SyndicationCategory CreateCategory() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationCategory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This does not add the new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> object to the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Categories" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateLink">
+      <MemberSignature Language="C#" Value="protected virtual System.ServiceModel.Syndication.SyndicationLink CreateLink ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.ServiceModel.Syndication.SyndicationLink CreateLink() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationLink</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to call the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.CreateLink" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePerson">
+      <MemberSignature Language="C#" Value="protected virtual System.ServiceModel.Syndication.SyndicationPerson CreatePerson ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.ServiceModel.Syndication.SyndicationPerson CreatePerson() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationPerson</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This does not add the new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> object to the <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Authors" /> or <see cref="P:System.ServiceModel.Syndication.SyndicationItem.Contributors" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new person.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ElementExtensions">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.SyndicationElementExtensionCollection ElementExtensions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.SyndicationElementExtensionCollection ElementExtensions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationElementExtensionCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Element extensions are valid XML elements that are not specified in either the Atom 1.0 or RSS 2.0 specifications. Any valid XML element can be added as an extension provided its namespace is different from the enclosing namespace. When serialized, extensions are written like any other XML element.</para>
+          <code>&lt;mg:MyElement xmlns:mg="http://myserver/elements" /&gt;</code>
+          <para>For a complete example that shows how to add element extensions, see the <format type="text/html"><a href="56ce265b-8163-4b85-98e7-7692a12c4357">Loosely-Typed Extensions Sample</a></format> sample.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the element extensions contained in the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAtom10Formatter">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.Atom10ItemFormatter GetAtom10Formatter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Syndication.Atom10ItemFormatter GetAtom10Formatter() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.Atom10ItemFormatter</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.ServiceModel.Syndication.Atom10FeedFormatter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.Atom10FeedFormatter" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRss20Formatter">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.Rss20ItemFormatter GetRss20Formatter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Syndication.Rss20ItemFormatter GetRss20Formatter() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.Rss20ItemFormatter</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRss20Formatter">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.Rss20ItemFormatter GetRss20Formatter (bool serializeExtensionsAsAtom);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Syndication.Rss20ItemFormatter GetRss20Formatter(bool serializeExtensionsAsAtom) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.Rss20ItemFormatter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serializeExtensionsAsAtom" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>RSS 2.0 allows elements and attributes that are not in its specification only if they are within a namespace. When the <paramref name="serializedExtensionsAsAtom" /> parameter is true, the formatter automatically adds the "a10" namespace to all extensions; otherwise, the extensions are not serialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Syndication.Rss20FeedFormatter" /> instance.</para>
+        </returns>
+        <param name="serializeExtensionsAsAtom">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether to serialize element and attribute extensions with an Atom 1.0 namespace.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public string Id { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Id" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0, this property is written to the &lt;id&gt; element. When serialized to RSS 2.0, this property is written to the &lt;guid&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the ID of the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LastUpdatedTime">
+      <MemberSignature Language="C#" Value="public DateTimeOffset LastUpdatedTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTimeOffset LastUpdatedTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0, this property is written to an &lt;updated&gt; item. When serialized to RSS 2.0, this property is written to an &lt;a10:updated&gt; item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the last updated time for the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Links">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationLink&gt; Links { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Syndication.SyndicationLink&gt; Links" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationLink&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0, a &lt;link&gt; element is written for each <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> in the collection. When serialized to RSS 2.0, an &lt;a10:link&gt; element is written for each <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> in the collection. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the links contained in the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Syndication.SyndicationItem Load (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Syndication.SyndicationItem Load(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationItem</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load&lt;TSyndicationItem&gt;">
+      <MemberSignature Language="C#" Value="public static TSyndicationItem Load&lt;TSyndicationItem&gt; (System.Xml.XmlReader reader) where TSyndicationItem : System.ServiceModel.Syndication.SyndicationItemnew();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSyndicationItem Load&lt;.ctor (class System.ServiceModel.Syndication.SyndicationItem) TSyndicationItem&gt;(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TSyndicationItem</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSyndicationItem">
+          <Constraints>
+            <ParameterAttribute>DefaultConstructorConstraint</ParameterAttribute>
+            <BaseTypeName>System.ServiceModel.Syndication.SyndicationItem</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you are loading a syndication item into a class derived from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> derived object from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> derived object that contains the syndication item.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <typeparam name="TSyndicationItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />-derived class to load.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="PublishDate">
+      <MemberSignature Language="C#" Value="public DateTimeOffset PublishDate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTimeOffset PublishDate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0, this property is written to a &lt;published&gt; element. When serialized to RSS 2.0, this property is written to a &lt;pubDate&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the publish date for the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsAtom10">
+      <MemberSignature Language="C#" Value="public void SaveAsAtom10 (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SaveAsAtom10(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the syndication item to the specified <see cref="T:System.Xml.XmlWriter" /> in Atom 1.0 format.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAsRss20">
+      <MemberSignature Language="C#" Value="public void SaveAsRss20 (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SaveAsRss20(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the syndication item to the specified <see cref="T:System.Xml.XmlWriter" /> in RSS 2.0 format.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SourceFeed">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.SyndicationFeed SourceFeed { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.SyndicationFeed SourceFeed" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationFeed</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not automatically set when you add a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />—you must explicitly set it. When serialized to Atom 1.0 or RSS 2.0, this property is written to a &lt;source&gt; element. The contents of that element vary depending on the format you serialize to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the source feed of the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Summary">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.TextSyndicationContent Summary { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.TextSyndicationContent Summary" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.TextSyndicationContent</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0, this property is written to a &lt;summary&gt; element. When serialized to RSS 2.0, this property is written to a &lt;description&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the summary of the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Title">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.TextSyndicationContent Title { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.TextSyndicationContent Title" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.TextSyndicationContent</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When serialized to Atom 1.0 or RSS 2.0, this property is written to a &lt;title&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the title of the syndication item.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseAttribute">
+      <MemberSignature Language="C#" Value="protected virtual bool TryParseAttribute (string name, string ns, string value, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool TryParseAttribute(string name, string ns, string value, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute extensions are custom attributes that are not defined by the Atom 1.0 or RSS 2.0 specifications. They are serialized as an attribute of the &lt;entry&gt; (for Atom 1.0) or &lt;item&gt; (for RSS 1.0) element, depending upon the syndication version being used. This method is an extension point that allows you to handle the deserialization of a custom attribute extension. To do this, you must derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override this method. This method is called for all unrecognized attribute extensions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that specifies whether the attribute extension was parsed successfully.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseContent">
+      <MemberSignature Language="C#" Value="protected virtual bool TryParseContent (System.Xml.XmlReader reader, string contentType, string version, out System.ServiceModel.Syndication.SyndicationContent content);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool TryParseContent(class System.Xml.XmlReader reader, string contentType, string version, class System.ServiceModel.Syndication.SyndicationContent content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="contentType" Type="System.String" />
+        <Parameter Name="version" Type="System.String" />
+        <Parameter Name="content" Type="System.ServiceModel.Syndication.SyndicationContent&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="contentType">To be added.</param>
+        <param name="version">To be added.</param>
+        <param name="content">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseElement">
+      <MemberSignature Language="C#" Value="protected virtual bool TryParseElement (System.Xml.XmlReader reader, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool TryParseElement(class System.Xml.XmlReader reader, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Element extensions are valid XML elements that are not specified in either the Atom 1.0 or RSS 2.0 specifications. You can add any valid XML element as an extension, provided its namespace is different from the enclosing namespace. This method is an extension point that allows you to handle the deserialization of a custom element extension. To do this, you must derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override this method. This method is called for all unrecognized element extensions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that specifies whether the element extension was parsed successfully.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use while parsing.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeExtensions">
+      <MemberSignature Language="C#" Value="protected virtual void WriteAttributeExtensions (System.Xml.XmlWriter writer, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void WriteAttributeExtensions(class System.Xml.XmlWriter writer, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute extensions are custom attributes that are not defined by the Atom 1.0 or RSS 2.0 specifications. They are serialized as an attribute of the &lt;entry&gt; (for Atom 1.0) or &lt;item&gt; (for RSS 1.0) element, depending upon the syndication version being used. This method is an extension point that allows you to handle the serialization of custom attribute extensions. To do this, you must derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override this method. This method is called for all unrecognized attribute extensions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions to the specified <see cref="T:System.Xml.XmlWriter" /> using the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to write to.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use while writing.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementExtensions">
+      <MemberSignature Language="C#" Value="protected virtual void WriteElementExtensions (System.Xml.XmlWriter writer, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void WriteElementExtensions(class System.Xml.XmlWriter writer, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Element extensions are valid XML elements that are not specified in either the Atom 1.0 or RSS 2.0 specifications. You can add any valid XML element as an extension, provided its namespace is different from the enclosing namespace. This method is an extension point that allows you to handle the serialization of custom element extensions. To do this, you must derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override this method. This method is called for all unrecognized element extensions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions to the specified <see cref="T:System.Xml.XmlWriter" /> using the specific syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to write to.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use while writing.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

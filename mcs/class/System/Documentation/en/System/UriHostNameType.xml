@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UriHostNameType" FullName="System.UriHostNameType" FullNameSP="System_UriHostNameType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UriHostNameType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum UriHostNameType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed UriHostNameType extends System.Enum" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,42 +10,53 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para>Specifies the format of host names.</para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">The <see cref="T:System.UriHostNameType" /> enumeration defines the values returned by the <see cref="M:System.Uri.CheckHostName(System.String)" qualify="true" /> 
-method.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.UriHostNameType" /> enumeration defines the values that the <see cref="M:System.Uri.CheckHostName(System.String)" /> method can return.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines host name types for the <see cref="M:System.Uri.CheckHostName(System.String)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Basic">
       <MemberSignature Language="C#" Value="Basic" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriHostNameType Basic = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriHostNameType</ReturnType>
       </ReturnValue>
       <MemberValue>Basic</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host is set, but the type cannot be determined.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dns">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriHostNameType Dns = 2" />
       <MemberSignature Language="C#" Value="Dns" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriHostNameType Dns = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriHostNameType</ReturnType>
       </ReturnValue>
@@ -51,19 +64,22 @@ method.</block>
       <MemberValue>Dns</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies that the host name is a domain name system (DNS) style host address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host name is a domain name system (DNS) style host name.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv4">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriHostNameType IPv4 = 3" />
       <MemberSignature Language="C#" Value="IPv4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriHostNameType IPv4 = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriHostNameType</ReturnType>
       </ReturnValue>
@@ -71,19 +87,22 @@ method.</block>
       <MemberValue>IPv4</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies that the host name is an Internet Protocol (IP) version 4 host address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host name is an Internet Protocol (IP) version 4 host address.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriHostNameType IPv6 = 4" />
       <MemberSignature Language="C#" Value="IPv6" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriHostNameType IPv6 = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriHostNameType</ReturnType>
       </ReturnValue>
@@ -91,20 +110,22 @@ method.</block>
       <MemberValue>IPv6</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies that the host name is an Internet Protocol (IP)
- version 6 host address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host name is an Internet Protocol (IP) version 6 host address.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriHostNameType Unknown = 0" />
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriHostNameType Unknown = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriHostNameType</ReturnType>
       </ReturnValue>
@@ -112,14 +133,11 @@ method.</block>
       <MemberValue>Unknown</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the format of a host name is not known or no host information is present.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the host name is not supplied.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

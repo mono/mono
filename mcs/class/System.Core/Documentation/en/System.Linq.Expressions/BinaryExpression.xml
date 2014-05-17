@@ -1,106 +1,665 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BinaryExpression" FullName="System.Linq.Expressions.BinaryExpression">
-  <TypeSignature Language="C#" Value="public sealed class BinaryExpression : System.Linq.Expressions.Expression" />
+  <TypeSignature Language="C#" Value="public class BinaryExpression : System.Linq.Expressions.Expression" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BinaryExpression extends System.Linq.Expressions.Expression" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Linq.Expressions.Expression</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerTypeProxy(typeof(System.Linq.Expressions.Expression/BinaryExpressionProxy))</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following tables summarize the factory methods that can be used to create a <see cref="T:System.Linq.Expressions.BinaryExpression" /> that has a specific node type, represented by the <see cref="P:System.Linq.Expressions.Expression.NodeType" /> property. Each table contains information for a specific class of operations such as arithmetic or bitwise.</para>
+      <format type="text/html">
+        <h2>Binary Arithmetic Operations</h2>
+      </format>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Node Type</para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Add" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Add" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.AddChecked" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.AddChecked" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Divide" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Divide" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Modulo" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Modulo" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Multiply" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Multiply" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.MultiplyChecked" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.MultiplyChecked" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Power" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Power" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Subtract" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Subtract" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.SubtractChecked" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.SubtractChecked" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Bitwise Operations</h2>
+      </format>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Node Type</para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.And" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.And" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Or" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Or" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.ExclusiveOr" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.ExclusiveOr" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Shift Operations</h2>
+      </format>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Node Type</para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.LeftShift" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.LeftShift" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.RightShift" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.RightShift" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Conditional Boolean Operations</h2>
+      </format>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Node Type</para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.AndAlso" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.AndAlso" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.OrElse" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.OrElse" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Comparison Operations</h2>
+      </format>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Node Type</para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Equal" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Equal" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.NotEqual" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.NotEqual" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.GreaterThanOrEqual" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.GreaterThanOrEqual" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.GreaterThan" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.GreaterThan" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.LessThan" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.LessThan" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.LessThanOrEqual" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.LessThanOrEqual" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Coalescing Operations</h2>
+      </format>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Node Type</para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Coalesce" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Linq.Expressions.Expression.Coalesce(System.Linq.Expressions.Expression,System.Linq.Expressions.Expression)" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Array Indexing Operations</h2>
+      </format>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Node Type</para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.ArrayIndex" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Linq.Expressions.Expression.ArrayIndex(System.Linq.Expressions.Expression,System.Linq.Expressions.Expression)" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <para>In addition, the <see cref="Overload:System.Linq.Expressions.Expression.MakeBinary" /> methods can also be used to create a <see cref="T:System.Linq.Expressions.BinaryExpression" />. These factory methods can be used to create a <see cref="T:System.Linq.Expressions.BinaryExpression" /> of any node type that represents a binary operation. The parameter of these methods that is of type <see cref="P:System.Linq.Expressions.Expression.NodeType" /> specifies the desired node type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an expression that has a binary operator.</para>
+    </summary>
   </Docs>
   <Members>
+    <Member MemberName="Accept">
+      <MemberSignature Language="C#" Value="protected override System.Linq.Expressions.Expression Accept (System.Linq.Expressions.ExpressionVisitor visitor);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.Linq.Expressions.Expression Accept(class System.Linq.Expressions.ExpressionVisitor visitor) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="visitor" Type="System.Linq.Expressions.ExpressionVisitor" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This default implementation for <see cref="F:System.Linq.Expressions.ExpressionType.Extension" /> nodes calls <see cref="M:System.Linq.Expressions.ExpressionVisitor.VisitExtension(System.Linq.Expressions.Expression)" />. Override this method to call into a more specific method on a derived visitor class of the <see cref="T:System.Linq.Expressions.ExpressionVisitor" /> class. However, it should still support unknown visitors by calling <see cref="M:System.Linq.Expressions.ExpressionVisitor.VisitExtension(System.Linq.Expressions.Expression)" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches to the specific visit method for this node type. For example, <see cref="T:System.Linq.Expressions.MethodCallExpression" /> calls the <see cref="M:System.Linq.Expressions.ExpressionVisitor.VisitMethodCall(System.Linq.Expressions.MethodCallExpression)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of visiting this node.</para>
+        </returns>
+        <param name="visitor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The visitor to visit this node with.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CanReduce">
+      <MemberSignature Language="C#" Value="public override bool CanReduce { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanReduce" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the expression tree node can be reduced.</para>
+        </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Conversion">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.LambdaExpression Conversion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.Expressions.LambdaExpression Conversion" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.LambdaExpression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Linq.Expressions.BinaryExpression.Conversion" /> property is null for any <see cref="T:System.Linq.Expressions.BinaryExpression" /> whose <see cref="P:System.Linq.Expressions.Expression.NodeType" /> property is not <see cref="F:System.Linq.Expressions.ExpressionType.Coalesce" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type conversion function that is used by a coalescing or compound assignment operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLifted">
       <MemberSignature Language="C#" Value="public bool IsLifted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsLifted" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operator call is lifted if the operator expects non-nullable operands but nullable operands are passed to it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the expression tree node represents a <newTerm>lifted</newTerm> call to an operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLiftedToNull">
       <MemberSignature Language="C#" Value="public bool IsLiftedToNull { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsLiftedToNull" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operator call is lifted if the operator expects non-nullable operands but nullable operands are passed to it. If the value of <see cref="P:System.Linq.Expressions.BinaryExpression.IsLiftedToNull" /> is true, the operator returns a nullable type, and if a nullable operand evaluates to null, the operator returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the expression tree node represents a <newTerm>lifted</newTerm> call to an operator whose return type is lifted to a nullable type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Left">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression Left { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.Expressions.Expression Left" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the left operand of the binary operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Method">
       <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo Method { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo Method" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a <see cref="T:System.Linq.Expressions.BinaryExpression" /> represents an operation that uses a predefined operator, the <see cref="P:System.Linq.Expressions.BinaryExpression.Method" /> property is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the implementing method for the binary operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Reduce">
+      <MemberSignature Language="C#" Value="public override System.Linq.Expressions.Expression Reduce ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Linq.Expressions.Expression Reduce() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If CanReduce returns true, this should return a valid expression.</para>
+          <para>This method can return another node which itself must be reduced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reduces the binary expression node to a simpler expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reduced expression.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Right">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression Right { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.Expressions.Expression Right" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the right operand of the binary operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public System.Linq.Expressions.BinaryExpression Update (System.Linq.Expressions.Expression left, System.Linq.Expressions.LambdaExpression conversion, System.Linq.Expressions.Expression right);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Linq.Expressions.BinaryExpression Update(class System.Linq.Expressions.Expression left, class System.Linq.Expressions.LambdaExpression conversion, class System.Linq.Expressions.Expression right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.BinaryExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Linq.Expressions.Expression" />
+        <Parameter Name="conversion" Type="System.Linq.Expressions.LambdaExpression" />
+        <Parameter Name="right" Type="System.Linq.Expressions.Expression" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.BinaryExpression.Left" /> property of the result. </param>
+        <param name="conversion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.BinaryExpression.Conversion" /> property of the result.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.BinaryExpression.Right" /> property of the result. </param>
       </Docs>
     </Member>
   </Members>

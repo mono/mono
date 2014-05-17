@@ -41,6 +41,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Runtime.Remoting.Proxies
 {
@@ -162,7 +163,7 @@ namespace System.Runtime.Remoting.Proxies
 						      out object [] out_args)
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
-			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext (true);
+			mMsg.LogicalCallContext = ExecutionContext.CreateLogicalCallContext (true);
 			CallType call_type = mMsg.CallType;
 			bool is_remproxy = (rp is RemotingProxy);
 
@@ -218,7 +219,7 @@ namespace System.Runtime.Remoting.Proxies
 			}
 			
 			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo)
-				CallContext.UpdateCurrentCallContext (res_msg.LogicalCallContext);
+				CallContext.UpdateCurrentLogicalCallContext (res_msg.LogicalCallContext);
 
 			exc = res_msg.Exception;
 

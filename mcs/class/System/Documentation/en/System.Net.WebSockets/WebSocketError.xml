@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WebSocketError" FullName="System.Net.WebSockets.WebSocketError">
+  <TypeSignature Language="C#" Value="public enum WebSocketError" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WebSocketError extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the list of possible WebSocket errors.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ConnectionClosedPrematurely">
+      <MemberSignature Language="C#" Value="ConnectionClosedPrematurely" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError ConnectionClosedPrematurely = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the connection was terminated unexpectedly.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Faulted">
+      <MemberSignature Language="C#" Value="Faulted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError Faulted = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a general error.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HeaderError">
+      <MemberSignature Language="C#" Value="HeaderError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError HeaderError = int32(7)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an error occurred when parsing the HTTP headers during the opening handshake.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InvalidMessageType">
+      <MemberSignature Language="C#" Value="InvalidMessageType" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError InvalidMessageType = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a WebSocket frame with an unknown opcode was received.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InvalidState">
+      <MemberSignature Language="C#" Value="InvalidState" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError InvalidState = int32(9)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the WebSocket is an invalid state for the given operation (such as being closed or aborted).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NativeError">
+      <MemberSignature Language="C#" Value="NativeError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError NativeError = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that an unknown native error occurred.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotAWebSocket">
+      <MemberSignature Language="C#" Value="NotAWebSocket" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError NotAWebSocket = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the incoming request was not a valid websocket request.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Success">
+      <MemberSignature Language="C#" Value="Success" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError Success = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that there was no native error information for the exception.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UnsupportedProtocol">
+      <MemberSignature Language="C#" Value="UnsupportedProtocol" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError UnsupportedProtocol = int32(6)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the client requested an unsupported WebSocket subprotocol.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UnsupportedVersion">
+      <MemberSignature Language="C#" Value="UnsupportedVersion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketError UnsupportedVersion = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the client requested an unsupported version of the WebSocket protocol.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

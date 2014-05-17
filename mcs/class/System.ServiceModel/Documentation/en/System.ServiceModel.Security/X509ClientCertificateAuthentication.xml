@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="X509ClientCertificateAuthentication" FullName="System.ServiceModel.Security.X509ClientCertificateAuthentication">
+  <TypeSignature Language="C#" Value="public class X509ClientCertificateAuthentication" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit X509ClientCertificateAuthentication extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If the <see cref="P:System.ServiceModel.Security.X509ClientCertificateAuthentication.CertificateValidationMode" /> is set to <see cref="F:System.ServiceModel.Security.X509CertificateValidationMode.Custom" />, then you must create a custom certificate validator that inherits from the <see cref="T:System.IdentityModel.Selectors.X509CertificateValidator" /> class. crdefault <format type="text/html"><a href="bb0190ff-0738-4e54-8d22-c97d343708bf">How To: Create a Service Employing a Custom Certificate Validator</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies authentication properties for validating the client certificate.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CertificateValidationMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.X509CertificateValidationMode CertificateValidationMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.Security.X509CertificateValidationMode CertificateValidationMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.X509CertificateValidationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allowed values of <see cref="T:System.ServiceModel.Security.X509CertificateValidationMode" /> are:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.X509CertificateValidationMode.ChainTrust" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.X509CertificateValidationMode.Custom" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.X509CertificateValidationMode.None" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.X509CertificateValidationMode.PeerTrust" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the certificate validation mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CustomCertificateValidator">
+      <MemberSignature Language="C#" Value="public System.IdentityModel.Selectors.X509CertificateValidator CustomCertificateValidator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IdentityModel.Selectors.X509CertificateValidator CustomCertificateValidator" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Selectors.X509CertificateValidator</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.ServiceModel.Security.X509ClientCertificateAuthentication.CertificateValidationMode" /> property is set to <see cref="F:System.ServiceModel.Security.X509CertificateValidationMode.Custom" />, you must set the <see cref="P:System.ServiceModel.Security.X509ClientCertificateAuthentication.CustomCertificateValidator" /> property to a custom validator that inherits from the <see cref="T:System.IdentityModel.Selectors.X509CertificateValidator" /> class.</para>
+          <para>crdefault <format type="text/html"><a href="bb0190ff-0738-4e54-8d22-c97d343708bf">How To: Create a Service Employing a Custom Certificate Validator</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom client certificate validator.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeWindowsGroups">
+      <MemberSignature Language="C#" Value="public bool IncludeWindowsGroups { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeWindowsGroups" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is valid only when the <see cref="P:System.ServiceModel.Security.X509ClientCertificateAuthentication.MapClientCertificateToWindowsAccount" /> property is set to true.</para>
+          <para>Set this property to false only if you do not need to establish the list of groups a user belongs to - this may result in a performance benefit if your application and authorization decisions do not require Windows groups.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether Windows groups are included in the authorization context.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MapClientCertificateToWindowsAccount">
+      <MemberSignature Language="C#" Value="public bool MapClientCertificateToWindowsAccount { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MapClientCertificateToWindowsAccount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using the certificate client credential type on bindings, the certificate is not mapped to Windows accounts. You can override this behavior using this property. When this property is set to true, it causes the identity from the client certificate to be mapped to a Windows account.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the certificate is mapped to Windows accounts.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RevocationMode">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509RevocationMode RevocationMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Cryptography.X509Certificates.X509RevocationMode RevocationMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509RevocationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using certificates, the system validates that the client certificate is not revoked, by checking that the client certificate is not in the revoked certificate list. This check can be performed either by checking online or by checking against a cached revocation list. Revocation checking can be turned off by setting this property to <see cref="F:System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck" />.</para>
+          <para>crdefault <format type="text/html"><a href="6ffb8682-8f07-4a45-afbb-8d2487e9dbc3">Working with Certificates</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the certificate revocation mode for ChainTrust and PeerOrChainTrust X.509 certificate validation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TrustedStoreLocation">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.StoreLocation TrustedStoreLocation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Cryptography.X509Certificates.StoreLocation TrustedStoreLocation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.StoreLocation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies whether machine or user context is used to verify the X.509 certificate chain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the trusted store location under which context the client certificate chain is validated.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

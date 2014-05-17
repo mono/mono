@@ -1,83 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContentType" FullName="System.Net.Mime.ContentType">
   <TypeSignature Language="C#" Value="public class ContentType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ContentType extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The information in the <see cref="T:System.Net.Mime.ContentType" /> class is used to describe the data contained in an e-mail message in such a way that software that displays e-mail can present the content in an appropriate manner. <see cref="T:System.Net.Mime.ContentType" /> is used with the <see cref="T:System.Net.Mail.Attachment" /> class to specify the type of content in the attachment.</para>
+      <para>The syntax of the Content-Type header is described in RFC 2045 Section 5.1. RFC 2046 provides detailed information about MIME media types and their parameters. These RFCs are available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a MIME protocol Content-Type header.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContentType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Net.Mime.ContentType.MediaType" /> property to "application/octet-stream".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new default instance of the <see cref="T:System.Net.Mime.ContentType" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContentType (string contentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string contentType) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="contentType" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="contentType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The syntax of the <paramref name="contentType" /> string is described in RFC 2045 Section 5.1 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mime.ContentType" /> class using the specified string. </para>
+        </summary>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" />, for example, "text/plain; charset=us-ascii", that contains the MIME media type, subtype, and optional parameters.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Boundary">
-      <MemberSignature Language="C#" Value="public string Boundary { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Boundary { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Boundary" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the following example of a Content-Type header, the value of the <see cref="P:System.Net.Mime.ContentType.Boundary" /> parameter is "-----boundary---0".</para>
+          <para>content-type: multipart/mixed; boundary=-----boundary---0</para>
+          <para>Set this property to null or <see cref="F:System.String.Empty" /> to remove the boundary information from the header.</para>
+          <para>The syntax of the Content-Type header is described in RFC 2045 Section 5.1. An in-depth discussion of the boundary parameter is contained in RFC 2046 Section 5.1.1. These RFCs are available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the boundary parameter included in the Content-Type header represented by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CharSet">
-      <MemberSignature Language="C#" Value="public string CharSet { set; get; }" />
+      <MemberSignature Language="C#" Value="public string CharSet { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CharSet" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the following example of a Content-Type header, the value of the <see cref="P:System.Net.Mime.ContentType.CharSet" /> property is "us-ascii".</para>
+          <para>content-type: application/x-myType; charset=us-ascii</para>
+          <para>Set this property to null or <see cref="F:System.String.Empty" /> to remove the charset information from the header.</para>
+          <para>A grammar that details the syntax of the Content-Type header is described in RFC 2045 Section 5.1. An in-depth discussion of the charset parameter is contained in RFC 2046 Section 4.1.2. These RFCs are available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the charset parameter included in the Content-Type header represented by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -86,96 +140,151 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the content-type header of the specified <see cref="T:System.Net.Mime.ContentType" /> object is equal to the content-type header of this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the content-type headers are the same; otherwise false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the hash code of the specified <see cref="T:System.Net.Mime.ContentType" /> object</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MediaType">
-      <MemberSignature Language="C#" Value="public string MediaType { set; get; }" />
+      <MemberSignature Language="C#" Value="public string MediaType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MediaType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the following example of a Content-Type header, the value of the <see cref="P:System.Net.Mime.ContentType.MediaType" /> property is "application/x-myType".</para>
+          <para>content-type: application/x-myType; name=data.xyz</para>
+          <para>Set this property to null or <see cref="F:System.String.Empty" /> to remove the name information from the header.</para>
+          <para>The syntax of the Content-Type header is described in RFC 2045 Section 5.1. RFC 2046 provides detailed information on MIME media types. These RFCs are available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the media type value included in the Content-Type header represented by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the following example of a Content-Type header, the value of the <see cref="P:System.Net.Mime.ContentType.Name" /> property is "data.xyz".</para>
+          <para>content-type: application/x-myType; name=data.xyz</para>
+          <para>A grammar that details the syntax of the Content-Type header is described in RFC 2045 Section 5.1, available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+          <para>When specifying content for a <see cref="T:System.Net.Mail.Attachment" /> as a <see cref="T:System.IO.Stream" /> or <see cref="T:System.String" />, you can use <see cref="P:System.Net.Mime.ContentType.Name" /> to set the name of the file that stores the content on the recipient's system. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the name parameter included in the Content-Type header represented by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parameters">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringDictionary Parameters { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringDictionary Parameters" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can set the parameters by specifying the entire Content-Header value when constructing a <see cref="T:System.Net.Mime.ContentType" /> object or you can add parameters to the <see cref="T:System.Collections.Specialized.StringDictionary" /> returned by the <see cref="P:System.Net.Mime.ContentType.Parameters" /> property. </para>
+          <para>When adding a parameter entry to the dictionary, the name of the parameter is the entry's key and the value of the parameter is the entry's value.</para>
+          <para>A grammar that details the syntax of the Content-Type header is described in RFC 2045 Section 5.1. RFC 2046 provides detailed information on MIME media types and their associated parameters. These RFCs are available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dictionary that contains the parameters included in the Content-Type header represented by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="M:System.Net.Mime.ContentType.ToString" /> method contains the string used to create this <see cref="T:System.Net.Mime.ContentType" />, if one was specified and no property values have been changed. If no string was specified, or one or more property values have changed since this <see cref="T:System.Net.Mime.ContentType" /> was created, the value of <see cref="M:System.Net.Mime.ContentType.ToString" /> is a string in the format of a Content-Type header that is composed using the current property values. The string does not include the "Content-type:" prefix.</para>
+          <para>The syntax of the Content-Type header is described in RFC 2045 Section 5.1, available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of this <see cref="T:System.Net.Mime.ContentType" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the current settings for this <see cref="T:System.Net.Mime.ContentType" />.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

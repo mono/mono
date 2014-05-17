@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParamArrayAttribute" FullName="System.ParamArrayAttribute" FullNameSP="System_ParamArrayAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed ParamArrayAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class ParamArrayAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ParamArrayAttribute extends System.Attribute" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,54 +25,50 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Indicates that a method allows a variable number of arguments in its invocation. </para>
-    </summary>
     <remarks>
-      <para> This attribute can be applied to parameters. A parameter array allows the specification
-      of an unknown number of arguments. The array is required to be a single-dimensional array that is
-      the last parameter in a formal parameter list. It permits arguments to a
-      method to be specified in two ways:</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ParamArrayAttribute" /> indicates that a method parameter is a parameter array. A parameter array allows the specification of an unknown number of arguments. A parameter array must be the last parameter in a formal parameter list, and it must be a single-dimension array. When the method is called, a parameter array permits arguments to a method to be specified in either of two ways: </para>
       <list type="bullet">
         <item>
-          <term>
-         
-         A single expression of a type that is implicitly convertible to
-         the parameter array type. The array functions as a value
-         parameter.</term>
+          <para>As a single expression of a type that is implicitly convertible to the parameter array type. The parameter array functions as a value parameter.</para>
         </item>
-      </list>
-      <list type="bullet">
         <item>
-          <term>
-      
-      Zero or more arguments where each argument is an expression of a type
-      that is implicitly convertible to the type of the parameter-array
-      element.</term>
+          <para>As zero or more arguments, where each argument is an expression of a type that is implictly convertible to the type of the parameter array element.</para>
         </item>
       </list>
+      <para>The example in the next section illustrates both calling conventions.</para>
+      <block subset="none" type="note">
+        <para>Typically, the <see cref="T:System.ParamArrayAttribute" /> is not used directly in code. Instead, individual language keywords, such as ParamArray in Visual Basic and params in C#, are used as wrappers for the <see cref="T:System.ParamArrayAttribute" /> class. Some languages, such as C#, may even require the use of the language keyword and prohibit the use of <see cref="T:System.ParamArrayAttribute" />.</para>
+      </block>
+      <para>During overload resolution, when compilers that support parameter arrays encounter a method overload that does not exist but has one fewer parameter than an overload that includes a parameter array, they will replace the method with the overload that includes the parameter array. For example, a call to the String.Split() instance method (which does not exist in the <see cref="T:System.String" /> class) is resolved as a call to the <see cref="M:System.String.Split(System.Char[])" /> method. The compiler will also pass an empty array of the required type to the method. This means that the method must always be prepared to handle an array whose length is zero when it processes the elements in the parameter array. The example provides an illustration.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a method will allow a variable number of arguments in its invocation. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public ParamArrayAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.ParamArrayAttribute" />
-class. </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ParamArrayAttribute" /> class with default properties.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

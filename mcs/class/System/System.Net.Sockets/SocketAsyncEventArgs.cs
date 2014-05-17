@@ -82,7 +82,7 @@ namespace System.Net.Sockets
 		public SocketFlags SocketFlags { get; set; }
 		public object UserToken { get; set; }
 		internal Socket curSocket;
-#if NET_2_1
+#if (NET_2_1 || NET_4_0)
 		public Socket ConnectSocket {
 			get {
 				switch (SocketError) {

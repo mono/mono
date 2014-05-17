@@ -171,7 +171,10 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override object GetValue (XslTransformProcessor p)
 		{
+			p.PushNodeset (new SelfIterator (p.Root, p.XPathContext));
+			p.NodesetMoveNext ();
 			Evaluate (p);
+			p.PopNodeset ();
 			return p.globalVariableTable [this];
 		}
 			

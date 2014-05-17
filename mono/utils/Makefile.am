@@ -97,9 +97,11 @@ monoutils_sources = \
 	mono-threads.c	\
 	mono-threads-posix.c	\
 	mono-threads-mach.c	\
+	mono-threads-mach-helper.c	\
 	mono-threads-windows.c	\
 	mono-threads.h	\
 	mono-tls.h	\
+	mono-tls.c	\
 	linux_magic.h	\
 	mono-memory-model.h	\
 	atomic.h	\
@@ -107,7 +109,8 @@ monoutils_sources = \
 	mono-hwcap.h	\
 	mono-hwcap.c	\
 	bsearch.h	\
-	bsearch.c
+	bsearch.c	\
+	mono-signal-handler.h
 
 arch_sources = 
 
@@ -122,6 +125,10 @@ arch_sources += mach-support-amd64.c
 endif
 
 if ARM
+arch_sources += mach-support-arm.c
+endif
+
+if ARM64
 arch_sources += mach-support-arm.c
 endif
 
@@ -141,6 +148,10 @@ endif
 
 if ARM
 arch_sources += mono-hwcap-arm.c mono-hwcap-arm.h
+endif
+
+if ARM64
+arch_sources += mono-hwcap-arm64.c mono-hwcap-arm64.h
 endif
 
 if MIPS
@@ -178,6 +189,7 @@ libmonoutilsinclude_HEADERS = 	\
 	mono-logger.h		\
 	mono-error.h		\
 	mono-publib.h		\
-	mono-dl-fallback.h
+	mono-dl-fallback.h	\
+	mono-counters.h
 
 EXTRA_DIST = ChangeLog mono-embed.h mono-embed.c

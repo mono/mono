@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPartVerbsEventArgs" FullName="System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs">
   <TypeSignature Language="C#" Value="public class WebPartVerbsEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs" /> class represents the event data for the <see cref="E:System.Web.UI.WebControls.WebParts.WebPartZoneBase.CreateVerbs" /> event, which occurs when the Web Parts verbs are created for a zone that derives from the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZoneBase" /> class. </para>
+      <para>Web Parts verbs represent actions that users can perform in the user interface (UI) of a Web Parts page, such as minimizing, closing, or restoring controls; adding controls to a page; or canceling an action. Verbs can appear in both the header and footer areas of a zone, and there are both standard verbs provided with the Web Parts control set, and custom verbs that can be added by developers. A verb is represented in the UI by a clickable object, which you can set to appear as a hyperlink, an image, or a button, by using the <see cref="P:System.Web.UI.WebControls.WebParts.WebPartZoneBase.VerbButtonType" /> property.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZone" /> zone provides a standard set of verbs that get rendered in a Web Parts control's verbs menu. A custom Web Parts zone, or a Web Parts control inside a Web Parts zone, can add additional verbs to the menu. </para>
+      <para>A control in a Web Parts zone can add verbs to the control's verbs menu by inheriting from the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> base class and overriding the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.Verbs" /> property. If the control does not inherit from the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> base class, you can add a new verb by implementing the <see cref="T:System.Web.UI.WebControls.WebParts.IWebActionable" /> interface, and then overriding the <see cref="P:System.Web.UI.WebControls.WebParts.IWebActionable.Verbs" /> collection.</para>
+      <para>The protected <see cref="M:System.Web.UI.WebControls.WebParts.WebPartZoneBase.OnCreateVerbs(System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs)" /> method allows derived classes to override the event without attaching a delegate to it. A derived class must always call the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartZoneBase.OnCreateVerbs(System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs)" /> method of the base class to ensure that registered delegates receive the event. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides event data for the <see cref="E:System.Web.UI.WebControls.WebParts.WebPartZoneBase.CreateVerbs" /> event that is used by the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartZoneBase.OnCreateVerbs(System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default constructor and it creates an empty object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +51,17 @@
         <Parameter Name="verbs" Type="System.Web.UI.WebControls.WebParts.WebPartVerbCollection" />
       </Parameters>
       <Docs>
-        <param name="verbs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using this constructor, the <see cref="P:System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs.Verbs" /> property is set to the Web Parts verb collection specified in the <paramref name="verbs" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs" /> class using the specified Web Parts verb collection.</para>
+        </summary>
+        <param name="verbs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Web Parts verb collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +74,16 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.WebPartVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initially, this property is set by specifying a Web Parts verb collection in the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartVerbsEventArgs.#ctor(System.Web.UI.WebControls.WebParts.WebPartVerbCollection)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Web Parts verbs used in the event data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

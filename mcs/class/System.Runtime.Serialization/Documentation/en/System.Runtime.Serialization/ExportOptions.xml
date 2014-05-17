@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ExportOptions" FullName="System.Runtime.Serialization.ExportOptions">
+  <TypeSignature Language="C#" Value="public class ExportOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ExportOptions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> is used to generate XSD schemas from a type or assembly. You can also use the <see cref="T:System.Runtime.Serialization.XsdDataContractImporter" /> to generate dnprdnshort code from a schema document. </para>
+      <para>crabout importing and exporting schemas, see <format type="text/html"><a href="0da32b50-ccd9-463a-844c-7fe803d3bf44">Schema Import and Export</a></format> and <format type="text/html"><a href="bb57b962-70c1-45a9-93d5-e721e340a13f">Exporting Schemas From Classes</a></format>. </para>
+      <para>The <see cref="P:System.Runtime.Serialization.ExportOptions.KnownTypes" /> property is used by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> to include types that can be read in an object graph. crabout the data contract and known types, see <format type="text/html"><a href="1a0baea1-27b7-470d-9136-5bbad86c4337">Data Contract Known Types</a></format>.</para>
+      <para>crabout data contracts, see <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Using Data Contracts</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the options that can be set for an <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExportOptions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.ExportOptions" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DataContractSurrogate">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.IDataContractSurrogate DataContractSurrogate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.IDataContractSurrogate DataContractSurrogate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.IDataContractSurrogate</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a serialization surrogate. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KnownTypes">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;Type&gt; KnownTypes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.Type&gt; KnownTypes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.Type&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Serialization.ExportOptions.KnownTypes" /> property is used by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> to include types that can be read in an object graph (set using the <see cref="P:System.Runtime.Serialization.DataContractSerializer.KnownTypes" /> property). </para>
+          <para>crabout the data contract and known types, see <format type="text/html"><a href="1a0baea1-27b7-470d-9136-5bbad86c4337">Data Contract Known Types</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of types that may be encountered during serialization or deserialization. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

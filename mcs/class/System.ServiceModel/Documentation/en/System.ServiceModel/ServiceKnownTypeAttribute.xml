@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceKnownTypeAttribute" FullName="System.ServiceModel.ServiceKnownTypeAttribute">
+  <TypeSignature Language="C#" Value="public sealed class ServiceKnownTypeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ServiceKnownTypeAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method | System.AttributeTargets.Interface | System.AttributeTargets.All, AllowMultiple=true, Inherited=true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.ServiceKnownTypeAttribute" /> is intended for use when creating indigo1 service contracts (interfaces that define the service and its methods). The <newTerm>known types</newTerm> are types that may be present in an object graph when serialization or deserialization occurs. For more information about known types, see <format type="text/html"><a href="1a0baea1-27b7-470d-9136-5bbad86c4337">Data Contract Known Types</a></format>.</para>
+      <para>To use the <see cref="P:System.ServiceModel.ServiceKnownTypeAttribute.MethodName" /> property, create a class that contains a method (or methods) that returns an array of types (each being a known type). When applying the attribute, set the <paramref name="methodName" /> to the name of a method that returns the list of types and set the <paramref name="declaringType" /> to the type that contains the method. The method must return a type that implements the <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface. The method must also include a parameter of type <see cref="T:System.Reflection.ICustomAttributeProvider" />.</para>
+      <para>You can also apply the attribute several times to an interface, class, or method, each time specifying a new known type. </para>
+      <block subset="none" type="note">
+        <para>You can use the word ServiceKnownType in your Microsoft Visual Basic or C# code instead of the longer ServiceKnownTypeAttribute.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies known types to be used by a service when serializing or deserializing.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceKnownTypeAttribute (string methodName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string methodName) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="methodName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor when applying the <see cref="T:System.ServiceModel.ServiceKnownTypeAttribute" /> to a class that contains methods that return known types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceKnownTypeAttribute" /> class and specifies the name of a method that returns the known types.</para>
+        </summary>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a method that returns the known types.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceKnownTypeAttribute (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.ServiceKnownTypeAttribute" /> can be applied several times to a method, with each application naming a different known type that may be present in the object graph returned by the method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceKnownTypeAttribute" /> class with the specified known type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies a known type that can be used in a parameter or return value defined by the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceKnownTypeAttribute (string methodName, Type declaringType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string methodName, class System.Type declaringType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="methodName" Type="System.String" />
+        <Parameter Name="declaringType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceKnownTypeAttribute" /> class with the name of a method that returns the known types and the type that contains the method (or methods) that returns the known types.</para>
+        </summary>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a method that returns the known types.</param>
+        <param name="declaringType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that can use the known types in its object graph.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaringType">
+      <MemberSignature Language="C#" Value="public Type DeclaringType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type DeclaringType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type that contains the methods that return the known types.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MethodName">
+      <MemberSignature Language="C#" Value="public string MethodName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MethodName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.ServiceKnownTypeAttribute.MethodName" /> must be the name of a method on the type specified by the <see cref="P:System.ServiceModel.ServiceKnownTypeAttribute.DeclaringType" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of a method that returns the collection of known types.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public Type Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The known type that can be included in an object graph.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

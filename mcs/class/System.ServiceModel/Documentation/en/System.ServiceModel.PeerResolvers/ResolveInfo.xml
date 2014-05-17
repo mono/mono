@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ResolveInfo" FullName="System.ServiceModel.PeerResolvers.ResolveInfo">
+  <TypeSignature Language="C#" Value="public class ResolveInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ResolveInfo extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ServiceModel.MessageContract(IsWrapped=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class represents information sent from a peer node to a peer resolver service when requesting the endpoints for a specific peer node registered with the service.</para>
+      <para>Instances of this class are primarily used to pass endpoint resolution information to the resolver service from a network client of that service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the information for the endpoint resolution of a registration entry by a peer resolver service.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResolveInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new default instance of the <see cref="T:System.ServiceModel.PeerResolvers.ResolveInfo" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResolveInfo (Guid clientId, string meshId, int maxAddresses);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Guid clientId, string meshId, int32 maxAddresses) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="clientId" Type="System.Guid" />
+        <Parameter Name="meshId" Type="System.String" />
+        <Parameter Name="maxAddresses" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.PeerResolvers.ResolveInfo" /> class with the provided client ID and mesh ID, as well as the maximum number of endpoint addresses to return.</para>
+        </summary>
+        <param name="clientId">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Guid" /> that contains a unique ID for the client for which endpoints are to be resolved.</param>
+        <param name="meshId">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.String" /> that contains the ID of the mesh in which the client is participating.</param>
+        <param name="maxAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Int32" /> that contains the maximum number of client endpoint addresses to be returned by the resolve operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientId">
+      <MemberSignature Language="C#" Value="public Guid ClientId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Guid ClientId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ID for the registration entry to resolve.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasBody">
+      <MemberSignature Language="C#" Value="public bool HasBody ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool HasBody() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the body of the message containing a serialized instance of this type is correctly formed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the resolve request information message body is correctly formed by the sender (the service client); false if it is not.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxAddresses">
+      <MemberSignature Language="C#" Value="public int MaxAddresses { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxAddresses" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum number of client endpoint addresses to be returned by the resolve operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MeshId">
+      <MemberSignature Language="C#" Value="public string MeshId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MeshId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the mesh ID for the entry whose endpoint addresses will be resolved.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

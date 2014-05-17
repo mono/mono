@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceDescription" FullName="System.Web.Services.Description.ServiceDescription">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ServiceDescription : System.Web.Services.Description.NamedItem" />
   <AssemblyInfo>
@@ -21,8 +22,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instances of this class can be created with either the new keyword or the static <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.TextReader)" /> method, which parses a WSDL file and assigns its values to appropriate members of the class.</para>
+      <para>WSDL is an XML-based language for describing XML Web services. The <see cref="T:System.Web.Services.Description.ServiceDescription" /> class corresponds to the root element, definitions, of a WSDL file. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a means of creating and formatting a valid Web Services Description Language (WSDL) document file, complete with appropriate namespaces, elements, and attributes, for describing an XML Web service. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +57,15 @@
         <ReturnType>System.Web.Services.Description.BindingCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'BindingCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.BindingCollection" /> returned by this property corresponds to the list of binding elements enclosed by the Web Services Description Language (WSDL) definitions root element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.Services.Description.Binding" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,10 +87,17 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">a <see cref="T:System.Xml.XmlReader" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether an <see cref="T:System.Xml.XmlReader" /> represents a valid Web Services Description Language (WSDL) file that can be parsed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.Serialization.XmlSerializer" /> can recognize the node on which the <see cref="T:System.Xml.XmlReader" /> is positioned; otherwise false.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,9 +111,12 @@
         <ReturnType>System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionFormatExtensionCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of extensibility elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,9 +135,15 @@
         <ReturnType>System.Web.Services.Description.ImportCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ImportCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.ImportCollection" /> returned by this property corresponds to the list of import elements enclosed by the Web Services Description Language (WSDL) definitions root element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.Services.Description.Import" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -129,9 +162,15 @@
         <ReturnType>System.Web.Services.Description.MessageCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'MessageCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.MessageCollection" /> returned by this property corresponds to the list of message elements enclosed by the Web Services Description Language (WSDL) definitions root element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.Services.Description.Message" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,8 +212,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML namespace in which the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class is defined ("http://schemas.xmlsoap.org/wsdl/"). This field is constant.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -188,9 +230,15 @@
         <ReturnType>System.Web.Services.Description.PortTypeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PortTypeCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.PortTypeCollection" /> returned by this property corresponds to the list of portType elements enclosed by the Web Services Description Language (WSDL) definitions root element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.Services.Description.PortType" /> elements contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,10 +260,17 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Services.Description.ServiceDescription" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.Stream" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" />, passed by reference, which contains the bytes to be read.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -232,10 +287,17 @@
         <Parameter Name="textReader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="textReader">a <see cref="T:System.IO.TextReader" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Services.Description.ServiceDescription" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.TextReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="textReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> instance, passed by reference, which contains the text to be read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -252,10 +314,17 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ServiceDescription'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object by directly loading the XML from the specified file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to be read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -272,10 +341,17 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">a <see cref="T:System.Xml.XmlReader" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Services.Description.ServiceDescription" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" />, passed by reference, which contains the XML data to be read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,11 +372,19 @@
         <Parameter Name="validate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="validate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.Stream" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" />, passed by reference, which contains the bytes to be read. </param>
+        <param name="validate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Read">
@@ -318,10 +402,17 @@
       </Parameters>
       <Docs>
         <param name="reader">To be added.</param>
-        <param name="validate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from a <see cref="T:System.IO.TextReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="validate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Read">
@@ -338,11 +429,19 @@
         <Parameter Name="validate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="validate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object by directly loading the XML from the specified file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to be read. </param>
+        <param name="validate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Read">
@@ -359,11 +458,19 @@
         <Parameter Name="validate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="validate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class by directly loading the XML from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" />, passed by reference, which contains the XML data to be read. </param>
+        <param name="validate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> that indicates whether the XML should be validated against the schema specified by <see cref="P:System.Web.Services.Description.ServiceDescription.Schema" />.</param>
       </Docs>
     </Member>
     <Member MemberName="RetrievalUrl">
@@ -374,9 +481,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the XML Web service to which the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance applies.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -398,9 +508,12 @@
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the schema associated with this <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Serializer">
@@ -411,9 +524,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSerializer" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML serializer can be customized using classes derived from the abstract <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> class. These classes are specified in a configuration file using the serviceDescriptionFormatExtensionTypes element and its child add element. The configuration can be applied to an ASP.NET Web application that publishes a Web service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML serializer used to serialize and deserialize between a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object and a Web Services Description Language (WSDL) document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -432,9 +551,12 @@
         <ReturnType>System.Web.Services.Description.ServiceDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> instance of which the <see cref="T:System.Web.Services.Description.ServiceDescription" /> is a member.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -453,9 +575,15 @@
         <ReturnType>System.Web.Services.Description.ServiceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.ServiceCollection" /> returned by this property corresponds to the list of service elements enclosed by the Web Services Description Language (WSDL) definitions root element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.Services.Description.Service" /> instances contained in the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -475,9 +603,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML targetNamespace attribute of the descriptions tag enclosing a Web Services Description Language (WSDL) file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -497,9 +628,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Types'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.Types" /> instance returned by this property corresponds to the list of types elements enclosed by the Web Services Description Language (WSDL) definitions root element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Web.Services.Description.Types" /> contained by the <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -526,9 +663,12 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Collections.Specialized.StringCollection" /> that contains any validation warnings that were generated during a call to <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.Stream,System.Boolean)" />, <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.IO.TextReader,System.Boolean)" />, <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.String,System.Boolean)" />, or <see cref="M:System.Web.Services.Description.ServiceDescription.Read(System.Xml.XmlReader,System.Boolean)" /> with the <paramref name="validate" /> parameter set to true.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -541,9 +681,13 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> to the specified <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" />, passed by reference, which contains the Web Services Description Language (WSDL) file produced. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -560,9 +704,13 @@
         <Parameter Name="writer" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> as a Web Services Description Language (WSDL) file to the <see cref="T:System.IO.TextWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> that contains the WSDL file produced. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -579,9 +727,13 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> as a Web Services Description Language (WSDL) file to the specified path.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to which the WSDL file is written. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -598,9 +750,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Xml.XmlWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the <see cref="T:System.Web.Services.Description.ServiceDescription" /> to the <see cref="T:System.Xml.XmlWriter" /> as a Web Services Description Language (WSDL) file.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" />, passed by reference, which contains the WSDL file produced. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

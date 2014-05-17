@@ -1,38 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesignerLoaderService" FullName="System.ComponentModel.Design.Serialization.IDesignerLoaderService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDesignerLoaderService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesignerLoaderService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" /> can implement this interface to manage designer loading that involves external components. This interface also allows external components to initiate a reload of the design surface by calling <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.Reload" />. A designer loader does not have to implement this interface if it does not require support for asynchronous loading.</para>
+      <para>Designer loading using a custom implementation of the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> can occur in a variety of ways. Sometimes external components are involved in the loading process. To facilitate loading with external dependencies, the designer loader service interface provides a mechanism that determines when loading is complete and allows each portion of loading to signal that it has completed. The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderService" /> typically determines when loading is complete by testing a counter that tracks the number of load dependencies remaining. When each portion of the load completes, <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> is called, and the service decrements the counter. To set the number of dependent load processes, call <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.AddLoadDependency" /> once for each load process that calls <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> when its loading is complete. When the final loading is complete, the service calls <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderHost.EndLoad(System.String,System.Boolean,System.Collections.ICollection)" /> on the loader host.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that can extend a designer loader to support asynchronous loading of external components.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddLoadDependency">
       <MemberSignature Language="C#" Value="public void AddLoadDependency ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddLoadDependency() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.AddLoadDependency" /> once for each external object participating in the load process. <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> is called when the work of the load process is done.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an external component as part of the load process managed by this interface.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DependentLoadComplete">
       <MemberSignature Language="C#" Value="public void DependentLoadComplete (bool successful, System.Collections.ICollection errorCollection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DependentLoadComplete(bool successful, class System.Collections.ICollection errorCollection) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -41,32 +65,49 @@
         <Parameter Name="errorCollection" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="successful">To be added: an object of type 'bool'</param>
-        <param name="errorCollection">To be added: an object of type 'Collections.ICollection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called to signal that a dependent loading operation has completed. Call <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.DependentLoadComplete(System.Boolean,System.Collections.ICollection)" /> once for every process that was registered by calling <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderService.AddLoadDependency" />, which has already completed.</para>
+          <para>If the dependent load succeeds, the caller sets the <paramref name="successful" /> parameter to true and passes either an empty collection or null to the <paramref name="errorCollection" /> parameter. If the dependent load encounters errors, the caller sets the <paramref name="successful" /> parameter to false and passes a collection of exceptions that indicate the reason or reasons for failure to the <paramref name="errorCollection" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals that a dependent load has finished.</para>
+        </summary>
+        <param name="successful">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the load of the designer is successful; false if errors prevented the load from finishing. </param>
+        <param name="errorCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of errors that occurred during the load, if any. If no errors occurred, pass either an empty collection or null. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reload">
       <MemberSignature Language="C#" Value="public bool Reload ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Reload() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any object can call this method to request that the loader reload the design document. If the loader supports reloading and complies with the reload, the designer loader can return true. Otherwise, it returns false, indicating that the reload will not occur. Callers cannot rely on the reload happening immediately; the designer loader can schedule this for some other time, or it can try to reload at once.</para>
+          <para>The caller can display a message to the user if the designer cannot be reloaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reloads the design document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reload request is accepted, or false if the loader does not allow the reload.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

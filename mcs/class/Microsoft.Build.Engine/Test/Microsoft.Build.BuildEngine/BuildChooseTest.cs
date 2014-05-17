@@ -400,5 +400,65 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			Assert.AreEqual ("no", project.GetEvaluatedProperty ("Exists"), "A1");
 		}
+
+		[Test]
+		public void EmptyExistsCondition()
+		{
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Choose>
+						<When Condition=""Exists('$(UndefinedProperty)')"">
+							<PropertyGroup>
+								<Exists>yes</Exists>
+							</PropertyGroup>
+						</When>
+						<Otherwise>
+							<PropertyGroup>
+								<Exists>no</Exists>
+							</PropertyGroup>
+						</Otherwise>
+					</Choose>
+				</Project>
+			";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+			//assign a real filename to be used as base path for the Exists
+			project.FullFileName = typeof (BuildChooseTest).Assembly.Location;
+
+			project.LoadXml (documentString);
+
+			Assert.AreEqual ("no", project.GetEvaluatedProperty ("Exists"), "A1");
+		}
+        
+        [Test]
+        public void EvaluationOrder ()
+        {
+            string documentString = @"
+                        <Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+                            <Choose>
+                                <When Condition=""true"">
+                                    <PropertyGroup>
+                                        <Foo>Bar</Foo>
+                                    </PropertyGroup>
+                                </When>
+                                <Otherwise>
+                                    <PropertyGroup>
+                                        <Foo>Baz</Foo>
+                                    </PropertyGroup>
+                                </Otherwise>
+                            </Choose>
+
+                            <PropertyGroup>
+                                <Test>$(Foo)</Test>
+                            </PropertyGroup>
+                        </Project>
+                    ";
+
+            Engine engine = new Engine (Consts.BinPath);
+            Project project = engine.CreateNewProject ();
+            project.LoadXml (documentString);
+            Assert.AreEqual ("Bar", project.GetEvaluatedProperty ("Test"));
+        }
 	}
 }

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CallContext" FullName="System.Runtime.Remoting.Messaging.CallContext">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class CallContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit CallContext extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,14 +14,39 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Runtime.Remoting.Messaging.CallContext" /> is a specialized collection object similar to a Thread Local Storage for method calls and provides data slots that are unique to each logical thread of execution. The slots are not shared across call contexts on other logical threads. Objects can be added to the <see cref="T:System.Runtime.Remoting.Messaging.CallContext" /> as it travels down and back up the execution code path, and examined by various objects along the path.</para>
+      <para>When a remote method call is made to an object in another <see cref="T:System.AppDomain" />, the <see cref="T:System.Runtime.Remoting.Messaging.CallContext" /> class generates a <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> instance that travels along with the remote call. Only objects that expose the <see cref="T:System.Runtime.Remoting.Messaging.ILogicalThreadAffinative" /> interface and are stored in the <see cref="T:System.Runtime.Remoting.Messaging.CallContext" /> are propagated outside the <see cref="T:System.AppDomain" /> in a <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" />. Objects that do not support this interface are not transmitted in <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> instances with remote method calls.</para>
+      <block subset="none" type="note">
+        <para>All methods in <see cref="T:System.Runtime.Remoting.Messaging.CallContext" /> are static and operate on the call context in the current <see cref="T:System.Threading.Thread" />.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>This class makes a link demand. A SecurityException is thrown if the immediate caller does not have infrastructure permission. See <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> for more information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of properties that are carried with the execution code path. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FreeNamedDataSlot">
       <MemberSignature Language="C#" Value="public static void FreeNamedDataSlot (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void FreeNamedDataSlot(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -27,19 +54,24 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Empties a data slot with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data slot to empty. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetData">
+      <MemberSignature Language="C#" Value="public static object GetData (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetData(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetData">
-      <MemberSignature Language="C#" Value="public static object GetData (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -47,37 +79,47 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an object with the specified name from the <see cref="T:System.Runtime.Remoting.Messaging.CallContext" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object in the call context associated with the specified name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the item in the call context. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHeaders">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.Header[] GetHeaders ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.Messaging.Header[] GetHeaders() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHeaders">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.Header[] GetHeaders ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.Header[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Header []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the headers that are sent along with the method call.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The headers that are sent along with the method call.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostContext">
-      <MemberSignature Language="C#" Value="public static object HostContext { set; get; }" />
+      <MemberSignature Language="C#" Value="public static object HostContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property object HostContext" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -87,13 +129,17 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the host context associated with the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LogicalGetData">
       <MemberSignature Language="C#" Value="public static object LogicalGetData (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object LogicalGetData(string name) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,14 +152,22 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an object with the specified name from the logical call context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object in the logical call context associated with the specified name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the item in the logical call context. </param>
       </Docs>
     </Member>
     <Member MemberName="LogicalSetData">
       <MemberSignature Language="C#" Value="public static void LogicalSetData (string name, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void LogicalSetData(string name, object data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -127,37 +181,54 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores a given object in the logical call context and associates it with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name with which to associate the new item in the logical call context. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to store in the logical call context, this object must be serializable. </param>
       </Docs>
     </Member>
     <Member MemberName="SetData">
       <MemberSignature Language="C#" Value="public static void SetData (string name, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetData(string name, object data) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-        <Parameter Name="data" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores a given object and associates it with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name with which to associate the new item in the call context. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to store in the call context. </param>
+      </Docs>
     </Member>
     <Member MemberName="SetHeaders">
       <MemberSignature Language="C#" Value="public static void SetHeaders (System.Runtime.Remoting.Messaging.Header[] headers);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetHeaders(class System.Runtime.Remoting.Messaging.Header[] headers) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -165,20 +236,14 @@
         <Parameter Name="headers" Type="System.Runtime.Remoting.Messaging.Header[]" />
       </Parameters>
       <Docs>
-        <param name="headers">To be added: an object of type 'Header []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the headers that are sent along with the method call.</para>
+        </summary>
+        <param name="headers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Remoting.Messaging.Header" /> array of the headers that are to be sent along with the method call. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="RequestContext" FullName="System.ServiceModel.Channels.RequestContext">
+  <TypeSignature Language="C#" Value="public abstract class RequestContext : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit RequestContext extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You get a request context from an <see cref="T:System.ServiceModel.Channels.IReplyChannel" />. Each <see cref="T:System.ServiceModel.Channels.RequestContext" /> encapsulates the information required to reply to the request, so that you do not have to block on the channel when waiting for each request message to receive a reply.</para>
+      <para>In the request/reply model, the <see cref="T:System.ServiceModel.Channels.RequestContext" /> object is the link between the request that comes in and the reply that goes out. When the server receives a request, it provides a <see cref="T:System.ServiceModel.Channels.RequestContext" /> instance that represents the request to the channel. The request context contains the original request message among other useful properties. This request context is then stashed inside the <see cref="T:System.ServiceModel.OperationContext" /> for retrieval by your service. You typically use the <see cref="P:System.ServiceModel.OperationContext.Current" /> property to access the request of the current operation. </para>
+      <para>The value of the <see cref="T:System.ServiceModel.Channels.RequestContext" /> can be null. Because the role of the request context is to link requests to replies, it does not make sense to have a request context when you do not have a reply, and so in this case the context is set to null. For a one-way operation on top of the request/reply model, the server receives requests but does not send back a response to the client. So if the <see cref="T:System.ServiceModel.Channels.RequestContext" /> is null unexpectedly, check first whether the operation contract is IsOneWay. </para>
+      <para>Special note for Managed C++ users deriving from this class:</para>
+      <list type="bullet">
+        <item>
+          <para>Put your cleanup code in (On)(Begin)Close (and/or OnAbort), not in a destructor.</para>
+        </item>
+        <item>
+          <para>Avoid destructors: they cause the compiler to auto-generate <see cref="T:System.IDisposable" />.</para>
+        </item>
+        <item>
+          <para>Avoid non-reference members: they can cause the compiler to auto-generate <see cref="T:System.IDisposable" />.</para>
+        </item>
+        <item>
+          <para>Avoid finalizers; but if you include one, you should suppress the build warning and call <see cref="M:System.GC.SuppressFinalize(System.Object)" /> and the finalizer itself from (On)(Begin)Close (and/or OnAbort) to emulate what would have been the auto-generated <see cref="T:System.IDisposable" /> behavior.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a reply that is correlated to an incoming request.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected RequestContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.RequestContext" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Abort">
+      <MemberSignature Language="C#" Value="public abstract void Abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Abort() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, aborts processing the request associated with the context. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginReply">
+      <MemberSignature Language="C#" Value="public abstract IAsyncResult BeginReply (System.ServiceModel.Channels.Message message, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginReply(class System.ServiceModel.Channels.Message message, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the asynchronous <see cref="M:System.ServiceModel.Channels.RequestContext.BeginReply" /> method when the application processing must continue without waiting. Use one of the synchronous <see cref="M:System.ServiceModel.Channels.RequestContext.Reply" /> methods when it is acceptable for the current thread to be blocked while it replies to the request message or until the time-out interval is exceeded.</para>
+          <para>This method receives notification, through a callback, of the identity of the event handler for the operation. The operation is not complete until either the reply is sent or the time-out occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, begins an asynchronous operation to reply to the request associated with the current context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous reply operation.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming <see cref="T:System.ServiceModel.Channels.Message" /> that contains the request.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous reply operation completion.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous reply operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginReply">
+      <MemberSignature Language="C#" Value="public abstract IAsyncResult BeginReply (System.ServiceModel.Channels.Message message, TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginReply(class System.ServiceModel.Channels.Message message, valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the asynchronous <see cref="M:System.ServiceModel.Channels.RequestContext.BeginReply" /> method to allow the application processing to continue without waiting for the request to complete. </para>
+          <para>Use one of the synchronous <see cref="M:System.ServiceModel.Channels.RequestContext.Reply" /> methods when it is acceptable for the current thread to be blocked while it replies to the request message or until the time-out interval is exceeded. This method receives notification, through a callback, of the identity of the event handler for the operation. The operation is not complete until either the reply is sent or the time-out occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, begins an asynchronous operation to reply to the request associated with the current context within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous reply operation.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming <see cref="T:System.ServiceModel.Channels.Message" /> that contains the request.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies the interval of time to wait for the reply to an available request.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous reply operation completion.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous reply operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public abstract void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, closes the operation that is replying to the request context associated with the current context.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public abstract void Close (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, closes the operation that is replying to the request context associated with the current context within a specified interval of time.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies the interval of time within which the reply operation associated with the current context must close.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases resources associated with the context.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndReply">
+      <MemberSignature Language="C#" Value="public abstract void EndReply (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndReply(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, completes an asynchronous operation to reply to a request message.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to one of the <see cref="Overload:System.ServiceModel.Channels.RequestContext.BeginReply" /> methods.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Reply">
+      <MemberSignature Language="C#" Value="public abstract void Reply (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reply(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.ServiceModel.Channels.RequestContext.Reply" /> when it is acceptable for the current thread to be blocked while it replies to the request message. The thread is blocked up to the specified <paramref name="timeout" />. </para>
+          <para>If the application processing must continue without waiting for the reply to complete, use the asynchronous <see cref="M:System.ServiceModel.Channels.RequestContext.BeginReply" /> method. This method receives notification, through a callback, of the identity of the event handler for the operation. The operation is not complete until either a message becomes available in the channel or the time-out occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, replies to a request message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming <see cref="T:System.ServiceModel.Channels.Message" /> that contains the request.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Reply">
+      <MemberSignature Language="C#" Value="public abstract void Reply (System.ServiceModel.Channels.Message message, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reply(class System.ServiceModel.Channels.Message message, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.ServiceModel.Channels.RequestContext.Reply" /> when it is acceptable for the current thread to be blocked while it replies to the request message. The thread is blocked up to the specified <paramref name="timeout" />. </para>
+          <para>If the application processing must continue without waiting for the reply to complete, use the asynchronous <see cref="M:System.ServiceModel.Channels.RequestContext.BeginReply" /> method. This method receives notification, through a callback, of the identity of the event handler for the operation. The operation is not complete until either a message becomes available in the channel or the time-out occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, replies to a request message within a specified interval of time.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming <see cref="T:System.ServiceModel.Channels.Message" /> that contains the request.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies the interval of time to wait for the reply to a request.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RequestMessage">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.Message RequestMessage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.Message RequestMessage" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the message that contains the request.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.IDisposable.Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases both managed and unmanaged resources associated with the context.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

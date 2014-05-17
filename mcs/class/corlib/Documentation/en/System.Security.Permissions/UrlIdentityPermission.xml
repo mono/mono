@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UrlIdentityPermission" FullName="System.Security.Permissions.UrlIdentityPermission">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class UrlIdentityPermission : System.Security.CodeAccessPermission, System.Security.Permissions.IBuiltInPermission" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit UrlIdentityPermission extends System.Security.CodeAccessPermission implements class System.Security.Permissions.IBuiltInPermission" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,68 +18,132 @@
       <InterfaceName>System.Security.Permissions.IBuiltInPermission</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The complete URL is considered, including the protocol (HTTP, HTTPS, FTP) and the file. For example, http://www.fourthcoffee.com/process/grind.htm is a complete URL.</para>
+      <para>URLs can be matched exactly or by a wildcard in the final position, for example: http://www.fourthcoffee.com/process/*. URLs can also contain a wildcard ("*") prefix at the dot delimiter. For example, the URL name string http://www.fourthcoffee.com/process/grind.htm/ is a subset of http://*.fourthcoffee.com/process/grind.htm/ and http://*.com/process/grind.htm/.</para>
+      <block subset="none" type="note">
+        <para>Starting with the net_v40_long, identity permissions are not used.</para>
+        <para>In the .NET Framework versions 1.0 and 1.1, demands on the identity permissions are effective even when the calling assembly is fully trusted. That is, although the calling assembly has full trust, a demand for an identity permission fails if the assembly does not meet the demanded criteria. Starting with the .NET Framework version 2.0, demands for identity permissions are ineffective if the calling assembly has full trust. That is, a demand for an identity always succeeds, regardless of the identity of the assembly, if the assembly has been granted full trust. This assures consistency for all permissions, eliminating the treatment of identity permissions as a special case.</para>
+      </block>
+      <para>In the .NET Framework versions 1.0 and 1.1, demands on the identity permissions are effective, even when the calling assembly is fully trusted. That is, although the calling assembly has full trust, a demand for an identity permission fails if the assembly does not meet the demanded criteria. Starting with the .NET Framework version 2.0, demands for identity permissions are ineffective if the calling assembly has full trust. This assures consistency for all permissions, eliminating the treatment of identity permissions as a special case.</para>
+      <block subset="none" type="note">
+        <para>In versions of the .NET Framework before the net_v40_long, you could use the <see cref="M:System.Security.CodeAccessPermission.Deny" /> method to prevent inadvertent access to system resources by trusted code. <see cref="M:System.Security.CodeAccessPermission.Deny" /> is now obsolete, and access to resources is now determined solely by the granted permission set for an assembly. To limit access to files, you must run partially trusted code in a sandbox and assign it permissions only to resources that the code is allowed to access. For information about running an application in a sandbox, see <format type="text/html"><a href="d1ad722b-5b49-4040-bff3-431b94bb8095">How To: Run Partially Trusted Code in a Sandbox</a></format>.</para>
+        <para />
+      </block>
+      <block subset="none" type="note">
+        <para>In the .NET Framework versions 1.0 and 1.1, identity permissions cannot have an <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> permission state value. Starting with the .NET Framework version 2.0, identity permissions can have any permission state value. This means that in 2.0 and later versions, identity permissions have the same behavior as permissions that implement the <see cref="T:System.Security.Permissions.IUnrestrictedPermission" /> interface.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the identity permission for the URL from which the code originates. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UrlIdentityPermission (System.Security.Permissions.PermissionState state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.PermissionState state) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added: an object of type 'PermissionState'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates either a fully restricted (None) or Unrestricted permission.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, identity permissions cannot have an <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> permission state value. Starting with the .NET Framework version 2.0, identity permissions can have any permission state value. This means that in 2.0 and later versions, identity permissions have the same behavior as permissions that implement the <see cref="T:System.Security.Permissions.IUnrestrictedPermission" /> interface. That is, a demand for an identity always succeeds, regardless of the identity of the assembly, if the assembly has been granted full trust.</para>
+          </block>
+          <para>In the .NET Framework versions 1.0 and 1.1, demands on the identity permissions are effective, even when the calling assembly is fully trusted. That is, although the calling assembly has full trust, a demand for an identity permission fails if the assembly does not meet the demanded criteria. Starting with the .NET Framework version 2.0, demands for identity permissions are ineffective if the calling assembly has full trust. This assures consistency for all permissions, eliminating the treatment of identity permissions as a special case.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> class with the specified <see cref="T:System.Security.Permissions.PermissionState" />.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" />  values. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UrlIdentityPermission (string site);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string site) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public UrlIdentityPermission (string site);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="site" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="site">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complete URL is considered, including the protocol (HTTP, HTTPS, FTP) and the file, for example: http://www.fourthcoffee.com/process/grind.htm/.</para>
+          <para>URLs can be matched exactly or by a wildcard in the final position, for example: http://www.fourthcoffee.com/process/*. URLs can also contain a wildcard ("*") prefix at the dot delimiter. For example, the URL name string http://www.fourthcoffee.com/process/grind.htm/ is a subset of http://*.fourthcoffee.com/process/grind.htm/ and http://*.com/process/grind.htm/.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, for performance reasons, an invalid URL does not cause an argument exception at the time the new class instance is created.  The argument exception will occur when one of the set operations (Union, Intersect, or IsSubsetOf) is executed.  A demand on the permission causes <see cref="M:System.Security.Permissions.UrlIdentityPermission.IsSubsetOf(System.Security.IPermission)" /> to be called by the security infrastructure. The demand will fail because of the argument exception, resulting in a <see cref="T:System.Security.SecurityException" /> being thrown. In this case, the original <see cref="T:System.ArgumentException" /> exception will not be seen.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> class to represent the URL identity described by <paramref name="site" />.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URL or wildcard expression. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission Copy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission Copy() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Copy">
-      <MemberSignature Language="C#" Value="public override System.Security.IPermission Copy ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of a permission represents the same access to resources as the original permission. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns an identical copy of the current permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="FromXml">
+      <MemberSignature Language="C#" Value="public override void FromXml (System.Security.SecurityElement esd);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void FromXml(class System.Security.SecurityElement esd) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromXml">
-      <MemberSignature Language="C#" Value="public override void FromXml (System.Security.SecurityElement esd);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -85,19 +151,24 @@
         <Parameter Name="esd" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="esd">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a permission with a specified state from an XML encoding.</para>
+        </summary>
+        <param name="esd">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the permission. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Intersect">
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission Intersect (System.Security.IPermission target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission Intersect(class System.Security.IPermission target) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Intersect">
-      <MemberSignature Language="C#" Value="public override System.Security.IPermission Intersect (System.Security.IPermission target);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
@@ -105,20 +176,33 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The intersection of two permissions is a permission that describes access to the URLs they both describe in common. Only a demand that passes both original permissions will pass the intersection. For example, the intersection of a permission that represents access to http://www.fourthcoffee.com/process/grind.htm and a permission that represents access to http://www.fourthcoffee.com/* is a permission that represents access to http://www.fourthcoffee.com/process/grind.htm.</para>
+          <para>
+            <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> supports set operations (<see cref="M:System.Security.Permissions.UrlIdentityPermission.IsSubsetOf(System.Security.IPermission)" />, <see cref="M:System.Security.Permissions.UrlIdentityPermission.Intersect(System.Security.IPermission)" />, and <see cref="M:System.Security.Permissions.UrlIdentityPermission.Union(System.Security.IPermission)" />) only when the current permission is equal to the specified permission object or when one of the permissions uses the wildcard operator ("*").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a permission that is the intersection of the current permission and the specified permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the intersection of the current permission and the specified permission. This new permission is null if the intersection is empty.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A permission to intersect with the current permission. It must be of the same type as the current permission. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsSubsetOf">
+      <MemberSignature Language="C#" Value="public override bool IsSubsetOf (System.Security.IPermission target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsSubsetOf(class System.Security.IPermission target) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsSubsetOf">
-      <MemberSignature Language="C#" Value="public override bool IsSubsetOf (System.Security.IPermission target);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -126,20 +210,33 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current permission is a subset of the specified permission if the current permission identifies access to a URL that is wholly contained by the specified permission. For example, a permission that represents access to http://www.fourthcoffee.com/process/grind.htm is a subset of a permission that represents access to http://www.fourthcoffee.com/*. If this method returns true, the current permission represents no more access to the protected resource than does the specified permission.</para>
+          <para>
+            <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> supports set operations (<see cref="M:System.Security.Permissions.UrlIdentityPermission.IsSubsetOf(System.Security.IPermission)" />, <see cref="M:System.Security.Permissions.UrlIdentityPermission.Intersect(System.Security.IPermission)" />, and <see cref="M:System.Security.Permissions.UrlIdentityPermission.Union(System.Security.IPermission)" />) only when the current permission is equal to the specified permission or when one of the permissions uses the wildcard operator ("*"). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current permission is a subset of the specified permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission is a subset of the specified permission; otherwise, false.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A permission that is to be tested for the subset relationship. This permission must be of the same type as the current permission. </param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Security.Permissions.IBuiltInPermission.GetTokenIndex">
+      <MemberSignature Language="C#" Value="int IBuiltInPermission.GetTokenIndex ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Security.Permissions.IBuiltInPermission.GetTokenIndex() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Security.Permissions.IBuiltInPermission.GetTokenIndex">
-      <MemberSignature Language="C#" Value="int IBuiltInPermission.GetTokenIndex ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -149,33 +246,41 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToXml">
+      <MemberSignature Language="C#" Value="public override System.Security.SecurityElement ToXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.SecurityElement ToXml() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToXml">
-      <MemberSignature Language="C#" Value="public override System.Security.SecurityElement ToXml ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the permission and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the permission, including any state information. </para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Union">
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission Union (System.Security.IPermission target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission Union(class System.Security.IPermission target) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Union">
-      <MemberSignature Language="C#" Value="public override System.Security.IPermission Union (System.Security.IPermission target);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
@@ -183,38 +288,47 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of a call to the <see cref="M:System.Security.Permissions.UrlIdentityPermission.Union(System.Security.IPermission)" /> method is a permission that represents access to the URL as represented by the current permission, as well as access to the URL as represented by the specified permission.</para>
+          <para>The <see cref="T:System.Security.Permissions.UrlIdentityPermission" /> class supports set operations <see cref="M:System.Security.Permissions.UrlIdentityPermission.IsSubsetOf(System.Security.IPermission)" />, <see cref="M:System.Security.Permissions.UrlIdentityPermission.Intersect(System.Security.IPermission)" />, and <see cref="M:System.Security.Permissions.UrlIdentityPermission.Union(System.Security.IPermission)" />) only when the current permission is equal to the specified permission, or when one of the permissions uses the wildcard operator ("*") and one is a subset of the other. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a permission that is the union of the current permission and the specified permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the union of the current permission and the specified permission.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A permission to combine with the current permission. It must be of the same type as the current permission. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Url">
+      <MemberSignature Language="C#" Value="public string Url { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Url" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Url">
-      <MemberSignature Language="C#" Value="public string Url { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complete URL is considered, including the protocol (HTTP, HTTPS, FTP) and the file, for example: http://www.fourthcoffee.com/process/grind.htm/.</para>
+          <para>URLs can be matched exactly or by a wildcard in the final position, for example: http://www.fourthcoffee.com/process/*.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a URL representing the identity of Internet code.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Void" FullName="System.Void" FullNameSP="System_Void" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable Void extends System.ValueType" />
   <TypeSignature Language="C#" Value="public struct Void" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit void extends System.ValueType" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,21 +16,21 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>
-      <para>Indicates a method that does not return a value; that is, 
-      the method has a return type of <see langword="void" />
-      .</para>
-    </summary>
-    <remarks>
-      <para>This class is used by types in the Reflection Library. </para>
-    </remarks>
-  </Docs>
-  <Members />
-  <TypeExcluded>0</TypeExcluded>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Void" /> structure is used in the <see cref="N:System.Reflection" /> namespace, but is rarely useful in a typical application. The <see cref="T:System.Void" /> structure has no members other than the ones all types inherit from the <see cref="T:System.Object" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a return value type for a method that does not return a value.</para>
+    </summary>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
 </Type>

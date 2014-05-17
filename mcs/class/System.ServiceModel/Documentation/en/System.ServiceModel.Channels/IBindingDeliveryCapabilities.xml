@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IBindingDeliveryCapabilities" FullName="System.ServiceModel.Channels.IBindingDeliveryCapabilities">
+  <TypeSignature Language="C#" Value="public interface IBindingDeliveryCapabilities" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindingDeliveryCapabilities" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.IBindingDeliveryCapabilities" /> interface must be implemented by a binding if clients and services are to be able to stipulate, as part of their contract, that the features they require are provided by the binding. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface that bindings must implement to describe and advertise the capabilities that clients and services may require.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AssuresOrderedDelivery">
+      <MemberSignature Language="C#" Value="public bool AssuresOrderedDelivery { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AssuresOrderedDelivery" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this <see cref="P:System.ServiceModel.Channels.IBindingDeliveryCapabilities.AssuresOrderedDelivery" /> property is consumed by the <see cref="P:System.ServiceModel.DeliveryRequirementsAttribute.RequireOrderedDelivery" /> when the description of the service is loaded at runtime. This check is done to determine whether the ordered delivery requirements of the service are satisfied by the binding selected or created for the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the binding can support assurances for the delivery of messages in the order they were sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="QueuedDelivery">
+      <MemberSignature Language="C#" Value="public bool QueuedDelivery { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool QueuedDelivery" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this <see cref="P:System.ServiceModel.Channels.IBindingDeliveryCapabilities.QueuedDelivery" /> property is consumed when the description of the service is loaded at runtime. This check is done to determine whether the queued delivery requirements of the service are satisfied by the binding selected or created for the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the binding can support the queued delivery of messages.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

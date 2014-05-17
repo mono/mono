@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodAccessException" FullName="System.MethodAccessException" FullNameSP="System_MethodAccessException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable MethodAccessException extends System.MemberAccessException" />
   <TypeSignature Language="C#" Value="public class MethodAccessException : MemberAccessException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit MethodAccessException extends System.MemberAccessException" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,20 +16,12 @@
     <BaseTypeName>System.MemberAccessException</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Represents the error that occurs when there is an
-      attempt to access a method outside the scope in which access is permitted.</para>
-    </summary>
-    <remarks>
-      <para>
-        <block subset="none" type="note">This exception is
-      thrown when the access level of a method in a class library is changed, and one
-      or more assemblies referencing the library have not been recompiled. This exception is also thrown when an attempt to invoke a
-      method via reflection fails because the caller does not have the required
-      permissions.</block>
-      </para>
-    </remarks>
     <example>
       <para>The following example demonstrates a scenario under
       which <see cref="T:System.MethodAccessException" />
@@ -94,125 +88,239 @@ namespace TestNameSpace
         <para> at AppTest.Main()</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>This exception is not included in the <see cref="http://go.microsoft.com/fwlink/?LinkID=247912">.NET for Windows Store apps</see> or the <format type="text/html"><a href="c31e1663-c164-4e65-b66d-d3aa8750a154">Portable Class Library</a></format>, but it is thrown by some members that are. To catch the exception in that case, write a catch statement for <see cref="T:System.MemberAccessException" /> instead.</para>
+      </block>
+      <para>This exception is thrown in situations such as the following:</para>
+      <list type="bullet">
+        <item>
+          <para>A private, protected, or internal method that would not be accessible from normal compiled code is accessed from partially trusted code by using reflection.</para>
+        </item>
+        <item>
+          <para>A security-critical method is accessed from transparent code.</para>
+        </item>
+        <item>
+          <para>The access level of a method in a class library has changed, and one or more assemblies that reference the library have not been recompiled.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Beginning with the net_v40_long, the common language runtime treats application code as transparent when it is run with partial trust. See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.</para>
+      </block>
+      <para>
+        <see cref="T:System.MethodAccessException" /> uses the HRESULT COR_E_METHODACCESS, that has the value 0x80131510.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.MethodAccessException" />, see the <see cref="M:System.MethodAccessException.#ctor" /> constructors.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when there is an invalid attempt to access a method, such as accessing a private method from partially trusted code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public MethodAccessException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs and initializes a new instance of the
-   <see cref="T:System.MethodAccessException" />
-   class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="!:System.MethodAccessException.Message" />
-property of the new instance to a system-supplied message that describes the
-error, such as "Attempt to access the method failed." This message takes into
-account the current system culture.</para>
-          <para>The <see cref="!:System.MethodAccessException.InnerException" /> property of the new instance is
-initialized to <see langword="null" /> .</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.MethodAccessException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>A null reference (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The localized error message string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.MethodAccessException" /> class, setting the <see cref="P:System.Exception.Message" /> property of the new instance to a system-supplied message that describes the error, such as "Attempt to access the method failed." This message takes into account the current system culture.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
       <MemberSignature Language="C#" Value="public MethodAccessException (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.MethodAccessException" /> class with
-   a specified error message.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="!:System.MethodAccessException.Message" />
-property of the new instance using <paramref name="message" />. If <paramref name="message" /> is
-<see langword="null" />, the <see cref="!:System.MethodAccessException.Message" /> property is initialized to the 
-system-supplied message provided by the constructor that takes no
-arguments. </para>
-          <para> The <see cref="!:System.MethodAccessException.InnerException" /> property of the
-new instance is initialized to <see langword="null" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content of <paramref name="message" /> should be understandable to the user. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.MethodAccessException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>A null reference (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.MethodAccessException" /> class with a specified error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that describes the error. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MethodAccessException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected MethodAccessException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called during deserialization to reconstitute the exception object transmitted over a stream. For more information, see <format type="text/html"><a href="832ac524-21bc-419a-a27b-ca8bfc45840f">XML and Soap Serialization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.MethodAccessException" /> class with serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that holds the serialized object data. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contextual information about the source or destination. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public MethodAccessException (string message, Exception inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception inner) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
-      <MemberSignature Language="C#" Value="public MethodAccessException (string message, Exception inner);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is not a <see langword="null" /> reference, the current exception was raised in a catch block handling <paramref name="inner" /> .</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.MethodAccessException" /> class with a specified error
-   message and a reference to the inner exception that is the cause of the current
-   exception.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="!:System.MethodAccessException.Message" /> property of the new instance
-   using <paramref name="message" /> and the <see cref="!:System.MethodAccessException.InnerException" /> property using
-<paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />, 
-   the <see cref="!:System.MethodAccessException.Message" /> property is initialized to the system-supplied message
-   provided by the constructor that takes no arguments.</para>
-          <block subset="none" type="note">For more information on inner
-   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception can include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or a null reference (Nothing in Visual Basic) if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.MethodAccessException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The inner exception reference. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.MethodAccessException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="inner" /> parameter is not a null reference (Nothing in Visual Basic), the current exception is raised in a catch block that handles the inner exception. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

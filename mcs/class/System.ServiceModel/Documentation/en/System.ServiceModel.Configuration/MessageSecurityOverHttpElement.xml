@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageSecurityOverHttpElement" FullName="System.ServiceModel.Configuration.MessageSecurityOverHttpElement">
+  <TypeSignature Language="C#" Value="public class MessageSecurityOverHttpElement : System.Configuration.ConfigurationElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageSecurityOverHttpElement extends System.Configuration.ConfigurationElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Configuration.ConfigurationElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the security configuration settings for message sent using HTTP.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageSecurityOverHttpElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AlgorithmSuite">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.SecurityAlgorithmSuite AlgorithmSuite { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.SecurityAlgorithmSuite AlgorithmSuite" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter(typeof(System.ServiceModel.Configuration.SecurityAlgorithmSuiteConverter))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("algorithmSuite", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityAlgorithmSuite</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the message encryption and key-wrap algorithms used to secure an HTTP message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCredentialType">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.MessageCredentialType ClientCredentialType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.MessageCredentialType ClientCredentialType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("clientCredentialType", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.MessageCredentialType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the type of credential to be used when performing client authentication using message-based security or TransportWithMessageCredential.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateServiceCredential">
+      <MemberSignature Language="C#" Value="public bool NegotiateServiceCredential { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool NegotiateServiceCredential" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("negotiateServiceCredential", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies whether the service credential is provisioned at the client out-of-band or is obtained from the service to the client through a process of negotiation. Such a negotiation is a precursor to the usual message exchange. </para>
+          <para>If the <see cref="P:System.ServiceModel.MessageSecurityOverHttp.ClientCredentialType" /> property is equal to Anonymous, <see cref="F:System.ServiceModel.MessageCredentialType.UserName" />, or <see cref="F:System.ServiceModel.MessageCredentialType.Certificate" />, setting this property to false implies that the service certificate is available at the client out-of-band, and that the client must specify the <see cref="P:System.ServiceModel.Configuration.ServiceCredentialsElement.ServiceCertificate" /> property of <see cref="T:System.ServiceModel.Configuration.ServiceCredentialsElement" /> class. This mode is interoperable with SOAP stacks that implement WS-Trust and WS-SecureConversation. </para>
+          <para>If the <see cref="P:System.ServiceModel.MessageSecurityOverHttp.ClientCredentialType" /> property is equal to <see cref="F:System.ServiceModel.MessageCredentialType.Windows" />, setting this property to false causes a Kerberos-based authentication. This requires that the client and service be part of a Kerberos domain. This mode is interoperable with SOAP stacks that implement the Kerberos token profile (as defined at OASIS WSS TC) as well as WS-Trust and WS-SecureConversation. </para>
+          <para>When this property is true, it causes a .NET SOAP negotiation that tunnels SPNego exchange over SOAP messages. </para>
+          <para>This property indicates whether the service credential is negotiated automatically between the client and the service. If this property is true, then such negotiation occurs. If this property is false, then the service credentials must be specified at the client before communication with the service can occur.</para>
+          <para>If this property is set to false, and the binding is configured to use Windows as a client credential type, the service account must be associated with a Service Principal Name (SPN). To do this, run the service under the NETWORK SERVICE account, or LOCAL SYSTEM account. Alternatively, use the SetSpn.exe tool to create an SPN for the service account. In either case, the client must use the correct SPN in the <format type="text/html"><a href="3f3b85d3-20f2-4cd8-8a6a-ee18befbd165">&lt;servicePrincipalName&gt;</a></format> element, or by using the <see cref="T:System.ServiceModel.EndpointAddress" /> constructor. For more information, see <format type="text/html"><a href="a4c8f52c-5b30-45c4-a545-63244aba82be">Specifying the Identity</a></format>.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that specifies whether the service credential is provisioned at the client out-of-band, or is obtained from the service to the client through a process of negotiation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

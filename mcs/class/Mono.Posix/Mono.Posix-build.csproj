@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{983EBE35-85B4-4D16-84AE-C3081CAE53EA}</ProjectGuid>
+    <ProjectGuid>{AA347918-40BB-4762-8A7F-B94836255127}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612</NoWarn>
-    <OutputPath>bin\Debug\Mono.Posix-build</OutputPath>
+    <OutputPath>./../../class/lib/build</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -112,17 +112,20 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\build\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-build.csproj">
-      <Project>{2BD930A2-88A9-4AD0-ADE7-1531552DF896}</Project>
+      <Project>{2BDF80D1-6F06-4908-B351-835292B7A9B9}</Project>
       <Name>corlib\corlib-build</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-build-1.csproj">
-      <Project>{83D197B9-A796-4A0D-B8F9-930DD9415615}</Project>
+      <Project>{ACA4A790-62B2-4D59-B96C-CE17F8F6BE58}</Project>
       <Name>System\System-build-1</Name>
     </ProjectReference>
   </ItemGroup>
@@ -130,3 +133,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageBodyMemberAttribute" FullName="System.ServiceModel.MessageBodyMemberAttribute">
+  <TypeSignature Language="C#" Value="public class MessageBodyMemberAttribute : System.ServiceModel.MessageContractMemberAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageBodyMemberAttribute extends System.ServiceModel.MessageContractMemberAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.MessageContractMemberAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" /> attribute to specify that a data member is serialized into the SOAP body and to control some serialization items. </para>
+      <para>The <see cref="P:System.ServiceModel.MessageBodyMemberAttribute.Order" /> property is used to specify the order of body parts in cases where the default alphabetical order is not appropriate.</para>
+      <para>The other properties are inherited from the base class, <see cref="T:System.ServiceModel.MessageContractMemberAttribute" />.</para>
+      <para>crabout controlling the serialization of the contents of a SOAP body without modifying the default SOAP envelope itself, see <see cref="T:System.Runtime.Serialization.DataContractAttribute" />, <format type="text/html"><a href="7c5a26c8-89c9-4bcb-a4bc-7131e6d01f0c">Specifying Data Transfer in Service Contracts</a></format>, and <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Data Contracts Overview</a></format>.</para>
+      <para>crdefault <format type="text/html"><a href="1e19c64a-ae84-4c2f-9155-91c54a77c249">Using Message Contracts</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a member is serialized as an element inside the SOAP body.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageBodyMemberAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" /> for a complete example.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Order">
+      <MemberSignature Language="C#" Value="public int Order { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Order" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.MessageBodyMemberAttribute.Order" /> property to specify the location of a data member in the SOAP body element. The value is not required to be consecutive, because it does not represent the position of the member, only the sorting key.</para>
+          <para>The order of the body elements is alphabetical by default. The semantics of this property are the same as the semantics of the <see cref="P:System.Runtime.Serialization.DataMemberAttribute.Order" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates the position in which the member is serialized into the SOAP body.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

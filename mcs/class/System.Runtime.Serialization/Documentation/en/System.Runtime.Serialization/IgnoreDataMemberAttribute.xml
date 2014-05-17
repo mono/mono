@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IgnoreDataMemberAttribute" FullName="System.Runtime.Serialization.IgnoreDataMemberAttribute">
+  <TypeSignature Language="C#" Value="public sealed class IgnoreDataMemberAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit IgnoreDataMemberAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Apply the <see cref="T:System.Runtime.Serialization.IgnoreDataMemberAttribute" /> attribute to opt-out of the default <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> behavior. By default, the DataContractSerializer serializes all publicly visible types. All public read/write properties and fields of the type are serialized. You can change the default behavior by applying the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> and <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> attributes to the types and members </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When applied to the member of a type, specifies that the member is not part of a data contract and is not serialized.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IgnoreDataMemberAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.IgnoreDataMemberAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

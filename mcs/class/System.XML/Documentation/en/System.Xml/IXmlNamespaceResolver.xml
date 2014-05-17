@@ -1,19 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IXmlNamespaceResolver" FullName="System.Xml.IXmlNamespaceResolver">
   <TypeSignature Language="C#" Value="public interface IXmlNamespaceResolver" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlNamespaceResolver" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides read-only access to a set of prefix and namespace mappings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetNamespacesInScope">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IDictionary&lt;string,string&gt; GetNamespacesInScope (System.Xml.XmlNamespaceScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IDictionary`2&lt;string, string&gt; GetNamespacesInScope(valuetype System.Xml.XmlNamespaceScope scope) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;</ReturnType>
       </ReturnValue>
@@ -21,19 +32,98 @@
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection is keyed by prefix and can be used to enumerate the namespaces currently in scope. The collection is a disconnected copy of the current namespace list.</para>
+          <para>The following table lists the <see cref="T:System.Xml.XmlNamespaceScope" /> values and how it affects the whether or not the default and built-in namespaces are returned by the <see cref="M:System.Xml.IXmlNamespaceResolver.GetNamespacesInScope(System.Xml.XmlNamespaceScope)" /> method.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>XmlNamespaceScope value</para>
+                </term>
+                <description>
+                  <para>xmlns:xml</para>
+                </description>
+                <description>
+                  <para>xmlns:xmlns</para>
+                </description>
+                <description>
+                  <para>xmlns=""</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.XmlNamespaceScope.All" />
+                </para>
+              </term>
+              <description>
+                <para>yes</para>
+              </description>
+              <description>
+                <para>no</para>
+              </description>
+              <description>
+                <para>no</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.XmlNamespaceScope.ExcludeXml" />
+                </para>
+              </term>
+              <description>
+                <para>no</para>
+              </description>
+              <description>
+                <para>no</para>
+              </description>
+              <description>
+                <para>no</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.XmlNamespaceScope.Local" />
+                </para>
+              </term>
+              <description>
+                <para>no</para>
+              </description>
+              <description>
+                <para>no</para>
+              </description>
+              <description>
+                <para>yes</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of defined prefix-namespace mappings that are currently in scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> that contains the current in-scope namespaces.</para>
+        </returns>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceScope" /> value that specifies the type of namespace nodes to return.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LookupNamespace">
       <MemberSignature Language="C#" Value="public string LookupNamespace (string prefix);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string LookupNamespace(string prefix) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -41,35 +131,141 @@
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Namespace URI-to-prefix mappings can change from node to node in an XML document. You cannot depend on the result of a lookup being consistent from one node to the next.</para>
+          </block>
+          <para>The following table describes how the default and built-in namespaces are handled by the <see cref="M:System.Xml.IXmlNamespaceResolver.LookupNamespace(System.String)" /> method.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Prefix</para>
+                </term>
+                <description>
+                  <para>Return Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>xml</para>
+              </term>
+              <description>
+                <para>http://www.w3.org/XML/1998/namespace</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>xmlns</para>
+              </term>
+              <description>
+                <para>http://www.w3.org/2000/xmlns/</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>String.Empty (A default namespace has been assigned).</para>
+              </term>
+              <description>
+                <para>The currently assigned default namespace.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>String.Empty (The default namespace has not been explicitly assigned).</para>
+              </term>
+              <description>
+                <para>String.Empty (The blank prefix is associated with elements that are not in any namespace).</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace URI mapped to the specified prefix.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI that is mapped to the prefix; null if the prefix is not mapped to a namespace URI.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you wish to find.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LookupPrefix">
-      <MemberSignature Language="C#" Value="public string LookupPrefix (string ns);" />
+      <MemberSignature Language="C#" Value="public string LookupPrefix (string namespaceName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string LookupPrefix(string namespaceName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="namespaceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is possible for a namespace URI to be mapped to multiple prefixes. Because the prefixes are not mapped in a predictable manner, you should not depend on getting back a particular prefix when a namespace URI is mapped to more than one prefix.</para>
+          <block subset="none" type="note">
+            <para>Namespace URI to prefix mappings can change from node to node in an XML document. You cannot depend on the result of a lookup being consistent from one node to the next.</para>
+          </block>
+          <para>The following table describes how the default and built-in namespaces are handled by the <see cref="M:System.Xml.IXmlNamespaceResolver.LookupPrefix(System.String)" /> method.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Namespace</para>
+                </term>
+                <description>
+                  <para>Return value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>http://www.w3.org/XML/1998/namespace</para>
+              </term>
+              <description>
+                <para>xml</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>http://www.w3.org/2000/xmlns/</para>
+              </term>
+              <description>
+                <para>xmlns</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An empty namespace.</para>
+              </term>
+              <description>
+                <para>A default namespace that has not been defined.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the prefix that is mapped to the specified namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The prefix that is mapped to the namespace URI; null if the namespace URI is not mapped to a prefix.</para>
+        </returns>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI whose prefix you wish to find.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

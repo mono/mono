@@ -1,22 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITypeDescriptorFilterService" FullName="System.ComponentModel.Design.ITypeDescriptorFilterService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ITypeDescriptorFilterService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypeDescriptorFilterService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" /> interface provides an interface that allows modification of the properties, events, and class-level attributes of a component at design time. This modification occurs through the set of descriptors that a component provides through a <see cref="T:System.ComponentModel.TypeDescriptor" />. The type descriptor will query a component's site for the <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" /> service and, if it exists, the type descriptor will pass all metadata it has collected to this service. The service can then modify the metadata by adding, removing, and altering existing characteristics of the component. </para>
+      <para>For example, the properties of a component can be modified through a call to the <see cref="M:System.ComponentModel.Design.ITypeDescriptorFilterService.FilterProperties(System.ComponentModel.IComponent,System.Collections.IDictionary)" /> method. The filter service obtains a dictionary that contains property names and their property descriptors of type <see cref="T:System.ComponentModel.PropertyDescriptor" />. The modifications are implemented using the following logic.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Modification</para>
+            </term>
+            <description>
+              <para>Implementation</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Removal</para>
+          </term>
+          <description>
+            <para>Delete the corresponding entry in the dictionary.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Addition</para>
+          </term>
+          <description>
+            <para>Add the appropriate entry to the dictionary.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Alteration</para>
+          </term>
+          <description>
+            <para>Call existing property descriptor methods, replace the associated property descriptor entry, or replace the entire property key/value pair in the dictionary.</para>
+          </description>
+        </item>
+      </list>
+      <para>The return value of <see cref="M:System.ComponentModel.Design.ITypeDescriptorFilterService.FilterProperties(System.ComponentModel.IComponent,System.Collections.IDictionary)" /> determines if this set of properties is fixed. If this method returns true, the <see cref="T:System.ComponentModel.TypeDescriptor" /> for this component can cache the results. This cache is maintained until either the component is garbage collected or the <see cref="Overload:System.ComponentModel.TypeDescriptor.Refresh" /> method of the type descriptor is called.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface to modify the set of member descriptors for a component in design mode.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FilterAttributes">
       <MemberSignature Language="C#" Value="public bool FilterAttributes (System.ComponentModel.IComponent component, System.Collections.IDictionary attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool FilterAttributes(class System.ComponentModel.IComponent component, class System.Collections.IDictionary attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -25,20 +78,33 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <param name="attributes">To be added: an object of type 'Collections.IDictionary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when a user requests a set of attributes for a component. The attributes are added to the dictionary with the attribute's <see cref="P:System.Attribute.TypeId" /> as the keys and the actual attribute as the value. Implementers of this service can add, remove, or alter existing attribute entries in the dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the attributes that a component exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered attributes is to be cached; false if the filter service must query again.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to filter the attributes of. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of attributes that can be modified. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FilterEvents">
       <MemberSignature Language="C#" Value="public bool FilterEvents (System.ComponentModel.IComponent component, System.Collections.IDictionary events);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool FilterEvents(class System.ComponentModel.IComponent component, class System.Collections.IDictionary events) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -47,20 +113,33 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <param name="events">To be added: an object of type 'Collections.IDictionary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when a user requests a set of events for a component. The events are added to the dictionary with the event names as the keys and the corresponding <see cref="T:System.ComponentModel.EventDescriptor" /> objects as the values. Implementers of this service can add, remove, or alter event entries in the dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the events that a component exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered events is to be cached; false if the filter service must query again.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to filter events for. </param>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of events that can be modified. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FilterProperties">
       <MemberSignature Language="C#" Value="public bool FilterProperties (System.ComponentModel.IComponent component, System.Collections.IDictionary properties);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool FilterProperties(class System.ComponentModel.IComponent component, class System.Collections.IDictionary properties) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -69,16 +148,23 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <param name="properties">To be added: an object of type 'Collections.IDictionary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when a user requests a set of properties for a component. The properties are added to the dictionary with the property names as the keys and the corresponding <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects as the values. Implementers of this service can add, remove, or alter property entries in the dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the properties that a component exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the set of filtered properties is to be cached; false if the filter service must query again.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to filter properties for. </param>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of properties that can be modified. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

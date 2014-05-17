@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IInstanceContextInitializer" FullName="System.ServiceModel.Dispatcher.IInstanceContextInitializer">
+  <TypeSignature Language="C#" Value="public interface IInstanceContextInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IInstanceContextInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To inspect or modify <see cref="T:System.ServiceModel.InstanceContext" /> objects when they are created, implement the <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextInitializer" /> interface and use an <see cref="T:System.ServiceModel.Description.IContractBehavior" /> to add it to the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.InstanceContextInitializers" /> property.</para>
+      <para>There can be any number of context initializers for a service. Typically, the <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextInitializer" /> is added to attach an extension to the <see cref="T:System.ServiceModel.InstanceContext" /> object as a mechanism for passing data throughout an application.</para>
+      <para>If you want to participate in providing or selecting the <see cref="T:System.ServiceModel.InstanceContext" /> object that processes a message, see <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextProvider" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the methods necessary to inspect or modify the creation of <see cref="T:System.ServiceModel.InstanceContext" /> objects when required.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public void Initialize (System.ServiceModel.InstanceContext context, System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Initialize(class System.ServiceModel.InstanceContext context, class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextInitializer.Initialize(System.ServiceModel.InstanceContext,System.ServiceModel.Channels.Message)" /> method is called when an <see cref="T:System.ServiceModel.InstanceContext" /> object is created. Typically this method is used to attach an extension so that custom data can be accessed throughout an application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the ability to modify the newly created <see cref="T:System.ServiceModel.InstanceContext" /> object.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message that triggered the creation of the instance context.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

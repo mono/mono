@@ -1,47 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDsigExcC14NWithCommentsTransform" FullName="System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform">
   <TypeSignature Language="C#" Value="public class XmlDsigExcC14NWithCommentsTransform : System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlDsigExcC14NWithCommentsTransform extends System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Security.Cryptography.Xml.XmlDsigExcC14NTransform</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class represents the exclusive C14N XML canonicalization transform with comments.  This class is similar to the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" /> class, which allows a signer to create a digest using the canonical form of an XML document.  However, the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class excludes ancestor context from a canonicalized subdocument.</para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class when you need to canonicalize an XML subdocument so that it is independent from its XML context.  For example, applications such as Web services that use signed XML within complex communication protocols often need to canonicalize XML in this manner.  Such applications often envelop XML within various dynamically constructed elements, which can substantially change the document and cause XML signature verification to fail.  The <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class solves this problem by excluding such ancestor context from the canonical subdocument.</para>
+      <para>Note that you cannot directly create a new instance of a canonicalization transform class.  To specify a canonicalization transform, pass the Uniform Resource Identifier (URI) that describes the transform to the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethod" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  To acquire a reference to the canonicalization transform, use the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethodObject" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  </para>
+      <para>The URI that describes the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class is defined by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigExcC14NWithCommentsTransformUrl" /> field.  </para>
+      <para>For more information about the exclusive C14N transform, see the XMLDSIG specification, which is available from the World Wide Web Consortium (W3C) at www.w3.org/TR/xmldsig-core/. The canonicalization algorithm is defined in the W3C Canonical XML specification, which is available at www.w3.org/2001/10/xml-exc-c14n.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the exclusive C14N XML canonicalization transform for a digital signature as defined by the World Wide Web Consortium (W3C), with comments.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlDsigExcC14NWithCommentsTransform ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlDsigExcC14NWithCommentsTransform (string inclusiveNamespacesPrefixList);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string inclusiveNamespacesPrefixList) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="inclusiveNamespacesPrefixList" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="inclusiveNamespacesPrefixList">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="inclusiveNamespacesPrefixList" /> parameter contains a whitespace-delimited list of namespace prefixes to canonicalize using the standard canonicalization algorithm rather than the exclusive canonicalization algorithm.  To specify the default namespace, which does not have a prefix, pass the special prefix "#default".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class specifying a list of namespace prefixes to canonicalize using the standard canonicalization algorithm.</para>
+        </summary>
+        <param name="inclusiveNamespacesPrefixList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefixes to canonicalize using the standard canonicalization algorithm.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

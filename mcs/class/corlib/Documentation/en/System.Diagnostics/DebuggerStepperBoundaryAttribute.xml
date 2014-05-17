@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DebuggerStepperBoundaryAttribute" FullName="System.Diagnostics.DebuggerStepperBoundaryAttribute">
   <TypeSignature Language="C#" Value="public sealed class DebuggerStepperBoundaryAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit DebuggerStepperBoundaryAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersions>
@@ -21,27 +23,37 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.DebuggerStepperBoundaryAttribute" /> attribute is used as an escape from the effect of a <see cref="T:System.Diagnostics.DebuggerNonUserCodeAttribute" />. When executing within the boundaries of the <see cref="T:System.Diagnostics.DebuggerNonUserCodeAttribute" />, designer-provided code is executed as a step-through until the next user supplied code is encountered. When context switches are made on a thread, the next user-supplied code module stepped into may not relate to the code that was in the process of being debugged. To avoid this debugging experience, use the <see cref="T:System.Diagnostics.DebuggerStepperBoundaryAttribute" /> to escape from stepping through code to running code. For example, in vsprvslong, encountering a <see cref="T:System.Diagnostics.DebuggerStepperBoundaryAttribute" /> while stepping through code using the F10 key (or <ui>Step Over</ui> command) has the same effect as pressing the F5 key or using the <ui>Start Debugging</ui> command.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the code following the attribute is to be executed in run, not step, mode.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DebuggerStepperBoundaryAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of the purpose of this constructor, see the <see cref="T:System.Diagnostics.DebuggerStepperBoundaryAttribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DebuggerStepperBoundaryAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

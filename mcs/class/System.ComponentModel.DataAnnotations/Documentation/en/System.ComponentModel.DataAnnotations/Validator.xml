@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Validator" FullName="System.ComponentModel.DataAnnotations.Validator">
+  <TypeSignature Language="C#" Value="public static class Validator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Validator extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a helper class that can be used to validate objects, properties, and methods when it is included in their associated <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> attributes.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="TryValidateObject">
+      <MemberSignature Language="C#" Value="public static bool TryValidateObject (object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryValidateObject(object instance, class System.ComponentModel.DataAnnotations.ValidationContext validationContext, class System.Collections.Generic.ICollection`1&lt;class System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+        <Parameter Name="validationResults" Type="System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type. It also checks whether each property that is marked with <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> is provided. It does not recursively validate the property values of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context and validation results collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object validates; otherwise, false.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold each failed validation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryValidateObject">
+      <MemberSignature Language="C#" Value="public static bool TryValidateObject (object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults, bool validateAllProperties);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryValidateObject(object instance, class System.ComponentModel.DataAnnotations.ValidationContext validationContext, class System.Collections.Generic.ICollection`1&lt;class System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults, bool validateAllProperties) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+        <Parameter Name="validationResults" Type="System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt;" />
+        <Parameter Name="validateAllProperties" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type. It also checks whether each property that is marked with <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> is provided. It does not recursively validate the property values of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context, validation results collection, and a value that specifies whether to validate all properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object validates; otherwise, false.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold each failed validation.</param>
+        <param name="validateAllProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to validate all properties; if false, only required attributes are validated..</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryValidateProperty">
+      <MemberSignature Language="C#" Value="public static bool TryValidateProperty (object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryValidateProperty(object value, class System.ComponentModel.DataAnnotations.ValidationContext validationContext, class System.Collections.Generic.ICollection`1&lt;class System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+        <Parameter Name="validationResults" Type="System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each <see cref="P:System.ComponentModel.DataAnnotations.ValidationException.ValidationAttribute" /> instance that is associated with the property that is identified by the <paramref name="validationContext" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property validates; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the property to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold each failed validation. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryValidateValue">
+      <MemberSignature Language="C#" Value="public static bool TryValidateValue (object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults, System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationAttribute&gt; validationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryValidateValue(object value, class System.ComponentModel.DataAnnotations.ValidationContext validationContext, class System.Collections.Generic.ICollection`1&lt;class System.ComponentModel.DataAnnotations.ValidationResult&gt; validationResults, class System.Collections.Generic.IEnumerable`1&lt;class System.ComponentModel.DataAnnotations.ValidationAttribute&gt; validationAttributes) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+        <Parameter Name="validationResults" Type="System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt;" />
+        <Parameter Name="validationAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationAttribute&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each validation attribute in the <paramref name="validationAttributes" /> parameter against the <paramref name="value" /> parameter. If the <paramref name="validationResults" /> parameter is not null, this method adds a <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> object for each validation failure to the validation results collection. If the <paramref name="validationResults" /> parameter is null, this method does not add a <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> object to the collection. If a <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is included in the <paramref name="validationAttributes" /> parameter, the <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is evaluated first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified value is valid with the specified attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object validates; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold failed validations. </param>
+        <param name="validationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation attributes.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateObject">
+      <MemberSignature Language="C#" Value="public static void ValidateObject (object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ValidateObject(object instance, class System.ComponentModel.DataAnnotations.ValidationContext validationContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context.</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateObject">
+      <MemberSignature Language="C#" Value="public static void ValidateObject (object instance, System.ComponentModel.DataAnnotations.ValidationContext validationContext, bool validateAllProperties);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ValidateObject(object instance, class System.ComponentModel.DataAnnotations.ValidationContext validationContext, bool validateAllProperties) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+        <Parameter Name="validateAllProperties" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context, and a value that specifies whether to validate all properties.</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validateAllProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to validate all properties; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateProperty">
+      <MemberSignature Language="C#" Value="public static void ValidateProperty (object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ValidateProperty(object value, class System.ComponentModel.DataAnnotations.ValidationContext validationContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each <see cref="P:System.ComponentModel.DataAnnotations.ValidationException.ValidationAttribute" /> instance that is associated with the property identified by the <paramref name="validationContext" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the property.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the property to validate.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateValue">
+      <MemberSignature Language="C#" Value="public static void ValidateValue (object value, System.ComponentModel.DataAnnotations.ValidationContext validationContext, System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationAttribute&gt; validationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ValidateValue(object value, class System.ComponentModel.DataAnnotations.ValidationContext validationContext, class System.Collections.Generic.IEnumerable`1&lt;class System.ComponentModel.DataAnnotations.ValidationAttribute&gt; validationAttributes) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+        <Parameter Name="validationAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationAttribute&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each validation attribute in the <paramref name="validationAttributes" /> parameter against the <paramref name="value" /> parameter.  If a <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is included, the <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is evaluated first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified attributes.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation attributes.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ValidationContext" FullName="System.ComponentModel.DataAnnotations.ValidationContext">
+  <TypeSignature Language="C#" Value="public sealed class ValidationContext : IServiceProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ValidationContext extends System.Object implements class System.IServiceProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IServiceProvider</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class describes the type or member on which validation is performed. It also enables custom validation to be added through any service that implements the <see cref="T:System.IServiceProvider" /> interface. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the context in which a validation check is performed.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ValidationContext (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object instance) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> class using the specified object instance</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object instance to validate. It cannot be null.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ValidationContext (object instance, System.Collections.Generic.IDictionary&lt;object,object&gt; items);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object instance, class System.Collections.Generic.IDictionary`2&lt;object, object&gt; items) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="items" Type="System.Collections.Generic.IDictionary&lt;System.Object,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="items" /> is null, an empty dictionary is created. If <paramref name="items" /> is not null, the set of key/value pairs is copied into a new dictionary, preventing consumers from modifying the original dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> class using the specified object and an optional property bag.</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object instance to validate.  It cannot be null</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional set of key/value pairs to make available to consumers.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ValidationContext (object instance, IServiceProvider serviceProvider, System.Collections.Generic.IDictionary&lt;object,object&gt; items);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object instance, class System.IServiceProvider serviceProvider, class System.Collections.Generic.IDictionary`2&lt;object, object&gt; items) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
+        <Parameter Name="items" Type="System.Collections.Generic.IDictionary&lt;System.Object,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="serviceProvider" /> parameter represents a service that can be used by the <see cref="M:System.ComponentModel.DataAnnotations.ValidationContext.GetService(System.Type)" /> method in order to perform custom validation. </para>
+          <para>If the <paramref name="items" /> parameter is null, an empty dictionary is created. If the parameter is not null, the set of key/value pairs is copied into a new dictionary, which prevents the service consumers from modifying the original dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> class using the service provider and dictionary of service consumers. </para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate. This parameter is required.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the <see cref="T:System.IServiceProvider" /> interface. This parameter is optional.</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of key/value pairs to make available to the service consumers. This parameter is optional.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DisplayName">
+      <MemberSignature Language="C#" Value="public string DisplayName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DisplayName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.DisplayName" /> value is the name that is shown to the user. If a display name is not explicitly set, this property uses the value that is assigned by the associated <see cref="T:System.ComponentModel.DataAnnotations.DisplayAttribute" /> object. If that attribute does not exist, the property returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.MemberName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the member to validate. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetService">
+      <MemberSignature Language="C#" Value="public object GetService (Type serviceType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetService(class System.Type serviceType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ServiceContainer" /> object is defined at the application level, the <see cref="M:System.ComponentModel.DataAnnotations.ValidationContext.GetService(System.Type)" /> method accesses it to retrieve the requested service. </para>
+          <para>If the <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ServiceContainer" /> object is not defined or it does not return the service, the <see cref="M:System.ComponentModel.DataAnnotations.ValidationContext.GetService(System.Type)" /> method queries the <see cref="T:System.IServiceProvider" /> object that is passed to the <see cref="M:System.ComponentModel.DataAnnotations.ValidationContext.#ctor(System.Object,System.IServiceProvider,System.Collections.Generic.IDictionary{System.Object,System.Object})" /> method in order to obtain the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the service that provides custom validation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the service, or null if the service is not available.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the service to use for validation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeServiceProvider">
+      <MemberSignature Language="C#" Value="public void InitializeServiceProvider (Func&lt;Type,object&gt; serviceProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void InitializeServiceProvider(class System.Func`2&lt;class System.Type, object&gt; serviceProvider) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceProvider" Type="System.Func&lt;System.Type,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.ComponentModel.DataAnnotations.ValidationContext" /> using a service provider that can return service instances by type when <see cref="http://msdn.microsoft.com/en-us/library/system.web.mvc.idependencyresolver.getservice(VS.98).aspx">GetService</see> is called.</para>
+        </summary>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service provider.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Items">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IDictionary&lt;object,object&gt; Items { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IDictionary`2&lt;object, object&gt; Items" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IDictionary&lt;System.Object,System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is never null, but the dictionary can be empty. Changes made to items in this dictionary are reflected in the original dictionary that is specified in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dictionary of key/value pairs that is associated with this context.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MemberName">
+      <MemberSignature Language="C#" Value="public string MemberName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MemberName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents an entity member name, not the name of a corresponding data field. Therefore, this name is not a localized name. It should be set only for property or parameter contexts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the member to validate. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ObjectInstance">
+      <MemberSignature Language="C#" Value="public object ObjectInstance { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object ObjectInstance" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During validation, especially during property-level validation, the object instance could be in an indeterminate state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object to validate.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ObjectType">
+      <MemberSignature Language="C#" Value="public Type ObjectType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ObjectType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the object to validate.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceContainer">
+      <MemberSignature Language="C#" Value="public System.ComponentModel.Design.IServiceContainer ServiceContainer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.Design.IServiceContainer ServiceContainer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Design.IServiceContainer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ServiceContainer" /> property is used for getting services during validation.</para>
+          <para>If the <see cref="T:System.IServiceProvider" /> provider that is specified in the constructor implements the <see cref="T:System.ComponentModel.Design.IServiceContainer" /> interface, the provider is used to initialize the <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ServiceContainer" /> property. Otherwise the <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ServiceContainer" /> property is initialized to an empty container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validation services container.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

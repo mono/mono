@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="YieldAwaitable" FullName="System.Runtime.CompilerServices.YieldAwaitable">
+  <TypeSignature Language="C#" Value="public struct YieldAwaitable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit YieldAwaitable extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type and its members are intended for use by the compiler.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the context for waiting when asynchronously switching into a target environment.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetAwaiter">
+      <MemberSignature Language="C#" Value="public System.Runtime.CompilerServices.YieldAwaitable.YieldAwaiter GetAwaiter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Runtime.CompilerServices.YieldAwaitable/YieldAwaiter GetAwaiter() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.YieldAwaitable+YieldAwaiter</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This type and its members are intended for use by the compiler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Runtime.CompilerServices.YieldAwaitable.YieldAwaiter" /> object  for this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that is used to monitor the completion of an asynchronous operation.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

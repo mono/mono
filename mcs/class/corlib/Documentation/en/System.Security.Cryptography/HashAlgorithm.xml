@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HashAlgorithm" FullName="System.Security.Cryptography.HashAlgorithm">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class HashAlgorithm : System.Security.Cryptography.ICryptoTransform" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit HashAlgorithm extends System.Object implements class System.IDisposable, class System.Security.Cryptography.ICryptoTransform" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,81 +18,121 @@
       <InterfaceName>System.Security.Cryptography.ICryptoTransform</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Common base class for all hash algorithm implementations. Available algorithms include:
-<list type="bullet"><item><term><see cref="T:System.Security.Cryptography.MD5" /></term></item><item><term><see cref="T:System.Security.Cryptography.SHA1" /></term></item><item><term><see cref="T:System.Security.Cryptography.SHA256" /></term></item><item><term><see cref="T:System.Security.Cryptography.SHA384" /></term></item><item><term><see cref="T:System.Security.Cryptography.SHA512" /></term></item></list></summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Hash functions are fundamental to modern cryptography. These functions map binary strings of an arbitrary length to small binary strings of a fixed length, known as hash values. A cryptographic hash function has the property that it is computationally infeasible to find two distinct inputs that hash to the same value. Hash functions are commonly used with digital signatures and for data integrity.</para>
+      <para>The hash is used as a unique value of fixed size representing a large amount of data. Hashes of two sets of data should match if the corresponding data also matches. Small changes to the data result in large unpredictable changes in the hash.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class from which all implementations of cryptographic hash algorithms must derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected HashAlgorithm ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>Called from constructor of derived class.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code creates a new instance of a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanReuseTransform">
       <MemberSignature Language="C#" Value="public virtual bool CanReuseTransform { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanReuseTransform" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Specify if the current transform object can be reused.</summary>
-        <value>True if the transform can be reused by calling <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" />. False if a new transform must be created for a new operation.</value>
-        <remarks>You should never assume that a specific algorithm can be reused without checking this property. A cryptographic implementation can be changed by modifying the machine.config file and by using, directly or indirectly, the <see cref="T:System.Security.Cryptography.CryptoConfig" /> class. The new implementation could behave differently than the old one.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>True if the transform can be reused by calling <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" />. False if a new transform must be created for a new operation.</value>
+        <remarks>You should never assume that a specific algorithm can be reused without checking this property. A cryptographic implementation can be changed by modifying the machine.config file and by using, directly or indirectly, the <see cref="T:System.Security.Cryptography.CryptoConfig" /> class. The new implementation could behave differently than the old one.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current transform can be reused.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CanTransformMultipleBlocks">
       <MemberSignature Language="C#" Value="public virtual bool CanTransformMultipleBlocks { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanTransformMultipleBlocks" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Specify if the current transform object can process multiple blocks in a single call.</summary>
-        <value>True if a single call to either <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformBlock" /> or <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock" /> can process more than one block at the time. False if the data must be processed block per block.</value>
-        <remarks>You should never assume that a specific algorithm can transform multiple blocks without checking this property. A cryptographic implementation can be changed by modifying the machine.config file and by using, directly or indirectly, the <see cref="T:System.Security.Cryptography.CryptoConfig" /> class. The new implementation could behave differently than the old one.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>True if a single call to either <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformBlock" /> or <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock" /> can process more than one block at the time. False if the data must be processed block per block.</value>
+        <remarks>You should never assume that a specific algorithm can transform multiple blocks without checking this property. A cryptographic implementation can be changed by modifying the machine.config file and by using, directly or indirectly, the <see cref="T:System.Security.Cryptography.CryptoConfig" /> class. The new implementation could behave differently than the old one.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether multiple blocks can be transformed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a simple call to the <see cref="M:System.IDisposable.Dispose" /> method.</para>
+          <para>Calling Dispose allows the resources used by the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> class to be reallocated for other purposes. For more information about Dispose, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> class.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ComputeHash">
+      <MemberSignature Language="C#" Value="public byte[] ComputeHash (byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] ComputeHash(unsigned int8[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ComputeHash">
-      <MemberSignature Language="C#" Value="public byte[] ComputeHash (byte[] buffer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -98,20 +140,28 @@
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="buffer">The data buffer to be hashed by the algorithm.</param>
-        <summary>Process the hash algorithm on the complete buffer specified.</summary>
-        <returns>The hash value of the processed buffer.</returns>
         <remarks>A copy of the return value is kept in the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property until the <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" /> method is called.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the hash value for the specified byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ComputeHash">
+      <MemberSignature Language="C#" Value="public byte[] ComputeHash (System.IO.Stream inputStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] ComputeHash(class System.IO.Stream inputStream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ComputeHash">
-      <MemberSignature Language="C#" Value="public byte[] ComputeHash (System.IO.Stream inputStream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -119,20 +169,28 @@
         <Parameter Name="inputStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="inputStream">The data stream to be hashed by the algorithm. </param>
-        <summary>Process the hash algorithm on the specified stream.</summary>
-        <returns>The hash value of the processed stream.</returns>
         <remarks>A copy of the return value is kept in the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property until the <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" /> method is called.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the hash value for the specified <see cref="T:System.IO.Stream" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
+        <param name="inputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ComputeHash">
+      <MemberSignature Language="C#" Value="public byte[] ComputeHash (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] ComputeHash(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ComputeHash">
-      <MemberSignature Language="C#" Value="public byte[] ComputeHash (byte[] buffer, int offset, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -142,40 +200,60 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">The data buffer to be hashed by the algorithm. </param>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>Process the hash algorithm on a subset of the buffer specified. </summary>
-        <returns>The hash value of the processed buffer.</returns>
         <remarks>A copy of the return value is kept in the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property until the <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" /> method is called.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the hash value for the specified region of the specified byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array from which to begin using data. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the array to use as data. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.HashAlgorithm Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.HashAlgorithm Create() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.HashAlgorithm Create ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.HashAlgorithm</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Return an instance of the default HashAlgorithm defined on the system.</summary>
-        <returns>An instance of the default HashAlgorithm implementation, <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" />.</returns>
-        <remarks>The machine.config file can be used to change the default implementation to any other HashAlgorithm derived class in any assembly.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, this overload uses the <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> implementation of a hash algorithm. If you want to specify a different implementation, use the <see cref="M:System.Security.Cryptography.HashAlgorithm.Create(System.String)" /> overload, which lets you specify an algorithm name, instead. The cryptography configuration system defines the default implementation of <see cref="T:System.Security.Cryptography.HashAlgorithm" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the default implementation of a hash algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> instance, unless the default settings have been changed using the <format type="text/html"><a href="03db52ef-010e-44ea-b6fd-b9c900ecad50">&lt;cryptoClass&gt; Element</a></format>.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.HashAlgorithm Create (string hashName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.HashAlgorithm Create(string hashName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.HashAlgorithm Create (string hashName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.HashAlgorithm</ReturnType>
       </ReturnValue>
@@ -183,20 +261,54 @@
         <Parameter Name="hashName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="hashName">Specifies which derived class to create.</param>
-        <summary>Return an instance of the specified HashAlgorithm. </summary>
-        <returns>An instance of the specified HashAlgorithm or null if the name isn't a well known name or defined in machine.config. </returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified implementation of a hash algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified hash algorithm, or null if <paramref name="hashName" /> is not a valid hash algorithm.</para>
+        </returns>
+        <param name="hashName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash algorithm implementation to use. The following table shows the valid values for the <paramref name="hashName" /> parameter and the algorithms they map to. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Security.Cryptography.HashAlgorithm" />. The Dispose method leaves the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Security.Cryptography.HashAlgorithm" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -204,36 +316,52 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>Any further call to the object will throw a <see cref="T:System.ObjectDisposedException" />.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. Finalize invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.HashAlgorithm" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Hash">
+      <MemberSignature Language="C#" Value="public virtual byte[] Hash { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Hash" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Hash">
-      <MemberSignature Language="C#" Value="public virtual byte[] Hash { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets the previously computed hash.</summary>
         <value>To be added: an object of type 'byte []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property is a byte array; the <see cref="P:System.Security.Cryptography.HashAlgorithm.HashSize" /> property is a value that represent bits. Therefore, the number of elements in <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> is one-eighth the size of <see cref="P:System.Security.Cryptography.HashAlgorithm.HashSize" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the computed hash code.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="HashCore">
+      <MemberSignature Language="C#" Value="protected abstract void HashCore (byte[] array, int ibStart, int cbSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void HashCore(unsigned int8[] array, int32 ibStart, int32 cbSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HashCore">
-      <MemberSignature Language="C#" Value="protected abstract void HashCore (byte[] array, int ibStart, int cbSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -243,154 +371,213 @@
         <Parameter Name="cbSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="ibStart">To be added.</param>
-        <param name="cbSize">To be added.</param>
-        <summary>When overridden in a derived class, drives the hashing function.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not called by application code.</para>
+          <para>This abstract method performs the hash computation. Every write to the cryptographic stream object passes the data through this method. For each block of data, this method updates the state of the hash object so a correct hash value is returned at the end of the data stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, routes data written to the object into the hash algorithm for computing the hash.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
+        <param name="ibStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array from which to begin using data. </param>
+        <param name="cbSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the byte array to use as data. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HashFinal">
       <MemberSignature Language="C#" Value="protected abstract byte[] HashFinal ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance unsigned int8[] HashFinal() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>When overridden in a derived class, this pads and hashes whatever data might be left in the buffers and then returns the hash created.</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method finalizes any partial computation and returns the correct hash value for the data stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, finalizes the hash computation after the last data is processed by the cryptographic stream object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="HashSize">
       <MemberSignature Language="C#" Value="public virtual int HashSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 HashSize" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Returns the size in bits of the hash.</summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size, in bits, of the computed hash code.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="HashSizeValue">
       <MemberSignature Language="C#" Value="protected int HashSizeValue;" />
+      <MemberSignature Language="ILAsm" Value=".field family int32 HashSizeValue" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The size of the hash in bits.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash algorithm specifies the size of the hash code. For example, <see cref="T:System.Security.Cryptography.SHA1" /> uses a hash size of 160 bits.</para>
+          <para>This field is accessed through the <see cref="P:System.Security.Cryptography.HashAlgorithm.HashSize" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the size, in bits, of the computed hash code.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="HashValue">
+      <MemberSignature Language="C#" Value="protected byte[] HashValue;" />
+      <MemberSignature Language="ILAsm" Value=".field familyorassembly unsigned int8[] HashValue" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HashValue">
-      <MemberSignature Language="C#" Value="protected byte[] HashValue;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Caches the hash after it is calculated.  Accessed through the Hash property.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field is accessed through the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the value of the computed hash code.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public abstract void Initialize ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Initialize() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Initialize">
-      <MemberSignature Language="C#" Value="public abstract void Initialize ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>When overridden in a derived class, initializes the object to prepare for hashing.</summary>
         <remarks>A newly created instance doesn't have to be initialized.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an implementation of the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InputBlockSize">
       <MemberSignature Language="C#" Value="public virtual int InputBlockSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 InputBlockSize" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>Must be overriden if not 1</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unless overridden, this property returns the value 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the input block size.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OutputBlockSize">
       <MemberSignature Language="C#" Value="public virtual int OutputBlockSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 OutputBlockSize" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>Must be overriden if not 1</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unless overridden, this property returns the value 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the output block size.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="State">
       <MemberSignature Language="C#" Value="protected int State;" />
+      <MemberSignature Language="ILAsm" Value=".field family int32 State" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>Non-zero when in use, zero when not in use.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field is used to prevent users from changing the key of a keyed hash algorithm during a hash operation. When a key change is legitimate, the value of this field is zero both before and after a hash operation. When a key change is not legitimate, the value of this field is nonzero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the state of the hash computation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
@@ -400,18 +587,30 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. Finalize invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.HashAlgorithm" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> and optionally releases the managed resources.</para>
+        </summary>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TransformBlock">
+      <MemberSignature Language="C#" Value="public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 TransformBlock(unsigned int8[] inputBuffer, int32 inputOffset, int32 inputCount, unsigned int8[] outputBuffer, int32 outputOffset) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TransformBlock">
-      <MemberSignature Language="C#" Value="public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -423,24 +622,41 @@
         <Parameter Name="outputOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="inputBuffer">The buffer from which to grab the data to be copied.</param>
-        <param name="inputOffset">The offset into the input buffer to start reading at.</param>
-        <param name="inputCount">The number of bytes to be copied.</param>
-        <param name="outputBuffer">The buffer to write the copied data to.</param>
-        <param name="outputOffset">At what point in the outputBuffer to write the data at.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>Used for stream chaining.  Computes hash as data passes through it.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must call the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformBlock(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32)" /> method before calling the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock(System.Byte[],System.Int32,System.Int32)" /> method. You must call both methods before you retrieve the final hash value.</para>
+          <para>To retrieve the final hash value after calling the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock(System.Byte[],System.Int32,System.Int32)" /> method, get the byte array contained within the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property. </para>
+          <para>Calling the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformBlock(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32)" /> method with different input and output arrays results in an <see cref="T:System.IO.IOException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the hash value for the specified region of the input byte array and copies the specified region of the input byte array to the specified region of the output byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written.</para>
+        </returns>
+        <param name="inputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
+        <param name="inputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the input byte array from which to begin using data. </param>
+        <param name="inputCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the input byte array to use as data. </param>
+        <param name="outputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A copy of the part of the input array used to compute the hash code. </param>
+        <param name="outputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the output byte array from which to begin writing data. </param>
       </Docs>
+    </Member>
+    <Member MemberName="TransformFinalBlock">
+      <MemberSignature Language="C#" Value="public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] TransformFinalBlock(unsigned int8[] inputBuffer, int32 inputOffset, int32 inputCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TransformFinalBlock">
-      <MemberSignature Language="C#" Value="public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -450,23 +666,26 @@
         <Parameter Name="inputCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="inputBuffer">The buffer from which to grab the data to be copied.</param>
-        <param name="inputOffset">The offset into the input buffer to start reading at.</param>
-        <param name="inputCount">The number of bytes to be copied.</param>
-        <summary>Implements <see cref="T:System.Security.Cryptography.ICryptoTransform" />.<see cref="M:System.Security.Cryptography.ICryptoTransform.TransformFinalBlock" /> method.</summary>
-        <returns>Return a byte array containing the last processed block. </returns>
-        <remarks>Note that the last processed block isn't the hash result of the processed data. The <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property contains the hash results after this operation.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must call the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock(System.Byte[],System.Int32,System.Int32)" /> method after calling the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformBlock(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32)" /> method but before you retrieve the final hash value. </para>
+          <para>Note that the return value of this method is not the hash value, but only a copy of the hashed part of the input data.  To retrieve the final hashed value after calling the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock(System.Byte[],System.Int32,System.Int32)" /> method, get the byte array contained in the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the hash value for the specified region of the specified byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that is a copy of the part of the input that is hashed.</para>
+        </returns>
+        <param name="inputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
+        <param name="inputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array from which to begin using data. </param>
+        <param name="inputCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the byte array to use as data. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

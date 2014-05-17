@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ActionMessageFilter" FullName="System.ServiceModel.Dispatcher.ActionMessageFilter">
+  <TypeSignature Language="C#" Value="public class ActionMessageFilter : System.ServiceModel.Dispatcher.MessageFilter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ActionMessageFilter extends System.ServiceModel.Dispatcher.MessageFilter" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Dispatcher.MessageFilter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.DataContract</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>It is invalid to construct an <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> with no actions.</para>
+      <para>This type is serializable as a <see cref="T:System.Runtime.Serialization.DataContractAttribute" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a query that tests whether the action of a message is one of a specified set of actions.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ActionMessageFilter (string[] actions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string[] actions) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="actions" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the array of <paramref name="actions" /> provided to populate the <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> contains duplicate actions, the duplicates are removed and only one of them is added to the <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />. The <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of <paramref name="actions" /> contained in the <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> is accessed by the <see cref="P:System.ServiceModel.Dispatcher.ActionMessageFilter.Actions" /> property and cannot be modified after the <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> object is instantiated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of this class with the set of actions for which it tests.</para>
+        </summary>
+        <param name="actions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> that contains the set of actions for which the filter tests.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Actions">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;string&gt; Actions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;string&gt; Actions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actions in the read-only collection returned cannot be modified after the <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> object is instantiated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a read-only copy of action strings for which this <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> tests.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFilterTable&lt;FilterData&gt;">
+      <MemberSignature Language="C#" Value="protected override System.ServiceModel.Dispatcher.IMessageFilterTable&lt;FilterData&gt; CreateFilterTable&lt;FilterData&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.ServiceModel.Dispatcher.IMessageFilterTable`1&lt;!!FilterData&gt; CreateFilterTable&lt;FilterData&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IMessageFilterTable&lt;FilterData&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="FilterData" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method returns an instance of <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" />. </para>
+          <para>This method is not intended to be called directly. If you require an instance of <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" />, create one by calling a constructor on the desired type of filter table. In general, <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />s should be added to instances of <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new filter table that tests efficiently on message actions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> object to which <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />s and associated <paramref name="FilterData" /> can be added.</para>
+        </returns>
+        <typeparam name="FilterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data associated with the filters in the table.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public override bool Match (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Match(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this overload of <see cref="Overload:System.ServiceModel.Dispatcher.ActionMessageFilter.Match" /> when a message must be tested against the actions in a single filter and the <see cref="T:System.ServiceModel.Channels.Message" /> is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether a message's action matches one of the actions specified in this <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.Message" /> action header matches one of the specified actions; otherwise, false.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to test.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public override bool Match (System.ServiceModel.Channels.MessageBuffer buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Match(class System.ServiceModel.Channels.MessageBuffer buffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.ServiceModel.Channels.MessageBuffer" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this overload of the <see cref="Overload:System.ServiceModel.Dispatcher.ActionMessageFilter.Match" /> method when a message must be tested against the actions in a single filter and the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether a buffered message's action header matches one of the actions specified in this <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> action header matches one of the specified actions; otherwise, false.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectorySecurity" FullName="System.Security.AccessControl.DirectorySecurity">
   <TypeSignature Language="C#" Value="public sealed class DirectorySecurity : System.Security.AccessControl.FileSystemSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DirectorySecurity extends System.Security.AccessControl.FileSystemSecurity" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,43 +12,134 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.AccessControl.DirectorySecurity" /> class specifies the access rights for a system directory and how access attempts are audited. This class represents access and audit rights as a set of rules. Each access rule is represented by a <see cref="T:System.Security.AccessControl.FileSystemAccessRule" /> object, while each audit rule is represented by a <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> object.</para>
+      <para>The <see cref="T:System.Security.AccessControl.DirectorySecurity" /> class is an abstraction of the underlying Windows file security system. In this system, each directory has a discretionary access control list (DACL), which controls access to the directory, and a system access control list (SACL), which specifies the access control attempts that are audited. The <see cref="T:System.Security.AccessControl.FileSystemAccessRule" /> and <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> classes are abstractions of the access control entries (ACEs) that comprise DACLs and SACLs. </para>
+      <para>The <see cref="T:System.Security.AccessControl.DirectorySecurity" /> class hides many of the details of DACLs and SACLs; you do not have to worry about ACE ordering or null DACLS.</para>
+      <para>Use the <see cref="T:System.Security.AccessControl.FileSecurity" /> class to retrieve, add, or change the access rules that represent the DACL and SACL of a file.</para>
+      <para>The following tables lists the methods you can use to access and maintain directory security.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Task</para>
+            </term>
+            <description>
+              <para>Methods</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Add rules</para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Security.AccessControl.FileSystemSecurity.AddAccessRule(System.Security.AccessControl.FileSystemAccessRule)" />
+            </para>
+            <para>
+              <see cref="M:System.Security.AccessControl.FileSystemSecurity.AddAuditRule(System.Security.AccessControl.FileSystemAuditRule)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Remove rules</para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Security.AccessControl.FileSystemSecurity.RemoveAccessRule(System.Security.AccessControl.FileSystemAccessRule)" />
+            </para>
+            <para>
+              <see cref="M:System.Security.AccessControl.FileSystemSecurity.RemoveAuditRule(System.Security.AccessControl.FileSystemAuditRule)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Retrieve the access control to a directory</para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.IO.Directory.GetAccessControl(System.String)" />
+            </para>
+            <para>
+              <see cref="M:System.IO.DirectoryInfo.GetAccessControl" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Persist the access control to a directory</para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.IO.Directory.SetAccessControl(System.String,System.Security.AccessControl.DirectorySecurity)" />
+            </para>
+            <para>
+              <see cref="M:System.IO.DirectoryInfo.SetAccessControl(System.Security.AccessControl.DirectorySecurity)" />
+            </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the access control and audit security for a directory. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DirectorySecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor when you want to create an empty <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that is not based on an existing directory. You can then populate the object with access control information and apply it to a directory.</para>
+          <para>  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.DirectorySecurity" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DirectorySecurity (string name, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Security.AccessControl.AccessControlSections includeSections) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="includeSections">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor retrieves the access control information for the specified directory and then creates a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates that information. You can then inspect, add, or delete the access control information for the specified directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.DirectorySecurity" /> class from a specified directory using the specified values of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> enumeration.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location of a directory to create a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object from.</param>
+        <param name="includeSections">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> values that specifies the type of access control list (ACL) information to retrieve. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

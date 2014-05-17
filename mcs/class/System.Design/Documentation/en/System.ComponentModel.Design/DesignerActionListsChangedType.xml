@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionListsChangedType" FullName="System.ComponentModel.Design.DesignerActionListsChangedType">
   <TypeSignature Language="C#" Value="public enum DesignerActionListsChangedType" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedType" /> enumeration indicates that an element has been added or removed from a managed collection of <see cref="T:System.ComponentModel.Design.DesignerActionList" /> objects. This enumeration is used in the <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedEventArgs" /> class, which is associated with the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event.</para>
+      <block subset="none" type="note">
+        <para>Although the <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> class is a collection of <see cref="T:System.ComponentModel.Design.DesignerActionList" /> objects, it does not directly raise events. Instead, the owning <see cref="T:System.ComponentModel.Design.DesignerActionService" /> raises <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> events.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of change occurring in a collection of <see cref="T:System.ComponentModel.Design.DesignerActionList" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ActionListsAdded">
@@ -27,7 +37,10 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionListsChangedType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more <see cref="T:System.ComponentModel.Design.DesignerActionList" /> objects have been added to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActionListsRemoved">
@@ -40,7 +53,10 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionListsChangedType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more <see cref="T:System.ComponentModel.Design.DesignerActionList" /> objects have been removed from the collection.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

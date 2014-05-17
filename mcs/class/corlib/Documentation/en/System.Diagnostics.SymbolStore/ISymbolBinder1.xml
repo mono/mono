@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISymbolBinder1" FullName="System.Diagnostics.SymbolStore.ISymbolBinder1">
   <TypeSignature Language="C#" Value="public interface ISymbolBinder1" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolBinder1" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersions>
@@ -15,17 +17,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Note   <see cref="T:System.Diagnostics.SymbolStore.ISymbolBinder1" /> is the managed counterpart of the unmanaged <unmanagedCodeEntityReference>ISymUnmanagedBinder</unmanagedCodeEntityReference> </para>
+      <para>interface, one of the unmanaged symbol store interfaces that provide an alternative way to read and write debug symbol information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a symbol binder for managed code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetReader">
       <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolReader GetReader (IntPtr importer, string filename, string searchPath);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolReader GetReader(native int importer, string filename, string searchPath) cil managed" />
       <MemberType>Method</MemberType>
-      <AssemblyVersions>
+      <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolReader</ReturnType>
       </ReturnValue>
@@ -35,18 +46,26 @@
         <Parameter Name="searchPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="importer">To be added.</param>
-        <param name="filename">To be added.</param>
-        <param name="searchPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When given a pointer to a metadata interface, a file name, and a search path, the <see cref="M:System.Diagnostics.SymbolStore.ISymbolBinder1.GetReader(System.IntPtr,System.String,System.String)" /> method returns the <see cref="T:System.Diagnostics.SymbolStore.ISymbolReader" /> interface that reads the debugging symbols associated with the module.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interface of the symbol reader for the current file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.SymbolStore.ISymbolReader" /> interface that reads the debugging symbols.</para>
+        </returns>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> that refers to the metadata import interface. </param>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file for which the reader interface is required. </param>
+        <param name="searchPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search path used to locate the symbol file. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

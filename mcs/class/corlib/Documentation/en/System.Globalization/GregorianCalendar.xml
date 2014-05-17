@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GregorianCalendar" FullName="System.Globalization.GregorianCalendar">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class GregorianCalendar : System.Globalization.Calendar" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit GregorianCalendar extends System.Globalization.Calendar" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,47 +14,90 @@
     <BaseTypeName>System.Globalization.Calendar</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Gregorian calendar recognizes two eras: B.C. or B.C.E., and A.D. or C.E. This implementation of the <see cref="T:System.Globalization.GregorianCalendar" /> class recognizes only the current era (A.D. or C.E.).</para>
+      <block subset="none" type="note">
+        <para>For information about using the <see cref="T:System.Globalization.GregorianCalendar" /> class and the other calendar classes in the .NET Framework, see <format type="text/html"><a href="0c1534e5-979b-4c8a-a588-1c24301aefb3">Working with Calendars</a></format>.</para>
+      </block>
+      <para>A leap year in the Gregorian calendar is defined as a year that is evenly divisible by 4, unless it is divisible by 100. However, years that are divisible by 400 are leap years. For example, the year 1900 was not a leap year, but the year 2000 was. A common year has 365 days and a leap year has 366 days.</para>
+      <para>The Gregorian calendar has 12 months with 28 to 31 days each: January (31 days), February (28 or 29 days), March (31 days), April (30 days), May (31 days), June (30 days), July (31 days), August (31 days), September (30 days), October (31 days), November (30 days), and December (31 days). February has 29 days during leap years and 28 during common years.</para>
+      <block subset="none" type="note">
+        <para>By default, all <see cref="T:System.DateTime" /> and <see cref="T:System.DateTimeOffset" /> values express dates and times in the Gregorian calendar. </para>
+      </block>
+      <para>The Gregorian calendar was developed as a replacement for the Julian calendar (which is represented by the <see cref="T:System.Globalization.JulianCalendar" /> class) and was first introduced in a small number of cultures on October 15, 1582. When working with historic dates that precede a culture's adoption of the Gregorian calendar, you should use the original calendar if it is available in the .NET Framework. For example, Denmark changed from the Julian calendar to the Gregorian calendar on February 19 (in the Julian calendar) or March 1 (in the Gregorian calendar) of 1700. In this case, for dates before the adoption of the Gregorian calendar, you should use the Julian calendar. However, note that no culture offers intrinsic support for the <see cref="T:System.Globalization.JulianCalendar" /> class. You must use the <see cref="T:System.Globalization.JulianCalendar" /> class as a standalone calendar. For more information, see <format type="text/html"><a href="0c1534e5-979b-4c8a-a588-1c24301aefb3">Working with Calendars</a></format>. </para>
+      <para>The following example illustrates that February 18, 1700 in the Julian calendar, which is the last day the Julian calendar was officially used in Denmark, is one day earlier than March 1, 1700 in the Gregorian calendar.</para>
+      <para>code reference: System.Globalization.GregorianCalendar.Class#1</para>
+      <para>Each <see cref="T:System.Globalization.CultureInfo" /> supports a set of calendars. The <see cref="P:System.Globalization.CultureInfo.Calendar" /> property returns the default calendar for the culture, and the <see cref="P:System.Globalization.CultureInfo.OptionalCalendars" /> property returns an array containing all the calendars supported by the culture. To change the calendar used by a <see cref="T:System.Globalization.CultureInfo" />, the application can set the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property to a new <see cref="T:System.Globalization.Calendar" />.</para>
+      <para>
+        <see cref="M:System.Globalization.DateTimeFormatInfo.GetEra(System.String)" /> ignores punctuation in abbreviated era names, only if the <see cref="T:System.Globalization.GregorianCalendar" /> is selected in <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> and the culture uses "A.D." as the era name, that is, "A.D." is equivalent to "AD".</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the Gregorian calendar.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public GregorianCalendar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="T:System.Globalization.GregorianCalendarTypes" /> value is <see cref="F:System.Globalization.GregorianCalendarTypes.Localized" />. If the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of the <see cref="T:System.Globalization.CultureInfo" /> is set to a <see cref="T:System.Globalization.GregorianCalendar" /> that is created with this constructor, the dates and times are localized in the language associated with the <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.GregorianCalendar" /> class using the default <see cref="T:System.Globalization.GregorianCalendarTypes" /> value.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public GregorianCalendar (System.Globalization.GregorianCalendarTypes type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Globalization.GregorianCalendarTypes type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="type" Type="System.Globalization.GregorianCalendarTypes" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'GregorianCalendarTypes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.GregorianCalendar" /> class using the specified <see cref="T:System.Globalization.GregorianCalendarTypes" /> value.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.GregorianCalendarTypes" /> value that denotes which language version of the calendar to create. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddMonths">
+      <MemberSignature Language="C#" Value="public override DateTime AddMonths (DateTime time, int months);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime AddMonths(valuetype System.DateTime time, int32 months) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddMonths">
-      <MemberSignature Language="C#" Value="public override DateTime AddMonths (DateTime time, int months);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -61,21 +106,37 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="months">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. The year part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting month is outside the year of the specified <see cref="T:System.DateTime" />. This implementation supports only the current era. Therefore, <see cref="T:System.ArgumentException" /> is thrown if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />. The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>For example, if the specified month is October, which has 31 days, the specified day is the 31st day of that month, and the value of the <paramref name="months" /> parameter is 6, the resulting year is one more than the specified year, the resulting month is April, and the resulting day is the 30th day, which is the last day in April.</para>
+          <para>If the value of the <paramref name="months" /> parameter is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#5</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of months away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of months to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add months. </param>
+        <param name="months">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of months to add. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddYears">
+      <MemberSignature Language="C#" Value="public override DateTime AddYears (DateTime time, int years);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime AddYears(valuetype System.DateTime time, int32 years) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddYears">
-      <MemberSignature Language="C#" Value="public override DateTime AddYears (DateTime time, int years);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -84,48 +145,57 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="years">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. The month part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />. This implementation supports only the current era. Therefore, <see cref="T:System.ArgumentException" /> is thrown if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />. The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>For example, February has 28 days, except during leap years when it has 29 days. If the specified date is the 29th day of February in a leap year and the value of <paramref name="years" /> is 1, the resulting date will be the 28th day of February in the following year.</para>
+          <para>If <paramref name="years" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#8</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of years away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of years to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add years. </param>
+        <param name="years">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of years to add. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ADEra">
+      <MemberSignature Language="C#" Value="public const int ADEra = 1;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 ADEra = (1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ADEra">
-      <MemberSignature Language="C#" Value="public const int ADEra = 1;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <MemberValue>1</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Gregorian calendar recognizes two eras: B.C. or B.C.E., and A.D. or C.E. This implementation of the <see cref="T:System.Globalization.GregorianCalendar" /> class recognizes only the current era (A.D. or C.E.). This field always returns 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the current era. This field is constant.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AlgorithmType">
       <MemberSignature Language="C#" Value="public override System.Globalization.CalendarAlgorithmType AlgorithmType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Globalization.CalendarAlgorithmType AlgorithmType" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -135,46 +205,75 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current calendar is solar-based, lunar-based, or a combination of both.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CalendarType">
-      <MemberSignature Language="C#" Value="public virtual System.Globalization.GregorianCalendarTypes CalendarType { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Globalization.GregorianCalendarTypes CalendarType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Globalization.GregorianCalendarTypes CalendarType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.GregorianCalendarTypes</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'GregorianCalendarTypes'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Globalization.GregorianCalendarTypes" /> value that denotes the language version of the current <see cref="T:System.Globalization.GregorianCalendar" />.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Eras">
+      <MemberSignature Language="C#" Value="public override int[] Eras { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32[] Eras" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Eras">
-      <MemberSignature Language="C#" Value="public override int[] Eras { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Gregorian calendar recognizes two eras: B.C. or B.C.E., and A.D. or C.E. This implementation of the <see cref="T:System.Globalization.GregorianCalendar" /> class recognizes only the current era (A.D. or C.E.). This property always returns an array with only one element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of eras in the <see cref="T:System.Globalization.GregorianCalendar" />.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayOfMonth">
+      <MemberSignature Language="C#" Value="public override int GetDayOfMonth (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDayOfMonth(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayOfMonth">
-      <MemberSignature Language="C#" Value="public override int GetDayOfMonth (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -182,20 +281,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 31 that represents the day of the month in <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayOfWeek">
+      <MemberSignature Language="C#" Value="public override DayOfWeek GetDayOfWeek (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DayOfWeek GetDayOfWeek(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayOfWeek">
-      <MemberSignature Language="C#" Value="public override DayOfWeek GetDayOfWeek (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DayOfWeek</ReturnType>
       </ReturnValue>
@@ -203,20 +310,31 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DayOfWeek" /> values are Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the week in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DayOfWeek" /> value that represents the day of the week in <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayOfYear">
+      <MemberSignature Language="C#" Value="public override int GetDayOfYear (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDayOfYear(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayOfYear">
-      <MemberSignature Language="C#" Value="public override int GetDayOfYear (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -224,20 +342,31 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day of the year is defined as the number of days from the first day of the year. For example, <see cref="M:System.Globalization.GregorianCalendar.GetDayOfYear(System.DateTime)" /> for the first day of the first month returns 1, and <see cref="M:System.Globalization.GregorianCalendar.GetDayOfYear(System.DateTime)" /> for the last day of the last month returns the total number of days in that year, which is the same value returned by <see cref="M:System.Globalization.GregorianCalendar.GetDaysInYear(System.Int32,System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the year in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 366 that represents the day of the year in <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaysInMonth">
+      <MemberSignature Language="C#" Value="public override int GetDaysInMonth (int year, int month, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDaysInMonth(int32 year, int32 month, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaysInMonth">
-      <MemberSignature Language="C#" Value="public override int GetDaysInMonth (int year, int month, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -247,22 +376,35 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, this method returns 28 or 29 for February (<paramref name="month" /> = 2), depending on whether <paramref name="year" /> is a leap year.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified month in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaysInYear">
+      <MemberSignature Language="C#" Value="public override int GetDaysInYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDaysInYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaysInYear">
-      <MemberSignature Language="C#" Value="public override int GetDaysInYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -271,21 +413,33 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, this method returns 365 or 366, depending on whether <paramref name="year" /> is a leap year.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetEra">
+      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetEra(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEra">
-      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -293,19 +447,25 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Gregorian calendar recognizes two eras: B.C. or B.C.E., and A.D. or C.E. This implementation of the <see cref="T:System.Globalization.GregorianCalendar" /> class recognizes only the current era (A.D. or C.E.).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the era in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the era in <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLeapMonth">
       <MemberSignature Language="C#" Value="public override int GetLeapMonth (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetLeapMonth(int32 year, int32 era) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -324,16 +484,30 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the leap month for a specified year and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always 0 because the Gregorian calendar does not recognize leap months.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />A year.</param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An era. Specify either <see cref="F:System.Globalization.GregorianCalendar.ADEra" /> or GregorianCalendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
     </Member>
     <Member MemberName="GetMonth">
       <MemberSignature Language="C#" Value="public override int GetMonth (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMonth(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -341,20 +515,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 12 that represents the month in <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetMonthsInYear">
+      <MemberSignature Language="C#" Value="public override int GetMonthsInYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMonthsInYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMonthsInYear">
-      <MemberSignature Language="C#" Value="public override int GetMonthsInYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -363,24 +545,26 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of months in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of months in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetWeekOfYear">
       <MemberSignature Language="C#" Value="public override int GetWeekOfYear (DateTime time, System.Globalization.CalendarWeekRule rule, DayOfWeek firstDayOfWeek);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -396,17 +580,39 @@
         <Parameter Name="firstDayOfWeek" Type="System.DayOfWeek" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="rule">To be added.</param>
-        <param name="firstDayOfWeek">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to determine the number of weeks in the year by setting the <paramref name="time" /> parameter to the last day of the year.</para>
+          <para>The <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> property contains culture-specific values that can be used for the <paramref name="rule" /> and <paramref name="firstDayOfWeek" /> parameters.</para>
+          <para>The <see cref="P:System.Globalization.DateTimeFormatInfo.FirstDayOfWeek" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> contains the default <see cref="T:System.DayOfWeek" /> value that represents the first day of the week for a specific culture, using the calendar specified in the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" />.</para>
+          <para>The <see cref="P:System.Globalization.DateTimeFormatInfo.CalendarWeekRule" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> contains the default <see cref="T:System.Globalization.CalendarWeekRule" /> value that defines a calendar week for a specific culture, using the calendar specified in the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" />.</para>
+          <para>For example, in <see cref="T:System.Globalization.GregorianCalendar" />, the <see cref="M:System.Globalization.Calendar.GetWeekOfYear(System.DateTime,System.Globalization.CalendarWeekRule,System.DayOfWeek)" /> method for January 1 returns 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the week of the year that includes the date in the specified <see cref="T:System.DateTime" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 1-based integer that represents the week of the year that includes the date in the <paramref name="time" /> parameter.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> object to read. </param>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Globalization.CalendarWeekRule" /> values that defines a calendar week. </param>
+        <param name="firstDayOfWeek">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.DayOfWeek" /> values that represents the first day of the week. </param>
       </Docs>
     </Member>
     <Member MemberName="GetYear">
       <MemberSignature Language="C#" Value="public override int GetYear (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetYear(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -414,20 +620,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the year in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the year in <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapDay">
+      <MemberSignature Language="C#" Value="public override bool IsLeapDay (int year, int month, int day, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapDay(int32 year, int32 month, int32 day, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapDay">
-      <MemberSignature Language="C#" Value="public override bool IsLeapDay (int year, int month, int day, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -438,23 +652,38 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A leap year in the Gregorian calendar is defined as a year that is evenly divisible by four, except if it is divisible by 100. However, years that are divisible by 400 are leap years. For example, the year 1900 was not a leap year, but the year 2000 was. A common year has 365 days and a leap year has 366 days.</para>
+          <para>A leap day is a day that occurs only in a leap year. In the Gregorian calendar, the 29th day of February is the only leap day.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified date in the specified era is a leap day.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified day is a leap day; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 31 that represents the day. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapMonth">
+      <MemberSignature Language="C#" Value="public override bool IsLeapMonth (int year, int month, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapMonth(int32 year, int32 month, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapMonth">
-      <MemberSignature Language="C#" Value="public override bool IsLeapMonth (int year, int month, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -464,22 +693,36 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A leap year in the Gregorian calendar is defined as a year that is evenly divisible by four, except if it is divisible by 100. However, years that are divisible by 400 are leap years. For example, the year 1900 was not a leap year, but the year 2000 was. A common year has 365 days and a leap year has 366 days.</para>
+          <para>A leap month is an entire month that occurs only in a leap year. The Gregorian calendar does not have any leap months.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified month in the specified year in the specified era is a leap month.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always returns false, unless overridden by a derived class.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapYear">
+      <MemberSignature Language="C#" Value="public override bool IsLeapYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapYear">
-      <MemberSignature Language="C#" Value="public override bool IsLeapYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -488,65 +731,88 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A leap year in the Gregorian calendar is defined as a year that is evenly divisible by four, except if it is divisible by 100. However, years that are divisible by 400 are leap years. For example, the year 1900 was not a leap year, but the year 2000 was. A common year has 365 days and a leap year has 366 days.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified year in the specified era is a leap year.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified year is a leap year; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MaxSupportedDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime MaxSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MaxSupportedDateTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the latest date and time supported by the <see cref="T:System.Globalization.GregorianCalendar" /> type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MinSupportedDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime MinSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MinSupportedDateTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the value of the <see cref="P:System.Globalization.GregorianCalendar.MinSupportedDateTime" /> property is the first moment of January 1, 0001 C.E., the Gregorian calendar was not introduced until October 15, 1582, and its adoption throughout the European continent and worldwide was slow. Until they adopted the Gregorian calendar, most cultures in the European, American, and Australian continents used the Julian calendar, which is represented by the <see cref="T:System.Globalization.JulianCalendar" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the earliest date and time supported by the <see cref="T:System.Globalization.GregorianCalendar" /> type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime ToDateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime ToDateTime(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second, int32 millisecond, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxSupportedDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime MaxSupportedDateTime { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="MinSupportedDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime MinSupportedDateTime { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="ToDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime ToDateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -561,27 +827,42 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="hour">To be added.</param>
-        <param name="minute">To be added.</param>
-        <param name="second">To be added.</param>
-        <param name="millisecond">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is set to the specified date and time in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 31 that represents the day. </param>
+        <param name="hour">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 23 that represents the hour. </param>
+        <param name="minute">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the minute. </param>
+        <param name="second">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the second. </param>
+        <param name="millisecond">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 999 that represents the millisecond. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToFourDigitYear">
+      <MemberSignature Language="C#" Value="public override int ToFourDigitYear (int year);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ToFourDigitYear(int32 year) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToFourDigitYear">
-      <MemberSignature Language="C#" Value="public override int ToFourDigitYear (int year);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -589,38 +870,50 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Globalization.GregorianCalendar.TwoDigitYearMax" /> is the last year in the 100-year range that can be represented by a two-digit year. The century is determined by finding the sole occurrence of the two-digit <paramref name="year" /> within that 100-year range. For example, if <see cref="P:System.Globalization.GregorianCalendar.TwoDigitYearMax" /> is set to 2029, the 100-year range is from 1930 to 2029. Therefore, a 2-digit value of 30 is interpreted as 1930, while a 2-digit value of 29 is interpreted as 2029.</para>
+          <para>
+            <see cref="M:System.Globalization.GregorianCalendar.ToFourDigitYear(System.Int32)" /> supports either a two-digit year or a four-digit year. Passing a two-digit year value (less than 100) causes the method to convert the value to a four-digit value according to the <see cref="P:System.Globalization.GregorianCalendar.TwoDigitYearMax" /> value representing the appropriate century. If the application supplies a four-digit year value that is within the supported calendar range to <see cref="M:System.Globalization.GregorianCalendar.ToFourDigitYear(System.Int32)" />, the method returns the actual input value. If the application supplies a four-digit value that is outside the supported calendar range, or if it supplies a negative value, the method throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified year to a four-digit year by using the <see cref="P:System.Globalization.GregorianCalendar.TwoDigitYearMax" /> property to determine the appropriate century.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that contains the four-digit representation of <paramref name="year" />.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />A two-digit or four-digit integer that represents the year to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="TwoDigitYearMax">
+      <MemberSignature Language="C#" Value="public override int TwoDigitYearMax { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 TwoDigitYearMax" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TwoDigitYearMax">
-      <MemberSignature Language="C#" Value="public override int TwoDigitYearMax { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property allows a 2-digit year to be properly translated to a 4-digit year. For example, if this property is set to 2029, the 100-year range is from 1930 to 2029. Therefore, a 2-digit value of 30 is interpreted as 1930, while a 2-digit value of 29 is interpreted as 2029.</para>
+          <para>The initial value of this property is derived from the settings in the regional and language options portion of Control Panel. However, that information can change during the life of the <see cref="T:System.AppDomain" />. The <see cref="T:System.Globalization.GregorianCalendar" /> class does not detect changes in the system settings automatically.</para>
+          <para>The application should set this value to 99 to indicate that 2-digit years are to be taken literally. For example, if this property is set to 99, the 100-year range is from 0 (not a valid value for most calendars) to 99. Therefore, a 2-digit value of 30 is interpreted as 30.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the last year of a 100-year range that can be represented by a 2-digit year.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

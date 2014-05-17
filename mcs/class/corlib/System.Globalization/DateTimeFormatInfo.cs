@@ -193,9 +193,11 @@ namespace System.Globalization
 
 		public string GetAbbreviatedEraName (int era)
 		{
-			if (era < 0 || era >= Calendar.AbbreviatedEraNames.Length)
+			if (era < 0 || era > Calendar.AbbreviatedEraNames.Length)
 				throw new ArgumentOutOfRangeException ("era", era.ToString ());
-			return Calendar.AbbreviatedEraNames [era];
+			if (era == Calendar.CurrentEra)
+			    era = Calendar.EraNames.Length;				
+			return Calendar.AbbreviatedEraNames [era - 1];
 		}
 
 		public string GetAbbreviatedMonthName(int month)
@@ -229,6 +231,8 @@ namespace System.Globalization
 		{
 			if (era < 0 || era > Calendar.EraNames.Length)
 				throw new ArgumentOutOfRangeException ("era", era.ToString ());
+			if (era == Calendar.CurrentEra)
+			    era = Calendar.EraNames.Length;
 			return Calendar.EraNames [era - 1];
 		}
 

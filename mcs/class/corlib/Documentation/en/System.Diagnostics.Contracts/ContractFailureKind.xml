@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractFailureKind" FullName="System.Diagnostics.Contracts.ContractFailureKind">
   <TypeSignature Language="C#" Value="public enum ContractFailureKind" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ContractFailureKind extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,12 +10,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>The different kinds of code contract that can fail.</summary>
-    <remarks />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.Contracts.ContractFailureKind" /> enumeration is used by the <see cref="T:System.Diagnostics.Contracts.ContractFailedEventArgs" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of contract that failed. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Assert">
       <MemberSignature Language="C#" Value="Assert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Assert = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -22,11 +31,15 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>An Assert contract.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="Overload:System.Diagnostics.Contracts.Contract.Assert" /> contract failed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Assume">
       <MemberSignature Language="C#" Value="Assume" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Assume = int32(5)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,11 +48,15 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>An Assume contract.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="Overload:System.Diagnostics.Contracts.Contract.Assume" /> contract failed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Invariant">
       <MemberSignature Language="C#" Value="Invariant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Invariant = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -48,11 +65,15 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>A type-level Invariant contract.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="Overload:System.Diagnostics.Contracts.Contract.Invariant" /> contract failed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Postcondition">
       <MemberSignature Language="C#" Value="Postcondition" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Postcondition = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -61,11 +82,15 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>A Post-Condition contract.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="Overload:System.Diagnostics.Contracts.Contract.Ensures" /> contract failed. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostconditionOnException">
       <MemberSignature Language="C#" Value="PostconditionOnException" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind PostconditionOnException = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -74,11 +99,15 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>A Post-Condition contract, that is only active when an exception is thrown to be handled outside the current method.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="Overload:System.Diagnostics.Contracts.Contract.EnsuresOnThrow" /> contract failed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Precondition">
       <MemberSignature Language="C#" Value="Precondition" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Precondition = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -87,7 +116,10 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>A Pre-Condition contract.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="Overload:System.Diagnostics.Contracts.Contract.Requires" /> contract failed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

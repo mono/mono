@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SignatureHelper" FullName="System.Reflection.Emit.SignatureHelper">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SignatureHelper : System.Runtime.InteropServices._SignatureHelper" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit SignatureHelper extends System.Object implements class System.Runtime.InteropServices._SignatureHelper" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,14 +18,40 @@
       <InterfaceName>System.Runtime.InteropServices._SignatureHelper</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._SignatureHelper))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Reflection.Emit.SignatureHelper" /> class to create a signature blob that can be passed to the <see cref="M:System.Reflection.Emit.DynamicILInfo.SetLocalSignature(System.Byte[])" /> method of the <see cref="T:System.Reflection.Emit.DynamicILInfo" /> class. A <see cref="T:System.Reflection.Emit.SignatureHelper" /> object can also be passed to the <see cref="M:System.Reflection.Emit.ILGenerator.Emit(System.Reflection.Emit.OpCode,System.Reflection.Emit.SignatureHelper)" /> method overload to insert an instruction and a signature token into a Microsoft intermediate language (MSIL) stream. For information on signature blobs and signature metadata, see the ECMA Partition II Metadata documentation.</para>
+      <block subset="none" type="note">
+        <para>The ECMA Partition II documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for building signatures.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddArgument">
       <MemberSignature Language="C#" Value="public void AddArgument (Type clsArgument);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddArgument(class System.Type clsArgument) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -31,18 +59,21 @@
         <Parameter Name="clsArgument" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="clsArgument">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To add an argument with optional or required custom modifiers, use the <see cref="M:System.Reflection.Emit.SignatureHelper.AddArgument(System.Type,System.Type[],System.Type[])" /> method overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an argument to the signature.</para>
+        </summary>
+        <param name="clsArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the argument. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddArgument">
       <MemberSignature Language="C#" Value="public void AddArgument (Type argument, bool pinned);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddArgument(class System.Type argument, bool pinned) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,14 +87,23 @@
         <Parameter Name="pinned" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="argument">To be added.</param>
-        <param name="pinned">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To add an argument with optional or required custom modifiers, use the <see cref="M:System.Reflection.Emit.SignatureHelper.AddArgument(System.Type,System.Type[],System.Type[])" /> method overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an argument of the specified type to the signature, specifying whether the argument is pinned.</para>
+        </summary>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument type.</param>
+        <param name="pinned">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the argument is pinned; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="AddArgument">
       <MemberSignature Language="C#" Value="public void AddArgument (Type argument, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddArgument(class System.Type argument, class System.Type[] requiredCustomModifiers, class System.Type[] optionalCustomModifiers) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -78,15 +118,25 @@
         <Parameter Name="optionalCustomModifiers" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="argument">To be added.</param>
-        <param name="requiredCustomModifiers">To be added.</param>
-        <param name="optionalCustomModifiers">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="N:System.Runtime.CompilerServices" /> namespace for classes that represent custom modifiers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an argument to the signature, with the specified custom modifiers.</para>
+        </summary>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument type.</param>
+        <param name="requiredCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the required custom modifiers for the argument, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the argument has no required custom modifiers, specify null.</param>
+        <param name="optionalCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the optional custom modifiers for the argument, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the argument has no optional custom modifiers, specify null.</param>
       </Docs>
     </Member>
     <Member MemberName="AddArguments">
       <MemberSignature Language="C#" Value="public void AddArguments (Type[] arguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddArguments(class System.Type[] arguments, class System.Type[][] requiredCustomModifiers, class System.Type[][] optionalCustomModifiers) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,33 +151,53 @@
         <Parameter Name="optionalCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <param name="requiredCustomModifiers">To be added.</param>
-        <param name="optionalCustomModifiers">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The arguments are added to the end of the signature, in order of the elements of <paramref name="arguments" />.</para>
+          <para>See the <see cref="N:System.Runtime.CompilerServices" /> namespace for classes that represent custom modifiers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a set of arguments to the signature, with the specified custom modifiers.</para>
+        </summary>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the arguments to be added.</param>
+        <param name="requiredCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the required custom modifiers for the corresponding argument, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If a particular argument has no required custom modifiers, specify null instead of an array of types. If none of the arguments have required custom modifiers, specify null instead of an array of arrays.</param>
+        <param name="optionalCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the optional custom modifiers for the corresponding argument, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If a particular argument has no optional custom modifiers, specify null instead of an array of types. If none of the arguments have optional custom modifiers, specify null instead of an array of arrays.</param>
       </Docs>
     </Member>
     <Member MemberName="AddSentinel">
       <MemberSignature Language="C#" Value="public void AddSentinel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddSentinel() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the end of a vararg fixed part. This is only used if the caller is creating a vararg signature call site.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -135,20 +205,28 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks if this instance is equal to the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the given object is a SignatureHelper and represents the same signature; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object with which this instance should be compared. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetFieldSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetFieldSigHelper (System.Reflection.Module mod);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetFieldSigHelper(class System.Reflection.Module mod) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetFieldSigHelper">
-      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetFieldSigHelper (System.Reflection.Module mod);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
       </ReturnValue>
@@ -156,37 +234,50 @@
         <Parameter Name="mod" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a field.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dynamic module that contains the field for which the SignatureHelper is requested. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code is created from the name of this instance, so the return value is the same as if the GetHashCode method were called on the value of the Name property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code based on the name.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLocalVarSigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetLocalVarSigHelper ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetLocalVarSigHelper() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -197,14 +288,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a local variable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> for a local variable.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLocalVarSigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetLocalVarSigHelper (System.Reflection.Module mod);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetLocalVarSigHelper(class System.Reflection.Module mod) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
       </ReturnValue>
@@ -212,19 +315,22 @@
         <Parameter Name="mod" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a local variable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a local variable.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dynamic module that contains the local variable for which the SignatureHelper is requested. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethodSigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.CallingConventions callingConvention, Type returnType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetMethodSigHelper(valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,15 +344,24 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="callingConvention">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a method given the method's calling convention and return type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention of the method. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method, or null for a void return type (Sub procedure in Visual Basic). </param>
       </Docs>
     </Member>
     <Member MemberName="GetMethodSigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Runtime.InteropServices.CallingConvention unmanagedCallingConvention, Type returnType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetMethodSigHelper(valuetype System.Runtime.InteropServices.CallingConvention unmanagedCallingConvention, class System.Type returnType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -260,16 +375,30 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="unmanagedCallingConvention">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a method given the method's unmanaged calling convention and return type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
+        <param name="unmanagedCallingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged calling convention of the method. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method, or null for a void return type (Sub procedure in Visual Basic). </param>
       </Docs>
     </Member>
     <Member MemberName="GetMethodSigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.Module mod, System.Reflection.CallingConventions callingConvention, Type returnType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetMethodSigHelper(class System.Reflection.Module mod, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
       </ReturnValue>
@@ -279,22 +408,32 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
-        <param name="callingConvention">To be added: an object of type 'Reflection.CallingConventions'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a method given the method's module, calling convention, and return type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the method for which the SignatureHelper is requested. </param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention of the method. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method, or null for a void return type (Sub procedure in Visual Basic). </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetMethodSigHelper">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.Module mod, System.Runtime.InteropServices.CallingConvention unmanagedCallConv, Type returnType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetMethodSigHelper(class System.Reflection.Module mod, valuetype System.Runtime.InteropServices.CallingConvention unmanagedCallConv, class System.Type returnType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMethodSigHelper">
-      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.Module mod, System.Runtime.InteropServices.CallingConvention unmanagedCallConv, Type returnType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
       </ReturnValue>
@@ -304,22 +443,32 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
-        <param name="unmanagedCallConv">To be added.</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a method given the method's module, unmanaged calling convention, and return type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the method for which the SignatureHelper is requested. </param>
+        <param name="unmanagedCallConv">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged calling convention of the method. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method, or null for a void return type (Sub procedure in Visual Basic). </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetMethodSigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetMethodSigHelper (System.Reflection.Module mod, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetMethodSigHelper(class System.Reflection.Module mod, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
       </ReturnValue>
@@ -329,22 +478,36 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload creates a signature with a standard calling convention.</para>
+          <para>To create a method signature with custom modifiers, use the <see cref="M:System.Reflection.Emit.SignatureHelper.GetMethodSigHelper(System.Reflection.Module,System.Reflection.CallingConventions,System.Type)" /> method overload and then use the <see cref="M:System.Reflection.Emit.SignatureHelper.AddArgument(System.Type,System.Type[],System.Type[])" /> or <see cref="M:System.Reflection.Emit.SignatureHelper.AddArguments(System.Type[],System.Type[][],System.Type[][])" /> method overloads to add arguments with custom modifiers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a method with a standard calling convention, given the method's module, return type, and argument types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the method for which the SignatureHelper is requested. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method, or null for a void return type (Sub procedure in Visual Basic). </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the arguments of the method, or null if the method has no arguments. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPropertySigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetPropertySigHelper (System.Reflection.Module mod, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetPropertySigHelper(class System.Reflection.Module mod, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureHelper</ReturnType>
       </ReturnValue>
@@ -354,21 +517,29 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added: an object of type 'Reflection.Module'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create a signature helper for a property with optional or required custom modifiers, use the <see cref="M:System.Reflection.Emit.SignatureHelper.GetPropertySigHelper(System.Reflection.Module,System.Type,System.Type[],System.Type[],System.Type[],System.Type[][],System.Type[][])" /> method overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a property, given the dynamic module that contains the property, the property type, and the property arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> object for a property.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the property for which the <see cref="T:System.Reflection.Emit.SignatureHelper" /> is requested.</param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property type.</param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument types, or null if the property has no arguments.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPropertySigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetPropertySigHelper (System.Reflection.Module mod, Type returnType, Type[] requiredReturnTypeCustomModifiers, Type[] optionalReturnTypeCustomModifiers, Type[] parameterTypes, Type[][] requiredParameterTypeCustomModifiers, Type[][] optionalParameterTypeCustomModifiers);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetPropertySigHelper(class System.Reflection.Module mod, class System.Type returnType, class System.Type[] requiredReturnTypeCustomModifiers, class System.Type[] optionalReturnTypeCustomModifiers, class System.Type[] parameterTypes, class System.Type[][] requiredParameterTypeCustomModifiers, class System.Type[][] optionalParameterTypeCustomModifiers) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -387,20 +558,38 @@
         <Parameter Name="optionalParameterTypeCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="requiredReturnTypeCustomModifiers">To be added.</param>
-        <param name="optionalReturnTypeCustomModifiers">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="requiredParameterTypeCustomModifiers">To be added.</param>
-        <param name="optionalParameterTypeCustomModifiers">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="N:System.Runtime.CompilerServices" /> namespace for classes that represent custom modifiers.</para>
+          <para>If a property has no custom modifiers, use the <see cref="M:System.Reflection.Emit.SignatureHelper.GetPropertySigHelper(System.Reflection.Module,System.Type,System.Type[])" /> method overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a property, given the dynamic module that contains the property, the property type, the property arguments, and custom modifiers for the return type and arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> object for a property.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the property for which the <see cref="T:System.Reflection.Emit.SignatureHelper" /> is requested.</param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property type.</param>
+        <param name="requiredReturnTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the required custom modifiers for the return type, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the return type has no required custom modifiers, specify null.</param>
+        <param name="optionalReturnTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the optional custom modifiers for the return type, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the return type has no optional custom modifiers, specify null.</param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the property's arguments, or null if the property has no arguments.</param>
+        <param name="requiredParameterTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the required custom modifiers for the corresponding argument of the property. If a particular argument has no required custom modifiers, specify null instead of an array of types. If the property has no arguments, or if none of the arguments have required custom modifiers, specify null instead of an array of arrays.</param>
+        <param name="optionalParameterTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the optional custom modifiers for the corresponding argument of the property. If a particular argument has no optional custom modifiers, specify null instead of an array of types. If the property has no arguments, or if none of the arguments have optional custom modifiers, specify null instead of an array of arrays.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPropertySigHelper">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.SignatureHelper GetPropertySigHelper (System.Reflection.Module mod, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] requiredReturnTypeCustomModifiers, Type[] optionalReturnTypeCustomModifiers, Type[] parameterTypes, Type[][] requiredParameterTypeCustomModifiers, Type[][] optionalParameterTypeCustomModifiers);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.SignatureHelper GetPropertySigHelper(class System.Reflection.Module mod, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] requiredReturnTypeCustomModifiers, class System.Type[] optionalReturnTypeCustomModifiers, class System.Type[] parameterTypes, class System.Type[][] requiredParameterTypeCustomModifiers, class System.Type[][] optionalParameterTypeCustomModifiers) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -419,40 +608,74 @@
         <Parameter Name="optionalParameterTypeCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <param name="mod">To be added.</param>
-        <param name="callingConvention">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="requiredReturnTypeCustomModifiers">To be added.</param>
-        <param name="optionalReturnTypeCustomModifiers">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="requiredParameterTypeCustomModifiers">To be added.</param>
-        <param name="optionalParameterTypeCustomModifiers">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="N:System.Runtime.CompilerServices" /> namespace for classes that represent custom modifiers.</para>
+          <para>If a property has no custom modifiers, use the <see cref="M:System.Reflection.Emit.SignatureHelper.GetPropertySigHelper(System.Reflection.Module,System.Type,System.Type[])" /> method overload.</para>
+          <block subset="none" type="note">
+            <para>This method overload is introduced in the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a signature helper for a property, given the dynamic module that contains the property, the calling convention, the property type, the property arguments, and custom modifiers for the return type and arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> object for a property.</para>
+        </returns>
+        <param name="mod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the property for which the <see cref="T:System.Reflection.Emit.SignatureHelper" /> is requested.</param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention of the property accessors.</param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property type.</param>
+        <param name="requiredReturnTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the required custom modifiers for the return type, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the return type has no required custom modifiers, specify null.</param>
+        <param name="optionalReturnTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the optional custom modifiers for the return type, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the return type has no optional custom modifiers, specify null.</param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the property's arguments, or null if the property has no arguments.</param>
+        <param name="requiredParameterTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the required custom modifiers for the corresponding argument of the property. If a particular argument has no required custom modifiers, specify null instead of an array of types. If the property has no arguments, or if none of the arguments have required custom modifiers, specify null instead of an array of arrays.</param>
+        <param name="optionalParameterTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the optional custom modifiers for the corresponding argument of the property. If a particular argument has no optional custom modifiers, specify null instead of an array of types. If the property has no arguments, or if none of the arguments have optional custom modifiers, specify null instead of an array of arrays.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSignature">
       <MemberSignature Language="C#" Value="public byte[] GetSignature ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetSignature() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the end token to the signature and marks the signature as finished, so no further tokens can be added.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a byte array made up of the full signature.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetIDsOfNames">
       <MemberSignature Language="C#" Value="void _SignatureHelper.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._SignatureHelper.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -472,15 +695,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _SignatureHelper.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._SignatureHelper.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _SignatureHelper.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -490,21 +714,31 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _SignatureHelper.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._SignatureHelper.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _SignatureHelper.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -516,15 +750,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.Invoke">
+      <MemberSignature Language="C#" Value="void _SignatureHelper.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._SignatureHelper.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._SignatureHelper.Invoke">
-      <MemberSignature Language="C#" Value="void _SignatureHelper.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -550,40 +785,31 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representing the signature arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representing the arguments of this signature.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._SignatureHelper))</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

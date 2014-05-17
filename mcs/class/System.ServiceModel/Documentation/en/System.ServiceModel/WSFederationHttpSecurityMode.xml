@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WSFederationHttpSecurityMode" FullName="System.ServiceModel.WSFederationHttpSecurityMode">
+  <TypeSignature Language="C#" Value="public enum WSFederationHttpSecurityMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WSFederationHttpSecurityMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration defines the security modes that the <see cref="T:System.ServiceModel.WsFederationHttpBinding" /> supports.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the different security modes for <see cref="T:System.ServiceModel.WsFederationHttpBinding" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="Message" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.WSFederationHttpSecurityMode Message = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.WSFederationHttpSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Integrity, confidentiality, server authentication and client authentication are provided using SOAP message security. By default, the body is encrypted and signed. The service must be configured with a certificate. Client authentication is based on the token issued to the client by a security token service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.WSFederationHttpSecurityMode None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.WSFederationHttpSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAP message is not secure during transfer. No Security Token Service is contacted. This mode is equivalent to using the wsHttpBinding binding with SecurityMode.None.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TransportWithMessageCredential">
+      <MemberSignature Language="C#" Value="TransportWithMessageCredential" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.WSFederationHttpSecurityMode TransportWithMessageCredential = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.WSFederationHttpSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Integrity, confidentiality and server authentication are provided by HTTPS. The service must be configured with a certificate. Client authentication is provided by means of SOAP message security and is based on the token issued to the client by a security token service. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

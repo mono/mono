@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Extensions" FullName="System.Xml.XPath.Extensions">
+  <TypeSignature Language="C#" Value="public static class Extensions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Extensions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>There is some performance penalty for using these methods. Using sqltecxlinq queries yields better performance.</para>
+      <para>Although the ordering of returned collections is not specified in the XML XPath Language 1.0 Recommendation, this extension method returns nodes in document order.</para>
+      <para>Note that nodes are returned in document order even when you use a reverse axis, such as preceding-sibling or ancestor-or-self.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains the sqltecxlinq extension methods that enable you to evaluate XPath expressions.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public static System.Xml.XPath.XPathNavigator CreateNavigator (this System.Xml.Linq.XNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XPath.XPathNavigator CreateNavigator(class System.Xml.Linq.XNode node) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot edit the XML tree by using the <see cref="T:System.Xml.XPath.XPathNavigator" /> that is returned by this method. The <see cref="P:System.Xml.XPath.XPathNavigator.CanEdit" /> property returns false.</para>
+          <para>You cannot create an <see cref="T:System.Xml.XPath.XPathNavigator" /> for a <see cref="T:System.Xml.Linq.XDocumentType" /> node. Document types do not participate in the XPath data model.</para>
+          <para>Namespace declarations are reported from left to right. In contrast, for <see cref="T:System.Xml.XmlDocument" /> namespaces are reported from right to left. This is conformant behavior because namespace declarations are not ordered in the XPath data model.</para>
+          <para>The method <see cref="M:System.Xml.XPath.XPathNavigator.MoveToId(System.String)" /> is not supported for navigators that are returned by this method.</para>
+          <para>You can use this method to perform an XSLT transformation. You can create an XML tree, create an <see cref="T:System.Xml.XPath.XPathNavigator" /> from the XML tree, create a new document, and create a <see cref="T:System.Xml.XmlWriter" /> that will write into the new document. Then, you can invoke the XSLT transformation, passing the <see cref="T:System.Xml.XPath.XPathNavigator" /> and <see cref="T:System.Xml.XmlWriter" /> to the transform. After the transformation successfully completes, the new XML tree is populated with the results of the transformation.</para>
+          <para>To perform an XSLT transformation, you can use either an <see cref="T:System.Xml.XmlReader" /> or an <see cref="T:System.Xml.XPath.XPathNavigator" />. The two approaches have different performance characteristics. Some transformations will execute faster when using an <see cref="T:System.Xml.XmlReader" />, and others will execute faster when using a <see cref="T:System.Xml.XPath.XPathNavigator" />. If performance is a concern, we recommend that you experiment with each approach to determine which will perform better in your circumstances.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.XPath.XPathNavigator" /> for an <see cref="T:System.Xml.Linq.XNode" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> that can process XPath queries.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XNode" /> that can process XPath queries.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public static System.Xml.XPath.XPathNavigator CreateNavigator (this System.Xml.Linq.XNode node, System.Xml.XmlNameTable nameTable);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XPath.XPathNavigator CreateNavigator(class System.Xml.Linq.XNode node, class System.Xml.XmlNameTable nameTable) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+        <Parameter Name="nameTable" Type="System.Xml.XmlNameTable" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot edit the XML tree using the <see cref="T:System.Xml.XPath.XPathNavigator" /> that is returned by this method. The <see cref="P:System.Xml.XPath.XPathNavigator.CanEdit" /> property returns false.</para>
+          <para>You cannot create an <see cref="T:System.Xml.XPath.XPathNavigator" /> for a <see cref="T:System.Xml.Linq.XDocumentType" /> node. Document types do not participate in the XPath data model.</para>
+          <para>Namespace declarations are reported from left to right. In contrast, for <see cref="T:System.Xml.XmlDocument" /> namespaces are reported from right to left. This is conformant behavior because namespace declarations are not ordered in the XPath data model.</para>
+          <para>The method <see cref="M:System.Xml.XPath.XPathNavigator.MoveToId(System.String)" /> is not supported for navigators that are returned by this method.</para>
+          <para>If you use an <see cref="T:System.Xml.XmlNameTable" /> with this method to create the <see cref="T:System.Xml.XPath.XPathNavigator" />, you will get better performance when evaluating XPath expressions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.XPath.XPathNavigator" /> for an <see cref="T:System.Xml.Linq.XNode" />. The <see cref="T:System.Xml.XmlNameTable" /> enables more efficient XPath expression processing.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> that can process XPath queries.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XNode" /> that can process an XPath query.</param>
+        <param name="nameTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlNameTable" /> to be used by <see cref="T:System.Xml.XPath.XPathNavigator" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="XPathEvaluate">
+      <MemberSignature Language="C#" Value="public static object XPathEvaluate (this System.Xml.Linq.XNode node, string expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object XPathEvaluate(class System.Xml.Linq.XNode node, string expression) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+        <Parameter Name="expression" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the collection is an enumeration of elements or attributes, you can use the Cast operator to get a collection of <see cref="T:System.Xml.Linq.XElement" /> or <see cref="T:System.Xml.Linq.XAttribute" />.</para>
+          <para>Although the ordering of returned collections is not specified in the XML XPath Language 1.0 Recommendation, this extension method returns nodes in document order.</para>
+          <para>Note that nodes are returned in document order even when you use a reverse axis, such as preceding-sibling or ancestor-or-self.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an XPath expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can contain a bool, a double, a string, or an <see cref="T:System.Collections.Generic.IEnumerable`1" />. </para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an XPath expression.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="XPathEvaluate">
+      <MemberSignature Language="C#" Value="public static object XPathEvaluate (this System.Xml.Linq.XNode node, string expression, System.Xml.IXmlNamespaceResolver resolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object XPathEvaluate(class System.Xml.Linq.XNode node, string expression, class System.Xml.IXmlNamespaceResolver resolver) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+        <Parameter Name="expression" Type="System.String" />
+        <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to evaluate XPath expressions that contain namespace prefixes.</para>
+          <para>Although the ordering of returned collections is not specified in the XML XPath Language 1.0 Recommendation, this extension method returns nodes in document order.</para>
+          <para>Note that nodes are returned in document order even when you use a reverse axis, such as preceding-sibling or ancestor-or-self.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an XPath expression, resolving namespace prefixes using the specified <see cref="T:System.Xml.IXmlNamespaceResolver" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the result of evaluating the expression. The object can be a bool, a double, a string, or an <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an XPath expression.</param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.IXmlNamespaceResolver" /> for the namespace prefixes in the XPath expression.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="XPathSelectElement">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XElement XPathSelectElement (this System.Xml.Linq.XNode node, string expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XElement XPathSelectElement(class System.Xml.Linq.XNode node, string expression) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XElement</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+        <Parameter Name="expression" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects an <see cref="T:System.Xml.Linq.XElement" /> using a XPath expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XElement" />, or null.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an XPath expression.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="XPathSelectElement">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XElement XPathSelectElement (this System.Xml.Linq.XNode node, string expression, System.Xml.IXmlNamespaceResolver resolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XElement XPathSelectElement(class System.Xml.Linq.XNode node, string expression, class System.Xml.IXmlNamespaceResolver resolver) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XElement</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+        <Parameter Name="expression" Type="System.String" />
+        <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to evaluate XPath expressions that contain namespace prefixes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects an <see cref="T:System.Xml.Linq.XElement" /> using a XPath expression, resolving namespace prefixes using the specified <see cref="T:System.Xml.IXmlNamespaceResolver" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XElement" />, or null.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an XPath expression.</param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.IXmlNamespaceResolver" /> for the namespace prefixes in the XPath expression.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="XPathSelectElements">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; XPathSelectElements (this System.Xml.Linq.XNode node, string expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; XPathSelectElements(class System.Xml.Linq.XNode node, string expression) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+        <Parameter Name="expression" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the ordering of returned collections is not specified in the XML XPath Language 1.0 Recommendation, this extension method returns nodes in document order.</para>
+          <para>Note that nodes are returned in document order even when you use a reverse axis, such as preceding-sibling or ancestor-or-self.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects a collection of elements using an XPath expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> that contains the selected elements.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an XPath expression.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="XPathSelectElements">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; XPathSelectElements (this System.Xml.Linq.XNode node, string expression, System.Xml.IXmlNamespaceResolver resolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; XPathSelectElements(class System.Xml.Linq.XNode node, string expression, class System.Xml.IXmlNamespaceResolver resolver) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
+        <Parameter Name="expression" Type="System.String" />
+        <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to evaluate XPath expressions that contain namespace prefixes.</para>
+          <para>Although the ordering of returned collections is not specified in the XML XPath Language 1.0 Recommendation, this extension method returns nodes in document order.</para>
+          <para>Note that nodes are returned in document order even when you use a reverse axis, such as preceding-sibling or ancestor-or-self.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects a collection of elements using an XPath expression, resolving namespace prefixes using the specified <see cref="T:System.Xml.IXmlNamespaceResolver" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> that contains the selected elements.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an XPath expression.</param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.IXmlNamespaceResolver" /> for the namespace prefixes in the XPath expression.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

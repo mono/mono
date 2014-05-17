@@ -1,0 +1,1014 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DataContractSerializer" FullName="System.Runtime.Serialization.DataContractSerializer">
+  <TypeSignature Language="C#" Value="public sealed class DataContractSerializer : System.Runtime.Serialization.XmlObjectSerializer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DataContractSerializer extends System.Runtime.Serialization.XmlObjectSerializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Runtime.Serialization.XmlObjectSerializer</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize and deserialize instances of a type into an XML stream or document. For example, you can create a type named Person with properties that contain essential data, such as a name and address. You can then create and manipulate an instance of the Person class and write all of its property values in an XML document for later retrieval, or in an XML stream for immediate transport. Most important, the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is used to serialize and deserialize data sent in indigo1 messages. Apply the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute to classes, and the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> attribute to class members to specify properties and fields that are serialized. </para>
+      <para>crlist types that can be serialized, see <format type="text/html"><a href="7381b200-437a-4506-9556-d77bf1bc3f34">Types Supported by the Data Contract Serializer</a></format>.</para>
+      <para>To use the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />, first create an instance of a class and an object appropriate to writing or reading the format; for example, an instance of the <see cref="T:System.Xml.XmlDictionaryWriter" />. Then call the <see cref="M:System.Runtime.Serialization.XmlObjectSerializer.WriteObject(System.Xml.XmlDictionaryWriter,System.Object)" /> method to persist the data. To retrieve data, create an object appropriate to reading the data format (such as an <see cref="T:System.Xml.XmlDictionaryReader" /> for an XML document) and call the <see cref="Overload:System.Runtime.Serialization.DataContractSerializer.ReadObject" /> method. </para>
+      <para>crabout using the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />, see <format type="text/html"><a href="3d71814c-bda7-424b-85b7-15084ff9377a">Using Stand-alone Serialization</a></format>.</para>
+      <para>You can set the type of a data contract serializer using the <format type="text/html"><a href="f41fb4d5-24e7-4059-8010-286a30bfea93">&lt;dataContractSerializer&gt;</a></format> element in a client application configuration file.</para>
+      <format type="text/html">
+        <h2>Preparing Classes for Serialization or Deserialization</h2>
+      </format>
+      <para>The <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is used in combination with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> and <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> classes. To prepare a class for serialization, apply the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> to the class.  For each member of the class that returns data that you want to serialize, apply the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" />. You can serialize fields and properties, regardless of accessibility: private, protected, internal, protected internal, or public. </para>
+      <para>For example, your schema specifies a Customer with an ID property, but you already have an existing application that uses a type named Person with a Name property. To create a type that conforms to the contract, first apply the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> to the class.  Then apply the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> to every field or property that you want to serialize. </para>
+      <block subset="none" type="note">
+        <para>You can apply the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> to both private and public members. </para>
+      </block>
+      <para>The final format of the XML need not be text. Instead, the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> writes the data as an XML infoset, which allows you to write the data to any format recognized by the <see cref="T:System.Xml.XmlReader" /> and <see cref="T:System.Xml.XmlWriter" />. It is recommended that you use the <see cref="T:System.Xml.XmlDictionaryReader" /> and <see cref="T:System.Xml.XmlDictionaryWriter" /> classes to read and write, because both are optimized to work with the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />.</para>
+      <para>If you are creating a class that has fields or properties that must be populated before the serialization or deserialization occurs, use callback attributes, as described in <format type="text/html"><a href="aa4a3a6f-05ec-4efd-bdbf-2181e13e6468">Version Tolerant Serialization Callbacks</a></format>. </para>
+      <format type="text/html">
+        <h2>Adding to the Collection of Known Types</h2>
+      </format>
+      <para>When serializing or deserializing an object, it is required that the type is "known" to the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. Begin by creating an instance of a class that implements <see cref="T:System.Collections.Generic.IEnumerable`1" /> (such as <see cref="T:System.Collections.Generic.List`1" />) and adding the known types to the collection. Then create an instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> using one of the overloads that takes the <see cref="T:System.Collections.Generic.IEnumerable`1" /> (for example, <see cref="M:System.Runtime.Serialization.DataContractSerializer.#ctor(System.Type,System.Collections.Generic.IEnumerable{System.Type})" />. </para>
+      <block subset="none" type="note">
+        <para>Unlike other primitive types, the <see cref="T:System.DateTimeOffset" /> structure is not a known type by default, so it must be manually added to the list of known types (see <format type="text/html"><a href="1a0baea1-27b7-470d-9136-5bbad86c4337">Data Contract Known Types</a></format>). </para>
+      </block>
+      <format type="text/html">
+        <h2>Forward Compatibility</h2>
+      </format>
+      <para>The <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> understands data contracts that have been designed to be compatible with future versions of the contract. Such types implement the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface. The interface features the <see cref="P:System.Runtime.Serialization.IExtensibleDataObject.ExtensionData" /> property that returns an <see cref="T:System.Runtime.Serialization.ExtensionDataObject" /> object. crdefault <format type="text/html"><a href="413c9044-26f8-4ecb-968c-18495ea52cd9">Forward Compatible Data Contracts</a></format>.</para>
+      <format type="text/html">
+        <h2>Running under Partial Trust</h2>
+      </format>
+      <para>When instantiating the target object during deserialization, the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> does not call the constructor of the target object. If you author a <newTerm>[DataContract]</newTerm> type that is accessible from partial trust (that is, it is public and in an assembly that has the AllowPartiallyTrustedCallers attribute applied) and that performs some security-related actions, you must be aware that the constructor is not called. In particular, the following techniques do not work:</para>
+      <list type="bullet">
+        <item>
+          <para>If you try to restrict partial trust access by making the constructor internal or private, or by adding a LinkDemand to the constructor -- neither of these have any effect during deserialization under partial trust.</para>
+        </item>
+        <item>
+          <para>If you code the class that assumes the constructor has run, the class may get into an invalid internal state that is exploitable.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serializes and deserializes an instance of a type into an XML stream or document using a supplied data contract. This class cannot be inherited. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type, and a collection of known types that may be present in the object graph.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" />  of <see cref="T:System.Type" /> that contains the types that may be present in the object graph.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Runtime.Serialization.DataContractSerializerSettings settings);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Runtime.Serialization.DataContractSerializerSettings settings) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="settings" Type="System.Runtime.Serialization.DataContractSerializerSettings" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type and settings.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instance to serialize or deserialize.</param>
+        <param name="settings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serializer settings.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, string rootName, string rootNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, string rootName, string rootNamespace) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.String" />
+        <Parameter Name="rootNamespace" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type using the supplied XML root element and namespace.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the XML element that encloses the content to serialize or deserialize.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the XML element that encloses the content to serialize or deserialize.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Xml.XmlDictionaryString rootName, System.Xml.XmlDictionaryString rootNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Xml.XmlDictionaryString rootName, class System.Xml.XmlDictionaryString rootNamespace) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="rootNamespace" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type using the XML root element and namespace specified through the parameters of type <see cref="T:System.Xml.XmlDictionaryString" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the root element name of the content.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the namespace of the root element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, string rootName, string rootNamespace, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, string rootName, string rootNamespace, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.String" />
+        <Parameter Name="rootNamespace" Type="System.String" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies the root XML element and namespace in two string parameters as well as a list of known types that may be present in the object graph.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The root element name of the content.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the root element.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" />  of <see cref="T:System.Type" /> that contains the types that may be present in the object graph.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Xml.XmlDictionaryString rootName, System.Xml.XmlDictionaryString rootNamespace, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Xml.XmlDictionaryString rootName, class System.Xml.XmlDictionaryString rootNamespace, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="rootNamespace" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies the root XML element and namespace in two <see cref="T:System.Xml.XmlDictionaryString" /> parameters as well as a list of known types that may be present in the object graph.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the root element name of the content.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the namespace of the root element.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes, int maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes, int32 maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, class System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+        <Parameter Name="maxObjectsInGraph" Type="System.Int32" />
+        <Parameter Name="ignoreExtensionDataObject" Type="System.Boolean" />
+        <Parameter Name="preserveObjectReferences" Type="System.Boolean" />
+        <Parameter Name="dataContractSurrogate" Type="System.Runtime.Serialization.IDataContractSurrogate" />
+      </Parameters>
+      <Docs>
+        <param name="maxObjectsInGraph">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies a list of known types that may be present in the object graph, the maximum number of graph items to serialize, parameters to ignore unexpected data, whether to use non-standard XML constructs to preserve object reference data in the graph, and a surrogate for custom serialization.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the data supplied by an extension of the type upon serialization and deserialization; otherwise, false.</param>
+        <param name="preserveObjectReferences">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use non-standard XML constructs to preserve object reference data; otherwise, false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes, int maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate, System.Runtime.Serialization.DataContractResolver dataContractResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes, int32 maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, class System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate, class System.Runtime.Serialization.DataContractResolver dataContractResolver) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+        <Parameter Name="maxObjectsInGraph" Type="System.Int32" />
+        <Parameter Name="ignoreExtensionDataObject" Type="System.Boolean" />
+        <Parameter Name="preserveObjectReferences" Type="System.Boolean" />
+        <Parameter Name="dataContractSurrogate" Type="System.Runtime.Serialization.IDataContractSurrogate" />
+        <Parameter Name="dataContractResolver" Type="System.Runtime.Serialization.DataContractResolver" />
+      </Parameters>
+      <Docs>
+        <param name="maxObjectsInGraph">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is not available in Windows Store apps.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies a list of known types that may be present in the object graph, the maximum number of graph items to serialize, parameters to ignore unexpected data, whether to use non-standard XML constructs to preserve object reference data in the graph, a surrogate for custom serialization, and an alternative for mapping xsi:type declarations at run time.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the data supplied by an extension of the type upon serialization and deserialization; otherwise, false.</param>
+        <param name="preserveObjectReferences">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use non-standard XML constructs to preserve object reference data; otherwise, false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+        <param name="dataContractResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.DataContractResolver" /> to map xsi:type declarations to data contract types.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, string rootName, string rootNamespace, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes, int maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, string rootName, string rootNamespace, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes, int32 maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, class System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.String" />
+        <Parameter Name="rootNamespace" Type="System.String" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+        <Parameter Name="maxObjectsInGraph" Type="System.Int32" />
+        <Parameter Name="ignoreExtensionDataObject" Type="System.Boolean" />
+        <Parameter Name="preserveObjectReferences" Type="System.Boolean" />
+        <Parameter Name="dataContractSurrogate" Type="System.Runtime.Serialization.IDataContractSurrogate" />
+      </Parameters>
+      <Docs>
+        <param name="maxObjectsInGraph">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies a list of known types that may be present in the object graph, the maximum number of graph items to serialize, parameters to ignore unexpected data, whether to use non-standard XML constructs to preserve object reference data in the graph, a surrogate for custom serialization, and the XML element and namespace that contain the content.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element that encloses the content to serialize or deserialize.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the XML element that encloses the content to serialize or deserialize.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the data supplied by an extension of the type upon serialization and deserialization; otherwise, false.</param>
+        <param name="preserveObjectReferences">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use non-standard XML constructs to preserve object reference data; otherwise, false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Xml.XmlDictionaryString rootName, System.Xml.XmlDictionaryString rootNamespace, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes, int maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Xml.XmlDictionaryString rootName, class System.Xml.XmlDictionaryString rootNamespace, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes, int32 maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, class System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="rootNamespace" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+        <Parameter Name="maxObjectsInGraph" Type="System.Int32" />
+        <Parameter Name="ignoreExtensionDataObject" Type="System.Boolean" />
+        <Parameter Name="preserveObjectReferences" Type="System.Boolean" />
+        <Parameter Name="dataContractSurrogate" Type="System.Runtime.Serialization.IDataContractSurrogate" />
+      </Parameters>
+      <Docs>
+        <param name="maxObjectsInGraph">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies a list of known types that may be present in the object graph, the maximum number of graph items to serialize, parameters to ignore unexpected data, whether to use non-standard XML constructs to preserve object reference data in the graph, a surrogate for custom serialization, and parameters of <see cref="T:System.Xml.XmlDictionaryString" /> that specify the XML element and namespace that contain the content.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryString" /> that specifies the XML element that encloses the content to serialize or deserialize.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryString" /> that specifies the XML namespace of the root.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the data supplied by an extension of the type upon serialization and deserialization; otherwise, false.</param>
+        <param name="preserveObjectReferences">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use non-standard XML constructs to preserve object reference data; otherwise, false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, string rootName, string rootNamespace, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes, int maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate, System.Runtime.Serialization.DataContractResolver dataContractResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, string rootName, string rootNamespace, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes, int32 maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, class System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate, class System.Runtime.Serialization.DataContractResolver dataContractResolver) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.String" />
+        <Parameter Name="rootNamespace" Type="System.String" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+        <Parameter Name="maxObjectsInGraph" Type="System.Int32" />
+        <Parameter Name="ignoreExtensionDataObject" Type="System.Boolean" />
+        <Parameter Name="preserveObjectReferences" Type="System.Boolean" />
+        <Parameter Name="dataContractSurrogate" Type="System.Runtime.Serialization.IDataContractSurrogate" />
+        <Parameter Name="dataContractResolver" Type="System.Runtime.Serialization.DataContractResolver" />
+      </Parameters>
+      <Docs>
+        <param name="maxObjectsInGraph">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies a list of known types that may be present in the object graph, the maximum number of graph items to serialize, parameters to ignore unexpected data, whether to use non-standard XML constructs to preserve object reference data in the graph, a surrogate for custom serialization, the XML element and namespace that contains the content, and an alternative for mapping xsi:type declarations at run time.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element that encloses the content to serialize or deserialize.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the XML element that encloses the content to serialize or deserialize.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the data supplied by an extension of the type upon serialization and deserialization; otherwise, false.</param>
+        <param name="preserveObjectReferences">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use non-standard XML constructs to preserve object reference data; otherwise, false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+        <param name="dataContractResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.DataContractResolver" /> to map xsi:type declarations to data contract types.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractSerializer (Type type, System.Xml.XmlDictionaryString rootName, System.Xml.XmlDictionaryString rootNamespace, System.Collections.Generic.IEnumerable&lt;Type&gt; knownTypes, int maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate, System.Runtime.Serialization.DataContractResolver dataContractResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Xml.XmlDictionaryString rootName, class System.Xml.XmlDictionaryString rootNamespace, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; knownTypes, int32 maxObjectsInGraph, bool ignoreExtensionDataObject, bool preserveObjectReferences, class System.Runtime.Serialization.IDataContractSurrogate dataContractSurrogate, class System.Runtime.Serialization.DataContractResolver dataContractResolver) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="rootName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="rootNamespace" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+        <Parameter Name="maxObjectsInGraph" Type="System.Int32" />
+        <Parameter Name="ignoreExtensionDataObject" Type="System.Boolean" />
+        <Parameter Name="preserveObjectReferences" Type="System.Boolean" />
+        <Parameter Name="dataContractSurrogate" Type="System.Runtime.Serialization.IDataContractSurrogate" />
+        <Parameter Name="dataContractResolver" Type="System.Runtime.Serialization.DataContractResolver" />
+      </Parameters>
+      <Docs>
+        <param name="maxObjectsInGraph">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies a list of known types that may be present in the object graph, the maximum number of graph items to serialize, parameters to ignore unexpected data, whether to use non-standard XML constructs to preserve object reference data in the graph, a surrogate for custom serialization, parameters of <see cref="T:System.Xml.XmlDictionaryString" /> that specify the XML element and namespace that contains the content, and an alternative for mapping xsi:type declarations at run time.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element that encloses the content to serialize or deserialize.</param>
+        <param name="rootNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the XML element that encloses the content to serialize or deserialize.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the data supplied by an extension of the type upon serialization and deserialization; otherwise, false.</param>
+        <param name="preserveObjectReferences">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use non-standard XML constructs to preserve object reference data; otherwise, false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+        <param name="dataContractResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.DataContractResolver" /> to map xsi:type declarations to data contract types.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DataContractResolver">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.DataContractResolver DataContractResolver { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.DataContractResolver DataContractResolver" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.DataContractResolver</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.DataContractResolver" /> is set using a <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component used to dynamically map xsi:type declarations to known contract types.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DataContractSurrogate">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.IDataContractSurrogate DataContractSurrogate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.IDataContractSurrogate DataContractSurrogate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.IDataContractSurrogate</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> can be used to customize how instances of a type are serialized and deserialized. For example, it can be used to enable the serialization of legacy types that are not serializable, that is, types to which the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute has not been applied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a surrogate type that can extend the serialization or deserialization process.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IgnoreExtensionDataObject">
+      <MemberSignature Language="C#" Value="public bool IgnoreExtensionDataObject { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreExtensionDataObject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Serialization.DataContractSerializer.IgnoreExtensionDataObject" /> property is used when the class to which a <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> has been applied also implements the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface. In this case, the data added in a future version of the contract is ignored on read and write. crdefault <format type="text/html"><a href="413c9044-26f8-4ecb-968c-18495ea52cd9">Forward Compatible Data Contracts</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether to ignore data supplied by an extension of the class when the class is being serialized or deserialized.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsStartObject">
+      <MemberSignature Language="C#" Value="public override bool IsStartObject (System.Xml.XmlDictionaryReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsStartObject(class System.Xml.XmlDictionaryReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Serialization.DataContractSerializer.IsStartObject(System.Xml.XmlDictionaryReader)" /> determines whether it can read an object by checking that it is positioned on an XML element. It also examines the name and namespace of the XML element that the reader is positioned at and compares the values to the expected name and namespace. The expected name and namespace can be set with the following: the data contract name and namespace of the type passed into the constructor, or the <paramref name="rootName" /> and <paramref name="rootNamespace" /> values passed into the constructor (if present).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Xml.XmlDictionaryReader" /> is positioned on an object that can be deserialized.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reader is at the start element of the stream to read; otherwise, false.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryReader" /> used to read the XML stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsStartObject">
+      <MemberSignature Language="C#" Value="public override bool IsStartObject (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsStartObject(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Xml.XmlReader" /> is positioned on an object that can be deserialized.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reader is at the start element of the stream to read; otherwise, false.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> used to read the XML stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="KnownTypes">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;Type&gt; KnownTypes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Type&gt; KnownTypes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Type&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Serialization.DataContractSerializer.KnownTypes" /> property provides the set of known types that are used for serialization and deserialization. For example, if an instance of the <see cref="T:System.Collections.Hashtable" /> class contains instances of a Person class, add the Person type to an instance of the <see cref="T:System.Collections.Generic.List`1" /> class and use the instance to construct an instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. If you know of other types to add to the <see cref="T:System.Collections.Hashtable" />, then add those types to the collection. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of types that may be present in the object graph serialized using this instance of the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxItemsInObjectGraph">
+      <MemberSignature Language="C#" Value="public int MaxItemsInObjectGraph { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxItemsInObjectGraph" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be set in configuration or imperatively in code. To set it in configuration, add a custom behavior to the behaviors section and add the following setting.</para>
+          <code>&lt;behaviors&gt;    &lt;behavior name="MyServiceBehavior"&gt;        &lt;dataContractSerializer maxItemsInObjectGraph="3" /&gt;    &lt;/behavior&gt;&lt;/behaviors&gt;
+</code>
+          <para>To set this property imperatively in code find the operation description of the service, then get the operation behavior, finally set the property as shown in the following code.</para>
+          <code>OperationDescription operation = host.Description.Endpoints[0].Contract.Operations.Find("MyOperationName");operation.Behaviors.Find&lt;DataContractSerializerOperationBehavior&gt;().MaxItemsInObjectGraph = 3;
+</code>
+          <para>The <see cref="P:System.Runtime.Serialization.DataContractSerializer.MaxItemsInObjectGraph" /> property specifies the maximum number of objects that the serializer serializes or deserializes in a single <see cref="Overload:System.Runtime.Serialization.DataContractSerializer.ReadObject" /> method call. (The method always reads one root object, but this object may have other objects in its data members. Those objects may have other objects, and so on.) The default is <see cref="F:System.Int32.MaxValue" />. Note that when serializing or deserializing arrays, every array entry counts as a separate object. Also, note that some objects may have a large memory representation and so this quota alone may not be sufficient to prevent Denial of Service attacks. crdefault <format type="text/html"><a href="a7eb98da-4a93-4692-8b59-9d670c79ffb2">Security Considerations for Data</a></format>. If you need to increase this quota beyond its default value, it is important to do so both on the sending (serializing) and receiving (deserializing) sides. It applies both when reading and writing data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum number of items in an object graph to serialize or deserialize.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PreserveObjectReferences">
+      <MemberSignature Language="C#" Value="public bool PreserveObjectReferences { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PreserveObjectReferences" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether to use non-standard XML constructs to preserve object reference data. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadObject">
+      <MemberSignature Language="C#" Value="public override object ReadObject (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object ReadObject(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the XML stream with an <see cref="T:System.Xml.XmlReader" /> and returns the deserialized object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> used to read the XML stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadObject">
+      <MemberSignature Language="C#" Value="public override object ReadObject (System.Xml.XmlDictionaryReader reader, bool verifyObjectName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object ReadObject(class System.Xml.XmlDictionaryReader reader, bool verifyObjectName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
+        <Parameter Name="verifyObjectName" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the XML stream with an <see cref="T:System.Xml.XmlDictionaryReader" /> and returns the deserialized object, and also specifies whether a check is made to verify the object name before reading its value. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReader" /> used to read the XML stream.</param>
+        <param name="verifyObjectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to check whether the name of the object corresponds to the root name value supplied in the constructor; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadObject">
+      <MemberSignature Language="C#" Value="public override object ReadObject (System.Xml.XmlReader reader, bool verifyObjectName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object ReadObject(class System.Xml.XmlReader reader, bool verifyObjectName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="verifyObjectName" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the XML stream with an <see cref="T:System.Xml.XmlReader" /> and returns the deserialized object, and also specifies whether a check is made to verify the object name before reading its value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> used to read the XML stream.</param>
+        <param name="verifyObjectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to check whether the name of the object corresponds to the root name value supplied in the constructor; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadObject">
+      <MemberSignature Language="C#" Value="public object ReadObject (System.Xml.XmlDictionaryReader reader, bool verifyObjectName, System.Runtime.Serialization.DataContractResolver resolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object ReadObject(class System.Xml.XmlDictionaryReader reader, bool verifyObjectName, class System.Runtime.Serialization.DataContractResolver resolver) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
+        <Parameter Name="verifyObjectName" Type="System.Boolean" />
+        <Parameter Name="resolver" Type="System.Runtime.Serialization.DataContractResolver" />
+      </Parameters>
+      <Docs>
+        <param name="resolver">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an XML document or document stream and returns the deserialized object.  The method includes a parameter to specify whether the object name is verified is validated, and a resolver for mapping xsi:type declarations at runtime.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML reader used to read the content.</param>
+        <param name="verifyObjectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />true  to verify the object name; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SerializeReadOnlyTypes">
+      <MemberSignature Language="C#" Value="public bool SerializeReadOnlyTypes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SerializeReadOnlyTypes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether read-only types are serialized.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteEndObject">
+      <MemberSignature Language="C#" Value="public override void WriteEndObject (System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEndObject(class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the closing XML element using an <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteEndObject">
+      <MemberSignature Language="C#" Value="public override void WriteEndObject (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEndObject(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the closing XML element using an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> used to write the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteObject">
+      <MemberSignature Language="C#" Value="public override void WriteObject (System.Xml.XmlWriter writer, object graph);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteObject(class System.Xml.XmlWriter writer, object graph) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="graph" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes all the object data (starting XML element, content, and closing element) to an XML document or stream with an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> used to write the XML document or stream.</param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the data to write to the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteObject">
+      <MemberSignature Language="C#" Value="public void WriteObject (System.Xml.XmlDictionaryWriter writer, object graph, System.Runtime.Serialization.DataContractResolver resolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteObject(class System.Xml.XmlDictionaryWriter writer, object graph, class System.Runtime.Serialization.DataContractResolver resolver) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+        <Parameter Name="graph" Type="System.Object" />
+        <Parameter Name="resolver" Type="System.Runtime.Serialization.DataContractResolver" />
+      </Parameters>
+      <Docs>
+        <param name="resolver">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes all the object data (starting XML element, content, and enclosing element) to an XML document or stream  using the specified XmlDictionaryWriter. The method includes a resolver for mapping xsi:type declarations at runtime.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An XmlDictionaryWriter used to write the content to the XML document or stream.</param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the content to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteObjectContent">
+      <MemberSignature Language="C#" Value="public override void WriteObjectContent (System.Xml.XmlDictionaryWriter writer, object graph);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteObjectContent(class System.Xml.XmlDictionaryWriter writer, object graph) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+        <Parameter Name="graph" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the XML content using an <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write the stream.</param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to write to the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteObjectContent">
+      <MemberSignature Language="C#" Value="public override void WriteObjectContent (System.Xml.XmlWriter writer, object graph);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteObjectContent(class System.Xml.XmlWriter writer, object graph) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="graph" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the XML content using an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> used to write the stream.</param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to write to the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartObject">
+      <MemberSignature Language="C#" Value="public override void WriteStartObject (System.Xml.XmlDictionaryWriter writer, object graph);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartObject(class System.Xml.XmlDictionaryWriter writer, object graph) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+        <Parameter Name="graph" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the opening XML element using an <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write the XML start element.</param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartObject">
+      <MemberSignature Language="C#" Value="public override void WriteStartObject (System.Xml.XmlWriter writer, object graph);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartObject(class System.Xml.XmlWriter writer, object graph) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="graph" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the opening XML element using an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> used to write the XML start element.</param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to write.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

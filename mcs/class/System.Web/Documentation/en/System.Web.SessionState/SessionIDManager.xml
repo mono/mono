@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionIDManager" FullName="System.Web.SessionState.SessionIDManager">
   <TypeSignature Language="C#" Value="public class SessionIDManager : System.Web.SessionState.ISessionIDManager" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.SessionState.SessionIDManager" /> class is an HTTP module that manages unique session identifiers for use with ASP.NET session state. The unique identifier for an ASP.NET session is the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property, which can be accessed from the <see cref="P:System.Web.HttpContext.Session" /> property of the current <see cref="T:System.Web.HttpContext" /> or <see cref="T:System.Web.UI.Page" />. The ASP.NET session identifier is a randomly generated number encoded into a 24-character string consisting of lowercase characters from a to z and numbers from 0 to 5.</para>
+      <para>By default, the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value is sent in a cookie with each request to the ASP.NET application. The name of the cookie that contains the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value is ASP.NET_SessionId by default. You can configure a different cookie name by setting the cookieName attribute of the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState Element (ASP.NET Settings Schema)</a></format> to the desired cookie name.</para>
+      <para>If you want to disable the use of cookies in your ASP.NET application and still make use of session state, you can configure your application to store the session identifier in the URL instead of a cookie by setting the cookieless attribute of the sessionState element to true in the Web.config file for your application. For more information, see the <see cref="P:System.Web.SessionState.HttpSessionStateContainer.IsCookieless" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages unique identifiers for ASP.NET session state.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +34,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be called from application code.</para>
+          <para>ASP.NET calls this constructor to create an instance of the <see cref="T:System.Web.SessionState.SessionIDManager" /> class. After calling the constructor, ASP.NET calls the <see cref="M:System.Web.SessionState.SessionIDManager.Initialize" /> method to initialize the new <see cref="T:System.Web.SessionState.SessionIDManager" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.SessionState.SessionIDManager" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateSessionID">
@@ -42,10 +58,21 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>The <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> method returns a unique session identifier that is a randomly generated number encoded into a 24-character string consisting of lowercase characters from a to z and numbers from 0 to 5.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a unique session identifier for the session.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique session identifier.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> object that references server objects used to process HTTP requests (for example, the <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties).</param>
       </Docs>
     </Member>
     <Member MemberName="Decode">
@@ -61,10 +88,21 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>This method is used internally by the <see cref="T:System.Web.SessionState.SessionIDManager" /> class to decode custom <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> values created by classes that inherit the <see cref="T:System.Web.SessionState.SessionIDManager" /> class and override the <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> and <see cref="M:System.Web.SessionState.SessionIDManager.Validate(System.String)" /> methods. To ensure the fidelity of a custom session-identifier value retrieved from the HTTP request by the <see cref="M:System.Web.SessionState.SessionIDManager.GetSessionID(System.Web.HttpContext)" /> method, the <see cref="T:System.Web.SessionState.SessionIDManager" /> decodes the custom value using the <see cref="Overload:System.Web.HttpUtility.UrlDecode" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes a URL-encoded session identifier obtained from a cookie or the URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decoded session identifier.</para>
+        </returns>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session identifier to decode. </param>
       </Docs>
     </Member>
     <Member MemberName="Encode">
@@ -80,10 +118,22 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>This method is used internally by the <see cref="T:System.Web.SessionState.SessionIDManager" /> class to encode custom <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> values created by classes that inherit the <see cref="T:System.Web.SessionState.SessionIDManager" /> class and override the <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> and <see cref="M:System.Web.SessionState.SessionIDManager.Validate(System.String)" /> methods. To ensure the fidelity of a custom session-identifier value stored in the HTTP response by the <see cref="M:System.Web.SessionState.SessionIDManager.SaveSessionID(System.Web.HttpContext,System.String,System.Boolean@,System.Boolean@)" /> method, the <see cref="T:System.Web.SessionState.SessionIDManager" /> encodes the custom value using the <see cref="Overload:System.Web.HttpUtility.UrlEncode" /> method.</para>
+          <para>For an example of a class that inherits the <see cref="T:System.Web.SessionState.SessionIDManager" /> class and overrides the <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> and <see cref="M:System.Web.SessionState.SessionIDManager.Validate(System.String)" /> methods, see the <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes the session identifier for saving to either a cookie or the URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The encoded session identifier.</para>
+        </returns>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session identifier to encode. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSessionID">
@@ -99,10 +149,21 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> calls the <see cref="M:System.Web.SessionState.SessionIDManager.GetSessionID(System.Web.HttpContext)" /> method during the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event to retrieve the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> from the current <see cref="T:System.Web.HttpRequest" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the session-identifier value from the current Web request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> object that references server objects used to process HTTP requests (for example, the <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties).</param>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -116,8 +177,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SessionState.SessionIDManager.Initialize" /> method reads the session configuration data from the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> configuration element of the configuration files.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.SessionState.SessionIDManager" /> object with information from configuration files.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeRequest">
@@ -156,9 +223,17 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> calls the <see cref="M:System.Web.SessionState.SessionIDManager.RemoveSessionID(System.Web.HttpContext)" /> method during the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event to remove the session identifier from the <see cref="P:System.Web.HttpResponse.Cookies" /> collection of the <see cref="T:System.Web.HttpResponse" /> if a new session was created but was not used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the session-identifier cookie from the HTTP response.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> object that references server objects used to process HTTP requests (for example, the <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties).</param>
       </Docs>
     </Member>
     <Member MemberName="SaveSessionID">
@@ -195,9 +270,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum length of a session identifier is 80 characters.</para>
+          <para>While session identifiers created by the <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> method are 24 characters long, the maximum length of a session identifier allowed by the <see cref="T:System.Web.SessionState.SessionIDManager" /> class is 80 characters. This is especially important if you implement a custom <see cref="T:System.Web.SessionState.SessionIDManager" />. The <see cref="M:System.Web.SessionState.SessionIDManager.GetSessionID(System.Web.HttpContext)" /> method, which retrieves session-identifier values from the current <see cref="T:System.Web.HttpRequest" />, ensures that values do not exceed the <see cref="P:System.Web.SessionState.SessionIDManager.SessionIDMaxLength" /> value and that the session identifier is a 24-character string containing only the lowercase characters a to z and the numbers 0 to 5 by calling the <see cref="M:System.Web.SessionState.SessionIDManager.Validate(System.String)" /> method. If you implement a custom <see cref="T:System.Web.SessionState.SessionIDManager" /> class that inherits the <see cref="T:System.Web.SessionState.SessionIDManager" /> class and overrides the <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> method but not the <see cref="M:System.Web.SessionState.SessionIDManager.Validate(System.String)" /> method, your custom session-identifier values must meet the constraints above. For an example of overriding the <see cref="T:System.Web.SessionState.SessionIDManager" /> class and implementing these methods, see the example provided for the <see cref="M:System.Web.SessionState.SessionIDManager.CreateSessionID(System.Web.HttpContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum length of a valid session identifier.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Validate">
@@ -213,10 +295,22 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>The <see cref="M:System.Web.SessionState.SessionIDManager.Validate(System.String)" /> method verifies that the supplied <paramref name="id" /> is a 24-character string consisting of lowercase characters from a to z and numbers from 0 to 5 and that the maximum length of the session ID does not exceed 80 characters.</para>
+          <para>The <see cref="M:System.Web.SessionState.SessionIDManager.GetSessionID(System.Web.HttpContext)" /> method calls the <see cref="M:System.Web.SessionState.SessionIDManager.Validate(System.String)" /> method when retrieving a session identifier from an HTTP request, to ensure that the supplied session identifier is properly formatted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a session identifier is valid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the session identifier is valid; otherwise, false.</para>
+        </returns>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The session identifier to validate. </param>
       </Docs>
     </Member>
   </Members>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageHeaderDescriptionCollection" FullName="System.ServiceModel.Description.MessageHeaderDescriptionCollection">
+  <TypeSignature Language="C#" Value="public class MessageHeaderDescriptionCollection : System.Collections.ObjectModel.KeyedCollection&lt;System.Xml.XmlQualifiedName,System.ServiceModel.Description.MessageHeaderDescription&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageHeaderDescriptionCollection extends System.Collections.ObjectModel.KeyedCollection`2&lt;class System.Xml.XmlQualifiedName, class System.ServiceModel.Description.MessageHeaderDescription&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.ObjectModel.KeyedCollection&lt;System.Xml.XmlQualifiedName,System.ServiceModel.Description.MessageHeaderDescription&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.Xml.XmlQualifiedName</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!1">System.ServiceModel.Description.MessageHeaderDescription</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically this collection is returned from the <see cref="P:System.ServiceModel.Description.MessageDescription.Headers" /> property and enables you to find, insert, and remove various <see cref="T:System.ServiceModel.Description.MessageHeaderDescription" /> objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ServiceModel.Description.MessageHeaderDescription" /> objects.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetKeyForItem">
+      <MemberSignature Language="C#" Value="protected override System.Xml.XmlQualifiedName GetKeyForItem (System.ServiceModel.Description.MessageHeaderDescription item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.Xml.XmlQualifiedName GetKeyForItem(class System.ServiceModel.Description.MessageHeaderDescription item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.ServiceModel.Description.MessageHeaderDescription" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called by a derived class, returns the <see cref="T:System.Xml.XmlQualifiedName" /> of the message header.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlQualifiedName" /> of the message header.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MessageHeaderDescription" /> to locate.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

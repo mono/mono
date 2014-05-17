@@ -1,50 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeDescriptionProvider" FullName="System.ComponentModel.TypeDescriptionProvider">
   <TypeSignature Language="C#" Value="public abstract class TypeDescriptionProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TypeDescriptionProvider extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> class dynamically extends the type information associated with a type or object by adding, modifying, or hiding characteristics such as attributes, properties, and events. There can be multiple type description provider classes that offer metadata to a single <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+      <para>There are two ways to associate a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> with a <see cref="T:System.ComponentModel.TypeDescriptor" />: </para>
+      <list type="bullet">
+        <item>
+          <para>At design time, when the target class can be assigned the appropriate <see cref="T:System.ComponentModel.TypeDescriptionProviderAttribute" /> tag.</para>
+        </item>
+        <item>
+          <para>At run time, when one of the <see cref="Overload:System.ComponentModel.TypeDescriptor.AddProvider" /> methods of the <see cref="T:System.ComponentModel.TypeDescriptor" /> class can be called. These overloaded methods require either the target object or its class type.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> class relies on a parent object of the same type, supplied during construction. This allows classes that derive from <see cref="T:System.ComponentModel.CustomTypeDescriptor" /> to selectively override methods.</para>
+      <para>Instances of <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> are only built upon demand, minimizing the impact of custom type information on performance. </para>
+      <para>This class cannot be inherited.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides supplemental metadata to the <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TypeDescriptionProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is equivalent to calling the other <see cref="M:System.ComponentModel.TypeDescriptionProvider.#ctor(System.ComponentModel.TypeDescriptionProvider)" /> constructor with a parameter value that is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TypeDescriptionProvider (System.ComponentModel.TypeDescriptionProvider parent);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.TypeDescriptionProvider parent) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="parent" Type="System.ComponentModel.TypeDescriptionProvider" />
       </Parameters>
       <Docs>
-        <param name="parent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="parent" /> parameter is null, all <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> methods will return default values. Otherwise, all <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> methods will delegate to the methods of <paramref name="parent" />.</para>
+          <para>The following table shows the default return values for <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> methods.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Method</para>
+                </term>
+                <description>
+                  <para>Default return value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetCache(System.Object)" />
+                </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="M:System.ComponentModel.TypeDescriptionProvider.CreateInstance(System.IServiceProvider,System.Type,System.Type[],System.Object[])" />
+                </para>
+              </term>
+              <description>
+                <para>A newly created object through a call to the <see cref="Overload:System.Activator.CreateInstance" /> method.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetExtendedTypeDescriptor(System.Object)" />
+                </para>
+              </term>
+              <description>
+                <para>A default instance of a <see cref="T:System.ComponentModel.CustomTypeDescriptor" /> class.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" />
+                </para>
+              </term>
+              <description>
+                <para>A default instance of a <see cref="T:System.ComponentModel.CustomTypeDescriptor" /> class.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetReflectionType" />
+                </para>
+              </term>
+              <description>
+                <para>The <paramref name="objectType" /> first parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> class using a parent type description provider.</para>
+        </summary>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent type description provider.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public virtual object CreateInstance (IServiceProvider provider, Type objectType, Type[] argTypes, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object CreateInstance(class System.IServiceProvider provider, class System.Type objectType, class System.Type[] argTypes, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -56,20 +159,36 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="argTypes">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IServiceProvider" /> specified by the <paramref name="provider" /> parameter is passed in by the <see cref="M:System.ComponentModel.TypeDescriptor.CreateInstance(System.IServiceProvider,System.Type,System.Type[],System.Object[])" /> method of the <see cref="T:System.ComponentModel.TypeDescriptor" /> class. If <paramref name="provider" /> is not null, the service provider can be used by the type description provider to obtain additional context about the creation call.</para>
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptionProvider.CreateInstance(System.IServiceProvider,System.Type,System.Type[],System.Object[])" /> method is virtual and, by default, returns the result of the <see cref="Overload:System.Activator.CreateInstance" /> method if <paramref name="provider" /> is null. If <paramref name="provider" /> is null, this method will invoke the <see cref="M:System.ComponentModel.TypeDescriptionProvider.CreateInstance(System.IServiceProvider,System.Type,System.Type[],System.Object[])" /> method of the parent provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object that can substitute for another data type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The substitute <see cref="T:System.Object" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional service provider.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. This parameter is never null.</param>
+        <param name="argTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional array of types that represent the parameter types to be passed to the object's constructor. This array can be null or of zero length.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional array of parameter values to pass to the object's constructor.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCache">
       <MemberSignature Language="C#" Value="public virtual System.Collections.IDictionary GetCache (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IDictionary GetCache(object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IDictionary</ReturnType>
@@ -78,17 +197,30 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeDescriptor" /> may need to perform complex operations on collections of metadata. Because types are not unloaded for the life of a domain, the <see cref="T:System.ComponentModel.TypeDescriptor" /> class will automatically cache the results of these operations based on type. However, some operations use live object instances. These operations cannot be cached within the <see cref="T:System.ComponentModel.TypeDescriptor" /> class because caching them would prevent the object from being garbage collected. Instead, the <see cref="T:System.ComponentModel.TypeDescriptor" /> class allows for a per-object cache, accessed as an <see cref="T:System.Collections.IDictionary" /> of key/value pairs, to exist on an object. The <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetCache(System.Object)" /> method returns an instance of this cache. The <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetCache(System.Object)" /> method will return null if there is no supported cache for an object.</para>
+          <para>The default <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> used by <see cref="T:System.ComponentModel.TypeDescriptor" /> examines the object to see if it is a sited component that implements the <see cref="T:System.ComponentModel.Design.IDictionaryService" /> interface. If the object is, it uses the dictionary service to store the object's cache. Otherwise, the object it returns null. Other type description providers may provide their own implementation here. For example, dependency objects can just attach a property of type <see cref="T:System.Collections.IDictionary" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a per-object cache, accessed as an <see cref="T:System.Collections.IDictionary" /> of key/value pairs.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> if the provided object supports caching; otherwise, null.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object for which to get the cache.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExtendedTypeDescriptor">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.ICustomTypeDescriptor GetExtendedTypeDescriptor (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.ICustomTypeDescriptor GetExtendedTypeDescriptor(object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ICustomTypeDescriptor</ReturnType>
@@ -97,17 +229,58 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An extended type descriptor is a custom type descriptor that offers properties that other objects have added to this object, but that are not actually defined on the object. For example, in the dnprdnshort component model, objects that implement the <see cref="T:System.ComponentModel.IExtenderProvider" /> interface can attach properties to other objects that reside in the same logical container. The overloaded <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> methods do not return a type descriptor that provides these extra extended properties. The <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetExtendedTypeDescriptor(System.Object)" /> method returns the set of these extended properties. The <see cref="T:System.ComponentModel.TypeDescriptor" /> will automatically merge the results of these two property collections. While the dnprdnshort component model supports only extended properties, <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetExtendedTypeDescriptor(System.Object)" /> can be used for extended attributes as well as events, if the type description provider supports it. </para>
+          <para>
+            <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetExtendedTypeDescriptor(System.Object)" /> is virtual and, by default, returns a custom type descriptor that returns empty results if no parent provider was passed. If a parent provider was passed, this method will invoke the parent provider's <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetExtendedTypeDescriptor(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an extended custom type descriptor for the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> that can provide extended metadata for the object.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object for which to get the extended type descriptor.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExtenderProviders">
+      <MemberSignature Language="C#" Value="protected virtual System.ComponentModel.IExtenderProvider[] GetExtenderProviders (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.ComponentModel.IExtenderProvider[] GetExtenderProviders(object instance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.IExtenderProvider[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+      </Parameters>
+      <Docs>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the extender providers for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of extender providers for <paramref name="instance" />.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to get extender providers for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetFullComponentName">
       <MemberSignature Language="C#" Value="public virtual string GetFullComponentName (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetFullComponentName(object component) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -116,17 +289,26 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified component, or null if the component has no name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified component.</param>
       </Docs>
     </Member>
     <Member MemberName="GetReflectionType">
       <MemberSignature Language="C#" Value="public Type GetReflectionType (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Type GetReflectionType(object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -135,17 +317,30 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetReflectionType" /> method is a lower-level version of the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method. If no custom type descriptor can be located for an object, <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetReflectionType" /> is called to perform normal reflection against the object.</para>
+          <para>Use this method overload if you have called a type descriptor member that uses an instance instead of a type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs normal reflection against the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of reflection for this <paramref name="instance" />.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the type (should not be null).</param>
       </Docs>
     </Member>
     <Member MemberName="GetReflectionType">
       <MemberSignature Language="C#" Value="public Type GetReflectionType (Type objectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Type GetReflectionType(class System.Type objectType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -154,17 +349,30 @@
         <Parameter Name="objectType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="objectType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetReflectionType" /> method is a lower-level version of the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method. If no custom type descriptor can be located for an object, <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetReflectionType" /> is called to perform normal reflection against the object.</para>
+          <para>Use this method overload if you have called a type descriptor member that uses a type instead of an instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs normal reflection against a type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of reflection for this <paramref name="objectType" />.</para>
+        </returns>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object for which to retrieve the <see cref="T:System.Reflection.IReflect" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetReflectionType">
       <MemberSignature Language="C#" Value="public virtual Type GetReflectionType (Type objectType, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetReflectionType(class System.Type objectType, object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -174,18 +382,61 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="objectType">To be added.</param>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetReflectionType" /> method is a lower-level version of the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method. If no custom type descriptor can be located for an object, <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetReflectionType" /> is called to perform normal reflection against the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs normal reflection against the given object with the given type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of reflection for this <paramref name="objectType" />.</para>
+        </returns>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object for which to retrieve the <see cref="T:System.Reflection.IReflect" />.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the type. Can be null.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRuntimeType">
+      <MemberSignature Language="C#" Value="public virtual Type GetRuntimeType (Type reflectionType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetRuntimeType(class System.Type reflectionType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reflectionType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetRuntimeType(System.Type)" /> method reverses the <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetReflectionType(System.Type)" /> method to convert a reflection type back into a runtime type. Using the <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetRuntimeType(System.Type)" /> method is preferred over using the <see cref="P:System.Type.UnderlyingSystemType" /> property, which was used in earlier versions to return the runtime type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a reflection type into a runtime type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> that represents the runtime equivalent of <paramref name="reflectionType" />.</para>
+        </returns>
+        <param name="reflectionType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert to its runtime equivalent.</param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeDescriptor">
       <MemberSignature Language="C#" Value="public System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor(object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ICustomTypeDescriptor</ReturnType>
@@ -194,17 +445,26 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a custom type descriptor for the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> that can provide metadata for the type.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the type. Can be null if no instance was passed to the <see cref="T:System.ComponentModel.TypeDescriptor" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeDescriptor">
       <MemberSignature Language="C#" Value="public System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor (Type objectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor(class System.Type objectType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ICustomTypeDescriptor</ReturnType>
@@ -213,17 +473,26 @@
         <Parameter Name="objectType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="objectType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a custom type descriptor for the given type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> that can provide metadata for the type.</para>
+        </returns>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object for which to retrieve the type descriptor.</param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeDescriptor">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor(class System.Type objectType, object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ICustomTypeDescriptor</ReturnType>
@@ -233,11 +502,49 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="objectType">To be added.</param>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is prototyped as virtual and, by default, returns an empty descriptor if no parent provider was passed. If a parent provider was passed, this method will invoke the parent provider's <see cref="M:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor(System.Type,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a custom type descriptor for the given type and object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> that can provide metadata for the type.</para>
+        </returns>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object for which to retrieve the type descriptor.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the type. Can be null if no instance was passed to the <see cref="T:System.ComponentModel.TypeDescriptor" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSupportedType">
+      <MemberSignature Language="C#" Value="public virtual bool IsSupportedType (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsSupportedType(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the specified type is compatible with the type description and its chain of type description providers. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="type" /> is compatible with the type description and its chain of type description providers; otherwise, false. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to test for compatibility.</param>
       </Docs>
     </Member>
   </Members>

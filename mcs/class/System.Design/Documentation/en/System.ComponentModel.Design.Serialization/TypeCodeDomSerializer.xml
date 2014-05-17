@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeCodeDomSerializer" FullName="System.ComponentModel.Design.Serialization.TypeCodeDomSerializer">
   <TypeSignature Language="C#" Value="public class TypeCodeDomSerializer : System.ComponentModel.Design.Serialization.CodeDomSerializerBase" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer" /> class performs the same tasks as a <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" />, but serializing an object through this class defines a new type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serializes an object to a new type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +28,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -39,11 +49,92 @@
         <Parameter Name="declaration" Type="System.CodeDom.CodeTypeDeclaration" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="declaration">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.Deserialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeTypeDeclaration)" /> method deserializes a previously serialized code type declaration. The following table shows the tasks default implementation performs.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Task</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Case Sensitivity Checks</para>
+              </term>
+              <description>
+                <para>The implementation searches for a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> service to decide if it should treat members as case sensitive or case insensitive.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Statement Sorting</para>
+              </term>
+              <description>
+                <para>All member variables and local variables from init methods are stored in a table. Then each statement in an init method is added to a statement collection grouped according to its left-hand side, so all statements assigning or operating on a particular variable are grouped under that variable. Variables that have no statements are discarded.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Deserialization</para>
+              </term>
+              <description>
+                <para>The statement collections for each variable are deserialized according to the variable.</para>
+              </description>
+            </item>
+          </list>
+          <para>The following table shows the services the <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.Deserialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeTypeDeclaration)" /> method requires.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Service</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.CodeDom.Compiler.CodeDomProvider" />
+                </para>
+              </term>
+              <description>
+                <para>While not strictly necessary, the service, if available, is used to determine if the serialization should be case sensitive or case insensitive.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.IContainer" />
+                </para>
+              </term>
+              <description>
+                <para>If an object does not exist in the name table during deserialization, a query for <see cref="T:System.ComponentModel.IContainer" /> is made. If this query succeeds, the container is checked for the object. The container is also used as a stand-in for any container argument needed by components.</para>
+              </description>
+            </item>
+          </list>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the given type declaration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The root object.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="declaration">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type declaration to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInitializeMethod">
@@ -61,12 +152,24 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="declaration">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.GetInitializeMethod(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeTypeDeclaration,System.Object)" /> method returns the method to emit all of the initialization code for the given member. The default implementation returns an empty constructor. If the same method is to be returned for multiple values, the same instance of the method should be returned. You can use the <see cref="P:System.CodeDom.CodeObject.UserData" /> dictionary to remember methods you have created. The <paramref name="typeDecl" /> parameter can also be used to add infrastructure methods. For example, if you want to emit a separate method for each object, you need a single method that calls all of these methods in turn. This method can be added to the code type declaration as needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the method where statements used to serialize a member are stored.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method used to emit all of the initialization code for the given member.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="declaration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type declaration to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInitializeMethods">
@@ -83,11 +186,22 @@
         <Parameter Name="declaration" Type="System.CodeDom.CodeTypeDeclaration" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="declaration">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation returns a single-element array with the constructor in it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of methods to be interpreted during deserialization.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeMemberMethod" /> array of methods to be interpreted during deserialization.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="declaration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type declaration to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
@@ -105,12 +219,108 @@
         <Parameter Name="members" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="root">To be added.</param>
-        <param name="members">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Collections.ICollection)" /> method serializes the given root object and optional collection of members to create a new type definition. If the <paramref name="members" /> collection contains values, these values are serialized. Values themselves may serialize as either member variables or local variables. This determination is done by searching for an extender property on the object called GenerateMember. If true, a member is generated. Otherwise, a local variable is generated. For convenience, the <paramref name="members" /> collection can contain the root object. In this case, the root object is not also added as a member or local variable. </para>
+          <para>The name of the returned type is taken from the root object’s name, if it was a named object. If not, a name is fabricated from the simple type name of the root class. </para>
+          <para>The following table shows the tasks performed by the default implementation of the <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Collections.ICollection)" /> method.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Task</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Context Seeding</para>
+              </term>
+              <description>
+                <para>The serialization context is initialized with data including the <see cref="T:System.ComponentModel.Design.Serialization.RootContext" /> and <see cref="T:System.CodeDom.CodeTypeDeclaration" /></para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Member Serialization</para>
+              </term>
+              <description>
+                <para>Next, <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Collections.ICollection)" /> walks all of the members and calls <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" />. Because serialization is done opportunistically in <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" />, this ensures that serialization is not done twice.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Root Serialization</para>
+              </term>
+              <description>
+                <para>Next, the root object is serialized and its statements are added to the statement collection.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Statement Integration</para>
+              </term>
+              <description>
+                <para>After all objects are serialized, the <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Collections.ICollection)" /> method orders the statements and adds them to a method returned from <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.GetInitializeMethod(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeTypeDeclaration,System.Object)" />. Finally, a constructor is fabricated that calls all of the methods returned from <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.GetInitializeMethod(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeTypeDeclaration,System.Object)" />.</para>
+              </description>
+            </item>
+          </list>
+          <list type="bullet">
+            <item>
+              <para />
+            </item>
+          </list>
+          <para>The following table shows the objects the <see cref="M:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Collections.ICollection)" /> method places on the context stack.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Instance</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer" />
+                </para>
+              </term>
+              <description>
+                <para>This serializer. Deriving classes may find it useful to add public properties to this class.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.CodeDom.CodeTypeDeclaration" />
+                </para>
+              </term>
+              <description>
+                <para>The type being created. Most objects do not need direct access to this.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the object root by creating a new type declaration that defines root.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeTypeDeclaration" /> that defines the root object.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="root">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
+        <param name="members">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional collection of members. Can be null or empty.</param>
       </Docs>
     </Member>
   </Members>

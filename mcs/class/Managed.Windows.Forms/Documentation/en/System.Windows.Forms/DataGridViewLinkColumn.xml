@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewLinkColumn" FullName="System.Windows.Forms.DataGridViewLinkColumn">
   <TypeSignature Language="C#" Value="public class DataGridViewLinkColumn : System.Windows.Forms.DataGridViewColumn" />
   <AssemblyInfo>
@@ -14,8 +15,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" /> class is a specialized type of the <see cref="T:System.Windows.Forms.DataGridViewColumn" /> class used to logically host cells that respond to user clicks. The <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" /> class is similar to the <see cref="T:System.Windows.Forms.DataGridViewButtonColumn" /> class but provides a different user experience that may be more appropriate in certain situations, such as displaying a URL stored in a database table. </para>
+      <para>To display the same link text for every cell, set the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.UseColumnTextForLinkValue" /> property to true and set the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.Text" /> property to the desired link text. </para>
+      <para>A <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" /> has an associated <see cref="T:System.Windows.Forms.DataGridViewLinkCell" /> in every <see cref="T:System.Windows.Forms.DataGridViewRow" /> that intersects it. </para>
+      <para>The default sort mode for this column type is <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.NotSortable" />.</para>
+      <para>To respond to user link clicks, handle the <see cref="E:System.Windows.Forms.DataGridView.CellContentClick" /> event. You can also use the <see cref="E:System.Windows.Forms.DataGridView.CellClick" /> event to respond to clicks anywhere in the cell. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a column of cells that contain links in a <see cref="T:System.Windows.Forms.DataGridView" /> control. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +37,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When initializing a new <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" /> instance, this constructor sets the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property to a new <see cref="T:System.Windows.Forms.DataGridViewLinkCell" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActiveLinkColor">
@@ -40,9 +57,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.ActiveLinkColor" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.ActiveLinkColor" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color used to display an active link within cells in the column. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CellTemplate">
@@ -63,9 +86,18 @@
         <ReturnType>System.Windows.Forms.DataGridViewCell</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor for the <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" /> class initializes this property to a newly created <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />.</para>
+          <block subset="none" type="note">
+            <para>Changing the properties of the cell template will not immediately affect the user interface (UI) of the column's existing cells. These changes are only apparent after the column is regenerated (for example, by sorting the column or through a call to the <see cref="M:System.Windows.Forms.DataGridView.InvalidateColumn(System.Int32)" /> method).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template used to create new cells.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -79,9 +111,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to duplicate a column of link cells. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LinkBehavior">
@@ -99,9 +140,15 @@
         <ReturnType>System.Windows.Forms.LinkBehavior</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkBehavior" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkBehavior" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that represents the behavior of links within cells in the column.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinkColor">
@@ -114,9 +161,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkColor" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkColor" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color used to display an unselected link within cells in the column.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -134,9 +187,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text is visible if the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.UseColumnTextForLinkValue" /> property is set to true. Otherwise, each cell's link text is populated with the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> property of each cell.</para>
+          <para>You can override the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.Text" /> property value for individual cells by setting the cell <see cref="P:System.Windows.Forms.DataGridViewLinkCell.UseColumnTextForLinkValue" /> property to false after setting the column <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.UseColumnTextForLinkValue" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the link text displayed in a column's cells if <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.UseColumnTextForLinkValue" /> is true.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -170,9 +230,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.TrackVisitedState" /> is true, the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.VisitedLinkColor" /> property value is used to display links that have already been visited.</para>
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.TrackVisitedState" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.TrackVisitedState" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the link changes color if it has been visited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseColumnTextForLinkValue">
@@ -190,9 +257,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.UseColumnTextForLinkValue" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.UseColumnTextForLinkValue" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.Text" /> property value is displayed as the link text.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VisitedLinkColor">
@@ -205,9 +278,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.TrackVisitedState" /> property is set to false, the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.VisitedLinkColor" /> property is ignored. </para>
+          <para>Getting or setting this property gets or sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.VisitedLinkColor" /> property of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property. Setting this property also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.VisitedLinkColor" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color used to display a link that has been previously visited.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

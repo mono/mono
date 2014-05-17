@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509ContentType" FullName="System.Security.Cryptography.X509Certificates.X509ContentType">
   <TypeSignature Language="C#" Value="public enum X509ContentType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed X509ContentType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,130 +16,168 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Content types <see cref="F:System.Security.Cryptography.X509Certificates.X509ContentType.Cert" />, <see cref="F:System.Security.Cryptography.X509Certificates.X509ContentType.Pkcs12" />, and <see cref="F:System.Security.Cryptography.X509Certificates.X509ContentType.SerializedCert" /> can be exported as byte arrays. Therefore, all three formats are serialized certificates. <see cref="F:System.Security.Cryptography.X509Certificates.X509ContentType.SerializedCert" /> differs from an exported <see cref="F:System.Security.Cryptography.X509Certificates.X509ContentType.Cert" /> file in that it is created by using the <see cref="http://go.microsoft.com/fwlink/?LinkId=183293">CertSerializeCertificateStoreElement function</see>, which serializes both the encoded certificate and its encoded properties. If you export the same <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object in both formats and view the resulting byte arrays, you will see that the two are different. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the format of an X.509 certificate. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Authenticode">
       <MemberSignature Language="C#" Value="Authenticode" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType Authenticode = int32(6)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Authenticode X.509 certificate. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Cert">
       <MemberSignature Language="C#" Value="Cert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType Cert = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single X.509 certificate.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Pfx">
       <MemberSignature Language="C#" Value="Pfx" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType Pfx = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A PFX-formatted certificate. The Pfx value is identical to the Pkcs12 value.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Pkcs12">
       <MemberSignature Language="C#" Value="Pkcs12" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType Pkcs12 = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A PKCS #12–formatted certificate. The Pkcs12 value is identical to the Pfx value.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Pkcs7">
       <MemberSignature Language="C#" Value="Pkcs7" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType Pkcs7 = int32(5)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A PKCS #7–formatted certificate.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SerializedCert">
       <MemberSignature Language="C#" Value="SerializedCert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType SerializedCert = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single serialized X.509 certificate. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SerializedStore">
       <MemberSignature Language="C#" Value="SerializedStore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType SerializedStore = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A serialized store.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.X509Certificates.X509ContentType Unknown = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unknown X.509 certificate.  </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

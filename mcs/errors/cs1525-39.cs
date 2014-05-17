@@ -1,4 +1,4 @@
-// CS1525: Unexpected symbol `}', expecting `,', `{', or `where'
+// CS1525: Unexpected symbol `}', expecting `(', `,', `{', or `where'
 // Line: 9
 
 using System;

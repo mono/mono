@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="LoadOptions" FullName="System.Xml.Linq.LoadOptions">
+  <TypeSignature Language="C#" Value="public enum LoadOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed LoadOptions extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you preserve white space when loading, all insignificant white space in the XML tree is materialized in the XML tree as is. If you do not preserve white space, then all insignificant white space is discarded.</para>
+      <para>There is a performance penalty if you set the <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" /> and the <see cref="F:System.Xml.Linq.LoadOptions.SetLineInfo" /> flags.</para>
+      <para>The base URI and the line information are accurate immediately after loading the XML document. If you modify the XML tree after loading the document, the base URI and line information may become meaningless.</para>
+      <para>If the underlying <see cref="T:System.Xml.XmlReader" /> does not have base URI or line information, setting the <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" /> and the <see cref="F:System.Xml.Linq.LoadOptions.SetLineInfo" /> flags will have no effect.</para>
+      <para>This type allows you to control how LINQ to XML handles white space when loading or parsing. For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies load options when parsing XML. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Does not preserve insignificant white space or load base URI and line information.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PreserveWhitespace">
+      <MemberSignature Language="C#" Value="PreserveWhitespace" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions PreserveWhitespace = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Preserves insignificant white space while parsing.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetBaseUri">
+      <MemberSignature Language="C#" Value="SetBaseUri" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions SetBaseUri = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests the base URI information from the <see cref="T:System.Xml.XmlReader" />, and makes it available via the <see cref="P:System.Xml.Linq.XObject.BaseUri" /> property.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLineInfo">
+      <MemberSignature Language="C#" Value="SetLineInfo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions SetLineInfo = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests the line information from the <see cref="T:System.Xml.XmlReader" /> and makes it available via properties on <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

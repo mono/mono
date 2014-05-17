@@ -1,6 +1,10 @@
 // ConcurrentStack.cs
 //
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
+//
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,10 +45,10 @@ namespace System.Collections.Concurrent
 		class Node
 		{
 			public T Value = default (T);
-			public Node Next = null;
+			public Node Next;
 		}
 		
-		Node head = null;
+		Node head;
 		
 		int count;
 		
@@ -54,6 +58,9 @@ namespace System.Collections.Concurrent
 		
 		public ConcurrentStack (IEnumerable<T> collection)
 		{
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+
 			foreach (T item in collection) 
 				Push (item);
 		}
@@ -77,11 +84,16 @@ namespace System.Collections.Concurrent
 
 		public void PushRange (T[] items)
 		{
+			if (items == null)
+				throw new ArgumentNullException ("items");
+
 			PushRange (items, 0, items.Length);
 		}
 		
 		public void PushRange (T[] items, int startIndex, int count)
 		{
+			RangeArgumentsCheck (items, startIndex, count);
+
 			Node insert = null;
 			Node first = null;
 			
@@ -99,7 +111,7 @@ namespace System.Collections.Concurrent
 				first.Next = head;
 			} while (Interlocked.CompareExchange (ref head, insert, first.Next) != first.Next);
 			
-			Interlocked.Add (ref count, count);
+			Interlocked.Add (ref this.count, count);
 		}
 		
 		public bool TryPop (out T result)
@@ -130,14 +142,7 @@ namespace System.Collections.Concurrent
 
 		public int TryPopRange (T[] items, int startIndex, int count)
 		{
-			if (items == null)
-				throw new ArgumentNullException ("items");
-			if (startIndex < 0 || startIndex >= items.Length)
-				throw new ArgumentOutOfRangeException ("startIndex");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
-			if (startIndex + count > items.Length)
-				throw new ArgumentException ("startIndex + count is greater than the length of items.");
+			RangeArgumentsCheck (items, startIndex, count);
 
 			Node temp;
 			Node end;
@@ -145,7 +150,7 @@ namespace System.Collections.Concurrent
 			do {
 				temp = head;
 				if (temp == null)
-					return -1;
+					return 0;
 				end = temp;
 				for (int j = 0; j < count; j++) {
 					end = end.Next;
@@ -207,17 +212,8 @@ namespace System.Collections.Concurrent
 		
 		void ICollection.CopyTo (Array array, int index)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-			if (array.Rank > 1)
-				throw new ArgumentException ("The array can't be multidimensional");
-			if (array.GetLowerBound (0) != 0)
-				throw new ArgumentException ("The array needs to be 0-based");
-
-			T[] dest = array as T[];
-			if (dest == null)
-				throw new ArgumentException ("The array cannot be cast to the collection element type", "array");
-			CopyTo (dest, index);
+			ICollection ic = new List<T> (this);
+			ic.CopyTo (array, index);
 		}
 		
 		public void CopyTo (T[] array, int index)
@@ -226,7 +222,7 @@ namespace System.Collections.Concurrent
 				throw new ArgumentNullException ("array");
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index");
-			if (index >= array.Length)
+			if (index > array.Length)
 				throw new ArgumentException ("index is equals or greather than array length", "index");
 
 			IEnumerator<T> e = InternalGetEnumerator ();
@@ -239,7 +235,7 @@ namespace System.Collections.Concurrent
 		}
 		
 		bool ICollection.IsSynchronized {
-			get { return true; }
+			get { return false; }
 		}
 		
 		bool IProducerConsumerCollection<T>.TryTake (out T item)
@@ -247,9 +243,10 @@ namespace System.Collections.Concurrent
 			return TryPop (out item);
 		}
 		
-		object syncRoot = new object ();
 		object ICollection.SyncRoot {
-			get { return syncRoot; }
+			get {
+				throw new NotSupportedException ();
+			}
 		}
 		
 		public T[] ToArray ()
@@ -268,6 +265,19 @@ namespace System.Collections.Concurrent
 				return count == 0;
 			}
 		}
+
+		static void RangeArgumentsCheck (T[] items, int startIndex, int count)
+		{
+			if (items == null)
+				throw new ArgumentNullException ("items");
+			if (startIndex < 0 || startIndex >= items.Length)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			if (startIndex + count > items.Length)
+				throw new ArgumentException ("startIndex + count is greater than the length of items.");
+		}
 	}
 }
 #endif
+

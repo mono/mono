@@ -1,51 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaSet" FullName="System.Xml.Schema.XmlSchemaSet">
   <TypeSignature Language="C#" Value="public class XmlSchemaSet" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaSet extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In <see cref="N:System.Xml" /> version 1.0, XML schemas were loaded into an <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class as a library of schemas. In <see cref="N:System.Xml" /> version 2.0, the <see cref="T:System.Xml.XmlValidatingReader" /> and the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> classes are obsolete, and have been replaced by the <see cref="Overload:System.Xml.XmlReader.Create" /> method and the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class, respectively.</para>
+      <para>The <see cref="T:System.Xml.Schema.XmlSchemaSet" /> has been introduced to fix a number of issues, including standards compatibility, performance, and the obsolete Microsoft XML-Data Reduced (XDR) schema format.</para>
+      <para>The following is a comparison between the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class and the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>XmlSchemaCollection</para>
+            </term>
+            <description>
+              <para>XmlSchemaSet</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Supports Microsoft XDR and W3C XML schemas.</para>
+          </term>
+          <description>
+            <para>Only supports W3C XML schemas.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Schemas are compiled when the <see cref="Overload:System.Xml.Schema.XmlSchemaCollection.Add" /> method is called.</para>
+          </term>
+          <description>
+            <para>Schemas are not compiled when the <see cref="Overload:System.Xml.Schema.XmlSchemaSet.Add" /> method is called. This provides a performance improvement during creation of the schema library.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Each schema generates an individual compiled version that can result in "schema islands." As a result, all includes and imports are scoped only within that schema.</para>
+          </term>
+          <description>
+            <para>Compiled schemas generate a single logical schema, a "set" of schemas. Any imported schemas within a schema that are added to the set are directly added to the set themselves. This means that all types are available to all schemas.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Only one schema for a particular target namespace can exist in the collection.</para>
+          </term>
+          <description>
+            <para>Multiple schemas for the same target namespace can be added as long as there are no type conflicts.</para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Security Considerations</h2>
+      </format>
+      <list type="bullet">
+        <item>
+          <para>External namespaces or locations referenced in include, import, and redefine elements of a schema are resolved with respect to the base URI of the schema that includes or imports them. For example, if the base URI of the including or importing schema is empty or null, the external locations are resolved with respect to the current directory. The <see cref="T:System.Xml.XmlUrlResolver" /> class is used to resolve external schemas by default. To disable resolution of include, import, and redefine elements of a schema, set the <see cref="P:System.Xml.Schema.XmlSchemaSet.XmlResolver" /> property to null.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class uses the <see cref="T:System.Text.RegularExpressions.Regex" /> class to parse and match regular expressions in an XML schema. Validation of pattern facets with regular expressions in an XML schema may involve increased CPU usage and should be avoided in high availability scenarios.</para>
+        </item>
+        <item>
+          <para>Exceptions raised as a result of using the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class, such as the <see cref="T:System.Xml.Schema.XmlSchemaException" /> class may contain sensitive information that should not be exposed in untrusted scenarios. For example, the <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property of an <see cref="T:System.Xml.Schema.XmlSchemaException" /> returns the URI path to the schema file that caused the exception. The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property should not be exposed in untrusted scenarios. Exceptions should be properly handled so that this sensitive information is not exposed in untrusted scenarios.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a cache of XML Schema definition language (XSD) schemas.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaSet ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaSet (System.Xml.XmlNameTable nameTable);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlNameTable nameTable) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="nameTable" Type="System.Xml.XmlNameTable" />
       </Parameters>
       <Docs>
-        <param name="nameTable">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class with the specified <see cref="T:System.Xml.XmlNameTable" />.</para>
+        </summary>
+        <param name="nameTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNameTable" /> object to use.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(class System.Xml.Schema.XmlSchema schema) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -53,114 +138,310 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Xml.Schema.XmlSchema" /> object already exists in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.Xml.Schema.XmlSchema)" /> method does nothing.</para>
+          <para>The functionality of this method is identical to that of the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the given <see cref="T:System.Xml.Schema.XmlSchema" /> to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is valid. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, then null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object to add to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public void Add (System.Xml.Schema.XmlSchemaSet schemaSet);" />
+      <MemberSignature Language="C#" Value="public void Add (System.Xml.Schema.XmlSchemaSet schemas);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Xml.Schema.XmlSchemaSet schemas) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="schemaSet" Type="System.Xml.Schema.XmlSchemaSet" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <param name="schemaSet">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before a schema can be added to an <see cref="T:System.Xml.Schema.XmlSchemaSet" />, it has to be successfully preprocessed. Preprocessing performs the following basic tasks.</para>
+          <list type="ordered">
+            <item>
+              <para>The schema is checked for structural validity according to the rules of W3C XML Schema, but the schema is not fully validated.</para>
+            </item>
+            <item>
+              <para>References to internal and external schema components are resolved. Any imported or included schemas that are successfully retrieved are also added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. Imported schemas are added as separate <see cref="T:System.Xml.Schema.XmlSchema" /> objects, and included schemas are made a part of the including <see cref="T:System.Xml.Schema.XmlSchema" />.</para>
+            </item>
+          </list>
+          <para>If the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to add is true, all schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to add are added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. If the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to add is false, each schema added is preprocessed before being added. If any of the schemas in the newly added <see cref="T:System.Xml.Schema.XmlSchemaSet" /> fails to be preprocessed, no schemas are added; instead, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown. As a result, the following two code example are not equivalent.</para>
+          <code>' First example
+schemaSet.Add(schemaSet1)
+
+' Second example
+Dim schema As XmlSchema
+
+For Each schema in schemaSet.Schemas()
+
+    schemaSet.Add(schema)
+
+Next</code>
+          <code>// First example
+schemaSet.Add(schemaSet1);
+
+// Second example
+foreach(XmlSchema schema in schemaSet.Schemas())
+{
+    schemaSet.Add(schema);
+}</code>
+          <para>The previous two code examples are not equivalent. In the first example, if an invalid schema exists in schemaSet1 and its <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property is set to false, no schemas are added to schemaSet. In the second example, a number of schemas can be added to schemaSet before an invalid schema is encountered and an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds all the XML Schema definition language (XSD) schemas in the given <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (string targetNamespace, string url);" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (string targetNamespace, string schemaUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(string targetNamespace, string schemaUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="targetNamespace" Type="System.String" />
-        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="schemaUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="targetNamespace">To be added.</param>
-        <param name="url">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before a schema can be added to an <see cref="T:System.Xml.Schema.XmlSchemaSet" />, it has to be successfully preprocessed. Preprocessing performs the following basic tasks.</para>
+          <list type="ordered">
+            <item>
+              <para>The schema is checked for structural validity according to the rules of W3C XML Schema, but the schema is not fully validated.</para>
+            </item>
+            <item>
+              <para>References to internal and external schema components are resolved. Any imported or included schemas that are successfully retrieved are also added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. Imported schemas are added as separate <see cref="T:System.Xml.Schema.XmlSchema" /> objects, and included schemas are made a part of the including <see cref="T:System.Xml.Schema.XmlSchema" />.</para>
+            </item>
+          </list>
+          <para>The following are important notes to consider when using the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method.</para>
+          <list type="bullet">
+            <item>
+              <para>Adding a schema to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> with the same target namespace and schema location URL as a schema already contained within the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> will return the original schema object.</para>
+            </item>
+            <item>
+              <para>When a new schema is successfully added to an <see cref="T:System.Xml.Schema.XmlSchemaSet" />, the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> is set to false.</para>
+            </item>
+            <item>
+              <para>Any include or import elements encountered in an XML schema are resolved when the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method is called. Failure to resolve include and import elements results in a schema validation warning and if no <see cref="E:System.Xml.Schema.XmlSchemaSet.ValidationEventHandler" /> has been specified for the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object, these warning will not be reported.</para>
+            </item>
+            <item>
+              <para>If a schema with the same target namespace as a schema that already exists in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> is added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, both schemas are added.</para>
+              <block subset="none" type="note">
+                <para>This behavior differs from the obsolete <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> object.</para>
+              </block>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> has the ability to use the target namespace defined in a schema, rather than requiring the target namespace be specified as a parameter when the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method is called. Specifying null in the <paramref name="targetNamespace" /> parameter of the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method instructs the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to use the target namespace defined in the schema, as illustrated in the following code example.</para>
+            </item>
+          </list>
+          <code>Dim schemaSet As XmlSchemaSet = New XmlSchemaSet()
+schemaSet.Add(Nothing, "books.xsd")
+
+Dim schema As XmlSchema
+For Each schema In schemaSet.Schemas("http://www.contoso.com/books")
+    schema.Write(Console.Out)
+Next</code>
+          <code>XmlSchemaSet schemaSet = new XmlSchemaSet();
+schemaSet.Add(null, "books.xsd");
+
+foreach(XmlSchema schema in schemaSet.Schemas("http://www.contoso.com/books"))
+{
+    schema.Write(Console.Out);
+}</code>
+          <para>In the code example above, null is specified as the <paramref name="targetNamespace" /> parameter to the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method. As a result, the targetNamespace defined in the books.xml file is used. In this case, the result of calling the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method would be identical if http://www.contoso.com/books had been specified as the <paramref name="targetNamespace" /> parameter.</para>
+          <list type="bullet">
+            <item>
+              <para>W3C XML Schema allows schemas without a target namespace to be included in schemas with a target namespace defined. In this case, the schema without a target namespace defined is coerced into the target namespace of the including schema. The included schema is treated as if it had that target namespace defined. Similarly, schemas without a target namespace can be added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> and coerced into the target namespace specified by the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method, as illustrated in the following example.</para>
+            </item>
+          </list>
+          <code>&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;xs:element name="A" type="xs:string" /&gt;
+&lt;/xs:schema&gt;</code>
+          <para>If the schema above is added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> with the target namespace http://www.contoso.com/new/targetnamespace (as shown in the code below), it is treated as if the target namespace declared in the schema was http://www.contoso.com/new/targetnamespace.</para>
+          <code>Dim schemaSet As XmlSchemaSet = New XmlSchemaSet()
+schemaSet.Add("http://www.contoso.com/new/targetnamespace", "http://www.contoso.com/targetnamespace.xsd")
+
+Dim schema As XmlSchema
+
+For Each schema in schemaSet.Schemas()
+
+    Console.WriteLine(schema.TargetNamespace)   
+
+Next</code>
+          <code>XmlSchemaSet schemaSet = new XmlSchemaSet();
+schemaSet.Add("http://www.contoso.com/new/targetnamespace", "http://www.contoso.com/targetnamespace.xsd");
+foreach(XmlSchema schema in schemaSet.Schemas())
+{
+    Console.WriteLine(schema.TargetNamespace);
+}</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the XML Schema definition language (XSD) schema at the URL specified to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is valid. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, then null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
+        <param name="targetNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property, or null to use the targetNamespace specified in the schema.</param>
+        <param name="schemaUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL that specifies the schema to load.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (string targetNamespace, System.Xml.XmlReader reader);" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (string targetNamespace, System.Xml.XmlReader schemaDocument);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(string targetNamespace, class System.Xml.XmlReader schemaDocument) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="targetNamespace" Type="System.String" />
-        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="schemaDocument" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="targetNamespace">To be added.</param>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before a schema can be added to an <see cref="T:System.Xml.Schema.XmlSchemaSet" />, it has to be successfully preprocessed. Preprocessing performs the following basic tasks.</para>
+          <list type="ordered">
+            <item>
+              <para>The schema is checked for structural validity according to the rules of W3C XML Schema, but the schema is not fully validated.</para>
+            </item>
+            <item>
+              <para>References to internal and external schema components are resolved. Any imported or included schemas that are successfully retrieved are also added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. Imported schemas are added as separate <see cref="T:System.Xml.Schema.XmlSchema" /> objects, and included schemas are made a part of the including <see cref="T:System.Xml.Schema.XmlSchema" />.</para>
+            </item>
+          </list>
+          <para>The following are important notes to consider when using the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.Xml.XmlReader)" /> method.</para>
+          <list type="bullet">
+            <item>
+              <para>Successfully retrieved schemas imported or included by the schemas contained in the <see cref="T:System.Xml.XmlReader" /> are also added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+            </item>
+            <item>
+              <para>If the <see cref="T:System.Xml.XmlReader" /> is not positioned on the root element, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown unless the current item is an element. If the current item is an xs:schema element, the schema document is read into the <see cref="T:System.Xml.Schema.XmlSchemaSet" />; otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown because the schema is not valid.</para>
+            </item>
+            <item>
+              <para>If the <see cref="T:System.Xml.XmlReader" /> is positioned over a sequence of XML nodes, only the first node in the sequence is added.</para>
+            </item>
+            <item>
+              <para>If the schema was created from a <see cref="Overload:System.Xml.XmlReader.Create" /> method call, the value of the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> property is ignored, because inline schema processing is not applied for W3C XML Schema documents.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Xml.XmlResolver" /> property of the <see cref="T:System.Xml.XmlReader" /> is not used to resolve references to namespaces or schema locations in include and import elements. Instead, the <see cref="T:System.Xml.XmlResolver" /> property of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> is used.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.Xml.XmlReader)" /> method of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> has the ability to use the target namespace defined in a schema, rather than requiring the target namespace be specified as a parameter when the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.Xml.XmlReader)" /> method is called. Specifying null or <see cref="F:System.String.Empty" /> to the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.Xml.XmlReader)" /> method instructs the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to use the target namespace defined in the schema. For an example of this behavior, see the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method.</para>
+            </item>
+          </list>
+          <para>The remaining functionality of this method is identical to that of the <see cref="M:System.Xml.Schema.XmlSchemaSet.Add(System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the XML Schema definition language (XSD) schema contained in the <see cref="T:System.Xml.XmlReader" /> to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is valid. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, then null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
+        <param name="targetNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property, or null to use the targetNamespace specified in the schema.</param>
+        <param name="schemaDocument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompilationSettings">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaCompilationSettings CompilationSettings { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaCompilationSettings CompilationSettings { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaCompilationSettings CompilationSettings" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaCompilationSettings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaCompilationSettings" /> class specifies Unique Particle Attribution (UPA) validation options for the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. For more information about enabling UPA validation checks, see the <see cref="P:System.Xml.Schema.XmlSchemaCompilationSettings.EnableUpaCheck" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.Schema.XmlSchemaCompilationSettings" /> for the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compile">
       <MemberSignature Language="C#" Value="public void Compile ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Compile() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called automatically when validation is needed and the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> has not been previously compiled—for example, when an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> is used as an input to create an <see cref="T:System.Xml.XmlReader" /> object in the <see cref="Overload:System.Xml.Schema.XmlSchemaSet.Schemas" /> property of an <see cref="T:System.Xml.XmlReaderSettings" /> object. If the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> is already in the compiled state, this method will not recompile the schemas. If this method executes successfully, the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property is set to true.</para>
+          <para>Schemas that have been previously compiled by an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> are not recompiled. However, schemas that were compiled using the <see cref="M:System.Xml.Schema.XmlSchemaCollection.Compile" /> method of the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> and the <see cref="M:System.Xml.Schema.XmlSchema.Compile" /> of the <see cref="T:System.Xml.Schema.XmlSchema" /> will be recompiled.</para>
+          <block subset="none" type="note">
+            <para>You need to call the <see cref="M:System.Xml.Schema.XmlSchemaSet.Reprocess(System.Xml.Schema.XmlSchema)" /> method if you have changed a schema (or one of its includes/imports) after adding it to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. The <see cref="M:System.Xml.Schema.XmlSchemaSet.Reprocess(System.Xml.Schema.XmlSchema)" /> method will check the schema for structural validity according to the rules of W3C XML Schema. However, it will not perform a full validation check. It will also resolve references to internal and external schema components. Any imported or included schemas that are successfully retrieved are also added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. Imported schemas are added as separate <see cref="T:System.Xml.Schema.XmlSchema" /> objects while included schemas are made part of the including <see cref="T:System.Xml.Schema.XmlSchema" />. If the call to reprocess is successful, the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property is set to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the XML Schema definition language (XSD) schemas added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> into one logical schema.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Contains">
       <MemberSignature Language="C#" Value="public bool Contains (string targetNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Contains(string targetNamespace) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -168,156 +449,223 @@
         <Parameter Name="targetNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="targetNamespace">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Schemas that are indirectly added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> are detected by the <see cref="M:System.Xml.Schema.XmlSchemaSet.Contains(System.String)" /> method; for example, imported schemas. As a result, if a schema for the http://www.contoso.com/retail namespace which imports a schema for the http://www.contoso.com/books namespace is added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, calling <see cref="M:System.Xml.Schema.XmlSchemaSet.Contains(System.String)" /> with <paramref name="http://www.contoso.com/books" /> as a parameter, it returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether an XML Schema definition language (XSD) schema with the specified target namespace URI is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a schema with the specified target namespace URI is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />; otherwise, false.</para>
+        </returns>
+        <param name="targetNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Contains">
-      <MemberSignature Language="C#" Value="public bool Contains (System.Xml.Schema.XmlSchema targetNamespace);" />
+      <MemberSignature Language="C#" Value="public bool Contains (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Contains(class System.Xml.Schema.XmlSchema schema) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="targetNamespace" Type="System.Xml.Schema.XmlSchema" />
+        <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <param name="targetNamespace">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified XML Schema definition language (XSD) <see cref="T:System.Xml.Schema.XmlSchema" /> object is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.Schema.XmlSchema" /> object is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />; otherwise, false.</para>
+        </returns>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (System.Xml.Schema.XmlSchema[] array, int index);" />
+      <MemberSignature Language="C#" Value="public void CopyTo (System.Xml.Schema.XmlSchema[] schemas, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(class System.Xml.Schema.XmlSchema[] schemas, int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="array" Type="System.Xml.Schema.XmlSchema[]" />
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchema[]" />
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the <see cref="T:System.Xml.Schema.XmlSchema" /> objects from the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to the given array, starting at the given index.</para>
+        </summary>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to copy the objects to.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in the array where copying will begin.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are two schemas for the namespace http://www.contoso.com in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, the <see cref="P:System.Xml.Schema.XmlSchemaSet.Count" /> property would return 1 because the schemas are treated as a single logical schema for validation purposes. However, if a schema for the namespace http://www.contoso.com/retail imported a schema for the http://www.contoso.com/books namespace, the value of the <see cref="P:System.Xml.Schema.XmlSchemaSet.Count" /> property would be 2.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of logical XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GlobalAttributes">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaObjectTable GlobalAttributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaObjectTable GlobalAttributes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaObjectTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the global attributes in all the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GlobalElements">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaObjectTable GlobalElements { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaObjectTable GlobalElements" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaObjectTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the global elements in all the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GlobalTypes">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaObjectTable GlobalTypes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaObjectTable GlobalTypes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaObjectTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlSchemaSet.GlobalTypes" /> property always returns a type that represents the xs:anyType complex type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all of the global simple and complex types in all the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCompiled">
       <MemberSignature Language="C#" Value="public bool IsCompiled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCompiled" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property is not affected if schemas are edited while in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. Updates of the individual schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> are not tracked. As a result, the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property can be true even though one of the schemas contained in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> has been altered, as long as no schemas were added or removed from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> have been compiled.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NameTable">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNameTable NameTable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNameTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default <see cref="T:System.Xml.XmlNameTable" /> used by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> when loading new XML Schema definition language (XSD) schemas.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Remove (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Remove(class System.Xml.Schema.XmlSchema schema) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -325,39 +673,80 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removing a schema from the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> sets the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified XML Schema definition language (XSD) schema from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> object removed from the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> or null if the schema was not found in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </returns>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object to remove from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveRecursive">
-      <MemberSignature Language="C#" Value="public bool RemoveRecursive (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="C#" Value="public bool RemoveRecursive (System.Xml.Schema.XmlSchema schemaToRemove);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveRecursive(class System.Xml.Schema.XmlSchema schemaToRemove) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
+        <Parameter Name="schemaToRemove" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Xml.Schema.XmlSchemaSet.RemoveRecursive" /> method removes the specified schema and all the schemas it imports from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, as long as there are no dependencies on the schema or its imported schemas. If there are dependencies on the schema or its imported schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, nothing is removed and <see cref="M:System.Xml.Schema.XmlSchemaSet.RemoveRecursive(System.Xml.Schema.XmlSchema)" /> returns false. If false is returned and a <see cref="E:System.Xml.Schema.XmlSchemaSet.ValidationEventHandler" /> is defined, a warning is sent to the event handler describing the dependencies.</para>
+          <para>If the specified schema imports other schemas and the specified schema was previously removed with the <see cref="M:System.Xml.Schema.XmlSchemaSet.Remove(System.Xml.Schema.XmlSchema)" /> method, the <see cref="M:System.Xml.Schema.XmlSchemaSet.RemoveRecursive(System.Xml.Schema.XmlSchema)" /> method will not remove the imported schemas and will return false. For example, if <paramref name="parentSchema" /> imports <paramref name="childSchema1" /> and <paramref name="childSchema2" /> the following code will only remove <paramref name="parentSchema" />, but not the imported <paramref name="childSchema1" /> and <paramref name="childSchema2 " />schemas:</para>
+          <code>XmlSchemaSet ss = new XmlSchemaSet();
+XmlSchema xs = XmlSchema.Read(XmlReader.Create("parentSchema.xsd"), null);
+ss.Add(xs);
+ss.Compile();
+ss.Remove(xs);
+ss.Compile();
+ss.RemoveRecursive(xs);
+ss.Compile();</code>
+          <para>The following code will remove the <paramref name="parentSchema" /> and the imported schemas:</para>
+          <code>XmlSchemaSet ss = new XmlSchemaSet();
+XmlSchema xs = XmlSchema.Read(XmlReader.Create("parentSchema.xsd"), null);
+ss.Add(xs);
+ss.Compile();
+ss.RemoveRecursive(xs);
+ss.Compile();</code>
+          <para>The <see cref="M:System.Xml.Schema.XmlSchemaSet.RemoveRecursive(System.Xml.Schema.XmlSchema)" /> method has no effect on the state of the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified XML Schema definition language (XSD) schema and all the schemas it imports from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.Schema.XmlSchema" /> object and all its imports were successfully removed; otherwise, false.</para>
+        </returns>
+        <param name="schemaToRemove">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object to remove from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reprocess">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Reprocess (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Reprocess(class System.Xml.Schema.XmlSchema schema) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -365,36 +754,66 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reprocessing a schema performs all the preprocessing steps performed on a schema when the <see cref="Overload:System.Xml.Schema.XmlSchemaSet.Add" /> method is called. If the call to <see cref="M:System.Xml.Schema.XmlSchemaSet.Reprocess(System.Xml.Schema.XmlSchema)" /> is successful, the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property is set to false.</para>
+          <para>The Reprocess method should be used after a schema in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> has been modified, after the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> has performed compilation.</para>
+          <block subset="none" type="note">
+            <para>You need to call the <see cref="M:System.Xml.Schema.XmlSchemaSet.Reprocess(System.Xml.Schema.XmlSchema)" /> method if you have changed a schema (or one of its includes/imports) after adding it to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. The <see cref="M:System.Xml.Schema.XmlSchemaSet.Reprocess(System.Xml.Schema.XmlSchema)" /> method will check the schema for structural validity according to the rules of W3C XML Schema. However, it will not perform a full validation check. It will also resolve references to internal and external schema components. Any imported or included schemas that are successfully retrieved are also added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. Imported schemas are added as separate <see cref="T:System.Xml.Schema.XmlSchema" /> objects while included schemas are made part of the including <see cref="T:System.Xml.Schema.XmlSchema" />. If the call to reprocess is successful, the <see cref="P:System.Xml.Schema.XmlSchemaSet.IsCompiled" /> property is set to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reprocesses an XML Schema definition language (XSD) schema that already exists in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is a valid schema. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The schema to reprocess.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Schemas">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection Schemas ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ICollection Schemas() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns schemas that were added indirectly to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> because they were imported.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Xml.Schema.XmlSchemaSet.Schemas" /> method is the equivalent of the <see cref="M:System.Xml.Schema.XmlSchemaCollection.GetEnumerator" /> method of the obsolete <see cref="T:System.Xml.Schema.XmlSchemaCollection" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of all the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> object containing all the schemas that have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. If no schemas have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, an empty <see cref="T:System.Collections.ICollection" /> object is returned.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Schemas">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection Schemas (string targetNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ICollection Schemas(string targetNamespace) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
@@ -402,46 +821,77 @@
         <Parameter Name="targetNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="targetNamespace">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="targetNamespace" /> parameter is null or <see cref="F:System.String.Empty" />, then all schemas without a namespace are returned.</para>
+          <para>This method returns schemas that were added indirectly to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> because they were imported.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Xml.Schema.XmlSchemaSet.Schemas(System.String)" /> method is the equivalent of the <see cref="P:System.Xml.Schema.XmlSchemaCollection.Item(System.String)" /> method of the obsolete <see cref="T:System.Xml.Schema.XmlSchemaCollection" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of all the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that belong to the given namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> object containing all the schemas that have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that belong to the given namespace. If no schemas have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, an empty <see cref="T:System.Collections.ICollection" /> object is returned.</para>
+        </returns>
+        <param name="targetNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ValidationEventHandler">
       <MemberSignature Language="C#" Value="public event System.Xml.Schema.ValidationEventHandler ValidationEventHandler;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.Schema.ValidationEventHandler ValidationEventHandler" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.ValidationEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an event handler for receiving information about schema validation errors when the <see cref="Overload:System.Xml.Schema.XmlSchemaSet.Add" /> or <see cref="M:System.Xml.Schema.XmlSchemaSet.Compile" /> methods of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> are called.</para>
+          <para>If an event handler is not defined, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown on any validation errors where the <see cref="T:System.Xml.Schema.XmlSeverityType" /> is <see cref="F:System.Xml.Schema.XmlSeverityType.Error" />. Exceptions are not thrown for validation errors with an <see cref="T:System.Xml.Schema.XmlSeverityType" /> of <see cref="F:System.Xml.Schema.XmlSeverityType.Warning" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an event handler for receiving information about XML Schema definition language (XSD) schema validation errors.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlResolver">
       <MemberSignature Language="C#" Value="public System.Xml.XmlResolver XmlResolver { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlResolver XmlResolver" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlResolver</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlResolver" /> of an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> is used to resolve namespaces or locations referenced in include and import elements of a schema, any time a schema is added using the <see cref="Overload:System.Xml.Schema.XmlSchemaSet.Add" /> or <see cref="M:System.Xml.Schema.XmlSchemaSet.Reprocess(System.Xml.Schema.XmlSchema)" /> methods.</para>
+          <block subset="none" type="note">
+            <para>External namespaces or locations referenced in include, import, and redefine elements of a schema are resolved with respect to the base URI of the schema that includes or imports them. For example, if the base URI of the including or importing schema is empty or null, the external locations are resolved with respect to the current directory. The <see cref="T:System.Xml.XmlUrlResolver" /> class is used to resolve external schemas by default. To disable resolution of include, import, and redefine elements of a schema, set the <see cref="P:System.Xml.Schema.XmlSchemaSet.XmlResolver" /> property to null.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Xml.XmlResolver" /> used to resolve namespaces or locations referenced in include and import elements of a schema.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

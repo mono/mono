@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PeerNodeAddress" FullName="System.ServiceModel.PeerNodeAddress">
+  <TypeSignature Language="C#" Value="public sealed class PeerNodeAddress" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit PeerNodeAddress extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.DataContract(Name="PeerNodeAddress", Namespace="http://schemas.microsoft.com/net/2006/05/peer")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.KnownType(typeof(System.Net.IPAddress[]))</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a type that contains the <see cref="T:System.ServiceModel.EndpointAddress" /> for a peer node as well as an optional collection of multihoming IP addresses.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PeerNodeAddress (System.ServiceModel.EndpointAddress endpointAddress, System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Net.IPAddress&gt; ipAddresses);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.EndpointAddress endpointAddress, class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Net.IPAddress&gt; ipAddresses) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="endpointAddress" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="ipAddresses" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Net.IPAddress&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.ServiceModel.PeerNodeAddress" /> with the supplied <see cref="T:System.ServiceModel.EndpointAddress" /> and a collection of multihoming IP addresses also configured for the local computer.</para>
+        </summary>
+        <param name="endpointAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.EndpointAddress" /> that represents the address of the peer node within the mesh. </param>
+        <param name="ipAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> that contains IP addresses configured for the local computer, and which can be used to connect to the peer node.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndpointAddress">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointAddress EndpointAddress { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointAddress EndpointAddress" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.EndpointAddress" /> associated with this <see cref="T:System.ServiceModel.PeerNodeAddress" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IPAddresses">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Net.IPAddress&gt; IPAddresses { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Net.IPAddress&gt; IPAddresses" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Net.IPAddress&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of multihoming IP addresses for this <see cref="T:System.ServiceModel.PeerNodeAddress" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

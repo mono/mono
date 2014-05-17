@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlValueGetter" FullName="System.Xml.Schema.XmlValueGetter">
   <TypeSignature Language="C#" Value="public delegate object XmlValueGetter();" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlValueGetter extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -12,9 +15,16 @@
     <ReturnType>System.Object</ReturnType>
   </ReturnValue>
   <Docs>
-    <summary>To be added.</summary>
-    <value>To be added.</value>
-    <remarks>To be added.</remarks>
+    <returns>To be added.</returns>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Xml.Schema.XmlValueGetter" /> delegate is useful if the CLR value of an attribute, text, or white space node is already available, and avoids the cost of converting it to a string and then reparsing it again for validation.</para>
+      <para>For more information about the <see cref="T:System.Xml.Schema.XmlSchemaValidator" /> class, see the <format type="text/html"><a href="911d4460-dd91-4958-85b2-2ca3299f9ec6">XmlSchemaValidator Push-Based Validation</a></format> topic, or the <see cref="T:System.Xml.Schema.XmlSchemaValidator" /> class reference documentation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A delegate used by the <see cref="T:System.Xml.Schema.XmlSchemaValidator" /> class to pass attribute, text, and white space values as a Common Language Runtime (CLR) type compatible with the XML Schema Definition Language (XSD) type of the attribute, text, or white space.</para>
+    </summary>
   </Docs>
 </Type>

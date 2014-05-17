@@ -361,8 +361,11 @@ namespace Mono.Tools.LocaleBuilder
 
 			var territory2dayofweek = new Dictionary<string, DayOfWeek> (StringComparer.OrdinalIgnoreCase);
 			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/weekData/firstDay")) {
-				DayOfWeek dow;
 
+				if (entry.Attributes ["alt"] != null)
+					continue;
+
+				DayOfWeek dow;
 				switch (entry.Attributes["day"].Value) {
 				case "mon":
 					dow = DayOfWeek.Monday;
@@ -381,8 +384,9 @@ namespace Mono.Tools.LocaleBuilder
 				}
 
 				var territories = entry.Attributes["territories"].Value.Split ();
-				foreach (var t in territories)
-					territory2dayofweek[t] = dow;
+				foreach (var t in territories) {
+					territory2dayofweek.Add (t, dow);
+				}
 			}
 
 			var territory2wr = new Dictionary<string, CalendarWeekRule> (StringComparer.OrdinalIgnoreCase);
@@ -429,11 +433,6 @@ namespace Mono.Tools.LocaleBuilder
 					ci.DateTimeFormatEntry.CalendarWeekRule = (int) rule;
 				}
 
-				string fraction_value;
-				if (currency_fractions.TryGetValue (ci.Territory, out fraction_value)) {
-					ci.NumberFormatEntry.CurrencyDecimalDigits = fraction_value;
-				}
-
 				RegionInfoEntry region = regions.Where (l => l.Name == ci.Territory).FirstOrDefault ();
 				if (region == null) {
 					region = new RegionInfoEntry () {
@@ -464,6 +463,11 @@ namespace Mono.Tools.LocaleBuilder
 					var lcdid_value = int.Parse (ci.LCID.Substring (2), NumberStyles.HexNumber);
 					Patterns.FillValues (lcdid_value, region);
 					regions.Add (region);
+				}
+
+				string fraction_value;
+				if (currency_fractions.TryGetValue (region.ISOCurrencySymbol, out fraction_value)) {
+					ci.NumberFormatEntry.CurrencyDecimalDigits = fraction_value;
 				}
 
 				ci.RegionInfoEntry = region;
@@ -558,10 +562,19 @@ namespace Mono.Tools.LocaleBuilder
 					case "en":
 						nfe.CurrencySymbol = "$";
 						break;
+					case "bs":
+						nfe.CurrencySymbol = "KM";
+						break;
 					case "es":
 					case "fr":
+					case "de":
+					case "it":
+					case "se":
 						nfe.CurrencySymbol = "€";
 						break;
+					case "hr":
+						nfe.CurrencySymbol = "kn";
+						break;				
 					case "pt":
 						nfe.CurrencySymbol = "R$";
 						break;
@@ -582,12 +595,13 @@ namespace Mono.Tools.LocaleBuilder
 						nfe.CurrencySymbol = "Din.";
 						break;
 					case "zh":
+					case "zh-Hans":
 						nfe.CurrencySymbol = "¥";
 						break;
 					case "zh-Hant":
 						nfe.CurrencySymbol = "HK$";
 						break;
-						
+
 					default:
 						var all_currencies = new List<string> ();
 						GetAllChildrenValues (ci, all_currencies, l => l.NumberFormatEntry.CurrencySymbol);
@@ -603,7 +617,7 @@ namespace Mono.Tools.LocaleBuilder
 						} else {
 							// .NET has weird concept of territory data available for neutral cultures (e.g. en, es, pt)
 							// We have to manually disambiguate the correct entry (which is artofficial anyway)
-							throw new ApplicationException (string.Format ("Ambiguous currency data for `{0}'", ci.Name));
+							throw new ApplicationException (string.Format ("Ambiguous currency data for `{0}'. Possible values '{1}'", ci.Name, string.Join (", ", children)));
 						}
 
 						break;
@@ -621,6 +635,8 @@ namespace Mono.Tools.LocaleBuilder
 						if (!ci.HasMissingLocale)
 							Console.WriteLine ("No currency decimal digits data for `{0}'", ci.Name);
 
+						nfe.CurrencyDecimalDigits = "2";
+					} else if (ci.IsNeutral) {
 						nfe.CurrencyDecimalDigits = "2";
 					} else {
 						// .NET has weird concept of territory data available for neutral cultures (e.g. en, es, pt)
@@ -991,10 +1007,14 @@ namespace Mono.Tools.LocaleBuilder
 				ProcessAllNodes (nodes, df.MonthNames, AddOrReplaceValue);
 
 				// Apply global rule first <alias source="locale" path="../../monthContext[@type='format']/monthWidth[@type='abbreviated']"/>
-				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='abbreviated']/month");
-				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
-				nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='abbreviated']/month");
-				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+				if (ci.Name == "ja" || ci.Name == "ja-JP") {
+					// Use common number style
+				} else {
+					nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='abbreviated']/month");
+					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+					nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='abbreviated']/month");
+					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+				}
 
 				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='wide']/month");
 				if (nodes != null) {
@@ -1053,17 +1073,30 @@ namespace Mono.Tools.LocaleBuilder
 					// Apply global rule first <alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 					el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='wide']/dayPeriod[@type='am']");
 
-				if (el != null)
-					df.AMDesignator = el.InnerText;
+				switch (ci.Name) {
+				case "en-AU":
+					df.AMDesignator = "AM";
+					break;
+				default:
+					if (el != null)
+						df.AMDesignator = el.InnerText;
+					break;
+				}
 
 				el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='abbreviated']/dayPeriod[@type='pm']");
 				if (el == null)
 					// Apply global rule first <alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 					el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='wide']/dayPeriod[@type='pm']");
 
-				// No data
-				if (el != null)
-					df.PMDesignator = el.InnerText;
+				switch (ci.Name) {
+				case "en-AU":
+					df.PMDesignator = "PM";
+					break;
+				default:
+					if (el != null)
+						df.PMDesignator = el.InnerText;
+					break;
+				}
 			}
 
 			var ni = ci.NumberFormatEntry;
@@ -1073,8 +1106,7 @@ namespace Mono.Tools.LocaleBuilder
 				el = node.SelectSingleNode ("decimal");
 				if (el != null) {
 					ni.NumberDecimalSeparator =
-					ni.PercentDecimalSeparator =
-					ni.CurrencyDecimalSeparator = el.InnerText;
+					ni.PercentDecimalSeparator = el.InnerText;
 				}
 
 				el = node.SelectSingleNode ("plusSign");
@@ -1085,9 +1117,12 @@ namespace Mono.Tools.LocaleBuilder
 				if (el != null) {
 					// CLDR uses unicode negative sign for some culture (e.g sv, is, lt, don't kwnow why) but .net always
 					// uses simple - sign
-					if (el.InnerText == "\u2212")
+					if (el.InnerText == "\u2212") {
 						ni.NegativeSign = "-";
-					else
+					} else if (el.InnerText ==  "\u200F\u002D") {
+						// Remove any right-to-left mark characters
+						ni.NegativeSign = "-";
+					} else
 						ni.NegativeSign = el.InnerText;					
 				}
 
@@ -1115,12 +1150,31 @@ namespace Mono.Tools.LocaleBuilder
 				if (el != null)
 					ni.PercentSymbol = el.InnerText;
 
-				el = node.SelectSingleNode ("group");
-				if (el != null) {
-					ni.NumberGroupSeparator =
-					ni.PercentGroupSeparator =
-					ni.CurrencyGroupSeparator = el.InnerText;
+			}
+
+			string value = null;
+
+			// .net has incorrect separators for some countries and we want to be compatible
+			switch (ci.Name) {
+			case "es-ES":
+				// es-ES does not have group separator but .net has '.'
+				value = ".";
+				break;
+			default:
+				if (node != null) {
+					el = node.SelectSingleNode ("group");
+					if (el != null) {
+						value = el.InnerText;
+					}
 				}
+
+				break;
+			}
+					
+			if (value != null) {
+				ni.NumberGroupSeparator =
+				ni.PercentGroupSeparator =
+				ni.CurrencyGroupSeparator = value;
 			}
 		}
 

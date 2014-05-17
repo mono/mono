@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5A185DDB-82E9-4241-8216-82988647755A}</ProjectGuid>
+    <ProjectGuid>{7203476D-4107-4C91-9930-DEC5CCFE62C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\System.IdentityModel.Selectors-net_2_0</OutputPath>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -70,33 +70,36 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Security\System.Security-net_2_0.csproj">
-      <Project>{1A468E0B-8690-4595-BBD7-D9A5002DFF26}</Project>
+      <Project>{879EA17D-67A5-44ED-B912-1BE4883356FE}</Project>
       <Name>System.Security\System.Security-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_2_0.csproj">
-      <Project>{FBE202BB-4389-49E8-A81F-155E92BF1B0B}</Project>
+      <Project>{01BE23DB-E426-45E7-B56C-CA1175232AA7}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_2_0.csproj">
-      <Project>{FB6EBCB1-9EAF-4671-A9CB-505DC2FEC8A0}</Project>
+      <Project>{737EBB38-BBFD-40D8-99F1-1FBBD49AF1B6}</Project>
       <Name>System.IdentityModel\System.IdentityModel-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -104,3 +107,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Runtime.ExceptionServices">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.ExceptionServices" /> namespace provides classes for advanced exception handling.</para>
+    </summary>
+  </Docs>
+</Namespace>

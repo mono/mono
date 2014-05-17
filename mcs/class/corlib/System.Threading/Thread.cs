@@ -43,7 +43,7 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading {
 	[StructLayout (LayoutKind.Sequential)]
-	internal class InternalThread : CriticalFinalizerObject {
+	sealed class InternalThread : CriticalFinalizerObject {
 #pragma warning disable 169, 414, 649
 		#region Sync with metadata/object-internals.h
 		int lock_thread_id;
@@ -137,6 +137,8 @@ namespace System.Threading {
 
 		IPrincipal principal;
 		int principal_version;
+		bool current_culture_set;
+		bool current_ui_culture_set;
 		CultureInfo current_culture;
 		CultureInfo current_ui_culture;
 
@@ -155,6 +157,9 @@ namespace System.Threading {
 		static ExecutionContext _ec;
 
 		static NamedDataSlot namedDataSlot;		
+
+		static internal CultureInfo default_culture;
+		static internal CultureInfo default_ui_culture;
 
 		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
@@ -470,11 +475,13 @@ namespace System.Threading {
 		public CultureInfo CurrentCulture {
 			get {
 				CultureInfo culture = current_culture;
-				if (culture != null)
+				if (current_culture_set && culture != null)
 					return culture;
 
+				if (default_culture != null)
+					return default_culture;
+
 				current_culture = culture = CultureInfo.ConstructCurrentCulture ();
-				NumberFormatter.SetThreadCurrentCulture (culture);
 				return culture;
 			}
 			
@@ -485,15 +492,18 @@ namespace System.Threading {
 
 				value.CheckNeutral ();
 				current_culture = value;
-				NumberFormatter.SetThreadCurrentCulture (value);
+				current_culture_set = true;
 			}
 		}
 
 		public CultureInfo CurrentUICulture {
 			get {
 				CultureInfo culture = current_ui_culture;
-				if (culture != null)
+				if (current_ui_culture_set && culture != null)
 					return culture;
+
+				if (default_ui_culture != null)
+					return default_ui_culture;
 
 				current_ui_culture = culture = CultureInfo.ConstructCurrentUICulture ();
 				return culture;
@@ -503,6 +513,7 @@ namespace System.Threading {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				current_ui_culture = value;
+				current_ui_culture_set = true;
 			}
 		}
 
@@ -685,8 +696,7 @@ namespace System.Threading {
 
 		public void Start() {
 			// propagate informations from the original thread to the new thread
-			if (!ExecutionContext.IsFlowSuppressed ())
-				ec_to_set = ExecutionContext.Capture ();
+			ec_to_set = ExecutionContext.Capture (false, true);
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
@@ -801,6 +811,8 @@ namespace System.Threading {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern public static void VolatileWrite (ref UIntPtr address, UIntPtr value);
 		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static int SystemMaxStackStize ();
 
 		static int CheckStackSize (int maxStackSize)
 		{
@@ -815,12 +827,8 @@ namespace System.Threading {
 			if ((maxStackSize % page_size) != 0) // round up to a divisible of page size
 				maxStackSize = (maxStackSize / (page_size - 1)) * page_size;
 
-			int default_stack_size = (IntPtr.Size / 4) * 1024 * 1024; // from wthreads.c
-
-			if (maxStackSize > default_stack_size)
-				return default_stack_size;
-
-			return maxStackSize; 
+			/* Respect the max stack size imposed by the system*/
+			return Math.Min (maxStackSize, SystemMaxStackStize ());
 		}
 
 		public Thread (ThreadStart start, int maxStackSize)
@@ -849,13 +857,15 @@ namespace System.Threading {
 			Internal.stack_size = CheckStackSize (maxStackSize);
 		}
 
-		[MonoTODO ("limited to CompressedStack support")]
 		public ExecutionContext ExecutionContext {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
 				if (_ec == null)
 					_ec = new ExecutionContext ();
 				return _ec;
+			}
+			internal set {
+				_ec = value;
 			}
 		}
 

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AutoResetEvent" FullName="System.Threading.AutoResetEvent">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AutoResetEvent : System.Threading.EventWaitHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AutoResetEvent extends System.Threading.EventWaitHandle" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,29 +15,58 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>AutoResetEvent allows threads to communicate with each other by signaling. Typically, you use this class when threads need exclusive access to a resource.</para>
+      <para>A thread waits for a signal by calling <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> on the AutoResetEvent. If the AutoResetEvent is in the non-signaled state, the thread blocks, waiting for the thread that currently controls the resource to signal that the resource is available by calling <see cref="M:System.Threading.EventWaitHandle.Set" />.</para>
+      <para>Calling Set signals AutoResetEvent to release a waiting thread. AutoResetEvent remains signaled until a single waiting thread is released, and then automatically returns to the non-signaled state. If no threads are waiting, the state remains signaled indefinitely.</para>
+      <para>If a thread calls <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> while the <see cref="T:System.Threading.AutoResetEvent" /> is in the signaled state, the thread does not block. The <see cref="T:System.Threading.AutoResetEvent" /> releases the thread immediately and returns to the non-signaled state.</para>
+      <block subset="none" type="note">
+        <para>There is no guarantee that every call to the <see cref="M:System.Threading.EventWaitHandle.Set" /> method will release a thread. If two calls are too close together, so that the second call occurs before a thread has been released, only one thread is released. It is as if the second call did not happen. Also, if <see cref="M:System.Threading.EventWaitHandle.Set" /> is called when there are no threads waiting and the <see cref="T:System.Threading.AutoResetEvent" /> is already signaled, the call has no effect. </para>
+      </block>
+      <para>You can control the initial state of an AutoResetEvent by passing a Boolean value to the constructor: true if the initial state is signaled and false otherwise.</para>
+      <para>AutoResetEvent can also be used with the static <see cref="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.Int32,System.Boolean)" /> and <see cref="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.Int32,System.Boolean)" /> methods.</para>
+      <para>For more information about thread synchronization mechanisms, see <format type="text/html"><a href="6d39c48d-6b37-4a9b-8631-f2924cfd9c18">AutoResetEvent</a></format> in the conceptual documentation.</para>
+      <para>Beginning with the .NET Framework version 2.0, <see cref="T:System.Threading.AutoResetEvent" /> derives from the new <see cref="T:System.Threading.EventWaitHandle" /> class. An <see cref="T:System.Threading.AutoResetEvent" /> is functionally equivalent to an <see cref="T:System.Threading.EventWaitHandle" /> created with <see cref="F:System.Threading.EventResetMode.AutoReset" />. </para>
+      <block subset="none" type="note">
+        <para>Unlike the <see cref="T:System.Threading.AutoResetEvent" /> class, the <see cref="T:System.Threading.EventWaitHandle" /> class provides access to named system synchronization events.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Notifies a waiting thread that an event has occurred. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AutoResetEvent (bool initialState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="initialState" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="initialState">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="initialState" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.AutoResetEvent" /> class with a Boolean value indicating whether to set the initial state to signaled.</para>
+        </summary>
+        <param name="initialState">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to set the initial state to signaled; false to set the initial state to non-signaled. </param>
+      </Docs>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public bool Reset ();" />
@@ -45,9 +76,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the dnprdnext and the compact_v35_long, this member is inherited from <see cref="T:System.Threading.EventWaitHandle" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the state of the event to nonsignaled, which causes threads to block.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation succeeds; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,18 +103,28 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the dnprdnext and the compact_v35_long, this member is inherited from <see cref="T:System.Threading.EventWaitHandle" />. See <see cref="M:System.Threading.EventWaitHandle.Set" />.</para>
+          </block>
+          <para>The <see cref="M:System.Threading.AutoResetEvent.Set" /> method releases a single thread. If there are no waiting threads, the wait handle remains signaled until a thread attempts to wait on it, or until its <see cref="M:System.Threading.EventWaitHandle.Reset" /> method is called.</para>
+          <block subset="none" type="note">
+            <para>There is no guarantee that every call to the <see cref="M:System.Threading.AutoResetEvent.Set" /> method will release a thread. If two calls are too close together, so that the second call occurs before a thread has been released, only one thread is released — as if the second call did not happen. Also, if the <see cref="M:System.Threading.AutoResetEvent.Set" /> method is called when there are no threads waiting and the <see cref="T:System.Threading.AutoResetEvent" /> is already signaled, the call has no effect. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the state of the event to signaled, which allows at most one waiting thread to proceed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation succeeds; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

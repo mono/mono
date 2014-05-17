@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TaskContinuationOptions" FullName="System.Threading.Tasks.TaskContinuationOptions">
   <TypeSignature Language="C#" Value="public enum TaskContinuationOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TaskContinuationOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -13,12 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the behavior for a task that is created by using the <see cref="M:System.Threading.Tasks.Task.ContinueWith(System.Action{System.Threading.Tasks.Task},System.Threading.CancellationToken,System.Threading.Tasks.TaskContinuationOptions,System.Threading.Tasks.TaskScheduler)" /> or <see cref="M:System.Threading.Tasks.Task`1.ContinueWith(System.Action{System.Threading.Tasks.Task{`0}},System.Threading.Tasks.TaskContinuationOptions)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AttachedToParent">
       <MemberSignature Language="C#" Value="AttachedToParent" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions AttachedToParent = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,11 +33,32 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a task is attached to a parent in the task hierarchy.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DenyChildAttach">
+      <MemberSignature Language="C#" Value="DenyChildAttach" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions DenyChildAttach = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that an <see cref="T:System.InvalidOperationException" /> will be thrown if an attempt is made to attach a child task to the created task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExecuteSynchronously">
       <MemberSignature Language="C#" Value="ExecuteSynchronously" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions ExecuteSynchronously = int32(524288)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -40,11 +67,49 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the continuation task should be executed synchronously. With this option specified, the continuation will be run on the same thread that causes the antecedent task to transition into its final state. If the antecedent is already complete when the continuation is created, the continuation will run on the thread creating the continuation. Only very short-running continuations should be executed synchronously.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HideScheduler">
+      <MemberSignature Language="C#" Value="HideScheduler" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions HideScheduler = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prevents the ambient scheduler from being seen as the current scheduler in the created task. This means that operations like StartNew or ContinueWith that are performed in the created task will see <see cref="P:System.Threading.Tasks.TaskScheduler.Default" /> as the current scheduler.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LazyCancellation">
+      <MemberSignature Language="C#" Value="LazyCancellation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions LazyCancellation = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the case of continuation cancellation, prevents completion of the continuation until the antecedent has completed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LongRunning">
       <MemberSignature Language="C#" Value="LongRunning" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions LongRunning = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -53,11 +118,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a task will be a long-running, course-grained operation. It provides a hint to the <see cref="T:System.Threading.Tasks.TaskScheduler" /> that oversubscription may be warranted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,11 +135,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Default = "Continue on any, no task options, run asynchronously" Specifies that the default behavior should be used. Continuations, by default, will be scheduled when the antecedent task completes, regardless of the task's final <see cref="T:System.Threading.Tasks.TaskStatus" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotOnCanceled">
       <MemberSignature Language="C#" Value="NotOnCanceled" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions NotOnCanceled = int32(262144)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -79,11 +152,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the continuation task should not be scheduled if its antecedent was canceled. This option is not valid for multi-task continuations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotOnFaulted">
       <MemberSignature Language="C#" Value="NotOnFaulted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions NotOnFaulted = int32(131072)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -92,11 +169,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the continuation task should not be scheduled if its antecedent threw an unhandled exception. This option is not valid for multi-task continuations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotOnRanToCompletion">
       <MemberSignature Language="C#" Value="NotOnRanToCompletion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions NotOnRanToCompletion = int32(65536)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -105,11 +186,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the continuation task should not be scheduled if its antecedent ran to completion. This option is not valid for multi-task continuations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnlyOnCanceled">
       <MemberSignature Language="C#" Value="OnlyOnCanceled" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions OnlyOnCanceled = int32(196608)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -118,11 +203,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the continuation task should be scheduled only if its antecedent was canceled.  This option is not valid for multi-task continuations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnlyOnFaulted">
       <MemberSignature Language="C#" Value="OnlyOnFaulted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions OnlyOnFaulted = int32(327680)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -131,11 +220,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the continuation task should be scheduled only if its antecedent threw an unhandled exception. This option is not valid for multi-task continuations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnlyOnRanToCompletion">
       <MemberSignature Language="C#" Value="OnlyOnRanToCompletion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions OnlyOnRanToCompletion = int32(393216)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -144,11 +237,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the continuation task should be scheduled only if its antecedent ran to completion. This option is not valid for multi-task continuations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreferFairness">
       <MemberSignature Language="C#" Value="PreferFairness" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskContinuationOptions PreferFairness = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -157,7 +254,10 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hint to a <see cref="T:System.Threading.Tasks.TaskScheduler" /> to schedule a task in as fair a manner as possible, meaning that tasks scheduled sooner will be more likely to be run sooner, and tasks scheduled later will be more likely to be run later.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

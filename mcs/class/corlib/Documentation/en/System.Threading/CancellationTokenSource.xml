@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CancellationTokenSource" FullName="System.Threading.CancellationTokenSource">
-  <TypeSignature Language="C#" Value="public sealed class CancellationTokenSource : IDisposable" />
+  <TypeSignature Language="C#" Value="public class CancellationTokenSource : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi CancellationTokenSource extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -13,24 +15,83 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, see <format type="text/html"><a href="eea11fe5-d8b0-4314-bb5d-8a58166fb1c3">Cancellation</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Signals to a <see cref="T:System.Threading.CancellationToken" /> that it should be canceled.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CancellationTokenSource ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.CancellationTokenSource" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CancellationTokenSource (int millisecondsDelay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 millisecondsDelay) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="millisecondsDelay" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The countdown for the <paramref name="millisecondsDelay" /> starts during the call to the constructor.  When the <paramref name="millisecondsDelay" /> expires, the constructed <see cref="T:System.Threading.CancellationTokenSource" /> is canceled (if it has not been canceled already).</para>
+          <para>Subsequent calls to <see cref="M:System.Threading.CancellationTokenSource.CancelAfter(System.Int32)" /> will reset the <paramref name="millisecondsDelay" /> for the constructed <see cref="T:System.Threading.CancellationTokenSource" />, if it has not been canceled already.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.CancellationTokenSource" /> class that will be canceled after the specified delay in milliseconds.</para>
+        </summary>
+        <param name="millisecondsDelay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time span to wait before canceling this <see cref="T:System.Threading.CancellationTokenSource" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CancellationTokenSource (TimeSpan delay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.TimeSpan delay) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="delay" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The countdown for the delay starts during the call to the constructor. When the delay expires, the constructed <see cref="T:System.Threading.CancellationTokenSource" /> is canceled, if it has not been canceled already.</para>
+          <para>Subsequent calls to <see cref="M:System.Threading.CancellationTokenSource.CancelAfter(System.TimeSpan)" /> will reset the delay for the constructed <see cref="T:System.Threading.CancellationTokenSource" />, if it has not been canceled already.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.CancellationTokenSource" /> class that will be canceled after the specified time span.</para>
+        </summary>
+        <param name="delay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time span to wait before canceling this <see cref="T:System.Threading.CancellationTokenSource" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Cancel">
       <MemberSignature Language="C#" Value="public void Cancel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Cancel() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -40,12 +101,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The associated <see cref="T:System.Threading.CancellationToken" /> will be notified of the cancellation and will transition to a state where <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> returns true. </para>
+          <para>Any callbacks or cancelable operations registered with the <see cref="T:System.Threading.CancellationToken" /> will be executed.</para>
+          <para>Cancelable operations and callbacks registered with the token should not throw exceptions.</para>
+          <para>However, this overload of Cancel will aggregate any exceptions thrown into an <see cref="T:System.AggregateException" />, such that one callback throwing an exception will not prevent other registered callbacks from being executed.</para>
+          <para>The <see cref="T:System.Threading.ExecutionContext" /> that was captured when each callback was registered will be reestablished when the callback is invoked.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Communicates a request for cancellation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cancel">
-      <MemberSignature Language="C#" Value="public void Cancel (bool throwOnFirst);" />
+      <MemberSignature Language="C#" Value="public void Cancel (bool throwOnFirstException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Cancel(bool throwOnFirstException) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -54,16 +127,80 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="throwOnFirst" Type="System.Boolean" />
+        <Parameter Name="throwOnFirstException" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="throwOnFirst">To be added.</param>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The associated <see cref="T:System.Threading.CancellationToken" /> will be notified of the cancellation and will transition to a state where <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> returns true. </para>
+          <para>Any callbacks or cancelable operations registered with the <see cref="T:System.Threading.CancellationToken" /> will be executed.</para>
+          <para>Cancelable operations and callbacks registered with the token should not throw exceptions. </para>
+          <para>If <paramref name="throwOnFirstException" /> is true, an exception will immediately propagate out of the call to <see cref="M:System.Threading.CancellationTokenSource.Cancel(System.Boolean)" />, preventing the remaining callbacks and cancelable operations from being processed.</para>
+          <para> If <paramref name="throwOnFirstException" /> is false, this overload will aggregate any exceptions thrown into an <see cref="T:System.AggregateException" />, such that one callback throwing an exception will not prevent other registered callbacks from being executed.</para>
+          <para>The <see cref="T:System.Threading.ExecutionContext" /> that was captured when each callback was registered will be reestablished when the callback is invoked.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Communicates a request for cancellation, and specifies whether remaining callbacks and cancelable operations should be processed.</para>
+        </summary>
+        <param name="throwOnFirstException">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if exceptions should immediately propagate; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CancelAfter">
+      <MemberSignature Language="C#" Value="public void CancelAfter (int millisecondsDelay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CancelAfter(int32 millisecondsDelay) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsDelay" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The countdown for the <paramref name="millisecondsDelay" /> starts during this call. When the <paramref name="millisecondsDelay" /> expires, this <see cref="T:System.Threading.CancellationTokenSource" /> is canceled, if it has not been canceled already.</para>
+          <para>Subsequent calls to CancelAfter will reset the <paramref name="millisecondsDelay" /> for this <see cref="T:System.Threading.CancellationTokenSource" />, if it has not been canceled already.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Schedules a cancel operation on this <see cref="T:System.Threading.CancellationTokenSource" /> after the specified number of milliseconds.</para>
+        </summary>
+        <param name="millisecondsDelay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time span to wait before canceling this <see cref="T:System.Threading.CancellationTokenSource" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CancelAfter">
+      <MemberSignature Language="C#" Value="public void CancelAfter (TimeSpan delay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CancelAfter(valuetype System.TimeSpan delay) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="delay" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Schedules a cancel operation on this <see cref="T:System.Threading.CancellationTokenSource" /> after the specified time span.</para>
+        </summary>
+        <param name="delay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time span to wait before canceling this <see cref="T:System.Threading.CancellationTokenSource" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateLinkedTokenSource">
       <MemberSignature Language="C#" Value="public static System.Threading.CancellationTokenSource CreateLinkedTokenSource (System.Threading.CancellationToken[] tokens);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.CancellationTokenSource CreateLinkedTokenSource(valuetype System.Threading.CancellationToken[] tokens) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -81,14 +218,22 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="tokens">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.CancellationTokenSource" /> that will be in the canceled state when any of the source tokens in the specified array are in the canceled state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CancellationTokenSource" /> that is linked to the source tokens.</para>
+        </returns>
+        <param name="tokens">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the cancellation token instances to observe.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateLinkedTokenSource">
       <MemberSignature Language="C#" Value="public static System.Threading.CancellationTokenSource CreateLinkedTokenSource (System.Threading.CancellationToken token1, System.Threading.CancellationToken token2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.CancellationTokenSource CreateLinkedTokenSource(valuetype System.Threading.CancellationToken token1, valuetype System.Threading.CancellationToken token2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -101,15 +246,24 @@
         <Parameter Name="token2" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token1">To be added.</param>
-        <param name="token2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.CancellationTokenSource" /> that will be in the canceled state when any of the source tokens are in the canceled state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CancellationTokenSource" /> that is linked to the source tokens.</para>
+        </returns>
+        <param name="token1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first cancellation token to observe.</param>
+        <param name="token2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second cancellation token to observe.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -119,12 +273,46 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Threading.CancellationTokenSource" />. The Dispose method leaves the <see cref="T:System.Threading.CancellationTokenSource" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Threading.CancellationTokenSource" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Threading.CancellationTokenSource" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Threading.CancellationTokenSource" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Threading.CancellationTokenSource" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Threading.CancellationTokenSource" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Threading.CancellationTokenSource" /> class and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="IsCancellationRequested">
       <MemberSignature Language="C#" Value="public bool IsCancellationRequested { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCancellationRequested" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -133,13 +321,22 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> This property indicates whether cancellation has been requested for this token source, such as due to a call to its <see cref="M:System.Threading.CancellationTokenSource.Cancel" /> method.</para>
+          <para>  If this property returns true, it only guarantees that cancellation has been requested. It does not guarantee that every handler registered with the corresponding token has finished executing, nor that cancellation requests have finished propagating to all registered handlers. Additional synchronization may be required, particularly in situations where related objects are being canceled concurrently.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether cancellation has been requested for this <see cref="T:System.Threading.CancellationTokenSource" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Token">
       <MemberSignature Language="C#" Value="public System.Threading.CancellationToken Token { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.CancellationToken Token" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -148,9 +345,12 @@
         <ReturnType>System.Threading.CancellationToken</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.CancellationToken" /> associated with this <see cref="T:System.Threading.CancellationTokenSource" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

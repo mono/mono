@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SpinWait" FullName="System.Threading.SpinWait">
   <TypeSignature Language="C#" Value="public struct SpinWait" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit SpinWait extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,22 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Threading.SpinWait" /> encapsulates common spinning logic. On single-processor machines, yields are always used instead of busy waits, and on computers with Intel processors employing Hyper-Threading technology, it helps to prevent hardware thread starvation. SpinWait encapsulates a good mixture of spinning and true yielding. </para>
+      <para>
+        <see cref="T:System.Threading.SpinWait" /> is a value type, which means that low-level code can utilize SpinWait without fear of unnecessary allocation overheads. SpinWait is not generally useful for ordinary applications. In most cases, you should use the synchronization classes provided by the .NET Framework, such as <see cref="T:System.Threading.Monitor" />. For most purposes where spin waiting is required, however, the <see cref="T:System.Threading.SpinWait" /> type should be preferred over the <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> method. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for spin-based waiting.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -23,13 +35,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of times <see cref="M:System.Threading.SpinWait.SpinOnce" /> has been called on this instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NextSpinWillYield">
       <MemberSignature Language="C#" Value="public bool NextSpinWillYield { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool NextSpinWillYield" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -38,13 +54,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On a single-CPU machine, <see cref="M:System.Threading.SpinWait.SpinOnce" /> always yields the processor. On machines with multiple CPUs, <see cref="M:System.Threading.SpinWait.SpinOnce" /> may yield after an unspecified number of calls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the next call to <see cref="M:System.Threading.SpinWait.SpinOnce" /> will yield the processor, triggering a forced context switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -54,12 +77,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This makes <see cref="M:System.Threading.SpinWait.SpinOnce" /> and <see cref="P:System.Threading.SpinWait.NextSpinWillYield" /> behave as though no calls to <see cref="M:System.Threading.SpinWait.SpinOnce" /> had been issued on this instance. If a <see cref="T:System.Threading.SpinWait" /> instance is reused many times, it may be useful to reset it to avoid yielding too soon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the spin counter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpinOnce">
       <MemberSignature Language="C#" Value="public void SpinOnce ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SpinOnce() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -69,12 +99,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is typically called in a loop, and may change in behavior based on the number of times a <see cref="M:System.Threading.SpinWait.SpinOnce" /> has been called thus far on this instance. Each spin results in the <see cref="M:System.Threading.Thread.SpinWait(System.Int32)" /> method being called. A count is kept of the number of times <see cref="M:System.Threading.SpinWait.SpinOnce" /> is called, and after a threshold count is reached, the <see cref="M:System.Threading.Thread.Yield" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a single spin.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpinUntil">
-      <MemberSignature Language="C#" Value="public static void SpinUntil (Func&lt;bool&gt; predicate);" />
+      <MemberSignature Language="C#" Value="public static void SpinUntil (Func&lt;bool&gt; condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SpinUntil(class System.Func`1&lt;bool&gt; condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -83,16 +120,21 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="predicate" Type="System.Func&lt;System.Boolean&gt;" />
+        <Parameter Name="condition" Type="System.Func&lt;System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <param name="predicate">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Spins until the specified condition is satisfied.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate to be executed over and over until it returns true.</param>
       </Docs>
     </Member>
     <Member MemberName="SpinUntil">
-      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; predicate, int milliseconds);" />
+      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; condition, int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SpinUntil(class System.Func`1&lt;bool&gt; condition, int32 millisecondsTimeout) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -101,19 +143,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="predicate" Type="System.Func&lt;System.Boolean&gt;" />
-        <Parameter Name="milliseconds" Type="System.Int32" />
+        <Parameter Name="condition" Type="System.Func&lt;System.Boolean&gt;" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="predicate">To be added.</param>
-        <param name="milliseconds">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Spins until the specified condition is satisfied or until the specified timeout is expired.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the condition is satisfied within the timeout; otherwise, false</para>
+        </returns>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate to be executed over and over until it returns true.</param>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" /> (-1) to wait indefinitely.</param>
       </Docs>
     </Member>
     <Member MemberName="SpinUntil">
-      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; predicate, TimeSpan ts);" />
+      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; condition, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SpinUntil(class System.Func`1&lt;bool&gt; condition, valuetype System.TimeSpan timeout) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -122,15 +173,23 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="predicate" Type="System.Func&lt;System.Boolean&gt;" />
-        <Parameter Name="ts" Type="System.TimeSpan" />
+        <Parameter Name="condition" Type="System.Func&lt;System.Boolean&gt;" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="predicate">To be added.</param>
-        <param name="ts">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Spins until the specified condition is satisfied or until the specified timeout is expired.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the condition is satisfied within the timeout; otherwise, false</para>
+        </returns>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate to be executed over and over until it returns true.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a TimeSpan that represents -1 milliseconds to wait indefinitely.</param>
       </Docs>
     </Member>
   </Members>

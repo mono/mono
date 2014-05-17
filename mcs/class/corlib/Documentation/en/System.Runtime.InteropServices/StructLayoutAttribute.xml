@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StructLayoutAttribute" FullName="System.Runtime.InteropServices.StructLayoutAttribute" FullNameSP="System_Runtime_InteropServices_StructLayoutAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed StructLayoutAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class StructLayoutAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit StructLayoutAttribute extends System.Attribute" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,29 +25,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>The <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />
-allows the user to control the physical layout
-of the data members of a class or structure.</para>
-    </summary>
-    <remarks>
-      <para> The target objects for this attribute are classes and structures. By default, the physical layout of the data members of a target object is automatically arranged.
-      When managed objects are passed as arguments to unmanaged code,
-      the system creates their unmanaged representations. These unmanaged representations can
-      be controlled with the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> .
-      Such control is necessary if the unmanaged code expects a specific layout, packing
-      size, or character set.</para>
-      <para>
-        <block subset="none" type="note">See the <see cref="T:System.Runtime.InteropServices.LayoutKind" />
-enumeration for a description of the possible layout schemes, and the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> for further information on the layout of exported objects.</block>
-      </para>
-      <para>Compilers are required to not preserve this type
-   in metadata as a custom attribute. Instead, compilers are required to emit it
-   directly in the file format, as described in Partition II of the CLI
-   Specification. Metadata consumers, such as the Reflection API, are required to
-   retrieve this data from the file format and return it as if it were a custom
-   attribute. </para>
-    </remarks>
     <example>
       <para>The following example demonstrates the use of the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />, and the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" />.</para>
       <para>
@@ -121,175 +100,238 @@ public class StructLayoutTest {
         <para>The second point is outside the rectangle.</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to classes or structures.</para>
+      <para>The common language runtime controls the physical layout of the data fields of a class or structure in managed memory. However, if you want to pass the type to unmanaged code, you can use the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> attribute to control the unmanaged layout of the type. Use the attribute with <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> to force the members to be laid out sequentially in the order they appear. For <format type="text/html"><a href="d03b050e-2916-49a0-99ba-f19316e5c1b3">blittable types</a></format>, <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> controls both the layout in managed memory and the layout in unmanaged memory. For non-blittable types, it controls the layout when the class or structure is marshaled to unmanaged code, but does not control the layout in managed memory.  Use the attribute with <see cref="F:System.Runtime.InteropServices.LayoutKind.Explicit" /> to control the precise position of each data member. This affects both managed and unmanaged layout, for both blittable and non-blittable types. Using <see cref="F:System.Runtime.InteropServices.LayoutKind.Explicit" /> requires that you use the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> attribute to indicate the position of each field within the type.</para>
+      <para>C#, Visual Basic, and C++ compilers apply the <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> layout value to structures by default. For classes, you must apply the <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> value explicitly. The <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrfTypeLibraryImporterTlbimpexe&gt;]</a></format> also applies the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> attribute; it always applies the <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> value when it imports a type library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Lets you control the physical layout of the data fields of a class or structure.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int16 layoutKind)" />
       <MemberSignature Language="C#" Value="public StructLayoutAttribute (short layoutKind);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int16 layoutKind) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="layoutKind" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="layoutKind">A <see cref="T:System.Int16" /> set to a <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how the class or structure is arranged in memory.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the 
-   <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class 
-      with the specified value.</para>
-        </summary>
         <remarks>
-          <para>If the <paramref name="layoutKind" />
-parameter does not represent a valid <see cref="T:System.Runtime.InteropServices.LayoutKind" />
-value, a
-runtime error occurs.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor takes an underlying 16-bit integer that represents each <see cref="T:System.Runtime.InteropServices.LayoutKind" /> enumeration member. The <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrfTypeLibraryImporterTlbimpexe&gt;]</a></format> uses this constructor.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initalizes a new instance of the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class with the specified <see cref="T:System.Runtime.InteropServices.LayoutKind" /> enumeration member.</para>
+        </summary>
+        <param name="layoutKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 16-bit integer that represents one of the <see cref="T:System.Runtime.InteropServices.LayoutKind" /> values that specifes how the class or structure should be arranged. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Runtime.InteropServices.LayoutKind layoutKind)" />
+      <MemberSignature Language="C#" Value="public StructLayoutAttribute (System.Runtime.InteropServices.LayoutKind layoutKind);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.InteropServices.LayoutKind layoutKind) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Runtime.InteropServices.LayoutKind layoutKind)" />
-      <MemberSignature Language="C#" Value="public StructLayoutAttribute (System.Runtime.InteropServices.LayoutKind layoutKind);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="layoutKind" Type="System.Runtime.InteropServices.LayoutKind" />
       </Parameters>
       <Docs>
-        <param name="layoutKind">A <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how the class or structure is arranged in memory.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class
-   with the specified <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value.</para>
-        </summary>
         <remarks>
-          <para> If <paramref name="layoutKind" /> contains an invalid
-<see cref="T:System.Runtime.InteropServices.LayoutKind" /> value, 
-   a runtime error occurs.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For readable code that is less prone to error, always use this constructor.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initalizes a new instance of the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class with the specified <see cref="T:System.Runtime.InteropServices.LayoutKind" /> enumeration member.</para>
+        </summary>
+        <param name="layoutKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifes how the class or structure should be arranged. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CharSet">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CharSet">
-      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>A <see cref="T:System.Runtime.InteropServices.CharSet" /> value that indicates the character set in which strings of an object are
-   marshaled.</para>
-        </summary>
         <remarks>
-          <para>
-            <block subset="none" type="note">See the <see cref="T:System.Runtime.InteropServices.CharSet" />
-enumeration for a description of different character sets.</block>
-          </para>
-          <para>The default value of this field is
-<see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the CharSet field is set to <see cref="F:System.Runtime.InteropServices.CharSet.Unicode" />, all string arguments are converted to Unicode characters (LPWSTR) before they are passed to the unmanaged implementation. If the field is set to <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />, the strings are converted to ANSI strings (LPSTR). If the CharSet field is set to <see cref="F:System.Runtime.InteropServices.CharSet.Auto" />, the conversion is platform-dependent (ANSI on Windows 98 and Windows Me, and Unicode on later versions).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether string data fields within the class should be marshaled as LPWSTR or LPSTR by default.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Pack">
       <MemberSignature Language="ILASM" Value=".field public int32 Pack" />
       <MemberSignature Language="C#" Value="public int Pack;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 Pack" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> A <see cref="T:System.Int32" /> that indicates the packing alignment used with the
-<see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> layout. </para>
-        </summary>
-        <remarks>
-          <para>The <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> field determines memory
-   alignment of data fields of a target object.</para>
-          <para>Data fields of a target object exported to unmanaged
-   memory are
-   aligned on
-   a byte boundary that is a multiple of <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> bytes, or at
-   some natural alignment for that field type, whichever is smaller.</para>
-          <para>The value of <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> is
-required to be 0, 1, 2, 4, 8, 16, 32, 64, or 128. A value of zero indicates that
-the packing alignment is set to the default for the current platform.
-The default value is implementation-defined.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field indicates memory boundaries for aligning fields. It affects both <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" /> and <see cref="F:System.Runtime.InteropServices.LayoutKind.Explicit" />. By default, the value is 0, indicating the default packing size for the current platform.</para>
+          <para>The value of <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> must be 0, 1, 2, 4, 8, 16, 32, 64, or 128:</para>
+          <list type="bullet">
+            <item>
+              <para>A value of 0 indicates that the packing alignment is set to the default for the current platform. </para>
+            </item>
+            <item>
+              <para>A value of 1 indicates that data alignment occurs on byte boundaries. There are no gaps between fields with a packing value of 1. </para>
+            </item>
+            <item>
+              <para>Packing values of 2 and higher will cause each field to be aligned on a byte offset relative to the beginning of the structure. Therefore, data fields will start on offsets that are multiples of the requested packing value.</para>
+            </item>
+          </list>
+          <para>The following example contains a structure with three one-byte fields:</para>
+          <code>struct MyStruct
+{
+byte B0;
+byte B1;
+byte B2;
+}</code>
+          <para>Byte B0 always starts at offset 0 (byte 0) regardless of the packing value.</para>
+          <para>A packing value of 0 will produce the following:</para>
+          <list type="bullet">
+            <item>
+              <para>B0 will begin at offset 0 (byte 0).</para>
+            </item>
+            <item>
+              <para>B1 will begin at offset 1 (byte 1).</para>
+            </item>
+            <item>
+              <para>B2 will begin at offset 2 (byte 2).</para>
+            </item>
+          </list>
+          <para>Note that the default platform alignment will always pack identical types contiguously.</para>
+          <para>A packing value of 1 will produce the following:</para>
+          <list type="bullet">
+            <item>
+              <para>B0 will still begin at offset 0 (byte 0).</para>
+            </item>
+            <item>
+              <para>B1 will still begin at offset 1 (byte 1).</para>
+            </item>
+            <item>
+              <para>B2 will still begin at offset 2 (byte 2).</para>
+            </item>
+          </list>
+          <para>However, a packing value of 2 will produce the following:</para>
+          <list type="bullet">
+            <item>
+              <para>B0 will still begin at offset 0 (byte 0).</para>
+            </item>
+            <item>
+              <para>B1 will begin at offset 2 (byte 2).</para>
+            </item>
+            <item>
+              <para>B2 will begin at offset 4 (byte 4).</para>
+            </item>
+          </list>
+          <para>Similarily, a packing value of n will produce the following:</para>
+          <list type="bullet">
+            <item>
+              <para>B0 will still begin at offset 0 (byte 0).</para>
+            </item>
+            <item>
+              <para>B1 will begin at offset n (byte n).</para>
+            </item>
+            <item>
+              <para>B2 will begin at offset n*2 (byte 2n).</para>
+            </item>
+          </list>
+          <para>The <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> field is frequently used when structures are exported during disk and network write operations. The field is also frequently used during platform invoke and interop operations.</para>
+          <para>Occasionally, the field is used to reduce memory requirements by producing a tighter packing size. However, this usage requires careful consideration of actual hardware constraints, and may actually degrade performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Controls the alignment of data fields of a class or structure in memory.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Size">
       <MemberSignature Language="ILASM" Value=".field public int32 Size" />
       <MemberSignature Language="C#" Value="public int Size;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 Size" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>A <see cref="T:System.Int32" /> that indicates the size of the memory block to be allocated
-   for an instance of the type qualified by the current <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />.</para>
-        </summary>
-        <remarks>
-          <para>
-            <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Size" /> is required to
-   be zero, or greater than or equal to the calculated size of the target object,
-   based on the <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> field indicating the packing
-   alignment. A <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Size" qualify="true" /> of zero
-   indicates that the size is calculated from the field types, their specified offsets, the packing size (default or
-   specified) and natural alignment on the target, runtime platform.</para>
-          <para>
-            <block subset="none" type="note">For additional
-   information on the <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Size" qualify="true" />
-   field, see Partition II of the CLI Specification.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field must be equal or greater than the total size, in bytes, of the members of the class or structure. This field is primarily for compiler writers who want to extend the memory occupied by a structure for direct, unmanaged access. For example, you can use this field when working with unions that are not represented in metadata directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the absolute size of the class or structure.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Runtime.InteropServices.LayoutKind Value { public hidebysig specialname instance valuetype System.Runtime.InteropServices.LayoutKind get_Value() }" />
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.LayoutKind Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.InteropServices.LayoutKind Value" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.LayoutKind</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how
-   the target object is arranged.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how
    the target object is arranged.</para>
@@ -297,13 +339,12 @@ The default value is implementation-defined.</para>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value that specifies how the class or structure is arranged.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

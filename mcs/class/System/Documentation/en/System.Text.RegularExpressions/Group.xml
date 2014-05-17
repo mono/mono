@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Group" FullName="System.Text.RegularExpressions.Group">
   <TypeSignature Language="C#" Value="public class Group : System.Text.RegularExpressions.Capture" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Group extends System.Text.RegularExpressions.Capture" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,45 +16,144 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A capturing group can capture zero, one, or more strings in a single match because of quantifiers. (For more information, see <format type="text/html"><a href="36b81212-6511-49ed-a8f1-ff080415312f">Quantifiers</a></format>.) All the substrings matched by a single capturing group are available from the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property. Information about the last substring captured can be accessed directly from the Value and Index properties. (That is, the <see cref="T:System.Text.RegularExpressions.Group" /> instance is equivalent to the last item of the collection returned by the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property, which reflects the last capture made by the capturing group.)</para>
+      <para>An example helps to clarify this relationship between a <see cref="T:System.Text.RegularExpressions.Group" /> object and the <see cref="T:System.Text.RegularExpressions.CaptureCollection" /> that is returned by the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property. The regular expression pattern (\b(\w+?)[,:;]?\s?)+[?.!] matches entire sentences. The regular expression is defined as shown in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Pattern</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>\b</para>
+          </term>
+          <description>
+            <para>Begin the match at a word boundary.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>(\w+?)</para>
+          </term>
+          <description>
+            <para>Match one or more word characters, but as few characters as possible. This is the second (inner) capturing group. (The first capturing group includes the \b language element.)</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>[,:;]?</para>
+          </term>
+          <description>
+            <para>Match zero or one occurrence of a comma, colon, or semicolon.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>\s?</para>
+          </term>
+          <description>
+            <para>Match zero or one occurrence of a white-space character.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>(\b(\w+?)[,:;]?\s?)+</para>
+          </term>
+          <description>
+            <para>Match the pattern consisting of a word boundary, one or more word characters, a punctuation symbol, and a white-space character one or more times. This is the first capturing group.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>[?.!]</para>
+          </term>
+          <description>
+            <para>Match any occurrence of a period, question mark, or exclamation point.</para>
+          </description>
+        </item>
+      </list>
+      <para>In this regular expression pattern, the subpattern (\w+?) is designed to match multiple words within a sentence. However, the value of the <see cref="T:System.Text.RegularExpressions.Group" /> object represents only the last match that (\w+?) captures, whereas the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property returns a <see cref="T:System.Text.RegularExpressions.CaptureCollection" /> that represents all captured text. As the output shows, the <see cref="T:System.Text.RegularExpressions.CaptureCollection" /> for the second capturing group contains four objects. The last of these corresponds to the <see cref="T:System.Text.RegularExpressions.Group" /> object.</para>
+      <para>code reference: System.Text.RegularExpressions.Group.Class#1</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the results from a single capturing group. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Captures">
       <MemberSignature Language="C#" Value="public System.Text.RegularExpressions.CaptureCollection Captures { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.RegularExpressions.CaptureCollection Captures" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.CaptureCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CaptureCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a quantifier is not applied to a capturing group, the collection returned by the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property contains a single <see cref="T:System.Text.RegularExpressions.Capture" /> object that provides information about the same substring as the <see cref="T:System.Text.RegularExpressions.Group" /> object. This is illustrated in the following example. It defines a regular expression, \b(\w+)\b, that extracts a single word from a sentence. The <see cref="T:System.Text.RegularExpressions.Group" /> object captures the word "This", and the single object in the <see cref="T:System.Text.RegularExpressions.CaptureCollection" /> contains information about the same capture. </para>
+          <para>code reference: System.Text.RegularExpressions.Group.Captures#1</para>
+          <para>The real utility of the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property occurs when a quantifier is applied to a capturing group so that the group captures multiple substrings in a single regular expression. In this case, the <see cref="T:System.Text.RegularExpressions.Group" /> object contains information about the last captured substring, whereas the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property contains information about all the substrings captured by the group. In the following example, the regular expression \b(\w+\s*)+\. matches an entire sentence that ends in a period. The group (\w+\s*)+ captures the individual words in the collection. Because the <see cref="T:System.Text.RegularExpressions.Group" /> collection contains information only about the last captured substring, it captures the last word in the sentence, "sentence". However, each word captured by the group is available from the collection returned by the <see cref="P:System.Text.RegularExpressions.Group.Captures" /> property.</para>
+          <para>code reference: System.Text.RegularExpressions.Group.Captures#2</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all the captures matched by the capturing group, in innermost-leftmost-first order (or innermost-rightmost-first order if the regular expression is modified with the <see cref="F:System.Text.RegularExpressions.RegexOptions.RightToLeft" /> option). The collection may have zero or more items.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Success">
       <MemberSignature Language="C#" Value="public bool Success { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Success" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Success property is true if at least one substring was captured by this group. It is equivalent to the Boolean expression (Group.Captures.Count &gt; 0).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the match is successful.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Synchronized">
       <MemberSignature Language="C#" Value="public static System.Text.RegularExpressions.Group Synchronized (System.Text.RegularExpressions.Group inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.RegularExpressions.Group Synchronized(class System.Text.RegularExpressions.Group inner) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("not thread-safe")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.Group</ReturnType>
       </ReturnValue>
@@ -59,15 +161,18 @@
         <Parameter Name="inner" Type="System.Text.RegularExpressions.Group" />
       </Parameters>
       <Docs>
-        <param name="inner">To be added: an object of type 'Group'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Group'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Group object equivalent to the one supplied that is safe to share between multiple threads.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A regular expression Group object. </para>
+        </returns>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.Text.RegularExpressions.Group" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

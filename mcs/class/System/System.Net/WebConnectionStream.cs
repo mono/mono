@@ -120,12 +120,18 @@ namespace System.Net
 				writeBuffer = new MemoryStream ();
 		}
 
+		bool CheckAuthHeader (string headerName)
+		{
+			var authHeader = cnc.Data.Headers [headerName];
+			return (authHeader != null && authHeader.IndexOf ("NTLM", StringComparison.Ordinal) != -1);
+		}
+
 		bool IsNtlmAuth ()
 		{
 			bool isProxy = (request.Proxy != null && !request.Proxy.IsBypassed (request.Address));
-			string header_name = (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate";
-			string authHeader = cnc.Data.Headers [header_name];
-			return (authHeader != null && authHeader.IndexOf ("NTLM", StringComparison.Ordinal) != -1);
+			if (isProxy && CheckAuthHeader ("Proxy-Authenticate"))
+				return true;
+			return CheckAuthHeader ("WWW-Authenticate");
 		}
 
 		internal void CheckResponseInBuffer ()
@@ -184,7 +190,7 @@ namespace System.Net
 		}
 
 		internal int ReadBufferOffset {
-			set { readBufferOffset = value;}
+			set { readBufferOffset = value; }
 		}
 		
 		internal int ReadBufferSize {
@@ -208,7 +214,7 @@ namespace System.Net
 				cnc.NextRead ();
 			}
 		}
-		
+
 		internal void CheckComplete ()
 		{
 			bool nrc = nextReadCalled;
@@ -442,11 +448,13 @@ namespace System.Net
 			return (nb >= 0) ? nb : 0;
 		}
 
-	   	void WriteRequestAsyncCB (IAsyncResult r)
+	   	void WriteAsyncCB (IAsyncResult r)
 		{
 			WebAsyncResult result = (WebAsyncResult) r.AsyncState;
+			result.InnerAsyncResult = null;
+
 			try {
-				cnc.EndWrite2 (request, r);
+				cnc.EndWrite (request, true, r);
 				result.SetCompleted (false, 0);
 				if (!initRead) {
 					initRead = true;
@@ -460,7 +468,10 @@ namespace System.Net
 					e = new IOException ("Error writing request", e);
 				result.SetCompleted (false, e);
 			}
-			complete_request_written = true;
+
+			if (allowBuffering && !sendChunked && request.ContentLength > 0 && totalWritten == request.ContentLength)
+				complete_request_written = true;
+
 			result.DoCallback ();
 		}
 
@@ -490,55 +501,59 @@ namespace System.Net
 			}
 
 			WebAsyncResult result = new WebAsyncResult (cb, state);
-			if (!sendChunked)
-				CheckWriteOverflow (request.ContentLength, totalWritten, size);
-			if (allowBuffering && !sendChunked) {
-				if (writeBuffer == null)
-					writeBuffer = new MemoryStream ();
-				writeBuffer.Write (buffer, offset, size);
-				totalWritten += size;
-				if (request.ContentLength > 0 && totalWritten == request.ContentLength) {
-					try {
-						result.AsyncWriteAll = true;
-						result.InnerAsyncResult = WriteRequestAsync (new AsyncCallback (WriteRequestAsyncCB), result);
-						if (result.InnerAsyncResult == null) {
-							if (!result.IsCompleted)
-								result.SetCompleted (true, 0);
-							result.DoCallback ();
-						}
-					} catch (Exception exc) {
-						result.SetCompleted (true, exc);
-						result.DoCallback ();
-					}
-				} else {
-					result.SetCompleted (true, 0);
-					result.DoCallback ();
-				}
-				return result;
-			}
-
-			AsyncCallback callback = null;
-			if (cb != null)
-				callback = cb_wrapper;
+			AsyncCallback callback = new AsyncCallback (WriteAsyncCB);
 
 			if (sendChunked) {
-				WriteRequest ();
+				requestWritten = true;
 
 				string cSize = String.Format ("{0:X}\r\n", size);
-				byte [] head = Encoding.ASCII.GetBytes (cSize);
+				byte[] head = Encoding.ASCII.GetBytes (cSize);
 				int chunkSize = 2 + size + head.Length;
-				byte [] newBuffer = new byte [chunkSize];
+				byte[] newBuffer = new byte [chunkSize];
 				Buffer.BlockCopy (head, 0, newBuffer, 0, head.Length);
 				Buffer.BlockCopy (buffer, offset, newBuffer, head.Length, size);
 				Buffer.BlockCopy (crlf, 0, newBuffer, head.Length + size, crlf.Length);
 
+				if (allowBuffering) {
+					if (writeBuffer == null)
+						writeBuffer = new MemoryStream ();
+					writeBuffer.Write (buffer, offset, size);
+					totalWritten += size;
+				}
+
 				buffer = newBuffer;
 				offset = 0;
 				size = chunkSize;
+			} else {
+				CheckWriteOverflow (request.ContentLength, totalWritten, size);
+
+				if (allowBuffering) {
+					if (writeBuffer == null)
+						writeBuffer = new MemoryStream ();
+					writeBuffer.Write (buffer, offset, size);
+					totalWritten += size;
+
+					if (request.ContentLength <= 0 || totalWritten < request.ContentLength) {
+						result.SetCompleted (true, 0);
+						result.DoCallback ();
+						return result;
+					}
+
+					result.AsyncWriteAll = true;
+					requestWritten = true;
+					buffer = writeBuffer.GetBuffer ();
+					offset = 0;
+					size = (int)totalWritten;
+				}
 			}
 
 			try {
 				result.InnerAsyncResult = cnc.BeginWrite (request, buffer, offset, size, callback, result);
+				if (result.InnerAsyncResult == null) {
+					if (!result.IsCompleted)
+						result.SetCompleted (true, 0);
+					result.DoCallback ();
+				}
 			} catch (Exception) {
 				if (!IgnoreIOErrors)
 					throw;
@@ -591,25 +606,11 @@ namespace System.Net
 			if (result.GotException)
 				throw result.Exception;
 
-			try {
-				cnc.EndWrite2 (request, result.InnerAsyncResult);
-				result.SetCompleted (false, 0);
-				result.DoCallback ();
-			} catch (Exception e) {
-				if (IgnoreIOErrors)
-					result.SetCompleted (false, 0);
-				else
-					result.SetCompleted (false, e);
-				result.DoCallback ();
-				if (!IgnoreIOErrors)
-					throw;
-			} finally {
-				if (sendChunked) {
-					lock (locker) {
-						pendingWrites--;
-						if (pendingWrites == 0)
-							pending.Set ();
-					}
+			if (sendChunked) {
+				lock (locker) {
+					pendingWrites--;
+					if (pendingWrites == 0)
+						pending.Set ();
 				}
 			}
 		}
@@ -632,100 +633,139 @@ namespace System.Net
 		{
 		}
 
-		internal void SetHeaders (byte [] buffer)
+		internal WebAsyncResult SetHeadersAsync (bool setInternalLength, AsyncCallback callback, object state)
 		{
 			if (headersSent)
-				return;
+				return null;
 
-			headers = buffer;
-			long cl = request.ContentLength;
 			string method = request.Method;
 			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-						method == "TRACE");
+			                      method == "TRACE");
 			bool webdav = (method == "PROPFIND" || method == "PROPPATCH" || method == "MKCOL" ||
-			               method == "COPY" || method == "MOVE" || method == "LOCK" ||
-			               method == "UNLOCK");
-			if (sendChunked || cl > -1 || no_writestream || webdav) {
-				WriteHeaders ();
+			              method == "COPY" || method == "MOVE" || method == "LOCK" ||
+			              method == "UNLOCK");
+
+			if (setInternalLength && !no_writestream && writeBuffer != null)
+				request.InternalContentLength = writeBuffer.Length;
+
+			if (sendChunked || request.ContentLength > -1 || no_writestream || webdav) {
+				headersSent = true;
+				headers = request.GetRequestHeaders ();
+
+				var result = new WebAsyncResult (callback, state);
+				result.InnerAsyncResult = cnc.BeginWrite (request, headers, 0, headers.Length, new AsyncCallback (SetHeadersCB), result);
+				if (result.InnerAsyncResult != null)
+					return result;
+			}
+
+			return null;
+		}
+
+		void SetHeadersCB (IAsyncResult r)
+		{
+			WebAsyncResult result = (WebAsyncResult) r.AsyncState;
+			result.InnerAsyncResult = null;
+			try {
+				cnc.EndWrite (request, true, r);
+				result.SetCompleted (false, 0);
 				if (!initRead) {
 					initRead = true;
 					WebConnection.InitRead (cnc);
 				}
+				long cl = request.ContentLength;
 				if (!sendChunked && cl == 0)
 					requestWritten = true;
+			} catch (WebException e) {
+				result.SetCompleted (false, e);
+			} catch (Exception e) {
+				result.SetCompleted (false, new WebException ("Error writing headers", e, WebExceptionStatus.SendFailure));
 			}
+			result.DoCallback ();
 		}
 
 		internal bool RequestWritten {
 			get { return requestWritten; }
 		}
 
-		IAsyncResult WriteRequestAsync (AsyncCallback cb, object state)
-		{
-			requestWritten = true;
-			byte [] bytes = writeBuffer.GetBuffer ();
-			int length = (int) writeBuffer.Length;
-			// Headers already written to the stream
-			return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
-		}
-
-		void WriteHeaders ()
-		{
-			if (headersSent)
-				return;
-
-			headersSent = true;
-			string err_msg = null;
-			if (!cnc.Write (request, headers, 0, headers.Length, ref err_msg))
-				throw new WebException ("Error writing request: " + err_msg, null, WebExceptionStatus.SendFailure, null);
-		}
-
-		internal void WriteRequest ()
+		internal WebAsyncResult WriteRequestAsync (AsyncCallback callback, object state)
 		{
 			if (requestWritten)
-				return;
+				return null;
 
 			requestWritten = true;
 			if (sendChunked)
-				return;
+				return null;
 
 			if (!allowBuffering || writeBuffer == null)
-				return;
+				return null;
 
-			byte [] bytes = writeBuffer.GetBuffer ();
-			int length = (int) writeBuffer.Length;
+			// Keep the call for a potential side-effect of GetBuffer
+			writeBuffer.GetBuffer ();
+			int length = (int)writeBuffer.Length;
 			if (request.ContentLength != -1 && request.ContentLength < length) {
 				nextReadCalled = true;
 				cnc.Close (true);
 				throw new WebException ("Specified Content-Length is less than the number of bytes to write", null,
-							WebExceptionStatus.ServerProtocolViolation, null);
+					WebExceptionStatus.ServerProtocolViolation, null);
 			}
 
-			if (!headersSent) {
-				string method = request.Method;
-				bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-							method == "TRACE");
-				if (!no_writestream)
-					request.InternalContentLength = length;
-				request.SendRequestHeaders (true);
-			}
-			WriteHeaders ();
-			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
+			var result = new WebAsyncResult (callback, state);
+			result.InnerAsyncResult = SetHeadersAsync (true, WriteRequestAsyncCB, result);
+			if (result.InnerAsyncResult == null)
+				WriteRequestAsyncCB (result);
+			return result;
+		}
+
+		void WriteRequestAsyncCB (IAsyncResult ar)
+		{
+			var result = (WebAsyncResult)ar;
+			var innerResult = (WebAsyncResult)result.InnerAsyncResult;
+			result.InnerAsyncResult = null;
+
+			if (innerResult != null && innerResult.GotException) {
+				result.SetCompleted (false, innerResult.Exception);
+				result.DoCallback ();
 				return;
-				
-			IAsyncResult result = null;
+			}
+
+			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100) {
+				result.SetCompleted (false, 0);
+				result.DoCallback ();
+				return;
+			}
+
+			byte[] bytes = writeBuffer.GetBuffer ();
+			int length = (int)writeBuffer.Length;
+
 			if (length > 0)
-				result = cnc.BeginWrite (request, bytes, 0, length, null, null);
-			
+				result.InnerAsyncResult = cnc.BeginWrite (request, bytes, 0, length, WriteRequestAsyncCB2, result);
+
 			if (!initRead) {
 				initRead = true;
 				WebConnection.InitRead (cnc);
 			}
 
-			if (length > 0) 
-				complete_request_written = cnc.EndWrite (request, result);
-			else
+			if (length == 0) {
+				result.SetCompleted (false, 0);
+				result.DoCallback ();
 				complete_request_written = true;
+			}
+		}
+
+		void WriteRequestAsyncCB2 (IAsyncResult ar)
+		{
+			var result = (WebAsyncResult)ar.AsyncState;
+			var innerResult = result.InnerAsyncResult;
+			result.InnerAsyncResult = null;
+
+			try {
+				complete_request_written = cnc.EndWrite (request, false, innerResult);
+				result.SetCompleted (false, 0);
+			} catch (Exception exc) {
+				result.SetCompleted (false, exc);
+			} finally {
+				result.DoCallback ();
+			}
 		}
 
 		internal void InternalClose ()

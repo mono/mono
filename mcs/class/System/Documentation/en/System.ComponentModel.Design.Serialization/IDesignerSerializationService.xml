@@ -1,22 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesignerSerializationService" FullName="System.ComponentModel.Design.Serialization.IDesignerSerializationService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDesignerSerializationService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesignerSerializationService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This service provides methods to convert a collection of objects to a serializable object that represents them, and to convert serialization data to the object or objects that it represents.</para>
+      <para>All components that support a designer must support serialization of each component's type. This occurs when the designer scans the public properties, methods, and events of each type and represents these within a type descriptor.</para>
+      <para>This interface uses the technique of scanning members to convert a collection of components into a single object that supports run-time serialization. This does not necessarily provide for the serialization of custom types that belong to the class. Many objects require a custom serializer to have their values serialized at run time. To specify a serializer for a custom type, use a <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializerAttribute" /> attribute or implement an <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationProvider" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that can invoke serialization and deserialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Deserialize">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection Deserialize (object serializationData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ICollection Deserialize(object serializationData) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
@@ -24,19 +41,28 @@
         <Parameter Name="serializationData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serializationData">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.ICollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the specified serialization data object and returns a collection of objects represented by that data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of objects rebuilt from the specified serialization data object.</para>
+        </returns>
+        <param name="serializationData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object consisting of serialized data. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Serialize">
       <MemberSignature Language="C#" Value="public object Serialize (System.Collections.ICollection objects);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Serialize(class System.Collections.ICollection objects) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -44,15 +70,22 @@
         <Parameter Name="objects" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="objects">To be added: an object of type 'Collections.ICollection'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned object fully supports run-time serialization.</para>
+          <para>The object returned from this method contains live references to objects in the collection. This object can then be passed to any run-time serialization mechanism. The object itself serializes components the same way designers write source for them, by storing their state, property by property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified collection of objects and stores them in a serialization data object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the serialized state of the specified collection of objects.</para>
+        </returns>
+        <param name="objects">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of objects to serialize. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

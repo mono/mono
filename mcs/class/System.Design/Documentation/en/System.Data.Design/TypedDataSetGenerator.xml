@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypedDataSetGenerator" FullName="System.Data.Design.TypedDataSetGenerator">
   <TypeSignature Language="C#" Value="public sealed class TypedDataSetGenerator" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.TypedDataSetGenerator" /> class takes information provided (for example, an XML schema) and creates a typed dataset class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Generates a strongly typed <see cref="T:System.Data.DataSet" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Generate">
@@ -28,12 +35,24 @@
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="dataSet">To be added.</param>
-        <param name="codeNamespace">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" />. The dataset is created in the namespace indicated in the <paramref name="codeNamespace" /> parameter, and the dataset is generated in the managed programming language indicated in the <paramref name="codeProvider" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" /> based on an existing <see cref="T:System.Data.DataSet" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A strongly typed <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
+        <param name="dataSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source <see cref="T:System.Data.DataSet" /> that specifies the metadata for the typed <see cref="T:System.Data.DataSet" />.</param>
+        <param name="codeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace that provides the target namespace for the typed <see cref="T:System.Data.DataSet" />.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language-specific <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> to use to generate the dataset.</param>
       </Docs>
     </Member>
     <Member MemberName="Generate">
@@ -52,13 +71,29 @@
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="inputFileContent">To be added.</param>
-        <param name="compileUnit">To be added.</param>
-        <param name="mainNamespace">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" /> based on the provided input file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A strongly typed <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
+        <param name="inputFileContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the XML schema to base the <see cref="T:System.Data.DataSet" /> on.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> to contain the generated code.</param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeNamespace" /> that contains the generated dataset.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language-specific <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> to use to generate the dataset.</param>
       </Docs>
     </Member>
     <Member MemberName="Generate">
@@ -78,13 +113,31 @@
         <Parameter Name="customDBProviders" Type="System.Collections.Hashtable" />
       </Parameters>
       <Docs>
-        <param name="inputFileContent">To be added.</param>
-        <param name="compileUnit">To be added.</param>
-        <param name="mainNamespace">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <param name="customDBProviders">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" /> based on the provided input file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A strongly typed <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
+        <param name="inputFileContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the XML schema to base the <see cref="T:System.Data.DataSet" /> on.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> to contain the generated code.</param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeNamespace" /> that contains the generated dataset.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language specific <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> to use to generate the dataset.</param>
+        <param name="customDBProviders">
+          <attribution license="cc4" from="Microsoft" modified="false" />A HashTable that maps connections to specific providers in the typed dataset.</param>
       </Docs>
     </Member>
     <Member MemberName="Generate">
@@ -104,13 +157,31 @@
         <Parameter Name="specifiedFactory" Type="System.Data.Common.DbProviderFactory" />
       </Parameters>
       <Docs>
-        <param name="inputFileContent">To be added.</param>
-        <param name="compileUnit">To be added.</param>
-        <param name="mainNamespace">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <param name="specifiedFactory">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a strongly typed <see cref="T:System.Data.DataSet" /> based on the provided input file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A strongly typed <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
+        <param name="inputFileContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the XML schema to base the <see cref="T:System.Data.DataSet" /> on.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> to contain the generated code.</param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeNamespace" /> that contains the generated dataset.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language-specific <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> to use to generate the dataset.</param>
+        <param name="specifiedFactory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.Common.DbProviderFactory" /> to use to override the provider contained in the <paramref name="inputFileContent" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Generate">
@@ -181,10 +252,23 @@
         <Parameter Name="inputFileContent" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="inputFileContent">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>This method returns the first provider name in the specified <paramref name="inputFileContent" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the first provider name found in the provided input file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the specific provider for this <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
+        <param name="inputFileContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the XML schema to base the <see cref="T:System.Data.DataSet" /> on.</param>
       </Docs>
     </Member>
     <Member MemberName="GetProviderName">
@@ -201,11 +285,25 @@
         <Parameter Name="tableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="inputFileContent">To be added.</param>
-        <param name="tableName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>Returns the provider name for the given <paramref name="tableName" /> in the <see cref="T:System.Data.DataSet" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the provider name for the <paramref name="tableName" /> in the input file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the provider name for the specific table passed in to the <paramref name="tableName" /> parameter.</para>
+        </returns>
+        <param name="inputFileContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the XML schema to base the <see cref="T:System.Data.DataSet" /> on.</param>
+        <param name="tableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the name of the table to return the provider name from.</param>
       </Docs>
     </Member>
     <Member MemberName="ReferencedAssemblies">
@@ -218,9 +316,15 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.Reflection.Assembly&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The generator iterates over this list and adds the assemblies to your project.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the collection of assemblies referenced in a typed dataset.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

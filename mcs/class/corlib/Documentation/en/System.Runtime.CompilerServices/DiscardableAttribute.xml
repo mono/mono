@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscardableAttribute" FullName="System.Runtime.CompilerServices.DiscardableAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class DiscardableAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DiscardableAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,30 +14,41 @@
     <BaseTypeName>System.Attribute</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public DiscardableAttribute ();" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A type definition might be marked discardable if it is not referenced by any other code in its assembly. This might be useful for languages that support separate compilation, where it is only at link phase that it becomes known whether any type is actually referenced by other code.</para>
+      <para>The classes in <see cref="N:System.Runtime.CompilerServices" /> are for compiler writers' use only.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks a type definition as discardable.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DiscardableAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.DiscardableAttribute" /> class with default values.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

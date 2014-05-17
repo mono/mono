@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B0995E00-BF37-4B8A-8229-285C060E5957}</ProjectGuid>
+    <ProjectGuid>{A76A398F-08C0-4B3D-A624-690717233736}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.Build.Tasks-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\..\tools\xbuild\XBuildConsts.cs" />
     <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\DirectoryScanner.cs" />
     <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs" />
     <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\UpdateUnit.cs" />
     <Compile Include="Microsoft.Build.Tasks.Deployment.ManifestUtilities\WindowClass.cs" />
     <Compile Include="Microsoft.Build.Tasks.Hosting\ICscHostObject.cs" />
+    <Compile Include="Microsoft.Build.Tasks.Hosting\ICscHostObject4.cs" />
     <Compile Include="Microsoft.Build.Tasks.Hosting\IVbcHostObject.cs" />
     <Compile Include="Microsoft.Build.Tasks\AL.cs" />
     <Compile Include="Microsoft.Build.Tasks\AppDomainIsolatedTaskExtension.cs" />
@@ -132,12 +134,10 @@
     <Compile Include="Microsoft.Build.Tasks\GetFrameworkSdkPath.cs" />
     <Compile Include="Microsoft.Build.Tasks\GetReferenceAssemblyPaths.cs" />
     <Compile Include="Microsoft.Build.Tasks\LC.cs" />
-    <Compile Include="Microsoft.Build.Tasks\LibraryPcFileCache.cs" />
     <Compile Include="Microsoft.Build.Tasks\MakeDir.cs" />
     <Compile Include="Microsoft.Build.Tasks\ManagedCompiler.cs" />
     <Compile Include="Microsoft.Build.Tasks\Message.cs" />
     <Compile Include="Microsoft.Build.Tasks\MSBuild.cs" />
-    <Compile Include="Microsoft.Build.Tasks\PcFileCache.cs" />
     <Compile Include="Microsoft.Build.Tasks\ReadLinesFromFile.cs" />
     <Compile Include="Microsoft.Build.Tasks\RegisterAssembly.cs" />
     <Compile Include="Microsoft.Build.Tasks\RemoveDir.cs" />
@@ -173,45 +173,53 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
-      <Project>{409FF748-B765-4AB3-BCB1-72199B9E341C}</Project>
+      <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5.csproj">
-      <Project>{5CD66EA1-51EB-48EE-8C1C-DDFD23E22C38}</Project>
+      <Project>{6E1C7BDE-7B9E-47B0-A7B2-1561822FE922}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
+      <Project>{DA3B9FEE-8FBD-4587-B760-65420765256A}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5.csproj">
-      <Project>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</Project>
+      <Project>{54DFC5A7-7C1D-4BA5-A0F7-F0B312E1E076}</Project>
       <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_4_5.csproj">
+      <Project>{73FB1B7E-09F9-4E7F-A63A-C407A93BCA59}</Project>
+      <Name>Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

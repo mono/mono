@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RijndaelManagedTransform" FullName="System.Security.Cryptography.RijndaelManagedTransform">
   <TypeSignature Language="C#" Value="public sealed class RijndaelManagedTransform : System.Security.Cryptography.ICryptoTransform" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RijndaelManagedTransform extends System.Object implements class System.IDisposable, class System.Security.Cryptography.ICryptoTransform" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -19,129 +21,199 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>Using this class is not recommended. A better practice is to use <see cref="T:System.Security.Cryptography.RijndaelManaged" /> with a <see cref="T:System.Security.Cryptography.CryptoStream" /> object. The <see cref="T:System.Security.Cryptography.CryptoStream" /> object handles the padding issues that can occur when using <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> directly. For an example, see the <see cref="T:System.Security.Cryptography.RijndaelManaged" /> class.</para>
+      </block>
+      <para>Both the <see cref="Overload:System.Security.Cryptography.RijndaelManaged.CreateEncryptor" />  and <see cref="Overload:System.Security.Cryptography.RijndaelManaged.CreateDecryptor" />  methods return an instance of the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> class that is initialized with the key information of the current <see cref="T:System.Security.Cryptography.RijndaelManaged" /> object.  To encrypt or decrypt data using the Rijndael algorithm, pass the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> object returned by these methods to a <see cref="T:System.Security.Cryptography.CryptoStream" /> object. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Performs a cryptographic transformation of data using the Rijndael algorithm. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BlockSizeValue">
       <MemberSignature Language="C#" Value="public int BlockSizeValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BlockSizeValue" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the block size.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CanReuseTransform">
       <MemberSignature Language="C#" Value="public bool CanReuseTransform { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanReuseTransform" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current transform can be reused.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CanTransformMultipleBlocks">
       <MemberSignature Language="C#" Value="public bool CanTransformMultipleBlocks { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanTransformMultipleBlocks" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether multiple blocks can be transformed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a simple call to <see cref="M:System.IDisposable.Dispose" /> class.</para>
+          <para>Calling Dispose allows the resources used by the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> to be reallocated for other purposes. For more information about Dispose, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> class.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" />. The Dispose method leaves the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="InputBlockSize">
       <MemberSignature Language="C#" Value="public int InputBlockSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 InputBlockSize" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the input block size.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OutputBlockSize">
       <MemberSignature Language="C#" Value="public int OutputBlockSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 OutputBlockSize" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the output block size.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.RijndaelManagedTransform.Reset" /> method is called automatically when you call <see cref="M:System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock(System.Byte[],System.Int32,System.Int32)" />. The <see cref="M:System.Security.Cryptography.RijndaelManagedTransform.Reset" /> method is not called when, for example, the encrypted input data is garbage and cannot be decrypted. In this case, an exception is thrown and <see cref="M:System.Security.Cryptography.RijndaelManagedTransform.Reset" /> is not called. You can choose to manually call the <see cref="M:System.Security.Cryptography.RijndaelManagedTransform.Reset" /> method in this case.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the internal state of <see cref="T:System.Security.Cryptography.RijndaelManagedTransform" /> so it can be used again to do a different encryption or decryption.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
@@ -151,18 +223,25 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="TransformBlock">
       <MemberSignature Language="C#" Value="public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 TransformBlock(unsigned int8[] inputBuffer, int32 inputOffset, int32 inputCount, unsigned int8[] outputBuffer, int32 outputOffset) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -174,24 +253,36 @@
         <Parameter Name="outputOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="inputBuffer">To be added.</param>
-        <param name="inputOffset">To be added.</param>
-        <param name="inputCount">To be added.</param>
-        <param name="outputBuffer">To be added.</param>
-        <param name="outputOffset">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the transformation for the specified region of the input byte array and copies the resulting transformation to the specified region of the output byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written.</para>
+        </returns>
+        <param name="inputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to perform the operation on. </param>
+        <param name="inputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the input byte array to begin using data from. </param>
+        <param name="inputCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the input byte array to use as data. </param>
+        <param name="outputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output to write the data to. </param>
+        <param name="outputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the output byte array to begin writing data from. </param>
       </Docs>
+    </Member>
+    <Member MemberName="TransformFinalBlock">
+      <MemberSignature Language="C#" Value="public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] TransformFinalBlock(unsigned int8[] inputBuffer, int32 inputOffset, int32 inputCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TransformFinalBlock">
-      <MemberSignature Language="C#" Value="public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -201,18 +292,23 @@
         <Parameter Name="inputCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="inputBuffer">To be added.</param>
-        <param name="inputOffset">To be added.</param>
-        <param name="inputCount">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the transformation for the specified region of the specified byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed transformation.</para>
+        </returns>
+        <param name="inputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to perform the operation on.</param>
+        <param name="inputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array to begin using data from.</param>
+        <param name="inputCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the byte array to use as data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OrderablePartitioner&lt;TSource&gt;" FullName="System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;">
   <TypeSignature Language="C#" Value="public abstract class OrderablePartitioner&lt;TSource&gt; : System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit OrderablePartitioner`1&lt;TSource&gt; extends System.Collections.Concurrent.Partitioner`1&lt;!TSource&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -16,12 +18,19 @@
   <Interfaces />
   <Docs>
     <typeparam name="TSource">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The implementation of the derived class is responsible for ordering the elements into key-value pairs in whatever manner is appropriate. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a particular manner of splitting an orderable data source into multiple partitions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected OrderablePartitioner (bool keysOrderedInEachPartition, bool keysOrderedAcrossPartitions, bool keysNormalized);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(bool keysOrderedInEachPartition, bool keysOrderedAcrossPartitions, bool keysNormalized) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -32,15 +41,25 @@
         <Parameter Name="keysNormalized" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="keysOrderedInEachPartition">To be added.</param>
-        <param name="keysOrderedAcrossPartitions">To be added.</param>
-        <param name="keysNormalized">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called from constructors in derived classes to initialize the <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> class with the specified constraints on the index keys.</para>
+        </summary>
+        <param name="keysOrderedInEachPartition">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the elements in each partition are yielded in the order of increasing keys.</param>
+        <param name="keysOrderedAcrossPartitions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether elements in an earlier partition always come before elements in a later partition. If true, each element in partition 0 has a smaller order key than any element in partition 1, each element in partition 1 has a smaller order key than any element in partition 2, and so on.</param>
+        <param name="keysNormalized">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether keys are normalized. If true, all order keys are distinct integers in the range [0 .. numberOfElements-1]. If false, order keys must still be distinct, but only their relative order is considered, not their absolute values.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDynamicPartitions">
       <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;TSource&gt; GetDynamicPartitions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;!TSource&gt; GetDynamicPartitions() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -50,13 +69,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The returned object implements the <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface. Calling <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> on the object creates another partition over the sequence.</para>
+          <para>  The default implementation provides the same behavior as <see cref="M:System.Collections.Concurrent.OrderablePartitioner`1.GetOrderableDynamicPartitions" /> except that the returned set of partitions does not provide the keys for the elements.</para>
+          <para>  The <see cref="M:System.Collections.Concurrent.OrderablePartitioner`1.GetDynamicPartitions" /> method is only supported if the <see cref="P:System.Collections.Concurrent.Partitioner`1.SupportsDynamicPartitions" /> property returns true.</para>
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object that can partition the underlying collection into a variable number of partitions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can create partitions over the underlying data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOrderableDynamicPartitions">
       <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;long,TSource&gt;&gt; GetOrderableDynamicPartitions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;int64, !TSource&gt;&gt; GetOrderableDynamicPartitions() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,13 +98,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The returned object implements the <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface. Calling <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> on the object creates another partition over the sequence.</para>
+          <para>  Each partition is represented as an enumerator over key-value pairs. The value in the pair is the element itself, and the key is an integer which determines the relative ordering of this element against other elements.</para>
+          <para>  The <see cref="M:System.Collections.Concurrent.OrderablePartitioner`1.GetOrderableDynamicPartitions" /> method is only supported if the <see cref="P:System.Collections.Concurrent.Partitioner`1.SupportsDynamicPartitions" /> property returns true.</para>
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object that can partition the underlying collection into a variable number of partitions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can create partitions over the underlying data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOrderablePartitions">
       <MemberSignature Language="C#" Value="public abstract System.Collections.Generic.IList&lt;System.Collections.Generic.IEnumerator&lt;System.Collections.Generic.KeyValuePair&lt;long,TSource&gt;&gt;&gt; GetOrderablePartitions (int partitionCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class System.Collections.Generic.IEnumerator`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;int64, !TSource&gt;&gt;&gt; GetOrderablePartitions(int32 partitionCount) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -84,14 +129,27 @@
         <Parameter Name="partitionCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="partitionCount">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each partition is represented as an enumerator over key-value pairs.</para>
+          <para> The value of the pair is the element itself, and the key is an integer which determines the relative ordering of this element against other elements in the data source.</para>
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Partitions the underlying collection into the specified number of orderable partitions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list containing <paramref name="partitionCount" /> enumerators.</para>
+        </returns>
+        <param name="partitionCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of partitions to create.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPartitions">
       <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;System.Collections.Generic.IEnumerator&lt;TSource&gt;&gt; GetPartitions (int partitionCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class System.Collections.Generic.IEnumerator`1&lt;!TSource&gt;&gt; GetPartitions(int32 partitionCount) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -103,14 +161,26 @@
         <Parameter Name="partitionCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="partitionCount">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation provides the same behavior as <see cref="M:System.Collections.Concurrent.OrderablePartitioner`1.GetOrderablePartitions(System.Int32)" /> except that the returned set of partitions does not provide the keys for the elements.</para>
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Partitions the underlying collection into the given number of ordered partitions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list containing <paramref name="partitionCount" /> enumerators.</para>
+        </returns>
+        <param name="partitionCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of partitions to create.</param>
       </Docs>
     </Member>
     <Member MemberName="KeysNormalized">
       <MemberSignature Language="C#" Value="public bool KeysNormalized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool KeysNormalized" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -119,13 +189,21 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Collections.Concurrent.OrderablePartitioner`1.KeysNormalized" /> returns true, all order keys are distinct integers in the range [0 .. numberOfElements-1]. If the property returns false, order keys must still be distinct, but only their relative order is considered, not their absolute values.</para>
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether order keys are normalized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeysOrderedAcrossPartitions">
       <MemberSignature Language="C#" Value="public bool KeysOrderedAcrossPartitions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool KeysOrderedAcrossPartitions" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -134,13 +212,21 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Collections.Concurrent.OrderablePartitioner`1.KeysOrderedAcrossPartitions" /> returns true, each element in partition 0 has a smaller order key than any element in partition 1, each element in partition 1 has a smaller order key than any element in partition 2, and so on.</para>
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether elements in an earlier partition always come before elements in a later partition.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeysOrderedInEachPartition">
       <MemberSignature Language="C#" Value="public bool KeysOrderedInEachPartition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool KeysOrderedInEachPartition" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -149,9 +235,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether elements in each partition are yielded in the order of increasing keys.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

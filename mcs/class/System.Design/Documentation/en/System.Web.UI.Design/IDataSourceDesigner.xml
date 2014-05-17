@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataSourceDesigner" FullName="System.Web.UI.Design.IDataSourceDesigner">
   <TypeSignature Language="C#" Value="public interface IDataSourceDesigner" />
   <AssemblyInfo>
@@ -6,8 +7,18 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.IDataSourceDesigner" /> interface defines an interface through which you can implement basic services for a data source designer. A designer is only active at design time, and must be associated with a data source, using a <see cref="T:System.ComponentModel.DesignerAttribute" />, in order to be loaded when a data source of the associated type is created at design time.</para>
+      <para>The <see cref="T:System.Web.UI.Design.IDataSourceDesigner" /> interface provides methods and properties that you can implement in order to provide custom behavior at design time.</para>
+      <para>A designer can also use the available design-time services to perform a variety of tasks, including surveying the current design-time environment for components and their properties, reading and setting the values of properties of components, managing the toolbox, managing selected components, or displaying a user interface that can be used to configure values or to apply further processing.</para>
+      <para>In most cases, implement your custom designer for a data source by deriving it from the <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class. Data sources whose associated designer does not derive from <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> are displayed in the component tray. The <see cref="T:System.Web.UI.Design.DataSourceDesigner" /> class implements the <see cref="T:System.Web.UI.Design.IDataSourceDesigner" /> interface and provides additional design-time support that may be of use to authors of designers. For more information, see the reference documentation for these classes.</para>
+      <para>For an overview of creating design components, see <format type="text/html"><a href="d6ac8a6a-42fd-4bc8-bf33-b212811297e2">Extending Design-Time Support</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the basic functionality for a data source designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CanConfigure">
@@ -20,9 +31,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="M:System.Web.UI.Design.IDataSourceDesigner.Configure" /> method can be called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRefreshSchema">
@@ -35,9 +49,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="M:System.Web.UI.Design.IDataSourceDesigner.RefreshSchema(System.Boolean)" /> method can be called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Configure">
@@ -51,8 +68,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be called only if <see cref="P:System.Web.UI.Design.IDataSourceDesigner.CanConfigure" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Launches the underlying data source's configuration wizard.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataSourceChanged">
@@ -65,8 +88,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.Design.IDataSourceDesigner.DataSourceChanged" /> event occurs when the value of a field in the data source, or a property in the data-bound control that affects the data bindings to that field, has changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a data source has changed in a way that affects data-bound controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetView">
@@ -82,10 +111,21 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="viewName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A class that implements <see cref="T:System.Web.UI.Design.IDataSourceDesigner" /> can define a view in a way that is useful within the context of that class.</para>
+          <para>Use the <see cref="M:System.Web.UI.Design.IDataSourceDesigner.GetViewNames" /> method to get a list of view names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.Design.DesignerDataSourceView" /> for the specified view.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.DesignerDataSourceView" /> containing information about the identified view, or null if a view with the specified name is not found.</para>
+        </returns>
+        <param name="viewName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a view in the underlying data source.</param>
       </Docs>
     </Member>
     <Member MemberName="GetViewNames">
@@ -99,9 +139,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the names of the views in the underlying data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.String" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RefreshSchema">
@@ -117,9 +163,13 @@
         <Parameter Name="preferSilent" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="preferSilent">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the schema of the underlying data source.</para>
+        </summary>
+        <param name="preferSilent">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether to suppress any events raised while refreshing the schema.</param>
       </Docs>
     </Member>
     <Member MemberName="ResumeDataSourceEvents">
@@ -133,8 +183,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resumes raising data source events after calling the <see cref="M:System.Web.UI.Design.IDataSourceDesigner.SuppressDataSourceEvents" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SchemaRefreshed">
@@ -147,8 +200,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the fields or data of the underlying data source have changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SuppressDataSourceEvents">
@@ -162,8 +218,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suppresses all events raised by a data source until the <see cref="M:System.Web.UI.Design.IDataSourceDesigner.ResumeDataSourceEvents" /> method is called.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

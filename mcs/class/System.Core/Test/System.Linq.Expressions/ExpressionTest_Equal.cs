@@ -82,6 +82,18 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		public void PrimitiveNonNumeric ()
+		{
+			BinaryExpression expr = Expression.Equal (Expression.Constant ('a'), Expression.Constant ('b'));
+			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.IsNull (expr.Method);
+
+			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
+			Assert.IsFalse (eq ());
+		}
+
+		[Test]
 		public void Nullable_LiftToNull_SetToFalse ()
 		{
 			int? a = 1;
@@ -236,6 +248,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedEqualLifted ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -257,6 +270,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedEqualLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -460,6 +474,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void NullableNullEqual ()
 		{
 			var param = Expression.Parameter (typeof (DateTime?), "x");

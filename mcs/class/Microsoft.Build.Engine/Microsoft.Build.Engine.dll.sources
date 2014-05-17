@@ -1,5 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../../tools/xbuild/XBuildConsts.cs
 Assembly/AssemblyInfo.cs
 ../Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
 ../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
@@ -53,7 +54,9 @@ Microsoft.Build.BuildEngine/IBuildTask.cs
 Microsoft.Build.BuildEngine/IReference.cs
 Microsoft.Build.BuildEngine/ItemReference.cs
 Microsoft.Build.BuildEngine/LogExtensions.cs
+Microsoft.Build.BuildEngine/MemberInvocationReference.cs
 Microsoft.Build.BuildEngine/MetadataReference.cs
+Microsoft.Build.BuildEngine/PredefinedPropertyFunctions.cs
 Microsoft.Build.BuildEngine/Project.cs
 Microsoft.Build.BuildEngine/ProjectLoadSettings.cs
 Microsoft.Build.BuildEngine/PropertyPosition.cs

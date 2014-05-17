@@ -1,0 +1,129 @@
+<Type Name="CFNetworkHandler" FullName="System.Net.Http.CFNetworkHandler">
+  <TypeSignature Language="C#" Value="public class CFNetworkHandler : System.Net.Http.HttpMessageHandler" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CFNetworkHandler extends System.Net.Http.HttpMessageHandler" />
+  <AssemblyInfo>
+    <AssemblyName>System.Net.Http</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Net.Http.HttpMessageHandler</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>An Http Message Handler for HttpClient that is powered by iOS/MacOS CFNetwork stack.</summary>
+    <remarks preserve-mono="true">
+      <para>
+	This handler allows the HttpClient API to use Apple's
+	CFNetwork as the HTTP transport as opposed to the default
+	(which is to use <see cref="T:System.Net.HttpWebRequest"/>).
+      </para>
+      <para>
+
+	To use this, you need to pass an instance of the
+	CFNetworkHandler to your HttpClient constructor, like this:
+
+      </para>
+      <example>
+<code lang="c#">
+var client = new HttpClient (new CFNetworkHandler ());
+</code>
+      </example>
+      <para>
+
+	Using CFNetwork for your http client has the following
+	differences from HttpWebRequest: (a) On iOS, CFNetwork will
+	automatically turn on the phone's radio if it is off before
+	starting the HTTP request. This means that it is not necessary
+	to manually use the StartWWAN methods; (b) Connection pooling
+	is managed by CFNetwork as opposed to the settings in .NET's
+	stack; (c) Will automatically track proxy and network settings
+	done to iOS; (d) Operations are performed on the CFNetwork
+	dispatch queues/threads instead of consuming threads from
+	Mono's own managed thread pool.
+
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CFNetworkHandler ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary preserve-mono="true">Creates an instance of the CFNetwork-based http handler..</summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AllowAutoRedirect">
+      <MemberSignature Language="C#" Value="public bool AllowAutoRedirect { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowAutoRedirect" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary preserve-mono="true">Determines whether the request handler should follow redirects sent by the server.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing" preserve-mono="true">True if this is being called from Dispose(), false if it is being invoked by the finalizer.</param>
+        <summary>Disposes this CFNetworkHandler.</summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendAsync">
+      <MemberSignature Language="C#" Value="protected override System.Threading.Tasks.Task&lt;System.Net.Http.HttpResponseMessage&gt; SendAsync (System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.Threading.Tasks.Task`1&lt;class System.Net.Http.HttpResponseMessage&gt; SendAsync(class System.Net.Http.HttpRequestMessage request, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.AsyncStateMachine(typeof(System.Net.Http.CFNetworkHandler/&lt;SendAsync&gt;c__async0))</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.Http.HttpResponseMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.Http.HttpRequestMessage" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="request" preserve-mono="true">The request to send.</param>
+        <param name="cancellationToken" preserve-mono="true">Cancelation token to cancel the operation.</param>
+        <summary preserve-mono="true">Sends the Http message asynchronously.</summary>
+        <returns>Task representing the asynchronous operation.</returns>
+        <remarks preserve-mono="true">
+	  This method is invoked by the HttpClient, it is non-blocking.
+	</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

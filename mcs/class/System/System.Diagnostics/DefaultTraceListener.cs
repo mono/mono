@@ -144,6 +144,7 @@ namespace System.Diagnostics {
 		{
 		}
 
+		[MonoTODO ("AssertUiEnabled defaults to False; should follow Environment.UserInteractive.")]
 		public bool AssertUiEnabled {
 			get { return assertUiEnabled; }
 			set { assertUiEnabled = value; }

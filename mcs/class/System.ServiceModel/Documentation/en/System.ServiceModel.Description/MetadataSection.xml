@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MetadataSection" FullName="System.ServiceModel.Description.MetadataSection">
+  <TypeSignature Language="C#" Value="public class MetadataSection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi MetadataSection extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Xml.Serialization.XmlRoot("MetadataSection", Namespace="http://schemas.xmlsoap.org/ws/2004/09/mex")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Description.MetadataSection" /> class conforms to the definition of the wsx:Metadata/wsx:MetadataSection element in the WS-Metadata Exchange specification and contains XML metadata or references to XML metadata. </para>
+      <para>A <see cref="T:System.ServiceModel.Description.MetadataSection" /> object contains one dialect of metadata in XML form (such as a Web Services Description Language or WSDL file). You can add a <see cref="T:System.ServiceModel.Description.MetadataSection" /> to a collection of XML metadata represented by a <see cref="T:System.ServiceModel.Description.MetadataSet" /> object. Much of the indigo1 metadata system, such as the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> class, use the <see cref="T:System.ServiceModel.Description.MetadataSet" /> class to import or export service metadata in XML form.</para>
+      <para>For example, to export indigo2 contract or endpoint objects to a <see cref="T:System.ServiceModel.Description.MetadataSet" /> object that contains the equivalent metadata in XML form, call the appropriate Export methods on the <see cref="T:System.ServiceModel.Description.WsdlExporter" /> class, passing either <see cref="T:System.ServiceModel.Description.ContractDescription" /> or <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, and then call the <see cref="M:System.ServiceModel.Description.WsdlExporter.GetGeneratedMetadata" /> method. </para>
+      <para>To import XML-based metadata from a <see cref="T:System.ServiceModel.Description.MetadataSet" /> object into indigo2 <see cref="T:System.ServiceModel.Description.ContractDescription" />, <see cref="T:System.ServiceModel.Description.ServiceEndpoint" />, and <see cref="T:System.ServiceModel.Channels.Binding" /> objects, pass a <see cref="T:System.ServiceModel.Description.MetadataSet" /> object to the constructor of the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> class and call one of the import methods. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents XML metadata or references to XML metadata.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MetadataSection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataSection" /> class with no dialect, identifier, or XML metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MetadataSection (string dialect, string identifier, object metadata);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string dialect, string identifier, object metadata) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="dialect" Type="System.String" />
+        <Parameter Name="identifier" Type="System.String" />
+        <Parameter Name="metadata" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="dialect">To be added.</param>
+        <param name="identifier">To be added.</param>
+        <param name="metadata">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.MetadataSection.#ctor(System.String,System.String,System.Object)" /> constructor to specify the metadata to be included in this <see cref="T:System.ServiceModel.Description.MetadataSection" />, its dialect and its identifier. The metadata object must be serializable using the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class so that the <see cref="T:System.ServiceModel.Description.MetadataSection" /> object can be serialized. If it is not serializable, an exception is thrown when the object is serialized. Use a <see cref="T:System.ServiceModel.Description.MetadataLocation" /> or <see cref="T:System.ServiceModel.Description.MetadataReference" /> object for the <paramref name="metadata" /> parameter if you want to include a reference to the metadata instead of the metadata itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataSection" /> class using the specified dialect, identifier, and XML metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.Xml.XmlAttribute&gt; Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.Xml.XmlAttribute&gt; Attributes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlAnyAttribute</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.Xml.XmlAttribute&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataSection.Attributes" /> property to add or remove attribute extensions. </para>
+          <block subset="none" type="note">
+            <para>The dialect and identifier attributes are not included in this collection.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of XML attributes that you can use to add or remove attributes extensions to the metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFromSchema">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.MetadataSection CreateFromSchema (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.MetadataSection CreateFromSchema(class System.Xml.Schema.XmlSchema schema) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MetadataSection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
+      </Parameters>
+      <Docs>
+        <param name="schema">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this static factory method to quickly create a <see cref="T:System.ServiceModel.Description.MetadataSection" /> for a XML Schema document. The <see cref="P:System.ServiceModel.Description.MetadataSection.Dialect" /> property is assigned the value of <see cref="P:System.ServiceModel.Description.MetadataSection.XmlSchemaDialect" /> and the <see cref="P:System.ServiceModel.Description.MetadataSection.Identifier" /> property is assigned the value of the target namespace of the XML Schema document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ServiceModel.Description.MetadataSection" /> from the specified <see cref="T:System.Xml.Schema.XmlSchema" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.MetadataSection" /> containing the specified XML schema.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFromServiceDescription">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.MetadataSection CreateFromServiceDescription (System.Web.Services.Description.ServiceDescription serviceDescription);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.MetadataSection CreateFromServiceDescription(class System.Web.Services.Description.ServiceDescription serviceDescription) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MetadataSection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceDescription" Type="System.Web.Services.Description.ServiceDescription" />
+      </Parameters>
+      <Docs>
+        <param name="serviceDescription">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this static factory method to quickly create a <see cref="T:System.ServiceModel.Description.MetadataSection" /> for a WSDL document. The <see cref="P:System.ServiceModel.Description.MetadataSection.Dialect" /> property is assigned the value of <see cref="P:System.ServiceModel.Description.MetadataSection.ServiceDescriptionDialect" /> and the <see cref="P:System.ServiceModel.Description.MetadataSection.Identifier" /> property is assigned the value of the target namespace of the WSDL document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.MetadataSection" /> that contains the specified <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.MetadataSection" /> that contains the specified <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Dialect">
+      <MemberSignature Language="C#" Value="public string Dialect { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Dialect" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlAttribute</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialect indicates the type of metadata in this <see cref="T:System.ServiceModel.Description.MetadataSection" />. The dialect strings with supported object models are:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Description.MetadataSection.MetadataExchangeDialect" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Description.MetadataSection.PolicyDialect" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Description.MetadataSection.ServiceDescriptionDialect" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Description.MetadataSection.XmlSchemaDialect" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates the type of metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Identifier">
+      <MemberSignature Language="C#" Value="public string Identifier { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Identifier" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlAttribute</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The identifier for the metadata in this <see cref="T:System.ServiceModel.Description.MetadataSection" />. The value depends on the type of metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an identifier for the metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Metadata">
+      <MemberSignature Language="C#" Value="public object Metadata { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Metadata" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlAnyElement</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlElement("Location", IsNullable=false, Namespace="http://schemas.xmlsoap.org/ws/2004/09/mex", Type=typeof(System.ServiceModel.Description.MetadataLocation))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlElement("Metadata", IsNullable=false, Namespace="http://schemas.xmlsoap.org/ws/2004/09/mex", Type=typeof(System.ServiceModel.Description.MetadataSet))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlElement("schema", IsNullable=false, Namespace="http://www.w3.org/2001/XMLSchema", Type=typeof(System.Xml.Schema.XmlSchema))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlElement("definitions", IsNullable=false, Namespace="http://schemas.xmlsoap.org/wsdl/", Type=typeof(System.Web.Services.Description.ServiceDescription))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlElement("MetadataReference", IsNullable=false, Namespace="http://schemas.xmlsoap.org/ws/2004/09/mex", Type=typeof(System.ServiceModel.Description.MetadataReference))</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataSection.Metadata" /> property to access or modify the metadata content contained in the <see cref="T:System.ServiceModel.Description.MetadataSection" />. The metadata object can be <see cref="T:System.ServiceModel.Description.MetadataReference" /> or a <see cref="T:System.ServiceModel.Description.MetadataLocation" /> as a reference to the metadata content. When a <see cref="T:System.ServiceModel.Description.MetadataSection" /> is deserialized, the type of the metadata object is determined from the XML content. The following table describes the possible return values. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Type of XML metadata</para>
+                </term>
+                <description>
+                  <para>Returned type</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>WSDL document</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Web.Services.Description.ServiceDescription" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XML Schema</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Xml.Schema.XmlSchema" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Metadata reference</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.ServiceModel.Description.MetadataReference" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Metadata location</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.ServiceModel.Description.MetadataLocation" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Policy, and all other XML content</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Xml.XmlElement" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the contained metadata object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MetadataExchangeDialect">
+      <MemberSignature Language="C#" Value="public static string MetadataExchangeDialect { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string MetadataExchangeDialect" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialect for a WS-Metadata Exchange document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value of the metadata exchange dialect.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PolicyDialect">
+      <MemberSignature Language="C#" Value="public static string PolicyDialect { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string PolicyDialect" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialect for a WS-Policy policy expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value of the WS-Policy dialect.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceDescriptionDialect">
+      <MemberSignature Language="C#" Value="public static string ServiceDescriptionDialect { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string ServiceDescriptionDialect" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value of the Web Services Description Language (WSDL) dialect.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="XmlSchemaDialect">
+      <MemberSignature Language="C#" Value="public static string XmlSchemaDialect { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string XmlSchemaDialect" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialect for an XML Schema document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value of the XML Schema dialect.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

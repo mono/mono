@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompareOptions" FullName="System.Globalization.CompareOptions">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum CompareOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CompareOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -20,160 +22,207 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These options denote case sensitivity or necessity to ignore types of characters.</para>
+      <para>The .NET Framework uses three distinct ways of sorting: word sort, string sort, and ordinal sort. Word sort performs a culture-sensitive comparison of strings. Certain nonalphanumeric characters might have special weights assigned to them. For example, the hyphen ("-") might have a very small weight assigned to it so that "coop" and "co-op" appear next to each other in a sorted list. String sort is similar to word sort, except that there are no special cases. Therefore, all nonalphanumeric symbols come before all alphanumeric characters. Ordinal sort compares strings based on the Unicode values of each element of the string.</para>
+      <para>The <see cref="F:System.Globalization.CompareOptions.StringSort" /> value can only be used with <see cref="M:System.Globalization.CompareInfo.Compare(System.String,System.String)" /> and <see cref="M:System.Globalization.CompareInfo.GetSortKey(System.String,System.Globalization.CompareOptions)" />. <see cref="T:System.ArgumentException" /> is thrown if the <see cref="F:System.Globalization.CompareOptions.StringSort" /> value is used with <see cref="M:System.Globalization.CompareInfo.IsPrefix(System.String,System.String,System.Globalization.CompareOptions)" />, <see cref="M:System.Globalization.CompareInfo.IsSuffix(System.String,System.String,System.Globalization.CompareOptions)" />, <see cref="M:System.Globalization.CompareInfo.IndexOf(System.String,System.Char)" />, or <see cref="M:System.Globalization.CompareInfo.LastIndexOf(System.String,System.Char)" />.</para>
+      <block subset="none" type="note">
+        <para>When possible, the application should use string comparison methods that accept a <see cref="T:System.Globalization.CompareOptions" /> value to specify the kind of comparison expected. As a general rule, user-facing comparisons are best served by the use of linguistic options (using the current culture), while security comparisons should specify <see cref="F:System.Globalization.CompareOptions.Ordinal" /> or <see cref="F:System.Globalization.CompareOptions.OrdinalIgnoreCase" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the string comparison options to use with <see cref="T:System.Globalization.CompareInfo" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IgnoreCase">
       <MemberSignature Language="C#" Value="IgnoreCase" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions IgnoreCase = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the string comparison must ignore case.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IgnoreKanaType">
       <MemberSignature Language="C#" Value="IgnoreKanaType" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions IgnoreKanaType = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the string comparison must ignore the Kana type. Kana type refers to Japanese hiragana and katakana characters, which represent phonetic sounds in the Japanese language. Hiragana is used for native Japanese expressions and words, while katakana is used for words borrowed from other languages, such as "computer" or "Internet". A phonetic sound can be expressed in both hiragana and katakana. If this value is selected, the hiragana character for one sound is considered equal to the katakana character for the same sound.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IgnoreNonSpace">
       <MemberSignature Language="C#" Value="IgnoreNonSpace" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions IgnoreNonSpace = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the string comparison must ignore nonspacing combining characters, such as diacritics. The <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode Standard</see> defines combining characters as characters that are combined with base characters to produce a new character. Nonspacing combining characters do not occupy a spacing position by themselves when rendered.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IgnoreSymbols">
       <MemberSignature Language="C#" Value="IgnoreSymbols" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions IgnoreSymbols = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the string comparison must ignore symbols, such as white-space characters, punctuation, currency symbols, the percent sign, mathematical symbols, the ampersand, and so on.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IgnoreWidth">
       <MemberSignature Language="C#" Value="IgnoreWidth" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions IgnoreWidth = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the string comparison must ignore the character width. For example, Japanese katakana characters can be written as full-width or half-width. If this value is selected, the katakana characters written as full-width are considered equal to the same characters written as half-width.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the default option settings for string comparisons.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Ordinal">
       <MemberSignature Language="C#" Value="Ordinal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions Ordinal = int32(1073741824)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the string comparison must use successive Unicode UTF-16 encoded values of the string (code unit by code unit comparison), leading to a fast comparison but one that is culture-insensitive. A string starting with a code unit XXXX<subscript>16</subscript> comes before a string starting with YYYY<subscript>16</subscript>, if XXXX<subscript>16</subscript> is less than YYYY<subscript>16</subscript>. This value cannot be combined with other <see cref="T:System.Globalization.CompareOptions" /> values and must be used alone.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OrdinalIgnoreCase">
       <MemberSignature Language="C#" Value="OrdinalIgnoreCase" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions OrdinalIgnoreCase = int32(268435456)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CompareOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="StringSort">
-      <MemberSignature Language="C#" Value="StringSort" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CompareOptions</ReturnType>
       </ReturnValue>
-      <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>String comparison must ignore case, then perform an ordinal comparison. This technique is equivalent to converting the string to uppercase using the invariant culture and then performing an ordinal comparison on the result.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="StringSort">
+      <MemberSignature Language="C#" Value="StringSort" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CompareOptions StringSort = int32(536870912)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CompareOptions</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the string comparison must use the string sort algorithm. In a string sort, the hyphen and the apostrophe, as well as other nonalphanumeric symbols, come before alphanumeric characters.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

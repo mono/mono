@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Font" FullName="System.Drawing.Font">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class Font : MarshalByRefObject, ICloneable, IDisposable, System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -34,8 +35,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about how to construct fonts, see <format type="text/html"><a href="d3a4a223-9492-4b54-9afd-db1c31c3cefd">How To: Construct Font Families and Fonts</a></format>. Windows Forms applications support TrueType fonts and have limited support for OpenType fonts. If you attempt to use a font that is not supported, or the font is not installed on the machine that is running the application, the Microsoft Sans Serif font will be substituted.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a particular format for text, including font face, size, and style attributes. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -47,10 +54,18 @@
         <Parameter Name="newStyle" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="prototype">To be added.</param>
-        <param name="newStyle">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For localized applications that are based on the dnprdnlong and earlier releases, specifying a font for <paramref name="prototype" /> when that font has not been installed on the computer that is used to build your application will cause the Microsoft Sans Serif font to be used instead. If your application depends on this behavior and you must recompile your application for the .NET Framework 3.0, you should specify the Microsoft Sans Serif font for <paramref name="prototype" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> that uses the specified existing <see cref="T:System.Drawing.Font" /> and <see cref="T:System.Drawing.FontStyle" /> enumeration.</para>
+        </summary>
+        <param name="prototype">
+          <attribution license="cc4" from="Microsoft" modified="false" />The existing <see cref="T:System.Drawing.Font" /> from which to create the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="newStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> to apply to the new <see cref="T:System.Drawing.Font" />. Multiple values of the <see cref="T:System.Drawing.FontStyle" /> enumeration can be combined with the OR operator. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,10 +81,18 @@
         <Parameter Name="emSize" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="family">To be added: an object of type 'FontFamily'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting font has its <see cref="P:System.Drawing.Font.Style" /> property set to <see cref="F:System.Drawing.FontStyle.Regular" /> and its <see cref="P:System.Drawing.Font.Unit" /> property set to <see cref="F:System.Drawing.GraphicsUnit.Point" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size. </para>
+        </summary>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontFamily" /> of the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size, in points, of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,10 +108,18 @@
         <Parameter Name="emSize" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="familyName">To be added: an object of type 'string'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting font has its <see cref="P:System.Drawing.Font.Style" /> property set to <see cref="F:System.Drawing.FontStyle.Regular" /> and its <see cref="P:System.Drawing.Font.Unit" /> property set to <see cref="F:System.Drawing.GraphicsUnit.Point" />. Windows Forms applications support TrueType fonts and have limited support for OpenType fonts. If the <paramref name="familyName" /> parameter specifies a font that is not installed on the machine running the application or is not supported, Microsoft Sans Serif will be substituted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size. </para>
+        </summary>
+        <param name="familyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of the <see cref="T:System.Drawing.FontFamily" /> for the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size, in points, of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,11 +136,20 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="family">To be added: an object of type 'FontFamily'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting font has its <see cref="P:System.Drawing.Font.Unit" /> property set to <see cref="F:System.Drawing.GraphicsUnit.Point" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size and style. </para>
+        </summary>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontFamily" /> of the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size, in points, of the new font. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,11 +166,20 @@
         <Parameter Name="unit" Type="System.Drawing.GraphicsUnit" />
       </Parameters>
       <Docs>
-        <param name="family">To be added: an object of type 'FontFamily'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting font has its <see cref="P:System.Drawing.Font.Style" /> property set to <see cref="F:System.Drawing.FontStyle.Regular" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size and unit. Sets the style to <see cref="F:System.Drawing.FontStyle.Regular" />.</para>
+        </summary>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontFamily" /> of the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -147,11 +196,20 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="familyName">To be added: an object of type 'string'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting font has its <see cref="P:System.Drawing.Font.Unit" /> property set to <see cref="F:System.Drawing.GraphicsUnit.Point" />. Windows Forms applications support TrueType fonts and have limited support for OpenType fonts. If the <paramref name="familyName" /> parameter specifies a font that is not installed on the machine running the application or is not supported, Microsoft Sans Serif will be substituted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size and style. </para>
+        </summary>
+        <param name="familyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of the <see cref="T:System.Drawing.FontFamily" /> for the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size, in points, of the new font. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -168,11 +226,20 @@
         <Parameter Name="unit" Type="System.Drawing.GraphicsUnit" />
       </Parameters>
       <Docs>
-        <param name="familyName">To be added: an object of type 'string'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting font has its <see cref="P:System.Drawing.Font.Style" /> property set to <see cref="F:System.Drawing.FontStyle.Regular" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size and unit. The style is set to <see cref="F:System.Drawing.FontStyle.Regular" />.</para>
+        </summary>
+        <param name="familyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of the <see cref="T:System.Drawing.FontFamily" /> for the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -190,12 +257,19 @@
         <Parameter Name="unit" Type="System.Drawing.GraphicsUnit" />
       </Parameters>
       <Docs>
-        <param name="family">To be added: an object of type 'FontFamily'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size, style, and unit.</para>
+        </summary>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontFamily" /> of the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,12 +287,22 @@
         <Parameter Name="unit" Type="System.Drawing.GraphicsUnit" />
       </Parameters>
       <Docs>
-        <param name="familyName">To be added: an object of type 'string'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Windows Forms applications support TrueType fonts and have limited support for OpenType fonts. If the <paramref name="familyName" /> parameter specifies a font that is not installed on the machine running the application or is not supported, Microsoft Sans Serif will be substituted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size, style, and unit.</para>
+        </summary>
+        <param name="familyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of the <see cref="T:System.Drawing.FontFamily" /> for the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -237,13 +321,24 @@
         <Parameter Name="gdiCharSet" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="family">To be added: an object of type 'FontFamily'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <param name="gdiCharSet">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="gdiCharSet" /> parameter takes a value from the list defined in the Windows SDK header file WinGDI.h.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size, style, unit, and character set.</para>
+        </summary>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontFamily" /> of the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
+        <param name="gdiCharSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> that specifies a </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -262,13 +357,24 @@
         <Parameter Name="gdiCharSet" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="familyName">To be added: an object of type 'string'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <param name="gdiCharSet">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="gdiCharSet" /> parameter takes a value from the list defined in the Windows SDK header file WinGDI.h. Windows Forms applications support TrueType fonts and have limited support for OpenType fonts. If the <paramref name="familyName" /> parameter specifies a font that is not installed on the machine running the application or is not supported, Microsoft Sans Serif will be substituted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size, style, unit, and character set.</para>
+        </summary>
+        <param name="familyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of the <see cref="T:System.Drawing.FontFamily" /> for the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
+        <param name="gdiCharSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> that specifies a ndptecgdi character set to use for this font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -288,14 +394,26 @@
         <Parameter Name="gdiVerticalFont" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="family">To be added: an object of type 'FontFamily'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <param name="gdiCharSet">To be added.</param>
-        <param name="gdiVerticalFont">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="gdiCharSet" /> parameter takes a value from the list defined in the Windows SDK header file WinGDI.h.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using a specified size, style, unit, and character set.</para>
+        </summary>
+        <param name="family">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontFamily" /> of the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
+        <param name="gdiCharSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> that specifies a </param>
+        <param name="gdiVerticalFont">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value indicating whether the new font is derived from a ndptecgdi vertical font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -315,14 +433,26 @@
         <Parameter Name="gdiVerticalFont" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="familyName">To be added: an object of type 'string'</param>
-        <param name="emSize">To be added: an object of type 'float'</param>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <param name="unit">To be added: an object of type 'GraphicsUnit'</param>
-        <param name="gdiCharSet">To be added.</param>
-        <param name="gdiVerticalFont">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="gdiCharSet" /> parameter takes a value from the list defined in the Windows SDK header file WinGDI.h. If the <paramref name="familyName" /> parameter specifies a font that is not installed on the machine running the application or is not supported, Microsoft Sans Serif will be substituted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.Font" /> using the specified size, style, unit, and character set.</para>
+        </summary>
+        <param name="familyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representation of the <see cref="T:System.Drawing.FontFamily" /> for the new <see cref="T:System.Drawing.Font" />. </param>
+        <param name="emSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The em-size of the new font in the units specified by the <paramref name="unit" /> parameter. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> of the new font. </param>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.GraphicsUnit" /> of the new font. </param>
+        <param name="gdiCharSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> that specifies a ndptecgdi character set to use for this font. </param>
+        <param name="gdiVerticalFont">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value indicating whether the new <see cref="T:System.Drawing.Font" /> is derived from a ndptecgdi vertical font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -336,9 +466,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this <see cref="T:System.Drawing.Font" /> is bold.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -358,9 +491,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> this method creates, cast as an <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -375,8 +514,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Drawing.Font.Dispose" /> allows the resources used by this <see cref="T:System.Drawing.Font" /> to be reallocated for other purposes.</para>
+          <para>Call <see cref="M:System.Drawing.Font.Dispose" /> when you are finished using the <see cref="T:System.Drawing.Font" />. The <see cref="M:System.Drawing.Font.Dispose" /> method leaves the <see cref="T:System.Drawing.Font" /> in an unusable state. After calling <see cref="M:System.Drawing.Font.Dispose" />, you must release all references to the <see cref="T:System.Drawing.Font" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Drawing.Font" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Drawing.Font.Dispose" /> before you release your last reference to the <see cref="T:System.Drawing.Font" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Drawing.Font" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -393,10 +546,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified object is a <see cref="T:System.Drawing.Font" /> and has the same <see cref="P:System.Drawing.Font.FontFamily" />, <see cref="P:System.Drawing.Font.GdiVerticalFont" />, <see cref="P:System.Drawing.Font.GdiCharSet" />, <see cref="P:System.Drawing.Font.Style" />, <see cref="P:System.Drawing.Font.Size" />, and <see cref="P:System.Drawing.Font.Unit" /> property values as this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="obj" /> parameter is a <see cref="T:System.Drawing.Font" /> and has the same <see cref="P:System.Drawing.Font.FontFamily" />, <see cref="P:System.Drawing.Font.GdiVerticalFont" />, <see cref="P:System.Drawing.Font.GdiCharSet" />, <see cref="P:System.Drawing.Font.Style" />, <see cref="P:System.Drawing.Font.Size" />, and <see cref="P:System.Drawing.Font.Unit" /> property values as this <see cref="T:System.Drawing.Font" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -426,9 +586,15 @@
         <ReturnType>System.Drawing.FontFamily</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontFamily'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.FontFamily" /> represents a group of fonts that have a similar font face, but may have different sizes and styles (for example, Arial, Times New Roman, and Verdana).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.FontFamily" /> associated with this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -450,10 +616,20 @@
         <Parameter Name="hdc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="hdc">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Font'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For this method to work, the <paramref name="hdc" /> parameter must contain a handle to a device context in which a font is selected. This method will not work with an <paramref name="hdc" /> handle acquired from a ndptecgdiplus <see cref="T:System.Drawing.Graphics" /> object because the <paramref name="hdc" /> handle does not have a font selected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified Windows handle to a device context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> this method creates.</para>
+        </returns>
+        <param name="hdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to a device context. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -470,10 +646,17 @@
         <Parameter Name="hfont" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="hfont">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Font'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified Windows handle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> this method creates.</para>
+        </returns>
+        <param name="hfont">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a ndptecgdi font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -490,10 +673,20 @@
         <Parameter Name="lf" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="lf">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Font'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A ndptecgdi <unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>, or logical font, is a structure that contains 14 properties that describe a particular font. For more information, see "The Logical Font" in the Windows Development documentation at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified GDI logical font (<unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>) structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> that this method creates.</para>
+        </returns>
+        <param name="lf">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the ndptecgdi LOGFONT structure from which to create the <see cref="T:System.Drawing.Font" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -511,11 +704,22 @@
         <Parameter Name="hdc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="lf">To be added: an object of type 'object'</param>
-        <param name="hdc">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Font'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A ndptecgdi <unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>, or logical font, is a structure that contains 14 properties that describe a particular font. For more information, see "The Logical Font" in the Windows Development documentation at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Drawing.Font" /> from the specified GDI logical font (<unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>) structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> that this method creates.</para>
+        </returns>
+        <param name="lf">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the ndptecgdi LOGFONT structure from which to create the <see cref="T:System.Drawing.Font" />. </param>
+        <param name="hdc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to a device context that contains additional information about the <paramref name="lf" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -529,9 +733,187 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'byte'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns 1, unless a different character set is specified in the <see cref="M:System.Drawing.Font.#ctor(System.String,System.Single,System.Drawing.FontStyle,System.Drawing.GraphicsUnit,System.Byte)" /> constructor. This property takes a value from the list defined in the Windows SDK header file WinGDI.h. The character sets and byte values are listed in the following table. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Character set</para>
+                </term>
+                <description>
+                  <para>Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ANSI</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DEFAULT</para>
+              </term>
+              <description>
+                <para>1</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SYMBOL</para>
+              </term>
+              <description>
+                <para>2</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SHIFTJIS</para>
+              </term>
+              <description>
+                <para>128</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>HANGEUL</para>
+              </term>
+              <description>
+                <para>129</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>HANGUL</para>
+              </term>
+              <description>
+                <para>129</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GB2312</para>
+              </term>
+              <description>
+                <para>134</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CHINESEBIG5</para>
+              </term>
+              <description>
+                <para>136</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OEM</para>
+              </term>
+              <description>
+                <para>255</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>JOHAB</para>
+              </term>
+              <description>
+                <para>130</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>HEBREW</para>
+              </term>
+              <description>
+                <para>177</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ARABIC</para>
+              </term>
+              <description>
+                <para>178</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GREEK</para>
+              </term>
+              <description>
+                <para>161</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TURKISH</para>
+              </term>
+              <description>
+                <para>162</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VIETNAMESE</para>
+              </term>
+              <description>
+                <para>163</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>THAI</para>
+              </term>
+              <description>
+                <para>222</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>EASTEUROPE</para>
+              </term>
+              <description>
+                <para>238</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>RUSSIAN</para>
+              </term>
+              <description>
+                <para>204</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MAC</para>
+              </term>
+              <description>
+                <para>77</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BALTIC</para>
+              </term>
+              <description>
+                <para>186</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a byte value that specifies the GDI character set that this <see cref="T:System.Drawing.Font" /> uses.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -550,9 +932,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine if a font is compatible with native Win32 controls on non-Unicode platforms.</para>
+          <para>
+            <see cref="P:System.Drawing.Font.GdiVerticalFont" /> only returns true if this font was created from a classic GDI</para>
+          <para>font definition, like a LOGFONT or HFONT.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value that indicates whether this <see cref="T:System.Drawing.Font" /> is derived from a GDI vertical font.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -572,9 +963,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code for this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -589,9 +986,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line spacing of a <see cref="T:System.Drawing.Font" /> is the vertical distance between the base lines of two consecutive lines of text. Thus, the line spacing includes the blank space between lines along with the height of the character itself.</para>
+          <para>If the <see cref="P:System.Drawing.Font.Unit" /> property of the font is set to anything other than <see cref="F:System.Drawing.GraphicsUnit.Pixel" />, the height (in pixels) is calculated using the vertical resolution of the screen display. For example, suppose the font unit is inches and the font size is 0.3. Also suppose that for the corresponding font family, the em-height is 2048 and the line spacing is 2355. For a screen display that has a vertical resolution of 96 dots per inch, you can calculate the height as follows: </para>
+          <para>2355*(0.3/2048)*96 = 33.11719 </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the line spacing, in pixels, of this font. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line spacing, in pixels, of this font.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -608,10 +1016,24 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added: an object of type 'Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line spacing of a <see cref="T:System.Drawing.Font" /> is the vertical distance between the base lines of two consecutive lines of text. Thus, the line spacing includes the blank space between lines along with the height of the character itself.</para>
+          <para>If the <see cref="P:System.Drawing.Font.Unit" /> property of the font is set to anything other than <see cref="F:System.Drawing.GraphicsUnit.Pixel" />, the height, in pixels, is calculated using the vertical resolution of the specified <see cref="T:System.Drawing.Graphics" /> object. For example, suppose the font unit is inches and the font size is 0.3. Also suppose that for the corresponding font family, the em-height is 2048 and the line spacing is 2355. If the <see cref="T:System.Drawing.Graphics" /> object has a <see cref="P:System.Drawing.Font.Unit" /> property value of <see cref="F:System.Drawing.GraphicsUnit.Pixel" /> and a <see cref="P:System.Drawing.Graphics.DpiY" /> property value of 96 dots per inch, the height is calculated as follows: </para>
+          <para>2355*(0.3/2048)*96 = 33.1171875 </para>
+          <para>Continuing with the same example, suppose the <see cref="P:System.Drawing.Font.Unit" /> property of the <see cref="T:System.Drawing.Graphics" /> object is set to <see cref="F:System.Drawing.GraphicsUnit.Millimeter" /> rather than <see cref="F:System.Drawing.GraphicsUnit.Pixel" />. Then (using 1 inch = 25.4 millimeters) the height, in millimeters, is calculated as follows: </para>
+          <para>2355*(0.3/2048)25.4 = 8.762256 </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the line spacing, in the current unit of a specified <see cref="T:System.Drawing.Graphics" />, of this font. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line spacing, in pixels, of this font.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> that holds the vertical resolution, in dots per inch, of the display device as well as settings for page unit and page scale. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -628,10 +1050,21 @@
         <Parameter Name="dpi" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="dpi">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Drawing.Font.Unit" /> property of the font is set to anything other than <see cref="F:System.Drawing.GraphicsUnit.Pixel" />, the height (in pixels) is calculated using the vertical resolution of the screen display. For example, suppose the font unit is inches and the font size is 0.3. Also suppose that for the corresponding font family, the em-height is 2048 and the line spacing is 2355. If the specified vertical resolution is 96 dots per inch, the height is calculated as follows: </para>
+          <para>2355*(0.3/2048)*96 = 33.1171875 </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the height, in pixels, of this <see cref="T:System.Drawing.Font" /> when drawn to a device with the specified vertical resolution.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height, in pixels, of this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
+        <param name="dpi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical resolution, in dots per inch, used to calculate the height of the font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -645,9 +1078,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line spacing is the vertical distance between the base lines of two consecutive lines of text. Thus, the line spacing includes the blank space between lines along with the height of the character itself.</para>
+          <para>If the <see cref="P:System.Drawing.Font.Unit" /> property of the font is set to anything other than <see cref="F:System.Drawing.GraphicsUnit.Pixel" />, the height (in pixels) is calculated using the vertical resolution of the screen display. For example, suppose the font unit is inches and the font size is 0.3. Also suppose that for the corresponding font family, the em-height is 2048 and the line spacing is 2355. For a screen display that has a vertical resolution of 96 dots per inch, you can calculate the height as follows: </para>
+          <para>2355*(0.3/2048)*96 = 33.11719 </para>
+          <para>The value returned by the <see cref="M:System.Drawing.Font.GetHeight" /> method would be 33.11719, and the value returned by the <see cref="P:System.Drawing.Font.Height" /> property would be 34. The <see cref="P:System.Drawing.Font.Height" /> property is the value returned by <see cref="M:System.Drawing.Font.GetHeight" />, rounded up to the nearest integer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line spacing of this font.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -674,9 +1116,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the user changes the system font, the <see cref="P:System.Drawing.Font.IsSystemFont" /> property could return true, even if the font is not actually a system font. To avoid this situation, if you are using system fonts in your application, you should track user preference changes by handling the <see cref="E:Microsoft.Win32.SystemEvents.UserPreferenceChanging" /> or <see cref="E:Microsoft.Win32.SystemEvents.UserPreferenceChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the font is a member of <see cref="T:System.Drawing.SystemFonts" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Italic">
@@ -686,9 +1134,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this font has the italic style applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -707,9 +1158,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the face name of this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -734,9 +1188,12 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the em-size of this <see cref="T:System.Drawing.Font" /> measured in the units specified by the <see cref="P:System.Drawing.Font.Unit" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -750,9 +1207,12 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the em-size, in points, of this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -771,9 +1231,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this <see cref="T:System.Drawing.Font" /> specifies a horizontal line through the font.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -792,9 +1255,12 @@
         <ReturnType>System.Drawing.FontStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontStyle'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets style information for this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -821,10 +1287,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="SystemFontName">
@@ -842,9 +1313,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name returned by the <see cref="P:System.Drawing.Font.SystemFontName" /> property will be one of the members of the <see cref="T:System.Drawing.SystemFonts" />, converted to a string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the system font if the <see cref="P:System.Drawing.Font.IsSystemFont" /> property returns true.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToHfont">
@@ -855,9 +1332,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IntPtr'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using this method, you must dispose of the resulting <unmanagedCodeEntityReference>Hfont</unmanagedCodeEntityReference> using the ndptecgdi <unmanagedCodeEntityReference>DeleteObject</unmanagedCodeEntityReference> method to ensure the resources are released.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a handle to this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows handle to this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -874,9 +1360,16 @@
         <Parameter Name="logFont" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="logFont">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about logical fonts, search for "LOGFONT" in the MSDN library at <see cref="">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a GDI logical font (<unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>) structure from this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <param name="logFont">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the LOGFONT structure that this method creates. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -894,10 +1387,18 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="logFont">To be added: an object of type 'object'</param>
-        <param name="graphics">To be added: an object of type 'Graphics'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about logical fonts, search for "LOGFONT" in the MSDN library at <see cref="">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a GDI logical font (<unmanagedCodeEntityReference>LOGFONT</unmanagedCodeEntityReference>) structure from this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <param name="logFont">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the LOGFONT structure that this method creates. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> that provides additional information for the LOGFONT structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -912,9 +1413,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned string has the following format:</para>
+          <para>[Font: Name=fontName, Size=size, Units=units, GDiCharSet=gdiCharSet, GdiVerticalFont=boolean]</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a human-readable string representation of this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Drawing.Font" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -928,9 +1439,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this <see cref="T:System.Drawing.Font" /> is underlined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -949,9 +1463,12 @@
         <ReturnType>System.Drawing.GraphicsUnit</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'GraphicsUnit'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unit of measure for this <see cref="T:System.Drawing.Font" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

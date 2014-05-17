@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageProtectionOrder" FullName="System.ServiceModel.Security.MessageProtectionOrder">
+  <TypeSignature Language="C#" Value="public enum MessageProtectionOrder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MessageProtectionOrder extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with the <see cref="P:System.ServiceModel.Channels.AsymmetricSecurityBindingElement.MessageProtectionOrder" /> property of the <see cref="T:System.ServiceModel.Channels.AsymmetricSecurityBindingElement" /> and the <see cref="P:System.ServiceModel.Channels.SymmetricSecurityBindingElement.MessageProtectionOrder" /> property of the <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> classes.</para>
+      <para>If a message is vulnerable to a digest attack (for example, if the message is short or the entropy is low), you should use the <see cref="F:System.ServiceModel.Security.MessageProtectionOrder.SignBeforeEncryptAndEncryptSignature" /> or <see cref="F:System.ServiceModel.Security.MessageProtectionOrder.EncryptBeforeSign" /> option. (<newTerm>Entropy</newTerm> is random data provided by a server, a client, or both, and is used to create a shared key for encrypting and decrypting data.)</para>
+      <format type="text/html">
+        <h2>What Is Ordered?</h2>
+      </format>
+      <para>indigo2 offers three different protection levels that determine how messages are secured using SOAP message security. The default is <see cref="F:System.ServiceModel.Security.MessageProtectionOrder.SignBeforeEncryptAndEncryptSignature" />. This setting first signs the message, encrypts the message body, and then encrypts the XML signature. This reduces the likelihood of a successful cryptographic guessing attack against the signature. </para>
+      <para>However, using the default has performance implications. In effect, there is a tradeoff of performance for increased security. Encrypting the signature can decrease performance between 10 percent and 40 percent. If the data content of the message is of low value, and performance throughput is more significant, use <see cref="F:System.ServiceModel.Security.MessageProtectionOrder.SignBeforeEncrypt" />. With this setting, the signature digest is sent in clear text, and thus the message is more vulnerable to guess-and-verify attacks on low entropy.</para>
+      <format type="text/html">
+        <h2>Custom Bindings Only</h2>
+      </format>
+      <para>To change the MessageProtectionOrder property requires the creation of a custom security binding. For more information about creating custom bindings, see <format type="text/html"><a href="c4960675-d701-4bc9-b400-36a752fdd08b">Creating User-defined Bindings and Binding Elements</a></format>. For more information about creating a custom binding for a specific authentication mode, see <format type="text/html"><a href="a7c7747a-5b8c-463f-8493-7266dac75066">How To: Create a SecurityBindingElement for a Specified Authentication Mode</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the order of operations that protect a message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="EncryptBeforeSign">
+      <MemberSignature Language="C#" Value="EncryptBeforeSign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.MessageProtectionOrder EncryptBeforeSign = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.MessageProtectionOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the SOAP message is encrypted before a digital signature is generated for the SOAP message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SignBeforeEncrypt">
+      <MemberSignature Language="C#" Value="SignBeforeEncrypt" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.MessageProtectionOrder SignBeforeEncrypt = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.MessageProtectionOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a digital signature is generated for the SOAP message before any portion of the SOAP message is encrypted, but the digital signature is not encrypted.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SignBeforeEncryptAndEncryptSignature">
+      <MemberSignature Language="C#" Value="SignBeforeEncryptAndEncryptSignature" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.MessageProtectionOrder SignBeforeEncryptAndEncryptSignature = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.MessageProtectionOrder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a digital signature is generated for the SOAP message before any portion of the SOAP message is encrypted, and the digital signature is encrypted.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

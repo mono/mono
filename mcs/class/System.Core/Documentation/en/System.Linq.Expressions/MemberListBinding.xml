@@ -1,31 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemberListBinding" FullName="System.Linq.Expressions.MemberListBinding">
   <TypeSignature Language="C#" Value="public sealed class MemberListBinding : System.Linq.Expressions.MemberBinding" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MemberListBinding extends System.Linq.Expressions.MemberBinding" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Linq.Expressions.MemberBinding</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="Overload:System.Linq.Expressions.Expression.ListBind" /> factory methods to create a <see cref="T:System.Linq.Expressions.MemberListBinding" />.</para>
+      <para>A <see cref="T:System.Linq.Expressions.MemberListBinding" /> has the <see cref="P:System.Linq.Expressions.MemberBinding.BindingType" /> property equal to <see cref="F:System.Linq.Expressions.MemberBindingType.ListBinding" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents initializing the elements of a collection member of a newly created object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Initializers">
       <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.ElementInit&gt; Initializers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Linq.Expressions.ElementInit&gt; Initializers" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.ElementInit&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the element initializers for initializing a collection member of a newly created object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public System.Linq.Expressions.MemberListBinding Update (System.Collections.Generic.IEnumerable&lt;System.Linq.Expressions.ElementInit&gt; initializers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Linq.Expressions.MemberListBinding Update(class System.Collections.Generic.IEnumerable`1&lt;class System.Linq.Expressions.ElementInit&gt; initializers) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.MemberListBinding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="initializers" Type="System.Collections.Generic.IEnumerable&lt;System.Linq.Expressions.ElementInit&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="initializers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.MemberListBinding.Initializers" /> property of the result.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DispatchRuntime" FullName="System.ServiceModel.Dispatcher.DispatchRuntime">
+  <TypeSignature Language="C#" Value="public sealed class DispatchRuntime" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DispatchRuntime extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" /> class either to modify the default behavior of a service or individual endpoint, or to insert objects that implement custom modifications to one or both of the following service processes:</para>
+      <list type="ordered">
+        <item>
+          <para>The transformation of incoming messages into objects and releasing those objects as method invocations on a service object.</para>
+        </item>
+        <item>
+          <para>The transformation of objects received from the response to a service operation invocation into outbound messages.</para>
+        </item>
+      </list>
+      <para>In indigo1, the channel and endpoint dispatchers are the service components responsible for accepting new channels, receiving messages, method dispatch and invocation, and response processing. Each endpoint exposed by a <see cref="T:System.ServiceModel.ServiceHost" /> object has one endpoint dispatcher and an associated channel dispatcher; in addition, each client that participates in duplex communication also has an endpoint dispatcher and channel dispatcher for each callback endpoint.</para>
+      <para>The <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" /> enables you to intercept and extend the channel or endpoint dispatcher for all messages across a particular contract, even when a message is not recognized. When a message arrives that does not match any messages declared in the contract it is dispatched to the operation that was returned by the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.UnhandledDispatchOperation" /> property. To intercept or extend across all messages for a particular operation, see the <see cref="T:System.ServiceModel.Dispatcher.DispatchOperation" /> class.</para>
+      <para>There are four main areas of dispatcher extensibility exposed by the <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" /> class:</para>
+      <list type="ordered">
+        <item>
+          <para>Dispatch components use the properties of the <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" /> and those of the associated channel dispatcher returned by the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ChannelDispatcher" /> property to customize how the channel dispatcher accepts and closes channels. This category includes the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.ChannelInitializers" /> and <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.InputSessionShutdownHandlers" /> properties.</para>
+        </item>
+        <item>
+          <para>Message components are customized for each message processed. This category includes the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.MessageInspectors" />, <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.OperationSelector" />, <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.Operations" />, and the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers" /> properties.</para>
+        </item>
+        <item>
+          <para>Instance components customize the creation, lifetime, and disposal of instances of the service type. For more information about service object lifetimes, see the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property. This category includes the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.InstanceContextInitializers" /> and the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.InstanceProvider" /> properties.</para>
+        </item>
+        <item>
+          <para>Security-related components can use the following properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.SecurityAuditLogLocation" /> indicates where audit events are written. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ImpersonateCallerForAllOperations" /> controls whether the service attempts to impersonate using the credentials provided by the incoming message.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.MessageAuthenticationAuditLevel" /> controls whether successful message authentication events are written to the event log specified by <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.SecurityAuditLogLocation" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.PrincipalPermissionMode" /> controls how the <see cref="P:System.Threading.Thread.CurrentPrincipal" /> property is set.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ServiceAuthorizationAuditLevel" /> specifies how the auditing of authorization events is performed.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.SuppressAuditFailure" /> specifies whether to suppress non-critical exceptions that occur during the logging process.</para>
+            </item>
+          </list>
+        </item>
+      </list>
+      <para>Typically custom extension objects are assigned to a <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" /> property or inserted into a collection by a service behavior (an object that implements <see cref="T:System.ServiceModel.Description.IServiceBehavior" />), a contract behavior (an object that implements <see cref="T:System.ServiceModel.Description.IContractBehavior" />), or an endpoint behavior (an object that implements <see cref="T:System.ServiceModel.Description.IEndpointBehavior" />). Then the installing behavior object is added to the appropriate collection of behaviors either programmatically or by implementing a custom <see cref="T:System.ServiceModel.Configuration.BehaviorExtensionElement" /> object to enable the behavior to be inserted using an application configuration file.</para>
+      <para />
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes properties that can be used to modify default service behavior as well as attach custom objects that can modify how incoming messages are transformed into objects and dispatched to operations. This class cannot be inherited. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AutomaticInputSessionShutdown">
+      <MemberSignature Language="C#" Value="public bool AutomaticInputSessionShutdown { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AutomaticInputSessionShutdown" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you set the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.AutomaticInputSessionShutdown" /> property to false, the channel must be closed by some other mechanism. In this case, you must add a custom session shutdown handler to the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.InputSessionShutdownHandlers" /> property. </para>
+          <para>By default when a client closes an output session and the service has finished processing any remaining messages the server closes the session. Setting <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.AutomaticInputSessionShutdown" /> to false prevents the server from automatically closing the session and enables custom control of session lifetimes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the service closes an input session when the client closes an output session. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CallbackClientRuntime">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.ClientRuntime CallbackClientRuntime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.ClientRuntime CallbackClientRuntime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.ClientRuntime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.CallbackClientRuntime" /> to add custom extension objects that view or modify the conversion of parameters to outbound messages and response messages back into return values. For details, see <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> object that represents the installation point for extensions to indigo1 for outbound calls to a duplex callback endpoint.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ChannelDispatcher">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.ChannelDispatcher ChannelDispatcher { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.ChannelDispatcher ChannelDispatcher" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.ChannelDispatcher</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> for this dispatch run-time object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConcurrencyMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ConcurrencyMode ConcurrencyMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.ConcurrencyMode ConcurrencyMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ConcurrencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service implementation must be thread-safe to use the Multiple concurrency mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether an instance of a service processes messages sequentially or concurrently.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndpointDispatcher">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.EndpointDispatcher EndpointDispatcher { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.EndpointDispatcher EndpointDispatcher" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.EndpointDispatcher</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.EndpointDispatcher" /> property to obtain the endpoint dispatcher associated with this dispatch runtime to modify or customize endpoint-specific execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Dispatcher.EndpointDispatcher" /> for this dispatch runtime.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExternalAuthorizationPolicies">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; ExternalAuthorizationPolicies { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; ExternalAuthorizationPolicies" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to add a custom implementation of <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> that defines a set of rules for authorizing a user, given a set of claims. This custom implementation is used every time the service is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the external authorization policies that define a set of rules for authorizing a user, given a set of claims.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IgnoreTransactionMessageProperty">
+      <MemberSignature Language="C#" Value="public bool IgnoreTransactionMessageProperty { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreTransactionMessageProperty" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.TransactionMessageProperty" /> allows third-party channel developers who use a proprietary transaction flow mechanism for their channel to introduce their transaction into indigo1. If this property is set to true, the transaction is ignored when executing the service method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether to ignore the <see cref="T:System.ServiceModel.Channels.TransactionMessageProperty" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ImpersonateCallerForAllOperations">
+      <MemberSignature Language="C#" Value="public bool ImpersonateCallerForAllOperations { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ImpersonateCallerForAllOperations" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ImpersonateCallerForAllOperations" /> property to control whether impersonation is performed when an operation's <see cref="P:System.ServiceModel.Dispatcher.DispatchOperation.Impersonation" /> property value is <see cref="F:System.ServiceModel.ImpersonationOption.Allowed" />. An exception is thrown if the property is true but an operation's <see cref="P:System.ServiceModel.Dispatcher.DispatchOperation.Impersonation" /> property value is <see cref="F:System.ServiceModel.ImpersonationOption.NotAllowed" />.</para>
+          <para>If an operation's <see cref="P:System.ServiceModel.Dispatcher.DispatchOperation.Impersonation" /> property value is <see cref="F:System.ServiceModel.ImpersonationOption.Required" /> impersonation is always attempted. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that controls whether the service attempts to impersonate using the credentials provided by the incoming message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InputSessionShutdownHandlers">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IInputSessionShutdown&gt; InputSessionShutdownHandlers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.IInputSessionShutdown&gt; InputSessionShutdownHandlers" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IInputSessionShutdown&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Add an <see cref="T:System.ServiceModel.Dispatcher.IInputSessionShutdown" /> object to this property to control the manner in which input sessions are closed. When a call to the <see cref="M:System.ServiceModel.Channels.IInputChannel.Receive" /> method on the <see cref="T:System.ServiceModel.Channels.IDuplexSessionChannel" /> first returns null, (which indicates that the input session has been closed), the dispatcher invokes each <see cref="T:System.ServiceModel.Dispatcher.IInputSessionShutdown" /> object, passing it an <see cref="T:System.ServiceModel.Channels.IDuplexSessionChannel" /> object. Custom <see cref="T:System.ServiceModel.Dispatcher.IInputSessionShutdown" /> objects can use this <see cref="T:System.ServiceModel.Channels.IDuplexSessionChannel" /> object to perform clean-up for each channel state or to send a response message before closing the channel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Dispatcher.IInputSessionShutdown" /> objects that can be used to add a custom handler to control how input sessions are closed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InstanceContextInitializers">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IInstanceContextInitializer&gt; InstanceContextInitializers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.IInstanceContextInitializer&gt; InstanceContextInitializers" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IInstanceContextInitializer&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.InstanceContextInitializers" /> property to add a custom initializer that can inspect or modify an <see cref="T:System.ServiceModel.InstanceContext" /> object when it is first created. The frequency with which <see cref="T:System.ServiceModel.InstanceContext" /> objects are created is controlled by the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextInitializer" /> objects that can be used to inspect or modify an <see cref="T:System.ServiceModel.InstanceContext" /> object when it is first created.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InstanceContextProvider">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.IInstanceContextProvider InstanceContextProvider { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.IInstanceContextProvider InstanceContextProvider" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IInstanceContextProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextProvider" /> to be used by the <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InstanceProvider">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.IInstanceProvider InstanceProvider { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.IInstanceProvider InstanceProvider" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IInstanceProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IInstanceProvider" /> interface and assign the implementation to the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.InstanceProvider" /> property to control instances of the service type using a constructor other than the default constructor, for example, to implement a custom instancing mode such as instance pooling.</para>
+          <para>Typically the <see cref="M:System.ServiceModel.Dispatcher.IInstanceProvider.GetInstance" /> method is invoked once, when the <see cref="T:System.ServiceModel.InstanceContext" /> object is first created. The <see cref="M:System.ServiceModel.Dispatcher.IInstanceProvider.ReleaseInstance(System.ServiceModel.InstanceContext,System.Object)" /> method is also invoked once, when the <see cref="T:System.ServiceModel.InstanceContext" /> object is closed.</para>
+          <para>A service can also be configured to release an instance before the <see cref="T:System.ServiceModel.InstanceContext" /> object is closed. This can be configured by using the <see cref="P:System.ServiceModel.OperationBehaviorAttribute.ReleaseInstanceMode" /> property or by calling the <see cref="M:System.ServiceModel.InstanceContext.ReleaseServiceInstance" /> method. If this is done, the <see cref="T:System.ServiceModel.InstanceContext" /> object calls the <see cref="M:System.ServiceModel.Dispatcher.IInstanceProvider.ReleaseInstance(System.ServiceModel.InstanceContext,System.Object)" /> method. If a new message arrives after the instance has been released, a new instance is created using the <see cref="M:System.ServiceModel.Dispatcher.IInstanceProvider.GetInstance" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.ServiceModel.Dispatcher.IInstanceProvider" /> object that you can use to control the creation and destruction of service objects.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageAuthenticationAuditLevel">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.AuditLevel MessageAuthenticationAuditLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.AuditLevel MessageAuthenticationAuditLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.MessageAuthenticationAuditLevel" /> property to specify whether successful message authentication events are written to the event log. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether successful message authentication events are written to the event log specified by <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.SecurityAuditLogLocation" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageInspectors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IDispatchMessageInspector&gt; MessageInspectors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.IDispatchMessageInspector&gt; MessageInspectors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IDispatchMessageInspector&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.MessageInspectors" /> property to attach custom <see cref="T:System.ServiceModel.Dispatcher.IDispatchMessageInspector" /> objects that can inspect or transform all messages that flow through the endpoint. Because the <see cref="T:System.ServiceModel.Dispatcher.IDispatchMessageInspector" /> object gets a reference to the message, you can buffer it and examine a copy of the body.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Dispatcher.IDispatchMessageInspector" /> objects that can be used to attach a custom message inspector for all incoming and outgoing messages across the endpoint.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Operations">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedKeyedCollection&lt;string,System.ServiceModel.Dispatcher.DispatchOperation&gt; Operations { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedKeyedCollection`2&lt;string, class System.ServiceModel.Dispatcher.DispatchOperation&gt; Operations" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedKeyedCollection&lt;System.String,System.ServiceModel.Dispatcher.DispatchOperation&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.Operations" /> property to inspect or modify parameters, control parameter and return value serialization and deserialization, control operation invocation, and modify other behaviors for a single operation. For details, see <see cref="T:System.ServiceModel.Dispatcher.DispatchOperation" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Dispatcher.DispatchOperation" /> objects that can be used to control the execution behavior of a particular operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OperationSelector">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.IDispatchOperationSelector OperationSelector { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.IDispatchOperationSelector OperationSelector" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IDispatchOperationSelector</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.OperationSelector" /> property to decide which operation receives a given message. The default operation selector returns the value of the action header for the message, which is used as the key to locate the correct <see cref="T:System.ServiceModel.Dispatcher.DispatchOperation" />. If no matching operation is found, the invocation is dispatched to the return value from the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.UnhandledDispatchOperation" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.Dispatcher.IDispatchOperationSelector" /> object that controls the selection of a destination <see cref="T:System.ServiceModel.Dispatcher.DispatchOperation" /> for a particular message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PrincipalPermissionMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.PrincipalPermissionMode PrincipalPermissionMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.Description.PrincipalPermissionMode PrincipalPermissionMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.PrincipalPermissionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.PrincipalPermissionMode" /> is <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.None" />, the <see cref="P:System.Threading.Thread.CurrentPrincipal" /> property is not set. </para>
+          <para>When the value is <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.UseWindowsGroups" /> the <see cref="P:System.Threading.Thread.CurrentPrincipal" /> property is populated with a <see cref="T:System.Security.Principal.WindowsPrincipal" /> based on the user credentials of the incoming message.</para>
+          <para>When the value is <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.UseAspNetRoles" /> the <see cref="P:System.Threading.Thread.CurrentPrincipal" /> property is populated with an <see cref="T:System.Security.Principal.IPrincipal" /> object based on vstecasp role information.</para>
+          <para>When the value is <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.Custom" /> the <see cref="P:System.Threading.Thread.CurrentPrincipal" /> property is populated by a custom <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how the <see cref="P:System.Threading.Thread.CurrentPrincipal" /> property is set.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReleaseServiceInstanceOnTransactionComplete">
+      <MemberSignature Language="C#" Value="public bool ReleaseServiceInstanceOnTransactionComplete { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ReleaseServiceInstanceOnTransactionComplete" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ReleaseServiceInstanceOnTransactionComplete" /> to specify that the <see cref="M:System.ServiceModel.InstanceContext.ReleaseServiceInstance" /> method is called when the transaction successfully completes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the service object is recycled after the transaction successfully completes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RoleProvider">
+      <MemberSignature Language="C#" Value="public System.Web.Security.RoleProvider RoleProvider { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.Security.RoleProvider RoleProvider" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.RoleProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom <see cref="T:System.Web.Security.RoleProvider" /> that is used by the <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SecurityAuditLogLocation">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.AuditLogLocation SecurityAuditLogLocation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.AuditLogLocation SecurityAuditLogLocation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLogLocation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location of the audit log.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceAuthorizationAuditLevel">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.AuditLevel ServiceAuthorizationAuditLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.AuditLevel ServiceAuthorizationAuditLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the default case, no service authorization events are audited. If the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ServiceAuthorizationAuditLevel" /> value is <see cref="F:System.ServiceModel.AuditLevel.Success" />, only successful service authorization events are written to the audit log specified by the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.SecurityAuditLogLocation" /> property. If this property has a value of <see cref="F:System.ServiceModel.AuditLevel.Failure" />, only unsuccessful service authorization events are written to the audit log specified by the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.SecurityAuditLogLocation" /> property. If the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ServiceAuthorizationAuditLevel" /> value is <see cref="F:System.ServiceModel.AuditLevel.SuccessOrFailure" />, both successful and failed service authorization events are written to the audit log.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that controls what service authorization events are audited.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceAuthorizationManager">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ServiceAuthorizationManager ServiceAuthorizationManager { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.ServiceAuthorizationManager ServiceAuthorizationManager" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceAuthorizationManager</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.ServiceAuthorizationManager" /> that provides authorization checking for the <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SingletonInstanceContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.InstanceContext SingletonInstanceContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.InstanceContext SingletonInstanceContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.InstanceContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the singleton <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextProvider" /> to be used by the <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SuppressAuditFailure">
+      <MemberSignature Language="C#" Value="public bool SuppressAuditFailure { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SuppressAuditFailure" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.SuppressAuditFailure" /> to false if you want exceptions that occur during the course of writing the audit log to be re-thrown to the application. In the default case, only the <see cref="T:System.OutOfMemoryException" />, <see cref="T:System.StackOverflowException" />, <see cref="T:System.Threading.ThreadAbortException" />, and <see cref="T:System.ArgumentException" /> exceptions that result from attempts to write audit events are re-thrown to the application; all other exceptions are suppressed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to suppress non-critical exceptions that occur during the logging process.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SynchronizationContext">
+      <MemberSignature Language="C#" Value="public System.Threading.SynchronizationContext SynchronizationContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.SynchronizationContext SynchronizationContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.SynchronizationContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value can be null. If this value is not null, then this synchronization context is used to invoke the service operations on the correct thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the synchronization context that is used to invoke the service operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TransactionAutoCompleteOnSessionClose">
+      <MemberSignature Language="C#" Value="public bool TransactionAutoCompleteOnSessionClose { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool TransactionAutoCompleteOnSessionClose" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.TransactionAutoCompleteOnSessionClose" /> is true and there is an active transaction, the transaction is completed when the session closes. If <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.TransactionAutoCompleteOnSessionClose" /> is false, active transactions are not completed and are eventually aborted. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to automatically complete the current transaction when the session closes. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public Type Type { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the contract type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UnhandledDispatchOperation">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.DispatchOperation UnhandledDispatchOperation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.DispatchOperation UnhandledDispatchOperation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.DispatchOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operation return by the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.UnhandledDispatchOperation" /> is the operation indicated by the use of the "*" (asterisk) in the <see cref="P:System.ServiceModel.OperationContractAttribute.Action" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the operation to which unrecognized messages are dispatched.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateMustUnderstand">
+      <MemberSignature Language="C#" Value="public bool ValidateMustUnderstand { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ValidateMustUnderstand" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether unexpected message headers cause an error condition.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ValidateMustUnderstand" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

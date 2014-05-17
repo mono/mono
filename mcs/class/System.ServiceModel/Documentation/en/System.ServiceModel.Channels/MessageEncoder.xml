@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageEncoder" FullName="System.ServiceModel.Channels.MessageEncoder">
+  <TypeSignature Language="C#" Value="public abstract class MessageEncoder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MessageEncoder extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ServiceModel.Channels.MessageEncoder" /> is a base class that provides implementations that support a Multipurpose Internet Mail Extensions (MIME) content type and message version, and defines the interface for the serialization and deserialization of messages according to that content type. Use it as a base class for writing your own custom encoder.</para>
+      <para>Use this class if you want to implement a custom message encoder. To implement your own custom message encoder, you must provide custom implementations of the following abstract base classes:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MessageEncoderFactory" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MessageEncoder" />
+          </para>
+        </item>
+      </list>
+      <para>Override the <see cref="P:System.ServiceModel.Channels.MessageEncoderFactory.Encoder" /> to return an instance of your custom <see cref="T:System.ServiceModel.Channels.MessageEncoder" />. Then wire up your custom <see cref="T:System.ServiceModel.Channels.MessageEncoderFactory" /> to the binding element stack used to configure the service or client by overriding the <see cref="M:System.ServiceModel.Channels.MessageEncodingBindingElement.CreateMessageEncoderFactory" /> method to return an instance of this factory.</para>
+      <para>The task of converting between the in-memory representation of a message and an XML Information Set (Infoset) representation that can be written to a stream is encapsulated within the <see cref="T:System.ServiceModel.Channels.MessageEncoder" /> class, which most commonly serves as a factory for XML readers and XML writers that support specific types of XML encodings. </para>
+      <para>The key methods on <see cref="T:System.ServiceModel.Channels.MessageEncoder" /> are <see cref="M:System.ServiceModel.Channels.MessageEncoder.WriteMessage" /> and <see cref="M:System.ServiceModel.Channels.MessageEncoder.ReadMessage" />. <see cref="M:System.ServiceModel.Channels.MessageEncoder.WriteMessage" /> takes a <see cref="T:System.ServiceModel.Channels.Message" /> object and writes it into a <see cref="T:System.IO.Stream" /> object. <see cref="M:System.ServiceModel.Channels.MessageEncoder.ReadMessage" /> takes a <see cref="T:System.IO.Stream" /> object and a maximum header size and returns a <see cref="T:System.ServiceModel.Channels.Message" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The encoder is the component that is used to write messages to a stream and to read messages from a stream.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MessageEncoder ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageEncoder" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentType">
+      <MemberSignature Language="C#" Value="public abstract string ContentType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content type is a Multipurpose Internet Mail Exchange (MIME) header that appears at the beginning of a MIME message as well as within the separate body parts. Content-type headers are used to specify the media type and subtype of data in the body of a message and to fully specify the media type and subtype of data in the body of a message and to specify the character encoding (optional) of the data. An example of a MIME content type that can be supported: “application/soap+xml; charset=’utf8’”.</para>
+          <para>A grammar that details the syntax of the content-type header is described in <see cref="http://go.microsoft.com/fwlink/?LinkId=95945">RFC 2045</see>, Section 5.1. <see cref="http://go.microsoft.com/fwlink/?LinkId=95944">RFC 2046</see> provides detailed information on MIME media types and their parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the MIME content type used by the encoder.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProperty&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public virtual T GetProperty&lt;T&gt; () where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !!T GetProperty&lt;class T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this to request a typed object such as an interface for setting properties or getting status from the appropriate layer in the channel stack. If a layer supports returning the requested object, it returns it. If not, it delegates the call down to the next layer in the stack. If it gets to the bottom of the stack and no channel layer supported the requested object, then the method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a typed object requested, if present, from the appropriate layer in the channel stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T " />requested if it is present or null if it is not.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="IsContentTypeSupported">
+      <MemberSignature Language="C#" Value="public virtual bool IsContentTypeSupported (string contentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsContentTypeSupported(string contentType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contentType" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to determine whether the message encoder can be used to read a particular style of message, based on its content-type. The information in the <see cref="T:System.Net.Mime.ContentType" /> class is used to describe the data that is contained in a message and is used to determine if there is a content-type match.</para>
+          <para>A grammar that details the syntax of the content-type header is described in <see cref="http://go.microsoft.com/fwlink/?LinkId=95945">RFC 2045</see> Section 5.1. <see cref="http://go.microsoft.com/fwlink/?LinkId=95944">RFC 2046</see> provides detailed information on Multipurpose Internet Mail Extensions (MIME) media types and their parameters. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether a specified message-level content-type value is supported by the message encoder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the message-level content-type specified is supported; otherwise false.</para>
+        </returns>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message-level content-type being tested.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="MediaType">
+      <MemberSignature Language="C#" Value="public abstract string MediaType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MediaType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The media type is part of the content-type header. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the media type value that is used by the encoder.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageVersion">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.MessageVersion MessageVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageVersion MessageVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the versions of SOAP and WS-Addressing associated with a message and its exchange. If SOAP versions are not to be used, this property should be overridden to return <see cref="P:System.ServiceModel.Channels.MessageVersion.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the message version value that is used by the encoder.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadMessage">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Message ReadMessage (ArraySegment&lt;byte&gt; buffer, System.ServiceModel.Channels.BufferManager bufferManager);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.Message ReadMessage(valuetype System.ArraySegment`1&lt;unsigned int8&gt; buffer, class System.ServiceModel.Channels.BufferManager bufferManager) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="bufferManager" Type="System.ServiceModel.Channels.BufferManager" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, reads a message from a specified buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the buffer specified.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ArraySegment`1" /> of type <see cref="T:System.Byte" /> that provides the buffer from which the message is deserialized.</param>
+        <param name="bufferManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BufferManager" /> that manages the buffer from which the message is deserialized.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadMessage">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Message ReadMessage (System.IO.Stream stream, int maxSizeOfHeaders);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.Message ReadMessage(class System.IO.Stream stream, int32 maxSizeOfHeaders) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="maxSizeOfHeaders" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, reads a message from a specified stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the stream specified.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> object from which the message is read.</param>
+        <param name="maxSizeOfHeaders">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the headers that can be read from the message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadMessage">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.Message ReadMessage (ArraySegment&lt;byte&gt; buffer, System.ServiceModel.Channels.BufferManager bufferManager, string contentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message ReadMessage(valuetype System.ArraySegment`1&lt;unsigned int8&gt; buffer, class System.ServiceModel.Channels.BufferManager bufferManager, string contentType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="bufferManager" Type="System.ServiceModel.Channels.BufferManager" />
+        <Parameter Name="contentType" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, reads a message from a specified stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the stream specified.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ArraySegment`1" /> of type <see cref="T:System.Byte" /> that provides the buffer from which the message is deserialized.</param>
+        <param name="bufferManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BufferManager" /> that manages the buffer from which the message is deserialized.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Multipurpose Internet Mail Extensions (MIME) message-level content-type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadMessage">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.Message ReadMessage (System.IO.Stream stream, int maxSizeOfHeaders, string contentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message ReadMessage(class System.IO.Stream stream, int32 maxSizeOfHeaders, string contentType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="maxSizeOfHeaders" Type="System.Int32" />
+        <Parameter Name="contentType" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, reads a message from a specified stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> that is read from the stream specified.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> object from which the message is read.</param>
+        <param name="maxSizeOfHeaders">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the headers that can be read from the message.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Multipurpose Internet Mail Extensions (MIME) message-level content-type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the content type that is used by the message encoder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content type that is used by the message encoder.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteMessage">
+      <MemberSignature Language="C#" Value="public abstract void WriteMessage (System.ServiceModel.Channels.Message message, System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteMessage(class System.ServiceModel.Channels.Message message, class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, writes a message to a specified stream.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to write to the <paramref name="stream" />.</param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> object to which the <paramref name="message" /> is written.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteMessage">
+      <MemberSignature Language="C#" Value="public ArraySegment&lt;byte&gt; WriteMessage (System.ServiceModel.Channels.Message message, int maxMessageSize, System.ServiceModel.Channels.BufferManager bufferManager);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.ArraySegment`1&lt;unsigned int8&gt; WriteMessage(class System.ServiceModel.Channels.Message message, int32 maxMessageSize, class System.ServiceModel.Channels.BufferManager bufferManager) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ArraySegment&lt;System.Byte&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="maxMessageSize" Type="System.Int32" />
+        <Parameter Name="bufferManager" Type="System.ServiceModel.Channels.BufferManager" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls the abstract method <see cref="M:System.ServiceModel.Channels.MessageEncoder.WriteMessage(System.ServiceModel.Channels.Message,System.Int32,System.ServiceModel.Channels.BufferManager,System.Int32)" /> with <paramref name="messageOffset" /> = 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message less than a specified size to a byte array buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ArraySegment`1" /> of type byte that provides the buffer to which the message is serialized.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to write to the message buffer.</param>
+        <param name="maxMessageSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum message size that can be written.</param>
+        <param name="bufferManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BufferManager" /> that manages the buffer to which the message is written.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteMessage">
+      <MemberSignature Language="C#" Value="public abstract ArraySegment&lt;byte&gt; WriteMessage (System.ServiceModel.Channels.Message message, int maxMessageSize, System.ServiceModel.Channels.BufferManager bufferManager, int messageOffset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.ArraySegment`1&lt;unsigned int8&gt; WriteMessage(class System.ServiceModel.Channels.Message message, int32 maxMessageSize, class System.ServiceModel.Channels.BufferManager bufferManager, int32 messageOffset) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ArraySegment&lt;System.Byte&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="maxMessageSize" Type="System.Int32" />
+        <Parameter Name="bufferManager" Type="System.ServiceModel.Channels.BufferManager" />
+        <Parameter Name="messageOffset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by <see cref="M:System.ServiceModel.Channels.MessageEncoder.WriteMessage(System.ServiceModel.Channels.Message,System.Int32,System.ServiceModel.Channels.BufferManager,System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, writes a message of less than a specified size to a byte array buffer at the specified offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ArraySegment`1" /> of type byte that provides the buffer to which the message is serialized.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to write to the message buffer.</param>
+        <param name="maxMessageSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum message size that can be written.</param>
+        <param name="bufferManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BufferManager" /> that manages the buffer to which the message is written.</param>
+        <param name="messageOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset of the segment that begins from the start of the byte array that provides the buffer.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

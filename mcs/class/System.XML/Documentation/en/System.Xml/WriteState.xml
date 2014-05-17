@@ -1,21 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WriteState" FullName="System.Xml.WriteState" FullNameSP="System_Xml_WriteState" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable WriteState extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum WriteState" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WriteState extends System.Enum" />
   <MemberOfLibrary>XML</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Specifies the write state of an instance of a class derived from the <see cref="T:System.Xml.XmlWriter" /> class.
-   </para>
-    </summary>
     <remarks>
       <para>When a writer is instantiated, the write state is set to <see langword="Start" />. While content is written, the write 
    state is set to reflect the type of
@@ -25,156 +24,180 @@
 <see langword="Start" />, allowing 
    the writer to write a new XML document.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the state of the <see cref="T:System.Xml.XmlWriter" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Attribute">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WriteState Attribute = 3" />
       <MemberSignature Language="C#" Value="Attribute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.WriteState Attribute = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Attribute</MemberValue>
       <Docs>
-        <summary>
-          <para> An attribute value is being written.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that an attribute value is being written.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Closed">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WriteState Closed = 5" />
       <MemberSignature Language="C#" Value="Closed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.WriteState Closed = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Closed</MemberValue>
       <Docs>
-        <summary>
-          <para> The <see cref="M:System.Xml.XmlWriter.Close" /> method has been called.
-   </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the <see cref="M:System.Xml.XmlWriter.Close" /> method has been called.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Content">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WriteState Content = 4" />
       <MemberSignature Language="C#" Value="Content" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.WriteState Content = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Content</MemberValue>
       <Docs>
-        <summary>
-          <para> Element content is being written.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that element content is being written.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Element">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WriteState Element = 2" />
       <MemberSignature Language="C#" Value="Element" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.WriteState Element = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Element</MemberValue>
       <Docs>
-        <summary>
-          <para> An element start tag is being written.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that an element start tag is being written.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Error">
       <MemberSignature Language="C#" Value="Error" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.WriteState Error = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This field was added in the dnprdnext release.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception has been thrown, which has left the <see cref="T:System.Xml.XmlWriter" /> in an invalid state. You can call the <see cref="M:System.Xml.XmlWriter.Close" /> method to put the <see cref="T:System.Xml.XmlWriter" /> in the <see cref="F:System.Xml.WriteState.Closed" /> state. Any other <see cref="T:System.Xml.XmlWriter" /> method calls results in an <see cref="T:System.InvalidOperationException" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Prolog">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WriteState Prolog = 1" />
       <MemberSignature Language="C#" Value="Prolog" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.WriteState Prolog = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Prolog</MemberValue>
       <Docs>
-        <summary>
-          <para> The XML declaration is being written.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the prolog is being written.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Start">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Xml.WriteState Start = 0" />
       <MemberSignature Language="C#" Value="Start" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.WriteState Start = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Start</MemberValue>
       <Docs>
-        <summary>
-          <para> None of the writing
-      methods have been called.
-      </para>
-          <para> The <see cref="M:System.Xml.XmlWriter.WriteEndDocument" /> method resets the write state to this
-   value. </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a Write method has not yet been called.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

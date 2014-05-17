@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegistrationConnectionType" FullName="System.Runtime.InteropServices.RegistrationConnectionType">
   <TypeSignature Language="C#" Value="public enum RegistrationConnectionType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RegistrationConnectionType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,85 +16,112 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The values in the <see cref="T:System.Runtime.InteropServices.RegistrationConnectionType" /> enumeration are used in the <paramref name="flags" /> parameter of the <see cref="M:System.Runtime.InteropServices.RegistrationServices.RegisterTypeForComClients(System.Type,System.Runtime.InteropServices.RegistrationClassContext,System.Runtime.InteropServices.RegistrationConnectionType)" /> method. These values are the same as those defined in the COM REGCLS enumeration, which is used as the <paramref name="flags" /> parameter in calls to the COM API CoRegisterClassObject.</para>
+      <para>For more information about CoRegisterClassObject and the REGCLS enumeration, see the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the types of connections to a class object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MultipleUse">
       <MemberSignature Language="C#" Value="MultipleUse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.RegistrationConnectionType MultipleUse = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiple applications can connect to the class object through calls to CoGetClassObject.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MultiSeparate">
       <MemberSignature Language="C#" Value="MultiSeparate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.RegistrationConnectionType MultiSeparate = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers separate CLSCTX_LOCAL_SERVER and CLSCTX_INPROC_SERVER class factories.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SingleUse">
       <MemberSignature Language="C#" Value="SingleUse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.RegistrationConnectionType SingleUse = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once an application is connected to a class object with CoGetClassObject, the class object is removed from public view so that no other applications can connect to it. This value is commonly used for single document interface (SDI) applications.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Surrogate">
       <MemberSignature Language="C#" Value="Surrogate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.RegistrationConnectionType Surrogate = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class object is a surrogate process used to run DLL servers.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Suspended">
       <MemberSignature Language="C#" Value="Suspended" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.RegistrationConnectionType Suspended = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.RegistrationConnectionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suspends registration and activation requests for the specified CLSID until there is a call to CoResumeClassObjects.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

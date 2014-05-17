@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DisplayAttribute" FullName="System.ComponentModel.DataAnnotations.DisplayAttribute">
+  <TypeSignature Language="C#" Value="public sealed class DisplayAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DisplayAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.All, AllowMultiple=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The properties of this class can be used either as literals or as resource identifiers for a specified <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> instance.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a general-purpose attribute that lets you specify localizable strings for types and members of entity partial classes.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DisplayAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor initializes the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" />, and <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" /> properties to an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.DisplayAttribute" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AutoGenerateField">
+      <MemberSignature Language="C#" Value="public bool AutoGenerateField { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AutoGenerateField" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this property to access the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.AutoGenerateField" /> property. Use the <see cref="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetAutoGenerateField" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether UI should be generated automatically in order to display this field.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AutoGenerateFilter">
+      <MemberSignature Language="C#" Value="public bool AutoGenerateFilter { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AutoGenerateFilter" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this property to get the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.AutoGenerateFilter" /> property. Use the <see cref="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetAutoGenerateFilter" /> method instead.</para>
+          <para>Setting this property overrides the default behavior for specifying which columns are included as filters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether filtering UI is automatically displayed for this field. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Description">
+      <MemberSignature Language="C#" Value="public string Description { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Description" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this property to get the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> property. Use the <see cref="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetDescription" /> method instead. </para>
+          <para>The <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> property is typically used as a tooltip or description UI element that is bound to the member using this attribute. The Dynamic Data Edit.ascx template will display the description as a tooltip in text-entry fields. A null value or empty string is valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that is used to display a description in the UI.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAutoGenerateField">
+      <MemberSignature Language="C#" Value="public Nullable&lt;bool&gt; GetAutoGenerateField ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Nullable`1&lt;bool&gt; GetAutoGenerateField() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.Boolean&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.AutoGenerateField" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.AutoGenerateField" /> if the property has been initialized; otherwise, null.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAutoGenerateFilter">
+      <MemberSignature Language="C#" Value="public Nullable&lt;bool&gt; GetAutoGenerateFilter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Nullable`1&lt;bool&gt; GetAutoGenerateFilter() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.Boolean&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether UI should be generated automatically in order to display filtering for this field. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.AutoGenerateFilter" /> if the property has been initialized; otherwise, null.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDescription">
+      <MemberSignature Language="C#" Value="public string GetDescription ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetDescription() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> property is typically used as a tooltip for the property that is annotated with this attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The localized description, if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> has been specified and the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> property represents a resource key; otherwise, the non-localized value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> property.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetGroupName">
+      <MemberSignature Language="C#" Value="public string GetGroupName ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetGroupName() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.GroupName" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that will be used for grouping fields in the UI, if <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.GroupName" /> has been initialized; otherwise, null. If the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has been specified and the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.GroupName" /> property represents a resource key, a localized string is returned; otherwise, a non-localized string is returned.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetName">
+      <MemberSignature Language="C#" Value="public string GetName ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetName() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name is typically used as the field label for a UI element that is bound to the property that is annotated with the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property. A null value or empty string is valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that is used for field display in the UI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The localized string for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property, if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has been specified and the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property represents a resource key; otherwise, the non-localized value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetOrder">
+      <MemberSignature Language="C#" Value="public Nullable&lt;int&gt; GetOrder ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Nullable`1&lt;int32&gt; GetOrder() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an order is not specified, presentation layers should consider setting the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Order" /> property to 10000. This value lets explicitly-ordered fields be displayed before and after the fields that do not have a specified order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Order" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Order" /> property, if it has been set; otherwise, null.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetPrompt">
+      <MemberSignature Language="C#" Value="public string GetPrompt ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetPrompt() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" /> property is typically used as a prompt or watermark for a UI element that is bound to the property that is annotated with the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the localized string for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" /> property if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has been specified and if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" /> property represents a resource key; otherwise, the non-localized value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" /> property.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetShortName">
+      <MemberSignature Language="C#" Value="public string GetShortName ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetShortName() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The short name is used as the grid column label for a UI element that is bound to the property that is annotated with this attribute. This property returns either the literal, non-localized string, or a localized string if <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> is not null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The localized string for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" /> property if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has been specified and if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" /> property represents a resource key; otherwise, the non-localized value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" /> value property.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GroupName">
+      <MemberSignature Language="C#" Value="public string GroupName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string GroupName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this property to get the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.GroupName" /> property. Use the <see cref="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetDescription" /> method instead. A null value or empty string is valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that is used to group fields in the UI.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this property to get the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property. Use the <see cref="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetName" /> method instead. </para>
+          <para>The name is typically used as the field label for a UI element that is bound to the property that is annotated with this attribute. The Dynamic Data List.aspx, ListDetails.aspx, and Details.aspx page templates use the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property for the field label. A null value or empty string is valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that is used for display in the UI.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Order">
+      <MemberSignature Language="C#" Value="public int Order { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Order" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Columns are sorted in increasing order based on the order value. Columns without this attribute have an order value of 0. Negative values are valid and can be used to position a column before all non-negative columns. If an order is not specified, presentation layers should consider using the value 10000. This value lets explicitly-ordered fields be displayed before and after the fields that do not have a specified order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the order weight of the column.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Prompt">
+      <MemberSignature Language="C#" Value="public string Prompt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Prompt" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is typically used as a prompt or watermark for a UI element that is bound to the property that is annotated with this attribute. Do not use this method to access the prompt string. Use the <see cref="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetPrompt" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that will be used to set the watermark for prompts in the UI.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ResourceType">
+      <MemberSignature Language="C#" Value="public Type ResourceType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ResourceType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this value is null, the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" />, and <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> properties are assumed to be literal, non-localized strings. If this value is not null, the string properties are assumed to be the names of public static properties that return the actual string value. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type that contains the resources for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" />, and <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> properties.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ShortName">
+      <MemberSignature Language="C#" Value="public string ShortName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ShortName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The short name is used as the grid column label for a UI element that is bound to the property that is annotated with this attribute. The Dynamic Data Insert.aspx and Edit.aspx page templates use the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" /> for the field label. This property returns the localized string for <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has been specified and if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" /> property represents a resource key. If the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has not been specified or if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" /> property is not a resource key, this property returns a non-localized string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that is used for the grid column label.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

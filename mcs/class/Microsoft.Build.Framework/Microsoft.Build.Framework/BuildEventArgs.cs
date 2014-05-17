@@ -26,8 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Threading;
 
@@ -41,7 +39,10 @@ namespace Microsoft.Build.Framework
 		string	senderName;
 		int	threadId;
 		DateTime	timestamp;
-		
+#if NET_3_5
+		BuildEventContext context;
+#endif
+
 		protected BuildEventArgs ()
 			: this (null, null, null)
 		{
@@ -49,12 +50,24 @@ namespace Microsoft.Build.Framework
 
 		protected BuildEventArgs (string message, string helpKeyword,
 					  string senderName)
+			: this (message, helpKeyword, senderName, DateTime.Now)
+		{
+		}
+
+#if NET_4_0
+		protected
+#endif
+		BuildEventArgs (string message, string helpKeyword,
+		                string senderName, DateTime eventTimestamp)
 		{
 			this.message = message;
 			this.helpKeyword = helpKeyword;
 			this.senderName = senderName;
 			this.threadId = Thread.CurrentThread.GetHashCode ();
-			this.timestamp = DateTime.Now;
+			this.timestamp = eventTimestamp;
+#if NET_3_5
+			this.context = BuildEventContext.NewInstance ();
+#endif
 		}
 
 		public string HelpKeyword {
@@ -63,6 +76,9 @@ namespace Microsoft.Build.Framework
 			}
 		}
 
+#if NET_4_0
+		virtual
+#endif
 		public string Message {
 			get {
 				return message;
@@ -87,7 +103,17 @@ namespace Microsoft.Build.Framework
 				return timestamp;
 			}
 		}
+
+#if NET_3_5
+		public BuildEventContext BuildEventContext {
+			get { return context; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				context = value;
+			}
+		}
+#endif
 	}
 }
 
-#endif

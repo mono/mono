@@ -16,6 +16,7 @@
 
 #ifdef HOST_WIN32
 #include <windows.h>
+#include <process.h>
 #endif
 
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
@@ -415,7 +416,7 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 
-	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0)
+	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0 || strcmp (item, "VmData") == 0)
 		ret = t_info.resident_size;
 	else if (strcmp (item, "VmSize") == 0 || strcmp (item, "VmPeak") == 0)
 		ret = t_info.virtual_size;
@@ -501,6 +502,18 @@ mono_process_get_data (gpointer pid, MonoProcessData data)
 	return mono_process_get_data_with_error (pid, data, &error);
 }
 
+int
+mono_process_current_pid ()
+{
+#if defined(HAVE_UNISTD_H)
+	return (int) getpid ();
+#elif defined(HOST_WIN32)
+	return (int) GetCurrentProcessId ();
+#else
+#error getpid
+#endif
+}
+
 /**
  * mono_cpu_count:
  *
@@ -561,7 +574,7 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	char buf [256];
 	char *s;
 	int hz = get_user_hz ();
-	guint64	user_ticks, nice_ticks, system_ticks, idle_ticks, iowait_ticks, irq_ticks, sirq_ticks;
+	guint64	user_ticks = 0, nice_ticks = 0, system_ticks = 0, idle_ticks = 0, irq_ticks = 0, sirq_ticks = 0;
 	FILE *f = fopen ("/proc/stat", "r");
 	if (!f)
 		return;
@@ -583,7 +596,7 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 		nice_ticks = strtoull (data, &data, 10);
 		system_ticks = strtoull (data, &data, 10);
 		idle_ticks = strtoull (data, &data, 10);
-		iowait_ticks = strtoull (data, &data, 10);
+		/* iowait_ticks = strtoull (data, &data, 10); */
 		irq_ticks = strtoull (data, &data, 10);
 		sirq_ticks = strtoull (data, &data, 10);
 		break;

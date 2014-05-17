@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoadHint" FullName="System.Runtime.CompilerServices.LoadHint">
   <TypeSignature Language="C#" Value="public enum LoadHint" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed LoadHint extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,55 +11,74 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this enumeration with the <see cref="T:System.Runtime.CompilerServices.DependencyAttribute" /> attribute and the <see cref="T:System.Runtime.CompilerServices.DefaultDependencyAttribute" /> attribute to specify the preferred default binding for a dependent assembly.</para>
+      <para>Note that the Default value directs the native generation service to consult the dependent assembly for its preferred default binding, which is specified using the <see cref="T:System.Runtime.CompilerServices.DefaultDependencyAttribute" /> attribute. Very few assemblies should need to specify a default value in this manner.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the preferred default binding for a dependent assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Always">
       <MemberSignature Language="C#" Value="Always" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.CompilerServices.LoadHint Always = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.CompilerServices.LoadHint</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.LoadHint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dependency is always loaded.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.CompilerServices.LoadHint Default = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.CompilerServices.LoadHint</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.LoadHint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No preference specified.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Sometimes">
       <MemberSignature Language="C#" Value="Sometimes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.CompilerServices.LoadHint Sometimes = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.CompilerServices.LoadHint</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.LoadHint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dependency is sometimes loaded.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

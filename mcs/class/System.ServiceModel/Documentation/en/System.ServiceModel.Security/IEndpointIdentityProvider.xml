@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IEndpointIdentityProvider" FullName="System.ServiceModel.Security.IEndpointIdentityProvider">
+  <TypeSignature Language="C#" Value="public interface IEndpointIdentityProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEndpointIdentityProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is an extensibility point that SecurityTokenManagers can implement to provide a default <see cref="T:System.ServiceModel.EndpointIdentity" /> for the service endpoint (for example, a DNS identity). This <see cref="T:System.ServiceModel.EndpointIdentity" /> is published as part of the WSDL for the service endpoint.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the identity of an endpoint. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetIdentityOfSelf">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointIdentity GetIdentityOfSelf (System.IdentityModel.Selectors.SecurityTokenRequirement tokenRequirement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.EndpointIdentity GetIdentityOfSelf(class System.IdentityModel.Selectors.SecurityTokenRequirement tokenRequirement) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointIdentity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="tokenRequirement" Type="System.IdentityModel.Selectors.SecurityTokenRequirement" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="tokenRequirement" /> parameter contains the binding information of the endpoint, which is typically used in determining the <see cref="T:System.ServiceModel.EndpointIdentity" /> for the endpoint. For example, if the binding is configured to do Kerberos-based authentication, the default identity returned will be a ServicePrincipalName (SPN) or UserPrincipalName (UPN).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identity of the current endpoint, based on the security token requirements passed in.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointIdentity" /> of the current endpoint.</para>
+        </returns>
+        <param name="tokenRequirement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IdentityModel.Selectors.SecurityTokenRequirement" /> that describes security token requirements.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

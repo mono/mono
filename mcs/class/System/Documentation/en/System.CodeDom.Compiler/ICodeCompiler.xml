@@ -1,22 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICodeCompiler" FullName="System.CodeDom.Compiler.ICodeCompiler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ICodeCompiler" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICodeCompiler" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>In the .NET Framework versions 1.0 and 1.1, code providers consist of implementations of <see cref="T:System.CodeDom.Compiler.CodeDomProvider" />, <see cref="T:System.CodeDom.Compiler.ICodeGenerator" />, <see cref="T:System.CodeDom.Compiler.ICodeParser" />, and <see cref="T:System.CodeDom.Compiler.ICodeCompiler" />. In the dnprdnlong, the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" />, <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateParser" />, and <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateCompiler" /> methods are obsolete, and the methods of <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> and <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> are directly available in the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> class. You should override those methods in your code provider implementation and not call the base methods.</para>
+      </block>
+      <para>The <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface can be implemented for a specific compiler to enable developers to programmatically compile assemblies from Code Document Object Model (CodeDOM) compile units, strings containing source code, or source code files.</para>
+      <para>The <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface provides the capability to invoke compilation with specified parameters at runtime and access information related to compilation after compilation occurs, including the result code, and any errors or warnings the compiler returns. Each compile method accepts a <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates settings for the compiler, and returns a <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of the compilation.</para>
+      <para>Compiler developers should provide an implementation of this interface to support dynamic compilation. <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementers should also consider implementing this interface to provide programmatic compilation capability for the language that they are providing CodeDom support for.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an interface for invoking compilation of source code or a CodeDOM tree using a specific compiler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CompileAssemblyFromDom">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CompilerResults CompileAssemblyFromDom (System.CodeDom.Compiler.CompilerParameters options, System.CodeDom.CodeCompileUnit compilationUnit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromDom(class System.CodeDom.Compiler.CompilerParameters options, class System.CodeDom.CodeCompileUnit compilationUnit) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
       </ReturnValue>
@@ -25,20 +45,30 @@
         <Parameter Name="compilationUnit" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="compilationUnit">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly from the <see cref="N:System.CodeDom" /> tree contained in the specified <see cref="T:System.CodeDom.CodeCompileUnit" />, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
+        <param name="compilationUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> that indicates the code to compile. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompileAssemblyFromDomBatch">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CompilerResults CompileAssemblyFromDomBatch (System.CodeDom.Compiler.CompilerParameters options, System.CodeDom.CodeCompileUnit[] batch);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromDomBatch(class System.CodeDom.Compiler.CompilerParameters options, class System.CodeDom.CodeCompileUnit[] batch) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
       </ReturnValue>
@@ -47,20 +77,29 @@
         <Parameter Name="batch" Type="System.CodeDom.CodeCompileUnit[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
         <param name="batch">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly based on the <see cref="N:System.CodeDom" /> trees contained in the specified array of <see cref="T:System.CodeDom.CodeCompileUnit" /> objects, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompileAssemblyFromFile">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CompilerResults CompileAssemblyFromFile (System.CodeDom.Compiler.CompilerParameters options, string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromFile(class System.CodeDom.Compiler.CompilerParameters options, string fileName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
       </ReturnValue>
@@ -69,20 +108,30 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly from the source code contained within the specified file, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the file that contains the source code to compile. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompileAssemblyFromFileBatch">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CompilerResults CompileAssemblyFromFileBatch (System.CodeDom.Compiler.CompilerParameters options, string[] batch);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromFileBatch(class System.CodeDom.Compiler.CompilerParameters options, string[] batch) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
       </ReturnValue>
@@ -91,20 +140,29 @@
         <Parameter Name="batch" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
         <param name="batch">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly from the source code contained within the specified files, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompileAssemblyFromSource">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CompilerResults CompileAssemblyFromSource (System.CodeDom.Compiler.CompilerParameters options, string source);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromSource(class System.CodeDom.Compiler.CompilerParameters options, string source) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
       </ReturnValue>
@@ -113,20 +171,30 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="source">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly from the specified string containing source code, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source code to compile. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompileAssemblyFromSourceBatch">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CompilerResults CompileAssemblyFromSourceBatch (System.CodeDom.Compiler.CompilerParameters options, string[] batch);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromSourceBatch(class System.CodeDom.Compiler.CompilerParameters options, string[] batch) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
       </ReturnValue>
@@ -135,16 +203,19 @@
         <Parameter Name="batch" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
         <param name="batch">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly from the specified array of strings containing source code, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

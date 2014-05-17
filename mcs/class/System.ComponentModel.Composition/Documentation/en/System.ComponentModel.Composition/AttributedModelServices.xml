@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AttributedModelServices" FullName="System.ComponentModel.Composition.AttributedModelServices">
+  <TypeSignature Language="C#" Value="public static class AttributedModelServices" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit AttributedModelServices extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains helper methods for using the MEF attributed programming model with composition.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AddExportedValue&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionBatch batch, T exportedValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionBatch batch, !!T exportedValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="batch" Type="System.ComponentModel.Composition.Hosting.CompositionBatch" RefType="this" />
+        <Parameter Name="exportedValue" Type="T" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="batch">To be added.</param>
+        <param name="exportedValue">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddExportedValue&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionBatch batch, string contractName, T exportedValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionBatch batch, string contractName, !!T exportedValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="batch" Type="System.ComponentModel.Composition.Hosting.CompositionBatch" RefType="this" />
+        <Parameter Name="contractName" Type="System.String" />
+        <Parameter Name="exportedValue" Type="T" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="batch">To be added.</param>
+        <param name="contractName">To be added.</param>
+        <param name="exportedValue">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddPart">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart AddPart (this System.ComponentModel.Composition.Hosting.CompositionBatch batch, object attributedPart);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart AddPart(class System.ComponentModel.Composition.Hosting.CompositionBatch batch, object attributedPart) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="batch" Type="System.ComponentModel.Composition.Hosting.CompositionBatch" RefType="this" />
+        <Parameter Name="attributedPart" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a composable part from the specified attributed object, and adds it to the specified composition batch.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new part.</para>
+        </returns>
+        <param name="batch">
+          <attribution license="cc4" from="Microsoft" modified="false" />The batch to add to.</param>
+        <param name="attributedPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ComposeExportedValue&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void ComposeExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionContainer container, T exportedValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ComposeExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionContainer container, !!T exportedValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="container" Type="System.ComponentModel.Composition.Hosting.CompositionContainer" RefType="this" />
+        <Parameter Name="exportedValue" Type="T" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="container">To be added.</param>
+        <param name="exportedValue">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ComposeExportedValue&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void ComposeExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionContainer container, string contractName, T exportedValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ComposeExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionContainer container, string contractName, !!T exportedValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="container" Type="System.ComponentModel.Composition.Hosting.CompositionContainer" RefType="this" />
+        <Parameter Name="contractName" Type="System.String" />
+        <Parameter Name="exportedValue" Type="T" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="container">To be added.</param>
+        <param name="contractName">To be added.</param>
+        <param name="exportedValue">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ComposeParts">
+      <MemberSignature Language="C#" Value="public static void ComposeParts (this System.ComponentModel.Composition.Hosting.CompositionContainer container, object[] attributedParts);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ComposeParts(class System.ComponentModel.Composition.Hosting.CompositionContainer container, object[] attributedParts) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="container" Type="System.ComponentModel.Composition.Hosting.CompositionContainer" RefType="this" />
+        <Parameter Name="attributedParts" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates composable parts from an array of attributed objects and composes them in the specified composition container.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The composition container to perform composition in.</param>
+        <param name="attributedParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of attributed objects to compose.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePart">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart CreatePart (object attributedPart);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart CreatePart(object attributedPart) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributedPart" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a composable part from the specified attributed object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created part.</para>
+        </returns>
+        <param name="attributedPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributed object.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePart">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart CreatePart (System.ComponentModel.Composition.Primitives.ComposablePartDefinition partDefinition, object attributedPart);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart CreatePart(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition partDefinition, object attributedPart) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="partDefinition" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+        <Parameter Name="attributedPart" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a composable part from the specified attributed object, using the specified part definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created part.</para>
+        </returns>
+        <param name="partDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The definition of the new part.</param>
+        <param name="attributedPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributed object.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePart">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart CreatePart (object attributedPart, System.Reflection.ReflectionContext reflectionContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart CreatePart(object attributedPart, class System.Reflection.ReflectionContext reflectionContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributedPart" Type="System.Object" />
+        <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a composable part from the specified attributed object, using the specified reflection context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created part.</para>
+        </returns>
+        <param name="attributedPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributed object.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reflection context for the part.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePartDefinition">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePartDefinition CreatePartDefinition (Type type, System.ComponentModel.Composition.Primitives.ICompositionElement origin);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePartDefinition CreatePartDefinition(class System.Type type, class System.ComponentModel.Composition.Primitives.ICompositionElement origin) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePartDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a part definition with the specified type and origin.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new part definition.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the definition.</param>
+        <param name="origin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The origin of the definition.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePartDefinition">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePartDefinition CreatePartDefinition (Type type, System.ComponentModel.Composition.Primitives.ICompositionElement origin, bool ensureIsDiscoverable);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePartDefinition CreatePartDefinition(class System.Type type, class System.ComponentModel.Composition.Primitives.ICompositionElement origin, bool ensureIsDiscoverable) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePartDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
+        <Parameter Name="ensureIsDiscoverable" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a part definition with the specified type and origin.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new part definition.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the definition.</param>
+        <param name="origin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The origin of the definition.</param>
+        <param name="ensureIsDiscoverable">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether or not the new definition should be discoverable.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Exports">
+      <MemberSignature Language="C#" Value="public static bool Exports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, Type contractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, class System.Type contractType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+        <Parameter Name="contractType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified part contains an export that matches the specified contract type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an export definition that matches <paramref name="contractType" />; otherwise, false.</para>
+        </returns>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Exports&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static bool Exports&lt;T&gt; (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exports&lt;T&gt;(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified part contains an export that matches the specified contract type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an export definition of type <paramref name="T" />; otherwise, false.</para>
+        </returns>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetContractName">
+      <MemberSignature Language="C#" Value="public static string GetContractName (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetContractName(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a canonical contract name for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A contract name created from the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMetadataView&lt;TMetadataView&gt;">
+      <MemberSignature Language="C#" Value="public static TMetadataView GetMetadataView&lt;TMetadataView&gt; (System.Collections.Generic.IDictionary&lt;string,object&gt; metadata);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TMetadataView GetMetadataView&lt;TMetadataView&gt;(class System.Collections.Generic.IDictionary`2&lt;string, object&gt; metadata) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TMetadataView</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TMetadataView" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="metadata" Type="System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a metadata view object from a dictionary of loose metadata.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A metadata view containing the specified metadata.</para>
+        </returns>
+        <param name="metadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of loose metadata.</param>
+        <typeparam name="TMetadataView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view object to get.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTypeIdentity">
+      <MemberSignature Language="C#" Value="public static string GetTypeIdentity (System.Reflection.MethodInfo method);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetTypeIdentity(class System.Reflection.MethodInfo method) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.MethodInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier for the specified method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier for the method.</para>
+        </returns>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to examine.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTypeIdentity">
+      <MemberSignature Language="C#" Value="public static string GetTypeIdentity (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetTypeIdentity(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier for the type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to examine.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Imports">
+      <MemberSignature Language="C#" Value="public static bool Imports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, Type contractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, class System.Type contractType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+        <Parameter Name="contractType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition that matches <paramref name="contractType" />; otherwise, false.</para>
+        </returns>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Imports">
+      <MemberSignature Language="C#" Value="public static bool Imports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, Type contractType, System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, class System.Type contractType, valuetype System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+        <Parameter Name="contractType" Type="System.Type" />
+        <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type and import cardinality.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition that matches <paramref name="contractType" /> and <paramref name="importCardinality" />; otherwise, false.</para>
+        </returns>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</param>
+        <param name="importCardinality">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import cardinality.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Imports&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static bool Imports&lt;T&gt; (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports&lt;T&gt;(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition of type <paramref name="T" />; otherwise, false.</para>
+        </returns>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Imports&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static bool Imports&lt;T&gt; (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports&lt;T&gt;(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, valuetype System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+        <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type and import cardinality.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition of type <paramref name="T" /> that has the specified import cardinality; otherwise, false.</para>
+        </returns>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <param name="importCardinality">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import cardinality.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="SatisfyImportsOnce">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce (this System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce(class System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="compositionService" Type="System.ComponentModel.Composition.ICompositionService" RefType="this" />
+        <Parameter Name="attributedPart" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike ordinary composition, parts composed with this method are not guaranteed to remain valid if the catalog behind <paramref name="compositionService" /> changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Composes the specified part by using the specified composition service, with recomposition disabled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composed part.</para>
+        </returns>
+        <param name="compositionService">
+          <attribution license="cc4" from="Microsoft" modified="false" />The composition service to use.</param>
+        <param name="attributedPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to compose.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SatisfyImportsOnce">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce (this System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart, System.Reflection.ReflectionContext reflectionContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce(class System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart, class System.Reflection.ReflectionContext reflectionContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="compositionService" Type="System.ComponentModel.Composition.ICompositionService" RefType="this" />
+        <Parameter Name="attributedPart" Type="System.Object" />
+        <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Composes the specified part by using the specified composition service, with recomposition disabled and using the specified reflection context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composed part.</para>
+        </returns>
+        <param name="compositionService">
+          <attribution license="cc4" from="Microsoft" modified="false" />The composition service to use.</param>
+        <param name="attributedPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to compose.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reflection context for the part.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

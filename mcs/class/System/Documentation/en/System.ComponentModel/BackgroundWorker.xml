@@ -1,51 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BackgroundWorker" FullName="System.ComponentModel.BackgroundWorker">
   <TypeSignature Language="C#" Value="public class BackgroundWorker : System.ComponentModel.Component" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BackgroundWorker extends System.ComponentModel.Component" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.Component</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.DefaultEvent("DoWork")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.BackgroundWorker" /> class allows you to run an operation on a separate, dedicated thread. Time-consuming operations like downloads and database transactions can cause your user interface (UI) to seem as though it has stopped responding while they are running. When you want a responsive UI and you are faced with long delays associated with such operations, the <see cref="T:System.ComponentModel.BackgroundWorker" /> class provides a convenient solution.</para>
+      <para>To execute a time-consuming operation in the background, create a <see cref="T:System.ComponentModel.BackgroundWorker" /> and listen for events that report the progress of your operation and signal when your operation is finished. You can create the <see cref="T:System.ComponentModel.BackgroundWorker" /> programmatically or you can drag it onto your form from the <ui>Components</ui> tab of the <ui>Toolbox</ui>. If you create the <see cref="T:System.ComponentModel.BackgroundWorker" /> in the Windows Forms Designer, it will appear in the Component Tray, and its properties will be displayed in the Properties window.</para>
+      <para>To set up for a background operation, add an event handler for the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event. Call your time-consuming operation in this event handler. To start the operation, call <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" />. To receive notifications of progress updates, handle the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event. To receive a notification when the operation is completed, handle the <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event.</para>
+      <block subset="none" type="note">
+        <para>You must be careful not to manipulate any user-interface objects in your <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler. Instead, communicate to the user interface through the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> and <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> events.</para>
+        <para>
+          <see cref="T:System.ComponentModel.BackgroundWorker" /> events are not marshaled across <see cref="T:System.AppDomain" /> boundaries. Do not use a <see cref="T:System.ComponentModel.BackgroundWorker" /> component to perform multithreaded operations in more than one <see cref="T:System.AppDomain" />.</para>
+      </block>
+      <para>If your background operation requires a parameter, call <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" /> with your parameter. Inside the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler, you can extract the parameter from the <see cref="P:System.ComponentModel.DoWorkEventArgs.Argument" /> property.</para>
+      <para>For more information about <see cref="T:System.ComponentModel.BackgroundWorker" />, see <format type="text/html"><a href="5b56e2aa-dc05-444f-930c-2d7b23f9ad5b">How to: Run an Operation in the Background</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Executes an operation on a separate thread.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BackgroundWorker ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a <see cref="T:System.ComponentModel.BackgroundWorker" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.BackgroundWorker" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CancelAsync">
       <MemberSignature Language="C#" Value="public void CancelAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CancelAsync() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ComponentModel.BackgroundWorker.CancelAsync" /> submits a request to terminate the pending background operation and sets the <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> property to true.</para>
+          <para>When you call <see cref="M:System.ComponentModel.BackgroundWorker.CancelAsync" />, your worker method has an opportunity to stop its execution and exit. The worker code should periodically check the <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> property to see if it has been set to true.</para>
+          <block subset="none" type="note">
+            <para>Be aware that your code in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler may finish its work as a cancellation request is being made, and your polling loop may miss <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> being set to true. In this case, the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> flag of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" /> in your <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event handler will not be set to true, even though a cancellation request was made. This situation is called a <newTerm>race condition</newTerm> and is a common concern in multithreaded programming. For more information about multithreading design issues, see <format type="text/html"><a href="e51988e7-7f4b-4646-a06d-1416cee8d557">Managed Threading Best Practices</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests cancellation of a pending background operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CancellationPending">
       <MemberSignature Language="C#" Value="public bool CancellationPending { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CancellationPending" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
@@ -55,33 +104,58 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> is true, then the <see cref="M:System.ComponentModel.BackgroundWorker.CancelAsync" /> method has been called on the <see cref="T:System.ComponentModel.BackgroundWorker" />.</para>
+          <para>This property is meant for use by the worker thread, which should periodically check <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> and abort the background operation when it is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the application has requested cancellation of a background operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DoWork">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.DoWorkEventHandler DoWork;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.DoWorkEventHandler DoWork" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.DoWorkEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when you call the <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" /> method. This is where you start the operation that performs the potentially time-consuming work.</para>
+          <para>Your code in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler should periodically check the <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> property value and abort the operation if it is true. When this occurs, you can set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> flag of <see cref="T:System.ComponentModel.DoWorkEventArgs" /> to true, and the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> flag of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" /> in your <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event handler will be set to true.</para>
+          <block subset="none" type="note">
+            <para>Be aware that your code in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler may finish its work as a cancellation request is being made, and your polling loop may miss <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> being set to true. In this case, the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> flag of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" /> in your <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event handler will not be set to true, even though a cancellation request was made. This situation is called a <newTerm>race condition</newTerm> and is a common concern in multithreaded programming. For more information about multithreading design issues, see <format type="text/html"><a href="e51988e7-7f4b-4646-a06d-1416cee8d557">Managed Threading Best Practices</a></format>.</para>
+          </block>
+          <para>If your operation produces a result, you can assign the result to the <see cref="P:System.ComponentModel.DoWorkEventArgs.Result" /> property. This will be available to the <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event handler in the <see cref="P:System.ComponentModel.RunWorkerCompletedEventArgs.Result" /> property.</para>
+          <para>If the operation raises an exception that your code does not handle, the <see cref="T:System.ComponentModel.BackgroundWorker" /> catches the exception and passes it into the <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event handler, where it is exposed as the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" />. If you are running under the Visual Studio debugger, the debugger will break at the point in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler where the unhandled exception was raised. If you have more than one <see cref="T:System.ComponentModel.BackgroundWorker" />, you should not reference any of them directly, as this would couple your <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler to a specific instance of <see cref="T:System.ComponentModel.BackgroundWorker" />. Instead, you should access your <see cref="T:System.ComponentModel.BackgroundWorker" /> by casting the <paramref name="sender" /> parameter in your <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler.</para>
+          <para>You must be careful not to manipulate any user-interface objects in your <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler. Instead, communicate to the user interface through the <see cref="T:System.ComponentModel.BackgroundWorker" /> events.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" /> is called.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsBusy">
       <MemberSignature Language="C#" Value="public bool IsBusy { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsBusy" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
@@ -91,18 +165,26 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.BackgroundWorker" /> starts an asynchronous operation when you call <see cref="Overload:System.ComponentModel.BackgroundWorker.RunWorkerAsync" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.ComponentModel.BackgroundWorker" /> is running an asynchronous operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnDoWork">
       <MemberSignature Language="C#" Value="protected virtual void OnDoWork (System.ComponentModel.DoWorkEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnDoWork(class System.ComponentModel.DoWorkEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -110,18 +192,24 @@
         <Parameter Name="e" Type="System.ComponentModel.DoWorkEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnProgressChanged">
       <MemberSignature Language="C#" Value="protected virtual void OnProgressChanged (System.ComponentModel.ProgressChangedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnProgressChanged(class System.ComponentModel.ProgressChangedEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -129,18 +217,28 @@
         <Parameter Name="e" Type="System.ComponentModel.ProgressChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.BackgroundWorker.OnProgressChanged(System.ComponentModel.ProgressChangedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnRunWorkerCompleted">
       <MemberSignature Language="C#" Value="protected virtual void OnRunWorkerCompleted (System.ComponentModel.RunWorkerCompletedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnRunWorkerCompleted(class System.ComponentModel.RunWorkerCompletedEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -148,33 +246,52 @@
         <Parameter Name="e" Type="System.ComponentModel.RunWorkerCompletedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.BackgroundWorker.OnRunWorkerCompleted(System.ComponentModel.RunWorkerCompletedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProgressChanged">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.ProgressChangedEventHandler ProgressChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.ProgressChangedEventHandler ProgressChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ProgressChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when you call the <see cref="Overload:System.ComponentModel.BackgroundWorker.ReportProgress" /> method.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when <see cref="M:System.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)" /> is called.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReportProgress">
       <MemberSignature Language="C#" Value="public void ReportProgress (int percentProgress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReportProgress(int32 percentProgress) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -182,18 +299,29 @@
         <Parameter Name="percentProgress" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="percentProgress">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you need the background operation to report on its progress, you can call the <see cref="M:System.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)" /> method to raise the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event. The <see cref="P:System.ComponentModel.BackgroundWorker.WorkerReportsProgress" /> property value must be true, or <see cref="M:System.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)" /> will throw an <see cref="T:System.InvalidOperationException" />.</para>
+          <para>It is up to you to implement a meaningful way of measuring your background operation's progress as a percentage of the total task completed.</para>
+          <para>The call to the <see cref="M:System.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)" /> method is asynchronous and returns immediately. The <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event handler executes on the thread that created the <see cref="T:System.ComponentModel.BackgroundWorker" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event.</para>
+        </summary>
+        <param name="percentProgress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The percentage, from 0 to 100, of the background operation that is complete. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReportProgress">
       <MemberSignature Language="C#" Value="public void ReportProgress (int percentProgress, object userState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReportProgress(int32 percentProgress, object userState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -202,35 +330,55 @@
         <Parameter Name="userState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="percentProgress">To be added.</param>
-        <param name="userState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you need the background operation to report on its progress, you can call the <see cref="M:System.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)" /> method to raise the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event. The <see cref="P:System.ComponentModel.BackgroundWorker.WorkerReportsProgress" /> property value must true, or <see cref="M:System.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)" /> will throw an <see cref="T:System.InvalidOperationException" />.</para>
+          <para>It is up to you to implement a meaningful way of measuring your background operation's progress as a percentage of the total task completed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event.</para>
+        </summary>
+        <param name="percentProgress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The percentage, from 0 to 100, of the background operation that is complete.</param>
+        <param name="userState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state object passed to <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync(System.Object)" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RunWorkerAsync">
       <MemberSignature Language="C#" Value="public void RunWorkerAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RunWorkerAsync() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" /> method submits a request to start the operation running asynchronously. When the request is serviced, the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event is raised, which in turn starts execution of your background operation.</para>
+          <para>If the background operation is already running, calling <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" /> again will raise an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts execution of a background operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RunWorkerAsync">
       <MemberSignature Language="C#" Value="public void RunWorkerAsync (object argument);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RunWorkerAsync(object argument) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -238,33 +386,59 @@
         <Parameter Name="argument" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="argument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" /> method submits a request to start the operation running asynchronously. When the request is serviced, the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event is raised, which in turn starts execution of your background operation.</para>
+          <para>If your operation requires a parameter, you can provide it as the <paramref name="argument" /> parameter to <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" />.</para>
+          <para>If the background operation is already running, calling <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync" /> again will raise an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts execution of a background operation.</para>
+        </summary>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter for use by the background operation to be executed in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RunWorkerCompleted">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.RunWorkerCompletedEventHandler RunWorkerCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.RunWorkerCompletedEventHandler RunWorkerCompleted" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.RunWorkerCompletedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler returns.</para>
+          <para>If the operation completes successfully and its result is assigned in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler, you can access the result through the <see cref="P:System.ComponentModel.RunWorkerCompletedEventArgs.Result" /> property.</para>
+          <para>The <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" /> indicates that an exception was thrown by the operation.</para>
+          <para>The <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> property of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" /> indicates whether a cancellation request was processed by the background operation. If your code in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler detects a cancellation request by checking the <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> flag and setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> flag of <see cref="T:System.ComponentModel.DoWorkEventArgs" /> to true, the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> flag of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" /> also will be set to true.</para>
+          <block subset="none" type="note">
+            <para>Be aware that your code in the <see cref="E:System.ComponentModel.BackgroundWorker.DoWork" /> event handler may finish its work as a cancellation request is being made, and your polling loop may miss <see cref="P:System.ComponentModel.BackgroundWorker.CancellationPending" /> being set to true. In this case, the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> flag of <see cref="T:System.ComponentModel.RunWorkerCompletedEventArgs" /> in your <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event handler will not be set to true, even though a cancellation request was made. This situation is called a <newTerm>race condition</newTerm> and is a common concern in multithreaded programming. For more information about multithreading design issues, see <format type="text/html"><a href="e51988e7-7f4b-4646-a06d-1416cee8d557">Managed Threading Best Practices</a></format>.</para>
+          </block>
+          <para>Your <see cref="E:System.ComponentModel.BackgroundWorker.RunWorkerCompleted" /> event handler should always check the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> and <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> properties before accessing the <see cref="P:System.ComponentModel.RunWorkerCompletedEventArgs.Result" /> property. If an exception was raised or if the operation was canceled, accessing the <see cref="P:System.ComponentModel.RunWorkerCompletedEventArgs.Result" /> property raises an exception. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the background operation has completed, has been canceled, or has raised an exception.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WorkerReportsProgress">
-      <MemberSignature Language="C#" Value="public bool WorkerReportsProgress { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool WorkerReportsProgress { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool WorkerReportsProgress" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
@@ -274,18 +448,26 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ComponentModel.BackgroundWorker.WorkerReportsProgress" /> property to true if you want the <see cref="T:System.ComponentModel.BackgroundWorker" /> to support progress updates. When this property is true, user code can call the <see cref="M:System.ComponentModel.BackgroundWorker.ReportProgress(System.Int32)" /> method to raise the <see cref="E:System.ComponentModel.BackgroundWorker.ProgressChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.ComponentModel.BackgroundWorker" /> can report progress updates.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WorkerSupportsCancellation">
-      <MemberSignature Language="C#" Value="public bool WorkerSupportsCancellation { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool WorkerSupportsCancellation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool WorkerSupportsCancellation" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
@@ -295,19 +477,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ComponentModel.BackgroundWorker.WorkerSupportsCancellation" /> property to true if you want the <see cref="T:System.ComponentModel.BackgroundWorker" /> to support cancellation. When this property is true, you can call the <see cref="M:System.ComponentModel.BackgroundWorker.CancelAsync" /> method to interrupt a background operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.ComponentModel.BackgroundWorker" /> supports asynchronous cancellation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.ComponentModel.DefaultEvent("DoWork")</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

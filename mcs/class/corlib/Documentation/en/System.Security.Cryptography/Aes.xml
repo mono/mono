@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Aes" FullName="System.Security.Cryptography.Aes">
   <TypeSignature Language="C#" Value="public abstract class Aes : System.Security.Cryptography.SymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Aes extends System.Security.Cryptography.SymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -14,24 +16,32 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract base class from which all implementations of the Advanced Encryption Standard (AES) must inherit. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Aes ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Aes" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.Aes Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.Aes Create() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -41,13 +51,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a cryptographic object that is used to perform the symmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object that is used to perform the symmetric algorithm.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.Aes Create (string algName);" />
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.Aes Create (string algorithmName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.Aes Create(string algorithmName) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -56,13 +73,23 @@
         <ReturnType>System.Security.Cryptography.Aes</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="algName" Type="System.String" />
+        <Parameter Name="algorithmName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="algName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Possible <paramref name="algorithmName" /> values are: "AES", "AesCryptoServiceProvider", "System.Security.Cryptography.AesCryptoServiceProvider", "AesManaged", and "System.Security.Cryptography.AesManaged".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a cryptographic object that specifies the implementation of AES to use to perform the symmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object that is used to perform the symmetric algorithm.</para>
+        </returns>
+        <param name="algorithmName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of AES to use.</param>
       </Docs>
     </Member>
   </Members>

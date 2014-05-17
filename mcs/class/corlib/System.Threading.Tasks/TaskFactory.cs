@@ -214,9 +214,14 @@ namespace System.Threading.Tasks
 		                                        TaskCreationOptions creationOptions,
 		                                        TaskScheduler scheduler)
 		{
-			Task<TResult> t = new Task<TResult> (function, state, cancellationToken, creationOptions);
-			t.Start (scheduler);
+			var t = new Task<TResult> (function, state, cancellationToken, creationOptions);
 			
+			//
+			// Don't start cancelled task it would throw an exception
+			//
+			if (!t.IsCompleted)
+				t.Start (scheduler);
+
 			return t;
 		}
 		#endregion
@@ -305,7 +310,7 @@ namespace System.Threading.Tasks
 		{
 			CheckContinueArguments (tasks, continuationFunction, continuationOptions, scheduler);
 
-			var cont = Task.WhenAnyCore (tasks).ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
+			var cont = Task.WhenAnyCore (tasks).ContinueWith<TResult> (TaskActionInvoker.CreateSelected (continuationFunction), cancellationToken, continuationOptions, scheduler);
 
 			return cont;
 		}

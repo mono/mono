@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallbackBehaviorAttribute" FullName="System.ServiceModel.CallbackBehaviorAttribute">
+  <TypeSignature Language="C#" Value="public sealed class CallbackBehaviorAttribute : Attribute, System.ServiceModel.Description.IEndpointBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CallbackBehaviorAttribute extends System.Attribute implements class System.ServiceModel.Description.IEndpointBehavior" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Description.IEndpointBehavior</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.CallbackBehaviorAttribute" /> attribute to configure or extend the execution behavior of a callback contract implementation in a client application. This attribute performs the same function for the callback class as the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> attribute with the exception of instancing behavior and transaction settings. </para>
+      <para>The <see cref="T:System.ServiceModel.CallbackBehaviorAttribute" /> must be applied to the class that implements the callback contract. If applied to a non-duplex contract implementation an <see cref="T:System.InvalidOperationException" /> exception is thrown at runtime.</para>
+      <block subset="none" type="note">
+        <para>You can also use the <see cref="T:System.ServiceModel.OperationBehaviorAttribute" /> attribute for the callback operation implementations. However, if <see cref="T:System.ServiceModel.OperationBehaviorAttribute" /> is used on a callback operation, the <see cref="P:System.ServiceModel.OperationBehaviorAttribute.ReleaseInstanceMode" /> property must be <see cref="F:System.ServiceModel.ReleaseInstanceMode.None" /> or an <see cref="T:System.InvalidOperationException" /> exception is thrown at runtime.</para>
+      </block>
+      <para>The following properties are available:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.AutomaticSessionShutdown" /> property automatically closes the session when the channel is closed and the callback has finished processing any remaining messages.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.ConcurrencyMode" /> property controls the internal threading model, enabling support for reentrant or multithreaded callback objects.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.IgnoreExtensionDataObject" /> property enables the runtime to ignore extra serialization information that is not required to process the message.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.IncludeExceptionDetailInFaults" /> property specifies whether unhandled exceptions in a service are returned to the service as SOAP faults for debugging purposes.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.MaxItemsInObjectGraph" /> property limits on the number of items in an object graph that are serialized.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.TransactionIsolationLevel" /> property specifies the transaction isolation level that the contract supports.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.TransactionTimeout" /> property specifies the time period within which a transaction must complete or it aborts.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.UseSynchronizationContext" /> property indicates whether to synchronize inbound method calls automatically using the current <see cref="T:System.Threading.SynchronizationContext" /> object.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.ValidateMustUnderstand" /> property informs the system whether it should confirm that SOAP headers marked as MustUnderstand have, in fact, been understood.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures a callback service implementation in a client application.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CallbackBehaviorAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default settings for the <see cref="T:System.ServiceModel.CallbackBehaviorAttribute" /> are:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.AutomaticSessionShutdown" /> property is true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.ConcurrencyMode" /> is set to <see cref="F:System.ServiceModel.ConcurrencyMode.Single" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.IgnoreExtensionDataObject" /> property is false.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> is false.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.UseSynchronizationContext" /> is false.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.ValidateMustUnderstand" /> property is true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.CallbackBehaviorAttribute" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AutomaticSessionShutdown">
+      <MemberSignature Language="C#" Value="public bool AutomaticSessionShutdown { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AutomaticSessionShutdown" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, when a service closes a duplex session and the callback has finished processing any remaining messages, the callback closes the session. Setting <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.AutomaticSessionShutdown" /> to false prevents the client from automatically closing the session. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether to automatically close a session when a service closes a duplex session.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConcurrencyMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ConcurrencyMode ConcurrencyMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.ConcurrencyMode ConcurrencyMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ConcurrencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates whether an instance of a callback object supports one thread or multiple threads that execute concurrently, and if single-threaded, whether reentrancy is supported. </para>
+          <para>Setting <see cref="T:System.ServiceModel.ConcurrencyMode" /> to <see cref="F:System.ServiceModel.ConcurrencyMode.Single" /> instructs the system to restrict instances of the service to one thread of execution at a time, which frees you from dealing with threading issues. This is the default value. A value of <see cref="F:System.ServiceModel.ConcurrencyMode.Multiple" /> means that service objects can be executed by multiple threads at any one time. In this case, you must ensure thread safety and state consistency.</para>
+          <para>
+            <see cref="F:System.ServiceModel.ConcurrencyMode.Reentrant" /> also restricts access to a single thread at a time. However, it enables calls out from an executing service method to return and reenter the executing service. A reentrant call can execute on a different managed thread, but in this case the original thread is blocked for the duration of the reentrant call.</para>
+          <para>Generally, if a message arrives for an instance that violates its concurrency mode, the message waits until the instance is available, or until it times out.  </para>
+          <para>In addition, if the <see cref="T:System.ServiceModel.ConcurrencyMode" /> is set to <see cref="F:System.ServiceModel.ConcurrencyMode.Single" /> and a reentrant call is blocked while waiting for the instance to be freed, the system detects the deadlock and throws an exception. </para>
+          <para>crabout concurrency, see <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> and <format type="text/html"><a href="50797a3b-7678-44ed-8138-49ac1602f35b">Sessions, Instancing, and Concurrency</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether a service supports one thread, multiple threads, or reentrant calls.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IgnoreExtensionDataObject">
+      <MemberSignature Language="C#" Value="public bool IgnoreExtensionDataObject { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreExtensionDataObject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a type implements the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface, it stores any extra data it does not know about that comes over the wire when deserializing into that type. For example, if a type Person has members FirstName and LastName, and an element called PhoneNumber comes in, it is stored. When later serializing the type, PhoneNumber is re-emitted. The problem is that the schema for Person exported by that service only has FirstName and LastName, so indigo1 generates a schema-invalid instance. If strict schema compliance is important, you can set <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.IgnoreExtensionDataObject" /> to true to turn this re-emitting behavior off.</para>
+          <para>Regardless of the <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.IgnoreExtensionDataObject" /> setting, indigo2 always processes known data (both in and out) and does not throw exceptions when extra data comes in.</para>
+          <para>You can use the <format type="text/html"><a href="4073feda-1857-4be4-9947-227afb847ced">&lt;callbackDebug&gt;</a></format> element to set this property in a client application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to send unknown serialization data onto the wire.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeExceptionDetailInFaults">
+      <MemberSignature Language="C#" Value="public bool IncludeExceptionDetailInFaults { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeExceptionDetailInFaults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.IncludeExceptionDetailInFaults" /> to true to enable exception information to flow back to services for debugging purposes when possible. This is a development-only feature and should not be employed in deployed services. These faults appear to the calling service as <see cref="T:System.ServiceModel.FaultException" /> objects. </para>
+          <block subset="none" type="note">
+            <para>Setting <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.IncludeExceptionDetailInFaults" /> to true enables services to obtain information about internal client callback exceptions; it is only recommended as a way of temporarily debugging a duplex client application.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies that general unhandled execution exceptions are to be converted into a <see cref="T:System.ServiceModel.FaultException`1" /> of type <see cref="T:System.String" /> and sent as a fault message. Set this to true only during development to troubleshoot a service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxItemsInObjectGraph">
+      <MemberSignature Language="C#" Value="public int MaxItemsInObjectGraph { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxItemsInObjectGraph" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.MaxItemsInObjectGraph" /> property set a limit on the number of items in an object graph that are serialized. You can also use the <format type="text/html"><a href="a47513a4-a96c-4350-8586-daacb05dee71">&lt;dataContractSerializer&gt;</a></format> element to set this value in a client application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of items allowed in a serialized object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.AddBindingParameters (System.ServiceModel.Description.ServiceEndpoint endpoint, System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters(class System.ServiceModel.Description.ServiceEndpoint endpoint, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures the binding elements to support the callback behavior.</para>
+        </summary>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of binding parameters that are configured.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.ApplyClientBehavior (System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Dispatcher.ClientRuntime behavior);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior(class System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, class System.ServiceModel.Dispatcher.ClientRuntime behavior) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceEndpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+        <Parameter Name="behavior" Type="System.ServiceModel.Dispatcher.ClientRuntime" />
+      </Parameters>
+      <Docs>
+        <param name="behavior">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures the client runtime to support the callback object.</para>
+        </summary>
+        <param name="serviceEndpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint configured by the attribute.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.ApplyDispatchBehavior (System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, System.ServiceModel.Dispatcher.EndpointDispatcher dispatcher);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior(class System.ServiceModel.Description.ServiceEndpoint serviceEndpoint, class System.ServiceModel.Dispatcher.EndpointDispatcher dispatcher) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceEndpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+        <Parameter Name="dispatcher" Type="System.ServiceModel.Dispatcher.EndpointDispatcher" />
+      </Parameters>
+      <Docs>
+        <param name="dispatcher">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementation of the <see cref="M:System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)" /> method. This implementation has no effect.</para>
+        </summary>
+        <param name="serviceEndpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint to be modified.   </param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.Validate">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.Validate (System.ServiceModel.Description.ServiceEndpoint serviceEndpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.Validate(class System.ServiceModel.Description.ServiceEndpoint serviceEndpoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceEndpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the endpoint description prior to building the runtime.</para>
+        </summary>
+        <param name="serviceEndpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint to be validated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TransactionIsolationLevel">
+      <MemberSignature Language="C#" Value="public System.Transactions.IsolationLevel TransactionIsolationLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Transactions.IsolationLevel TransactionIsolationLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Transactions.IsolationLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The isolation level in which your transaction runs determines how data is treated when changes are made in other transactions and how long your transaction must hold locks to protect against these changes. For example, the default value, <see cref="F:System.Transactions.IsolationLevel.Unspecified" />, specifies that no updating or inserting can occur until the transaction is complete.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the transaction isolation level.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TransactionTimeout">
+      <MemberSignature Language="C#" Value="public string TransactionTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TransactionTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is typically set in an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the period within which a transaction must complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseSynchronizationContext">
+      <MemberSignature Language="C#" Value="public bool UseSynchronizationContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseSynchronizationContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide the user interface thread affinity that some applications require. For example, a Windows Forms application may be registered as a singleton service object. In this case, all calls into the service must run on the Windows Forms thread. The default case, in which <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.UseSynchronizationContext" /> is set to true, synchronizes all calls to the service to run on the user interface thread. </para>
+          <para>Note that the thread used is the current synchronization thread when <see cref="M:System.ServiceModel.DuplexChannelFactory`1.CreateChannel(System.Object,System.String)" /> or <see cref="M:System.ServiceModel.DuplexClientBase`1.CreateChannel" /> is called. In the case of an Windows Forms application, this means that these calls should occur after a call to the <see cref="M:System.Windows.Forms.Application.Run" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to use the current synchronization context to choose the thread of execution.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateMustUnderstand">
+      <MemberSignature Language="C#" Value="public bool ValidateMustUnderstand { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ValidateMustUnderstand" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.CallbackBehaviorAttribute.ValidateMustUnderstand" /> property to turn off the enforced validation of arriving message headers. In normal execution, message headers are compared against the <see cref="P:System.ServiceModel.Channels.MessageHeaders.UnderstoodHeaders" /> property to confirm that arriving headers are explicitly handled by the callback object runtime. Set this to false to disable this checking. When set to false, the application must check for headers marked with MustUnderstand="true" and return a fault if one or more of them were not understood. This is useful when the callback is supposed to accept any incoming SOAP messages (for example, when using typed or untyped messages) and perform custom header processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the system or the application enforces SOAP MustUnderstand header processing.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

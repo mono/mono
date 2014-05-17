@@ -1,104 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X500DistinguishedName" FullName="System.Security.Cryptography.X509Certificates.X500DistinguishedName">
   <TypeSignature Language="C#" Value="public sealed class X500DistinguishedName : System.Security.Cryptography.AsnEncodedData" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit X500DistinguishedName extends System.Security.Cryptography.AsnEncodedData" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Security.Cryptography.AsnEncodedData</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.MonoTODO("Some X500DistinguishedNameFlags options aren't supported, like DoNotUsePlusSign, DoNotUseQuotes and ForceUTF8Encoding")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is like an extension to the <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.SubjectName" /> or <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.IssuerName" /> property, which is the name of the person or entity that the certificate is being issued to. X.500 is an international standard for distributed directory services. The distinguished name uses the following format:</para>
+      <para>[X500:/C=CountryCode/O=Organization/OU=OrganizationUnit/CN=CommonName]</para>
+      <para>The following field length limits apply:</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Field</para>
+            </term>
+            <description>
+              <para>Length Limit</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>CountryCode</para>
+          </term>
+          <description>
+            <para>2 characters</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Organization</para>
+          </term>
+          <description>
+            <para>Up to 64 characters</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>OrganizationUnit</para>
+          </term>
+          <description>
+            <para>Up to 32 characters</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>CommonName</para>
+          </term>
+          <description>
+            <para>Up to 64 characters</para>
+          </description>
+        </item>
+      </list>
+      <para>The following guidelines apply: </para>
+      <list type="bullet">
+        <item>
+          <para>Field values can be uppercase or lowercase. </para>
+        </item>
+        <item>
+          <para>Delimiters are slash marks (/) and must appear before the first value and between subsequent values. </para>
+        </item>
+        <item>
+          <para>Delimiters can be followed by a space. </para>
+        </item>
+      </list>
+      <para>The following is an example of a correctly formatted name: [X500:/ C=US/ O=Microsoft/ OU=WGA/ CN=TedSt]</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the distinguished name of an X509 certificate. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public X500DistinguishedName (byte[] encodedDistinguishedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] encodedDistinguishedName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="encodedDistinguishedName" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="encodedDistinguishedName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class inherits from the <see cref="T:System.Security.Cryptography.AsnEncodedData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class using information from the specified byte array.</para>
+        </summary>
+        <param name="encodedDistinguishedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains distinguished name information.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public X500DistinguishedName (System.Security.Cryptography.AsnEncodedData encodedDistinguishedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Cryptography.AsnEncodedData encodedDistinguishedName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="encodedDistinguishedName" Type="System.Security.Cryptography.AsnEncodedData" />
       </Parameters>
       <Docs>
-        <param name="encodedDistinguishedName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class inherits from the <see cref="T:System.Security.Cryptography.AsnEncodedData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class using the specified <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object.</para>
+        </summary>
+        <param name="encodedDistinguishedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object that represents the distinguished name.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public X500DistinguishedName (System.Security.Cryptography.X509Certificates.X500DistinguishedName distinguishedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Cryptography.X509Certificates.X500DistinguishedName distinguishedName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="distinguishedName" Type="System.Security.Cryptography.X509Certificates.X500DistinguishedName" />
       </Parameters>
       <Docs>
-        <param name="distinguishedName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a copy of the specified <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> object. The <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class inherits from the <see cref="T:System.Security.Cryptography.AsnEncodedData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class using the specified <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> object.</para>
+        </summary>
+        <param name="distinguishedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public X500DistinguishedName (string distinguishedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string distinguishedName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="distinguishedName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="distinguishedName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class inherits from the <see cref="T:System.Security.Cryptography.AsnEncodedData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class using information from the specified string.</para>
+        </summary>
+        <param name="distinguishedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the distinguished name.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public X500DistinguishedName (string distinguishedName, System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags flag);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string distinguishedName, valuetype System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags flag) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="distinguishedName" Type="System.String" />
         <Parameter Name="flag" Type="System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags" />
       </Parameters>
       <Docs>
-        <param name="distinguishedName">To be added.</param>
-        <param name="flag">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class inherits from the <see cref="T:System.Security.Cryptography.AsnEncodedData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedName" /> class using the specified string and <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags" /> flag.</para>
+        </summary>
+        <param name="distinguishedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the distinguished name.</param>
+        <param name="flag">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specify the characteristics of the distinguished name.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Decode">
       <MemberSignature Language="C#" Value="public string Decode (System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags flag);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Decode(valuetype System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags flag) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -106,19 +230,31 @@
         <Parameter Name="flag" Type="System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags" />
       </Parameters>
       <Docs>
-        <param name="flag">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method decodes the ASN encoded distinguished name into a string value. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes a distinguished name using the characteristics specified by the <paramref name="flag" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decoded distinguished name.</para>
+        </returns>
+        <param name="flag">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specify the characteristics of the distinguished name.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Format">
       <MemberSignature Language="C#" Value="public override string Format (bool multiLine);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string Format(bool multiLine) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -126,31 +262,47 @@
         <Parameter Name="multiLine" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="multiLine">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to print Abstract Syntax Notation number One (ASN.1)-encoded data or output the information to a text box. Use the <paramref name="multiLine" /> parameter to control the layout of the output.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a formatted version of an X500 distinguished name for printing or for output to a text window or to a console.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A formatted string that represents the X500 distinguished name.</para>
+        </returns>
+        <param name="multiLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the return string should contain carriage returns; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name uses the following format:</para>
+          <para>[X500:/C=CountryCode/O=Organization/OU=OrganizationUnit/CN=CommonName]</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the comma-delimited distinguished name from an X500 certificate.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -28,7 +28,7 @@ namespace System.Diagnostics.Contracts {
 
 	[AttributeUsageAttribute(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
 	[ConditionalAttribute("CONTRACTS_FULL")]
-	public class ContractOptionAttribute : Attribute {
+	public sealed class ContractOptionAttribute : Attribute {
 		public ContractOptionAttribute (string category, string setting, bool enabled)
 		{
 			Category = category;

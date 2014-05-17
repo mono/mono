@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceType" FullName="System.Security.AccessControl.ResourceType">
   <TypeSignature Language="C#" Value="public enum ResourceType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ResourceType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,205 +11,260 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the defined native object types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DSObject">
       <MemberSignature Language="C#" Value="DSObject" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType DSObject = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A directory service (DS) object or a property set or property of a directory service object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DSObjectAll">
       <MemberSignature Language="C#" Value="DSObjectAll" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType DSObjectAll = int32(9)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A directory service object and all of its property sets and properties.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="FileObject">
       <MemberSignature Language="C#" Value="FileObject" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType FileObject = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file or directory.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="KernelObject">
       <MemberSignature Language="C#" Value="KernelObject" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType KernelObject = int32(6)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local kernel object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LMShare">
       <MemberSignature Language="C#" Value="LMShare" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType LMShare = int32(5)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A network share.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Printer">
       <MemberSignature Language="C#" Value="Printer" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType Printer = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A printer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ProviderDefined">
       <MemberSignature Language="C#" Value="ProviderDefined" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType ProviderDefined = int32(10)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object defined by a provider.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RegistryKey">
       <MemberSignature Language="C#" Value="RegistryKey" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType RegistryKey = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A registry key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RegistryWow6432Key">
       <MemberSignature Language="C#" Value="RegistryWow6432Key" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType RegistryWow6432Key = int32(12)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object for a registry entry under WOW64.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Service">
       <MemberSignature Language="C#" Value="Service" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType Service = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows service.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType Unknown = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unknown object type.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WindowObject">
       <MemberSignature Language="C#" Value="WindowObject" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType WindowObject = int32(7)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A window station or desktop object on the local computer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WmiGuidObject">
       <MemberSignature Language="C#" Value="WmiGuidObject" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.AccessControl.ResourceType WmiGuidObject = int32(11)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.ResourceType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows Management Instrumentation (WMI) object.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

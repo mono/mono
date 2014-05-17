@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XStreamingElement" FullName="System.Xml.Linq.XStreamingElement">
+  <TypeSignature Language="C#" Value="public class XStreamingElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XStreamingElement extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class allows you to create an XML tree that supports deferred streaming output. You use this class to create an XML tree in a very similar fashion to creating an XML tree using <see cref="T:System.Xml.Linq.XElement" />. However, there is a fundamental difference. When you use a LINQ query to specify content when creating an XML tree using <see cref="T:System.Xml.Linq.XElement" />, the query variable is iterated at the time of construction of the XML tree, and the results of the query are added to the XML tree. In contrast, when you create an XML tree using <see cref="T:System.Xml.Linq.XStreamingElement" />, a reference to the query variable is stored in the XML tree without being iterated. Queries are iterated only upon serialization. This allows you to create larger XML trees while maintaining a smaller memory footprint.</para>
+      <para>If you are streaming from an input source, such as a text file, then you can read a very large text file, and generate a very large XML document while maintaining a small memory footprint.</para>
+      <para>Another scenario is that you have a large XML tree that has been loaded into memory, and you want to create a transformed version of the document. If you create a new document using <see cref="T:System.Xml.Linq.XElement" />, then you will have two large XML trees in memory upon completion of the transformation. However, if you create the new XML tree using <see cref="T:System.Xml.Linq.XStreamingElement" />, then your working set will be effectively cut in half.</para>
+      <para>Note that when debugging a program that uses <see cref="T:System.Xml.Linq.XStreamingElement" />, displaying the value of an object causes its <see cref="Overload:System.Xml.Linq.XStreamingElement.ToString" /> method to be called. This causes the XML to be serialized. If the semantics of your streaming element query are such that the streaming element can only be streamed once, this may cause undesirable behavior in your debugging experience.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents elements in an XML tree that supports deferred streaming output.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XStreamingElement (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XName name) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a streaming element with no content and no attributes.</para>
+          <para>There is an implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />. Typical use of this constructor is to specify a string as the parameter instead of creating a new <see cref="T:System.Xml.Linq.XName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XElement" /> class from the specified <see cref="T:System.Xml.Linq.XName" />.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XName" /> that contains the name of the element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XStreamingElement (System.Xml.Linq.XName name, object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XName name, object content) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a streaming element with the specified content and attributes.</para>
+          <para>There is an implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />. Typical use of this constructor is to specify a string as the parameter instead of creating a new <see cref="T:System.Xml.Linq.XName" />.</para>
+          <para>Queries are not iterated until the <see cref="T:System.Xml.Linq.XStreamingElement" /> is serialized. This is in contrast to using queries for content for an <see cref="T:System.Xml.Linq.XElement" />, where queries are iterated at the time of construction of the new <see cref="T:System.Xml.Linq.XElement" />.</para>
+          <para>For details about the valid content that can be passed to this constructor, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XStreamingElement" /> class with the specified name and content.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XName" /> that contains the element name.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents of the element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XStreamingElement (System.Xml.Linq.XName name, object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XName name, object[] content) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a streaming element with the specified content and attributes.</para>
+          <para>There is an implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />. Typical use of this constructor is to specify a string as the parameter instead of creating a new <see cref="T:System.Xml.Linq.XName" />.</para>
+          <para>Queries are not iterated until the <see cref="T:System.Xml.Linq.XStreamingElement" /> is serialized. This is in contrast to using queries for content for an <see cref="T:System.Xml.Linq.XElement" />, where queries are iterated at the time of construction of the new <see cref="T:System.Xml.Linq.XElement" />.</para>
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XStreamingElement" /> class with the specified name and content.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XName" /> that contains the element name.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents of the element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor adds the specified content and attributes to the <see cref="T:System.Xml.Linq.XStreamingElement" />. While it is often possible to construct the <see cref="T:System.Xml.Linq.XStreamingElement" /> in a single statement, it is sometimes more convenient to add content to the streaming element incrementally.</para>
+          <para>Queries are not iterated until the <see cref="T:System.Xml.Linq.XStreamingElement" /> is serialized. This is in contrast to using queries for content for an <see cref="T:System.Xml.Linq.XElement" />, where queries are iterated at the time of construction of the new <see cref="T:System.Xml.Linq.XElement" />.</para>
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content as children to this <see cref="T:System.Xml.Linq.XStreamingElement" />.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />Content to be added to the streaming element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object[] content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor adds the specified content and attributes to the <see cref="T:System.Xml.Linq.XStreamingElement" />. While it is often possible to construct the <see cref="T:System.Xml.Linq.XStreamingElement" /> in a single statement, it is sometimes more convenient to add content to the streaming element incrementally.</para>
+          <para>Queries are not iterated until the <see cref="T:System.Xml.Linq.XStreamingElement" /> is serialized. This is in contrast to using queries for content for an <see cref="T:System.Xml.Linq.XElement" />, where queries are iterated at the time of construction of the new <see cref="T:System.Xml.Linq.XElement" />.</para>
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content as children to this <see cref="T:System.Xml.Linq.XStreamingElement" />.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />Content to be added to the streaming element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XName Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XName Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XName</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of this streaming element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialized XML will be indented. All insignificant white space will be removed, and additional white space will be added so that the XML will be properly indented. The behavior of this method is that insignificant white space will not be preserved.</para>
+          <para>If you want to control white space, use the overload of <see cref="Overload:System.Xml.Linq.XStreamingElement.Save" /> that takes <see cref="T:System.Xml.Linq.SaveOptions" /> as a parameter. Use the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> option to save unindented XML. This will cause the writer to write all white spaces exactly as represented in the XML tree.</para>
+          <para>Use <see cref="F:System.Xml.Linq.SaveOptions.OmitDuplicateNamespaces" /> option if you want to remove duplicate namespace declarations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs this <see cref="T:System.Xml.Linq.XStreamingElement" /> to the specified <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to output this <see cref="T:System.Xml.Linq.XDocument" /> to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.TextWriter textWriter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.TextWriter textWriter) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialized XML will be indented. All insignificant white space will be removed, and additional white space will be added so that the XML will be properly indented. The behavior of this method is that insignificant white space nodes in the XML tree will not be preserved.</para>
+          <para>If you want to control white space, use one of the overloads of <see cref="Overload:System.Xml.Linq.XStreamingElement.Save" /> that take <see cref="T:System.Xml.Linq.SaveOptions" /> as a parameter. For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this streaming element to a <see cref="T:System.IO.TextWriter" />.</para>
+        </summary>
+        <param name="textWriter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> that the <see cref="T:System.Xml.Linq.XStreamingElement" /> will be written to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(string fileName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialized XML will be indented. All insignificant white space will be removed, and additional white space will be added so that the XML will be properly indented. The behavior of this method is that insignificant white space nodes in the XML tree will not be preserved.</para>
+          <para>If you want to control white space, use one of the overloads of <see cref="Overload:System.Xml.Linq.XStreamingElement.Save" /> that take <see cref="T:System.Xml.Linq.SaveOptions" /> as a parameter. For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this streaming element to a file.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the name of the file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this streaming element to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlWriter" /> that the <see cref="T:System.Xml.Linq.XElement" /> will be written to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.Stream stream, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.Stream stream, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default the <paramref name="options" /> are set to <see cref="F:System.Xml.Linq.SaveOptions.None" />. This option will remove all extraneous insignificant white space, and add appropriate insignificant white space so that the XML is properly indented. </para>
+          <para>If you want to save unindented XML, specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will cause the writer to write all white spaces exactly as represented in the XML tree.</para>
+          <para>Use <see cref="F:System.Xml.Linq.SaveOptions.OmitDuplicateNamespaces" /> option if you want to remove duplicate namespace declarations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs this <see cref="T:System.Xml.Linq.XStreamingElement" /> to the specified <see cref="T:System.IO.Stream" />, optionally specifying formatting behavior.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to output this <see cref="T:System.Xml.Linq.XDocument" /> to.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> object that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.TextWriter textWriter, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.TextWriter textWriter, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to save unindented XML, specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will cause the writer to write all white space exactly as represented in the XML tree.</para>
+          <para>If you want to save indented XML, do not specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will remove all extraneous insignificant white space, and add appropriate insignificant white space so that the XML is properly indented. This is the default behavior, and the behavior of the overloads of the <see cref="Overload:System.Xml.Linq.XElement.Save" /> methods that do not take <paramref name="options" /> as a parameter.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this streaming element to a <see cref="T:System.IO.TextWriter" />, optionally disabling formatting.</para>
+        </summary>
+        <param name="textWriter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to output the XML to.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string fileName, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(string fileName, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to save unindented XML, specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will cause the writer to write all white space exactly as represented in the XML tree.</para>
+          <para>If you want to save indented XML, do not specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will remove all extraneous insignificant white space, and add appropriate insignificant white space so that the XML is properly indented. This is the default behavior, and the behavior of the overloads of the <see cref="Overload:System.Xml.Linq.XElement.Save" /> methods that do not take <paramref name="options" /> as a parameter.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this streaming element to a file, optionally disabling formatting.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the name of the file.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> object that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that when debugging a program that uses <see cref="T:System.Xml.Linq.XStreamingElement" />, displaying the value of an object causes its <see cref="Overload:System.Xml.Linq.XStreamingElement.ToString" /> method to be called. This causes the XML to be serialized. If the semantics of your streaming element query are such that the streaming element can only be streamed once, this may cause undesirable behavior in your debugging experience.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the formatted (indented) XML for this streaming element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the indented XML.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that when debugging a program that uses <see cref="T:System.Xml.Linq.XStreamingElement" />, displaying the value of an object causes its <see cref="Overload:System.Xml.Linq.XStreamingElement.ToString" /> method to be called. This causes the XML to be serialized. If the semantics of your streaming element query are such that the streaming element can only be streamed once, this may cause undesirable behavior in your debugging experience.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML for this streaming element, optionally disabling formatting.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the XML.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public void WriteTo (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteTo(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes this streaming element to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> into which this method will write.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

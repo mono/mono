@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OperatingSystem" FullName="System.OperatingSystem">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class OperatingSystem : ICloneable, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit OperatingSystem extends System.Object implements class System.ICloneable, class System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -19,25 +21,38 @@
       <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Represents the details of an Operating System.</summary>
-    <remarks>Represents the details of an Operating System including
-
-<list type="bullet"><item><term>Platform ID</term></item><item><term>Version</term></item></list></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.OperatingSystem" /> class contains information about an operating system. For example, the <see cref="P:System.Environment.OSVersion" /> property returns information about the currently executing operating system in an <see cref="T:System.OperatingSystem" /> object. </para>
+      <para>By design, the <see cref="T:System.OperatingSystem" /> class is not a general purpose means of describing an operating system, and you cannot derive a more inclusive type from the <see cref="T:System.OperatingSystem" /> class. If you need a type to contain other information about an operating system, create your own type, then include a field of type <see cref="T:System.OperatingSystem" /> and any additional fields, properties, or methods you require.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents information about an operating system, such as the version and platform identifier. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public OperatingSystem (PlatformID platform, Version version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.PlatformID platform, class System.Version version) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="platform" Type="System.PlatformID" />
         <Parameter Name="version" Type="System.Version" />
       </Parameters>
       <Docs>
-        <param name="platform">PlatformID for the newly created <see cref="T:System.OperatingSystem" /> object.</param>
-        <param name="version">Version of the newly created <see cref="T:System.OperatingSystem" /> object.</param>
-        <summary>Create a new <see cref="T:System.OperatingSystem" /> object with the specified PlatformID and Version values.</summary>
         <remarks>
           <example>
             <code lang="C#">
@@ -57,33 +72,44 @@ prints
 Microsoft Windows NT 5.1.2600.0
 </para></example>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.OperatingSystem" /> class, using the specified platform identifier value and version object.</para>
+        </summary>
+        <param name="platform">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.PlatformID" /> values that indicates the operating system platform. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Version" /> object that indicates the version of the operating system. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clone">
-      <MemberSignature Language="C#" Value="public object Clone ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Creates a copy of this <see cref="T:System.OperatingSystem" /> object.</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.OperatingSystem" /> object that is identical to this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.OperatingSystem" /> object that is a copy of this instance.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetObjectData">
       <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,102 +123,139 @@ Microsoft Windows NT 5.1.2600.0
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="context" /> parameter is reserved for future use; it is currently not implemented in the <see cref="M:System.OperatingSystem.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> method.</para>
+          <para>For more information, see the <see cref="M:System.Runtime.Serialization.SerializationInfo.AddValue(System.String,System.Object,System.Type)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the data necessary to deserialize this instance.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to populate with serialization information.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The place to store and retrieve serialized data. Reserved for future use.</param>
       </Docs>
     </Member>
     <Member MemberName="Platform">
       <MemberSignature Language="C#" Value="public PlatformID Platform { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.PlatformID Platform" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.PlatformID</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Platform identifying this <see cref="T:System.OperatingSystem" />.</summary>
-        <value>To be added: an object of type 'PlatformID'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.PlatformID</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'PlatformID'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.PlatformID" /> enumeration value that identifies the operating system platform.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ServicePack">
       <MemberSignature Language="C#" Value="public string ServicePack { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ServicePack" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A service pack is used to distribute software updates for the operating system on which it is installed. However, not every operating system uses service packs. </para>
+          <para>The service pack version, if available, is already correctly formatted for display.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the service pack version represented by this <see cref="T:System.OperatingSystem" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this <see cref="T:System.OperatingSystem" /> object to its equivalent string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the values returned by the <see cref="P:System.OperatingSystem.Platform" />, <see cref="P:System.OperatingSystem.Version" />, and <see cref="P:System.OperatingSystem.ServicePack" /> properties.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="C#" Value="public Version Version { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Version Version" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Version">
-      <MemberSignature Language="C#" Value="public Version Version { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Version of this <see cref="T:System.OperatingSystem" />.</summary>
         <value>To be added: an object of type 'Version'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See <see cref="http://msdn.microsoft.com/library/windows/desktop/ms724832.aspx">Operating System Version</see> on the Windows Dev Center for a list of Windows operating system versions and their corresponding version numbers. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Version" /> object that identifies the operating system.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="VersionString">
       <MemberSignature Language="C#" Value="public string VersionString { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string VersionString" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the value returned by <see cref="P:System.OperatingSystem.VersionString" /> is the same as the value returned by the <see cref="M:System.OperatingSystem.ToString" /> method. However, an implementation of the .NET Framework for a different platform might return a more appropriate string for that platform.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the concatenated string representation of the platform identifier, version, and service pack that are currently installed on the operating system. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

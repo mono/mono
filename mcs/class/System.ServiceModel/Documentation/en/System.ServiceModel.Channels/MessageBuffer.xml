@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageBuffer" FullName="System.ServiceModel.Channels.MessageBuffer">
+  <TypeSignature Language="C#" Value="public abstract class MessageBuffer : IDisposable, System.Xml.XPath.IXPathNavigable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MessageBuffer extends System.Object implements class System.IDisposable, class System.Xml.XPath.IXPathNavigable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Xml.XPath.IXPathNavigable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The body of a <see cref="T:System.ServiceModel.Channels.Message" /> instance can only be consumed or written once. If you wish to consume a <see cref="T:System.ServiceModel.Channels.Message" /> instance more than once, you should use the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> class to completely store an entire <see cref="T:System.ServiceModel.Channels.Message" /> instance into memory. </para>
+      <para>A <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance is constructed by calling <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> of a <see cref="T:System.ServiceModel.Channels.Message" /> instance. A new <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> is then created and returned, which assumes ownership of the <see cref="T:System.ServiceModel.Channels.Message" /> and reads the entire content into memory. </para>
+      <para>In order to retrieve a copy of a <see cref="T:System.ServiceModel.Channels.Message" /> from the <see cref="T:System.ServiceModel.Channels.MessageBuffer" />, you must call the <see cref="M:System.ServiceModel.Channels.MessageBuffer.CreateMessage" /> method of the <see cref="T:System.ServiceModel.Channels.MessageBuffer" />. This returns an identical copy of the original <see cref="T:System.ServiceModel.Channels.Message" /> instance you provided.</para>
+      <para>You can control the maximum size of the buffer by setting <see cref="P:System.ServiceModel.Channels.MessageBuffer.BufferSize" /> to the maximum number of bytes desired. This number does not necessarily cover any transient allocations related to building the buffer, or properties attached to the message.</para>
+      <para>You should always close a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance by calling <see cref="M:System.ServiceModel.Channels.MessageBuffer.Close" /> when finished working with it. This allows system resources to potentially be freed sooner.</para>
+      <para>Special note for Managed C++ users deriving from this class:</para>
+      <list type="bullet">
+        <item>
+          <para>Put your cleanup code in (On)(Begin)Close (and/or OnAbort), not in a destructor.</para>
+        </item>
+        <item>
+          <para>Avoid destructors: they cause the compiler to auto-generate <see cref="T:System.IDisposable" /></para>
+        </item>
+        <item>
+          <para>Avoid non-reference members: they can cause the compiler to auto-generate <see cref="T:System.IDisposable" /></para>
+        </item>
+        <item>
+          <para>Avoid finalizers; but if you include one, you should suppress the build warning and call <see cref="M:System.GC.SuppressFinalize(System.Object)" /> and the finalizer itself from (On)(Begin)Close (and/or OnAbort) in order to emulate what would have been the auto-generated <see cref="T:System.IDisposable" /> behavior.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a memory buffer that stores an entire message for future consumption.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MessageBuffer ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BufferSize">
+      <MemberSignature Language="C#" Value="public abstract int BufferSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BufferSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can control the maximum size of the buffer by setting <see cref="P:System.ServiceModel.Channels.MessageBuffer.BufferSize" /> to the maximum number of bytes desired. This number does not necessarily cover any transient allocations related to building the buffer, or properties attached to the message. It is not related to the actual size of the message when serialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the approximate number of bytes consumed by this <see cref="T:System.ServiceModel.Channels.MessageBuffer" />. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public abstract void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should always close a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance by calling <see cref="M:System.ServiceModel.Channels.MessageBuffer.Close" /> when finished working with it. This allows system resources to potentially be freed sooner.</para>
+          <para>If you have called <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> to create a message buffer of a message, and inspected the message using <see cref="M:System.ServiceModel.Channels.MessageBuffer.CreateMessage" />, you will get a <see cref="T:System.InvalidOperationException" /> when you attempt to close the buffer using this method. To avoid this problem, you need to recreate the message from the buffer before closing. See the code sample in the Example section for a demonstration of the previous scenario and a way to resolve this problem.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finishes working with the buffer.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateMessage">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.Message CreateMessage ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message CreateMessage() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method creates an identical copy of the original <see cref="T:System.ServiceModel.Channels.Message" /> instance you previously provided to the <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> method of a <see cref="T:System.ServiceModel.Channels.Message" /> instance. You can then save the message to a durable storage.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a copy of the original message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An identical copy of the original <see cref="T:System.ServiceModel.Channels.Message" /> instance you previously provided to the <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> method of a <see cref="T:System.ServiceModel.Channels.Message" /> instance. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public System.Xml.XPath.XPathNavigator CreateNavigator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XPath.XPathNavigator CreateNavigator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to manipulate just a portion of the message copy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object. This method cannot be inherited.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public System.Xml.XPath.XPathNavigator CreateNavigator (int node_quota);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XPath.XPathNavigator CreateNavigator(int32 node_quota) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node_quota" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="node_quota">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to manipulate just a portion of the message copy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object, with the navigator positioned on the node specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public System.Xml.XPath.XPathNavigator CreateNavigator (System.Xml.XmlSpace space);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XPath.XPathNavigator CreateNavigator(valuetype System.Xml.XmlSpace space) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="space" Type="System.Xml.XmlSpace" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to manipulate just a portion of the message copy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object, with the specified xml:space scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
+        <param name="space">
+          <attribution license="cc4" from="Microsoft" modified="false" />A valid <see cref="T:System.Xml.XmlSpace" /> space.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNavigator">
+      <MemberSignature Language="C#" Value="public System.Xml.XPath.XPathNavigator CreateNavigator (int node_quota, System.Xml.XmlSpace space);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XPath.XPathNavigator CreateNavigator(int32 node_quota, valuetype System.Xml.XmlSpace space) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node_quota" Type="System.Int32" />
+        <Parameter Name="space" Type="System.Xml.XmlSpace" />
+      </Parameters>
+      <Docs>
+        <param name="node_quota">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to manipulate just a portion of the message copy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object, with the navigator positioned on the specified node and xml:space scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this object.</para>
+        </returns>
+        <param name="space">
+          <attribution license="cc4" from="Microsoft" modified="false" />A valid <see cref="T:System.Xml.XmlSpace" /> space.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageContentType">
+      <MemberSignature Language="C#" Value="public virtual string MessageContentType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MessageContentType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of message content stored in this buffer.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.IDisposable.Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method when you are finished using the <see cref="T:System.ServiceModel.Channels.MessageBuffer" />. This method leaves the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> in an unusable state. After calling this method, you must release all references to the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> was occupying. </para>
+          <block subset="none" type="note">
+            <para>Always call this method before you release your last reference to the <see cref="T:System.ServiceModel.Channels.MessageBuffer" />. Otherwise, the resources it is using are not freed until the garbage collector calls the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> and optionally releases the managed resources. This method cannot be inherited.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteMessage">
+      <MemberSignature Language="C#" Value="public virtual void WriteMessage (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteMessage(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This function uses a binary encoder instead of a UTF-8 encoder. Therefore, you cannot directly convert from a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> to a <see cref="T:System.ServiceModel.Channels.Message" />. The code in the example section shows how to work around this problem.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the entire content of this buffer to the specified IO stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IO stream that the entire content of this buffer is written to.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

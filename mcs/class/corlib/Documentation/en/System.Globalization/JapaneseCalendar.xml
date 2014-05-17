@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="JapaneseCalendar" FullName="System.Globalization.JapaneseCalendar">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class JapaneseCalendar : System.Globalization.Calendar" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable JapaneseCalendar extends System.Globalization.Calendar" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,29 +14,361 @@
     <BaseTypeName>System.Globalization.Calendar</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Japanese calendar, which is also known as the Wareki calendar, works exactly like the Gregorian calendar, except that the year and era are different.</para>
+      <block subset="none" type="note">
+        <para>For information about using the <see cref="T:System.Globalization.JapaneseCalendar" /> class and the other calendar classes in the .NET Framework, see <format type="text/html"><a href="0c1534e5-979b-4c8a-a588-1c24301aefb3">Working with Calendars</a></format>.</para>
+      </block>
+      <para>The Japanese calendar recognizes one era for every emperor's reign. The current era is the Heisei era, which began in the Gregorian calendar year 1989. The era name is typically displayed before the year. For example, the Gregorian calendar year 2001 is the Japanese calendar year Heisei 13. Note that the first year of an era is called "Gannen." Therefore, the Gregorian calendar year 1989 was the Japanese calendar year Heisei Gannen.</para>
+      <para>This class assigns numbers to the eras as follows: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>GetEra value </para>
+            </term>
+            <description>
+              <para>Era Name </para>
+            </description>
+            <description>
+              <para>Era Abbreviation </para>
+            </description>
+            <description>
+              <para>Gregorian Dates </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>4 </para>
+          </term>
+          <description>
+            <para>平成 (Heisei) </para>
+          </description>
+          <description>
+            <para>平 (H, h) </para>
+          </description>
+          <description>
+            <para>January 8, 1989 to present </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>3 </para>
+          </term>
+          <description>
+            <para>昭和 (Showa) </para>
+          </description>
+          <description>
+            <para>昭 (S, s) </para>
+          </description>
+          <description>
+            <para>December 25, 1926 to January 7, 1989 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>大正 (Taisho) </para>
+          </description>
+          <description>
+            <para>大 (T, t) </para>
+          </description>
+          <description>
+            <para>July 30, 1912 to December 24, 1926 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>明治 (Meiji) </para>
+          </description>
+          <description>
+            <para>明 (M, m) </para>
+          </description>
+          <description>
+            <para>September 8, 1868 to July 29, 1912 </para>
+          </description>
+        </item>
+      </list>
+      <para>This class handles dates from September 8 in the year Meiji 1 (in the Gregorian calendar, September 8, 1868). Although the Japanese calendar was switched from a lunar calendar to a solar calendar in the year Meiji 6 (1873 of the Gregorian calendar), this implementation is based on the solar calendar only.</para>
+      <para>Leap years in the Japanese calendar correspond to the same leap years in the Gregorian calendar. A leap year in the Gregorian calendar is defined as a Gregorian year that is evenly divisible by four, except if it is divisible by 100. However, Gregorian years that are divisible by 400 are leap years. A common year has 365 days and a leap year has 366 days.</para>
+      <para>The Japanese calendar has 12 months with 28 to 31 days each: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>GetMonth value </para>
+            </term>
+            <description>
+              <para>Month </para>
+            </description>
+            <description>
+              <para>English </para>
+            </description>
+            <description>
+              <para>Days in common years </para>
+            </description>
+            <description>
+              <para>Days in leap years </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>1月 (Ichigatsu) </para>
+          </description>
+          <description>
+            <para>January </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>2月 (Nigatsu) </para>
+          </description>
+          <description>
+            <para>February </para>
+          </description>
+          <description>
+            <para>28 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>3 </para>
+          </term>
+          <description>
+            <para>3月 (Sangatsu) </para>
+          </description>
+          <description>
+            <para>March </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>4 </para>
+          </term>
+          <description>
+            <para>4月 (Shigatsu) </para>
+          </description>
+          <description>
+            <para>April </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>5 </para>
+          </term>
+          <description>
+            <para>5月 (Gogatsu) </para>
+          </description>
+          <description>
+            <para>May </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>6 </para>
+          </term>
+          <description>
+            <para>6月 (Rokugatsu) </para>
+          </description>
+          <description>
+            <para>June </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>7 </para>
+          </term>
+          <description>
+            <para>7月 (Shichigatsu) </para>
+          </description>
+          <description>
+            <para>July </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>8 </para>
+          </term>
+          <description>
+            <para>8月 (Hachigatsu) </para>
+          </description>
+          <description>
+            <para>August </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>9 </para>
+          </term>
+          <description>
+            <para>9月 (Kugatsu) </para>
+          </description>
+          <description>
+            <para>September </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>10 </para>
+          </term>
+          <description>
+            <para>10月 (Juugatsu) </para>
+          </description>
+          <description>
+            <para>October </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>11 </para>
+          </term>
+          <description>
+            <para>11月 (Juuichigatsu) </para>
+          </description>
+          <description>
+            <para>November </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>12 </para>
+          </term>
+          <description>
+            <para>12月 (Juunigatsu) </para>
+          </description>
+          <description>
+            <para>December </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+          <description>
+            <para>31 </para>
+          </description>
+        </item>
+      </list>
+      <para>Nigatsu, which is equivalent to the Gregorian calendar month of February, has 29 days during leap years and 28 during common years.</para>
+      <para>The date January 1, 2001 A.D. in the Gregorian calendar is equivalent to the first day of Ichigatsu in the year Heisei 13 in the Japanese calendar.</para>
+      <para>If the application is using the <see cref="T:System.Globalization.JapaneseCalendar" /> class, <see cref="M:System.DateTime.Parse(System.String)" /> recognizes the era abbreviations in front of the year. The abbreviation is either the single-character case-insensitive Latin alphabet abbreviation or the single-character Kanji abbreviation.</para>
+      <para>Each <see cref="T:System.Globalization.CultureInfo" /> object supports a set of calendars. The <see cref="P:System.Globalization.CultureInfo.Calendar" /> property returns the default calendar for the culture, and the <see cref="P:System.Globalization.CultureInfo.OptionalCalendars" /> property returns an array containing all the calendars supported by the culture. To change the calendar used by a <see cref="T:System.Globalization.CultureInfo" />, the application should set the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> to a new <see cref="T:System.Globalization.Calendar" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the Japanese calendar.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public JapaneseCalendar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.JapaneseCalendar" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AddMonths">
       <MemberSignature Language="C#" Value="public override DateTime AddMonths (DateTime time, int months);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime AddMonths(valuetype System.DateTime time, int32 months) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -43,21 +377,37 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="months">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. The year part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting month is outside the year of the specified <see cref="T:System.DateTime" />. The era part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />. The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>For example, if the specified month is Juugatsu (October), which has 31 days, the specified day is the 31st day of that month, and <paramref name="months" /> is 6, the resulting year is one more than the specified year, the resulting month is Shigatsu (April), and the resulting day is the 30th day, which is the last day in Shigatsu (April).</para>
+          <para>If <paramref name="months" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#5</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of months away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of months to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add months. </param>
+        <param name="months">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of months to add. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddYears">
+      <MemberSignature Language="C#" Value="public override DateTime AddYears (DateTime time, int years);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime AddYears(valuetype System.DateTime time, int32 years) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddYears">
-      <MemberSignature Language="C#" Value="public override DateTime AddYears (DateTime time, int years);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -66,30 +416,32 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="years">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. The month part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />. The era part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />. The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>For example, Nigatsu (February) has 28 days except during leap years when it has 29 days. If the specified date is the 29th day of Nigatsu (February) in a leap year and the value of <paramref name="years" /> is 1, the resulting date will be the 28th day of Nigatsu (February) in the following year.</para>
+          <para>If <paramref name="years" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#8</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of years away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of years to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add years. </param>
+        <param name="years">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of years to add. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AlgorithmType">
       <MemberSignature Language="C#" Value="public override System.Globalization.CalendarAlgorithmType AlgorithmType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Globalization.CalendarAlgorithmType AlgorithmType" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -99,27 +451,131 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current calendar is solar-based, lunar-based, or a combination of both.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Eras">
       <MemberSignature Language="C#" Value="public override int[] Eras { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32[] Eras" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Japanese calendar recognizes one era for every emperor's reign. The current era is the Heisei era, which began in the Gregorian calendar year 1989. The era name is typically displayed before the year. For example, the Gregorian calendar year 2001 is the Japanese calendar year Heisei 13. Note that the first year of an era is called "Gannen." Therefore, the Gregorian calendar year 1989 was the Japanese calendar year Heisei Gannen.</para>
+          <para>This class assigns numbers to the eras as follows: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>GetEra value </para>
+                </term>
+                <description>
+                  <para>Era Name </para>
+                </description>
+                <description>
+                  <para>Era Abbreviation </para>
+                </description>
+                <description>
+                  <para>Gregorian Dates </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para>平成 (Heisei) </para>
+              </description>
+              <description>
+                <para>平 (H, h) </para>
+              </description>
+              <description>
+                <para>January 8, 1989 to present </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para>昭和 (Showa) </para>
+              </description>
+              <description>
+                <para>昭 (S, s) </para>
+              </description>
+              <description>
+                <para>December 25, 1926 to January 7, 1989 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>大正 (Taisho) </para>
+              </description>
+              <description>
+                <para>大 (T, t) </para>
+              </description>
+              <description>
+                <para>July 30, 1912 to December 24, 1926 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>明治 (Meiji) </para>
+              </description>
+              <description>
+                <para>明 (M, m) </para>
+              </description>
+              <description>
+                <para>September 8, 1868 to July 29, 1912 </para>
+              </description>
+            </item>
+          </list>
+          <para>This class handles dates from September 8 in the year Meiji 1 (January 1, 1868 of the Gregorian calendar). Although the Japanese calendar was switched from a lunar calendar to a solar calendar in the year Meiji 6 (1873 of the Gregorian calendar), this implementation is based on the solar calendar only.</para>
+          <block subset="none" type="note">
+            <para>Should additional eras be added in the future, applications may encounter more than the expected four eras for the Japanese calendar. Applications should be tested to ensure that they continue to work in such an event; see <see cref="http://go.microsoft.com/fwlink/p/?LinkId=239618">Era Handling for the Japanese Calendar</see>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of eras in the <see cref="T:System.Globalization.JapaneseCalendar" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetDayOfMonth">
       <MemberSignature Language="C#" Value="public override int GetDayOfMonth (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDayOfMonth(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -127,20 +583,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 31 that represents the day of the month in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayOfWeek">
+      <MemberSignature Language="C#" Value="public override DayOfWeek GetDayOfWeek (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DayOfWeek GetDayOfWeek(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayOfWeek">
-      <MemberSignature Language="C#" Value="public override DayOfWeek GetDayOfWeek (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DayOfWeek</ReturnType>
       </ReturnValue>
@@ -148,20 +612,99 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DayOfWeek" /> values are as follows: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DayOfWeek value </para>
+                </term>
+                <description>
+                  <para>which indicates </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Sunday </para>
+              </term>
+              <description>
+                <para>日曜日 (Nichiyoubi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Monday </para>
+              </term>
+              <description>
+                <para>月曜日 (Getsuyoubi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Tuesday </para>
+              </term>
+              <description>
+                <para>火曜日 (Kayoubi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Wednesday </para>
+              </term>
+              <description>
+                <para>水曜日 (Suiyoubi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Thursday </para>
+              </term>
+              <description>
+                <para>木曜日 (Mokuyoubi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Friday </para>
+              </term>
+              <description>
+                <para>金曜日 (Kinyoubi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Saturday </para>
+              </term>
+              <description>
+                <para>土曜日 (Doyoubi) </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the week in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DayOfWeek" /> value that represents the day of the week in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayOfYear">
+      <MemberSignature Language="C#" Value="public override int GetDayOfYear (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDayOfYear(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayOfYear">
-      <MemberSignature Language="C#" Value="public override int GetDayOfYear (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -169,20 +712,31 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day of the year is defined as the number of days from the first day of the year. For example, <see cref="M:System.Globalization.JapaneseCalendar.GetDayOfYear(System.DateTime)" /> for the first day of the first month returns 1, and <see cref="M:System.Globalization.JapaneseCalendar.GetDayOfYear(System.DateTime)" /> for the last day of the last month returns the total number of days in that year, which is the same value as that returned by <see cref="M:System.Globalization.JapaneseCalendar.GetDaysInYear(System.Int32,System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the year in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 366 that represents the day of the year in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaysInMonth">
+      <MemberSignature Language="C#" Value="public override int GetDaysInMonth (int year, int month, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDaysInMonth(int32 year, int32 month, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaysInMonth">
-      <MemberSignature Language="C#" Value="public override int GetDaysInMonth (int year, int month, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -192,22 +746,35 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, this method returns 28 or 29 for Nigatsu (February, <paramref name="month" /> = 2), depending on whether <paramref name="year" /> is a leap year.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified month in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaysInYear">
+      <MemberSignature Language="C#" Value="public override int GetDaysInYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDaysInYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaysInYear">
-      <MemberSignature Language="C#" Value="public override int GetDaysInYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -216,21 +783,33 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, this method returns 365 or 366, depending on whether <paramref name="year" /> is a leap year.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetEra">
+      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetEra(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEra">
-      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -238,19 +817,101 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Japanese calendar recognizes one era for every emperor's reign. The current era is the Heisei era, which began in the Gregorian calendar year 1989. The era name is typically displayed before the year. For example, the Gregorian calendar year 2001 is the Japanese calendar year Heisei 13. Note that the first year of an era is called "Gannen." Therefore, the Gregorian calendar year 1989 was the Japanese calendar year Heisei Gannen.</para>
+          <para>This class assigns numbers to the eras as follows: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>GetEra value </para>
+                </term>
+                <description>
+                  <para>Era Name </para>
+                </description>
+                <description>
+                  <para>Era Abbreviation </para>
+                </description>
+                <description>
+                  <para>Gregorian Dates </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para>平成 (Heisei) </para>
+              </description>
+              <description>
+                <para>平 (H, h) </para>
+              </description>
+              <description>
+                <para>January 8, 1989 to present </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para>昭和 (Showa) </para>
+              </description>
+              <description>
+                <para>昭 (S, s) </para>
+              </description>
+              <description>
+                <para>December 25, 1926 to January 7, 1989 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>大正 (Taisho) </para>
+              </description>
+              <description>
+                <para>大 (T, t) </para>
+              </description>
+              <description>
+                <para>July 30, 1912 to December 24, 1926 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>明治 (Meiji) </para>
+              </description>
+              <description>
+                <para>明 (M, m) </para>
+              </description>
+              <description>
+                <para>September 8, 1868 to July 29, 1912 </para>
+              </description>
+            </item>
+          </list>
+          <para>Ordinarily, the <see cref="T:System.Globalization.JapaneseCalendar" /> class supports dates from September 8 in the year Meiji 1 (September 8, 1868 of the Gregorian calendar), which is the value of the <see cref="P:System.Globalization.JapaneseCalendar.MinSupportedDateTime" /> property. However, the <see cref="M:System.Globalization.JapaneseCalendar.GetEra(System.DateTime)" /> method successfully returns the era for dates from January 1 through September 7 in the year Meiji 1 (January 1, 1868 through September 7, 1868 in the Gregorian calendar). For dates earlier than January 1, 1868 in the Gregorian calendar, the method throws an <see cref="T:System.ArgumentOutOfRangeException" /> exception. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the era in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the era in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLeapMonth">
       <MemberSignature Language="C#" Value="public override int GetLeapMonth (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetLeapMonth(int32 year, int32 era) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -269,16 +930,33 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a calendar that supports the notion of a leap month, the leap month can occur either after a particular month or after any month in a year. For example, the <see cref="M:System.Globalization.EastAsianLunisolarCalendar.GetMonth(System.DateTime)" /> method returns a number between 1 and 13 that indicates the month associated with a specified date. If there is a leap month between the eighth and ninth months of the year, the <see cref="M:System.Globalization.EastAsianLunisolarCalendar.GetMonth(System.DateTime)" /> method returns 8 for the eighth month, 9 for the leap eighth month, and 10 for the ninth month.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the leap month for a specified year and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is always 0 because the <see cref="T:System.Globalization.JapaneseCalendar" /> type does not support the notion of a leap month.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />A year.</param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An era.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMonth">
       <MemberSignature Language="C#" Value="public override int GetMonth (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMonth(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -286,20 +964,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 12 that represents the month in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetMonthsInYear">
+      <MemberSignature Language="C#" Value="public override int GetMonthsInYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMonthsInYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMonthsInYear">
-      <MemberSignature Language="C#" Value="public override int GetMonthsInYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -308,20 +994,24 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of months in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is always 12.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetWeekOfYear">
       <MemberSignature Language="C#" Value="public override int GetWeekOfYear (DateTime time, System.Globalization.CalendarWeekRule rule, DayOfWeek firstDayOfWeek);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetWeekOfYear(valuetype System.DateTime time, valuetype System.Globalization.CalendarWeekRule rule, valuetype System.DayOfWeek firstDayOfWeek) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -341,17 +1031,39 @@
         <Parameter Name="firstDayOfWeek" Type="System.DayOfWeek" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="rule">To be added.</param>
-        <param name="firstDayOfWeek">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to determine the number of weeks in the year by setting the <paramref name="time" /> parameter to the last day of the year.</para>
+          <para>The <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> property contains culture-specific values that can be used for the <paramref name="rule" /> and <paramref name="firstDayOfWeek" /> parameters.</para>
+          <para>The <see cref="P:System.Globalization.DateTimeFormatInfo.FirstDayOfWeek" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> contains the default <see cref="T:System.DayOfWeek" /> value that represents the first day of the week for a specific culture, using the calendar specified in the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" />.</para>
+          <para>The <see cref="P:System.Globalization.DateTimeFormatInfo.CalendarWeekRule" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> contains the default <see cref="T:System.Globalization.CalendarWeekRule" /> value that defines a calendar week for a specific culture, using the calendar specified in the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" />.</para>
+          <para>For example, in <see cref="T:System.Globalization.GregorianCalendar" />, the <see cref="M:System.Globalization.Calendar.GetWeekOfYear(System.DateTime,System.Globalization.CalendarWeekRule,System.DayOfWeek)" /> method for January 1 returns 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the week of the year that includes the date in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 1-based integer that represents the week of the year that includes the date in the <paramref name="time" /> parameter.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Globalization.CalendarWeekRule" /> values that defines a calendar week. </param>
+        <param name="firstDayOfWeek">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.DayOfWeek" /> values that represents the first day of the week. </param>
       </Docs>
     </Member>
     <Member MemberName="GetYear">
       <MemberSignature Language="C#" Value="public override int GetYear (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetYear(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -359,20 +1071,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the year in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the year in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapDay">
+      <MemberSignature Language="C#" Value="public override bool IsLeapDay (int year, int month, int day, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapDay(int32 year, int32 month, int32 day, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapDay">
-      <MemberSignature Language="C#" Value="public override bool IsLeapDay (int year, int month, int day, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -383,23 +1103,38 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Leap years in the Japanese calendar correspond to the same leap years in the Gregorian calendar. A leap year in the Gregorian calendar is defined as a Gregorian year that is evenly divisible by four, except if it is divisible by 100. However, Gregorian years that are divisible by 400 are leap years. A common year has 365 days and a leap year has 366 days.</para>
+          <para>A leap day is a day that occurs only in a leap year. For example, the 29th day of Nigatsu (February) is the only leap day.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified date in the specified era is a leap day.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the specified day is a leap day; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 31 that represents the day. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapMonth">
+      <MemberSignature Language="C#" Value="public override bool IsLeapMonth (int year, int month, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapMonth(int32 year, int32 month, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapMonth">
-      <MemberSignature Language="C#" Value="public override bool IsLeapMonth (int year, int month, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -409,22 +1144,36 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Leap years in the Japanese calendar correspond to the same leap years in the Gregorian calendar. A leap year in the Gregorian calendar is defined as a Gregorian year that is evenly divisible by four, except if it is divisible by 100. However, Gregorian years that are divisible by 400 are leap years. A common year has 365 days and a leap year has 366 days.</para>
+          <para>A leap month is an entire month that occurs only in a leap year. The Japanese calendar does not have any leap months.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified month in the specified year in the specified era is a leap month.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always returns false, unless overridden by a derived class.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapYear">
+      <MemberSignature Language="C#" Value="public override bool IsLeapYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapYear">
-      <MemberSignature Language="C#" Value="public override bool IsLeapYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -433,65 +1182,88 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Leap years in the Japanese calendar correspond to the same leap years in the Gregorian calendar. A leap year in the Gregorian calendar is defined as a Gregorian year that is evenly divisible by four, except if it is divisible by 100. However, Gregorian years that are divisible by 400 are leap years. A common year has 365 days and a leap year has 366 days.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified year in the specified era is a leap year.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the specified year is a leap year; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MaxSupportedDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime MaxSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MaxSupportedDateTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the latest date and time supported by the current <see cref="T:System.Globalization.JapaneseCalendar" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MinSupportedDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime MinSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MinSupportedDateTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The earliest date supported by the <see cref="T:System.Globalization.JapaneseCalendar" /> class is September 8, 1868 C.E., in the first year of the Meiji era. Ordinarily, date and time operations that use the <see cref="T:System.Globalization.JapaneseCalendar" /> class throw an <see cref="T:System.ArgumentOutOfRangeException" /> exception for dates before this date. However, some members, such as the <see cref="M:System.Globalization.JapaneseCalendar.GetEra(System.DateTime)" /> method, support dates from January 1, 1868 through September 7 in the year Meiji 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the earliest date and time supported by the current <see cref="T:System.Globalization.JapaneseCalendar" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime ToDateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime ToDateTime(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second, int32 millisecond, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxSupportedDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime MaxSupportedDateTime { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="MinSupportedDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime MinSupportedDateTime { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="ToDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime ToDateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -506,27 +1278,45 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="hour">To be added.</param>
-        <param name="minute">To be added.</param>
-        <param name="second">To be added.</param>
-        <param name="millisecond">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Globalization.JapaneseCalendar.ToDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" /> method is useful because it can convert any date in the current calendar to a Gregorian calendar date. The Gregorian date can subsequently be used, for example, to compare dates in different calendars or create an equivalent date in a particular calendar.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is set to the specified date and time in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 12 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 31 that represents the day. </param>
+        <param name="hour">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 23 that represents the hour. </param>
+        <param name="minute">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the minute. </param>
+        <param name="second">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the second. </param>
+        <param name="millisecond">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 999 that represents the millisecond. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToFourDigitYear">
+      <MemberSignature Language="C#" Value="public override int ToFourDigitYear (int year);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ToFourDigitYear(int32 year) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToFourDigitYear">
-      <MemberSignature Language="C#" Value="public override int ToFourDigitYear (int year);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -534,38 +1324,49 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Globalization.Calendar.ToFourDigitYear(System.Int32)" />.</para>
+          <para>Because the year in the Japanese calendar is typically less than four digits long, this implementation always returns the value of the <paramref name="year" /> parameter.</para>
+          <para>
+            <see cref="M:System.Globalization.JapaneseCalendar.ToFourDigitYear(System.Int32)" /> supports either a two-digit year or a four-digit year. However, a valid year is generally represented as two digits (less than 100). Passing a two-digit year value causes the method to convert the value to a four-digit value according to the <see cref="P:System.Globalization.JapaneseCalendar.TwoDigitYearMax" /> value representing the appropriate century. If the application supplies a four-digit value, or if it supplies zero or a negative value, <see cref="M:System.Globalization.JapaneseCalendar.ToFourDigitYear(System.Int32)" /> throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified year to a four-digit year by using the <see cref="P:System.Globalization.JapaneseCalendar.TwoDigitYearMax" /> property to determine the appropriate century.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that contains the four-digit representation of <paramref name="year" />.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer (usually two digits) that represents the year to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="TwoDigitYearMax">
+      <MemberSignature Language="C#" Value="public override int TwoDigitYearMax { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 TwoDigitYearMax" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TwoDigitYearMax">
-      <MemberSignature Language="C#" Value="public override int TwoDigitYearMax { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property implements <see cref="P:System.Globalization.Calendar.TwoDigitYearMax" />.</para>
+          <para>Because the year in the Japanese calendar is typically less than four digits long, this implementation returns 99 by default and does not affect the return value of <see cref="M:System.Globalization.JapaneseCalendar.ToFourDigitYear(System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the last year of a 100-year range that can be represented by a 2-digit year.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

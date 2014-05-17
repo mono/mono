@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ChannelDispatcherCollection" FullName="System.ServiceModel.Dispatcher.ChannelDispatcherCollection">
+  <TypeSignature Language="C#" Value="public class ChannelDispatcherCollection : System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.ChannelDispatcherBase&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ChannelDispatcherCollection extends System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.ChannelDispatcherBase&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.ChannelDispatcherBase&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="T">System.ServiceModel.Dispatcher.ChannelDispatcherBase</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This collection is used by <see cref="T:System.ServiceModel.ServiceHostBase" /> to manage the channel dispatchers associated with the host. A <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherCollection" /> is created when <see cref="M:System.ServiceModel.ServiceHostBase.#ctor" /> is called and the collection can be accessed using the <see cref="P:System.ServiceModel.ServiceHostBase.ChannelDispatchers" /> property.</para>
+      <para>The collection contains <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> objects (and not just instances of <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" />) because it is also used by developers who want to keep the indigo1 programming model but replace the system-provided runtime. They derive a class from <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> and extend <see cref="T:System.ServiceModel.ServiceHost" /> (which inherits from <see cref="T:System.ServiceModel.ServiceHostBase" />) by overriding <see cref="M:System.ServiceModel.ServiceHostBase.InitializeRuntime" />, adding instances of the class derived from <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> to <see cref="P:System.ServiceModel.ServiceHostBase.ChannelDispatchers" />.</para>
+      <para>This class has no public constructors and is not intended to be used outside of the <see cref="T:System.ServiceModel.ServiceHost" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a thread-safe collection that contains channel dispatchers.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ClearItems">
+      <MemberSignature Language="C#" Value="protected override void ClearItems ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void ClearItems() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all channel dispatchers from the collection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InsertItem">
+      <MemberSignature Language="C#" Value="protected override void InsertItem (int index, System.ServiceModel.Dispatcher.ChannelDispatcherBase item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InsertItem(int32 index, class System.ServiceModel.Dispatcher.ChannelDispatcherBase item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="item" Type="System.ServiceModel.Dispatcher.ChannelDispatcherBase" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a channel dispatcher into the collection at a specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the channel dispatcher to be retrieved from the collection.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The channel dispatcher to be inserted into the collection as an element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveItem">
+      <MemberSignature Language="C#" Value="protected override void RemoveItem (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void RemoveItem(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a channel dispatcher at a specified index from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the channel dispatcher to be removed from the collection.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetItem">
+      <MemberSignature Language="C#" Value="protected override void SetItem (int index, System.ServiceModel.Dispatcher.ChannelDispatcherBase item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void SetItem(int32 index, class System.ServiceModel.Dispatcher.ChannelDispatcherBase item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="item" Type="System.ServiceModel.Dispatcher.ChannelDispatcherBase" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the channel dispatcher at a specified index with another item.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the channel dispatcher to be replaced.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The channel dispatcher to replace </param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -37,6 +37,11 @@ namespace Mono.Data.Tds {
 
 	public class TdsMetaParameter
 	{
+		#region Static 
+		public const int maxVarCharCharacters =  2147483647; // According to MS, max size is 2GB, 1 Byte Characters
+		public const int maxNVarCharCharacters = 1073741823; // According to MS, max size is 2GB, 2 Byte Characters
+		#endregion
+
 		#region Fields
 
 		TdsParameterDirection direction = TdsParameterDirection.Input;
@@ -175,6 +180,78 @@ namespace Mono.Data.Tds {
 			set { isVariableSizeType = value; }
 		}
 
+		public bool IsVarNVarCharMax
+		{
+			get { return (TypeName == "ntext" && size >= maxNVarCharCharacters); }
+		}
+
+		public bool IsVarCharMax
+		{
+			get { return (TypeName == "text" && size >= maxVarCharCharacters); }
+		}
+
+		public bool IsAnyVarCharMax
+		{
+			get { return IsVarNVarCharMax || IsVarCharMax; }
+		}
+
+		public bool IsNonUnicodeText
+		{
+			get {
+				TdsColumnType colType = GetMetaType();
+				return (colType == TdsColumnType.VarChar ||
+				        colType == TdsColumnType.BigVarChar ||
+				        colType == TdsColumnType.Text ||
+				        colType == TdsColumnType.Char ||
+				        colType == TdsColumnType.BigChar);
+			}
+		}
+
+		public bool IsMoneyType
+		{
+			get {
+				TdsColumnType colType = GetMetaType();
+				return (colType == TdsColumnType.Money ||
+				        colType == TdsColumnType.MoneyN ||
+				        colType == TdsColumnType.Money4 ||
+				        colType == TdsColumnType.SmallMoney);
+			}
+		}
+
+		public bool IsDateTimeType
+		{
+			get {
+				TdsColumnType colType = GetMetaType();
+				return (colType == TdsColumnType.DateTime ||
+				        colType == TdsColumnType.DateTime4 ||
+				        colType == TdsColumnType.DateTimeN);
+			}
+		}
+
+		public bool IsTextType
+		{
+			get {
+				TdsColumnType colType = GetMetaType();
+				return (colType == TdsColumnType.VarChar ||
+				        colType == TdsColumnType.BigVarChar ||
+				        colType == TdsColumnType.BigChar ||
+				        colType == TdsColumnType.Char ||
+				        colType == TdsColumnType.BigNVarChar || 
+				        colType == TdsColumnType.NChar ||
+				        colType == TdsColumnType.Text ||
+				        colType == TdsColumnType.NText);
+			}
+		}
+
+		public bool IsDecimalType
+		{
+			get {
+				TdsColumnType colType = GetMetaType();
+				return (colType == TdsColumnType.Decimal ||
+				        colType == TdsColumnType.Numeric);
+			}
+		}
+
 		#endregion // Properties
 
 		#region Methods
@@ -245,7 +322,6 @@ namespace Mono.Data.Tds {
 				result.Append (size > 8000 ? "(max)" : String.Format ("({0})", size));
 				break;
 			case "nvarchar":
-			case "xml":
 				int paramSize = Size < 0 ? GetActualSize () / 2 : Size;
 				result.Append (paramSize > 0 ? (paramSize > 4000 ? "(max)" : String.Format ("({0})", paramSize)) : "(4000)");
 				break;
@@ -346,7 +422,7 @@ namespace Mono.Data.Tds {
 					return TdsColumnType.IntN ;
 				return TdsColumnType.BigInt;
 			case "char":
-				return TdsColumnType.Char;
+				return TdsColumnType.BigChar;
 			case "money":
 				if (IsNullable)
 					return TdsColumnType.MoneyN;
@@ -354,7 +430,7 @@ namespace Mono.Data.Tds {
 			case "smallmoney":
 				if (IsNullable)
 					return TdsColumnType.MoneyN ;
-				return TdsColumnType.Money4;
+				return TdsColumnType.SmallMoney;
 			case "decimal":
 				return TdsColumnType.Decimal;
 			case "datetime":
@@ -406,6 +482,34 @@ namespace Mono.Data.Tds {
 				return TdsColumnType.BigVarChar;
 			default:
 				throw new NotSupportedException ("Unknown Type : " + TypeName);
+			}
+		}
+
+		public void CalculateIsVariableType()
+		{
+			switch (GetMetaType ()) {
+				case TdsColumnType.UniqueIdentifier:
+				case TdsColumnType.BigVarChar:
+				case TdsColumnType.BigVarBinary:
+				case TdsColumnType.IntN:
+				case TdsColumnType.Text:
+				case TdsColumnType.FloatN:
+				case TdsColumnType.BigNVarChar:
+				case TdsColumnType.NText:
+				case TdsColumnType.Image:
+				case TdsColumnType.Decimal:
+				case TdsColumnType.BigBinary:
+				case TdsColumnType.DateTimeN:
+				case TdsColumnType.MoneyN:
+				case TdsColumnType.BitN:
+				case TdsColumnType.Char:
+				case TdsColumnType.BigChar:
+				case TdsColumnType.NChar:
+					IsVariableSizeType = true;
+					break;
+				default:
+					IsVariableSizeType = false;
+				break;
 			}
 		}
 

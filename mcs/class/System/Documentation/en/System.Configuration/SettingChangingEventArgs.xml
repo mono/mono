@@ -1,22 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingChangingEventArgs" FullName="System.Configuration.SettingChangingEventArgs">
   <TypeSignature Language="C#" Value="public class SettingChangingEventArgs : System.ComponentModel.CancelEventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SettingChangingEventArgs extends System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.CancelEventArgs</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Configuration.SettingChangingEventArgs" /> class provides data for the <see cref="E:System.Configuration.ApplicationSettingsBase.SettingChanging" /> event, which signals that the value of an application settings property is about to change. The most common source for this event is the get accessor of the <see cref="P:System.Configuration.ApplicationSettingsBase.Item(System.String)" /> method in the <see cref="T:System.Configuration.ApplicationSettingsBase" /> class.</para>
+      <para>Because <see cref="T:System.Configuration.SettingChangingEventArgs" /> is derived from <see cref="T:System.ComponentModel.CancelEventArgs" />, the handler has the option of canceling the write operation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Configuration.ApplicationSettingsBase.SettingChanging" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SettingChangingEventArgs (string settingName, string settingClass, string settingKey, object newValue, bool cancel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string settingName, string settingClass, string settingKey, object newValue, bool cancel) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="settingName" Type="System.String" />
         <Parameter Name="settingClass" Type="System.String" />
@@ -25,82 +40,122 @@
         <Parameter Name="cancel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="settingName">To be added.</param>
-        <param name="settingClass">To be added.</param>
-        <param name="settingKey">To be added.</param>
-        <param name="newValue">To be added.</param>
-        <param name="cancel">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Configuration.SettingChangingEventArgs.#ctor(System.String,System.String,System.String,System.Object,System.Boolean)" /> constructor just assigns the values of the parameters to the corresponding properties in the <see cref="T:System.Configuration.SettingChangingEventArgs" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Configuration.SettingChangingEventArgs" /> class.</para>
+        </summary>
+        <param name="settingName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the name of the application setting.</param>
+        <param name="settingClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing a category description of the setting. Often this parameter is set to the application settings group name.</param>
+        <param name="settingKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the application settings key.</param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains the new value to be assigned to the application settings property.</param>
+        <param name="cancel">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cancel the event; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NewValue">
       <MemberSignature Language="C#" Value="public object NewValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object NewValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual type of the <see cref="P:System.Configuration.SettingChangingEventArgs.NewValue" /> property should be compatible with the settings property being set. The latter is available though the <see cref="P:System.Configuration.SettingsProperty.PropertyType" /> property of the <see cref="T:System.Configuration.SettingsProperty" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the new value being assigned to the application settings property.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SettingClass">
       <MemberSignature Language="C#" Value="public string SettingClass { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SettingClass" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All application settings belong to a application settings group. The group name can be explicitly supplied by decorating the class with a <see cref="T:System.Configuration.SettingsGroupNameAttribute" />; otherwise, one is generated using the name of the settings wrapper class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application settings property category.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SettingKey">
       <MemberSignature Language="C#" Value="public string SettingKey { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SettingKey" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each settings wrapper class, derived from <see cref="T:System.Configuration.ApplicationSettingsBase" />, has an associated settings key, which is a string that helps disambiguate different instances of the same wrapper in a single application. Because each wrapper class defines a set of properties that represent application settings, the settings key can similarly help disambiguate their use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application settings key associated with the property.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SettingName">
       <MemberSignature Language="C#" Value="public string SettingName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SettingName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically the settings wrapper class, derived from <see cref="T:System.Configuration.ApplicationSettingsBase" />, will be constructed so that the name of the application settings property will be the same as its associated application setting. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the application setting associated with the application settings property.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

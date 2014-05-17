@@ -1,65 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataReference" FullName="System.Security.Cryptography.Xml.DataReference">
   <TypeSignature Language="C#" Value="public sealed class DataReference : System.Security.Cryptography.Xml.EncryptedReference" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DataReference extends System.Security.Cryptography.Xml.EncryptedReference" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Security.Cryptography.Xml.EncryptedReference</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class represents the &lt;DataReference&gt; element that contains the location of encrypted data used with XML encryption. </para>
+      <para>&lt;DataReference&gt; elements are used to refer to &lt;EncryptedData&gt; elements that were encrypted using the key defined in the enclosing &lt;EncryptedKey&gt; element. Multiple &lt;DataReference&gt; elements can occur if multiple &lt;EncryptedData&gt; elements exist that are encrypted using the same key.</para>
+      <para>For more information about XML encryption standards, see http://www.w3.org/TR/xmlenc-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;DataReference&gt; element used in XML encryption. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataReference ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class that represents the &lt;DataReference&gt; element. &lt;DataReference&gt; is a child element of the &lt;ReferenceList&gt; element.</para>
+          <para>For more information about XML encryption standards, see http://www.w3.org/TR/xmlenc-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataReference (string uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uri) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the specified Uniform Resource Identifier (URI) to create a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class, which represents the &lt;DataReference&gt; element. The URI indicates the location of encrypted data. The &lt;DataReference&gt; element is a child element of the &lt;ReferenceList&gt; element.</para>
+          <para>For more information about XML encryption standards, see http://www.w3.org/TR/xmlenc-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class using the specified Uniform Resource Identifier (URI).</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Uniform Resource Identifier (URI) that points to the encrypted data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataReference (string uri, System.Security.Cryptography.Xml.TransformChain tc);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uri, class System.Security.Cryptography.Xml.TransformChain tc) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.String" />
         <Parameter Name="tc" Type="System.Security.Cryptography.Xml.TransformChain" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
         <param name="tc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the specified Uniform Resource Identifier (URI) and transform chain to create a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class, which represents the &lt;DataReference&gt; element. The URI indicates the location of encrypted data, and the transform chain can contain XPath transforms, decompression transforms, or information on how to retrieve the encrypted data from a document storage facility. &lt;DataReference&gt; is a child element of the &lt;ReferenceList&gt; element.</para>
+          <para>For more information about XML encryption standards, see http://www.w3.org/TR/xmlenc-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class using the specified Uniform Resource Identifier (URI) and a <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Uniform Resource Identifier (URI) that points to the encrypted data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

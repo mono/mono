@@ -1,105 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpRequestCachePolicy" FullName="System.Net.Cache.HttpRequestCachePolicy">
   <TypeSignature Language="C#" Value="public class HttpRequestCachePolicy : System.Net.Cache.RequestCachePolicy" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpRequestCachePolicy extends System.Net.Cache.RequestCachePolicy" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Net.Cache.RequestCachePolicy</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can specify a default cache policy for your application by using the <see cref="P:System.Net.HttpWebRequest.DefaultCachePolicy" /> property or the application or machine configuration files. For more information, see <format type="text/html"><a href="9962a2fe-cbda-41a6-9377-571811eaea84">RequestCaching Element (Network Settings)</a></format>.</para>
+      <para>You can specify the cache policy for an individual request by using the <see cref="P:System.Net.WebRequest.CachePolicy" /> property.</para>
+      <para>Caching for Web services is not supported.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an application's caching requirements for resources obtained by using <see cref="T:System.Net.HttpWebRequest" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpRequestCachePolicy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.Level" /> property to <see cref="F:System.Net.Cache.HttpRequestCacheLevel.Default" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpRequestCachePolicy (DateTime cacheSyncDate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.DateTime cacheSyncDate) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="cacheSyncDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="cacheSyncDate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cache synchronization date allows you to specify an absolute date when cached contents must be revalidated. If the cache entry was last revalidated prior to the cache synchronization date, revalidation with the server occurs. If the cache entry was revalidated after the cache synchronization date and there are no server revalidation requirements that make the cached entry invalid, the entry from the cache is used. If the cache synchronization date is set to a future date, the entry is revalidated every time it is requested, until the cache synchronization date passes.</para>
+          <para>This constructor initializes the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.Level" /> property to <see cref="F:System.Net.Cache.HttpRequestCacheLevel.Default" />. The <see cref="P:System.Net.Cache.HttpRequestCachePolicy.CacheSyncDate" /> property is initialized to <paramref name="cacheSyncDate" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class using the specified cache synchronization date.</para>
+        </summary>
+        <param name="cacheSyncDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> object that specifies the time when resources stored in the cache must be revalidated.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpRequestCachePolicy (System.Net.Cache.HttpRequestCacheLevel level);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Net.Cache.HttpRequestCacheLevel level) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="level" Type="System.Net.Cache.HttpRequestCacheLevel" />
       </Parameters>
       <Docs>
-        <param name="level">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.Level" /> property to <paramref name="level" />. </para>
+          <para>The <see cref="T:System.Net.Cache.HttpRequestCacheLevel" /> value controls whether caching is enabled, and when the cache can be used. For additional information, see the <see cref="T:System.Net.Cache.HttpRequestCacheLevel" /> documentation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class using the specified cache policy.</para>
+        </summary>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.Cache.HttpRequestCacheLevel" /> value. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpRequestCachePolicy (System.Net.Cache.HttpCacheAgeControl cacheAgeControl, TimeSpan ageOrFreshOrStale);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Net.Cache.HttpCacheAgeControl cacheAgeControl, valuetype System.TimeSpan ageOrFreshOrStale) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="cacheAgeControl" Type="System.Net.Cache.HttpCacheAgeControl" />
         <Parameter Name="ageOrFreshOrStale" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="cacheAgeControl">To be added.</param>
-        <param name="ageOrFreshOrStale">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="cacheAgeControl" /> value defines the meaning of the <paramref name="ageOrFreshOrStale" /> parameter value and is used to set the associated property. For example, when you specify <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxStale" />, the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxStale" /> property is set to the value of the <paramref name="ageOrFreshOrStale" /> parameter.</para>
+          <para>This constructor initializes the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.Level" /> property to <see cref="F:System.Net.Cache.HttpRequestCacheLevel.Default" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class using the specified age control and time values. </para>
+        </summary>
+        <param name="cacheAgeControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the following <see cref="T:System.Net.Cache.HttpCacheAgeControl" /> enumeration values: <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxAge" />, <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxStale" />, or <see cref="F:System.Net.Cache.HttpCacheAgeControl.MinFresh" />.</param>
+        <param name="ageOrFreshOrStale">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> value that specifies an amount of time. See the Remarks section for more information. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpRequestCachePolicy (System.Net.Cache.HttpCacheAgeControl cacheAgeControl, TimeSpan maxAge, TimeSpan freshOrStale);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Net.Cache.HttpCacheAgeControl cacheAgeControl, valuetype System.TimeSpan maxAge, valuetype System.TimeSpan freshOrStale) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="cacheAgeControl" Type="System.Net.Cache.HttpCacheAgeControl" />
         <Parameter Name="maxAge" Type="System.TimeSpan" />
         <Parameter Name="freshOrStale" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="cacheAgeControl">To be added.</param>
-        <param name="maxAge">To be added.</param>
-        <param name="freshOrStale">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="cacheAgeControl" /> value is used to interpret the meaning of the <paramref name="freshOrStale" /> parameter value and set the associated property. For example, when you specify <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxStale" />, the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxStale" /> property is set to the value of the <paramref name="freshOrStale" /> parameter. When you specify <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxAgeAndMaxStale" />, the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> property is set using the value of the <paramref name="maxAge" /> parameter and the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxStale" /> property is set using the value of the <paramref name="freshOrStale" /> parameter.</para>
+          <para>Note that unless you specify <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxAgeAndMaxStale" /> or <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxAgeAndMinFresh" />, the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> property is not set.</para>
+          <para>This constructor initializes the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.Level" /> property to <see cref="F:System.Net.Cache.HttpRequestCacheLevel.Default" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class using the specified maximum age, age control value, and time value.</para>
+        </summary>
+        <param name="cacheAgeControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.Cache.HttpCacheAgeControl" /> value. </param>
+        <param name="maxAge">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> value that specifies the maximum age for resources.</param>
+        <param name="freshOrStale">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> value that specifies an amount of time. See the Remarks section for more information.  </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpRequestCachePolicy (System.Net.Cache.HttpCacheAgeControl cacheAgeControl, TimeSpan maxAge, TimeSpan freshOrStale, DateTime cacheSyncDate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Net.Cache.HttpCacheAgeControl cacheAgeControl, valuetype System.TimeSpan maxAge, valuetype System.TimeSpan freshOrStale, valuetype System.DateTime cacheSyncDate) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="cacheAgeControl" Type="System.Net.Cache.HttpCacheAgeControl" />
         <Parameter Name="maxAge" Type="System.TimeSpan" />
@@ -107,114 +175,179 @@
         <Parameter Name="cacheSyncDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="cacheAgeControl">To be added.</param>
-        <param name="maxAge">To be added.</param>
-        <param name="freshOrStale">To be added.</param>
-        <param name="cacheSyncDate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="cacheAgeControl" /> value is used to interpret the meaning of the <paramref name="freshOrStale" /> parameter value and set the associated property. For example, when you specify <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxStale" />, the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxStale" /> property is set to the value of the <paramref name="freshOrStale" /> parameter. When you specify <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxAgeAndMaxStale" />, the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> property is set using the value of the <paramref name="maxAge" /> parameter and the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxStale" /> property is set using the value of the <paramref name="freshOrStale" /> parameter.</para>
+          <para>Note that unless you specify <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxAgeAndMaxStale" /> or <see cref="F:System.Net.Cache.HttpCacheAgeControl.MaxAgeAndMinFresh" />, the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> property is not set.</para>
+          <para>This constructor initializes the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.CacheSyncDate" /> property to <paramref name="cacheSyncDate" />, and initializes the <see cref="P:System.Net.Cache.HttpRequestCachePolicy.Level" /> property to <see cref="F:System.Net.Cache.HttpRequestCacheLevel.Default" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class using the specified maximum age, age control value, time value, and cache synchronization date.</para>
+        </summary>
+        <param name="cacheAgeControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.Cache.HttpCacheAgeControl" /> value. </param>
+        <param name="maxAge">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> value that specifies the maximum age for resources.</param>
+        <param name="freshOrStale">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> value that specifies an amount of time. See the Remarks section for more information.  </param>
+        <param name="cacheSyncDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> object that specifies the time when resources stored in the cache must be revalidated.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CacheSyncDate">
       <MemberSignature Language="C#" Value="public DateTime CacheSyncDate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime CacheSyncDate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cache synchronization date allows you to specify an absolute date when cached contents must be revalidated. If the cache entry was last revalidated prior to the cache synchronization date, revalidation with the server occurs. If the cache entry was revalidated after the cache synchronization date and there are no server revalidation requirements that make the cached entry invalid, the entry from the cache is used. If the cache synchronization date is set to a future date, the entry is revalidated every time it is requested, until the cache synchronization date passes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cache synchronization date for this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Level">
       <MemberSignature Language="C#" Value="public System.Net.Cache.HttpRequestCacheLevel Level { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Cache.HttpRequestCacheLevel Level" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.HttpRequestCacheLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applications typically use <see cref="F:System.Net.Cache.HttpRequestCacheLevel.Default" /> as their cache policy level. The <see cref="P:System.Net.WebRequest.CachePolicy" /> property, if not null, determines the cache policy in effect for a request. The default policy for the application domain can be set using the <see cref="P:System.Net.HttpWebRequest.DefaultCachePolicy" /> property or by settings in the machine or application configuration files. For more information, see <format type="text/html"><a href="9962a2fe-cbda-41a6-9377-571811eaea84">RequestCaching Element (Network Settings)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Net.Cache.HttpRequestCacheLevel" /> value that was specified when this instance was created.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxAge">
       <MemberSignature Language="C#" Value="public TimeSpan MaxAge { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan MaxAge" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the cached copy of the resource is older than the specified time value, the resource must be revalidated. The value for this property is specified when the instance is constructed. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum age permitted for a resource returned from the cache.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxStale">
       <MemberSignature Language="C#" Value="public TimeSpan MaxStale { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan MaxStale" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the amount of time after content expiration during which the cached copy of the resource is acceptable. The value for this property is specified when the instance is constructed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum staleness value that is permitted for a resource returned from the cache.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MinFresh">
       <MemberSignature Language="C#" Value="public TimeSpan MinFresh { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan MinFresh" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value specifies the amount of time before content expiration, during which the cached copy of the resource is acceptable. The value for this property is specified when the instance is constructed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minimum freshness that is permitted for a resource returned from the cache.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string contains a label that identifies the property, followed by a colon (":") and the value. Properties are separated by a single space.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> value that contains the property values for this instance.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

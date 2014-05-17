@@ -133,7 +133,7 @@ namespace MonoTests.System {
 
 		private string prefix;
 		private Uri http;
-		private Uri ftp;
+		private Uri ftp, ftp2;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
@@ -141,6 +141,9 @@ namespace MonoTests.System {
 			prefix = "unit.test.";
 			http = new Uri (full_http);
 			ftp = new Uri ("ftp://username:password@ftp.go-mono.com:21/with some spaces/mono.tgz");
+
+			// Uses percent encoding on the username and password
+			ftp2 = new Uri ("ftp://%75sername%3a%70assword@ftp.go-mono.com:21/with some spaces/mono.tgz");
 		}
 
 		public string Prefix
@@ -210,6 +213,44 @@ namespace MonoTests.System {
 			Assert.AreEqual (":21/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path | UriComponents.StrongPort, UriFormat.Unescaped), "ftp.Path+StrongPort");
 		}
 
+		[Test]
+		public void GetComponents_Ftp2 ()
+		{
+			UnitTestUriParser p = new UnitTestUriParser ();
+			Assert.AreEqual ("ftp", p._GetComponents (ftp, UriComponents.Scheme, UriFormat.Unescaped), "ftp.Scheme");
+			Assert.AreEqual ("username:password", p._GetComponents (ftp, UriComponents.UserInfo, UriFormat.Unescaped), "ftp.UserInfo");
+			Assert.AreEqual ("ftp.go-mono.com", p._GetComponents (ftp, UriComponents.Host, UriFormat.Unescaped), "ftp.Host");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Port, UriFormat.Unescaped), "ftp.Port");
+			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.Unescaped), "ftp.Path");
+			Assert.AreEqual ("with%20some%20spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.UriEscaped), "ftp.Path-UriEscaped");
+			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.SafeUnescaped), "ftp.Path-SafeUnescaped");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Query, UriFormat.Unescaped), "ftp.Query");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Fragment, UriFormat.Unescaped), "ftp.Fragment");
+			Assert.AreEqual ("21", p._GetComponents (ftp, UriComponents.StrongPort, UriFormat.Unescaped), "ftp.StrongPort");
+			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.KeepDelimiter, UriFormat.Unescaped), "http.KeepDelimiter");
+			Assert.AreEqual ("ftp.go-mono.com:21", p._GetComponents (ftp, UriComponents.HostAndPort, UriFormat.Unescaped), "http.HostAndPort");
+			Assert.AreEqual ("username:password@ftp.go-mono.com:21", p._GetComponents (ftp, UriComponents.StrongAuthority, UriFormat.Unescaped), "http.StrongAuthority");
+			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.AbsoluteUri, UriFormat.Unescaped), "http.AbsoluteUri");
+			Assert.AreEqual ("/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.PathAndQuery, UriFormat.Unescaped), "http.PathAndQuery");
+			Assert.AreEqual ("ftp://ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.HttpRequestUrl, UriFormat.Unescaped), "http.HttpRequestUrl");
+			Assert.AreEqual ("ftp://ftp.go-mono.com", p._GetComponents (ftp, UriComponents.SchemeAndServer, UriFormat.Unescaped), "http.SchemeAndServer");
+			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.SerializationInfoString, UriFormat.Unescaped), "http.SerializationInfoString");
+			Assert.AreSame (p, p._OnNewUri (), "OnNewUri");
+			// strange mixup
+			Assert.AreEqual ("ftp://username:password@", p._GetComponents (ftp, UriComponents.Scheme | UriComponents.UserInfo, UriFormat.Unescaped), "ftp.Scheme+UserInfo");
+			Assert.AreEqual (":21/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path | UriComponents.StrongPort, UriFormat.Unescaped), "ftp.Path+StrongPort");
+		}
+
+		// Test case for Xamarin#17665
+		[Test]
+		public void TestParseUserPath ()
+		{
+			var u = new Uri("https://a.net/1@1.msg");
+			var result = u.GetComponents(UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path, UriFormat.UriEscaped);
+			Assert.AreEqual (result, "https://a.net/1@1.msg", "parse@InUrl");
+		}
+		
+		
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void GetComponents_Null ()

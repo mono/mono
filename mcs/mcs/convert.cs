@@ -71,19 +71,14 @@ namespace Mono.CSharp {
 			// From T to a type parameter U, provided T depends on U
 			//
 			if (target_type.IsGenericParameter) {
-				if (expr_type.TypeArguments != null) {
-					foreach (var targ in expr_type.TypeArguments) {
-						if (!TypeSpecComparer.Override.IsEqual (target_type, targ))
-							continue;
+				if (expr_type.TypeArguments != null && expr_type.HasDependencyOn (target_type)) {
+					if (expr == null)
+						return EmptyExpression.Null;
 
-						if (expr == null)
-							return EmptyExpression.Null;
+					if (expr_type.IsReferenceType && !((TypeParameterSpec) target_type).IsReferenceType)
+						return new BoxedCast (expr, target_type);
 
-						if (expr_type.IsReferenceType && !((TypeParameterSpec)target_type).IsReferenceType)
-							return new BoxedCast (expr, target_type);
-
-						return new ClassCast (expr, target_type);
-					}
+					return new ClassCast (expr, target_type);
 				}
 
 				return null;
@@ -135,14 +130,10 @@ namespace Mono.CSharp {
 		{
 			var target_tp = target_type as TypeParameterSpec;
 			if (target_tp != null) {
-				if (target_tp.TypeArguments != null) {
-					foreach (var targ in target_tp.TypeArguments) {
-						if (!TypeSpecComparer.Override.IsEqual (source_type, targ))
-							continue;
-
-						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
-					}
+				if (target_tp.TypeArguments != null && target_tp.HasDependencyOn (source_type)) {
+					return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 				}
+
 /*
 				if (target_tp.Interfaces != null) {
 					foreach (TypeSpec iface in target_tp.Interfaces) {
@@ -1235,7 +1226,7 @@ namespace Mono.CSharp {
 				//
 				// User operator is of T?
 				//
-				if (t_x.IsNullableType && target.IsNullableType) {
+				if (t_x.IsNullableType && (target.IsNullableType || !implicitOnly)) {
 					//
 					// User operator return type does not match target type we need
 					// yet another conversion. This should happen for promoted numeric
@@ -1251,7 +1242,8 @@ namespace Mono.CSharp {
 						if (source == null)
 							return null;
 
-						source = new Nullable.LiftedConversion (source, unwrap, target).Resolve (ec);
+						if (target.IsNullableType)
+							source = new Nullable.LiftedConversion (source, unwrap, target).Resolve (ec);
 					}
 				} else {
 					source = implicitOnly ?
@@ -1412,25 +1404,23 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (ec.IsUnsafe) {
-				var target_pc = target_type as PointerContainer;
-				if (target_pc != null) {
-					if (expr_type.IsPointer) {
-						//
-						// Pointer types are same when they have same element types
-						//
-						if (expr_type == target_pc)
-							return expr;
+			var target_pc = target_type as PointerContainer;
+			if (target_pc != null) {
+				if (expr_type.IsPointer) {
+					//
+					// Pointer types are same when they have same element types
+					//
+					if (expr_type == target_pc)
+						return expr;
 
-						if (target_pc.Element.Kind == MemberKind.Void)
-							return EmptyCast.Create (expr, target_type);
+					if (target_pc.Element.Kind == MemberKind.Void)
+						return EmptyCast.Create (expr, target_type);
 
 						//return null;
-					}
-
-					if (expr_type == InternalType.NullLiteral)
-						return new NullPointer (target_type, loc);
 				}
+
+				if (expr_type == InternalType.NullLiteral)
+					return new NullPointer (target_type, loc);
 			}
 
 			if (expr_type == InternalType.AnonymousMethod){
@@ -1468,6 +1458,7 @@ namespace Mono.CSharp {
 				return e;
 
 			source.Error_ValueCannotBeConverted (ec, target_type, false);
+
 			return null;
 		}
 
@@ -2201,7 +2192,7 @@ namespace Mono.CSharp {
 				target = TypeManager.GetTypeArguments (target_type) [0];
 				e = ExplicitConversionCore (ec, expr, target, loc);
 				if (e != null)
-					return Nullable.Wrap.Create (e, target_type);
+					return TypeSpec.IsReferenceType (expr.Type) ? new UnboxCast (expr, target_type) : Nullable.Wrap.Create (e, target_type);
 			} else if (expr_type.IsNullableType) {
 				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableLayoutPanelGrowStyle" FullName="System.Windows.Forms.TableLayoutPanelGrowStyle">
   <TypeSignature Language="C#" Value="public enum TableLayoutPanelGrowStyle" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If all the cells in the <see cref="T:System.Windows.Forms.TableLayoutPanel" /> are filled and the <see cref="P:System.Windows.Forms.TableLayoutPanel.GrowStyle" /> property is set to <see cref="F:System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize" />, an attempt to add another control will throw an exception.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how a <see cref="T:System.Windows.Forms.TableLayoutPanel" /> will gain additional rows or columns after its existing cells are full.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddColumns">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.TableLayoutPanelGrowStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TableLayoutPanel" /> gains additional columns after it is full.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.TableLayoutPanelGrowStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TableLayoutPanel" /> gains additional rows after it is full.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.TableLayoutPanelGrowStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TableLayoutPanel" /> does not allow additional rows or columns after it is full.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

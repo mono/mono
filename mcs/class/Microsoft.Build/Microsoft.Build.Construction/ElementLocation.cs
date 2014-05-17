@@ -1,10 +1,10 @@
 //
-// ProjectItemDefinitionInstance.cs
+// ElementLocation.cs
 //
 // Author:
-//   Atsushi Enomoto (atsushi@veritas-vos-liberabit.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2012 Xamarin Inc.
+// Copyright (C) 2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
 
 using Microsoft.Build.Framework;
 using System;
@@ -35,7 +34,10 @@ using System.Collections.Generic;
 namespace Microsoft.Build.Construction
 {
 	[Serializable]
-	public abstract class ElementLocation
+#if NET_4_5
+	public
+#endif
+	abstract class ElementLocation
 	{
 		public abstract int Column { get; }
 		public abstract string File { get; }
@@ -44,7 +46,16 @@ namespace Microsoft.Build.Construction
 		public string LocationString {
 			get { return Line == 0 ? File : String.Format ("{0} ({1}{2})", File, Line, Column != 0 ? "," + Column : String.Empty); }
 		}
+
+		public override bool Equals (object other)
+		{
+			var o = other as ElementLocation;
+			return (object) o != null && o.File == File && o.Line == Line && o.Column == Column;
+		}
+
+		public override int GetHashCode ()
+		{
+			return (File.GetHashCode () << 16) + (Line << 8) + Column;
+		}
 	}
 }
-
-#endif

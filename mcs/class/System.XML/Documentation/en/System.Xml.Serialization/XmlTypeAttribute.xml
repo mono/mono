@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlTypeAttribute" FullName="System.Xml.Serialization.XmlTypeAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlTypeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlTypeAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -13,111 +16,166 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Interface)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Interface | System.AttributeTargets.All)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> belongs to a family of attributes that controls how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes or deserializes an object. For a complete list of similar attributes, see <format type="text/html"><a href="414b820f-a696-4206-b576-2711d85490c7">Attributes That Control XML Serialization</a></format>.</para>
+      <para>You can apply the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> to a class, structure, enumeration, or interface declaration.</para>
+      <para>Apply the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> to a class to specify the XML type's namespace, the XML type name, and whether to include the type in the XML schema document. To see the results of setting the properties of the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> class, compile your application as an executable or DLL, and pass the resulting file to the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format>. The tool writes the schema, including the type definition.</para>
+      <block subset="none" type="note">
+        <para>If you set the <see cref="P:System.Xml.Serialization.XmlTypeAttribute.IncludeInSchema" /> property to false, the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format> does not include the type in the schema. By default, for each public class, the XSD tool generates a complexType and an element of that type.</para>
+      </block>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+      <block subset="none" type="note">
+        <para>You can use the word XmlType in your code instead of the longer <see cref="T:System.Xml.Serialization.XmlTypeAttribute" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls the XML schema that is generated when the attribute target is serialized by the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlTypeAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlTypeAttribute (string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string typeName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Apply the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> to a class to specify the XML type's namespace, the XML type name, and whether to include the type in the XML schema document. To see the results of setting the properties of the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> class, compile your application as an executable or DLL, and pass the resulting file to the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format>. The tool writes the schema, including the type definition.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> class and specifies the name of the XML type.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the XML type that the <see cref="T:System.Xml.Serialization.XmlSerializer" /> generates when it serializes the class instance (and recognizes when it deserializes the class instance). </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AnonymousType">
-      <MemberSignature Language="C#" Value="public bool AnonymousType { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AnonymousType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AnonymousType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether the resulting schema type is an XSD anonymous type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IncludeInSchema">
-      <MemberSignature Language="C#" Value="public bool IncludeInSchema { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IncludeInSchema { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeInSchema" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Apply the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> to a class to specify the XML type's namespace, the XML type name, and whether to include the type in the XML schema document. To see the results of setting the properties of the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> class, compile your application as an executable or DLL, and pass the resulting file to the XML Schema Definition tool (XSD.exe). The tool writes the schema, including the type definition.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to include the type in XML schema documents.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Namespace">
-      <MemberSignature Language="C#" Value="public string Namespace { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace of the XML type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TypeName">
-      <MemberSignature Language="C#" Value="public string TypeName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string TypeName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TypeName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Apply the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> to a class to specify the XML type's namespace, the XML type name, and whether to include the type in the XML schema document. To see the results of setting the properties of the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> class, compile your application as an executable or DLL, and pass the resulting file to the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format>. The tool writes the schema, including the type definition.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the XML type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

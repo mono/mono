@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ModuleHandle" FullName="System.ModuleHandle">
   <TypeSignature Language="C#" Value="public struct ModuleHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ModuleHandle extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,30 +17,50 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="M:System.ModuleHandle.ResolveFieldHandle(System.Int32)" />, <see cref="M:System.ModuleHandle.ResolveMethodHandle(System.Int32)" />, and <see cref="M:System.ModuleHandle.ResolveTypeHandle(System.Int32)" /> methods provide efficient resolution of metadata tokens to runtime handles for fields, methods, and types in the current module.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a runtime handle for a module.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EmptyHandle">
       <MemberSignature Language="C#" Value="public static readonly ModuleHandle EmptyHandle;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.ModuleHandle EmptyHandle" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ModuleHandle</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ModuleHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an empty module handle.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (ModuleHandle handle);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(valuetype System.ModuleHandle handle) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -46,12 +68,24 @@
         <Parameter Name="handle" Type="System.ModuleHandle" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Boolean" /> value indicating whether the specified <see cref="T:System.ModuleHandle" /> structure is equal to the current <see cref="T:System.ModuleHandle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="handle" /> is equal to the current <see cref="T:System.ModuleHandle" /> structure; otherwise false.</para>
+        </returns>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to be compared with the current <see cref="T:System.ModuleHandle" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -61,10 +95,6 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -72,25 +102,28 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Boolean" /> value indicating whether the specified object is a <see cref="T:System.ModuleHandle" /> structure, and equal to the current <see cref="T:System.ModuleHandle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.ModuleHandle" /> structure, and is equal to the current <see cref="T:System.ModuleHandle" /> structure; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared with the current <see cref="T:System.ModuleHandle" /> structure.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -101,14 +134,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetRuntimeFieldHandleFromMetadataToken">
+      <MemberSignature Language="C#" Value="public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken(int32 fieldToken) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRuntimeFieldHandleFromMetadataToken">
-      <MemberSignature Language="C#" Value="public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeFieldHandle</ReturnType>
       </ReturnValue>
@@ -116,20 +150,28 @@
         <Parameter Name="fieldToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="fieldToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime handle for the field identified by the specified metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeFieldHandle" /> for the field identified by <paramref name="fieldToken" />.</para>
+        </returns>
+        <param name="fieldToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetRuntimeMethodHandleFromMetadataToken">
+      <MemberSignature Language="C#" Value="public RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken (int methodToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken(int32 methodToken) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRuntimeMethodHandleFromMetadataToken">
-      <MemberSignature Language="C#" Value="public RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken (int methodToken);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeMethodHandle</ReturnType>
       </ReturnValue>
@@ -137,20 +179,28 @@
         <Parameter Name="methodToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="methodToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime method handle for the method or constructor identified by the specified metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeMethodHandle" /> for the method or constructor identified by <paramref name="methodToken" />.</para>
+        </returns>
+        <param name="methodToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetRuntimeTypeHandleFromMetadataToken">
+      <MemberSignature Language="C#" Value="public RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken (int typeToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken(int32 typeToken) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRuntimeTypeHandleFromMetadataToken">
-      <MemberSignature Language="C#" Value="public RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken (int typeToken);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeTypeHandle</ReturnType>
       </ReturnValue>
@@ -158,19 +208,23 @@
         <Parameter Name="typeToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="typeToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime type handle for the type identified by the specified metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeTypeHandle" /> for the type identified by <paramref name="typeToken" />.</para>
+        </returns>
+        <param name="typeToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MDStreamVersion">
       <MemberSignature Language="C#" Value="public int MDStreamVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MDStreamVersion" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -180,13 +234,22 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>For more information on the metadata header, see the Partition II: Metadata Definition and Semantics documentation. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the metadata stream version.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (ModuleHandle left, ModuleHandle right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.ModuleHandle left, valuetype System.ModuleHandle right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -200,15 +263,24 @@
         <Parameter Name="right" Type="System.ModuleHandle" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two <see cref="T:System.ModuleHandle" /> structures are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ModuleHandle" /> structures are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to the left of the equality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to the right of the equality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (ModuleHandle left, ModuleHandle right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.ModuleHandle left, valuetype System.ModuleHandle right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -222,16 +294,29 @@
         <Parameter Name="right" Type="System.ModuleHandle" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two <see cref="T:System.ModuleHandle" /> structures are unequal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ModuleHandle" /> structures are unequal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to the left of the inequality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ModuleHandle" /> structure to the right of the inequality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveFieldHandle">
       <MemberSignature Language="C#" Value="public RuntimeFieldHandle ResolveFieldHandle (int fieldToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeFieldHandle ResolveFieldHandle(int32 fieldToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.RuntimeFieldHandle</ReturnType>
       </ReturnValue>
@@ -239,19 +324,29 @@
         <Parameter Name="fieldToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="fieldToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To resolve a metadata token that identifies a field whose parent TypeSpec has a signature containing element type var or mvar, use the <see cref="M:System.ModuleHandle.ResolveFieldHandle(System.Int32,System.RuntimeTypeHandle[],System.RuntimeTypeHandle[])" /> method overload, which allows you to supply the necessary context. </para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime handle for the field identified by the specified metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeFieldHandle" /> for the field identified by <paramref name="fieldToken" />.</para>
+        </returns>
+        <param name="fieldToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveFieldHandle">
       <MemberSignature Language="C#" Value="public RuntimeFieldHandle ResolveFieldHandle (int fieldToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeFieldHandle ResolveFieldHandle(int32 fieldToken, valuetype System.RuntimeTypeHandle[] typeInstantiationContext, valuetype System.RuntimeTypeHandle[] methodInstantiationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -266,17 +361,36 @@
         <Parameter Name="methodInstantiationContext" Type="System.RuntimeTypeHandle[]" />
       </Parameters>
       <Docs>
-        <param name="fieldToken">To be added.</param>
-        <param name="typeInstantiationContext">To be added.</param>
-        <param name="methodInstantiationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime field handle for the field identified by the specified metadata token, specifying the generic type arguments of the type and method where the token is in scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeFieldHandle" /> for the field identified by <paramref name="fieldToken" />.</para>
+        </returns>
+        <param name="fieldToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
+        <param name="typeInstantiationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.RuntimeTypeHandle" /> structures representing the generic type arguments of the type where the token is in scope, or null if that type is not generic. </param>
+        <param name="methodInstantiationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.RuntimeTypeHandle" /> structures representing the generic type arguments of the method where the token is in scope, or null if that method is not generic.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveMethodHandle">
       <MemberSignature Language="C#" Value="public RuntimeMethodHandle ResolveMethodHandle (int methodToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeMethodHandle ResolveMethodHandle(int32 methodToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.RuntimeMethodHandle</ReturnType>
       </ReturnValue>
@@ -284,19 +398,29 @@
         <Parameter Name="methodToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="methodToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To resolve a metadata token for a MethodSpec whose signature contains element type var or mvar, use the <see cref="M:System.ModuleHandle.ResolveMethodHandle(System.Int32,System.RuntimeTypeHandle[],System.RuntimeTypeHandle[])" /> method overload, which allows you to supply the necessary context. </para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime method handle for the method or constructor identified by the specified metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeMethodHandle" /> for the method or constructor identified by <paramref name="methodToken" />.</para>
+        </returns>
+        <param name="methodToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveMethodHandle">
       <MemberSignature Language="C#" Value="public RuntimeMethodHandle ResolveMethodHandle (int methodToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeMethodHandle ResolveMethodHandle(int32 methodToken, valuetype System.RuntimeTypeHandle[] typeInstantiationContext, valuetype System.RuntimeTypeHandle[] methodInstantiationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -311,17 +435,36 @@
         <Parameter Name="methodInstantiationContext" Type="System.RuntimeTypeHandle[]" />
       </Parameters>
       <Docs>
-        <param name="methodToken">To be added.</param>
-        <param name="typeInstantiationContext">To be added.</param>
-        <param name="methodInstantiationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime method handle for the method or constructor identified by the specified metadata token, specifying the generic type arguments of the type and method where the token is in scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeMethodHandle" /> for the method or constructor identified by <paramref name="methodToken" />.</para>
+        </returns>
+        <param name="methodToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
+        <param name="typeInstantiationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.RuntimeTypeHandle" /> structures representing the generic type arguments of the type where the token is in scope, or null if that type is not generic. </param>
+        <param name="methodInstantiationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.RuntimeTypeHandle" /> structures representing the generic type arguments of the method where the token is in scope, or null if that method is not generic.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveTypeHandle">
       <MemberSignature Language="C#" Value="public RuntimeTypeHandle ResolveTypeHandle (int typeToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeTypeHandle ResolveTypeHandle(int32 typeToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.RuntimeTypeHandle</ReturnType>
       </ReturnValue>
@@ -329,19 +472,29 @@
         <Parameter Name="typeToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="typeToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To resolve a metadata token for a TypeSpec whose signature contains element type var or mvar, use the <see cref="M:System.ModuleHandle.ResolveTypeHandle(System.Int32,System.RuntimeTypeHandle[],System.RuntimeTypeHandle[])" /> method overload, which allows you to supply the necessary context. </para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime type handle for the type identified by the specified metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeTypeHandle" /> for the type identified by <paramref name="typeToken" />.</para>
+        </returns>
+        <param name="typeToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveTypeHandle">
       <MemberSignature Language="C#" Value="public RuntimeTypeHandle ResolveTypeHandle (int typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeTypeHandle ResolveTypeHandle(int32 typeToken, valuetype System.RuntimeTypeHandle[] typeInstantiationContext, valuetype System.RuntimeTypeHandle[] methodInstantiationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -356,12 +509,26 @@
         <Parameter Name="methodInstantiationContext" Type="System.RuntimeTypeHandle[]" />
       </Parameters>
       <Docs>
-        <param name="typeToken">To be added.</param>
-        <param name="typeInstantiationContext">To be added.</param>
-        <param name="methodInstantiationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a runtime type handle for the type identified by the specified metadata token, specifying the generic type arguments of the type and method where the token is in scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.RuntimeTypeHandle" /> for the type identified by <paramref name="typeToken" />.</para>
+        </returns>
+        <param name="typeToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
+        <param name="typeInstantiationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.RuntimeTypeHandle" /> structures representing the generic type arguments of the type where the token is in scope, or null if that type is not generic. </param>
+        <param name="methodInstantiationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.RuntimeTypeHandle" /> structures objects representing the generic type arguments of the method where the token is in scope, or null if that method is not generic.</param>
       </Docs>
     </Member>
   </Members>

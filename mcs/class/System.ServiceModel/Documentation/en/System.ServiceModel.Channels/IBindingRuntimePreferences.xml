@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IBindingRuntimePreferences" FullName="System.ServiceModel.Channels.IBindingRuntimePreferences">
+  <TypeSignature Language="C#" Value="public interface IBindingRuntimePreferences" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindingRuntimePreferences" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In some cases it may be more efficient for a binding to process messages with the synchronous <see cref="Overload:System.ServiceModel.Channels.IInputChannel.Receive" /> or <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.Request" /> methods. A <see cref="T:System.ServiceModel.Channels.Binding" /> class can optionally implement <see cref="T:System.ServiceModel.Channels.IBindingRuntimePreferences" /> to indicate to callers that this is preferred.  </para>
+      <para>If a binding does not implement <see cref="T:System.ServiceModel.Channels.IBindingRuntimePreferences" />, the indigo1 Service Model Runtime layer defaults to using the asynchronous versions of the Receive and Request methods. If a binding does implement <see cref="T:System.ServiceModel.Channels.IBindingRuntimePreferences" />, the indigo2 Service Model Runtime layer checks the value of <see cref="P:System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously" /> and uses that to determine whether to call the synchronous versions of the these methods (<see cref="Overload:System.ServiceModel.Channels.IInputChannel.Receive" /> or <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.Request" />) or the asynchronous versions (<see cref="Overload:System.ServiceModel.Channels.IInputChannel.BeginReceive" /> and <see cref="M:System.ServiceModel.Channels.IInputChannel.EndReceive(System.IAsyncResult)" /> or <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.BeginRequest" /> and <see cref="M:System.ServiceModel.Channels.IRequestChannel.EndRequest(System.IAsyncResult)" />. If <see cref="T:System.ServiceModel.Channels.IBindingRuntimePreferences" /> is implemented by the binding and returns true from the <see cref="P:System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously" /> property, it is recommended that you use the synchronous <see cref="Overload:System.ServiceModel.Channels.IInputChannel.Receive" /> and <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.Request" /> methods to receive messages from the channel. If the binding does not implement <see cref="T:System.ServiceModel.Channels.IBindingRuntimePreferences" /> or returns false from the <see cref="P:System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously" /> property, it is recommended that you use the asynchronous <see cref="Overload:System.ServiceModel.Channels.IInputChannel.BeginReceive" /> and <see cref="M:System.ServiceModel.Channels.IInputChannel.EndReceive(System.IAsyncResult)" /> or <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.BeginRequest" /> and <see cref="M:System.ServiceModel.Channels.IRequestChannel.EndRequest(System.IAsyncResult)" /> methods.</para>
+      <para>Regardless of the value returned by the <see cref="P:System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously" /> property, all bindings must still provide valid implementations of both the synchronous and asynchronous versions of the Receive methods for the specific channel types implemented. For more information about implementing custom channels, see <format type="text/html"><a href="0513af9f-a0c2-457b-9a50-5b6bfee48513">Developing Channels</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the optional contract that a binding can implement to specify whether incoming requests are handled synchronously or asynchronously by the service.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ReceiveSynchronously">
+      <MemberSignature Language="C#" Value="public bool ReceiveSynchronously { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ReceiveSynchronously" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The standard (system-provided) bindings provided by indigo1 have implemented this interface and in some cases override the default value to process incoming messages synchronously.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether incoming requests can be handled more efficiently synchronously or asynchronously.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

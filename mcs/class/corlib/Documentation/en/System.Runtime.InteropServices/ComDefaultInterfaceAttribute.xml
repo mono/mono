@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComDefaultInterfaceAttribute" FullName="System.Runtime.InteropServices.ComDefaultInterfaceAttribute">
   <TypeSignature Language="C#" Value="public sealed class ComDefaultInterfaceAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ComDefaultInterfaceAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,44 +20,65 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Compilers do not necessarily respect the order in which interfaces are implemented. For example, suppose you have the following code: </para>
+      <code>interface IBase {}interface IDerived : IBase {}class MyClass : IBase, IDerived {}</code>
+      <para>The compiler emits the implemented interfaces as IDervied, IBase. The ordering of interfaces is important  when using the <see cref="T:System.Runtime.InteropServices.ClassInterfaceAttribute" /> class with [ClassInterface(ClassInterfaceType.None)] to expose an explicit interface as the default interface. Regardless of the specified ClassInterfaceType, use the <see cref="T:System.Runtime.InteropServices.ComDefaultInterfaceAttribute" /> attribute to specify which interface should be recognized as the default.</para>
+      <para>Note that the type decorated by the <see cref="T:System.Runtime.InteropServices.ComDefaultInterfaceAttribute" /> must actually derive from the interface specified as the default interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a default interface to expose to COM. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ComDefaultInterfaceAttribute (Type defaultInterface);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type defaultInterface) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="defaultInterface" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="defaultInterface">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="defaultInterface" /> type passed to the constructor must be visible to COM.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComDefaultInterfaceAttribute" /> class with the specified <see cref="T:System.Type" /> object as the default interface exposed to COM.</para>
+        </summary>
+        <param name="defaultInterface">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> value indicating the default interface to expose to COM. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public Type Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public Type Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> object that specifies the default interface to expose to COM.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

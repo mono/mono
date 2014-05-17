@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FontFamily" FullName="System.Drawing.FontFamily">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class FontFamily : MarshalByRefObject, IDisposable" />
   <AssemblyInfo>
@@ -17,8 +18,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a group of type faces having a similar basic design and certain variations in styles. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +33,13 @@
         <Parameter Name="genericFamily" Type="System.Drawing.Text.GenericFontFamilies" />
       </Parameters>
       <Docs>
-        <param name="genericFamily">To be added: an object of type 'Text.GenericFontFamilies'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.FontFamily" /> from the specified generic font family.</para>
+        </summary>
+        <param name="genericFamily">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Text.GenericFontFamilies" /> from which to create the new <see cref="T:System.Drawing.FontFamily" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +54,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Passing empty string ("") for the <paramref name="name" /> parameter causes an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.FontFamily" /> with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new <see cref="T:System.Drawing.FontFamily" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,10 +79,15 @@
         <Parameter Name="fontCollection" Type="System.Drawing.Text.FontCollection" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="fontCollection">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.FontFamily" /> in the specified <see cref="T:System.Drawing.Text.FontCollection" /> with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the name of the new <see cref="T:System.Drawing.FontFamily" />. </param>
+        <param name="fontCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Text.FontCollection" /> that contains this <see cref="T:System.Drawing.FontFamily" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,8 +102,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Drawing.FontFamily.Dispose" /> allows the resources used by this <see cref="T:System.Drawing.FontFamily" /> to be reallocated for other purposes.</para>
+          <para>Call <see cref="M:System.Drawing.FontFamily.Dispose" /> when you are finished using the <see cref="T:System.Drawing.FontFamily" />. The <see cref="M:System.Drawing.FontFamily.Dispose" /> method leaves the <see cref="T:System.Drawing.FontFamily" /> in an unusable state. After calling <see cref="M:System.Drawing.FontFamily.Dispose" />, you must release all references to the <see cref="T:System.Drawing.FontFamily" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Drawing.FontFamily" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Drawing.FontFamily.Dispose" /> before you release your last reference to the <see cref="T:System.Drawing.FontFamily" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Drawing.FontFamily" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -100,10 +134,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified object is a <see cref="T:System.Drawing.FontFamily" /> and is identical to this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.Drawing.FontFamily" /> and is identical to this <see cref="T:System.Drawing.FontFamily" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -117,9 +158,12 @@
         <ReturnType>System.Drawing.FontFamily[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontFamily []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array that contains all the <see cref="T:System.Drawing.FontFamily" /> objects associated with the current graphics context.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,9 +193,12 @@
         <ReturnType>System.Drawing.FontFamily</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontFamily'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a generic monospace <see cref="T:System.Drawing.FontFamily" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,9 +212,12 @@
         <ReturnType>System.Drawing.FontFamily</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontFamily'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a generic sans serif <see cref="T:System.Drawing.FontFamily" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,9 +231,12 @@
         <ReturnType>System.Drawing.FontFamily</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontFamily'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a generic serif <see cref="T:System.Drawing.FontFamily" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -200,10 +253,17 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the cell ascent, in design units, of the <see cref="T:System.Drawing.FontFamily" /> of the specified style.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cell ascent for this <see cref="T:System.Drawing.FontFamily" /> that uses the specified <see cref="T:System.Drawing.FontStyle" />.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> that contains style information for the font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -220,10 +280,17 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the cell descent, in design units, of the <see cref="T:System.Drawing.FontFamily" /> of the specified style. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cell descent metric for this <see cref="T:System.Drawing.FontFamily" /> that uses the specified <see cref="T:System.Drawing.FontStyle" />.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> that contains style information for the font. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -240,10 +307,21 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <newTerm>Em square</newTerm> is a typography term that refers to the rectangle occupied by the font's widest letter, traditionally the letter M.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height, in font design units, of the em square for the specified style.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height of the em square.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> for which to get the em height. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -260,10 +338,17 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added: an object of type 'Graphics'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FontFamily []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array that contains all the <see cref="T:System.Drawing.FontFamily" /> objects available for the specified graphics context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Drawing.FontFamily" /> objects available for the specified <see cref="T:System.Drawing.Graphics" /> object.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> object from which to return <see cref="T:System.Drawing.FontFamily" /> objects. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -278,9 +363,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a hash code for this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -297,10 +388,17 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the line spacing, in design units, of the <see cref="T:System.Drawing.FontFamily" /> of the specified style. The line spacing is the vertical distance between the base lines of two consecutive lines of text. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distance between two consecutive lines of text.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> to apply. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -317,10 +415,20 @@
         <Parameter Name="language" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="language">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To indicate language neutral, you should specify 0 for the <paramref name="language" /> parameter. For a listing of the available languages and sublanguages, see the Winnt.h header file. If you have vsprvs installed, this header file can typically be found relative to the vsprvs installation directory at \\VC\PlatformSDK\Include.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name, in the specified language, of this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the name, in the specified language, of this <see cref="T:System.Drawing.FontFamily" />. </para>
+        </returns>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language in which the name is returned. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -337,10 +445,17 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added: an object of type 'FontStyle'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified <see cref="T:System.Drawing.FontStyle" /> enumeration is available.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Drawing.FontStyle" /> is available; otherwise, false.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -354,9 +469,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -371,9 +489,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Drawing.FontFamily" /> to a human-readable string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that represents this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

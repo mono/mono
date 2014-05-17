@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StreamingContextStates" FullName="System.Runtime.Serialization.StreamingContextStates">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum StreamingContextStates" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed StreamingContextStates extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -20,162 +22,201 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a set of flags that specifies the source or destination context for the stream during serialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
       <MemberSignature Language="C#" Value="All" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates All = int32(255)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the serialized data can be transmitted to or received from any of the other contexts.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="Clone" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates Clone = int32(64)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the object graph is being cloned. Users can assume that the cloned graph will continue to exist within the same process and be safe to access handles or other references to unmanaged resources.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CrossAppDomain">
       <MemberSignature Language="C#" Value="CrossAppDomain" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates CrossAppDomain = int32(128)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a different AppDomain. (For a description of AppDomains, see <format type="text/html"><a href="39E57D07-A740-4CD4-AE82-E119EA3856C1">[&lt;topic://cpconapplicationdomains&gt;]</a></format>).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CrossMachine">
       <MemberSignature Language="C#" Value="CrossMachine" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates CrossMachine = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a different computer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CrossProcess">
       <MemberSignature Language="C#" Value="CrossProcess" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates CrossProcess = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a different process on the same computer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="File">
       <MemberSignature Language="C#" Value="File" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates File = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a file. Users can assume that files will last longer than the process that created them and not serialize objects in such a way that deserialization will require accessing any data from the current process.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Other">
       <MemberSignature Language="C#" Value="Other" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates Other = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the serialization context is unknown.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Persistence">
       <MemberSignature Language="C#" Value="Persistence" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates Persistence = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a persisted store, which could include databases, files, or other backing stores. Users can assume that persisted data will last longer than the process that created the data and not serialize objects so that deserialization will require accessing any data from the current process.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Remoting">
       <MemberSignature Language="C#" Value="Remoting" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Serialization.StreamingContextStates Remoting = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.StreamingContextStates</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the data is remoted to a context in an unknown location. Users cannot make any assumptions whether this is on the same computer.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -120,7 +120,7 @@ namespace Microsoft.Build.Tasks {
 				
 				copiedFiles = temporaryCopiedFiles.ToArray ();
 
-				return true;
+				return !Log.HasLoggedErrors;
 			}
 			catch (Exception ex) {
 				Log.LogErrorFromException (ex);

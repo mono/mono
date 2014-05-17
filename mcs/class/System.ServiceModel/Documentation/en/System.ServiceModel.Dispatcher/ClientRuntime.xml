@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ClientRuntime" FullName="System.ServiceModel.Dispatcher.ClientRuntime">
+  <TypeSignature Language="C#" Value="public sealed class ClientRuntime" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ClientRuntime extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>indigo2 client objects, whether an extension of <see cref="T:System.ServiceModel.ClientBase`1" /> or of <see cref="T:System.ServiceModel.IClientChannel" />, are used by indigo1 client applications to convert method calls into outbound messages and convert incoming messages to objects and pass them to the results of client methods.</para>
+      <para>The <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> class is an extensibility point to which you can add extension objects that intercept messages and extend client behavior across all operations. Interception objects can process all messages in a particular contract, process only messages for particular operations, perform custom channel initialization, and implement other custom client application behavior. For an overview of client architecture, see <format type="text/html"><a href="02624403-0d77-41cb-9a86-ab55e98c7966">Client Architecture</a></format>. For more information about client programming, see <format type="text/html"><a href="c8329832-bf66-4064-9034-bf39f153fc2d">Consuming Services Using a Client</a></format>. For details about customizations and how to perform them, see <format type="text/html"><a href="1328c61c-06e5-455f-9ebd-ceefb59d3867">Extending Clients</a></format>.</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.CallbackDispatchRuntime" /> property returns the dispatch run-time object for service-initiated callback operations.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.OperationSelector" /> property accepts a custom operation selector object to control the routing of client messages.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ChannelInitializers" /> property enables the addition of a channel initializer that can inspect or modify the client channel.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.InteractiveChannelInitializers" /> property can be used to display a visual prompt to enable a user to select credentials prior to opening the channel.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.Operations" /> property gets a collection of <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> objects to which you can add custom message interceptors that provide functionality specific to the messages of that operation.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ManualAddressing" /> property enables an application to turn off some automatic addressing headers to directly control addressing.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MaxFaultSize" /> property enables the client to limit the size of fault messages that the client accepts.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MessageInspectors" /> property gets a collection of <see cref="T:System.ServiceModel.Dispatcher.IClientMessageInspector" /> objects to which you can add custom message interceptors for all messages traveling through a client.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.UnhandledClientOperation" /> property returns the operation to which unexpected messages are passed.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ValidateMustUnderstand" /> property informs the system whether it should confirm that SOAP headers marked as MustUnderstand have, in fact, been understood.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.Via" /> property sets the value of the destination of the message at the transport level to support intermediaries and other scenarios.</para>
+        </item>
+      </list>
+      <para>In addition, there are a number of other properties that retrieve the client contract information:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ContractName" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ContractNamespace" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ContractClientType" /> </para>
+        </item>
+      </list>
+      <para>If the client is a duplex client, the following properties also retrieve the client callback type and runtime:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.CallbackClientType" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.CallbackDispatchRuntime" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the insertion point for classes that extend the functionality of indigo1 client objects for all messages handled by a client application.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CallbackClientType">
+      <MemberSignature Language="C#" Value="public Type CallbackClientType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type CallbackClientType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the callback contract associated with a duplex client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CallbackDispatchRuntime">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.DispatchRuntime CallbackDispatchRuntime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.DispatchRuntime CallbackDispatchRuntime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.DispatchRuntime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dispatch run-time that dispatches service-initiated operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ChannelInitializers">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IChannelInitializer&gt; ChannelInitializers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.IChannelInitializer&gt; ChannelInitializers" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IChannelInitializer&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ChannelInitializers" /> property to add a custom <see cref="T:System.ServiceModel.Dispatcher.IChannelInitializer" /> object that can inspect the channel that is associated with a client on creation, register for events on the channel, and associate state with the channel by using <see cref="T:System.ServiceModel.IExtension`1" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of channel initializer objects used to customize the channel associated with a client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientMessageInspectors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.IClientMessageInspector&gt; ClientMessageInspectors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.ICollection`1&lt;class System.ServiceModel.Dispatcher.IClientMessageInspector&gt; ClientMessageInspectors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.IClientMessageInspector&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ClientMessateInspectors is a thread safe collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of message inspector objects used to view or modify messages of a particular service operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientOperations">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.ClientOperation&gt; ClientOperations { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.ICollection`1&lt;class System.ServiceModel.Dispatcher.ClientOperation&gt; ClientOperations" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.ClientOperation&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ClientOperations is a thread safe collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of client operation objects used to attach extension objects that inspect or modify messages and behavior of a particular service operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ContractClientType">
+      <MemberSignature Language="C#" Value="public Type ContractClientType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ContractClientType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the contract associated with a client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ContractName">
+      <MemberSignature Language="C#" Value="public string ContractName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContractName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the contract associated with a client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ContractNamespace">
+      <MemberSignature Language="C#" Value="public string ContractNamespace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContractNamespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace of the contract associated with a client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InteractiveChannelInitializers">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IInteractiveChannelInitializer&gt; InteractiveChannelInitializers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.IInteractiveChannelInitializer&gt; InteractiveChannelInitializers" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IInteractiveChannelInitializer&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about how to use interactive channel initializers, see <format type="text/html"><a href="c8329832-bf66-4064-9034-bf39f153fc2d">Consuming Services Using a WCF Client</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of an interactive channel initializer.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ManualAddressing">
+      <MemberSignature Language="C#" Value="public bool ManualAddressing { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ManualAddressing" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ManualAddressing" /> property to true if you want to prevent the client from adding Message ID and Reply-To addressing headers to request/response messages so that your application can control these headers.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ManualAddressing" /> is true, the client does not support request-reply operations over a duplex channel.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the client adds addressing headers to request-reply messages.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxFaultSize">
+      <MemberSignature Language="C#" Value="public int MaxFaultSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxFaultSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MaxFaultSize" /> property to limit the size of fault messages accepted by the client runtime.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum fault size.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageInspectors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IClientMessageInspector&gt; MessageInspectors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.IClientMessageInspector&gt; MessageInspectors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IClientMessageInspector&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MessageInspectors" /> property to attach custom <see cref="T:System.ServiceModel.Dispatcher.IClientMessageInspector" /> implementations to inspect or modify all messages that flow through the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of message inspector implementations for a client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageVersionNoneFaultsEnabled">
+      <MemberSignature Language="C#" Value="public bool MessageVersionNoneFaultsEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MessageVersionNoneFaultsEnabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the MessageVersionNoneFaultsEnabled property is set.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Operations">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedKeyedCollection&lt;string,System.ServiceModel.Dispatcher.ClientOperation&gt; Operations { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedKeyedCollection`2&lt;string, class System.ServiceModel.Dispatcher.ClientOperation&gt; Operations" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedKeyedCollection&lt;System.String,System.ServiceModel.Dispatcher.ClientOperation&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.Operations" /> property to get a collection of all client operations for this client that you can use to attach extension objects that inspect or modify messages and behavior scoped to a particular operation. For details, see <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of client operations for a client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OperationSelector">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.IClientOperationSelector OperationSelector { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.IClientOperationSelector OperationSelector" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IClientOperationSelector</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.OperationSelector" /> property to modify the selection of an operation when a client invokes a particular method. The default algorithm is to use the name of the <see cref="P:System.ServiceModel.OperationContractAttribute.Name" /> of the operation method as a key to find the <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> in the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.Operations" /> collection. If no matching <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> object is found, the invocation is dispatched to the <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> object returned from the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.UnhandledClientOperation" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.ServiceModel.Dispatcher.IClientOperationSelector" /> implementation that can be used to select a <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UnhandledClientOperation">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.ClientOperation UnhandledClientOperation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.ClientOperation UnhandledClientOperation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.ClientOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the client operation for methods that do not have a corresponding <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> in the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.Operations" /> collection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateMustUnderstand">
+      <MemberSignature Language="C#" Value="public bool ValidateMustUnderstand { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ValidateMustUnderstand" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ValidateMustUnderstand" /> property to turn off the enforced validation of arriving message headers. In normal execution, message headers are compared against the <see cref="P:System.ServiceModel.Channels.MessageHeaders.UnderstoodHeaders" /> property to confirm that arriving headers are explicitly handled by the service. Set this to false to disable this checking. When set to false, the application must check for headers marked with MustUnderstand="true" and return a fault if one or more of them were not understood. This is useful when the application is supposed to accept any returned SOAP messages (for example, when using typed or untyped messages) and perform custom header processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the system or the application enforces SOAP MustUnderstand header processing.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Via">
+      <MemberSignature Language="C#" Value="public Uri Via { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Via" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.Via" /> property to specify a transport address for messages when the immediate destination of messages is not the client's <see cref="P:System.ServiceModel.EndpointAddress.Uri" />. This enables you to specify SOAP intermediaries and handle scenarios in which the value of the <see cref="P:System.ServiceModel.EndpointAddress.Uri" /> property of the client is a logical name.</para>
+          <para>It is this value that the <see cref="T:System.ServiceModel.Description.ClientViaBehavior" /> sets from a configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the transport address that is used to send messages through the client.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509ExtensionEnumerator" FullName="System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator">
   <TypeSignature Language="C#" Value="public sealed class X509ExtensionEnumerator : System.Collections.IEnumerator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit X509ExtensionEnumerator extends System.Object implements class System.Collections.IEnumerator" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -13,73 +16,118 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enumerators provide read-only access to the data in the collection. Enumerators cannot be used to modify the underlying collection.</para>
+      <para>Initially, the enumerator is positioned before the first element in the collection. <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Reset" /> also brings the enumerator back to this position. At this position, calling <see cref="P:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Current" /> throws an exception. Therefore, you must call <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.MoveNext" /> to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Current" />.</para>
+      <para>This class inherits from the <see cref="T:System.Collections.IEnumerator" /> interface. For more information about enumerating over a collection, see the <see cref="T:System.Collections.IEnumerator" /> topic.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports a simple iteration over a <see cref="T:System.Security.Cryptography.X509Certificates.X509ExtensionCollection" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509Extension Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509Extension Current" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Extension</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator" /> does not move the position of the enumerator and consecutive calls to <see cref="P:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Current" /> return the same object until either <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.MoveNext" /> or <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Reset" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current element in the <see cref="T:System.Security.Cryptography.X509Certificates.X509ExtensionCollection" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveNext">
       <MemberSignature Language="C#" Value="public bool MoveNext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MoveNext() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method advances the enumerator to the next element in the collection. This class inherits from the <see cref="T:System.Collections.IEnumerator" /> interface. For more information about enumerating over a collection, see the <see cref="T:System.Collections.IEnumerator" /> topic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the enumerator to the next element in the <see cref="T:System.Security.Cryptography.X509Certificates.X509ExtensionCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying or deleting elements, the enumerator is irrecoverably invalidated and the next call to <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.MoveNext" /> or <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Reset" /> throws an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the enumerator to its initial position, which is before the first element in the <see cref="T:System.Security.Cryptography.X509Certificates.X509ExtensionCollection" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Current">
       <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IEnumerator.Current" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator" /> does not move the position of the enumerator and consecutive calls to <see cref="P:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Current" /> return the same object until either <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.MoveNext" /> or <see cref="M:System.Security.Cryptography.X509Certificates.X509ExtensionEnumerator.Reset" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object from a collection.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -43,19 +43,17 @@ namespace System
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class MulticastDelegate : Delegate
 	{
-		private MulticastDelegate prev;
-		private MulticastDelegate kpm_next;
+		MulticastDelegate prev;
+		MulticastDelegate kpm_next;
 
 		protected MulticastDelegate (object target, string method)
 			: base (target, method)
 		{
-			prev = null;
 		}
 
 		protected MulticastDelegate (Type target, string method)
 			: base (target, method)
 		{
-			prev = null;
 		}
 		
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -72,9 +70,6 @@ namespace System
 			return base.DynamicInvokeImpl (args);
 		}
 
-		internal bool HasSingleTarget {
-			get { return prev == null; }
-		}
 		// <remarks>
 		//   Equals: two multicast delegates are equal if their base is equal
 		//   and their invocations list is equal.

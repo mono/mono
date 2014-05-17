@@ -270,6 +270,47 @@ namespace MonoTests.System
 			Assert.AreEqual (22, x.Value, "#1");
 		}
 
+		[Test]
+		public void ConcurrentInitialization ()
+		{
+			var init = new AutoResetEvent (false);
+
+			var lazy = new Lazy<string> (() => {
+				init.Set ();
+				Thread.Sleep (10);
+				throw new ApplicationException ();
+			});
+
+			Exception e1 = null;
+			var thread = new Thread (() => {
+				try {
+					string value = lazy.Value;
+				} catch (Exception ex) {
+					e1 = ex;
+				}
+			});
+			thread.Start ();
+
+			Assert.IsTrue (init.WaitOne (3000), "#1");
+
+			Exception e2 = null;
+			try {
+				string value = lazy.Value;
+			} catch (Exception ex) {
+				e2 = ex;
+			}
+
+			Exception e3 = null;
+			try {
+				string value = lazy.Value;
+			} catch (Exception ex) {
+				e3 = ex;
+			}
+
+			Assert.AreSame (e1, e2, "#2");
+			Assert.AreSame (e1, e3, "#3");
+		}
+
 	}
 }
 

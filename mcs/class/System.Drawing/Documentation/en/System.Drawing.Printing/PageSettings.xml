@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PageSettings" FullName="System.Drawing.Printing.PageSettings">
   <TypeSignature Language="C#" Value="public class PageSettings : ICloneable" Maintainer="auto" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Drawing.Printing.PageSettings" /> class is used to specify settings that modify the way a page will be printed. Typically, you set default settings for all pages to be printed through the <see cref="P:System.Drawing.Printing.PrintDocument.DefaultPageSettings" /> property. To specify settings on a page-by-page basis, handle the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> or <see cref="E:System.Drawing.Printing.PrintDocument.QueryPageSettings" /> event and modify the <see cref="T:System.Drawing.Printing.PageSettings" /> argument included in the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> or <see cref="T:System.Drawing.Printing.QueryPageSettingsEventArgs" />, respectively.</para>
+      <para>For more information about handling <see cref="T:System.Drawing.Printing.PrintDocument" /> events, see the <see cref="T:System.Drawing.Printing.PrintDocument" /> class overview. For more information about printing, see the <see cref="N:System.Drawing.Printing" /> namespace overview.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies settings that apply to a single, printed page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +35,15 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes all fields to their default values.</para>
+          <para>Typically, you do not create an instance of <see cref="T:System.Drawing.Printing.PageSettings" />, but instead use the <see cref="P:System.Drawing.Printing.PrintDocument.DefaultPageSettings" /> to set settings for all pages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PageSettings" /> class using the default printer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,9 +58,16 @@
         <Parameter Name="printerSettings" Type="System.Drawing.Printing.PrinterSettings" />
       </Parameters>
       <Docs>
-        <param name="printerSettings">To be added: an object of type 'PrinterSettings'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Printing.PageSettings.#ctor(System.Drawing.Printing.PrinterSettings)" /> constructor is similar to initializing a new instance of <see cref="T:System.Drawing.Printing.PageSettings" /> and setting the <see cref="P:System.Drawing.Printing.PageSettings.PrinterSettings" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PageSettings" /> class using a specified printer.</para>
+        </summary>
+        <param name="printerSettings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Printing.PrinterSettings" /> that describes the printer to use. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +81,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Rectangle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Drawing.Printing.PageSettings.Bounds" /> property along with the <see cref="P:System.Drawing.Printing.PageSettings.Margins" /> property to calculate the printing area for the page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the page, taking into account the page orientation specified by the <see cref="P:System.Drawing.Printing.PageSettings.Landscape" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +104,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of this <see cref="T:System.Drawing.Printing.PageSettings" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of this object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,9 +128,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Drawing.Printing.PrinterSettings.SupportsColor" /> property to determine if the printer supports color printing. If the printer supports color, but you do not want to print in color, set the <see cref="P:System.Drawing.Printing.PageSettings.Color" /> property to false. The default will be true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the page should be printed in color.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -113,9 +153,17 @@
         <Parameter Name="hdevmode" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="hdevmode">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.Drawing.Printing.PageSettings.CopyToHdevmode(System.IntPtr)" /> method to copy relevant information to a DEVMODE structure from a <see cref="T:System.Drawing.Printing.PageSettings" />. This method is useful when you want to make unmanaged Win32 calls that require a DEVMODE.</para>
+          <para>To copy information from a DEVMODE structure to the <see cref="T:System.Drawing.Printing.PageSettings" />, call <see cref="M:System.Drawing.Printing.PageSettings.SetHdevmode(System.IntPtr)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the relevant information from the <see cref="T:System.Drawing.Printing.PageSettings" /> to the specified DEVMODE structure.</para>
+        </summary>
+        <param name="hdevmode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a Win32 DEVMODE structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,9 +180,15 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hard margin represents the physical margin set by the printer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the x-coordinate, in hundredths of an inch, of the hard margin at the left of the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HardMarginY">
@@ -147,9 +201,15 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hard margin represents the physical margin set by the printer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the y-coordinate, in hundredths of an inch, of the hard margin at the top of the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Landscape">
@@ -161,9 +221,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Drawing.Printing.PrinterSettings.LandscapeAngle" /> property to determine the angle, in degrees, that the portrait orientation is rotated to produce the landscape orientation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the page is printed in landscape or portrait orientation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -179,9 +245,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Margins'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When handling the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event, you can use this property along with the <see cref="P:System.Drawing.Printing.PageSettings.Bounds" /> property to calculate the printing area for the page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the margins for this page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,9 +269,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PaperSize'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Printing.PaperSize" /> represents the size of the paper through the <see cref="P:System.Drawing.Printing.PaperSize.Kind" /> property, which contains one of the <see cref="T:System.Drawing.Printing.PaperKind" /> values.</para>
+          <para>Set the <see cref="P:System.Drawing.Printing.PageSettings.PaperSize" /> property for the page to a valid <see cref="T:System.Drawing.Printing.PaperSize" />, available through the <see cref="P:System.Drawing.Printing.PrinterSettings.PaperSizes" /> collection.</para>
+          <para>For information about how you can specify a custom paper size, see the <see cref="M:System.Drawing.Printing.PaperSize.#ctor" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the paper size for the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -215,9 +295,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PaperSource'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Printing.PaperSource" /> represents the source of the paper through the <see cref="P:System.Drawing.Printing.PaperSource.Kind" /> property, which contains one of the <see cref="T:System.Drawing.Printing.PaperSourceKind" /> values.</para>
+          <para>Set the <see cref="P:System.Drawing.Printing.PageSettings.PaperSource" /> property for the page to a valid <see cref="T:System.Drawing.Printing.PaperSource" />, available through the <see cref="P:System.Drawing.Printing.PrinterSettings.PaperSources" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the page's paper source; for example, the printer's upper tray.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -234,9 +321,16 @@
         <ReturnType>System.Drawing.RectangleF</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Drawing.Printing.PageSettings.PrintableArea" /> property returns the correct value, whether the page orientation is landscape or portrait.</para>
+          <para>You can use this property to print outside the margins of the page, but within the printable area.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounds of the printable area of the page for the printer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrinterResolution">
@@ -248,9 +342,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PrinterResolution'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Printing.PrinterResolution" /> represents the printer resolution of through the <see cref="P:System.Drawing.Printing.PrinterResolution.Kind" /> property, which contains one of the <see cref="T:System.Drawing.Printing.PrinterResolutionKind" /> values.</para>
+          <para>Set the <see cref="P:System.Drawing.Printing.PageSettings.PrinterResolution" /> property for the page to a valid <see cref="T:System.Drawing.Printing.PrinterResolution" />, available through the <see cref="P:System.Drawing.Printing.PrinterSettings.PrinterResolutions" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the printer resolution for the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -266,9 +367,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PrinterSettings'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the printer settings to find default values for properties of the page that are not set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the printer settings associated with the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -285,9 +392,17 @@
         <Parameter Name="hdevmode" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="hdevmode">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to copy relevant information in a DEVMODE structure to the <see cref="T:System.Drawing.Printing.PageSettings" />.</para>
+          <para>To copy information from the <see cref="T:System.Drawing.Printing.PageSettings" /> to a DEVMODE, call <see cref="M:System.Drawing.Printing.PageSettings.CopyToHdevmode(System.IntPtr)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies relevant information to the <see cref="T:System.Drawing.Printing.PageSettings" /> from the specified DEVMODE structure.</para>
+        </summary>
+        <param name="hdevmode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to a Win32 DEVMODE structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -302,9 +417,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the <see cref="T:System.Drawing.Printing.PageSettings" /> to string form.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string showing the various property settings for the <see cref="T:System.Drawing.Printing.PageSettings" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

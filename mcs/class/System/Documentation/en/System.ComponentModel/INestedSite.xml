@@ -1,32 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INestedSite" FullName="System.ComponentModel.INestedSite">
-  <TypeSignature Language="C#" Value="public interface INestedSite : System.ComponentModel.ISite" />
+  <TypeSignature Language="C#" Value="public interface INestedSite : IServiceProvider, System.ComponentModel.ISite" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INestedSite implements class System.ComponentModel.ISite, class System.IServiceProvider" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
       <InterfaceName>System.ComponentModel.ISite</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.IServiceProvider</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the ability to retrieve the full nested name of a component.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FullName">
       <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.INestedSite.FullName" /> property returns the full name of the component in this site in the format of [owner].[component]. If this component's site has a null name, the property also returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full name of the component in this site.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

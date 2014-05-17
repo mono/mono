@@ -89,7 +89,7 @@
 #define ARCH_COPY_SIGCTX_REGS(a,ctx) do {	\
 	int __i;	\
 	for (__i = 0; __i < 32; ++__i)	\
-		((a)[__i]) = UCONTEXT_REG_Rn((ctx), __i);	\
+		((a)[__i]) = (gpointer) UCONTEXT_REG_Rn((ctx), __i);	\
 	} while (0)
 
 #elif defined(TARGET_ARM)
@@ -128,6 +128,26 @@
 	((a)[13]) = (gpointer) (UCONTEXT_REG_LR((ctx)));	\
 	} while (0)
 
+#elif defined(TARGET_ARM64)
+
+#include <mono/utils/mono-sigcontext.h>
+
+#ifdef __linux__
+#define REDZONE_SIZE    0
+#elif defined(__APPLE__)
+#define REDZONE_SIZE	128
+#else
+#error "Not implemented."
+#endif
+#define USE_MONO_CTX
+#define ARCH_NUM_REGS 31
+
+#define ARCH_STORE_REGS(ptr) do { g_assert_not_reached (); } while (0)
+
+#define ARCH_SIGCTX_SP(ctx)	UCONTEXT_REG_SP (ctx)
+#define ARCH_SIGCTX_IP(ctx)	UCONTEXT_REG_PC (ctx)
+#define ARCH_COPY_SIGCTX_REGS(a,ctx) do { g_assert_not_reached (); } while (0)
+
 #elif defined(__mips__)
 
 #define REDZONE_SIZE	0
@@ -135,8 +155,12 @@
 #define USE_MONO_CTX
 #define ARCH_NUM_REGS 32
 
-#define ARCH_SIGCTX_SP(ctx)	(UCONTEXT_GREGS((ctx))[29])
-#define ARCH_SIGCTX_IP(ctx)	(UCONTEXT_REG_PC((ctx)))
+/*
+ * These casts are necessary since glibc always makes the
+ * gregs 64-bit values in userland.
+ */
+#define ARCH_SIGCTX_SP(ctx)	((gsize) UCONTEXT_GREGS((ctx))[29])
+#define ARCH_SIGCTX_IP(ctx)	((gsize) UCONTEXT_REG_PC((ctx)))
 
 #elif defined(__s390x__)
 
@@ -199,6 +223,10 @@
 		: "r" (ptr)		\
 		: "memory"			\
 	)
+#endif
+
+#ifndef REG_SP
+#define REG_SP REG_O6
 #endif
 
 #define ARCH_SIGCTX_SP(ctx)	(((ucontext_t *)(ctx))->uc_mcontext.gregs [REG_SP])

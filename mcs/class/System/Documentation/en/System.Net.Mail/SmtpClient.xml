@@ -1,149 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SmtpClient" FullName="System.Net.Mail.SmtpClient">
-  <TypeSignature Language="C#" Value="public class SmtpClient" />
+  <TypeSignature Language="C#" Value="public class SmtpClient : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SmtpClient extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
-  <Interfaces />
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class is used to send e-mail to an SMTP server for delivery. The SMTP protocol is defined in RFC 2821, which is available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+      <para>The classes shown in the following table are used to construct e-mail messages that can be sent using <see cref="T:System.Net.Mail.SmtpClient" />.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Class</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.Mail.Attachment" />
+            </para>
+          </term>
+          <description>
+            <para>Represents file attachments. This class allows you to attach files, streams, or text to an e-mail message.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.Mail.MailAddress" />
+            </para>
+          </term>
+          <description>
+            <para>Represents the e-mail address of the sender and recipients.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.Mail.MailMessage" />
+            </para>
+          </term>
+          <description>
+            <para>Represents an e-mail message.</para>
+          </description>
+        </item>
+      </list>
+      <para>To construct and send an e-mail message by using <see cref="T:System.Net.Mail.SmtpClient" />, you must specify the following information:</para>
+      <list type="bullet">
+        <item>
+          <para>The SMTP host server that you use to send e-mail. See the <see cref="P:System.Net.Mail.SmtpClient.Host" /> and <see cref="P:System.Net.Mail.SmtpClient.Port" /> properties.</para>
+        </item>
+        <item>
+          <para>Credentials for authentication, if required by the SMTP server. See the <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property.</para>
+        </item>
+        <item>
+          <para>The e-mail address of the sender. See the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> and <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods that take a <paramref name="from" /> parameter. Also see the <see cref="P:System.Net.Mail.MailMessage.From" /> property.</para>
+        </item>
+        <item>
+          <para>The e-mail address or addresses of the recipients. See the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> and <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods that take a <paramref name="recipient" /> parameter. Also see the <see cref="P:System.Net.Mail.MailMessage.To" /> property.</para>
+        </item>
+        <item>
+          <para>The message content. See the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> and <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods that take a <paramref name="body" /> parameter. Also see the <see cref="P:System.Net.Mail.MailMessage.Body" /> property.</para>
+        </item>
+      </list>
+      <para>To include an attachment with an e-mail message, first create the attachment by using the <see cref="T:System.Net.Mail.Attachment" /> class, and then add it to the message by using the <see cref="P:System.Net.Mail.MailMessage.Attachments" /> property. Depending on the e-mail reader used by the recipients and the file type of the attachment, some recipients might not be able to read the attachment. For clients that cannot display the attachment in its original form, you can specify alternate views by using the <see cref="P:System.Net.Mail.MailMessage.AlternateViews" /> property.</para>
+      <para>You can use the application or machine configuration files to specify default host, port, and credentials values for all <see cref="T:System.Net.Mail.SmtpClient" /> objects. For more information, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>.</para>
+      <para>To send the e-mail message and block while waiting for the e-mail to be transmitted to the SMTP server, use one of the synchronous <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> methods. To allow your program's main thread to continue executing while the e-mail is transmitted, use one of the asynchronous <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods. The <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> event is raised when a <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> operation completes. To receive this event, you must add a <see cref="T:System.Net.Mail.SendCompletedEventHandler" /> delegate to <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" />. The <see cref="T:System.Net.Mail.SendCompletedEventHandler" /> delegate must reference a callback method that handles notification of <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> events. To cancel an asynchronous e-mail transmission, use the <see cref="M:System.Net.Mail.SmtpClient.SendAsyncCancel" /> method. </para>
+      <block subset="none" type="note">
+        <para> If there is an e-mail transmission in progress and you call <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> or <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> again, you will receive an <see cref="T:System.InvalidOperationException" />. </para>
+      </block>
+      <para>The connection established by the current instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class to the SMTP server may be re-used if an application wishes to send multiple messages to the same SMTP server. This is particularly useful when authentication or encryption are used establish a connection to the SMTP server. The process of authenticating and establishing a TLS session can be expensive operations. A requirement to re-establish a connection for each message when sending a large quantity of email to the same SMTP server could have a significant impact on performance. There are a number of high-volume email applications that send email status updates, newsletter distributions, or email alerts. Also many email client applications support an off-line mode where users can compose many email messages that are sent later when a connection to the SMTP server is established. It is typical for an email client to send all SMTP messages to a specific SMTP server (provided by the Internet service provider) that then forwards this email to other SMTP servers. </para>
+      <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class implementation pools SMTP connections so that it can avoid the overhead of re-establishing a connection for every message to the same server. An application may re-use the same <see cref="T:System.Net.Mail.SmtpClient" /> object to send many different emails to the same SMTP server and to many different SMTP servers. As a result, there is no way to determine when an application is finished using the <see cref="T:System.Net.Mail.SmtpClient" /> object and it should be cleaned up. </para>
+      <para>When an SMTP session is finished and the client wishes to terminate the connection, it must send a QUIT message to the server to indicate that it has no more messages to send. This allows the server to free up resources associated with the connection from the client and process the messages which were sent by the client.</para>
+      <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class has no Finalize method, so an application must call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> to explicitly free up resources. The <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> method iterates through all established connections to the SMTP server specified in the <see cref="P:System.Net.Mail.SmtpClient.Host" /> property and sends a QUIT message followed by gracefully ending the TCP connection. The <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> method also releases the unmanaged resources used by the <see cref="T:System.Net.Sockets.Socket" /> and optionally disposes of the managed resources.</para>
+      <para>Call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> when you are finished using the <see cref="T:System.Net.Mail.SmtpClient" />. The <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> method leaves the <see cref="T:System.Net.Mail.SmtpClient" /> in an unusable state. After calling <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" />, you must release all references to the <see cref="T:System.Net.Mail.SmtpClient" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Net.Mail.SmtpClient" /> was occupying.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows applications to send e-mail by using the Simple Mail Transfer Protocol (SMTP).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SmtpClient ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Net.Mail.SmtpClient.Host" />, <see cref="P:System.Net.Mail.SmtpClient.Credentials" />, and <see cref="P:System.Net.Mail.SmtpClient.Port" /> properties for the new <see cref="T:System.Net.Mail.SmtpClient" /> by using the settings in the application or machine configuration files. For more information, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class by using configuration file settings. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SmtpClient (string host);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string host) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="host" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="host" /> parameter is used to initialize the value of the <see cref="P:System.Net.Mail.SmtpClient.Host" /> property. The <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> and <see cref="P:System.Net.Mail.SmtpClient.Port" /> properties are initialized by using the settings in the application or machine configuration files. If <paramref name="host" /> is null or equal to <see cref="F:System.String.Empty" />, <see cref="P:System.Net.Mail.SmtpClient.Host" /> is initialized using the settings in the application or machine configuration files.</para>
+          <para>For more information about using the application and machine configuration files, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>. If information is specified using <see cref="T:System.Net.Mail.SmtpClient" /> constructors or properties, this information overrides the configuration file settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class that sends e-mail by using the specified SMTP server. </para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the name or IP address of the host computer used for SMTP transactions.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SmtpClient (string host, int port);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string host, int32 port) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="host" Type="System.String" />
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <param name="port">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="host" /> and <paramref name="port" /> parameters set the value of the <see cref="P:System.Net.Mail.SmtpClient.Host" /> and <see cref="P:System.Net.Mail.SmtpClient.Port" /> properties, respectively. If <paramref name="host" /> is null or equal to <see cref="F:System.String.Empty" />, <see cref="P:System.Net.Mail.SmtpClient.Host" /> is initialized using the settings in the application or machine configuration files. If <paramref name="port" /> is zero, <see cref="P:System.Net.Mail.SmtpClient.Port" /> is initialized using the settings in the application or machine configuration files. The <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property is initialized using the settings in the application or machine configuration files.</para>
+          <para>For more information about using the application and machine configuration files, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>. If information is specified using <see cref="T:System.Net.Mail.SmtpClient" /> constructors or properties, this information overrides the configuration file settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class that sends e-mail by using the specified SMTP server and port.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the name or IP address of the host used for SMTP transactions.</param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> greater than zero that contains the port to be used on <paramref name="host" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ClientCertificates">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Client certificates not used")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Client certificates are, by default, optional; however, the server configuration might require that the client present a valid certificate as part of the initial connection negotiation. </para>
+          <block subset="none" type="note">
+            <para>The Framework caches SSL sessions as they are created and attempts to reuse a cached session for a new request, if possible. When attempting to reuse an SSL session, the Framework uses the first element of <see cref="P:System.Net.Mail.SmtpClient.ClientCertificates" /> (if there is one), or tries to reuse an anonymous sessions if <see cref="P:System.Net.Mail.SmtpClient.ClientCertificates" /> is empty.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify which certificates should be used to establish the Secure Sockets Layer (SSL) connection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Credentials">
-      <MemberSignature Language="C#" Value="public System.Net.ICredentialsByHost Credentials { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.ICredentialsByHost Credentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentialsByHost Credentials" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentialsByHost</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some SMTP servers require that the client be authenticated before the server will send e-mail on its behalf. To use your default network credentials, you can set the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> to true instead of setting this property. If the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> property is set to false, then the value set in the <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property will be used for the credentials when connecting to the server. If the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> property is set to false and the <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property has not been set, then mail is sent to the server anonymously. </para>
+          <para>Credentials information can also be specified using the application and machine configuration files. For more information, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>. If information is specified using the <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property, this information overrides the configuration file settings.</para>
+          <block subset="none" type="note">
+            <para>If you provide credentials for basic authentication, they are sent to the server in clear text. This can present a security issue because your credentials can be seen, and then used by others.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the credentials used to authenticate the sender.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DeliveryMethod">
-      <MemberSignature Language="C#" Value="public System.Net.Mail.SmtpDeliveryMethod DeliveryMethod { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Mail.SmtpDeliveryMethod DeliveryMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Mail.SmtpDeliveryMethod DeliveryMethod" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Mail.SmtpDeliveryMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Delivery methods include: </para>
+          <list type="bullet">
+            <item>
+              <para>An SMTP server.</para>
+            </item>
+            <item>
+              <para>Moving the email into the pickup directory for IIS, which then delivers the message.</para>
+            </item>
+            <item>
+              <para>Moving the email to a directory specified by <see cref="P:System.Net.Mail.SmtpClient.PickupDirectoryLocation" /> for later delivery by another application.</para>
+            </item>
+          </list>
+          <para>The default value for this property can also be set in a machine or application configuration file. Any changes made to the <see cref="P:System.Net.Mail.SmtpClient.PickupDirectoryLocation" /> property override the configuration file settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies how outgoing email messages will be handled.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection established by the current instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class to the SMTP server may be re-used if an application wishes to send multiple messages to the same SMTP server. This is particularly useful when authentication or encryption are used establish a connection to the SMTP server. The process of authenticating and establishing a TLS session can be expensive operations. A requirement to re-establish a connection for each message when sending a large quantity of email to the same SMTP server could have a significant impact on performance. There are a number of high-volume email applications that send email status updates, newsletter distributions, or email alerts. Also many email client applications support an off-line mode where users can compose many email messages that are sent later when a connection to the SMTP server is established. It is typical for an email client to send all SMTP messages to a specific SMTP server (provided by the Internet service provider) that then forwards this email to other SMTP servers. </para>
+          <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class implementation pools SMTP connections so that it can avoid the overhead of re-establishing a connection for every message to the same server. An application may re-use the same <see cref="T:System.Net.Mail.SmtpClient" /> object to send many different emails to the same SMTP server and to many different SMTP servers. As a result, there is no way to determine when an application is finished using the <see cref="T:System.Net.Mail.SmtpClient" /> object and it should be cleaned up. </para>
+          <para>When an SMTP session is finished and the client wishes to terminate the connection, it must send a QUIT message to the server to indicate that it has no more messages to send. This allows the server to free up resources associated with the connection from the client and process the messages which were sent by the client.</para>
+          <para>Calling the <see cref="M:System.Net.Mail.SmtpClient.Dispose" /> method on a <see cref="T:System.Net.Mail.SmtpClient" /> object that is executing an asynchronous <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> operation will cancel the send operation as though the <see cref="M:System.Net.Mail.SmtpClient.SendAsyncCancel" /> method had been called.</para>
+          <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class has no Finalize method. So an application must call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> to explicitly free up resources. </para>
+          <para>The <see cref="M:System.Net.Mail.SmtpClient.Dispose" /> method iterates through all established connections to the SMTP server specified in the <see cref="P:System.Net.Mail.SmtpClient.Host" /> property and sends a QUIT message followed by gracefully ending the TCP connection. The <see cref="M:System.Net.Mail.SmtpClient.Dispose" /> method also releases the unmanaged resources used by the underlying <see cref="T:System.Net.Sockets.Socket" />.</para>
+          <para>Call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> when you are finished using the <see cref="T:System.Net.Mail.SmtpClient" />. The <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> method leaves the <see cref="T:System.Net.Mail.SmtpClient" /> in an unusable state. After calling <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" />, you must release all references to the <see cref="T:System.Net.Mail.SmtpClient" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Net.Mail.SmtpClient" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> before you release your last reference to the <see cref="T:System.Net.Mail.SmtpClient" />. Otherwise, the resources it is using will not be freed so the garbage collector can reclaim the memory.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a QUIT message to the SMTP server, gracefully ends the TCP connection, and releases all resources used by the current instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Does nothing at the moment.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection established by the current instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class to the SMTP server may be re-used if an application wishes to send multiple messages to the same SMTP server. This is particularly useful when authentication or encryption are used establish a connection to the SMTP server. The process of authenticating and establishing a TLS session can be expensive operations. A requirement to re-establish a connection for each message when sending a large quantity of email to the same SMTP server could have a significant impact on performance. There are a number of high-volume email applications that send email status updates, newsletter distributions, or email alerts. Also many email client applications support an off-line mode where users can compose many email messages that are sent later when a connection to the SMTP server is established. It is typical for an email client to send all SMTP messages to a specific SMTP server (provided by the Internet service provider) that then forwards this email to other SMTP servers. </para>
+          <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class implementation pools SMTP connections so that it can avoid the overhead of re-establishing a connection for every message to the same server. An application may re-use the same <see cref="T:System.Net.Mail.SmtpClient" /> object to send many different emails to the same SMTP server and to many different SMTP servers. As a result, there is no way to determine when an application is finished using the <see cref="T:System.Net.Mail.SmtpClient" /> object and it should be cleaned up. </para>
+          <para>When an SMTP session is finished and the client wishes to terminate the connection, it must send a QUIT message to the server to indicate that it has no more messages to send. This allows the server to free up resources associated with the connection from the client and process the messages which were sent by the client.</para>
+          <para>Calling the <see cref="M:System.Net.Mail.SmtpClient.Dispose(System.Boolean)" /> method on a <see cref="T:System.Net.Mail.SmtpClient" /> object that is executing an asynchronous <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> operation will cancel the send operation as though the <see cref="M:System.Net.Mail.SmtpClient.SendAsyncCancel" /> method had been called.</para>
+          <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class has no Finalize method. So an application must call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> to explicitly free up resources. </para>
+          <para>The <see cref="M:System.Net.Mail.SmtpClient.Dispose(System.Boolean)" /> method iterates through all established connections to the SMTP server specified in the <see cref="P:System.Net.Mail.SmtpClient.Host" /> property and sends a QUIT message followed by gracefully ending the TCP connection. The <see cref="M:System.Net.Mail.SmtpClient.Dispose(System.Boolean)" /> method also releases the unmanaged resources used by the <see cref="T:System.Net.Sockets.Socket" /> and optionally disposes of the managed resources.</para>
+          <para>Call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> when you are finished using the <see cref="T:System.Net.Mail.SmtpClient" />. The <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> method leaves the <see cref="T:System.Net.Mail.SmtpClient" /> in an unusable state. After calling <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" />, you must release all references to the <see cref="T:System.Net.Mail.SmtpClient" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Net.Mail.SmtpClient" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="Overload:System.Net.Mail.SmtpClient.Dispose" /> before you release your last reference to the <see cref="T:System.Net.Mail.SmtpClient" />. Otherwise, the resources it is using will not be freed so the garbage collector can reclaim the memory.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a QUIT message to the SMTP server, gracefully ends the TCP connection, releases all resources used by the current instance of the <see cref="T:System.Net.Mail.SmtpClient" /> class, and optionally disposes of the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to releases only unmanaged resources.</param>
+      </Docs>
     </Member>
     <Member MemberName="EnableSsl">
-      <MemberSignature Language="C#" Value="public bool EnableSsl { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool EnableSsl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EnableSsl" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mail.SmtpClient.EnableSsl" /> property specifies whether SSL is used to access the specified SMTP mail server. </para>
+          <para>The default value for this property can also be set in a machine or application configuration file. Any changes made to the <see cref="P:System.Net.Mail.SmtpClient.EnableSsl" /> property override the configuration file settings.</para>
+          <para>The <see cref="T:System.Net.Mail.SmtpClient" /> class only supports the SMTP Service Extension for Secure SMTP over Transport Layer Security as defined in RFC 3207. In this mode, the SMTP session begins on an unencrypted channel, then a STARTTLS command is issued by the client to the server to switch to secure communication using SSL. See RFC 3207 published by the Internet Engineering Task Force (IETF) for more information. </para>
+          <para>An alternate connection method is where an SSL session is established up front before any protocol commands are sent. This connection method is sometimes called SMTP/SSL, SMTP over SSL, or SMTPS and by default uses port 465. This alternate connection method using SSL is not currently supported.</para>
+          <para>You can use <see cref="P:System.Net.Mail.SmtpClient.ClientCertificates" /> to specify which client certificates should be used to establish the SSL connection. The <see cref="P:System.Net.ServicePointManager.ServerCertificateValidationCallback" /> allows you to reject the certificate provided by the SMTP server. The <see cref="P:System.Net.ServicePointManager.SecurityProtocol" /> property allows you to specify the version of the SSL protocol to use.</para>
+          <block subset="none" type="note">
+            <para> If the <see cref="P:System.Net.Mail.SmtpClient.EnableSsl" /> property is set to true, and the SMTP mail server does not advertise STARTTLS in the response to the EHLO command, then a call to the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> or <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods will throw an <see cref="T:System.Net.Mail.SmtpException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify whether the <see cref="T:System.Net.Mail.SmtpClient" /> uses Secure Sockets Layer (SSL) to encrypt the connection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Host">
-      <MemberSignature Language="C#" Value="public string Host { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Host { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Host" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Net.Mail.SmtpClient.Host" /> property can also be set using constructors or the application or machine configuration file. For more information, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>. </para>
+          <para>If information is specified using this property, this information overrides the configuration file settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name or IP address of the host used for SMTP transactions.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnSendCompleted">
       <MemberSignature Language="C#" Value="protected void OnSendCompleted (System.ComponentModel.AsyncCompletedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void OnSendCompleted(class System.ComponentModel.AsyncCompletedEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -151,50 +415,78 @@
         <Parameter Name="e" Type="System.ComponentModel.AsyncCompletedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that inherit from the <see cref="T:System.Net.Mail.SmtpClient" /> class can override the <see cref="M:System.Net.Mail.SmtpClient.OnSendCompleted(System.ComponentModel.AsyncCompletedEventArgs)" /> method to perform additional tasks when the <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> event occurs.</para>
+          <para>
+            <see cref="M:System.Net.Mail.SmtpClient.OnSendCompleted(System.ComponentModel.AsyncCompletedEventArgs)" /> also allows derived classes to handle <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> without attaching a delegate. This is the preferred technique for handling <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" /> that contains event data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PickupDirectoryLocation">
-      <MemberSignature Language="C#" Value="public string PickupDirectoryLocation { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PickupDirectoryLocation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PickupDirectoryLocation" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Mail messages in the pickup directory are automatically sent by a local SMTP server (if present), such as IIS. </para>
+          <para>The default value for this property can also be set in a machine or application configuration file. Any changes made to the <see cref="P:System.Net.Mail.SmtpClient.PickupDirectoryLocation" /> property override the configuration file settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the folder where applications save mail messages to be processed by the local SMTP server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Port">
-      <MemberSignature Language="C#" Value="public int Port { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Port { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Port" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Net.Mail.SmtpClient.Port" /> property can also be set using constructors or the application or machine configuration file. For more information about using configuration files, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>. If information is specified using this property, this information overrides the configuration file settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the port used for SMTP transactions.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public void Send (System.Net.Mail.MailMessage message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Send(class System.Net.Mail.MailMessage message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -202,18 +494,35 @@
         <Parameter Name="message" Type="System.Net.Mail.MailMessage" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks while the e-mail is transmitted. You can specify a time-out value using the <see cref="P:System.Net.Mail.SmtpClient.Timeout" /> property to ensure that the method returns after a specified amount of time elapses.</para>
+          <para>Before calling this method, the <see cref="P:System.Net.Mail.SmtpClient.Host" /> and <see cref="P:System.Net.Mail.SmtpClient.Port" /> properties must be set either through the configuration files by setting the relevant properties, or by passing this information into the <see cref="M:System.Net.Mail.SmtpClient.#ctor(System.String,System.Int32)" /> constructor. </para>
+          <para>You cannot call this method if there is a message being sent asynchronously. </para>
+          <para>If the SMTP host requires credentials, you must set them before calling this method. To specify credentials, use the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> or <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> properties.</para>
+          <para>If you receive an <see cref="T:System.Net.Mail.SmtpException" /> exception, check the <see cref="P:System.Net.Mail.SmtpException.StatusCode" /> property to find the reason the operation failed. The <see cref="T:System.Net.Mail.SmtpException" /> can also contain an inner exception that indicates the reason the operation failed. </para>
+          <para>When sending e-mail using <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> to multiple recipients and the SMTP server accepts some recipients as valid and rejects others, <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> sends e-mail to the accepted recipients and then a <see cref="T:System.Net.Mail.SmtpFailedRecipientsException" /> is thrown. The exception will contain a listing of the recipients that were rejected. </para>
+          <block subset="none" type="note">
+            <para> If the <see cref="P:System.Net.Mail.SmtpClient.EnableSsl" /> property is set to true, and the SMTP mail server does not advertise STARTTLS in the response to the EHLO command, then a call to the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> or <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods will throw an <see cref="T:System.Net.Mail.SmtpException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the specified message to an SMTP server for delivery.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Mail.MailMessage" /> that contains the message to send.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public void Send (string from, string to, string subject, string body);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Send(string from, string to, string subject, string body) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -224,21 +533,40 @@
         <Parameter Name="body" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
         <param name="to">To be added.</param>
-        <param name="subject">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks while the e-mail is transmitted. You can specify a time-out value using the <see cref="P:System.Net.Mail.SmtpClient.Timeout" /> property to ensure that the method returns after a specified amount of time elapses.</para>
+          <para>Before calling this method, the <see cref="P:System.Net.Mail.SmtpClient.Host" /> and <see cref="P:System.Net.Mail.SmtpClient.Port" /> properties must be set either through the configuration files by setting the relevant properties, or by passing this information into the <see cref="M:System.Net.Mail.SmtpClient.#ctor(System.String,System.Int32)" /> constructor. </para>
+          <para>You cannot call this method if there is a message being sent asynchronously. </para>
+          <para>If the SMTP host requires credentials, you must set them before calling this method. To specify credentials, use the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> or <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> properties.</para>
+          <para>If you receive an <see cref="T:System.Net.Mail.SmtpException" /> exception, check the <see cref="P:System.Net.Mail.SmtpException.StatusCode" /> property to find the reason the operation failed. The <see cref="T:System.Net.Mail.SmtpException" /> can also contain an inner exception that indicates the reason the operation failed. </para>
+          <para>When sending e-mail using <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> to multiple recipients and the SMTP server accepts some recipients as valid and rejects others, <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> sends e-mail to the accepted recipients and then a <see cref="T:System.Net.Mail.SmtpFailedRecipientsException" /> is thrown. The exception will contain a listing of the recipients that were rejected. </para>
+          <block subset="none" type="note">
+            <para> If the <see cref="P:System.Net.Mail.SmtpClient.EnableSsl" /> property is set to true, and the SMTP mail server does not advertise STARTTLS in the response to the EHLO command, then a call to the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> or <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods will throw an <see cref="T:System.Net.Mail.SmtpException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the specified e-mail message to an SMTP server for delivery. The message sender, recipients, subject, and message body are specified using <see cref="T:System.String" /> objects.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the address information of the message sender.</param>
+        <param name="subject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the subject line for the message.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the message body.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (System.Net.Mail.MailMessage message, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(class System.Net.Mail.MailMessage message, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -247,19 +575,40 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To receive notification when the e-mail has been sent or the operation has been canceled, add an event handler to the <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> event. You can cancel a <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> operation by calling the <see cref="M:System.Net.Mail.SmtpClient.SendAsyncCancel" /> method. </para>
+          <para>After calling <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" />, you must wait for the e-mail transmission to complete before attempting to send another e-mail message using <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> or <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" />.</para>
+          <para>Before calling this method, the <see cref="P:System.Net.Mail.SmtpClient.Host" /> and <see cref="P:System.Net.Mail.SmtpClient.Port" /> must be set through the configuration files by setting the relevant properties, or by passing this information into the <see cref="M:System.Net.Mail.SmtpClient.#ctor(System.String,System.Int32)" /> constructor. </para>
+          <para>If the SMTP host requires credentials, you must set them before calling this method. To specify credentials, use the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> or <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> properties.</para>
+          <para>If you receive an <see cref="T:System.Net.Mail.SmtpException" /> exception, check the <see cref="P:System.Net.Mail.SmtpException.StatusCode" /> property to find the reason the operation failed. The <see cref="T:System.Net.Mail.SmtpException" /> can also contain an inner exception that indicates the reason the operation failed.</para>
+          <para>When sending e-mail using <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> to multiple recipients, if the SMTP server accepts some recipients as valid and rejects others, a <see cref="T:System.Net.Mail.SmtpException" /> is thrown with a <see cref="T:System.NullReferenceException" /> for the inner exception. If this occurs, <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> fails to send e-mail to any of the recipients. </para>
+          <para>Your application can detect a server certificate validation error by examining the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property passed into the <see cref="T:System.Net.Mail.SendCompletedEventHandler" /> delegate.</para>
+          <para>The <see cref="P:System.Net.Mail.SmtpClient.Timeout" /> property does not have any effect on a <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> call.</para>
+          <para>To send mail and block while it is transmitted to the SMTP server, use one of the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> methods.</para>
+          <block subset="none" type="note">
+            <para> If the <see cref="P:System.Net.Mail.SmtpClient.EnableSsl" /> property is set to true, and the SMTP mail server does not advertise STARTTLS in the response to the EHLO command, then a call to the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> or <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods will throw an <see cref="T:System.Net.Mail.SmtpException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the specified e-mail message to an SMTP server for delivery. This method does not block the calling thread and allows the caller to pass an object to the method that is invoked when the operation completes. </para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Mail.MailMessage" /> that contains the message to send.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (string from, string to, string subject, string body, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(string from, string to, string subject, string body, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -271,97 +620,196 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
         <param name="to">To be added.</param>
-        <param name="subject">To be added.</param>
-        <param name="body">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To receive notification when the e-mail has been sent or the operation has been canceled, add an event handler to the <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> event. You can cancel a <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> operation by calling the <see cref="M:System.Net.Mail.SmtpClient.SendAsyncCancel" /> method. </para>
+          <para>After calling <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" />, you must wait for the e-mail transmission to complete before attempting to send another e-mail message using <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> or <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" />.</para>
+          <para>Before calling this method, the <see cref="P:System.Net.Mail.SmtpClient.Host" /> and <see cref="P:System.Net.Mail.SmtpClient.Port" /> properties must be set either through the configuration files or by setting the properties or passing this information into the <see cref="M:System.Net.Mail.SmtpClient.#ctor(System.String,System.Int32)" /> constructor. </para>
+          <para>If the SMTP host requires credentials, you must set them before calling this method. To specify credentials, use the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> or <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property.</para>
+          <para>If you receive an <see cref="T:System.Net.Mail.SmtpException" /> exception, check the <see cref="P:System.Net.Mail.SmtpException.StatusCode" /> property to find the reason the operation failed. The <see cref="T:System.Net.Mail.SmtpException" /> can also contain an inner exception that indicates the reason the operation failed. </para>
+          <para>When sending e-mail using <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> to multiple recipients, if the SMTP server accepts some recipients as valid and rejects others, a <see cref="T:System.Net.Mail.SmtpException" /> is thrown with a <see cref="T:System.NullReferenceException" /> for the inner exception. If this occurs, <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> fails to send e-mail to any of the recipients. </para>
+          <para>Your application can detect a server certificate validation error by examining the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property passed into the <see cref="T:System.Net.Mail.SendCompletedEventHandler" /> delegate.</para>
+          <para>The <see cref="P:System.Net.Mail.SmtpClient.Timeout" /> property does not have any effect on a <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> call.</para>
+          <para>To send mail and block while it is transmitted to the SMTP server, use one of the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> methods.</para>
+          <block subset="none" type="note">
+            <para> If the <see cref="P:System.Net.Mail.SmtpClient.EnableSsl" /> property is set to true, and the SMTP mail server does not advertise STARTTLS in the response to the EHLO command, then a call to the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> or <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods will throw an <see cref="T:System.Net.Mail.SmtpException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends an e-mail message to an SMTP server for delivery. The message sender, recipients, subject, and message body are specified using <see cref="T:System.String" /> objects. This method does not block the calling thread and allows the caller to pass an object to the method that is invoked when the operation completes.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the address information of the message sender.</param>
+        <param name="subject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the subject line for the message.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the message body.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsyncCancel">
       <MemberSignature Language="C#" Value="public void SendAsyncCancel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsyncCancel() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Net.Mail.SmtpClient.SendAsyncCancel" /> method to cancel a pending <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> operation. If there is mail waiting to be sent, this method releases resources used to store the mail. If there is no mail waiting to be sent, this method does nothing. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels an asynchronous operation to send an e-mail message.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendCompleted">
       <MemberSignature Language="C#" Value="public event System.Net.Mail.SendCompletedEventHandler SendCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Net.Mail.SendCompletedEventHandler SendCompleted" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Mail.SendCompletedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" /> event is raised each time an e-mail message is sent asynchronously when the send operation completes. To send an e-mail message asynchronously, use the <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> methods.</para>
+          <para>
+            <see cref="T:System.Net.Mail.SendCompletedEventHandler" /> is the delegate for <see cref="E:System.Net.Mail.SmtpClient.SendCompleted" />. The <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" /> class provides the event handler with event data. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an asynchronous e-mail send operation completes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ServicePoint">
       <MemberSignature Language="C#" Value="public System.Net.ServicePoint ServicePoint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ServicePoint ServicePoint" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Net.ServicePoint</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The settings for the <see cref="P:System.Net.Mail.SmtpClient.ServicePoint" /> property are created using defaults specified in the application or machine configuration files and the <see cref="T:System.Net.ServicePointManager" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the network connection used to transmit the e-mail message.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="TargetName">
+      <MemberSignature Language="C#" Value="public string TargetName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TargetName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mail.SmtpClient.TargetName" /> property is used with integrated Windows authentication when an application is using extended protection. The <see cref="T:System.Net.Mail.SmtpClient" /> can then provide extended protection to ensure that credential challenge responses contain service specific information (a SPN) and, if necessary, channel specific information (a channel binding token or CBT). With this information in the credential exchanges, services are able to better protect against malicious use of credential challenge responses that might have been improperly obtained.</para>
+          <para>The default value for this property can also be set in a machine or application configuration file. Any changes made to the <see cref="P:System.Net.Mail.SmtpClient.TargetName" /> property override the configuration file settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Service Provider Name (SPN) to use for authentication when using extended protection.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Timeout">
-      <MemberSignature Language="C#" Value="public int Timeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Timeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, calls to the <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> method block until the operation completes. If you set the <see cref="P:System.Net.Mail.SmtpClient.Timeout" /> property to a positive value, and a <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> operation cannot complete in the allotted time, the <see cref="T:System.Net.Mail.SmtpClient" /> class throws an <see cref="T:System.Net.Mail.SmtpException" /> exception. </para>
+          <para>To send a message and continue executing in the application thread, use the <see cref="Overload:System.Net.Mail.SmtpClient.SendAsync" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the amount of time after which a synchronous <see cref="Overload:System.Net.Mail.SmtpClient.Send" /> call times out.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UseDefaultCredentials">
-      <MemberSignature Language="C#" Value="public bool UseDefaultCredentials { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool UseDefaultCredentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseDefaultCredentials" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>set: System.MonoNotSupported("no DefaultCredential support in Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some SMTP servers require that the client be authenticated before the server sends e-mail on its behalf. Set this property to true when this <see cref="T:System.Net.Mail.SmtpClient" /> object should, if requested by the server, authenticate using the default credentials of the currently logged on user. For client applications, this is the desired behavior in most scenarios. </para>
+          <para>Credentials information can also be specified using the application and machine configuration files. For more information, see <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for system.net</a></format>. </para>
+          <para>If the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> property is set to false, then the value set in the <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property will be used for the credentials when connecting to the server. If the <see cref="P:System.Net.Mail.SmtpClient.UseDefaultCredentials" /> property is set to false and the <see cref="P:System.Net.Mail.SmtpClient.Credentials" /> property has not been set, then mail is sent to the server anonymously. </para>
+          <block subset="none" type="note">
+            <para>If you provide credentials for basic authentication, they are sent to the server in clear text. This can present a security issue because your credentials can be seen, and then used by others.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that controls whether the <see cref="P:System.Net.CredentialCache.DefaultCredentials" /> are sent with requests.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

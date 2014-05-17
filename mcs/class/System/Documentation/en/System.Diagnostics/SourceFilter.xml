@@ -1,38 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SourceFilter" FullName="System.Diagnostics.SourceFilter">
   <TypeSignature Language="C#" Value="public class SourceFilter : System.Diagnostics.TraceFilter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SourceFilter extends System.Diagnostics.TraceFilter" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Diagnostics.TraceFilter</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>One of several different types of filters can be assigned to a trace listener to provide a layer of screening beyond that provided by the trace switch. The filter can be used to control the level of tracing that is produced by the listener.</para>
+      <para>This class filters events based on a specific trace source set by the user.</para>
+      <para>
+        <see cref="T:System.Diagnostics.SourceFilter" /> overrides the <see cref="M:System.Diagnostics.TraceFilter.ShouldTrace(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[],System.Object,System.Object[])" /> method and defines a <see cref="P:System.Diagnostics.SourceFilter.Source" /> property that specifies the name of the trace source to be traced by the listener.</para>
+      <block subset="none" type="note">
+        <para>This filter is provided because multiple trace sources can simultaneously use the same trace listener.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether a listener should trace a message based on the source of a trace.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SourceFilter (string source);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string source) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="source" /> parameter is used to initialize the <see cref="P:System.Diagnostics.SourceFilter.Source" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SourceFilter" /> class, specifying the name of the trace source. </para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the trace source.</param>
       </Docs>
     </Member>
     <Member MemberName="ShouldTrace">
       <MemberSignature Language="C#" Value="public override bool ShouldTrace (System.Diagnostics.TraceEventCache cache, string source, System.Diagnostics.TraceEventType eventType, int id, string formatOrMessage, object[] args, object data1, object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool ShouldTrace(class System.Diagnostics.TraceEventCache cache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string formatOrMessage, object[] args, object data1, object[] data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -48,32 +74,58 @@
         <Parameter Name="data" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="cache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="formatOrMessage">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="data1">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <paramref name="source" /> parameter matches the value of the <see cref="P:System.Diagnostics.SourceFilter.Source" /> property, the method returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the trace listener should trace the event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the trace should be produced; otherwise, false. </para>
+        </returns>
+        <param name="cache">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the information cache for the trace event.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that identifies the event type. </param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A trace identifier number.</param>
+        <param name="formatOrMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format to use for writing an array of arguments or a message to write.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of argument objects.</param>
+        <param name="data1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A trace data object.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of trace data objects.</param>
       </Docs>
     </Member>
     <Member MemberName="Source">
-      <MemberSignature Language="C#" Value="public string Source { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Source { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Source" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Diagnostics.SourceFilter.Source" /> identifies the trace source for which to write trace information. Trace information will not be written for other trace sources. The name of the trace source is the <paramref name="name" /> parameter from the constructor for the <see cref="T:System.Diagnostics.TraceSource" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the trace source.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

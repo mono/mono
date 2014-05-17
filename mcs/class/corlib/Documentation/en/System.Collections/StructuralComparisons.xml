@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StructuralComparisons" FullName="System.Collections.StructuralComparisons">
   <TypeSignature Language="C#" Value="public static class StructuralComparisons" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit StructuralComparisons extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,28 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Collections.StructuralComparisons" /> class returns the following two predefined comparison objects:</para>
+      <list type="bullet">
+        <item>
+          <para>An <see cref="T:System.Collections.IComparer" /> implementation that can be passed to a method such as <see cref="M:System.Array.System#Collections#IStructuralComparable#CompareTo(System.Object,System.Collections.IComparer)" /> or <see cref="M:System.Tuple`3.System#Collections#IStructuralComparable#CompareTo(System.Object,System.Collections.IComparer)" /> to perform a structural comparison of two objects. It is designed to indicate whether the first object precedes, follows, or occurs in the same position as the second object in the sort order. </para>
+        </item>
+        <item>
+          <para>An <see cref="T:System.Collections.IEqualityComparer" /> implementation that can be passed to a method such as <see cref="M:System.Array.System#Collections#IStructuralEquatable#Equals(System.Object,System.Collections.IEqualityComparer)" /> or <see cref="M:System.Tuple`3.System#Collections#IStructuralEquatable#Equals(System.Object,System.Collections.IEqualityComparer)" /> to perform a comparison for structural equality.</para>
+        </item>
+      </list>
+      <para>The objects can be used to perform a structural comparison or a structural equality comparison of two collection objects, such as array or tuple objects. In structural comparison, two objects are compared based on their values. Objects can be ordered based on some criteria, and two objects are considered equal when they have equal values, not because they reference the same physical object </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides objects for performing a structural comparison of two collection objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="StructuralComparer">
       <MemberSignature Language="C#" Value="public static System.Collections.IComparer StructuralComparer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.IComparer StructuralComparer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -23,13 +41,31 @@
         <ReturnType>System.Collections.IComparer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Collections.IComparer" /> object returned by this property is passed to the comparison method of a collection object, such as <see cref="M:System.Array.System#Collections#IStructuralComparable#CompareTo(System.Object,System.Collections.IComparer)" /> or <see cref="M:System.Tuple`3.System#Collections#IStructuralComparable#CompareTo(System.Object,System.Collections.IComparer)" />, its <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> method is called for each member of an array or for each component of a tuple. This implementation of the <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> method behaves as follows when it compares each item of a collection object with the corresponding item of another collection object:</para>
+          <list type="bullet">
+            <item>
+              <para>It considers two items that are null to be equal, and considers a null item to be less than an item that is not null.</para>
+            </item>
+            <item>
+              <para>If the first item in the comparison can be cast to an <see cref="T:System.Collections.IStructuralComparable" /> object (in other words, if it is a collection object that implements the <see cref="T:System.Collections.IStructuralComparable" /> interface), it calls the <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method.</para>
+            </item>
+            <item>
+              <para>If the first item in the comparison cannot be cast to an <see cref="T:System.Collections.IStructuralComparable" /> object (in other words, if it is not a collection object that implements the <see cref="T:System.Collections.IStructuralComparable" /> interface), it calls the Comparer.Default.Compare method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a predefined object that performs a structural comparison of two objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StructuralEqualityComparer">
       <MemberSignature Language="C#" Value="public static System.Collections.IEqualityComparer StructuralEqualityComparer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.IEqualityComparer StructuralEqualityComparer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -38,9 +74,29 @@
         <ReturnType>System.Collections.IEqualityComparer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Collections.IComparer" /> object returned by this property is passed to the equality comparison method of a collection object, such as <see cref="M:System.Array.System#Collections#IStructuralEquatable#Equals(System.Object,System.Collections.IEqualityComparer)" /> or <see cref="M:System.Tuple`3.System#Collections#IStructuralEquatable#Equals(System.Object,System.Collections.IEqualityComparer)" />, its <see cref="M:System.Collections.IEqualityComparer.Equals(System.Object,System.Object)" /> method is called for each member of an array or for each component of a tuple. This implementation of the <see cref="M:System.Collections.IEqualityComparer.Equals(System.Object,System.Object)" /> method behaves as follows when it compares each item of a collection object with the corresponding item of another collection object:</para>
+          <list type="bullet">
+            <item>
+              <para>If both items are null, it considers the two items to be equal.</para>
+            </item>
+            <item>
+              <para>If one item is null but the other item is not, it considers the two items to be unequal.</para>
+            </item>
+            <item>
+              <para>If the first item in the comparison can be cast to an <see cref="T:System.Collections.IStructuralEquatable" /> object (in other words, if it is a collection object that implements the <see cref="T:System.Collections.IStructuralEquatable" /> interface), it calls the <see cref="M:System.Collections.IStructuralEquatable.Equals(System.Object,System.Collections.IEqualityComparer)" /> method.</para>
+            </item>
+            <item>
+              <para>If the first item in the comparison cannot be cast to an <see cref="T:System.Collections.IStructuralEquatable" /> object (in other words, if it is not a collection object that implements the <see cref="T:System.Collections.IStructuralEquatable" /> interface), it calls the item's Equals method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a predefined object that compares two objects for structural equality.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

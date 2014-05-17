@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MenuCommandService" FullName="System.ComponentModel.Design.MenuCommandService">
   <TypeSignature Language="C#" Value="public class MenuCommandService : IDisposable, System.ComponentModel.Design.IMenuCommandService" />
   <AssemblyInfo>
@@ -16,8 +17,64 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.MenuCommandService" /> class implements the <see cref="T:System.ComponentModel.Design.IMenuCommandService" /> interface, which is the managed interface used to add handlers for menu commands and to define verbs.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.MenuCommandService" /> class is automatically offered by the package class to offer global commands for an entire package, and it is also offered by the Microsoft.VisualStudio.Shell.WindowPane class to offer commands for the current window. This offering is always done through the service container, so anyone deriving from the package or window pane classes can remove or replace the default implementation of the <see cref="T:System.ComponentModel.Design.IMenuCommandService" /> interface.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.MenuCommandService" /> class utilizes several other services. All of these services are optional, so the behavior of the <see cref="T:System.ComponentModel.Design.MenuCommandService" /> class degrades if one or more services are missing. The following table shows which services are used and for what purpose.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Service</para>
+            </term>
+            <description>
+              <para>Purpose</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.ISelectionService" />
+            </para>
+          </term>
+          <description>
+            <para>Used to discover the current selection in order to obtain verbs offered by the currently selected designer.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IDesignerHost" />
+            </para>
+          </term>
+          <description>
+            <para>Used to obtain the designer for the currently selected component, if any.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Microsoft.VisualStudio.Shell.Interop.IVsUIShell</para>
+          </term>
+          <description>
+            <para>Used to notify vsprvs that the command status has changed.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Microsoft.VisualStudio.Shell.Interop.IOleComponentUIManager</para>
+          </term>
+          <description>
+            <para>Used to show context menus.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the <see cref="T:System.ComponentModel.Design.IMenuCommandService" /> interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +87,16 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the service is being used with a designer, the <paramref name="serviceProvider" /> parameter should be the service provider for the designer, as is the case with <see cref="T:System.ComponentModel.Design.DesignSurface" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.MenuCommandService" /> class. </para>
+        </summary>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service provider that this service uses to obtain other services.</param>
       </Docs>
     </Member>
     <Member MemberName="AddCommand">
@@ -48,9 +112,16 @@
         <Parameter Name="command" Type="System.ComponentModel.Design.MenuCommand" />
       </Parameters>
       <Docs>
-        <param name="command">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.MenuCommandService.AddCommand(System.ComponentModel.Design.MenuCommand)" /> method adds a command handler to the menu command service. Command handlers do not define the text, shortcut, or placement of a menu item. Rather, they define the menu item’s behavior if the item is clicked. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a command handler to the menu command service.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.MenuCommand" /> to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AddVerb">
@@ -66,9 +137,16 @@
         <Parameter Name="verb" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="verb">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This verb is available regardless of what designer is currently selected. Unlike menu commands, verbs can define the text that is displayed to the user, but they do not define the placement of the command on the actual menu.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a verb to the verb table of the <see cref="T:System.ComponentModel.Design.MenuCommandService" />.</para>
+        </summary>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to add.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -82,8 +160,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.ComponentModel.Design.MenuCommandService.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.Design.MenuCommandService" />. The <see cref="M:System.ComponentModel.Design.MenuCommandService.Dispose" /> method leaves the <see cref="T:System.ComponentModel.Design.MenuCommandService" /> in an unusable state. After calling <see cref="M:System.ComponentModel.Design.MenuCommandService.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.Design.MenuCommandService" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Design.MenuCommandService" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ComponentModel.Design.MenuCommandService.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.Design.MenuCommandService" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Design.MenuCommandService" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.ComponentModel.Design.MenuCommandService" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -99,9 +186,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.Design.MenuCommandService" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.ComponentModel.Design.MenuCommandService" />.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="EnsureVerbs">
@@ -115,8 +210,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.MenuCommandService.EnsureVerbs" /> method creates the verb list if it has not already been created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ensures that the verb list has been created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FindCommand">
@@ -132,10 +233,17 @@
         <Parameter Name="commandID" Type="System.ComponentModel.Design.CommandID" />
       </Parameters>
       <Docs>
-        <param name="commandID">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the <see cref="T:System.ComponentModel.Design.MenuCommand" /> associated with the given command ID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.MenuCommand" /> associated with the given command; otherwise, null if the command is not found.</para>
+        </returns>
+        <param name="commandID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.CommandID" /> to find.</param>
       </Docs>
     </Member>
     <Member MemberName="FindCommand">
@@ -152,11 +260,19 @@
         <Parameter Name="id" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="guid">To be added.</param>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the <see cref="T:System.ComponentModel.Design.MenuCommand" /> associated with the given command.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.MenuCommand" /> associated with the given command; otherwise, null if the command is not found.</para>
+        </returns>
+        <param name="guid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The GUID of the command.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the command.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCommandList">
@@ -172,10 +288,17 @@
         <Parameter Name="guid" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="guid">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command list for a given GUID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of commands.</para>
+        </returns>
+        <param name="guid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The GUID of the command list.</param>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -191,10 +314,17 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the requested service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to <paramref name="serviceType" />; otherwise, null if the service is not found.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the service to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GlobalInvoke">
@@ -210,10 +340,20 @@
         <Parameter Name="commandID" Type="System.ComponentModel.Design.CommandID" />
       </Parameters>
       <Docs>
-        <param name="commandID">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local form is first searched for the given command ID. If it is found, it is invoked. Otherwise, the command ID is passed to the global environment command handler, if one is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the given command on the local form or in the global environment.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the command was found; otherwise, false.</para>
+        </returns>
+        <param name="commandID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command to invoke.</param>
       </Docs>
     </Member>
     <Member MemberName="GlobalInvoke">
@@ -231,10 +371,20 @@
       </Parameters>
       <Docs>
         <param name="commandID">To be added.</param>
-        <param name="arg">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local form is first searched for the given command ID. If it is found, it is invoked. Otherwise, the command ID is passed to the global environment command handler, if one is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the given command with the given parameter on the local form or in the global environment.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the command was found; otherwise, false.</para>
+        </returns>
+        <param name="arg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter for the invocation.</param>
       </Docs>
     </Member>
     <Member MemberName="MenuCommandsChanged">
@@ -247,8 +397,14 @@
         <ReturnType>System.ComponentModel.Design.MenuCommandsChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the status of a menu command has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnCommandsChanged">
@@ -264,9 +420,18 @@
         <Parameter Name="e" Type="System.ComponentModel.Design.MenuCommandsChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.MenuCommandService.OnCommandsChanged(System.ComponentModel.Design.MenuCommandsChangedEventArgs)" /> method is called by a menu command when its status has changed.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.MenuCommandService.OnCommandsChanged(System.ComponentModel.Design.MenuCommandsChangedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.MenuCommandService.MenuCommandsChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.MenuCommandsChangedEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveCommand">
@@ -282,9 +447,16 @@
         <Parameter Name="command" Type="System.ComponentModel.Design.MenuCommand" />
       </Parameters>
       <Docs>
-        <param name="command">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are no more commands in the command group, the group is removed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the given menu command from the document.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveVerb">
@@ -300,9 +472,13 @@
         <Parameter Name="verb" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="verb">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the given verb from the document.</para>
+        </summary>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The verb to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="ShowContextMenu">
@@ -320,11 +496,20 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="menuID">To be added.</param>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the shortcut menu with the given command ID at the given location.</para>
+        </summary>
+        <param name="menuID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The shortcut menu to display.</param>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the shortcut menu's location.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the shortcut menu's location.</param>
       </Docs>
     </Member>
     <Member MemberName="Verbs">
@@ -337,9 +522,24 @@
         <ReturnType>System.ComponentModel.Design.DesignerVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.MenuCommandService.Verbs" /> property provides a collection of verbs. These verbs come from two places:</para>
+          <list type="bullet">
+            <item>
+              <para>Verbs added through the <see cref="M:System.ComponentModel.Design.MenuCommandService.AddVerb(System.ComponentModel.Design.DesignerVerb)" /> method of <see cref="P:System.ComponentModel.Design.MenuCommandService.Verbs" />.</para>
+            </item>
+            <item>
+              <para>Verbs offered by the currently selected designer.</para>
+            </item>
+          </list>
+          <para>Verbs added to this service through the <see cref="M:System.ComponentModel.Design.MenuCommandService.AddVerb(System.ComponentModel.Design.DesignerVerb)" /> method are called global verbs because they are global to this service, but generally there is one instance of this service for each tool or document window. Designer verbs are obtained by querying the service provider for <see cref="T:System.ComponentModel.Design.IDesignerHost" /> and <see cref="T:System.ComponentModel.Design.ISelectionService" />. If the selection service offers a primary selection, and a designer can be obtained for that selection from <see cref="T:System.ComponentModel.Design.IDesignerHost" />, the designer’s verbs are added to this list. If the name of a global verb conflicts with the name of a designer verb, the designer-provided designer verb takes precedence.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the designer verbs that are currently available.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

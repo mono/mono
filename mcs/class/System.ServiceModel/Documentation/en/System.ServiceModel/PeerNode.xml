@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PeerNode" FullName="System.ServiceModel.PeerNode">
+  <TypeSignature Language="C#" Value="public abstract class PeerNode : System.ServiceModel.IOnlineStatus" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit PeerNode extends System.Object implements class System.ServiceModel.IOnlineStatus" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.IOnlineStatus</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A peer node can host multiple peer channels within the mesh as long as they share a common URI and host name in the <see cref="T:System.ServiceModel.EndpointAddress" /> supplied to the binding for each channel.</para>
+      <para>If two or more peer channels defined for a peer node are created with separate bindings, then the <see cref="P:System.ServiceModel.NetPeerTcpBinding.Port" />, <see cref="P:System.ServiceModel.NetPeerTcpBinding.ListenIPAddress" />, and <see cref="P:System.ServiceModel.NetPeerTcpBinding.Resolver" /> properties must be identical on all bindings.</para>
+      <para>If a subsequent channel binding is created after the first one for the same peer node instance, then the <see cref="P:System.ServiceModel.NetPeerTcpBinding.MaxReceivedMessageSize" /> property on this and subsequent bindings must be less than or equal to the value of <see cref="P:System.ServiceModel.NetPeerTcpBinding.MaxReceivedMessageSize" /> property as set on the first channel binding.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the instance of of a peer node used by an application participating in a specific peer mesh.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="IsOnline">
+      <MemberSignature Language="C#" Value="public bool IsOnline { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsOnline" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>"Online" indicates that a peer node has available neighbor nodes. "Offline" indicates that a peer node has no available neighbors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the peer node is online and able to send messages to neighboring nodes in the peer mesh.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessagePropagationFilter">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.PeerMessagePropagationFilter MessagePropagationFilter { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.PeerMessagePropagationFilter MessagePropagationFilter" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerMessagePropagationFilter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message filter must be a derived type and should be recast to that type to use any custom features defined on it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets a custom filter for messages received over the peer channel.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Offline">
+      <MemberSignature Language="C#" Value="public event EventHandler Offline;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Offline" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An offline peer node has no neighbor nodes within the peer mesh to which it can connect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals when the peer node goes offline from the peer mesh.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Online">
+      <MemberSignature Language="C#" Value="public event EventHandler Online;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Online" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An online peer node has at least one neighbor node within the peer mesh to which it is connected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals when a peer node comes online within the peer mesh.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="C#" Value="public int Port { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Port" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the network port on which the peer node is listening.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RefreshConnection">
+      <MemberSignature Language="C#" Value="public void RefreshConnection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RefreshConnection() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the connection with the peer mesh.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a string representation of a peer node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.String" /> value that contains the mesh ID of the peer node if the mesh ID is set; otherwise, it returns the type.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

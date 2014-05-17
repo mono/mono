@@ -260,5 +260,19 @@ namespace System.Reflection {
 			}
 		}
 
+#if NET_4_5
+		public override bool IsConstructedGenericType {
+			get { return typeImpl.IsConstructedGenericType; }
+		}
+
+		public override bool IsAssignableFrom (TypeInfo typeInfo)
+		{
+			if (typeInfo == null)
+				throw new ArgumentNullException ("typeInfo");
+
+			return IsAssignableFrom (typeInfo.AsType ());
+		}
+#endif
+
 	}
 }

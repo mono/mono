@@ -193,7 +193,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (5, args[0], "#B2");
 		}
 
-		public void HeyHey (out string out1, ref string ref1)
+		public void HeyHey (out string out1, ref DateTime ref1)
 		{
 			out1 = null;
 		}
@@ -237,7 +237,7 @@ namespace MonoTests.System.Reflection
 		[Test] // bug #76541
 		public void ToStringByRef ()
 		{
-			Assert.AreEqual ("Void HeyHey(System.String ByRef, System.String ByRef)",
+			Assert.AreEqual ("Void HeyHey(System.String ByRef, System.DateTime ByRef)",
 				this.GetType ().GetMethod ("HeyHey").ToString ());
 		}
 		
@@ -254,8 +254,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("Int32* PtrFunc(Int32*)", this.GetType ().GetMethod ("PtrFunc").ToString ());
 		}
 
-
-#if NET_2_0
 		public struct SimpleStruct
 		{
 			int a;
@@ -278,7 +276,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("System.Collections.ObjectModel.ReadOnlyCollection`1[T] AsReadOnly[T](T[])",
 				typeof (Array).GetMethod ("AsReadOnly").ToString ());
 		}
-#endif
 
 		class GBD_A         { public virtual     void f () {} }
 		class GBD_B : GBD_A { public override    void f () {} }
@@ -366,6 +363,9 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void GetMethodBody ()
 		{
+#if MONOTOUCH && !DEBUG
+			Assert.Ignore ("Release app (on devices) are stripped of (managed) IL so this test would fail");
+#endif
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
 
 			Assert.IsTrue (mb.InitLocals, "#1");

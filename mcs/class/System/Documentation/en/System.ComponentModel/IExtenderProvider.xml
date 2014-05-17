@@ -1,22 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IExtenderProvider" FullName="System.ComponentModel.IExtenderProvider">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IExtenderProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IExtenderProvider" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An extender provider is a component that provides properties to other components. For example, the <see cref="T:System.Windows.Forms.ToolTip" /> control is an extender provider. When you add a <see cref="T:System.Windows.Forms.ToolTip" /> control to a <see cref="T:System.Windows.Forms.Form" />, all other controls on the form have a <see cref="T:System.Windows.Forms.ToolTip" /> property added to their list of properties.</para>
+      <para>Any component that provides extender properties must implement <see cref="T:System.ComponentModel.IExtenderProvider" />. A visual designer can then call <see cref="M:System.ComponentModel.IExtenderProvider.CanExtend(System.Object)" /> to determine which objects in a container should receive the extender properties.</para>
+      <para>For more information about extender providers, see <format type="text/html"><a href="d824f40e-b20b-464c-ac22-97974d5ab4fe">How to: Implement an Extender Provider</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface for extending properties to other components in a container.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CanExtend">
       <MemberSignature Language="C#" Value="public bool CanExtend (object extendee);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CanExtend(object extendee) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -24,15 +41,21 @@
         <Parameter Name="extendee" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="extendee">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on extender properties, see <format type="text/html"><a href="d824f40e-b20b-464c-ac22-97974d5ab4fe">How to: Implement an Extender Provider</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether this object can provide its extender properties to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this object can provide extender properties to the specified object; otherwise, false.</para>
+        </returns>
+        <param name="extendee">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to receive the extender properties. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

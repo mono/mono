@@ -390,14 +390,14 @@ namespace Mono.CSharp {
 						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					}
 					if (left is FloatConstant){
-						float res;
-						
+						double a, b, res;
+						a = ((FloatConstant) left).DoubleValue;
+						b = ((FloatConstant) right).DoubleValue;
+
 						if (ec.ConstantCheckState)
-							res = checked (((FloatConstant) left).Value +
-								       ((FloatConstant) right).Value);
+							res = checked (a + b);
 						else
-							res = unchecked (((FloatConstant) left).Value +
-									 ((FloatConstant) right).Value);
+							res = unchecked (a + b);
 
 						result = new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
@@ -514,14 +514,14 @@ namespace Mono.CSharp {
 
 						result = new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
-						float res;
-						
+						double a, b, res;
+						a = ((FloatConstant) left).DoubleValue;
+						b = ((FloatConstant) right).DoubleValue;
+
 						if (ec.ConstantCheckState)
-							res = checked (((FloatConstant) left).Value -
-								       ((FloatConstant) right).Value);
+							res = checked (a - b);
 						else
-							res = unchecked (((FloatConstant) left).Value -
-									 ((FloatConstant) right).Value);
+							res = unchecked (a - b);
 
 						result = new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
@@ -611,14 +611,14 @@ namespace Mono.CSharp {
 
 						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
-						float res;
-						
+						double a, b, res;
+						a = ((FloatConstant) left).DoubleValue;
+						b = ((FloatConstant) right).DoubleValue;
+
 						if (ec.ConstantCheckState)
-							res = checked (((FloatConstant) left).Value *
-								((FloatConstant) right).Value);
+							res = checked (a * b);
 						else
-							res = unchecked (((FloatConstant) left).Value *
-								((FloatConstant) right).Value);
+							res = unchecked (a * b);
 
 						return new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
@@ -707,14 +707,14 @@ namespace Mono.CSharp {
 
 						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
-						float res;
-						
+						double a, b, res;
+						a = ((FloatConstant) left).DoubleValue;
+						b = ((FloatConstant) right).DoubleValue;
+
 						if (ec.ConstantCheckState)
-							res = checked (((FloatConstant) left).Value /
-								((FloatConstant) right).Value);
+							res = checked (a / b);
 						else
-							res = unchecked (((FloatConstant) left).Value /
-								((FloatConstant) right).Value);
+							res = unchecked (a / b);
 
 						return new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
@@ -807,14 +807,14 @@ namespace Mono.CSharp {
 
 						return new DoubleConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is FloatConstant){
-						float res;
+						double a, b, res;
+						a = ((FloatConstant) left).DoubleValue;
+						b = ((FloatConstant) right).DoubleValue;
 						
 						if (ec.ConstantCheckState)
-							res = checked (((FloatConstant) left).Value %
-								       ((FloatConstant) right).Value);
+							res = checked (a % b);
 						else
-							res = unchecked (((FloatConstant) left).Value %
-									 ((FloatConstant) right).Value);
+							res = unchecked (a % b);
 
 						return new FloatConstant (ec.BuiltinTypes, res, left.Location);
 					} else if (left is ULongConstant){
@@ -883,7 +883,6 @@ namespace Mono.CSharp {
 
 				IntConstant ic = right.ConvertImplicitly (ec.BuiltinTypes.Int) as IntConstant;
 				if (ic == null){
-					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 					return null;
 				}
 
@@ -905,8 +904,7 @@ namespace Mono.CSharp {
 				if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Int)
 					return new IntConstant (ec.BuiltinTypes, ((IntConstant) left).Value << lshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
-				break;
+				return null;
 
 				//
 				// There is no overflow checking on right shift
@@ -920,7 +918,6 @@ namespace Mono.CSharp {
 
 				IntConstant sic = right.ConvertImplicitly (ec.BuiltinTypes.Int) as IntConstant;
 				if (sic == null){
-					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc); ;
 					return null;
 				}
 				int rshift_val = sic.Value;
@@ -941,8 +938,7 @@ namespace Mono.CSharp {
 				if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Int)
 					return new IntConstant (ec.BuiltinTypes, ((IntConstant) left).Value >> rshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
-				break;
+				return null;
 
 			case Binary.Operator.Equality:
 				if (TypeSpec.IsReferenceType (lt) && TypeSpec.IsReferenceType (rt) ||
@@ -969,8 +965,8 @@ namespace Mono.CSharp {
 					bool_res = ((DoubleConstant) left).Value ==
 						((DoubleConstant) right).Value;
 				else if (left is FloatConstant)
-					bool_res = ((FloatConstant) left).Value ==
-						((FloatConstant) right).Value;
+					bool_res = ((FloatConstant) left).DoubleValue ==
+						((FloatConstant) right).DoubleValue;
 				else if (left is ULongConstant)
 					bool_res = ((ULongConstant) left).Value ==
 						((ULongConstant) right).Value;
@@ -1013,8 +1009,8 @@ namespace Mono.CSharp {
 					bool_res = ((DoubleConstant) left).Value !=
 						((DoubleConstant) right).Value;
 				else if (left is FloatConstant)
-					bool_res = ((FloatConstant) left).Value !=
-						((FloatConstant) right).Value;
+					bool_res = ((FloatConstant) left).DoubleValue !=
+						((FloatConstant) right).DoubleValue;
 				else if (left is ULongConstant)
 					bool_res = ((ULongConstant) left).Value !=
 						((ULongConstant) right).Value;
@@ -1049,8 +1045,8 @@ namespace Mono.CSharp {
 					bool_res = ((DoubleConstant) left).Value <
 						((DoubleConstant) right).Value;
 				else if (left is FloatConstant)
-					bool_res = ((FloatConstant) left).Value <
-						((FloatConstant) right).Value;
+					bool_res = ((FloatConstant) left).DoubleValue <
+						((FloatConstant) right).DoubleValue;
 				else if (left is ULongConstant)
 					bool_res = ((ULongConstant) left).Value <
 						((ULongConstant) right).Value;
@@ -1085,8 +1081,8 @@ namespace Mono.CSharp {
 					bool_res = ((DoubleConstant) left).Value >
 						((DoubleConstant) right).Value;
 				else if (left is FloatConstant)
-					bool_res = ((FloatConstant) left).Value >
-						((FloatConstant) right).Value;
+					bool_res = ((FloatConstant) left).DoubleValue >
+						((FloatConstant) right).DoubleValue;
 				else if (left is ULongConstant)
 					bool_res = ((ULongConstant) left).Value >
 						((ULongConstant) right).Value;
@@ -1121,8 +1117,8 @@ namespace Mono.CSharp {
 					bool_res = ((DoubleConstant) left).Value >=
 						((DoubleConstant) right).Value;
 				else if (left is FloatConstant)
-					bool_res = ((FloatConstant) left).Value >=
-						((FloatConstant) right).Value;
+					bool_res = ((FloatConstant) left).DoubleValue >=
+						((FloatConstant) right).DoubleValue;
 				else if (left is ULongConstant)
 					bool_res = ((ULongConstant) left).Value >=
 						((ULongConstant) right).Value;
@@ -1157,8 +1153,8 @@ namespace Mono.CSharp {
 					bool_res = ((DoubleConstant) left).Value <=
 						((DoubleConstant) right).Value;
 				else if (left is FloatConstant)
-					bool_res = ((FloatConstant) left).Value <=
-						((FloatConstant) right).Value;
+					bool_res = ((FloatConstant) left).DoubleValue <=
+						((FloatConstant) right).DoubleValue;
 				else if (left is ULongConstant)
 					bool_res = ((ULongConstant) left).Value <=
 						((ULongConstant) right).Value;
@@ -1176,7 +1172,7 @@ namespace Mono.CSharp {
 
 				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 			}
-					
+
 			return null;
 		}
 	}

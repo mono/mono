@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IPartImportsSatisfiedNotification" FullName="System.ComponentModel.Composition.IPartImportsSatisfiedNotification">
+  <TypeSignature Language="C#" Value="public interface IPartImportsSatisfiedNotification" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPartImportsSatisfiedNotification" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Notifies a part when its imports have been satisfied.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="OnImportsSatisfied">
+      <MemberSignature Language="C#" Value="public void OnImportsSatisfied ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void OnImportsSatisfied() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when a part's imports have been satisfied and it is safe to use.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

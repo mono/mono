@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DataMemberAttribute" FullName="System.Runtime.Serialization.DataMemberAttribute">
+  <TypeSignature Language="C#" Value="public sealed class DataMemberAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DataMemberAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Apply the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> attribute in conjunction with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> to identify members of a type that are part of a data contract. One of the serializers that can serialize data contracts is the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. </para>
+      <para>The data contract model is an "opt-in" model. Applying the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> to a field or property explicitly specifies that the member value will be serialized. In contrast, the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" /> serializes public and private fields of a type, and the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes only public fields and properties of a type. </para>
+      <block subset="none" type="note">
+        <para>You can apply the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> to private fields or properties. Be aware that the data returned by the member (even if it private) will be serialized and deserialized, and thus can be viewed or intercepted by a malicious user or process. </para>
+      </block>
+      <para>By default, the CLR member name is used as the name of the data member. By setting the <see cref="P:System.Runtime.Serialization.DataMemberAttribute.Name" /> property, you can customize the name of the data member. This can be used to provide a name that may not be allowed as a CLR member name. When mapping to XML using the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />, this name is used as the name of the schema element in a type.</para>
+      <block subset="none" type="note">
+        <para>Properties to which the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> attribute has been applied must have both get and set fields; they cannot be get-only or set-only.</para>
+      </block>
+      <para>For more information about data contracts and data members, see <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Using Data Contracts</a></format>. For more information about member names, see <format type="text/html"><a href="53a3b505-4b27-444b-b079-0eb84a97cfd8">Data Member Default Values</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When applied to the member of a type, specifies that the member is part of a data contract and is serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataMemberAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EmitDefaultValue">
+      <MemberSignature Language="C#" Value="public bool EmitDefaultValue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EmitDefaultValue" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the dnprdnshort, types have a concept of default values. For example, for any reference type the default value is null, and for an integer type it is 0. It is occasionally desirable to omit a data member from the serialized data when it is set to its default value. To do this, set the <see cref="P:System.Runtime.Serialization.DataMemberAttribute.EmitDefaultValue" /> property to false (it is true by default). </para>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Runtime.Serialization.DataMemberAttribute.EmitDefaultValue" /> property to false is not a recommended practice. It should only be done if there is a specific need to do so (such as for interoperability or to reduce data size).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to serialize the default value for a field or property being serialized. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsRequired">
+      <MemberSignature Language="C#" Value="public bool IsRequired { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsRequired" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property is used for ensuring compatibility with future versions of a type. For more information, see <format type="text/html"><a href="4a0700cb-5f5f-4137-8705-3a3ecf06461f">Data Contract Versioning</a></format> and <format type="text/html"><a href="bf0ab338-4d36-4e12-8002-8ebfdeb346cb">Best Practices: Data Contract Versioning</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that instructs the serialization engine that the member must be present when reading or deserializing.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used to override the default name of the data member that is derived from the name of the member annotated with the <see cref="T:System.Runtime.Serialization.DataMemberAttribute" />. </para>
+          <para>The <see cref="P:System.Runtime.Serialization.DataMemberAttribute.Name" /> property enables you to use names that are not permitted as common language runtime (CLR) identifiers. In addition, this property enables the type author to define a data member name separate from the CLR member name. This separate definition helps in versioning scenarios (changing the CLR member name without breaking the data contract) and allows a different naming convention for data contact members and CLR members. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a data member name. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Order">
+      <MemberSignature Language="C#" Value="public int Order { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Order" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a type requires that one member be serialized or deserialized before another, use this property to specify the order. For more information, see <format type="text/html"><a href="0658a47d-b6e5-4ae0-ba72-ababc3c6ff33">Data Member Order</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the order of serialization and deserialization of a member.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

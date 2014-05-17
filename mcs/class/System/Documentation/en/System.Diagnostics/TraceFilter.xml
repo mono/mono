@@ -1,35 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceFilter" FullName="System.Diagnostics.TraceFilter">
   <TypeSignature Language="C#" Value="public abstract class TraceFilter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TraceFilter extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Trace filters can be used by trace listeners to provide an extra layer of filtering beyond that provided by trace switches. The trace filter for a trace listener can be found in the listener's <see cref="P:System.Diagnostics.TraceListener.Filter" /> property. Trace switches determine if a trace is to be sent to the trace listeners. Trace filters allow the individual trace listeners to determine whether or not the trace is to be written to the associated output medium. For example, as determined by each trace filter, a trace may be written to the console by a <see cref="T:System.Diagnostics.ConsoleTraceListener" />, but not to the event log by a <see cref="T:System.Diagnostics.EventLogTraceListener" />.</para>
+      <para>Filters that inherit from the <see cref="T:System.Diagnostics.TraceFilter" /> class can be used by trace listeners that inherit from the <see cref="T:System.Diagnostics.TraceListener" /> class to perform filtering of events being traced. <see cref="T:System.Diagnostics.TraceFilter" /> contains a single method, <see cref="M:System.Diagnostics.TraceFilter.ShouldTrace(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[],System.Object,System.Object[])" />, which takes event data and returns a flag indicating whether the event should be traced.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for trace filter implementations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TraceFilter ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.TraceFilter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShouldTrace">
       <MemberSignature Language="C#" Value="public abstract bool ShouldTrace (System.Diagnostics.TraceEventCache cache, string source, System.Diagnostics.TraceEventType eventType, int id, string formatOrMessage, object[] args, object data1, object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ShouldTrace(class System.Diagnostics.TraceEventCache cache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string formatOrMessage, object[] args, object data1, object[] data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -45,17 +62,31 @@
         <Parameter Name="data" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="cache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="formatOrMessage">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="data1">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, determines whether the trace listener should trace the event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to trace the specified event; otherwise, false. </para>
+        </returns>
+        <param name="cache">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.TraceEventCache" /> that contains information for the trace event.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A trace identifier number.</param>
+        <param name="formatOrMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />Either the format to use for writing an array of arguments specified by the <paramref name="args" /> parameter, or a message to write.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of argument objects.</param>
+        <param name="data1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A trace data object.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of trace data objects.</param>
       </Docs>
     </Member>
   </Members>

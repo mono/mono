@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SafeSerializationEventArgs" FullName="System.Runtime.Serialization.SafeSerializationEventArgs">
   <TypeSignature Language="C#" Value="public sealed class SafeSerializationEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SafeSerializationEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The event occurs when serializing an exception that contains custom data in  security-transparent code. </para>
+      <para>For more information and an example, see the <see cref="T:System.Runtime.Serialization.ISafeSerializationData" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="T:System.Exception.SerializeObjectState" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddSerializedState">
       <MemberSignature Language="C#" Value="public void AddSerializedState (System.Runtime.Serialization.ISafeSerializationData serializedState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddSerializedState(class System.Runtime.Serialization.ISafeSerializationData serializedState) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -26,13 +36,22 @@
         <Parameter Name="serializedState" Type="System.Runtime.Serialization.ISafeSerializationData" />
       </Parameters>
       <Docs>
-        <param name="serializedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class or structure that implements the <see cref="T:System.Runtime.Serialization.ISafeSerializationData" /> allows you to serialize custom data in security-transparent code. </para>
+          <para>For more information and an example, see the <see cref="T:System.Runtime.Serialization.ISafeSerializationData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the state of the exception.</para>
+        </summary>
+        <param name="serializedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A state object that is serialized with the instance.</param>
       </Docs>
     </Member>
     <Member MemberName="StreamingContext">
       <MemberSignature Language="C#" Value="public System.Runtime.Serialization.StreamingContext StreamingContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.Serialization.StreamingContext StreamingContext" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -41,9 +60,15 @@
         <ReturnType>System.Runtime.Serialization.StreamingContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and an example, see the <see cref="T:System.Runtime.Serialization.ISafeSerializationData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that describes the source and destination of a serialized stream.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

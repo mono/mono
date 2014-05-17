@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IDispatchMessageInspector" FullName="System.ServiceModel.Dispatcher.IDispatchMessageInspector">
+  <TypeSignature Language="C#" Value="public interface IDispatchMessageInspector" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDispatchMessageInspector" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement <see cref="T:System.ServiceModel.Dispatcher.IDispatchMessageInspector" /> to inspect or modify inbound or outbound application messages either prior to dispatching a request message to an operation or before returning a reply message to a caller. There are a large number of scenarios that require intercepting messages prior to invoking the operation for which it is destined. For example, you can log incoming application messages or perform some feature based on a message header.</para>
+      <para>Typically, message inspectors are inserted by a service behavior (<see cref="T:System.ServiceModel.Description.IServiceBehavior" />), an endpoint behavior (<see cref="T:System.ServiceModel.Description.IEndpointBehavior" />), or a contract behavior (<see cref="T:System.ServiceModel.Description.IContractBehavior" />). The behavior then adds the message inspector to the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.MessageInspectors" /> collection. For more information about extending the runtime using behaviors, see <format type="text/html"><a href="954c138a-1cd0-45a0-8abe-e4d2b8ff5400">Extending ServiceHost and the Dispatcher</a></format>. </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)" /> method enables custom behavior after receiving the message but before dispatching it to the intended operation.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object)" /> method enables custom behavior after the operation returns but before the reply is sent.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.ServiceModel.Dispatcher.IDispatchMessageInspector" /> objects are always called at the same point during message dispatch regardless of whether an operation is one-way or request-reply.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the methods that enable custom inspection or modification of inbound and outbound application messages in service applications.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AfterReceiveRequest">
+      <MemberSignature Language="C#" Value="public object AfterReceiveRequest (ref System.ServiceModel.Channels.Message message, System.ServiceModel.IClientChannel channel, System.ServiceModel.InstanceContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object AfterReceiveRequest(class System.ServiceModel.Channels.Message message, class System.ServiceModel.IClientChannel channel, class System.ServiceModel.InstanceContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message&amp;" RefType="ref" />
+        <Parameter Name="channel" Type="System.ServiceModel.IClientChannel" />
+        <Parameter Name="context" Type="System.ServiceModel.InstanceContext" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="channel">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeforeSendReply">
+      <MemberSignature Language="C#" Value="public void BeforeSendReply (ref System.ServiceModel.Channels.Message message, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void BeforeSendReply(class System.ServiceModel.Channels.Message message, object instance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message&amp;" RefType="ref" />
+        <Parameter Name="instance" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="instance">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

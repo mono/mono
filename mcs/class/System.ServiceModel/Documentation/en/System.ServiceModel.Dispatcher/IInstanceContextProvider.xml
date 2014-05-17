@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IInstanceContextProvider" FullName="System.ServiceModel.Dispatcher.IInstanceContextProvider">
+  <TypeSignature Language="C#" Value="public interface IInstanceContextProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IInstanceContextProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextProvider" /> interface to provide the appropriate <see cref="T:System.ServiceModel.InstanceContext" /> object to the system. Typically, this interface is implemented to support shared sessions, enable service instance pooling, control lifetimes of service instances, or to group contexts among clients.</para>
+      <para>For example, to implement sharing, insert a custom <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextProvider" /> to decide which session or call from a client is associated with which <see cref="T:System.ServiceModel.InstanceContext" /> object. For an example that demonstrates the sharing of instance contexts, see <format type="text/html"><a href="4a6a46d7-b7d7-4bb5-a0dd-03ffa3cbc230">InstanceContextSharing</a></format>.</para>
+      <block subset="none" type="note">
+        <para>When an <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextProvider" /> is inserted into indigo1, the normal property that controls the creation of <see cref="T:System.ServiceModel.InstanceContext" /> objects (the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property) is no longer checked and has no effect.</para>
+      </block>
+      <para>A more generic mechanism by which you can initialize <see cref="T:System.ServiceModel.InstanceContext" /> objects when created (for example, to attach custom extensions to each <see cref="T:System.ServiceModel.InstanceContext" />) is the <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextInitializer" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement to participate in the creation or choosing of a <see cref="T:System.ServiceModel.InstanceContext" /> object, especially to enable shared sessions.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetExistingInstanceContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.InstanceContext GetExistingInstanceContext (System.ServiceModel.Channels.Message message, System.ServiceModel.IContextChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.InstanceContext GetExistingInstanceContext(class System.ServiceModel.Channels.Message message, class System.ServiceModel.IContextChannel channel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.InstanceContext</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="channel" Type="System.ServiceModel.IContextChannel" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.GetExistingInstanceContext(System.ServiceModel.Channels.Message,System.ServiceModel.IContextChannel)" /> method is called when a message is received. Return the <see cref="T:System.ServiceModel.InstanceContext" /> object that you want to process the message, or null. In the case of null, indigo2 creates a new <see cref="T:System.ServiceModel.InstanceContext" /> object for the message and then calls the <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.InitializeInstanceContext(System.ServiceModel.InstanceContext,System.ServiceModel.Channels.Message,System.ServiceModel.IContextChannel)" /> method.</para>
+          <para>If you return null, the new <see cref="T:System.ServiceModel.InstanceContext" /> object goes through the throttling system and increments the count of <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentInstances" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when a new message is received.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.InstanceContext" /> object that is used to process the message; return null to instruct indigo2 to create a new <see cref="T:System.ServiceModel.InstanceContext" /> object.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming message.</param>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The channel that received the message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeInstanceContext">
+      <MemberSignature Language="C#" Value="public void InitializeInstanceContext (System.ServiceModel.InstanceContext instanceContext, System.ServiceModel.Channels.Message message, System.ServiceModel.IContextChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void InitializeInstanceContext(class System.ServiceModel.InstanceContext instanceContext, class System.ServiceModel.Channels.Message message, class System.ServiceModel.IContextChannel channel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instanceContext" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="channel" Type="System.ServiceModel.IContextChannel" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.InitializeInstanceContext(System.ServiceModel.InstanceContext,System.ServiceModel.Channels.Message,System.ServiceModel.IContextChannel)" /> is called when <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.GetExistingInstanceContext(System.ServiceModel.Channels.Message,System.ServiceModel.IContextChannel)" /> returns null and a new <see cref="T:System.ServiceModel.InstanceContext" /> object is created. This method is called to notify you that a new <see cref="T:System.ServiceModel.InstanceContext" /> has been created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when null is returned from the <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.GetExistingInstanceContext(System.ServiceModel.Channels.Message,System.ServiceModel.IContextChannel)" /> method.</para>
+        </summary>
+        <param name="instanceContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="T:System.ServiceModel.InstanceContext" /> object.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming message.</param>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The channel that received the message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsIdle">
+      <MemberSignature Language="C#" Value="public bool IsIdle (System.ServiceModel.InstanceContext instanceContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsIdle(class System.ServiceModel.InstanceContext instanceContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instanceContext" Type="System.ServiceModel.InstanceContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.IsIdle(System.ServiceModel.InstanceContext)" /> is called when indigo2 is about to close and recycle an idle <see cref="T:System.ServiceModel.InstanceContext" /> object so that you can inform the runtime whether to continue doing so. </para>
+          <para>For an example that demonstrates the sharing of instance contexts, see <format type="text/html"><a href="4a6a46d7-b7d7-4bb5-a0dd-03ffa3cbc230">InstanceContextSharing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when all <see cref="T:System.ServiceModel.InstanceContext" /> activities have completed to enable implementers to prevent the <see cref="T:System.ServiceModel.InstanceContext" /> from being recycled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if indigo1 is to close and recycle the <see cref="T:System.ServiceModel.InstanceContext" /> object and adjust the value of <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentInstances" />; otherwise, false.</para>
+        </returns>
+        <param name="instanceContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> object that is considered idle.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="NotifyIdle">
+      <MemberSignature Language="C#" Value="public void NotifyIdle (System.ServiceModel.Dispatcher.InstanceContextIdleCallback callback, System.ServiceModel.InstanceContext instanceContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NotifyIdle(class System.ServiceModel.Dispatcher.InstanceContextIdleCallback callback, class System.ServiceModel.InstanceContext instanceContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.ServiceModel.Dispatcher.InstanceContextIdleCallback" />
+        <Parameter Name="instanceContext" Type="System.ServiceModel.InstanceContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.NotifyIdle(System.ServiceModel.Dispatcher.InstanceContextIdleCallback,System.ServiceModel.InstanceContext)" /> method is called when the <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.IsIdle(System.ServiceModel.InstanceContext)" /> method returns false to enable you to provide indigo2 with a <see cref="T:System.ServiceModel.Dispatcher.InstanceContextIdleCallback" /> object that you use to inform the runtime that the <see cref="T:System.ServiceModel.InstanceContext" /> has finished its work. When the <see cref="T:System.ServiceModel.Dispatcher.InstanceContextIdleCallback" /> object notifies the runtime that the <see cref="T:System.ServiceModel.InstanceContext" /> has finished its work, indigo2 calls <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.IsIdle(System.ServiceModel.InstanceContext)" /> once again. This cycle continues until <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.IsIdle(System.ServiceModel.InstanceContext)" /> returns true and the context is closed and recycled. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.IsIdle(System.ServiceModel.InstanceContext)" /> method returns false to enable implementers to provide a callback to notify indigo2 when the <see cref="T:System.ServiceModel.InstanceContext" /> object is finished.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.InstanceContextIdleCallback" /> object that notifies indigo2 when the <see cref="T:System.ServiceModel.InstanceContext" /> object is to be closed and recycled.</param>
+        <param name="instanceContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.ServiceModel.InstanceContext" />. </param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

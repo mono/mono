@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Binder" FullName="Microsoft.CSharp.RuntimeBinder.Binder">
+  <TypeSignature Language="C#" Value="public static class Binder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Binder extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.CSharp</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains factory methods to create dynamic call site binders for CSharp.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="BinaryOperation">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder BinaryOperation (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, System.Linq.Expressions.ExpressionType operation, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder BinaryOperation(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, valuetype System.Linq.Expressions.ExpressionType operation, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="operation" Type="System.Linq.Expressions.ExpressionType" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp binary operation binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp binary operation binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binary operation kind.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder Convert (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type type, Type context);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder Convert(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, class System.Type type, class System.Type context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="context" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp convert binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp convert binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert to.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetIndex">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder GetIndex (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder GetIndex(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp get index binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp get index binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMember">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder GetMember (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder GetMember(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp get member binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp get member binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to get.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder Invoke (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder Invoke(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp invoke binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp invoke binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeConstructor">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder InvokeConstructor (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder InvokeConstructor(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp invoke constructor binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp invoke constructor binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeMember">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder InvokeMember (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, System.Collections.Generic.IEnumerable&lt;Type&gt; typeArguments, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder InvokeMember(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; typeArguments, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="typeArguments" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp invoke member binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp invoke member binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to invoke.</param>
+        <param name="typeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of type arguments specified for this invoke.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsEvent">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder IsEvent (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, Type context);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder IsEvent(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, class System.Type context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="context" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp is event binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp is event binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the event to look for.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetIndex">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder SetIndex (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder SetIndex(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp set index binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp set index binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetMember">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder SetMember (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder SetMember(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, string name, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp set member binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp set member binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to set.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="UnaryOperation">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSiteBinder UnaryOperation (Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, System.Linq.Expressions.ExpressionType operation, Type context, System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSiteBinder UnaryOperation(valuetype Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags flags, valuetype System.Linq.Expressions.ExpressionType operation, class System.Type context, class System.Collections.Generic.IEnumerable`1&lt;class Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt; argumentInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" />
+        <Parameter Name="operation" Type="System.Linq.Expressions.ExpressionType" />
+        <Parameter Name="context" Type="System.Type" />
+        <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp unary operation binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp unary operation binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unary operation kind.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

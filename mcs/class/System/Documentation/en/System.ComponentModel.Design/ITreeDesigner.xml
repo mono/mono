@@ -1,47 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITreeDesigner" FullName="System.ComponentModel.Design.ITreeDesigner">
-  <TypeSignature Language="C#" Value="public interface ITreeDesigner : System.ComponentModel.Design.IDesigner" />
+  <TypeSignature Language="C#" Value="public interface ITreeDesigner : IDisposable, System.ComponentModel.Design.IDesigner" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITreeDesigner implements class System.ComponentModel.Design.IDesigner, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
       <InterfaceName>System.ComponentModel.Design.IDesigner</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.ITreeDesigner" /> interface derives from the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface and provides support for flexibly navigating a hierarchy of related designers. With this interface, a programmer can supply a number of designers for the component, with the appropriate one being determined dynamically.</para>
+      <para>This interface is a simple extension of its base class, adding just two properties for navigating a tree hierarchy: <see cref="P:System.ComponentModel.Design.ITreeDesigner.Children" /> and <see cref="P:System.ComponentModel.Design.ITreeDesigner.Parent" />. </para>
+      <para>For an overview of creating design components, see <format type="text/html"><a href="d6ac8a6a-42fd-4bc8-bf33-b212811297e2">Extending Design-Time Support</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for building a set of related custom designers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Children">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection Children { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ICollection Children" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.ITreeDesigner.Children" /> property will return an empty collection if the <see cref="T:System.ComponentModel.Design.ITreeDesigner" /> has no child objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of child designers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parent">
       <MemberSignature Language="C#" Value="public System.ComponentModel.Design.IDesigner Parent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.Design.IDesigner Parent" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.IDesigner</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent designer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

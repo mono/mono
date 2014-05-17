@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XsltMessageEncounteredEventHandler" FullName="System.Xml.Xsl.XsltMessageEncounteredEventHandler">
   <TypeSignature Language="C#" Value="public delegate void XsltMessageEncounteredEventHandler(object sender, XsltMessageEncounteredEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XsltMessageEncounteredEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -17,8 +20,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Xml.Xsl.XsltArgumentList.XsltMessageEncountered" /> event occurs during XSLT processing when an xsl:message is specified in the style sheet.</para>
+      <para>For more information about event handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Xml.Xsl.XsltArgumentList.XsltMessageEncountered" /> event.</para>
+    </summary>
   </Docs>
 </Type>

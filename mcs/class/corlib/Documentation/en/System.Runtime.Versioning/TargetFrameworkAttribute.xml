@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TargetFrameworkAttribute" FullName="System.Runtime.Versioning.TargetFrameworkAttribute">
   <TypeSignature Language="C#" Value="public sealed class TargetFrameworkAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TargetFrameworkAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -14,12 +16,22 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Versioning.TargetFrameworkAttribute" /> class provides an attribute that you can apply to an assembly to indicate the version of the .NET Framework runtime against which the assembly was built. For example, the following example applies the TargetFrameworkAttribute to an assembly to indicate that it was built using net_v40_long.</para>
+      <para>code reference: System.Runtime.Versioning.TargetFrameworkAttribute#1</para>
+      <para>The <see cref="T:System.Runtime.Versioning.TargetFrameworkAttribute" /> class constructor has a single parameter, <paramref name="frameworkName" />, that specifies the .NET Framework version against which the assembly was built. This parameter maps to the <see cref="P:System.Runtime.Versioning.TargetFrameworkAttribute.FrameworkName" /> property. In addition, the <see cref="T:System.Runtime.Versioning.TargetFrameworkAttribute" /> attribute can specify a <see cref="P:System.Runtime.Versioning.TargetFrameworkAttribute.FrameworkDisplayName" /> property to provide a more descriptive .NET Framework version string that is suitable for displaying to clients of the assembly. The following example applies the TargetFrameworkAttribute to an assembly and assigns both property values to indicate that the assembly was built using net_v40_long. </para>
+      <para>code reference: System.Runtime.Versioning.TargetFrameworkAttribute#2</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the version of the .NET Framework that a particular assembly was compiled against.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TargetFrameworkAttribute (string frameworkName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string frameworkName) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -28,13 +40,21 @@
         <Parameter Name="frameworkName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="frameworkName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that is assigned to the <paramref name="frameworkName" /> parameter generally takes the same form as the string that is returned by the <see cref="M:System.Runtime.Versioning.FrameworkName.ToString" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Runtime.Versioning.TargetFrameworkAttribute" /> class by specifying the .NET Framework version against which an assembly was built.</para>
+        </summary>
+        <param name="frameworkName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the .NET Framework against which the assembly was built.</param>
       </Docs>
     </Member>
     <Member MemberName="FrameworkDisplayName">
-      <MemberSignature Language="C#" Value="public string FrameworkDisplayName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string FrameworkDisplayName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FrameworkDisplayName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -43,13 +63,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Versioning.TargetFrameworkAttribute.FrameworkDisplayName" /> property usually returns a relatively long descriptive string that is suitable for display to a user. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the display name of the .NET Framework version against which an assembly was built.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FrameworkName">
       <MemberSignature Language="C#" Value="public string FrameworkName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FrameworkName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -58,9 +85,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Versioning.TargetFrameworkAttribute.FrameworkName" /> property maps to the <paramref name="frameworkName" /> parameter of the <see cref="M:System.Runtime.Versioning.TargetFrameworkAttribute.#ctor(System.String)" /> constructor. It represents the .NET Framework version in a compact form and typically corresponds to the string that is returned by the <see cref="M:System.Runtime.Versioning.FrameworkName.ToString" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the .NET Framework version against which a particular assembly was compiled.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,9 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Globalization" FullName="System.Globalization" FullNameSP="System.Globalization" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Globalization" /> namespace contains classes that define culture-related information, including language, country/region, calendars in use, format patterns for dates, currency, and numbers, and sort order for strings. These classes are useful for writing globalized (internationalized) applications. Classes such as <see cref="T:System.Globalization.StringInfo" /> and <see cref="T:System.Globalization.TextInfo" /> provide advanced globalization functionalities, including surrogate support and text element processing.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following MSDN blogs include discussions of the <see cref="N:System.Globalization" /> namespace and its classes:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="http://go.microsoft.com/fwlink/?LinkId=160948">http://blogs.msdn.com/shawnste/</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://go.microsoft.com/fwlink/?LinkId=160949">http://blogs.msdn.com/michkap/</see>
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="http://go.microsoft.com/fwlink/?LinkId=160951">http://blogs.msdn.com/kierans/</see>
+          </para>
+        </item>
+      </list>
     </remarks>
   </Docs>
 </Namespace>

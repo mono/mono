@@ -1,9 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionEndingEventHandler" FullName="Microsoft.Win32.SessionEndingEventHandler">
   <TypeSignature Language="C#" Value="public delegate void SessionEndingEventHandler(object sender, SessionEndingEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SessionEndingEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -18,7 +21,13 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a <see cref="T:Microsoft.Win32.SessionEndingEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event-handling method, add an instance of the delegate to the event. The event-handling method is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:Microsoft.Win32.SystemEvents.SessionEnding" /> event from the operating system.</para>
+    </summary>
   </Docs>
 </Type>

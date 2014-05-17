@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XhtmlMobileDocType" FullName="System.Web.UI.XhtmlMobileDocType">
   <TypeSignature Language="C#" Value="public enum XhtmlMobileDocType" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you specify one of the <see cref="T:System.Web.UI.XhtmlMobileDocType" /> enumeration values as the parameter in a <see cref="M:System.Web.UI.XhtmlTextWriter.SetDocType(System.Web.UI.XhtmlMobileDocType)" /> method call, that value forces the text writer to adhere to the restrictions of that XHTML document type.</para>
+      <para>XHTML Basic is the mobile version of XHTML 1.0 and supports the minimum number of XHTML modules to be an XHTML document. It is designed for clients that do not support the full set of XHTML features, such as mobile phones, personal digital assistants (PDAs), pagers, and set-top boxes. With XHTML Basic, a document can be presented on the maximum number of clients, including a wide range of mobile phones with different display formats and presentation capabilities.</para>
+      <para>XHTML Mobile Profile adds to XHTML Basic several additional elements and attributes from the full XHTML 1.0, including additional presentation elements and support for internal style sheets.</para>
+      <para>WML 2.0 expands on both XHTML Basic and XHTML Mobile Profile by providing support for cascading style sheets.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of XHTML for the <see cref="T:System.Web.UI.XhtmlTextWriter" /> class to render to the page or control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Wml20">
@@ -20,8 +30,11 @@
         <ReturnType>System.Web.UI.XhtmlMobileDocType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the WML 2.0 format.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +47,11 @@
         <ReturnType>System.Web.UI.XhtmlMobileDocType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the XHTML Basic format. This format does not support frames and styles.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +64,11 @@
         <ReturnType>System.Web.UI.XhtmlMobileDocType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the XHTML Mobile Profile format.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

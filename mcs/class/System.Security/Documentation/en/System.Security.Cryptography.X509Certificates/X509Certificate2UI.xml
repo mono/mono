@@ -1,22 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509Certificate2UI" FullName="System.Security.Cryptography.X509Certificates.X509Certificate2UI">
-  <TypeSignature Language="C#" Value="public sealed class X509Certificate2UI" />
+  <TypeSignature Language="C#" Value="public static class X509Certificate2UI" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit X509Certificate2UI extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the methods of the <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2UI" /> class to present user interface dialogs that display detailed information about an X.509 certificate or allow users to select one or more certificates from a collection of X.509 certificates. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays user interface dialogs that allow you to select and view X.509 certificates. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DisplayCertificate">
       <MemberSignature Language="C#" Value="public static void DisplayCertificate (System.Security.Cryptography.X509Certificates.X509Certificate2 certificate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void DisplayCertificate(class System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -24,18 +38,27 @@
         <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
       </Parameters>
       <Docs>
-        <param name="certificate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate2UI.DisplayCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)" /> method displays a dialog box with detailed information about the specified X.509 certificate. The dialog box includes buttons for installing or copying the certificate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a dialog box that contains the properties of an X.509 certificate and its associated certificate chain.</para>
+        </summary>
+        <param name="certificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X.509 certificate to display.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisplayCertificate">
       <MemberSignature Language="C#" Value="public static void DisplayCertificate (System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, IntPtr hwndParent);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void DisplayCertificate(class System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, native int hwndParent) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -44,19 +67,29 @@
         <Parameter Name="hwndParent" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="certificate">To be added.</param>
-        <param name="hwndParent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate2UI.DisplayCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2,System.IntPtr)" /> method displays a dialog box with detailed information about the specified X.509 certificate. This method can be used to nest dialog boxes that display certificate information. The dialog box includes buttons for installing or copying the certificate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a dialog box that contains the properties of an X.509 certificate and its associated certificate chain using a handle to a parent window.</para>
+        </summary>
+        <param name="certificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X.509 certificate to display.</param>
+        <param name="hwndParent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to the parent window to use for the display dialog.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectFromCollection">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection (System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection(class System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, valuetype System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
       </ReturnValue>
@@ -67,22 +100,37 @@
         <Parameter Name="selectionFlag" Type="System.Security.Cryptography.X509Certificates.X509SelectionFlag" />
       </Parameters>
       <Docs>
-        <param name="certificates">To be added.</param>
-        <param name="title">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="selectionFlag">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate2UI.SelectFromCollection(System.Security.Cryptography.X509Certificates.X509Certificate2Collection,System.String,System.String,System.Security.Cryptography.X509Certificates.X509SelectionFlag)" /> method if you require users to manually select X.509 certificates using a dialog box. If no user interaction is required, use the <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate2Collection.Find(System.Security.Cryptography.X509Certificates.X509FindType,System.Object,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a dialog box for selecting an X.509 certificate from a certificate collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2Collection" /> object that contains the selected certificate or certificates.</para>
+        </returns>
+        <param name="certificates">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of X.509 certificates to select from.</param>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the dialog box.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A descriptive message to guide the user.  The message is displayed in the dialog box.</param>
+        <param name="selectionFlag">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509SelectionFlag" /> values that specifies whether single or multiple selections are allowed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectFromCollection">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection (System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag, IntPtr hwndParent);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection(class System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, valuetype System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag, native int hwndParent) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
       </ReturnValue>
@@ -94,19 +142,30 @@
         <Parameter Name="hwndParent" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="certificates">To be added.</param>
-        <param name="title">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="selectionFlag">To be added.</param>
-        <param name="hwndParent">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate2UI.SelectFromCollection(System.Security.Cryptography.X509Certificates.X509Certificate2Collection,System.String,System.String,System.Security.Cryptography.X509Certificates.X509SelectionFlag,System.IntPtr)" /> method if you require users to manually select X.509 certificates using a dialog box. If no user interaction is required, use the <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate2Collection.Find(System.Security.Cryptography.X509Certificates.X509FindType,System.Object,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a dialog box for selecting an X.509 certificate from a certificate collection using a handle to a parent window.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2Collection" /> object that contains the selected certificate or certificates.</para>
+        </returns>
+        <param name="certificates">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of X.509 certificates to select from.</param>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the dialog box.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A descriptive message to guide the user.  The message is displayed in the dialog box.</param>
+        <param name="selectionFlag">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509SelectionFlag" /> values that specifies whether single or multiple selections are allowed. </param>
+        <param name="hwndParent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to the parent window to use for the display dialog box.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

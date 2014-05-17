@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlMetaData" FullName="Microsoft.SqlServer.Server.SqlMetaData">
   <TypeSignature Language="C#" Value="public sealed class SqlMetaData" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies and retrieves metadata information from parameters and columns of <see cref="T:Microsoft.SqlServer.Server.SqlDataRecord" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +26,343 @@
         <Parameter Name="sqlDbType" Type="System.Data.SqlDbType" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
         <param name="sqlDbType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the following are allowed to be passed to the constructor as <paramref name="dbType" />: Bit, BigInt, DateTime, Decimal, Float, Int, Money, Numeric, SmallDateTime, SmallInt, SmallMoney, TimeStamp, TinyInt, UniqueIdentifier, Xml.</para>
+          <para>The following are the default values assigned to <paramref name="dbType" />, depending on the SqlDbType (the <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" />, and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Type" /> properties are set to null):</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>SqlDbType</para>
+                </term>
+                <description>
+                  <para>Maximum length</para>
+                </description>
+                <description>
+                  <para>Precision</para>
+                </description>
+                <description>
+                  <para>Scale</para>
+                </description>
+                <description>
+                  <para>Locale</para>
+                </description>
+                <description>
+                  <para>Compare options</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Bit</para>
+              </term>
+              <description>
+                <para>1</para>
+              </description>
+              <description>
+                <para>1</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BigInt</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>19</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DateTime</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>23</para>
+              </description>
+              <description>
+                <para>3</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Decimal</para>
+              </term>
+              <description>
+                <para>9</para>
+              </description>
+              <description>
+                <para>18</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Float</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>53</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Int</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>10</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Money</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>19</para>
+              </description>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Numeric</para>
+              </term>
+              <description>
+                <para>9</para>
+              </description>
+              <description>
+                <para>18</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SmallDateTime</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>16</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SmallInt</para>
+              </term>
+              <description>
+                <para>2</para>
+              </description>
+              <description>
+                <para>5</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SmallMoney</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>10</para>
+              </description>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TimeStamp</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TinyInt</para>
+              </term>
+              <description>
+                <para>1</para>
+              </description>
+              <description>
+                <para>3</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UniqueIdentifier</para>
+              </term>
+              <description>
+                <para>16</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Xml</para>
+              </term>
+              <description>
+                <para>Max (-1)</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> class with the specified column name and type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,12 +377,197 @@
         <Parameter Name="maxLength" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
         <param name="sqlDbType">To be added.</param>
-        <param name="maxLength">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the following are allowed to be passed to the constructor as <paramref name="dbType" />: Binary, Char, Image, NChar, Ntext, NVarChar, Text, VarBinary, VarChar.</para>
+          <para>Only a <paramref name="maxLength" /> specification of <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Max" />, or -1 is allowed for a <paramref name="dbType" /> of Text, NText, or Image.</para>
+          <para>For a <paramref name="dbType" /> of Varchar, Nvarchar, or VarBinary, a length specification of <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Max" />, or -1, declares the metadata as varchar(max), nvarchar(max), or nvarbinary(max), respectively.</para>
+          <para>The following are the default values assigned to <paramref name="dbType" />, depending on the SqlDbType (the <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" />, and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Type" /> properties are set to null):</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>SqlDbType</para>
+                </term>
+                <description>
+                  <para>Precision</para>
+                </description>
+                <description>
+                  <para>Scale</para>
+                </description>
+                <description>
+                  <para>Locale</para>
+                </description>
+                <description>
+                  <para>Compare options</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Binary</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para> 0</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Char</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Image</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NChar</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NText</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NVarChar</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VarBinary</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VarChar</para>
+              </term>
+              <description>
+                <para> 0</para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> class with the specified column name, type, and maximum length.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column.</param>
+        <param name="maxLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length of the specified type.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,11 +585,64 @@
         <Parameter Name="userDefinedType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
         <param name="sqlDbType">To be added.</param>
-        <param name="userDefinedType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the following SqlDbType is allowed to be passed to the constructor as <paramref name="dbType" />: UDT.</para>
+          <para>The following are the default values assigned to <paramref name="dbType" />, depending on the SqlDbType (the <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" />, and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Type" /> properties are set to null):</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>SqlDbType</para>
+                </term>
+                <description>
+                  <para>Maximum length</para>
+                </description>
+                <description>
+                  <para>Precision</para>
+                </description>
+                <description>
+                  <para>Scale</para>
+                </description>
+                <description>
+                  <para>Locale</para>
+                </description>
+                <description>
+                  <para>Compare options</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>UDT</para>
+              </term>
+              <description>
+                <para>&lt;Max length of the type&gt; or -1</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> class with the specified column name, type, and user-defined type (UDT).</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column.</param>
+        <param name="userDefinedType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> instance that points to the UDT.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -81,13 +655,67 @@
         <Parameter Name="scale" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
         <param name="sqlDbType">To be added.</param>
-        <param name="precision">To be added.</param>
-        <param name="scale">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the following SqlDbType is allowed to be passed to the constructor as <paramref name="dbType" />: Decimal.</para>
+          <para>The following are the default values assigned to <paramref name="dbType" />, depending on the SqlDbType (the <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" />, and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Type" /> properties are set to null):</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>SqlDbType</para>
+                </term>
+                <description>
+                  <para>Maximum length</para>
+                </description>
+                <description>
+                  <para>Precision</para>
+                </description>
+                <description>
+                  <para>Scale</para>
+                </description>
+                <description>
+                  <para>Locale</para>
+                </description>
+                <description>
+                  <para>Compare options</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Decimal</para>
+              </term>
+              <description>
+                <para>9</para>
+              </description>
+              <description>
+                <para>18</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> class with the specified column name, type, precision, and scale.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter or column.</param>
+        <param name="precision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The precision of the parameter or column.</param>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scale of the parameter or column.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,14 +732,108 @@
         <Parameter Name="compareOptions" Type="System.Data.SqlTypes.SqlCompareOptions" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
         <param name="sqlDbType">To be added.</param>
-        <param name="maxLength">To be added.</param>
-        <param name="locale">To be added.</param>
-        <param name="compareOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the following are allowed to be passed to the constructor as <paramref name="dbType" />: Char, NChar, Ntext, NVarChar, Text, VarChar.</para>
+          <para>Only a <paramref name="maxLength" /> specification of <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Max" />, or -1, is allowed for a <paramref name="dbType" /> of Text or NText.</para>
+          <para>For a <paramref name="dbType" /> of Varchar or Nvarchar, a length specification of <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Max" />, or -1, declares the metadata as varchar(max) and nvarchar(max), respectively.</para>
+          <para>The following are the default values assigned to <paramref name="dbType" />, depending on the SqlDbType (the <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" />, and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Type" /> properties are set to null):</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>SqlDbType</para>
+                </term>
+                <description>
+                  <para>Precision</para>
+                </description>
+                <description>
+                  <para>Scale</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Char</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NChar</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NText</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NVarChar</para>
+              </term>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>VarChar</para>
+              </term>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> class with the specified column name, type, maximum length, locale, and compare options.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter or column.</param>
+        <param name="maxLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length of the specified type. </param>
+        <param name="locale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale ID of the parameter or column.</param>
+        <param name="compareOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The comparison rules of the parameter or column.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -131,13 +853,68 @@
         <Parameter Name="objectName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
         <param name="sqlDbType">To be added.</param>
-        <param name="database">To be added.</param>
-        <param name="owningSchema">To be added.</param>
-        <param name="objectName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the following SqlDbType is allowed to be passed to the constructor as <paramref name="dbType" />: Xml.</para>
+          <para>The following are the default values assigned to <paramref name="dbType" />, depending on the SqlDbType:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>SqlDbType</para>
+                </term>
+                <description>
+                  <para>Maximum length</para>
+                </description>
+                <description>
+                  <para>Precision</para>
+                </description>
+                <description>
+                  <para>Scale</para>
+                </description>
+                <description>
+                  <para>Locale</para>
+                </description>
+                <description>
+                  <para>Compare options</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Xml</para>
+              </term>
+              <description>
+                <para>Max (-1)</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> class with the specified column name, type, database name, owning schema, and object name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column.</param>
+        <param name="database">
+          <attribution license="cc4" from="Microsoft" modified="false" />The database name of the XML schema collection of a typed XML instance.</param>
+        <param name="owningSchema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relational schema name of the XML schema collection of a typed XML instance.</param>
+        <param name="objectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the XML schema collection of a typed XML instance.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -157,16 +934,473 @@
         <Parameter Name="userDefinedType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
         <param name="sqlDbType">To be added.</param>
-        <param name="maxLength">To be added.</param>
-        <param name="precision">To be added.</param>
-        <param name="scale">To be added.</param>
         <param name="localeId">To be added.</param>
-        <param name="compareOptions">To be added.</param>
-        <param name="userDefinedType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the following are allowed to be passed to the constructor as <paramref name="dbType" />: BigInt, Bit, BitInt, DateTime, Decimal, Float, Image, Int, Money, Ntext, Numeric, Real, SmallDateTime, SmallInt, SmallMoney, Text, TimeStamp, TinyInt, UniqueIdentifier, Variant, Xml.</para>
+          <para>The following are the default values assigned to <paramref name="dbType" />, depending on the SqlDbType (the <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" />, <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" />, and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.Type" /> properties are set to null):</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>SqlDbType</para>
+                </term>
+                <description>
+                  <para>Maximum length</para>
+                </description>
+                <description>
+                  <para>Precision</para>
+                </description>
+                <description>
+                  <para>Scale</para>
+                </description>
+                <description>
+                  <para>Locale</para>
+                </description>
+                <description>
+                  <para>Compare options</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>BigInt</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>19</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Bit</para>
+              </term>
+              <description>
+                <para>1</para>
+              </description>
+              <description>
+                <para>1</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DateTime</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>23</para>
+              </description>
+              <description>
+                <para>3</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Decimal</para>
+              </term>
+              <description>
+                <para>9</para>
+              </description>
+              <description>
+                <para>18</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Float</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>53</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Image</para>
+              </term>
+              <description>
+                <para>Max (-1)</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Int</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>10</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Money</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>19</para>
+              </description>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Ntext</para>
+              </term>
+              <description>
+                <para>Max (-1)</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Real</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>24</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Row</para>
+              </term>
+              <description>
+                <para>&lt;number of columns&gt;</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SmallDateTime</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>16</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SmallInt</para>
+              </term>
+              <description>
+                <para>2</para>
+              </description>
+              <description>
+                <para>5</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SmallMoney</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>10</para>
+              </description>
+              <description>
+                <para>4</para>
+              </description>
+              <description>
+                <para>0 </para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text</para>
+              </term>
+              <description>
+                <para>Max (-1)</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>&lt;thread&gt;</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TimeStamp</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TinyInt</para>
+              </term>
+              <description>
+                <para>1</para>
+              </description>
+              <description>
+                <para>3</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UniqueIdentifier</para>
+              </term>
+              <description>
+                <para>16</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UDT</para>
+              </term>
+              <description>
+                <para>&lt;Max length of the type&gt; or -1</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Variant</para>
+              </term>
+              <description>
+                <para>8016</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Xml</para>
+              </term>
+              <description>
+                <para>Max (-1)</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+              <description>
+                <para>IgnoreCase, IgnoreKanaType, IgnoreWidth</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> class with the specified column name, type, maximum length, precision, scale, locale ID, compare options, and user-defined type (UDT).</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column.</param>
+        <param name="maxLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length of the specified type.</param>
+        <param name="precision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The precision of the parameter or column.</param>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scale of the parameter or column.</param>
+        <param name="compareOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The comparison rules of the parameter or column.</param>
+        <param name="userDefinedType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> instance that points to the UDT.</param>
       </Docs>
     </Member>
     <Member MemberName="Adjust">
@@ -179,11 +1413,18 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Boolean" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Boolean" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -199,11 +1440,18 @@
         <Parameter Name="value" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Byte" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Byte" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -219,11 +1467,18 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified array of <see cref="T:System.Byte" /> values against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as an array of <see cref="T:System.Byte" /> values.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -239,11 +1494,18 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Char" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Char" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -259,11 +1521,18 @@
         <Parameter Name="value" Type="System.Char[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified array of <see cref="T:System.Char" /> values against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as an array <see cref="T:System.Char" /> values.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -279,11 +1548,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlBinary" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlBinary" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlBinary" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -299,11 +1575,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlBoolean" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlBoolean" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlBoolean" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -319,11 +1602,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlByte" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlByte" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlByte" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -339,11 +1629,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlBytes" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlBytes" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlBytes" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -359,11 +1656,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlChars" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlChars" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlChars" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -379,11 +1683,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlDateTime" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlDateTime" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlDateTime" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -399,11 +1710,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlDecimal" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlDecimal" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlDecimal" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -419,11 +1737,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlDouble" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlDouble" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlDouble" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -439,11 +1764,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlGuid" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlGuid" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlGuid" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -459,11 +1791,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlInt16" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlInt16" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlInt16" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -479,11 +1818,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlInt32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlInt32" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlInt32" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -499,11 +1845,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlInt64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlInt64" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlInt64" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -519,11 +1872,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlMoney" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlMoney" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlMoney" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -539,11 +1899,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlSingle" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlSingle" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -559,11 +1926,18 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlString" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Data.SqlTypes.SqlString" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Data.SqlTypes.SqlString" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -579,11 +1953,18 @@
         <Parameter Name="value" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.DateTime" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -599,11 +1980,18 @@
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Decimal" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Decimal" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -619,11 +2007,18 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Double" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Double" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -639,11 +2034,18 @@
         <Parameter Name="value" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Guid" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Guid" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -659,11 +2061,18 @@
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Int16" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Int16" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -679,11 +2088,18 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Int32" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Int32" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -699,11 +2115,18 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Int64" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Int64" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -719,11 +2142,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Object" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Object" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -739,11 +2169,18 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.Single" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.Single" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -759,11 +2196,18 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified <see cref="T:System.String" /> value against the metadata, and adjusts the value if necessary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The adjusted value as a <see cref="T:System.String" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate against the <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -776,10 +2220,13 @@
         <ReturnType>System.Data.SqlTypes.SqlCompareOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the comparison rules used for the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -792,10 +2239,16 @@
         <ReturnType>System.Data.DbType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default type is <see cref="T:System.Data.DbType" />.String.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data type of the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -812,12 +2265,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Infers the metadata from the specified object and returns it as a <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The inferred metadata as a <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object used from which the metadata is inferred.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name assigned to the returned <see cref="T:Microsoft.SqlServer.Server.SqlMetaData" /> instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -830,10 +2291,17 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is the current locale of the current thread for string-valued SqlDbTypes, and 0 for SqlDbTypes that do not support collation.</para>
+          <para>Returns 0 if the collation of the underlying column type is not defined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the locale ID of the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -849,9 +2317,15 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of text, ntext, and image data types. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxLength">
@@ -861,10 +2335,18 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The potential maximum length for values of the specified column. Returns 0 for types other than fixed and varying length character and binary types. For variable size columns or parameters declared with the <paramref name="Max" /> constructor parameter, it returns -1.</para>
+          <para>For <see cref="T:System.Data.DbType" />.Row this returns the number of columns in the row metadata instance.</para>
+          <para>The default value is 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum length of the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -877,10 +2359,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -893,10 +2378,16 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns 0 if the precision of the underlying column type is not defined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the precision of the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -909,10 +2400,16 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns 0 if the scale of the underlying column type is not defined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the scale of the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -925,10 +2422,16 @@
         <ReturnType>System.Data.SqlDbType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is NVarChar.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data type of the column or parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -941,10 +2444,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the three-part name of the user-defined type (UDT) or the SQL Server type represented by the instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -960,9 +2469,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is null.</para>
+          <para>This property may be null if the collection is defined within the current database. It is also null if there is no schema collection, in which case <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" /> and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" /> are also null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the database where the schema collection for this XML instance is located.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlSchemaCollectionName">
@@ -975,9 +2491,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is null.</para>
+          <para>This value is null if there is no associated schema collection. If the value is null, then <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" /> and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionOwningSchema" /> are also null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the schema collection for this XML instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlSchemaCollectionOwningSchema">
@@ -990,9 +2513,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is null.</para>
+          <para>This value may be null if the collection is defined within the current database and default schema. It is also null if there is no schema collection, in which case <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionDatabase" /> and <see cref="P:Microsoft.SqlServer.Server.SqlMetaData.XmlSchemaCollectionName" /> are also null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the owning relational schema where the schema collection for this XML instance is located.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

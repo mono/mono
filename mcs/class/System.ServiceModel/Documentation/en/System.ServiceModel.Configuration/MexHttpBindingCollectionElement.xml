@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MexHttpBindingCollectionElement" FullName="System.ServiceModel.Configuration.MexHttpBindingCollectionElement">
+  <TypeSignature Language="C#" Value="public class MexHttpBindingCollectionElement : System.ServiceModel.Configuration.MexBindingBindingCollectionElement&lt;System.ServiceModel.WSHttpBinding,System.ServiceModel.Configuration.MexHttpBindingElement&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi MexHttpBindingCollectionElement extends System.ServiceModel.Configuration.MexBindingBindingCollectionElement`2&lt;class System.ServiceModel.WSHttpBinding, class System.ServiceModel.Configuration.MexHttpBindingElement&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.MexBindingBindingCollectionElement&lt;System.ServiceModel.WSHttpBinding,System.ServiceModel.Configuration.MexHttpBindingElement&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="TStandardBinding">System.ServiceModel.WSHttpBinding</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="TBindingConfiguration">System.ServiceModel.Configuration.MexHttpBindingElement</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ServiceModel.Configuration.MexHttpBindingElement" /> instances.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MexHttpBindingCollectionElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.MexHttpBindingCollectionElement" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDefault">
+      <MemberSignature Language="C#" Value="protected override System.ServiceModel.Channels.Binding GetDefault ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.ServiceModel.Channels.Binding GetDefault() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Binding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the default values of a configuration element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default binding.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

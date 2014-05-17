@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ZipArchiveMode" FullName="System.IO.Compression.ZipArchiveMode">
+  <TypeSignature Language="C#" Value="public enum ZipArchiveMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ZipArchiveMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.IO.Compression</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you set the mode to <see cref="F:System.IO.Compression.ZipArchiveMode.Read" />, the underlying file or stream must support reading, but does not have to support seeking. If the underlying file or stream supports seeking, the files are read from the archive as they are requested. If the underlying file or stream does not support seeking, the entire archive is held in memory. </para>
+      <para>When you set the mode to <see cref="F:System.IO.Compression.ZipArchiveMode.Create" />, the underlying file or stream must support writing, but does not have to support seeking. Each entry in the archive can be opened only once for writing. If you create a single entry, the data is written to the underlying stream or file as soon as it is available. If you create multiple entries, such as by calling the <see cref="M:System.IO.Compression.ZipFile.CreateFromDirectory(System.String,System.String,System.IO.Compression.CompressionLevel,System.Boolean)" /> method, the data is written to the underlying stream or file after all the entries are created. </para>
+      <para>When you set the mode to <see cref="F:System.IO.Compression.ZipArchiveMode.Update" />, the underlying file or stream must support reading, writing, and seeking. The content of the entire archive is held in memory, and no data is written to the underlying file or stream until the archive is disposed.</para>
+      <para>The following methods include a parameter named <paramref name="mode" /> that lets you specify the archive mode:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.ZipArchive.#ctor(System.IO.Stream,System.IO.Compression.ZipArchiveMode,System.Boolean)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.ZipArchive.#ctor(System.IO.Stream,System.IO.Compression.ZipArchiveMode)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.Compression.ZipFile.Open(System.String,System.IO.Compression.ZipArchiveMode)" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies values for interacting with zip archive entries.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="Create" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Compression.ZipArchiveMode Create = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchiveMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only creating new archive entries is permitted.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="Read" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Compression.ZipArchiveMode Read = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchiveMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only reading archive entries is permitted.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="Update" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Compression.ZipArchiveMode Update = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchiveMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Both read and write operations are permitted for archive entries.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

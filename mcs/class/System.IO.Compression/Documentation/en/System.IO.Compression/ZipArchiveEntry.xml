@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ZipArchiveEntry" FullName="System.IO.Compression.ZipArchiveEntry">
+  <TypeSignature Language="C#" Value="public class ZipArchiveEntry" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ZipArchiveEntry extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.IO.Compression</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A zip archive contains an entry for each compressed file. The <see cref="T:System.IO.Compression.ZipArchiveEntry" /> class enables you to examine the properties of an entry, and open or delete the entry. When you open an entry, you can modify the compressed file by writing to the stream for that compressed file. You open an entry by calling the <see cref="M:System.IO.Compression.ZipArchiveEntry.Open" /> method.</para>
+      <para>If you reference the System.IO.Compression.FileSystem assembly in your project, you can access two extension methods for the <see cref="T:System.IO.Compression.ZipArchiveEntry" /> class. Those methods are <see cref="M:System.IO.Compression.ZipFileExtensions.ExtractToFile(System.IO.Compression.ZipArchiveEntry,System.String)" /> and <see cref="M:System.IO.Compression.ZipFileExtensions.ExtractToFile(System.IO.Compression.ZipArchiveEntry,System.String,System.Boolean)" />, and they enable you to decompress the contents of the entry to a file. The System.IO.Compression.FileSystem assembly is not available in win8. In win8_appname_long apps, you can decompress the contents of an archive by using <see cref="T:System.IO.Compression.DeflateStream" /> or <see cref="T:System.IO.Compression.GZipStream" />, or you can use the wrt types <see cref="http://go.microsoft.com/fwlink/p/?LinkId=246357">Compressor</see> and <see cref="http://go.microsoft.com/fwlink/?LinkId=246358">Decompressor</see> to compress and decompress files.</para>
+      <para>You can retrieve an entry either by iterating through the <see cref="P:System.IO.Compression.ZipArchive.Entries" /> collection in <see cref="T:System.IO.Compression.ZipArchive" />, or by calling the <see cref="M:System.IO.Compression.ZipArchive.GetEntry(System.String)" /> method in <see cref="T:System.IO.Compression.ZipArchive" />. You can create a new entry by calling <see cref="M:System.IO.Compression.ZipArchive.CreateEntry(System.String)" /> or <see cref="M:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(System.IO.Compression.ZipArchive,System.String,System.String)" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a compressed file within a zip archive.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ZipArchiveEntry ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Archive">
+      <MemberSignature Language="C#" Value="public System.IO.Compression.ZipArchive Archive { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Compression.ZipArchive Archive" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchive</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the zip archive that the entry belongs to.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CompressedLength">
+      <MemberSignature Language="C#" Value="public long CompressedLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 CompressedLength" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property cannot be retrieved when the mode is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Create" />, or the mode is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Update" /> and the entry has been opened.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the compressed size of the entry in the zip archive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="public void Delete ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Delete() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the entry from the zip archive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FullName">
+      <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.Compression.ZipArchiveEntry.FullName" /> property contains the relative path, including the subdirectory hierarchy, of an entry in a zip archive. (In contrast, the <see cref="P:System.IO.Compression.ZipArchiveEntry.Name" /> property contains only the name of the entry and does not include the subdirectory hierarchy.) For example, if you create two entries in a zip archive by using the <see cref="M:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(System.IO.Compression.ZipArchive,System.String,System.String)" /> method and provide NewEntry.txt as the name for the first entry and AddedFolder\\NewEntry.txt for the second entry, both entries will have NewEntry.txt in the <see cref="P:System.IO.Compression.ZipArchiveEntry.Name" /> property. The first entry will also have NewEntry.txt in the <see cref="P:System.IO.Compression.ZipArchiveEntry.FullName" /> property, but the second entry will have AddedFolder\\NewEntry.txt in the <see cref="P:System.IO.Compression.ZipArchiveEntry.FullName" /> property. </para>
+          <para>You can specify any string as the path of an entry, including strings that specify invalid and absolute paths. Therefore, the <see cref="P:System.IO.Compression.ZipArchiveEntry.FullName" /> property might contain a value that is not correctly formatted. An invalid or absolute path might result in an exception when you extract the contents of the zip archive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the relative path of the entry in the zip archive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LastWriteTime">
+      <MemberSignature Language="C#" Value="public DateTimeOffset LastWriteTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTimeOffset LastWriteTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create a new entry from an existing file by calling the <see cref="M:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(System.IO.Compression.ZipArchive,System.String,System.String)" /> method, the <see cref="P:System.IO.Compression.ZipArchiveEntry.LastWriteTime" /> property for the entry is automatically set to the last time the file was modified. When you create a new entry programmatically by calling the <see cref="M:System.IO.Compression.ZipArchive.CreateEntry(System.String)" /> method, the <see cref="P:System.IO.Compression.ZipArchiveEntry.LastWriteTime" /> property for the entry is automatically set to the time of execution. If you modify the entry, you must explicitly set the <see cref="P:System.IO.Compression.ZipArchiveEntry.LastWriteTime" /> property if you want the value to reflect the time of the latest change.</para>
+          <para>When you set this property, the <see cref="T:System.DateTimeOffset" /> value is converted to a timestamp format that is specific to zip archives. This format supports a resolution of two seconds. The earliest permitted value is 1980 January 1 0:00:00 (midnight). The latest permitted value is 2107 December 31 23:59:58 (one second before midnight). If the value for the last write time is not valid, the property returns a default value of 1980 January 1 0:00:00 (midnight).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the last time the entry in the zip archive was changed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public long Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Length" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property cannot be retrieved when the mode is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Create" />, or the mode is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Update" /> and the entry has been opened.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the uncompressed size of the entry in the zip archive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para />
+          <para>The <see cref="P:System.IO.Compression.ZipArchiveEntry.Name" /> property contains the portion of the <see cref="P:System.IO.Compression.ZipArchiveEntry.FullName" /> property that follows the final directory separator character (\), and does not include the subdirectory hierarchy. For example, if you create two entries in a zip archive by using the <see cref="M:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(System.IO.Compression.ZipArchive,System.String,System.String)" /> method and provide NewEntry.txt as the name for the first entry and AddedFolder\\NewEntry.txt for the second entry, both entries will have NewEntry.txt in the <see cref="P:System.IO.Compression.ZipArchiveEntry.Name" /> property. The first entry will also have NewEntry.txt in the <see cref="P:System.IO.Compression.ZipArchiveEntry.FullName" /> property, but the second entry will have AddedFolder\\NewEntry.txt in the <see cref="P:System.IO.Compression.ZipArchiveEntry.FullName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file name of the entry in the zip archive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public System.IO.Stream Open ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.Stream Open() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You use this method to access the stream for an entry in a zip archive. After retrieving the stream, you can read from or write to the stream. When you write to the stream, the modifications you make to the entry will appear in the zip archive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the entry from the zip archive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The stream that represents the contents of the entry.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

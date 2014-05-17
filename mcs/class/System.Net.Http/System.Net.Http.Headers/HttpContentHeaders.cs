@@ -73,6 +73,10 @@ namespace System.Net.Http.Headers
 				if (v != null)
 					return v;
 
+				v = content.LoadedBufferLength;
+				if (v != null)
+					return v;
+
 				long l;
 				if (content.TryComputeLength (out l))
 					return l;
@@ -98,7 +102,7 @@ namespace System.Net.Http.Headers
 				return GetValue<byte[]> ("Content-MD5");
 			}
 			set {
-				AddOrRemove ("Content-MD5", value);
+				AddOrRemove ("Content-MD5", value, Parser.MD5.ToString);
 			}
 		}
 

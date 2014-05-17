@@ -1,86 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CipherReference" FullName="System.Security.Cryptography.Xml.CipherReference">
   <TypeSignature Language="C#" Value="public sealed class CipherReference : System.Security.Cryptography.Xml.EncryptedReference" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CipherReference extends System.Security.Cryptography.Xml.EncryptedReference" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Security.Cryptography.Xml.EncryptedReference</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class represents the &lt;CipherReference&gt; element in XML encryption. It identifies a source which, when processed, yields the encrypted data.</para>
+      <para>The actual encrypted data referenced by the &lt;CipherReference&gt; is obtained by the following process. The &lt;CipherReference&gt; URI property contains a Uniform Resource Identifier (URI) that is dereferenced. If the &lt;CipherReference&gt; element also contains a transform chain, the data resulting from dereferencing the URI is transformed as specified to produce the encrypted data. For example, if the encrypted data is base64-encoded within an XML document, the transforms would specify an XPath expression followed by a base64 decoding so the encrypted data can be extracted.</para>
+      <para>The syntax of the URI and transforms is similar to that of XML digital signatures.  However, in XML digital signatures, both generation and validation processing start with the same source data and perform that transform in the same order. In XML encryption, the decrypting application has only the encrypted data and the specified transforms. The transforms are enumerated in the order necessary to obtain the encrypted data. </para>
+      <para>Note   By default, you cannot dereference cipher references from documents with unknown sources, such as files from a Web site, because the <see cref="P:System.Security.Cryptography.Xml.EncryptedXml.DocumentEvidence" /> property is null. For example, when you attempt to decrypt a file containing a &lt;CipherReference&gt; element that references a file on the Web, a <see cref="T:System.Security.SecurityException" /> is thrown, even if the request is made by a fully trusted assembly.</para>
+      <para>If you are sure the documents you are decrypting can be trusted, you can change this behavior for fully trusted applications by using the following code:</para>
+      <code>        Evidence ev = new Evidence();
+        ev.AddHost (new Zone(SecurityZone.MyComputer));
+        EncryptedXml exml = new EncryptedXml(doc, ev);</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;CipherReference&gt; element in XML encryption. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CipherReference ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object that provides reference information for a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CipherReference (string uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uri) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object using a Uniform Resource Identifier (URI) that points to the encrypted data. The object is then used to provide reference information for a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object. </para>
+          <para>You can use a URI to designate an XML file containing encrypted data. For example:</para>
+          <para>String uri = "http://www.woodgrovebank.com/document.xml";</para>
+          <para>You can also use a partial URI to designate that only a portion of an XML document is to be encrypted. For example, assume that an XML document named document.xml contains two MyForm elements as shown in the following XML code example:</para>
+          <para>&lt;MyForm Id='Form1'&gt;</para>
+          <para>&lt;! -- Form data here --&gt;</para>
+          <para>&lt;/MyForm&gt;</para>
+          <para>&lt;MyForm Id='Form2'&gt;</para>
+          <para>&lt;! -- Form data here --&gt;</para>
+          <para>&lt;/MyForm&gt;</para>
+          <para>You can encrypt only the content in Form2 using a URI such as the following:</para>
+          <para>String uri = "http://www.woodgrovebank.com/document.xml#Form2";</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> class using the specified Uniform Resource Identifier (URI).</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Uniform Resource Identifier (URI) pointing to the encrypted data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CipherReference (string uri, System.Security.Cryptography.Xml.TransformChain tc);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uri, class System.Security.Cryptography.Xml.TransformChain tc) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.String" />
         <Parameter Name="tc" Type="System.Security.Cryptography.Xml.TransformChain" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
         <param name="tc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object using a Uniform Resource Identifier (URI) and transform chain to indicate the encrypted data. The object is then used to provide reference information for a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> class using the specified Uniform Resource Identifier (URI) and transform chain information.</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Uniform Resource Identifier (URI) pointing to the encrypted data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetXml">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlElement GetXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Xml.XmlElement GetXml() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to output the &lt;CipherReference&gt; element in XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> that represents the &lt;CipherReference&gt; element in XML encryption.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LoadXml">
       <MemberSignature Language="C#" Value="public override void LoadXml (System.Xml.XmlElement value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void LoadXml(class System.Xml.XmlElement value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -88,14 +157,18 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to load an existing XML element into the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads XML information into the &lt;CipherReference&gt; element in XML encryption.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlElement" /> object that represents an XML element to use as the reference.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

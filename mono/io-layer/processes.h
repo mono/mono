@@ -146,10 +146,6 @@ struct _WapiShellExecuteInfo
 #define CREATE_DEFAULT_ERROR_MODE 0x04000000
 #define CREATE_NO_WINDOW 0x08000000
 
-#ifndef HOST_WIN32
-#define CREATE_NO_DETACH 0x10000000
-#endif
-
 #ifdef NEW_STUFF
 #define CREATE_PRESERVE_CODE_AUTHZ_LEVEL find out the value for this one...
 #endif
@@ -219,6 +215,9 @@ extern gboolean TerminateProcess (gpointer process, gint32 exitCode);
 extern guint32 GetPriorityClass (gpointer process);
 extern gboolean SetPriorityClass (gpointer process, guint32  priority_class);
 
+gchar* wapi_process_get_path (pid_t pid);
+
+void wapi_process_set_cli_launcher (char *path);
 
 G_END_DECLS
 

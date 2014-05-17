@@ -137,6 +137,7 @@ sgen_gc_descr_has_references (mword desc)
 
 #define SGEN_VTABLE_HAS_REFERENCES(vt)	(sgen_gc_descr_has_references ((mword)((MonoVTable*)(vt))->gc_descr))
 #define SGEN_CLASS_HAS_REFERENCES(c)	(sgen_gc_descr_has_references ((mword)(c)->gc_descr))
+#define SGEN_OBJECT_HAS_REFERENCES(o)	(SGEN_VTABLE_HAS_REFERENCES (SGEN_LOAD_VTABLE ((o))))
 
 /* helper macros to scan and traverse objects, macros because we resue them in many functions */
 #define OBJ_RUN_LEN_SIZE(size,desc,obj) do { \
@@ -151,6 +152,12 @@ sgen_gc_descr_has_references (mword desc)
 #define PREFETCH(addr)	__builtin_prefetch ((addr))
 #else
 #define PREFETCH(addr)
+#endif
+
+#if defined(__GNUC__) && SIZEOF_VOID_P==4
+#define GNUC_BUILTIN_CTZ(bmap)	__builtin_ctz(bmap)
+#elif defined(__GNUC__) && SIZEOF_VOID_P==8
+#define GNUC_BUILTIN_CTZ(bmap)	__builtin_ctzl(bmap)
 #endif
 
 /* code using these macros must define a HANDLE_PTR(ptr) macro that does the work */
@@ -170,21 +177,21 @@ sgen_gc_descr_has_references (mword desc)
 		}	\
 	} while (0)
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
 #define OBJ_BITMAP_FOREACH_PTR(desc,obj)       do {    \
 		/* there are pointers */        \
 		void **_objptr = (void**)(obj); \
 		gsize _bmap = (desc) >> 16;     \
 		_objptr += OBJECT_HEADER_WORDS; \
 		{ \
-			int _index = __builtin_ctz (_bmap); \
+			int _index = GNUC_BUILTIN_CTZ (_bmap);		\
 			_objptr += _index; \
 			_bmap >>= (_index + 1);				\
 			HANDLE_PTR (_objptr, (obj));		\
 			_objptr ++;							\
 			} \
 		while (_bmap) { \
-			int _index = __builtin_ctz (_bmap); \
+			int _index = GNUC_BUILTIN_CTZ (_bmap);		\
 			_objptr += _index; \
 			_bmap >>= (_index + 1);				\
 			HANDLE_PTR (_objptr, (obj));		\

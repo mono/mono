@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VisualStyleRenderer" FullName="System.Windows.Forms.VisualStyles.VisualStyleRenderer">
   <TypeSignature Language="C#" Value="public sealed class VisualStyleRenderer" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Windows.Forms.VisualStyles" /> namespace exposes <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> objects that represent all of the controls and user interface (UI) elements that are supported by visual styles. To draw or get information about a particular element, you must set a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> to the element you are interested in. A <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> is automatically set to a specified <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> in the <see cref="Overload:System.Windows.Forms.VisualStyles.VisualStyleRenderer.#ctor" /> constructor, but you can also set an existing <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> to a different element by calling the <see cref="Overload:System.Windows.Forms.VisualStyles.VisualStyleRenderer.SetParameters" /> method. </para>
+      <para>To draw an element, use the <see cref="Overload:System.Windows.Forms.VisualStyles.VisualStyleRenderer.DrawBackground" /> method. The <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> class also includes methods, such as <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetColor(System.Windows.Forms.VisualStyles.ColorProperty)" /> and <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetEnumValue(System.Windows.Forms.VisualStyles.EnumProperty)" />, that provide information about how an element is defined by the current visual style.</para>
+      <para>The <see cref="Overload:System.Windows.Forms.VisualStyles.VisualStyleRenderer.#ctor" /> constructor and many of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> methods throw exceptions unless visual styles are enabled in the operating system and visual styles are applied to the client area of application windows. To check for these conditions, use the static <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsSupported" /> property.</para>
+      <para>The <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> class wraps the functionality of the visual styles (UxTheme) API from the Windows Shell portion of the Windows Platform SDK. For more information about visual styles, see "Using Windows XP Visual Styles" in the Platform SDK portion of the MSDN Library at <see cref="http://msdn.microsoft.com/library/">http://msdn.microsoft.com/library</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for drawing and getting information about a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +31,18 @@
         <Parameter Name="element" Type="System.Windows.Forms.VisualStyles.VisualStyleElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.ClassName" />, <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.Part" />, and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.State" /> properties of the <paramref name="element" /> parameter to initialize the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" />, <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Part" />, and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.State" /> properties.</para>
+          <para>Before using this constructor, you should call the static <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement)" /> method to verify whether the current visual style provides a definition for the element specified by the <paramref name="element" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> class using the given <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" />.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> that this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> will represent.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,12 +57,22 @@
         <Parameter Name="state" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="className">To be added.</param>
-        <param name="part">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the <paramref name="className" />, <paramref name="part" />, and <paramref name="state" /> parameters to initialize the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" />, <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Part" />, and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.State" /> properties.</para>
+          <para>Before using this constructor, you should call the static <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement)" /> method to verify whether the current visual style provides a definition for the element specified by the <paramref name="className" />, <paramref name="part" />, and <paramref name="state" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> class using the given class, part, and state values.</para>
+        </summary>
+        <param name="className">
+          <attribution license="cc4" from="Microsoft" modified="false" />The class name of the element that this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> will represent.</param>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part of the element that this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> will represent.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state of the element that this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> will represent.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +85,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property identifies a group of related controls or user interface (UI) elements. For more information about the class, part, and state of a visual style element, see the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class name of the current visual style element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,11 +111,21 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method draws the background of the current visual style element specified by the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" />, <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Part" />, and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.State" /> properties. </para>
+          <para>If the <see cref="P:System.Drawing.Rectangle.Width" /> or <see cref="P:System.Drawing.Rectangle.Height" /> of the rectangle specified by the <paramref name="bounds" /> parameter is less than 0, the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.DrawBackground(System.Drawing.IDeviceContext,System.Drawing.Rectangle)" /> method will return without drawing the background. </para>
+          <para>The background of a visual style element can be a bitmap file or a filled border. To determine the background type, call the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetEnumValue(System.Windows.Forms.VisualStyles.EnumProperty)" /> method with an argument value of <see cref="F:System.Windows.Forms.VisualStyles.EnumProperty.BackgroundType" />. To determine whether the element background will scale to fit the specified bounds, call the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetEnumValue(System.Windows.Forms.VisualStyles.EnumProperty)" /> method with an argument value of <see cref="F:System.Windows.Forms.VisualStyles.EnumProperty.SizingType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the background image of the current visual style element within the specified bounding rectangle.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> used to draw the background image.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which the background image is drawn.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -99,12 +143,23 @@
         <Parameter Name="clipRectangle" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="clipRectangle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method draws the background of the current visual style element specified by the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" />, <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Part" />, and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.State" /> properties. The background will be clipped to the area specified by the <paramref name="clipRectangle " />parameter.</para>
+          <para>If the <see cref="P:System.Drawing.Rectangle.Width" /> or <see cref="P:System.Drawing.Rectangle.Height" /> of the rectangle specified by either the <paramref name="bounds" /> or <paramref name="clipRectangle" /> parameters is less than 0, the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.DrawBackground(System.Drawing.IDeviceContext,System.Drawing.Rectangle,System.Drawing.Rectangle)" /> method will return without drawing the background. </para>
+          <para>The background of a visual style element can be a bitmap file or a filled border. To determine the background type, call the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetEnumValue(System.Windows.Forms.VisualStyles.EnumProperty)" /> method with an argument value of <see cref="F:System.Windows.Forms.VisualStyles.EnumProperty.BackgroundType" />. To determine whether the element background will scale to fit the specified bounds, call the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetEnumValue(System.Windows.Forms.VisualStyles.EnumProperty)" /> method with an argument value of <see cref="F:System.Windows.Forms.VisualStyles.EnumProperty.SizingType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the background image of the current visual style element within the specified bounding rectangle and clipped to the specified clipping rectangle.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> used to draw the background image.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which the background image is drawn.</param>
+        <param name="clipRectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that defines a clipping rectangle for the drawing operation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -124,15 +179,26 @@
         <Parameter Name="effects" Type="System.Windows.Forms.VisualStyles.EdgeEffects" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="edges">To be added.</param>
-        <param name="style">To be added.</param>
-        <param name="effects">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws one or more edges of the specified bounding rectangle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the interior of the <paramref name="bounds" /> parameter, minus the edges that were drawn.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> used to draw the edges.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> whose bounds define the edges to draw.</param>
+        <param name="edges">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.VisualStyles.Edges" /> values.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.VisualStyles.EdgeStyle" /> values.</param>
+        <param name="effects">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.VisualStyles.EdgeEffects" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -150,12 +216,21 @@
         <Parameter Name="image" Type="System.Drawing.Image" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="image">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the visual style applies one of the effects specified by the <see cref="T:System.Windows.Forms.VisualStyles.IconEffect" /> values to the current element, this method will apply the effect to the drawn image.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified image within the specified bounds.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the image.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which the image is drawn.</param>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> to draw.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -174,13 +249,23 @@
         <Parameter Name="imageIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="imageList">To be added.</param>
-        <param name="imageIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the visual style applies one of the effects specified by the <see cref="T:System.Windows.Forms.VisualStyles.IconEffect" /> values to the current element, this method will apply the effect to the drawn image.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the image from the specified <see cref="T:System.Windows.Forms.ImageList" /> within the specified bounds.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the image.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which the image is drawn.</param>
+        <param name="imageList">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.ImageList" /> that contains the <see cref="T:System.Drawing.Image" /> to draw.</param>
+        <param name="imageIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Drawing.Image" /> within <paramref name="imageList" /> to draw.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -198,12 +283,18 @@
         <Parameter Name="childControl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="childControl">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the background of a control's parent in the specified area.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> used to draw the background of the parent of <paramref name="childControl" />. This object typically belongs to the child control.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which to draw the parent control's background. This rectangle should be inside the child control’s bounds.</param>
+        <param name="childControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control whose parent's background will be drawn.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,12 +312,18 @@
         <Parameter Name="textToDraw" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textToDraw">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws text in the specified bounds using default formatting.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> used to draw the text.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which to draw the text.</param>
+        <param name="textToDraw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -245,13 +342,20 @@
         <Parameter Name="drawDisabled" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textToDraw">To be added.</param>
-        <param name="drawDisabled">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws text in the specified bounds with the option of displaying disabled text.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> used to draw the text.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which to draw the text.</param>
+        <param name="textToDraw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="drawDisabled">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to draw grayed-out text; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -271,14 +375,22 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textToDraw">To be added.</param>
-        <param name="drawDisabled">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws text in the specified bounding rectangle with the option of displaying disabled text and applying other text formatting.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> used to draw the text.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> in which to draw the text.</param>
+        <param name="textToDraw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="drawDisabled">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to draw grayed-out text; otherwise, false.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -295,12 +407,23 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A visual style can define a content area within each background image. This is the area in which content such as text and icons can be placed without overwriting background borders. This method uses the given background area to calculate the content area for the current visual style element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the content area for the background of the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that contains the content area for the background of the current visual style element.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the entire background area of the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -317,12 +440,23 @@
         <Parameter Name="contentBounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="contentBounds">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A visual style can define a content area within each background image. This is the area in which content such as text and icons can be placed without overwriting background borders. This method uses the given content area to calculate the entire background area for the current visual style element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the entire background area for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that contains the entire background area of the current visual style element.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="contentBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the content area of the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -339,12 +473,23 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to get the <see cref="T:System.Drawing.Region" /> of a visual style element that has partially transparent or alpha-blended parts in its background.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the region for the background of the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Region" /> that contains the background of the current visual style element.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the entire background area of the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -365,11 +510,21 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.BooleanProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of Boolean values to describe some properties of the elements defined by a style. These properties are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.BooleanProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified Boolean property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property specified by the <paramref name="prop" /> parameter is true for the current visual style element; otherwise, false.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.BooleanProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -385,11 +540,21 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.ColorProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of color values to describe some properties of the elements defined by a style. These properties are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.ColorProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified color property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> that contains the value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.ColorProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -405,11 +570,21 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.EnumProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of enumerated types to describe some properties of the elements defined by a style. These enumerated types are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.EnumProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified enumerated type property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.EnumProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -425,11 +600,21 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.FilenameProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles can specify the names of image files that are used to draw a particular element in different sizes and resolutions. These file names are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.FilenameProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified file name property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.FilenameProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -446,12 +631,23 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.FontProperty" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of font values to describe some properties of the elements defined by a style. These properties are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.FontProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified font property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Font" /> that contains the value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.FontProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -467,11 +663,21 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.IntegerProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of integer values to describe some properties of the elements defined by a style. These properties are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.IntegerProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified integer property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.IntegerProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -488,12 +694,23 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.MarginProperty" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of margin values to describe some properties of the elements defined by a style. These properties are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.MarginProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified margins property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Padding" /> that contains the value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.MarginProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -510,12 +727,23 @@
         <Parameter Name="type" Type="System.Windows.Forms.VisualStyles.ThemeSizeType" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, only the <see cref="F:System.Windows.Forms.VisualStyles.ThemeSizeType.True" /> and <see cref="F:System.Windows.Forms.VisualStyles.ThemeSizeType.Minimum" /> values should be used for the <paramref name="type" /> parameter of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified size property of the current visual style part.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that contains the size specified by the <paramref name="type" /> parameter for the current visual style part. </para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.ThemeSizeType" /> values that specifies which size value to retrieve for the part.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -533,13 +761,22 @@
         <Parameter Name="type" Type="System.Windows.Forms.VisualStyles.ThemeSizeType" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified size property of the current visual style part using the specified drawing bounds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that contains the size specified by the <paramref name="type" /> parameter for the current visual style part.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the area in which the part will be drawn.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.ThemeSizeType" /> values that specifies which size value to retrieve for the part.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -555,11 +792,21 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.PointProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of point values to describe some properties of the elements defined by a style. These properties are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.PointProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified point property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Point" /> that contains the value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.PointProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -575,11 +822,21 @@
         <Parameter Name="prop" Type="System.Windows.Forms.VisualStyles.StringProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual styles use a set of string values to describe some properties of the elements defined by a style. These properties are encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.StringProperty" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified string property for the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the value of the property specified by the <paramref name="prop" /> parameter for the current visual style element.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.StringProperty" /> values that specifies which property value to retrieve for the current visual style element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -597,13 +854,22 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="textToDraw">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the size and location of the specified string when drawn with the font of the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that contains the area required to fit the rendered text. </para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="textToDraw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to measure.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -622,14 +888,24 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textToDraw">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the size and location of the specified string when drawn with the font of the current visual style element within the specified initial bounding rectangle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that contains the area required to fit the rendered text. </para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> used to control the flow and wrapping of the text.</param>
+        <param name="textToDraw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to measure.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -645,11 +921,18 @@
         <Parameter Name="dc" Type="System.Drawing.IDeviceContext" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves information about the font specified by the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.VisualStyles.TextMetrics" /> that provides information about the font specified by the current visual style element. </para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -662,10 +945,17 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used internally by the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> methods. If the class of elements specified by the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" /> property is not defined by the current visual style, then this property returns <see cref="F:System.IntPtr.Zero" />.</para>
+          <para>This property value is invalidated when the visual style of the operating system changes, or when the user disables visual styles. If you access this property directly, your code should query this property again to get a new handle when the <see cref="E:Microsoft.Win32.SystemEvents.UserPreferenceChanged" /> event is raised with the <see cref="P:Microsoft.Win32.UserPreferenceChangedEventArgs.Category" /> property value of <see cref="F:Microsoft.Win32.UserPreferenceCategory.VisualStyle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique identifier for the current class of visual style elements.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -684,14 +974,24 @@
         <Parameter Name="options" Type="System.Windows.Forms.VisualStyles.HitTestOptions" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="backgroundRectangle">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hit test code indicating whether a point is contained in the background of the current visual style element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.VisualStyles.HitTestCode" /> that describes where <paramref name="pt" /> is located in the background of the current visual style element.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="backgroundRectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the background of the current visual style element.</param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> to test.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.VisualStyles.HitTestOptions" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -711,15 +1011,26 @@
         <Parameter Name="options" Type="System.Windows.Forms.VisualStyles.HitTestOptions" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="backgroundRectangle">To be added.</param>
-        <param name="region">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hit test code indicating whether the point is contained in the background of the current visual style element and within the specified bounds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.VisualStyles.HitTestCode" /> that describes where <paramref name="pt" /> is located in the background of the current visual style element, if at all.</para>
+        </returns>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> this operation will use.</param>
+        <param name="backgroundRectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the background of the current visual style element.</param>
+        <param name="region">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Region" /> that specifies the bounds of the hit test area within the background.</param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> to test.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.VisualStyles.HitTestOptions" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -739,15 +1050,26 @@
         <Parameter Name="options" Type="System.Windows.Forms.VisualStyles.HitTestOptions" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="backgroundRectangle">To be added.</param>
-        <param name="hRgn">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hit test code indicating whether the point is contained in the background of the current visual style element and within the specified region.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.VisualStyles.HitTestCode" /> that describes where <paramref name="pt" /> is located in the background of the current visual style element.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.IDeviceContext" /> this operation will use.</param>
+        <param name="backgroundRectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the background of the current visual style element.</param>
+        <param name="hRgn">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to a <see cref="T:System.Drawing.Region" /> that specifies the bounds of the hit test area within the background.</param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> to test.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.VisualStyles.HitTestOptions" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -761,10 +1083,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the background of the current visual style element has any semitransparent or alpha-blended pieces.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the background of the current visual style element has any semitransparent or alpha-blended pieces; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -780,11 +1108,21 @@
         <Parameter Name="element" Type="System.Windows.Forms.VisualStyles.VisualStyleElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method checks the value of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsSupported" /> property internally.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified visual style element is defined by the current visual style.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the combination of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.ClassName" /> and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.Part" /> properties of <paramref name="element" /> are defined; otherwise, false. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> whose class and part combination will be verified.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -797,10 +1135,52 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table describes how to individually check for each of the three conditions that must exist for the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsSupported" /> property to return true.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Condition</para>
+                </term>
+                <description>
+                  <para>How to determine separately</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>The operating system supports visual styles.</para>
+              </term>
+              <description>
+                <para>Verify that the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleInformation.IsSupportedByOS" /> property of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleInformation" /> class is true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The user has enabled visual styles in the operating system.</para>
+              </term>
+              <description>
+                <para>Verify that the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleInformation.IsEnabledByUser" /> property of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleInformation" /> class is true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Visual styles are being used to draw the client area of application windows.</para>
+              </term>
+              <description>
+                <para>Verify that the <see cref="P:System.Windows.Forms.Application.VisualStyleState" /> property of the <see cref="T:System.Windows.Forms.Application" /> class has the value <see cref="F:System.Windows.Forms.VisualStyles.VisualStyleState.ClientAreaEnabled" /> or <see cref="F:System.Windows.Forms.VisualStyles.VisualStyleState.ClientAndNonClientAreasEnabled" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value specifying whether the operating system is using visual styles to draw controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -813,10 +1193,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets the HRESULT value that was returned by the last native visual styles API method called by a member of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> class. For more information about the native visual styles API, see "Using Windows XP Visual Styles" in the Platform SDK portion of the MSDN Library at <see cref="http://msdn.microsoft.com/library/">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last error code returned by the native visual styles (UxTheme) API methods encapsulated by the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -829,10 +1215,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property identifies a particular specialization of a class. For more information about the class, part, and state of a visual style element, see the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the part of the current visual style element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -848,10 +1240,17 @@
         <Parameter Name="element" Type="System.Windows.Forms.VisualStyles.VisualStyleElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method checks the value of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsSupported" /> property internally. Before calling this method, you should call the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement)" /> method to verify that the current visual style provides a definition for the element specified by the <paramref name="element" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> to the visual style element represented by the specified <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" />.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> that specifies the new values of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" />, <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Part" />, and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.State" /> properties.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -869,12 +1268,21 @@
         <Parameter Name="state" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="className">To be added.</param>
-        <param name="part">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method checks the value of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsSupported" /> property internally. Before calling this method, you should call the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.IsElementDefined(System.Windows.Forms.VisualStyles.VisualStyleElement)" /> method to verify that the current visual style provides a definition for the element specified by the <paramref name="className" />, <paramref name="part" />, and <paramref name="state" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets this <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> to the visual style element represented by the specified class, part, and state values.</para>
+        </summary>
+        <param name="className">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" /> property.</param>
+        <param name="part">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Part" /> property.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value of the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.State" /> property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -887,10 +1295,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property identifies the current visual state of the element identified by the current <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Class" /> and <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleRenderer.Part" /> property values. For more information about the class, part, and state of a visual style element, see the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the current visual style element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

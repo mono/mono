@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="EventSource" FullName="System.Diagnostics.Tracing.EventSource">
+  <TypeSignature Language="C#" Value="public class EventSource : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventSource extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is intended to be inherited by a user class that provides specific events to be used for ETW. The <see cref="Overload:System.Diagnostics.Tracing.EventSource.WriteEvent" /> methods are called to log the events.</para>
+      <para>The basic functionality of <see cref="T:System.Diagnostics.Tracing.EventSource" /> is sufficient for most applications.  If you want more control over the ETW manifest that is created, you can apply the <see cref="T:System.Diagnostics.Tracing.EventAttribute" /> attribute to the methods. For advanced event source applications, it is possible to intercept the commands being sent to the derived event source and change the filtering, or to cause actions (such as dumping a data structure) to be performed by the inheritor.  An event source can be activated with Windows ETW controllers, such as the Logman tool, immediately.  It is also possible to programmatically control and intercept the data dispatcher.  The <see cref="T:System.Diagnostics.Tracing.EventListener" /> class provides additional functionality.      </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the ability to create events for event tracing for Windows (ETW).</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected EventSource ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Diagnostics.Tracing.EventSource" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected EventSource (bool throwOnEventWriteErrors);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(bool throwOnEventWriteErrors) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="throwOnEventWriteErrors" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Diagnostics.Tracing.EventSource" /> class and specifies whether to throw an exception when an error occurs in the underlying Windows code.</para>
+        </summary>
+        <param name="throwOnEventWriteErrors">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception when an error occurs in the underlying Windows code; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Diagnostics.Tracing.EventSource" />. The Dispose method leaves the <see cref="T:System.Diagnostics.Tracing.EventSource" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Diagnostics.Tracing.EventSource" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Diagnostics.Tracing.EventSource" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Diagnostics.Tracing.EventSource" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Diagnostics.Tracing.EventSource" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Diagnostics.Tracing.EventSource" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. Finalize invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Diagnostics.Tracing.EventSource" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Diagnostics.Tracing.EventSource" /> class and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsEnabled">
+      <MemberSignature Language="C#" Value="public bool IsEnabled ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsEnabled() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current event source is enabled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current event source is enabled; otherwise, false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteEvent">
+      <MemberSignature Language="C#" Value="protected void WriteEvent (int eventId, int arg1, int arg2, int arg3);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void WriteEvent(int32 eventId, int32 arg1, int32 arg2, int32 arg3) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventId" Type="System.Int32" />
+        <Parameter Name="arg1" Type="System.Int32" />
+        <Parameter Name="arg2" Type="System.Int32" />
+        <Parameter Name="arg3" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="eventid" /> should be greater than 0 or less than 65535 or errors can occur in the operation. If errors do occur, you can get more information about the source of the error by checking the output stream of the debugger, if you have a debugger attached to the process firing events. You can also look for errors reported in the ETW event stream, if you have an ETW listener on the event source where the error occurs.</para>
+          <para>When you implement a method that is identified as an ETW event in an <see cref="T:System.Diagnostics.Tracing.EventSource" />-derived class. You must call the base class <see cref="Overload:System.Diagnostics.Tracing.EventSource.WriteEvent" /> method passing the <see cref="P:System.Diagnostics.Tracing.EventAttribute.EventId" /> and the same arguments as the implemented method similar to the following example.</para>
+          <code>[Event(2, Level = EventLevel.Informational)]
+public void Info1(string arg1)
+{
+ base.WriteEvent(2, arg1);
+}</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an event by using the provided event identifier and 32-bit integer arguments.</para>
+        </summary>
+        <param name="eventId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event identifier.  This value should be between 0 and 65535.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer argument.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer argument.</param>
+        <param name="arg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer argument.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PolygonHotSpot" FullName="System.Web.UI.WebControls.PolygonHotSpot">
   <TypeSignature Language="C#" Value="public sealed class PolygonHotSpot : System.Web.UI.WebControls.HotSpot" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class defines a polygon-shaped hot spot region in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. The <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> is useful for defining irregularly shaped hot spot regions in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. For example, you can use it to define individual regions within a geographical map.</para>
+      <para>To define the region of a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" />, set the <see cref="P:System.Web.UI.WebControls.PolygonHotSpot.Coordinates" /> property to a string that specifies the coordinates of each vertex of the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object. A polygon vertex is a point at which two polygon edges meet.</para>
+      <para>When a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object is clicked, the page navigates to a URL, generates a post back to the server, or does nothing. The <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property specifies this behavior. To navigate to a URL, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Navigate, and use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to. To post back to the server, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.PostBack, and use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify a name for the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data when the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> is clicked. If you want the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object to have no behavior, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Inactive.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a polygon-shaped hot spot region in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +54,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.PolygonHotSpot.Coordinates" /> property to specify the coordinates of the vertexes of a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object. A polygon vertex is a point at which two polygon edges meet. The string that you specify must be formatted with each coordinate separated by a comma. Each vertex that you specify must have both an x- coordinate and a y-coordinate. For example, the string "128,185,335,157,510,224,510,383,228,383" defines a polygon hot spot with five vertexes. The x-coordinate of the first vertex is 128. The y-coordinate of the first vertex is 185. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of coordinates that represents the vertexes of a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +77,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.PolygonHotSpot.GetCoordinates" /> method returns a string that represents the coordinates of the vertexes of a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object. The string this method returns is the current value of the <see cref="P:System.Web.UI.WebControls.PolygonHotSpot.Coordinates" /> property.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.PolygonHotSpot.GetCoordinates" /> method is used internally by ASP.NET to get the text to use for the coordinates of a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> when it is rendered. The string that is returned is specific to the browser and markup language.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the coordinates of the vertexes of a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the coordinates of the vertexes of a <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object. The default value is an empty string ("").</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,9 +106,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.PolygonHotSpot.MarkupName" /> property is used internally by ASP.NET to get the markup-language string representation for the shape of the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object. This property always returns the string "poly". You cannot access this property directly from your application's code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string representation for the <see cref="T:System.Web.UI.WebControls.PolygonHotSpot" /> object's shape.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

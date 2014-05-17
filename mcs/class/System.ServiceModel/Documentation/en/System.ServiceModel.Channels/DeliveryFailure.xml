@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DeliveryFailure" FullName="System.ServiceModel.Channels.DeliveryFailure">
+  <TypeSignature Language="C#" Value="public enum DeliveryFailure" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DeliveryFailure extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can get the <see cref="P:System.ServiceModel.Channels.MsmqMessageProperty.DeliveryFailure" /> property to determine why a message failed delivery and was sent to the dead-letter queue. For additional information about message processing in a dead-letter queue, see <format type="text/html"><a href="9e891c6a-d960-45ea-904f-1a00e202d61a">Using Dead-Letter Queues to Handle Message Transfer Failures</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the possible types of delivery failure for a message read from the queue.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AccessDenied">
+      <MemberSignature Language="C#" Value="AccessDenied" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure AccessDenied = int32(32772)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sender does not have access rights to place messages in the destination queue.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BadDestinationQueue">
+      <MemberSignature Language="C#" Value="BadDestinationQueue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure BadDestinationQueue = int32(32768)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue was not found.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BadEncryption">
+      <MemberSignature Language="C#" Value="BadEncryption" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure BadEncryption = int32(32775)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue manager cannot decrypt the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BadSignature">
+      <MemberSignature Language="C#" Value="BadSignature" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure BadSignature = int32(32774)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue manager cannot authenticate the message because the attached signature is invalid.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CouldNotEncrypt">
+      <MemberSignature Language="C#" Value="CouldNotEncrypt" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure CouldNotEncrypt = int32(32776)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source queue manager cannot encrypt the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HopCountExceeded">
+      <MemberSignature Language="C#" Value="HopCountExceeded" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure HopCountExceeded = int32(32773)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message hop count was exceeded, which indicates the number of intermediate servers.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotTransactionalMessage">
+      <MemberSignature Language="C#" Value="NotTransactionalMessage" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure NotTransactionalMessage = int32(32778)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A nontransactional message was sent to a transactional queue.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotTransactionalQueue">
+      <MemberSignature Language="C#" Value="NotTransactionalQueue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure NotTransactionalQueue = int32(32777)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A transactional message was sent to a nontransactional queue.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Purged">
+      <MemberSignature Language="C#" Value="Purged" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure Purged = int32(32769)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was purged before reaching the destination queue.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="QueueDeleted">
+      <MemberSignature Language="C#" Value="QueueDeleted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure QueueDeleted = int32(49152)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue was deleted before the message could be delivered to the application.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="QueueExceedMaximumSize">
+      <MemberSignature Language="C#" Value="QueueExceedMaximumSize" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure QueueExceedMaximumSize = int32(32771)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was not delivered because the destination queue is full.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="QueuePurged">
+      <MemberSignature Language="C#" Value="QueuePurged" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure QueuePurged = int32(49153)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The queue was purged and the message no longer exists.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReachQueueTimeout">
+      <MemberSignature Language="C#" Value="ReachQueueTimeout" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure ReachQueueTimeout = int32(32770)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message did not reach the destination queue before timing out.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReceiveTimeout">
+      <MemberSignature Language="C#" Value="ReceiveTimeout" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure ReceiveTimeout = int32(49154)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was not delivered to the application on time. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Unknown">
+      <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.DeliveryFailure Unknown = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unknown error occurred.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

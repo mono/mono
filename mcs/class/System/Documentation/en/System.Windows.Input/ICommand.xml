@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ICommand" FullName="System.Windows.Input.ICommand">
+  <TypeSignature Language="C#" Value="public interface ICommand" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICommand" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.CompilerServices.TypeForwardedFrom("PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Input.RoutedCommand" /> and <see cref="T:System.Windows.Input.RoutedUICommand" /> are two implementations of the <see cref="T:System.Windows.Input.ICommand" /> interface in TLA#tla_winclient.</para>
+      <format type="text/html">
+        <a href="#xamlTextUsage_ICommand" />
+      </format>
+      <format type="text/html">
+        <h2>XAML Text Usage</h2>
+      </format>
+      <para>&lt;<legacyItalic>object property</legacyItalic>="<legacyItalic>predefinedCommandName</legacyItalic>"/&gt;</para>
+      <para>- or -</para>
+      <para>&lt;<legacyItalic>object property</legacyItalic>="<legacyItalic>predefinedCommandName.predefinedCommandName</legacyItalic>"/&gt;</para>
+      <para>- or -</para>
+      <para>&lt;<legacyItalic>object property</legacyItalic>="{<format type="text/html"><a href="056aee79-7cdd-434f-8174-dfc856cad343">x:Static</a></format><legacyItalic> customClassName.customCommandName</legacyItalic>}"/&gt;</para>
+      <format type="text/html">
+        <a href="#xamlValues_ICommand" />
+      </format>
+      <format type="text/html">
+        <h2>XAML Values</h2>
+      </format>
+      <list type="table">
+        <item>
+          <term>
+            <legacyItalic>predefinedClassName</legacyItalic>
+          </term>
+          <description>
+            <para>One of the predefined command classes.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <legacyItalic>predefinedCommandName</legacyItalic>
+          </term>
+          <description>
+            <para>One of the predefined commands.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <legacyItalic>customClassName</legacyItalic>
+          </term>
+          <description>
+            <para>A custom class that contains the custom command. Custom classes generally require an xlmns prefix mapping; see <format type="text/html"><a href="5c0854e3-7470-435d-9fe2-93eec9d3634e">XAML Namespaces and Namespace Mapping</a></format>.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <legacyItalic>customCommandName</legacyItalic>
+          </term>
+          <description>
+            <para>A custom command.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a command.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CanExecute">
+      <MemberSignature Language="C#" Value="public bool CanExecute (object parameter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CanExecute(object parameter) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameter" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a command source calls the <see cref="M:System.Windows.Input.ICommand.CanExecute(System.Object)" /> method when the <see cref="E:System.Windows.Input.ICommand.CanExecuteChanged" /> event is raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the method that determines whether the command can execute in its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this command can be executed; otherwise, false.</para>
+        </returns>
+        <param name="parameter">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CanExecuteChanged">
+      <MemberSignature Language="C#" Value="public event EventHandler CanExecuteChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler CanExecuteChanged" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Normally, a command source calls <see cref="M:System.Windows.Input.ICommand.CanExecute(System.Object)" /> on the command when this event occurs.</para>
+          <para>Normally, if the command cannot execute, the command source disables itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when changes occur that affect whether or not the command should execute.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Execute">
+      <MemberSignature Language="C#" Value="public void Execute (object parameter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Execute(object parameter) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameter" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the method to be called when the command is invoked.</para>
+        </summary>
+        <param name="parameter">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

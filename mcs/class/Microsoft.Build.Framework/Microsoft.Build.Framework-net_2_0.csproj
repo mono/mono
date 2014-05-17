@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AB5EDD8C-84A4-4F96-80EE-1B6F3A86785B}</ProjectGuid>
+    <ProjectGuid>{9F21C5DF-2ED4-43F7-8716-192B1C2EC185}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.Build.Framework-net_2_0</OutputPath>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -46,11 +46,14 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\..\tools\xbuild\XBuildConsts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.Build.Framework\AnyEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildEngineResult.cs" />
     <Compile Include="Microsoft.Build.Framework\BuildErrorEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\BuildErrorEventHandler.cs" />
     <Compile Include="Microsoft.Build.Framework\BuildEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildEventContext.cs" />
     <Compile Include="Microsoft.Build.Framework\BuildFinishedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\BuildFinishedEventHandler.cs" />
     <Compile Include="Microsoft.Build.Framework\BuildMessageEventArgs.cs" />
@@ -67,14 +70,21 @@
     <Compile Include="Microsoft.Build.Framework\ExternalProjectStartedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\IBuildEngine.cs" />
     <Compile Include="Microsoft.Build.Framework\IBuildEngine2.cs" />
+    <Compile Include="Microsoft.Build.Framework\IBuildEngine3.cs" />
+    <Compile Include="Microsoft.Build.Framework\IBuildEngine4.cs" />
     <Compile Include="Microsoft.Build.Framework\ICancelableTask.cs" />
+    <Compile Include="Microsoft.Build.Framework\IEventRedirector.cs" />
     <Compile Include="Microsoft.Build.Framework\IEventSource.cs" />
+    <Compile Include="Microsoft.Build.Framework\IForwardingLogger.cs" />
     <Compile Include="Microsoft.Build.Framework\ILogger.cs" />
     <Compile Include="Microsoft.Build.Framework\INodeLogger.cs" />
     <Compile Include="Microsoft.Build.Framework\ITask.cs" />
+    <Compile Include="Microsoft.Build.Framework\ITaskFactory.cs" />
+    <Compile Include="Microsoft.Build.Framework\ITaskFactory2.cs" />
     <Compile Include="Microsoft.Build.Framework\ITaskHost.cs" />
     <Compile Include="Microsoft.Build.Framework\ITaskItem.cs" />
     <Compile Include="Microsoft.Build.Framework\ITaskItem2.cs" />
+    <Compile Include="Microsoft.Build.Framework\LazyFormattedBuildEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\LoadInSeparateAppDomainAttribute.cs" />
     <Compile Include="Microsoft.Build.Framework\LoggerException.cs" />
     <Compile Include="Microsoft.Build.Framework\LoggerVerbosity.cs" />
@@ -84,6 +94,7 @@
     <Compile Include="Microsoft.Build.Framework\ProjectFinishedEventHandler.cs" />
     <Compile Include="Microsoft.Build.Framework\ProjectStartedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\ProjectStartedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\RegisteredTaskObjectLifetime.cs" />
     <Compile Include="Microsoft.Build.Framework\RequiredAttribute.cs" />
     <Compile Include="Microsoft.Build.Framework\TargetFinishedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\TargetFinishedEventHandler.cs" />
@@ -92,6 +103,7 @@
     <Compile Include="Microsoft.Build.Framework\TaskCommandLineEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\TaskFinishedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\TaskFinishedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\TaskPropertyInfo.cs" />
     <Compile Include="Microsoft.Build.Framework\TaskStartedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\TaskStartedEventHandler.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -105,17 +117,20 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
   </ItemGroup>
@@ -123,3 +138,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

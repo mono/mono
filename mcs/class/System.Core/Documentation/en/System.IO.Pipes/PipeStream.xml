@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PipeStream" FullName="System.IO.Pipes.PipeStream">
+  <TypeSignature Language="C#" Value="public abstract class PipeStream : System.IO.Stream" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit PipeStream extends System.IO.Stream" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.IO.Stream</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.Pipes.PipeStream" /> class provides the base class for named and anonymous pipes operations in the .NET Framework. Use the <see cref="T:System.IO.Pipes.NamedPipeServerStream" /> and <see cref="T:System.IO.Pipes.NamedPipeClientStream" /> classes for named pipe operations. Use the <see cref="T:System.IO.Pipes.AnonymousPipeServerStream" /> and <see cref="T:System.IO.Pipes.AnonymousPipeClientStream" /> classes for anonymous pipe operations.</para>
+      <para>For more information about pipes, see <format type="text/html"><a href="7b964ebd-7a4f-4d28-8194-7841f9e4c702">Pipes</a></format>. For an example of anonymous pipes, see <format type="text/html"><a href="e7773c77-c646-4a01-8a96-a003d59fc4c9">How to: Use Anonymous Pipes to Communicate Between Local Processes</a></format>. For an example of named pipes, see <format type="text/html"><a href="4e4d7e64-9f1b-4026-98f7-20488ac7b42b">How to: Use Named Pipes to Communicate Between Processes over a Network</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes a <see cref="T:System.IO.Stream" /> object around a pipe, which supports both anonymous and named pipes.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected PipeStream (System.IO.Pipes.PipeDirection direction, int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.IO.Pipes.PipeDirection direction, int32 bufferSize) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="direction" Type="System.IO.Pipes.PipeDirection" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses a pipe transmission mode of <see cref="F:System.IO.Pipes.PipeTransmissionMode.Byte" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Pipes.PipeStream" /> class using the specified <see cref="T:System.IO.Pipes.PipeDirection" /> value and buffer size.</para>
+        </summary>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.IO.Pipes.PipeDirection" /> values that indicates the direction of the pipe object.</param>
+        <param name="bufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />A positive <see cref="T:System.Int32" /> value greater than or equal to 0 that indicates the buffer size.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected PipeStream (System.IO.Pipes.PipeDirection direction, System.IO.Pipes.PipeTransmissionMode transmissionMode, int outBufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.IO.Pipes.PipeDirection direction, valuetype System.IO.Pipes.PipeTransmissionMode transmissionMode, int32 outBufferSize) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="direction" Type="System.IO.Pipes.PipeDirection" />
+        <Parameter Name="transmissionMode" Type="System.IO.Pipes.PipeTransmissionMode" />
+        <Parameter Name="outBufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Pipes.PipeStream" /> class using the specified <see cref="T:System.IO.Pipes.PipeDirection" />, <see cref="T:System.IO.Pipes.PipeTransmissionMode" />, and buffer size.</para>
+        </summary>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.IO.Pipes.PipeDirection" /> values that indicates the direction of the pipe object.</param>
+        <param name="transmissionMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.IO.Pipes.PipeTransmissionMode" /> values that indicates the transmission mode of the pipe object.</param>
+        <param name="outBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />A positive <see cref="T:System.Int32" /> value greater than or equal to 0 that indicates the buffer size.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginRead">
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IAsyncResult BeginRead(unsigned int8[] buffer, int32 offset, int32 count, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pass the returned <see cref="T:System.IAsyncResult" /> object to the <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> method to determine how many bytes were read and to release operating system resources used for reading. <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> must be called once for every call to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />. This can be done either in the same code that called <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> or in a callback that is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanRead" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports read operations.</para>
+          <para>If the pipe is closed or an invalid argument is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, the appropriate exceptions are raised immediately. Errors that occur during an asynchronous read request occur on the thread pool thread that is performing the request. The exceptions are raised when the code calls the <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous read operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous read.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read data into.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte offset in <paramref name="buffer" /> at which to begin reading.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to read.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to call when the asynchronous read operation is completed.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-provided object that distinguishes this particular asynchronous read request from other requests.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginWrite">
+      <MemberSignature Language="C#" Value="public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IAsyncResult BeginWrite(unsigned int8[] buffer, int32 offset, int32 count, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.IO.Pipes.PipeStream.EndWrite(System.IAsyncResult)" /> must be called once for every call to <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />. This can be done either in the same code that called <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> or in a callback that is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanWrite" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports write operations.</para>
+          <para>If the pipe is closed or an invalid argument is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, the appropriate exceptions are raised immediately. Errors that occur during an asynchronous write request occur on the thread pool thread that is performing the request. The exceptions are raised when the code calls the  <see cref="M:System.IO.Pipes.PipeStream.EndWrite(System.IAsyncResult)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous write operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous write operation.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer that contains the data to write to the current stream.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based byte offset in <paramref name="buffer" /> at which to begin copying bytes to the current stream.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to write.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to call when the asynchronous write operation is completed.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-provided object that distinguishes this particular asynchronous write request from other requests.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="C#" Value="public override bool CanRead { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanRead" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.IO.Pipes.PipeStream" /> object is closed, this property returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current stream supports read operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CanSeek">
+      <MemberSignature Language="C#" Value="public override bool CanSeek { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanSeek" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.IO.Pipes.PipeStream" /> object is closed, this property returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current stream supports seek operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CanWrite">
+      <MemberSignature Language="C#" Value="public override bool CanWrite { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanWrite" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.IO.Pipes.PipeStream" /> object is closed, this property returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current stream supports write operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckPipePropertyOperations">
+      <MemberSignature Language="C#" Value="protected virtual void CheckPipePropertyOperations ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void CheckPipePropertyOperations() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies that the pipe is in a proper state for getting or setting properties.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckReadOperations">
+      <MemberSignature Language="C#" Value="protected void CheckReadOperations ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance void CheckReadOperations() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies that the pipe is in a connected state for read operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckWriteOperations">
+      <MemberSignature Language="C#" Value="protected void CheckWriteOperations ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance void CheckWriteOperations() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies that the pipe is in a connected state for write operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public <see cref="M:System.ComponentModel.Component.Dispose" /> method and the <see cref="M:System.Object.Finalize" /> method. <see cref="M:System.ComponentModel.Component.Dispose" /> invokes the protected <see cref="M:System.IO.Pipes.PipeStream.Dispose(System.Boolean)" /> method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes <see cref="M:System.IO.Pipes.PipeStream.Dispose(System.Boolean)" /> with <paramref name="disposing" /> set to false. When the disposing parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.IO.Pipes.PipeStream" /> object references. This method invokes the <see cref="M:System.IO.Pipes.PipeStream.Dispose(System.Boolean)" /> method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.Pipes.PipeStream" /> class and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndRead">
+      <MemberSignature Language="C#" Value="public override int EndRead (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 EndRead(class System.IAsyncResult asyncResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the number of bytes read into the byte array specified by the earlier call to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+          <para>Pass the returned <see cref="T:System.IAsyncResult" /> object to the <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> method to determine how many bytes were read and to release operating system resources used for reading. <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> must be called once for every call to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />. This can be done either in the same code that called <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> or in a callback that is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanRead" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports read operations.</para>
+          <para>If the pipe is closed or an invalid argument is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, the appropriate exceptions are raised immediately. Errors that occur during an asynchronous read request occur on the thread pool thread that is performing the request. The exceptions are raised when the code calls the <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends a pending asynchronous read request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes that were read. A return value of 0 indicates the end of the stream (the pipe has been closed).</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference to the pending asynchronous request.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndWrite">
+      <MemberSignature Language="C#" Value="public override void EndWrite (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void EndWrite(class System.IAsyncResult asyncResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asyncResult" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.IO.Pipes.PipeStream.EndWrite(System.IAsyncResult)" /> must be called once for every call to <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />. This can be done either in the same code that called <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> or in a callback that is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanWrite" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports write operations.</para>
+          <para>If the pipe is closed or an invalid argument is passed to <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, the appropriate exceptions are raised immediately. Errors that occur during an asynchronous write request occur on the thread pool thread that is performing the request. The exceptions are raised when the code the calls <see cref="M:System.IO.Pipes.PipeStream.EndWrite(System.IAsyncResult)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends a pending asynchronous write request.</para>
+        </summary>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference to the pending asynchronous request.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Flush() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeStream.Flush" /> method is not supported in the <see cref="T:System.IO.Pipes.PipeStream" /> class and does nothing when it is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the buffer for the current stream and causes any buffered data to be written to the underlying device.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.IO.Pipes.PipeSecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.Pipes.PipeSecurity GetAccessControl() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeSecurity</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An access control list (ACL) describes individuals and/or groups that have, or do not have, rights to perform specific actions on a specified file. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How To: Add or Remove Access Control List Entries</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.IO.Pipes.PipeSecurity" /> object that encapsulates the access control list (ACL) entries for the pipe described by the current <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Pipes.PipeSecurity" /> object that encapsulates the access control list (ACL) entries for the pipe described by the current <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="InBufferSize">
+      <MemberSignature Language="C#" Value="public virtual int InBufferSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 InBufferSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.IO.Pipes.PipeStream.InBufferSize" /> is 0, the buffer size is allocated as needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size, in bytes, of the inbound buffer for a pipe.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeHandle">
+      <MemberSignature Language="C#" Value="protected void InitializeHandle (Microsoft.Win32.SafeHandles.SafePipeHandle handle, bool isExposed, bool isAsync);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void InitializeHandle(class Microsoft.Win32.SafeHandles.SafePipeHandle handle, bool isExposed, bool isAsync) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="Microsoft.Win32.SafeHandles.SafePipeHandle" />
+        <Parameter Name="isExposed" Type="System.Boolean" />
+        <Parameter Name="isAsync" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the pipe is in a connected state, this method also sets the <see cref="P:System.IO.Pipes.PipeStream.IsConnected" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.IO.Pipes.PipeStream" /> object from the specified <see cref="T:Microsoft.Win32.SafeHandles.SafePipeHandle" /> object.</para>
+        </summary>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Win32.SafeHandles.SafePipeHandle" /> object of the pipe to initialize.</param>
+        <param name="isExposed">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to expose the handle; otherwise, false.</param>
+        <param name="isAsync">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the handle was opened asynchronously; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsAsync">
+      <MemberSignature Language="C#" Value="public bool IsAsync { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAsync" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables your code to use the <see cref="P:System.IO.Pipes.PipeStream.SafePipeHandle" /> property correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a <see cref="T:System.IO.Pipes.PipeStream" /> object was opened asynchronously or synchronously.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsConnected">
+      <MemberSignature Language="C#" Value="public bool IsConnected { get; protected set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.Pipes.PipeStream.IsConnected" /> property returns true only if the <see cref="T:System.IO.Pipes.PipeStream" /> object is connected. If this property returns false, the pipe may be waiting to connect, or may be disconnected, closed, or broken.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a <see cref="T:System.IO.Pipes.PipeStream" /> object is connected.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsHandleExposed">
+      <MemberSignature Language="C#" Value="protected bool IsHandleExposed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsHandleExposed" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is set when obtaining a handle to the pipe that is encapsulated by the current <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a handle to a <see cref="T:System.IO.Pipes.PipeStream" /> object is exposed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsMessageComplete">
+      <MemberSignature Language="C#" Value="public bool IsMessageComplete { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsMessageComplete" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is relevant if the pipe's <see cref="P:System.IO.Pipes.PipeStream.ReadMode" /> property was set to <see cref="F:System.IO.Pipes.PipeTransmissionMode.Message" /> by the most recent call to <see cref="M:System.IO.Pipes.PipeStream.Read(System.Byte[],System.Int32,System.Int32)" /> or <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether there is more data in the message returned from the most recent read operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public override long Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Length" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.Pipes.PipeStream" /> class does not support the <see cref="P:System.IO.Pipes.PipeStream.Length" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of a stream, in bytes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OutBufferSize">
+      <MemberSignature Language="C#" Value="public virtual int OutBufferSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 OutBufferSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.IO.Pipes.PipeStream.OutBufferSize" /> is 0, the buffer size is allocated as needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size, in bytes, of the outbound buffer for a pipe.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Position">
+      <MemberSignature Language="C#" Value="public override long Position { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Position" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.Pipes.PipeStream" /> class does not support the <see cref="P:System.IO.Pipes.PipeStream.Position" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current position of the current stream.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public override int Read (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 Read(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanRead" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports read operations.</para>
+          <para>Calling the <see cref="M:System.IO.Pipes.PipeStream.Read(System.Byte[],System.Int32,System.Int32)" /> method blocks until <paramref name="count" /> bytes are read or the end of the stream is reached. For asynchronous read operations, see <see cref="M:System.IO.Pipes.PipeStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> and <see cref="M:System.IO.Pipes.PipeStream.EndRead(System.IAsyncResult)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a block of bytes from a stream and writes the data to a specified buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes that are read into <paramref name="buffer" />. This might be less than the number of bytes requested if that number of bytes is not currently available, or 0 if the end of the stream is reached.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> + <paramref name="count" /> - 1) replaced by the bytes read from the current source.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte offset in the <paramref name="buffer" /> array at which the bytes that are read will be placed.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to read.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadByte">
+      <MemberSignature Language="C#" Value="public override int ReadByte ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadByte() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanRead" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports read operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a byte from a pipe.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte, cast to <see cref="T:System.Int32" />, or -1 indicates the end of the stream (the pipe has been closed).</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadMode">
+      <MemberSignature Language="C#" Value="public virtual System.IO.Pipes.PipeTransmissionMode ReadMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Pipes.PipeTransmissionMode ReadMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeTransmissionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Anonymous pipes do not support <see cref="F:System.IO.Pipes.PipeTransmissionMode.Message" /> mode message transmission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the reading mode for a <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SafePipeHandle">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.SafeHandles.SafePipeHandle SafePipeHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Microsoft.Win32.SafeHandles.SafePipeHandle SafePipeHandle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SafeHandles.SafePipeHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the safe handle for the local end of the pipe that the current <see cref="T:System.IO.Pipes.PipeStream" /> object encapsulates.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="C#" Value="public override long Seek (long offset, System.IO.SeekOrigin origin);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int64 Seek(int64 offset, valuetype System.IO.SeekOrigin origin) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="origin" Type="System.IO.SeekOrigin" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeStream.Seek(System.Int64,System.IO.SeekOrigin)" /> method is not supported in pipes and raises a <see cref="T:System.NotSupportedException" /> when it is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current position of the current stream to the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new position in the stream.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The point, relative to <paramref name="origin" />, to begin seeking from.</param>
+        <param name="origin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the beginning, the end, or the current position as a reference point for <paramref name="offset" />, using a value of type <see cref="T:System.IO.SeekOrigin" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.IO.Pipes.PipeSecurity pipeSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.IO.Pipes.PipeSecurity pipeSecurity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pipeSecurity" Type="System.IO.Pipes.PipeSecurity" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An access control list (ACL) describes individuals and/or groups that have, or do not have, rights to perform specific actions on a specified file. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How To: Add or Remove Access Control List Entries</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the access control list (ACL) entries specified by a <see cref="T:System.IO.Pipes.PipeSecurity" /> object to the pipe specified by the current <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
+        </summary>
+        <param name="pipeSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Pipes.PipeSecurity" /> object that specifies an access control list (ACL) entry to apply to the current pipe.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLength">
+      <MemberSignature Language="C#" Value="public override void SetLength (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetLength(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.Pipes.PipeStream" /> class does not support the <see cref="M:System.IO.Pipes.PipeStream.SetLength(System.Int64)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the length of the current stream to the specified value.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new length of the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TransmissionMode">
+      <MemberSignature Language="C#" Value="public virtual System.IO.Pipes.PipeTransmissionMode TransmissionMode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Pipes.PipeTransmissionMode TransmissionMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeTransmissionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Anonymous pipes do not support <see cref="F:System.IO.Pipes.PipeTransmissionMode.Message" /> mode message transmission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the pipe transmission mode supported by the current pipe.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitForPipeDrain">
+      <MemberSignature Language="C#" Value="public void WaitForPipeDrain ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WaitForPipeDrain() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeStream.WaitForPipeDrain" /> method blocks until the other end of the pipe has read all sent bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for the other end of the pipe to read all sent bytes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public override void Write (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanWrite" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports write operations.</para>
+          <para>Calling the <see cref="M:System.IO.Pipes.PipeStream.Write(System.Byte[],System.Int32,System.Int32)" /> method blocks until <paramref name="count" /> bytes are read or the end of the stream is reached. For asynchronous read operations, see <see cref="M:System.IO.Pipes.PipeStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> and <see cref="M:System.IO.Pipes.PipeStream.EndWrite(System.IAsyncResult)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a block of bytes to the current stream using data from a buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer that contains data to write to the pipe.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based byte offset in <paramref name="buffer" /> at which to begin copying bytes to the current stream.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to write to the current stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteByte">
+      <MemberSignature Language="C#" Value="public override void WriteByte (byte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteByte(unsigned int8 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.IO.Pipes.PipeStream.CanWrite" /> property to determine whether the current <see cref="T:System.IO.Pipes.PipeStream" /> object supports write operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a byte to the current stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte to write to the stream.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

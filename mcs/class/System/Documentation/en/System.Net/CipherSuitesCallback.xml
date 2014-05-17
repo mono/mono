@@ -1,0 +1,28 @@
+<Type Name="CipherSuitesCallback" FullName="System.Net.CipherSuitesCallback">
+  <TypeSignature Language="C#" Value="public delegate System.Collections.Generic.IEnumerable&lt;string&gt; CipherSuitesCallback(SecurityProtocolType protocol, IEnumerable&lt;string&gt; allCiphers);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CipherSuitesCallback extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="protocol" Type="System.Net.SecurityProtocolType" />
+    <Parameter Name="allCiphers" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="protocol" preserve-mono="true">The SSL/TLS protocol version used for the connection.</param>
+    <param name="allCiphers" preserve-mono="true">The ordered list of all supported cipher suites.</param>
+    <summary preserve-mono="true">You can provide your own code to filter/re-order the cipher suites to be used for client and/or server side SSL/TLS support.</summary>
+    <returns preserve-mono="true">The ordered list of all cipher suites you wish to support.</returns>
+    <remarks preserve-mono="true">
+      <para>This type is only available in Mono and Xamarin products.</para>
+      <para>See the <see cref="P:System.Net.ServicePointManager.ClientCipherSuitesCallback"/> property for examples of how this is used.</para>
+    </remarks>
+  </Docs>
+</Type>

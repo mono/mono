@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Expression&lt;TDelegate&gt;" FullName="System.Linq.Expressions.Expression&lt;TDelegate&gt;">
   <TypeSignature Language="C#" Value="public sealed class Expression&lt;TDelegate&gt; : System.Linq.Expressions.LambdaExpression" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Expression`1&lt;TDelegate&gt; extends System.Linq.Expressions.LambdaExpression" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
     <TypeParameter Name="TDelegate" />
@@ -13,24 +16,128 @@
   <Interfaces />
   <Docs>
     <typeparam name="TDelegate">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a lambda expression is assigned to a variable, field, or parameter whose type is <see cref="T:System.Linq.Expressions.Expression`1" />, the compiler emits instructions to build an expression tree.</para>
+      <block subset="none" type="note">
+        <para>A conversion from a lambda expression to type <unmanagedCodeEntityReference>Expression&lt;D&gt;</unmanagedCodeEntityReference> (<unmanagedCodeEntityReference>Expression(Of D)</unmanagedCodeEntityReference> in Visual Basic) exists if a conversion from the lambda expression to a delegate of type <unmanagedCodeEntityReference>D</unmanagedCodeEntityReference> exists. However, the conversion may fail, for example, if the body of the lambda expression is a block. This means that delegates and expression trees behave similarly with regard to overload resolution.</para>
+      </block>
+      <para>The expression tree is an in-memory data representation of the lambda expression. The expression tree makes the structure of the lambda expression transparent and explicit. You can interact with the data in the expression tree just as you can with any other data structure.</para>
+      <para>The ability to treat expressions as data structures enables APIs to receive user code in a format that can be inspected, transformed, and processed in a custom manner. For example, the vbtecdlinq data access implementation uses this facility to translate expression trees to Transact-SQL statements that can be evaluated by the database.</para>
+      <para>Many standard query operators defined in the <see cref="T:System.Linq.Queryable" /> class have one or more parameters of type <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
+      <para>The <see cref="P:System.Linq.Expressions.Expression.NodeType" /> of an <see cref="T:System.Linq.Expressions.Expression`1" /> is <see cref="F:System.Linq.Expressions.ExpressionType.Lambda" />.</para>
+      <para>Use the <see cref="M:System.Linq.Expressions.Expression.Lambda``1(System.Linq.Expressions.Expression,System.Collections.Generic.IEnumerable{System.Linq.Expressions.ParameterExpression})" /> or <see cref="M:System.Linq.Expressions.Expression.Lambda``1(System.Linq.Expressions.Expression,System.Linq.Expressions.ParameterExpression[])" /> method to create an <see cref="T:System.Linq.Expressions.Expression`1" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a strongly typed lambda expression as a data structure in the form of an expression tree. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
+    <Member MemberName="Accept">
+      <MemberSignature Language="C#" Value="protected override System.Linq.Expressions.Expression Accept (System.Linq.Expressions.ExpressionVisitor visitor);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.Linq.Expressions.Expression Accept(class System.Linq.Expressions.ExpressionVisitor visitor) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="visitor" Type="System.Linq.Expressions.ExpressionVisitor" />
+      </Parameters>
+      <Docs>
+        <param name="visitor">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Compile">
       <MemberSignature Language="C#" Value="public TDelegate Compile ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !TDelegate Compile() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TDelegate</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Linq.Expressions.Expression`1.Compile" /> method produces a delegate of type <paramref name="TDelegate" /> at runtime. When that delegate is executed, it has the behavior described by the semantics of the <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
+          <para>The <see cref="M:System.Linq.Expressions.Expression`1.Compile" /> method can be used to obtain the value of any expression tree. First, create a lambda expression that has the expression as its body by using the <see cref="M:System.Linq.Expressions.Expression.Lambda(System.Linq.Expressions.Expression,System.Linq.Expressions.ParameterExpression[])" /> method. Then call <see cref="M:System.Linq.Expressions.Expression`1.Compile" /> to obtain a delegate, and execute the delegate to obtain the value of the expression.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the lambda expression described by the expression tree into executable code and produces a delegate that represents the lambda expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of type <paramref name="TDelegate" /> that represents the compiled lambda expression described by the <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Compile">
+      <MemberSignature Language="C#" Value="public TDelegate Compile (System.Runtime.CompilerServices.DebugInfoGenerator debugInfoGenerator);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !TDelegate Compile(class System.Runtime.CompilerServices.DebugInfoGenerator debugInfoGenerator) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TDelegate</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="debugInfoGenerator" Type="System.Runtime.CompilerServices.DebugInfoGenerator" />
+      </Parameters>
+      <Docs>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a delegate that represents the lambda expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate containing the compiled version of the lambda.</para>
+        </returns>
+        <param name="debugInfoGenerator">
+          <attribution license="cc4" from="Microsoft" modified="false" />Debugging information generator used by the compiler to mark sequence points and annotate local variables.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression&lt;TDelegate&gt; Update (System.Linq.Expressions.Expression body, System.Collections.Generic.IEnumerable&lt;System.Linq.Expressions.ParameterExpression&gt; parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Linq.Expressions.Expression`1&lt;!TDelegate&gt; Update(class System.Linq.Expressions.Expression body, class System.Collections.Generic.IEnumerable`1&lt;class System.Linq.Expressions.ParameterExpression&gt; parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression&lt;TDelegate&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="body" Type="System.Linq.Expressions.Expression" />
+        <Parameter Name="parameters" Type="System.Collections.Generic.IEnumerable&lt;System.Linq.Expressions.ParameterExpression&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.LambdaExpression.Body" /> property of the result.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.LambdaExpression.Parameters" /> property of the result. </param>
       </Docs>
     </Member>
   </Members>

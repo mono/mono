@@ -1,613 +1,1515 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionType" FullName="System.Linq.Expressions.ExpressionType">
   <TypeSignature Language="C#" Value="public enum ExpressionType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ExpressionType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about each enumeration value of this type, see section 4.4 of expr-tree-spec.doc or expr-tree-spec.pdf on the <see cref="http://go.microsoft.com/fwlink/?LinkId=230775">Microsoft Dynamic Language Runtime</see> page of the Codeplex website.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the node types for the nodes of an expression tree.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="Add" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Add = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An addition operation, such as a + b, without overflow checking, for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAssign">
+      <MemberSignature Language="C#" Value="AddAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType AddAssign = int32(63)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An addition compound assignment operation, such as (a += b), without overflow checking, for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAssignChecked">
+      <MemberSignature Language="C#" Value="AddAssignChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType AddAssignChecked = int32(74)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An addition compound assignment operation, such as (a += b), with overflow checking, for numeric operands.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddChecked">
       <MemberSignature Language="C#" Value="AddChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType AddChecked = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An addition operation, such as (a + b), with overflow checking, for numeric operands.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="And">
       <MemberSignature Language="C#" Value="And" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType And = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise or logical AND operation, such as (a &amp; b) in C# and (a And b) in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AndAlso">
       <MemberSignature Language="C#" Value="AndAlso" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType AndAlso = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A conditional AND operation that evaluates the second operand only if the first operand evaluates to true. It corresponds to (a &amp;&amp; b) in C# and (a AndAlso b) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AndAssign">
+      <MemberSignature Language="C#" Value="AndAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType AndAssign = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise or logical AND compound assignment operation, such as (a &amp;= b) in C#.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ArrayIndex">
       <MemberSignature Language="C#" Value="ArrayIndex" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType ArrayIndex = int32(5)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An indexing operation in a one-dimensional array, such as array[index] in C# or array(index) in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ArrayLength">
       <MemberSignature Language="C#" Value="ArrayLength" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType ArrayLength = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that obtains the length of a one-dimensional array, such as array.Length.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Assign">
+      <MemberSignature Language="C#" Value="Assign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Assign = int32(46)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An assignment operation, such as (a = b).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Block">
+      <MemberSignature Language="C#" Value="Block" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Block = int32(47)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A block of expressions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Call">
       <MemberSignature Language="C#" Value="Call" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Call = int32(6)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A method call, such as in the obj.sampleMethod() expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Coalesce">
       <MemberSignature Language="C#" Value="Coalesce" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Coalesce = int32(7)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A node that represents a null coalescing operation, such as (a ?? b) in C# or If(a, b) in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Conditional">
       <MemberSignature Language="C#" Value="Conditional" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Conditional = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A conditional operation, such as a &gt; b ? a : b in C# or If(a &gt; b, a, b) in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Constant">
       <MemberSignature Language="C#" Value="Constant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Constant = int32(9)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Convert">
       <MemberSignature Language="C#" Value="Convert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Convert = int32(10)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cast or conversion operation, such as (SampleType)obj in C# or CType(obj, SampleType) in Visual Basic. For a numeric conversion, if the converted value is too large for the destination type, no exception is thrown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConvertChecked">
       <MemberSignature Language="C#" Value="ConvertChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType ConvertChecked = int32(11)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cast or conversion operation, such as (SampleType)obj in C# or CType(obj, SampleType) in Visual Basic. For a numeric conversion, if the converted value does not fit the destination type, an exception is thrown.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DebugInfo">
+      <MemberSignature Language="C#" Value="DebugInfo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType DebugInfo = int32(48)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Debugging information.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Decrement">
+      <MemberSignature Language="C#" Value="Decrement" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Decrement = int32(49)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unary decrement operation, such as (a - 1) in C# and Visual Basic. The object a should not be modified in place.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Default = int32(51)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A default value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Divide">
       <MemberSignature Language="C#" Value="Divide" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Divide = int32(12)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A division operation, such as (a / b), for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DivideAssign">
+      <MemberSignature Language="C#" Value="DivideAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType DivideAssign = int32(65)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An division compound assignment operation, such as (a /= b), for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dynamic">
+      <MemberSignature Language="C#" Value="Dynamic" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Dynamic = int32(50)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equal">
       <MemberSignature Language="C#" Value="Equal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Equal = int32(13)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A node that represents an equality comparison, such as (a == b) in C# or (a = b) in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExclusiveOr">
       <MemberSignature Language="C#" Value="ExclusiveOr" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType ExclusiveOr = int32(14)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise or logical XOR operation, such as (a ^ b) in C# or (a Xor b) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExclusiveOrAssign">
+      <MemberSignature Language="C#" Value="ExclusiveOrAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType ExclusiveOrAssign = int32(66)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise or logical XOR compound assignment operation, such as (a ^= b) in C#.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Extension">
+      <MemberSignature Language="C#" Value="Extension" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Extension = int32(52)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An extension expression.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Goto">
+      <MemberSignature Language="C#" Value="Goto" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Goto = int32(53)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A "go to" expression, such as goto Label in C# or GoTo Label in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GreaterThan">
       <MemberSignature Language="C#" Value="GreaterThan" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType GreaterThan = int32(15)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A "greater than" comparison, such as (a &gt; b).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GreaterThanOrEqual">
       <MemberSignature Language="C#" Value="GreaterThanOrEqual" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType GreaterThanOrEqual = int32(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A "greater than or equal to" comparison, such as (a &gt;= b).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Increment">
+      <MemberSignature Language="C#" Value="Increment" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Increment = int32(54)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unary increment operation, such as (a + 1) in C# and Visual Basic. The object a should not be modified in place.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Index">
+      <MemberSignature Language="C#" Value="Index" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Index = int32(55)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An index operation or an operation that accesses a property that takes arguments. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
       <MemberSignature Language="C#" Value="Invoke" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Invoke = int32(17)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that invokes a delegate or lambda expression, such as sampleDelegate.Invoke().</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsFalse">
+      <MemberSignature Language="C#" Value="IsFalse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType IsFalse = int32(84)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A false condition value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsTrue">
+      <MemberSignature Language="C#" Value="IsTrue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType IsTrue = int32(83)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A true condition value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Label">
+      <MemberSignature Language="C#" Value="Label" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Label = int32(56)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A label.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Lambda">
       <MemberSignature Language="C#" Value="Lambda" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Lambda = int32(18)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A lambda expression, such as a =&gt; a + a in C# or Function(a) a + a in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LeftShift">
       <MemberSignature Language="C#" Value="LeftShift" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType LeftShift = int32(19)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise left-shift operation, such as (a &lt;&lt; b).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LeftShiftAssign">
+      <MemberSignature Language="C#" Value="LeftShiftAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType LeftShiftAssign = int32(67)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise left-shift compound assignment, such as (a &lt;&lt;= b).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LessThan">
       <MemberSignature Language="C#" Value="LessThan" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType LessThan = int32(20)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A "less than" comparison, such as (a &lt; b).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LessThanOrEqual">
       <MemberSignature Language="C#" Value="LessThanOrEqual" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType LessThanOrEqual = int32(21)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A "less than or equal to" comparison, such as (a &lt;= b).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListInit">
       <MemberSignature Language="C#" Value="ListInit" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType ListInit = int32(22)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that creates a new <see cref="T:System.Collections.IEnumerable" /> object and initializes it from a list of elements, such as new List&lt;SampleType&gt;(){ a, b, c } in C# or Dim sampleList = { a, b, c } in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Loop">
+      <MemberSignature Language="C#" Value="Loop" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Loop = int32(58)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A loop, such as for or while.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemberAccess">
       <MemberSignature Language="C#" Value="MemberAccess" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType MemberAccess = int32(23)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that reads from a field or property, such as obj.SampleProperty.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemberInit">
       <MemberSignature Language="C#" Value="MemberInit" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType MemberInit = int32(24)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that creates a new object and initializes one or more of its members, such as new Point { X = 1, Y = 2 } in C# or New Point With {.X = 1, .Y = 2} in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Modulo">
       <MemberSignature Language="C#" Value="Modulo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Modulo = int32(25)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An arithmetic remainder operation, such as (a % b) in C# or (a Mod b) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ModuloAssign">
+      <MemberSignature Language="C#" Value="ModuloAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType ModuloAssign = int32(68)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An arithmetic remainder compound assignment operation, such as (a %= b) in C#.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Multiply">
       <MemberSignature Language="C#" Value="Multiply" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Multiply = int32(26)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A multiplication operation, such as (a * b), without overflow checking, for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MultiplyAssign">
+      <MemberSignature Language="C#" Value="MultiplyAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType MultiplyAssign = int32(69)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A multiplication compound assignment operation, such as (a *= b), without overflow checking, for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MultiplyAssignChecked">
+      <MemberSignature Language="C#" Value="MultiplyAssignChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType MultiplyAssignChecked = int32(75)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A multiplication compound assignment operation, such as (a *= b), that has overflow checking, for numeric operands.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultiplyChecked">
       <MemberSignature Language="C#" Value="MultiplyChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType MultiplyChecked = int32(27)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An multiplication operation, such as (a * b), that has overflow checking, for numeric operands.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Negate">
       <MemberSignature Language="C#" Value="Negate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Negate = int32(28)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An arithmetic negation operation, such as (-a). The object a should not be modified in place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NegateChecked">
       <MemberSignature Language="C#" Value="NegateChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType NegateChecked = int32(30)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An arithmetic negation operation, such as (-a), that has overflow checking. The object a should not be modified in place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="New">
       <MemberSignature Language="C#" Value="New" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType New = int32(31)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that calls a constructor to create a new object, such as new SampleType().</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NewArrayBounds">
       <MemberSignature Language="C#" Value="NewArrayBounds" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType NewArrayBounds = int32(33)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that creates a new array, in which the bounds for each dimension are specified, such as new SampleType[dim1, dim2] in C# or New SampleType(dim1, dim2) in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NewArrayInit">
       <MemberSignature Language="C#" Value="NewArrayInit" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType NewArrayInit = int32(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that creates a new one-dimensional array and initializes it from a list of elements, such as new SampleType[]{a, b, c} in C# or New SampleType(){a, b, c} in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Not">
       <MemberSignature Language="C#" Value="Not" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Not = int32(34)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise complement or logical negation operation. In C#, it is equivalent to (~a) for integral types and to (!a) for Boolean values. In Visual Basic, it is equivalent to (Not a). The object a should not be modified in place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotEqual">
       <MemberSignature Language="C#" Value="NotEqual" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType NotEqual = int32(35)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An inequality comparison, such as (a != b) in C# or (a &lt;&gt; b) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnesComplement">
+      <MemberSignature Language="C#" Value="OnesComplement" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType OnesComplement = int32(82)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A ones complement operation, such as (~a) in C#.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Or">
       <MemberSignature Language="C#" Value="Or" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Or = int32(36)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise or logical OR operation, such as (a | b) in C# or (a Or b) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OrAssign">
+      <MemberSignature Language="C#" Value="OrAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType OrAssign = int32(70)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise or logical OR compound assignment, such as (a |= b) in C#.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OrElse">
       <MemberSignature Language="C#" Value="OrElse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType OrElse = int32(37)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A short-circuiting conditional OR operation, such as (a || b) in C# or (a OrElse b) in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parameter">
       <MemberSignature Language="C#" Value="Parameter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Parameter = int32(38)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to a parameter or variable that is defined in the context of the expression. For more information, see <see cref="T:System.Linq.Expressions.ParameterExpression" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PostDecrementAssign">
+      <MemberSignature Language="C#" Value="PostDecrementAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType PostDecrementAssign = int32(80)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unary postfix decrement, such as (a--). The object a should be modified in place.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PostIncrementAssign">
+      <MemberSignature Language="C#" Value="PostIncrementAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType PostIncrementAssign = int32(79)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unary postfix increment, such as (a++). The object a should be modified in place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Power">
       <MemberSignature Language="C#" Value="Power" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Power = int32(39)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mathematical operation that raises a number to a power, such as (a ^ b) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PowerAssign">
+      <MemberSignature Language="C#" Value="PowerAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType PowerAssign = int32(71)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A compound assignment operation that raises a number to a power, such as (a ^= b) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PreDecrementAssign">
+      <MemberSignature Language="C#" Value="PreDecrementAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType PreDecrementAssign = int32(78)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unary prefix decrement, such as (--a). The object a should be modified in place.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PreIncrementAssign">
+      <MemberSignature Language="C#" Value="PreIncrementAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType PreIncrementAssign = int32(77)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unary prefix increment, such as (++a). The object a should be modified in place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Quote">
       <MemberSignature Language="C#" Value="Quote" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Quote = int32(40)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An expression that has a constant value of type <see cref="T:System.Linq.Expressions.Expression" />. A <see cref="F:System.Linq.Expressions.ExpressionType.Quote" /> node can contain references to parameters that are defined in the context of the expression it represents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightShift">
       <MemberSignature Language="C#" Value="RightShift" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType RightShift = int32(41)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise right-shift operation, such as (a &gt;&gt; b).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RightShiftAssign">
+      <MemberSignature Language="C#" Value="RightShiftAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType RightShiftAssign = int32(72)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise right-shift compound assignment operation, such as (a &gt;&gt;= b).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RuntimeVariables">
+      <MemberSignature Language="C#" Value="RuntimeVariables" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType RuntimeVariables = int32(57)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list of run-time variables. For more information, see <see cref="T:System.Linq.Expressions.RuntimeVariablesExpression" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Subtract">
       <MemberSignature Language="C#" Value="Subtract" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Subtract = int32(42)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A subtraction operation, such as (a - b), without overflow checking, for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SubtractAssign">
+      <MemberSignature Language="C#" Value="SubtractAssign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType SubtractAssign = int32(73)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A subtraction compound assignment operation, such as (a -= b), without overflow checking, for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SubtractAssignChecked">
+      <MemberSignature Language="C#" Value="SubtractAssignChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType SubtractAssignChecked = int32(76)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A subtraction compound assignment operation, such as (a -= b), that has overflow checking, for numeric operands.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SubtractChecked">
       <MemberSignature Language="C#" Value="SubtractChecked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType SubtractChecked = int32(43)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An arithmetic subtraction operation, such as (a - b), that has overflow checking, for numeric operands.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Switch">
+      <MemberSignature Language="C#" Value="Switch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Switch = int32(59)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A switch operation, such as switch in C# or Select Case in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Throw">
+      <MemberSignature Language="C#" Value="Throw" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Throw = int32(60)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operation that throws an exception, such as throw new Exception().</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Try">
+      <MemberSignature Language="C#" Value="Try" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Try = int32(61)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A try-catch expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeAs">
       <MemberSignature Language="C#" Value="TypeAs" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType TypeAs = int32(44)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An explicit reference or boxing conversion in which null is supplied if the conversion fails, such as (obj as SampleType) in C# or TryCast(obj, SampleType) in Visual Basic.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TypeEqual">
+      <MemberSignature Language="C#" Value="TypeEqual" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType TypeEqual = int32(81)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exact type test.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeIs">
       <MemberSignature Language="C#" Value="TypeIs" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType TypeIs = int32(45)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A type test, such as obj is SampleType in C# or TypeOf obj is SampleType in Visual Basic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnaryPlus">
       <MemberSignature Language="C#" Value="UnaryPlus" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType UnaryPlus = int32(29)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unary plus operation, such as (+a). The result of a predefined unary plus operation is the value of the operand, but user-defined implementations might have unusual results.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Unbox">
+      <MemberSignature Language="C#" Value="Unbox" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.ExpressionType Unbox = int32(62)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unbox value type operation, such as unbox and unbox.any instructions in MSIL. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

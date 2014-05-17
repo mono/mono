@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessThread" FullName="System.Diagnostics.ProcessThread">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ProcessThread : System.ComponentModel.Component" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ProcessThread extends System.ComponentModel.Component" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -15,331 +18,595 @@
   </Interfaces>
   <Attributes>
     <Attribute>
-      <AttributeName>System.ComponentModel.Designer("System.Diagnostics.Design.ProcessThreadDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+      <AttributeName>System.ComponentModel.Designer("System.Diagnostics.Design.ProcessThreadDesigner, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>Starting with the .NET Framework version 2.0, the ability to reference performance counter data on other computers has been eliminated for many of the .NET Framework methods and properties. This change was made to improve performance and to enable non-administrators to use the <see cref="T:System.Diagnostics.ProcessThread" /> class. As a result, some applications that did not get exceptions in earlier versions of the .NET Framework may now get a <see cref="T:System.NotSupportedException" />. The methods and properties affected are too numerous to list here, but the exception information has been added to the affected member topics.</para>
+      </block>
+      <para>Use <see cref="T:System.Diagnostics.ProcessThread" /> to obtain information about a thread that is currently running on the system. Doing so allows you, for example, to monitor the thread's performance characteristics.</para>
+      <para>A thread is a path of execution through a program. It is the smallest unit of execution that Win32 schedules. It consists of a stack, the state of the CPU registers, and an entry in the execution list of the system scheduler.</para>
+      <para>A process consists of one or more threads and the code, data, and other resources of a program in memory. Typical program resources are open files, semaphores, and dynamically allocated memory. Each resource of a process is shared by all that process's threads.</para>
+      <para>A program executes when the system scheduler gives execution control to one of the program's threads. The scheduler determines which threads should run and when. A lower-priority thread might be forced to wait while higher-priority threads complete their tasks. On multiprocessor computers, the scheduler can move individual threads to different processors, thus balancing the CPU load.</para>
+      <para>Each process starts with a single thread, which is known as the primary thread. Any thread can create additional threads. All the threads within a process share the address space of that process.</para>
+      <block subset="none" type="note">
+        <para>The primary thread is not necessarily located at the first index in the collection.</para>
+      </block>
+      <para>The threads of a process execute individually and are unaware of each other unless you make them visible to each other. Threads that share common resources, however, must coordinate their work by using semaphores or another method of interprocess communication.</para>
+      <para>To get a collection of all the <see cref="T:System.Diagnostics.ProcessThread" /> objects associated with the current process, get the <see cref="P:System.Diagnostics.Process.Threads" /> property of the <see cref="T:System.Diagnostics.Process" /> instance.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an operating system process thread.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BasePriority">
       <MemberSignature Language="C#" Value="public int BasePriority { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BasePriority" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The base priority of this thread.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="CurrentPriority">
-      <MemberSignature Language="C#" Value="public int CurrentPriority { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.ProcessThread.BasePriority" /> is the starting priority for the process thread. You can view information about the base priority through the System Monitor's Priority Base counter.</para>
+          <para>The operating system computes a thread's base priority by combining the thread's priority level range with the process's priority class. You can set the process's <see cref="P:System.Diagnostics.Process.PriorityClass" /> property to one of the values in the <see cref="T:System.Diagnostics.ProcessPriorityClass" /> enumeration, which are <see cref="F:System.Diagnostics.ProcessPriorityClass.Idle" />, <see cref="F:System.Diagnostics.ProcessPriorityClass.Normal" />, <see cref="F:System.Diagnostics.ProcessPriorityClass.High" />, <see cref="F:System.Diagnostics.ProcessPriorityClass.AboveNormal" />, <see cref="F:System.Diagnostics.ProcessPriorityClass.BelowNormal" />, or <see cref="F:System.Diagnostics.ProcessPriorityClass.RealTime" />. You can set the thread's <see cref="P:System.Diagnostics.ProcessThread.PriorityLevel" /> property to a range of values that bounds the thread's base priority. Win32 uses four priority classes with seven base priority levels per class.</para>
+          <para>The thread's current priority might deviate from the base priority. For example, the operating system can change the <see cref="P:System.Diagnostics.ProcessThread.CurrentPriority" /> property based on the time elapsed or other boosts when a process must be put ahead of others for access to the processor. In addition, you can set the <see cref="P:System.Diagnostics.Process.PriorityBoostEnabled" /> property to cause the system to temporarily boost the priority of a thread whenever the process is taken out of the wait state. The priority is reset when the process returns to the wait state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base priority of the thread.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CurrentPriority">
+      <MemberSignature Language="C#" Value="public int CurrentPriority { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CurrentPriority" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The current priority of this thread.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Id">
-      <MemberSignature Language="C#" Value="public int Id { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread's current priority might deviate from the base priority. For example, the operating system can change the <see cref="P:System.Diagnostics.ProcessThread.CurrentPriority" /> property based on the time elapsed, or other boosts, when a process must be put ahead of others for access to the processor. In addition, you can set the <see cref="P:System.Diagnostics.Process.PriorityBoostEnabled" /> property to cause the system to temporarily boost the priority of a thread whenever the process is taken out of the wait state. The priority is reset when the process returns to the wait state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current priority of the thread.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public int Id { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Id" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The ID of this thread.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operating system reuses thread identification numbers, which identify threads only during their lifetimes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier of the thread.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IdealProcessor">
       <MemberSignature Language="C#" Value="public int IdealProcessor { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 IdealProcessor" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.ProcessThread.IdealProcessor" /> value is zero-based.  In other words, to set the thread affinity for the first processor, set the property to zero.</para>
+          <para>The system schedules threads on their preferred processors whenever possible.</para>
+          <para>A process thread can migrate from processor to processor, with each migration reloading the processor cache. Specifying a processor for a thread can improve performance under heavy system loads by reducing the number of times the processor cache is reloaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the preferred processor for this thread to run on.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="PriorityBoostEnabled">
+      <MemberSignature Language="C#" Value="public bool PriorityBoostEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PriorityBoostEnabled" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+          <AttributeName>System.Diagnostics.MonitoringDescription("Thread gets a priority boot when interactively used by a user.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="PriorityBoostEnabled">
-      <MemberSignature Language="C#" Value="public bool PriorityBoostEnabled { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Diagnostics.ProcessThread.PriorityBoostEnabled" /> is true, the system temporarily boosts the thread's priority whenever its associated process is taken out of the wait state. This action prevents other processes from interrupting the processing of the current thread. The <see cref="P:System.Diagnostics.ProcessThread.PriorityBoostEnabled" /> setting affects all existing threads as well as any threads subsequently created by the process. To restore normal behavior, set the <see cref="P:System.Diagnostics.Process.PriorityBoostEnabled" /> property to false.</para>
+          <para>
+            <see cref="P:System.Diagnostics.ProcessThread.PriorityBoostEnabled" /> has an effect only when the thread is running in a process that has a <see cref="P:System.Diagnostics.Process.PriorityClass" /> set to one of the dynamic priority enumeration values (<see cref="F:System.Diagnostics.ProcessPriorityClass.Normal" />, <see cref="F:System.Diagnostics.ProcessPriorityClass.High" />, or <see cref="F:System.Diagnostics.ProcessPriorityClass.RealTime" />).</para>
+          <block subset="none" type="note">
+            <para>Boosting the priority too high can drain resources from essential operating system and network functions. This could cause problems with other operating system tasks.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the operating system should temporarily boost the priority of the associated thread whenever the main window of the thread's process receives the focus.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="PriorityLevel">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.ThreadPriorityLevel PriorityLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.ThreadPriorityLevel PriorityLevel" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("Thread gets a priority boot when interactively used by a user.")</AttributeName>
+          <AttributeName>System.Diagnostics.MonitoringDescription("The priority level of this thread.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="PriorityLevel">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.ThreadPriorityLevel PriorityLevel { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.ThreadPriorityLevel</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ThreadPriorityLevel'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The priority level is not a single value, but rather a range of values. The operating system computes the thread's base priority by using the process's <see cref="P:System.Diagnostics.Process.PriorityClass" /> to choose a value from the range specified in the <see cref="P:System.Diagnostics.ProcessThread.PriorityLevel" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the priority level of the thread.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("The priority level of this thread.")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="PrivilegedProcessorTime">
       <MemberSignature Language="C#" Value="public TimeSpan PrivilegedProcessorTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan PrivilegedProcessorTime" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.TimeSpan</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'TimeSpan'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The amount of CPU time used in privileged mode.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'TimeSpan'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Windows uses several different protection mechanisms, and at the root of them all is the distinction between user mode and privileged mode. <see cref="P:System.Diagnostics.ProcessThread.PrivilegedProcessorTime" /> corresponds to the amount of time that the application has spent running in privileged mode, inside the operating system core. The <see cref="P:System.Diagnostics.ProcessThread.UserProcessorTime" /> property indicates the amount of time that the application has spent running code in user mode, outside the system core.</para>
+          <para>User mode restricts the application in two important ways. First, the application cannot directly access the peripherals, but instead must call the operating system core to get or set peripheral data. The operating system can thus ensure that one application does not destroy peripheral data that is needed by another. Second, the application cannot read or change data that the operating system itself maintains. This restriction prevents applications from either inadvertently or intentionally corrupting the core. If the application needs the operating system to perform an operation, it calls one of the system's routines. Many of these transition into privileged mode, perform the operation, and smoothly return to user mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the amount of time that the thread has spent running code inside the operating system core.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ProcessorAffinity">
       <MemberSignature Language="C#" Value="public IntPtr ProcessorAffinity { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance native int ProcessorAffinity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IntPtr'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The processor affinity of a thread is the set of processors it has a relationship to. In other words, those it can be scheduled to run on.</para>
+          <para>
+            <see cref="P:System.Diagnostics.ProcessThread.ProcessorAffinity" /> represents each processor as a bit. Bit 0 represents processor one, bit 1 represents processor two, and so on. The following table shows a subset of the possible <see cref="P:System.Diagnostics.ProcessThread.ProcessorAffinity" /> for a four-processor system.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property value (in hexadecimal) </para>
+                </term>
+                <description>
+                  <para>Valid processors </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0x0001 </para>
+              </term>
+              <description>
+                <para>1 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x0002 </para>
+              </term>
+              <description>
+                <para>2 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x0003 </para>
+              </term>
+              <description>
+                <para>1 or 2 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x0004 </para>
+              </term>
+              <description>
+                <para>3 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x0005 </para>
+              </term>
+              <description>
+                <para>1 or 3 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x0007 </para>
+              </term>
+              <description>
+                <para>1, 2, or 3 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0x000F </para>
+              </term>
+              <description>
+                <para>1, 2, 3, or 4 </para>
+              </description>
+            </item>
+          </list>
+          <para>You can also specify the single, preferred processor for a thread by setting the <see cref="P:System.Diagnostics.ProcessThread.IdealProcessor" /> property. A process thread can migrate from processor to processor, with each migration reloading the processor cache. Specifying a processor for a thread can improve performance under heavy system loads by reducing the number of times the processor cache is reloaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the processors on which the associated thread can run.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="ResetIdealProcessor">
       <MemberSignature Language="C#" Value="public void ResetIdealProcessor ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResetIdealProcessor() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the ideal processor for this thread to indicate that there is no single ideal processor. In other words, so that any processor is ideal.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StartAddress">
       <MemberSignature Language="C#" Value="public IntPtr StartAddress { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance native int StartAddress" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IntPtr</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'IntPtr'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The start address in memory of this thread.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'IntPtr'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each process starts with a single thread, which is known as the primary thread. Any thread can create additional threads.</para>
+          <para>A process has a virtual address space, executable code, data, object handles, environment variables, a base priority, and minimum and maximum working set sizes. All the threads of a process share its virtual address space and system resources. In addition, each thread maintains exception handlers, a scheduling priority, and a set of structures in which the system saves the thread context while the thread is waiting to be scheduled. The thread context includes the thread's set of machine registers, the kernel stack, a thread environment block, and a user stack in the address space of the thread's process.</para>
+          <para>Every Windows thread actually begins execution in a system-supplied function, not the application-supplied function. The starting address for the primary thread is, therefore, the same (as it represents the address of the system-supplied function) for every Windows process in the system. However, the <see cref="P:System.Diagnostics.ProcessThread.StartAddress" /> property allows you to get the starting function address that is specific to your application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the memory address of the function that the operating system called that started this thread.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="StartTime">
       <MemberSignature Language="C#" Value="public DateTime StartTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime StartTime" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The time this thread was started.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'DateTime'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time that the operating system started the thread.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ThreadState">
       <MemberSignature Language="C#" Value="public System.Diagnostics.ThreadState ThreadState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.ThreadState ThreadState" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Diagnostics.ThreadState</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'ThreadState'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The current state of this thread.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.ThreadState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'ThreadState'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.ProcessThread.WaitReason" /> property value is valid only when the <see cref="P:System.Diagnostics.ProcessThread.ThreadState" /> value is <see cref="F:System.Diagnostics.ThreadState.Wait" />. Therefore, check the <see cref="P:System.Diagnostics.ProcessThread.ThreadState" /> value before you get the <see cref="P:System.Diagnostics.ProcessThread.WaitReason" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of this thread.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="TotalProcessorTime">
       <MemberSignature Language="C#" Value="public TimeSpan TotalProcessorTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan TotalProcessorTime" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.TimeSpan</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'TimeSpan'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The total amount of CPU time used.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="UserProcessorTime">
-      <MemberSignature Language="C#" Value="public TimeSpan UserProcessorTime { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TimeSpan'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.ProcessThread.TotalProcessorTime" /> property indicates the total amount of time that the system has taken the thread out of the wait state and given it priority on any processor. On a multiple processor system, this value would include time spent on each processor, if the thread used more than one processor.</para>
+          <para>The <see cref="P:System.Diagnostics.ProcessThread.TotalProcessorTime" /> property is the sum of the <see cref="P:System.Diagnostics.ProcessThread.UserProcessorTime" /> and <see cref="P:System.Diagnostics.ProcessThread.PrivilegedProcessorTime" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total amount of time that this thread has spent using the processor.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="UserProcessorTime">
+      <MemberSignature Language="C#" Value="public TimeSpan UserProcessorTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan UserProcessorTime" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The amount of CPU time used in user mode.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'TimeSpan'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Windows NT uses several different protection mechanisms, and at the root of them all is the distinction between user mode and privileged mode. <see cref="P:System.Diagnostics.ProcessThread.UserProcessorTime" /> corresponds to the amount of time that the application has spent running in user mode, outside the operating system core. The <see cref="P:System.Diagnostics.ProcessThread.PrivilegedProcessorTime" /> corresponds to the amount of time that the application has spent running code in privileged mode, inside the system core.</para>
+          <para>User mode restricts the application in two important ways. First, the application cannot directly access the peripherals, but instead must call the operating system core to get or set peripheral data. The operating system can thus ensure that one application does not destroy peripheral data that is needed by another. Second, the application cannot read or change data that the operating system itself maintains. This restriction prevents applications from either inadvertently or intentionally corrupting the core. If the application needs the operating system to perform an operation, it calls one of the system's routines. Many of these transition into privileged mode, perform the operation, and smoothly return to user mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the amount of time that the associated thread has spent running code inside the application.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WaitReason">
       <MemberSignature Language="C#" Value="public System.Diagnostics.ThreadWaitReason WaitReason { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.ThreadWaitReason WaitReason" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Diagnostics.ThreadWaitReason</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'ThreadWaitReason'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The reason why this thread is waiting.")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.ThreadWaitReason</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'ThreadWaitReason'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.ProcessThread.WaitReason" /> property is valid only when the <see cref="P:System.Diagnostics.ProcessThread.ThreadState" /> is <see cref="F:System.Diagnostics.ThreadState.Wait" />. Therefore, check the <see cref="P:System.Diagnostics.ProcessThread.ThreadState" /> value before you get the <see cref="P:System.Diagnostics.ProcessThread.WaitReason" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the reason that the thread is waiting.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

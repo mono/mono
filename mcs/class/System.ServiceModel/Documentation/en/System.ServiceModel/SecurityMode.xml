@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecurityMode" FullName="System.ServiceModel.SecurityMode">
+  <TypeSignature Language="C#" Value="public enum SecurityMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SecurityMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Any ProtectionLevel settings of a transport are ignored if the <see cref="T:System.ServiceModel.SecurityMode" /> is set to <see cref="F:System.ServiceModel.SecurityMode.None" />. crabout the ProtectionLevel property, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+      <para>crabout indigo1 security and how this property affects general security features, see <format type="text/html"><a href="f0ecc6f7-f4b5-42a4-9cb1-b02e28e26620">Securing Services</a></format> and <format type="text/html"><a href="739ec222-4eda-4cc9-a470-67e64a7a3f10">Programming WCF Security</a></format>. crabout the transport mode, see <format type="text/html"><a href="86c94153-e48d-4539-b6cf-cd8060582e7f">Transport Security</a></format>.</para>
+      <para>Note that if you choose <see cref="F:System.ServiceModel.SecurityMode.TransportWithMessageCredential" />, then the value set in <see cref="T:System.ServiceModel.HttpClientCredentialType" /> or <see cref="T:System.ServiceModel.TcpClientCredentialType" /> is ignored.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the security settings for a binding.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="Message" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.SecurityMode Message = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.SecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Security is provided using SOAP message security.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.SecurityMode None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.SecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Security is disabled.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Transport">
+      <MemberSignature Language="C#" Value="Transport" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.SecurityMode Transport = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.SecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Security is provided using a secure transport (for example, HTTPS).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TransportWithMessageCredential">
+      <MemberSignature Language="C#" Value="TransportWithMessageCredential" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.SecurityMode TransportWithMessageCredential = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.SecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A secure transport (for example, HTTPS) provides integrity, confidentiality, and authentication while SOAP message security provides client authentication.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

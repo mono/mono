@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Runtime.Versioning">
+  <Docs>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Versioning" /> namespace contains advanced types that support versioning in side by side implementations of the .NET Framework.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The types found in this namespace are intended for use within the .NET Framework and not for user applications. </para>
+    </remarks>
+  </Docs>
+</Namespace>

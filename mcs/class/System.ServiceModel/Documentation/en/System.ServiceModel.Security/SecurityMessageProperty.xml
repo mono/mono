@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecurityMessageProperty" FullName="System.ServiceModel.Security.SecurityMessageProperty">
+  <TypeSignature Language="C#" Value="public class SecurityMessageProperty : IDisposable, System.ServiceModel.Channels.IMessageProperty" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SecurityMessageProperty extends System.Object implements class System.IDisposable, class System.ServiceModel.Channels.IMessageProperty" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IMessageProperty</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Client authentication results are translated into an instance of <see cref="T:System.ServiceModel.ServiceSecurityContext" />, which is attached to the message using a <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />. This property can be used by higher layers to implement custom authorization logic.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains security-related properties and is attached to a message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecurityMessageProperty ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateCopy">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.IMessageProperty CreateCopy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IMessageProperty CreateCopy() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IMessageProperty</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To access any objects in the <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />, such as <see cref="P:System.ServiceModel.Security.SecurityMessageProperty.ServiceSecurityContext" />, <see cref="P:System.ServiceModel.Security.SecurityMessageProperty.TransportToken" />, or <see cref="P:System.ServiceModel.Security.SecurityMessageProperty.IncomingSupportingTokens" />), a copy must be created because these properties are undefined after the message is disposed of.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clones the current instance of this class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.IMessageProperty" /> cloned from the current instance of this class.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes of the current instance of this class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExternalAuthorizationPolicies">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; ExternalAuthorizationPolicies { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; ExternalAuthorizationPolicies" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, <see cref="M:System.IdentityModel.Policy.IAuthorizationPolicy.Evaluate(System.IdentityModel.Policy.EvaluationContext,System.Object@)" /> is called on these authorization policies as part of the process that creates the <see cref="T:System.ServiceModel.ServiceSecurityContext" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of external authorization policies. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetOrCreate">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Security.SecurityMessageProperty GetOrCreate (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Security.SecurityMessageProperty GetOrCreate(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityMessageProperty</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or creates an instance of this class from the specified message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="HasIncomingSupportingTokens">
+      <MemberSignature Language="C#" Value="public bool HasIncomingSupportingTokens { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasIncomingSupportingTokens" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Supporting tokens provide additional claims beyond those contained in the principal tokens for the binding. Supporting tokens can be scoped at a different scope than the binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the incoming message contains at least one supporting security token.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncomingSupportingTokens">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Security.SupportingTokenSpecification&gt; IncomingSupportingTokens { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Security.SupportingTokenSpecification&gt; IncomingSupportingTokens" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Security.SupportingTokenSpecification&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Supporting tokens provide additional claims beyond those contained in the principal tokens for the binding. Supporting tokens can be scoped at a different scope than the binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of incoming supporting tokens. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InitiatorToken">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.SecurityTokenSpecification InitiatorToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.SecurityTokenSpecification InitiatorToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityTokenSpecification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the message pattern requires multiple messages, the Initiator Token is used for the message signature from initiator to the recipient, and for encryption from recipient to initiator. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.Security.SecurityTokenSpecification" /> initiator token for this message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionToken">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.SecurityTokenSpecification ProtectionToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.SecurityTokenSpecification ProtectionToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityTokenSpecification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Protection Tokens are used in symmetric security bindings for signing and encryption.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.Security.SecurityTokenSpecification" /> protection token for this message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RecipientToken">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.SecurityTokenSpecification RecipientToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.SecurityTokenSpecification RecipientToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityTokenSpecification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the message pattern requires multiple messages, the Recipient Token is used for encryption from initiator to recipient, and for the message signature from recipient to initiator. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.Security.SecurityTokenSpecification" /> recipient token for this message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SenderIdPrefix">
+      <MemberSignature Language="C#" Value="public string SenderIdPrefix { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SenderIdPrefix" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the sender ID prefix for this message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceSecurityContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ServiceSecurityContext ServiceSecurityContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.ServiceSecurityContext ServiceSecurityContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceSecurityContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this class to obtain information about the runtime security context. A security context is created when a client is successfully authenticated. The security information from the client and for the current service instance can be obtained from an instance of this class.</para>
+          <para>A common use of the class is to retrieve the current set of claims for the purpose of authorizing a client when accessing a method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> for this message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TransportToken">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.SecurityTokenSpecification TransportToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.SecurityTokenSpecification TransportToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityTokenSpecification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Transport Token provides security at the transport level. A token used by HTTPS is an example of a Transport Token.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.Security.SecurityTokenSpecification" /> transport token for this message.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IClientChannel" FullName="System.ServiceModel.IClientChannel">
+  <TypeSignature Language="C#" Value="public interface IClientChannel : IDisposable, System.ServiceModel.IContextChannel, System.ServiceModel.IExtensibleObject&lt;System.ServiceModel.IContextChannel&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IClientChannel implements class System.IDisposable, class System.ServiceModel.Channels.IChannel, class System.ServiceModel.ICommunicationObject, class System.ServiceModel.IContextChannel, class System.ServiceModel.IExtensibleObject`1&lt;class System.ServiceModel.IContextChannel&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.IContextChannel</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.IExtensibleObject&lt;System.ServiceModel.IContextChannel&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.IClientChannel" /> interface defines the operations supported by all channels returned by a call to <see cref="M:System.ServiceModel.ChannelFactory`1.CreateChannel" />. Use the <see cref="T:System.ServiceModel.IClientChannel" /> methods and properties to inspect and modify the outbound typed channel. The <format type="text/html"><a href="1abf3d9f-b420-46f1-b628-df238751f308">Service Metadata Utility Tool (Svcutil.exe)</a></format> exports both a <see cref="T:System.ServiceModel.ClientBase`1" /> class and a service contract interface by creating a contract interface that inherits from both the target service contract and <see cref="T:System.ServiceModel.IClientChannel" />, enabling you to use the extended contract as both the proxy to the service and to access the client channel.</para>
+      <para>For more information, see <format type="text/html"><a href="02624403-0d77-41cb-9a86-ab55e98c7966">Client Architecture</a></format>. For examples of its appearance in generated client code files, see <format type="text/html"><a href="c3f6e4b0-1131-4c94-aa39-a197c5c2f2ca">Understanding Generated Client Code</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the behavior of outbound request and request/reply channels used by client applications.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AllowInitializationUI">
+      <MemberSignature Language="C#" Value="public bool AllowInitializationUI { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowInitializationUI" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this to false if you want to throw an exception rather than display an initialization dialog. This is useful in a middle-tier scenario in which you want to guarantee that no dialog appears even if the application is configured to display one. For details, see <format type="text/html"><a href="c8329832-bf66-4064-9034-bf39f153fc2d">Consuming Services Using a Client</a></format> and <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether <see cref="M:System.ServiceModel.IClientChannel.DisplayInitializationUI" /> attempts to call the <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" /> objects in the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.InteractiveChannelInitializers" /> property or throws if that collection is not empty. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginDisplayInitializationUI">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginDisplayInitializationUI (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginDisplayInitializationUI(class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to cause any interactive channel initialization (for example, CardSpace card selection) to occur. This happens automatically if the channel is used without explicitly calling <see cref="M:System.ServiceModel.ICommunicationObject.Open" />, so for many applications this call is optional.</para>
+          <para>However, if the user takes a long time in the selection process, the operation that automatically called this may time out. To prevent this, call <see cref="M:System.ServiceModel.IClientChannel.DisplayInitializationUI" /> or <see cref="M:System.ServiceModel.IClientChannel.BeginDisplayInitializationUI(System.AsyncCallback,System.Object)" /> and <see cref="M:System.ServiceModel.IClientChannel.EndDisplayInitializationUI(System.IAsyncResult)" /> explicitly. These operations do not time out and allow you to control exactly where in your application this dialog comes up.</para>
+          <para>This method only brings up a dialog if the application is configured to do so. When the application is not configured to use CardSpace or another interactive channel initializer, this call returns without any action.</para>
+          <para>If you call this method explicitly, you must also explicitly open the channel before using it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An asynchronous call to begin using a user interface to obtain credential information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> to use to call back when processing has completed.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="DidInteractiveInitialization">
+      <MemberSignature Language="C#" Value="public bool DidInteractiveInitialization { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DidInteractiveInitialization" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If operations are called on an <see cref="T:System.ServiceModel.IClientChannel" /> without calling <see cref="M:System.ServiceModel.IClientChannel.DisplayInitializationUI" /> and <see cref="M:System.ServiceModel.ICommunicationObject.Open" />, these methods are called automatically. For details, see <format type="text/html"><a href="c8329832-bf66-4064-9034-bf39f153fc2d">Consuming Services Using a Client</a></format> and <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a call was done to a user interface to obtain credential information. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DisplayInitializationUI">
+      <MemberSignature Language="C#" Value="public void DisplayInitializationUI ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DisplayInitializationUI() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to cause any interactive channel initialization (for example, CardSpace card selection) to occur. This happens automatically if the channel is used without explicitly calling <see cref="M:System.ServiceModel.ICommunicationObject.Open" />, so for many applications this call is optional.</para>
+          <para>However, if the user takes a long time in the selection process, the operation that automatically called this may time out. To prevent this, call <see cref="M:System.ServiceModel.IClientChannel.DisplayInitializationUI" /> or <see cref="M:System.ServiceModel.IClientChannel.BeginDisplayInitializationUI(System.AsyncCallback,System.Object)" /> and <see cref="M:System.ServiceModel.IClientChannel.EndDisplayInitializationUI(System.IAsyncResult)" /> explicitly. These operations do not time out and allow you to control exactly where in your application this dialog comes up.</para>
+          <para>This method only brings up a dialog if the application is configured to do so. When the application is not configured to use CardSpace or another interactive channel initializer, this call returns without any action.</para>
+          <para>If you call this method explicitly, you must also explicitly open the channel before using it.</para>
+          <para>For details, see <format type="text/html"><a href="c8329832-bf66-4064-9034-bf39f153fc2d">Consuming Services Using a Client</a></format> and <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A call to a user interface to obtain credential information.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndDisplayInitializationUI">
+      <MemberSignature Language="C#" Value="public void EndDisplayInitializationUI (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndDisplayInitializationUI(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the call to <see cref="M:System.ServiceModel.IClientChannel.BeginDisplayInitializationUI(System.AsyncCallback,System.Object)" /> has finished.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UnknownMessageReceived">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.ServiceModel.UnknownMessageReceivedEventArgs&gt; UnknownMessageReceived;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.ServiceModel.UnknownMessageReceivedEventArgs&gt; UnknownMessageReceived" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.ServiceModel.UnknownMessageReceivedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a reserved event. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Via">
+      <MemberSignature Language="C#" Value="public Uri Via { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Via" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> serves as both the ultimate destination and the physical address if a <see cref="P:System.ServiceModel.IClientChannel.Via" /> is not specified. If the <see cref="P:System.ServiceModel.IClientChannel.Via" /> is specified, then that is the actual physical address to which the message is sent and through which the message must go to arrive at its destination. This value can be set from a configuration file using the <see cref="T:System.ServiceModel.Description.ClientViaBehavior" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI that contains the transport address to which messages are sent on the client channel.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

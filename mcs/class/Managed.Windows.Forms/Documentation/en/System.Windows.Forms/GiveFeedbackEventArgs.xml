@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GiveFeedbackEventArgs" FullName="System.Windows.Forms.GiveFeedbackEventArgs">
   <TypeSignature Language="C#" Value="public class GiveFeedbackEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -15,8 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.Control.GiveFeedback" /> event occurs during a drag operation. It allows the source of a drag event to modify the appearance of the mouse pointer in order to give the user visual feedback during a drag-and-drop operation. A <see cref="T:System.Windows.Forms.GiveFeedbackEventArgs" /> object specifies the type of drag-and-drop operation and whether default cursors are used.</para>
+      <para>For information about the event model, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.Control.GiveFeedback" /> event, which occurs during a drag operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,10 +35,15 @@
         <Parameter Name="useDefaultCursors" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="effect">To be added.</param>
-        <param name="useDefaultCursors">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.GiveFeedbackEventArgs" /> class.</para>
+        </summary>
+        <param name="effect">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of drag-and-drop operation. Possible values are obtained by applying the bitwise OR (|) operation to the constants defined in the <see cref="T:System.Windows.Forms.DragDropEffects" />. </param>
+        <param name="useDefaultCursors">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if default pointers are used; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +57,12 @@
         <ReturnType>System.Windows.Forms.DragDropEffects</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the drag-and-drop operation feedback that is displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,9 +76,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The system provides default drag-drop cursors for different drag-drop operations such as move or copy. If <see cref="P:System.Windows.Forms.GiveFeedbackEventArgs.UseDefaultCursors" /> is set to false, it is the responsibility of the event source to set the appropriate cursor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether drag operation should use the default cursors that are associated with drag-drop effects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

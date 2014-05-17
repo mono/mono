@@ -308,6 +308,12 @@ public class Int64Test
 		Assert.IsTrue(typeof(OverflowException) == e.GetType(), "#20");
 	}
 
+		try {
+			Int64.Parse ("５", NumberStyles.Any, CultureInfo.InvariantCulture);
+			Assert.Fail ("C#42");
+		} catch (FormatException) {
+		}
+
 	// Pass a DateTimeFormatInfo, it is unable to format
 	// numbers, but we should not crash
 	

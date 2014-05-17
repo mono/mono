@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FlowControl" FullName="System.Reflection.Emit.FlowControl">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum FlowControl" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FlowControl extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,124 +13,149 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes how an instruction alters the flow of control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Branch">
       <MemberSignature Language="C#" Value="Branch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Branch = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Branch instruction.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Break">
       <MemberSignature Language="C#" Value="Break" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Break = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Break instruction.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Call">
       <MemberSignature Language="C#" Value="Call" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Call = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call instruction.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Cond_Branch">
       <MemberSignature Language="C#" Value="Cond_Branch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Cond_Branch = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conditional branch instruction.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Meta">
       <MemberSignature Language="C#" Value="Meta" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Meta = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides information about a subsequent instruction. For example, the Unaligned instruction of Reflection.Emit.Opcodes has FlowControl.Meta and specifies that the subsequent pointer instruction might be unaligned.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Next">
       <MemberSignature Language="C#" Value="Next" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Next = int32(5)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Phi">
-      <MemberSignature Language="C#" Value="Phi" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Normal flow of control.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Phi">
+      <MemberSignature Language="C#" Value="Phi" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Phi = int32(6)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -139,45 +166,59 @@
           <AttributeName>System.Obsolete("This API has been deprecated.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This enumerator value is reserved and should not be used.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Return">
       <MemberSignature Language="C#" Value="Return" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Return = int32(7)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return instruction.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Throw">
       <MemberSignature Language="C#" Value="Throw" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.FlowControl Throw = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.FlowControl</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exception throw instruction.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

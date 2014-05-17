@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessStartInfo" FullName="System.Diagnostics.ProcessStartInfo">
   <TypeSignature Language="C#" Value="public sealed class ProcessStartInfo" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ProcessStartInfo extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -18,51 +21,83 @@
     </Attribute>
   </Attributes>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Diagnostics.ProcessStartInfo" /> is used together with the <see cref="T:System.Diagnostics.Process" /> component. When you start a process using the <see cref="T:System.Diagnostics.Process" /> class, you have access to process information in addition to that available when attaching to a running process.</para>
+      <para>You can use the <see cref="T:System.Diagnostics.ProcessStartInfo" /> class for better control over the process you start. You must at least set the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property, either manually or using the constructor. The file name is any application or document. Here a document is defined to be any file type that has an open or default action associated with it. You can view registered file types and their associated applications for your computer by using the <ui>Folder Options</ui> dialog box, which is available through the operating system. The <ui>Advanced</ui> button leads to a dialog box that shows whether there is an open action associated with a specific registered file type.</para>
+      <para>In addition, you can set other properties that define actions to take with that file. You can specify a value specific to the type of the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property for the <see cref="P:System.Diagnostics.ProcessStartInfo.Verb" /> property. For example, you can specify "print" for a document type. Additionally, you can specify <see cref="P:System.Diagnostics.ProcessStartInfo.Arguments" /> property values to be command-line arguments to pass to the file's open procedure. For example, if you specify a text editor application in the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property, you can use the <see cref="P:System.Diagnostics.ProcessStartInfo.Arguments" /> property to specify a text file to be opened by the editor.</para>
+      <para>Standard input is usually the keyboard, and standard output and standard error are usually the monitor screen. However, you can use the <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardInput" />, <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardOutput" />, and <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardError" /> properties to cause the process to get input from or return output to a file or other device. If you use the <see cref="P:System.Diagnostics.Process.StandardInput" />, <see cref="P:System.Diagnostics.Process.StandardOutput" />, or <see cref="P:System.Diagnostics.Process.StandardError" /> properties on the <see cref="T:System.Diagnostics.Process" /> component, you must first set the corresponding value on the <see cref="T:System.Diagnostics.ProcessStartInfo" /> property. Otherwise, the system throws an exception when you read or write to the stream.</para>
+      <para>Set <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> to specify whether to start the process by using the operating system shell.</para>
+      <para>You can change the value of any <see cref="T:System.Diagnostics.ProcessStartInfo" /> property up to the time that the process starts. After you start the process, changing these values has no effect.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the immediate caller does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format>.</para>
+      </block>
+    </remarks>
     <summary>
-      <see cref="T:System.Diagnostics.ProcessStartInfo" /> is used to as a container for information required for starting a <see cref="T:System.Diagnostics.Process" />.</summary>
-    <remarks>The <see cref="T:System.Diagnostics.ProcessStartInfo" /> object is usually used as a container for information about the process to be started. As such, it's usually used in conjunction with <see cref="T:System.Diagnostics.Process" />.</remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a set of values that are used when you start a process.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ProcessStartInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>Default Constructor. Creates an empty <see cref="T:System.Diagnostics.ProcessStartInfo" /> object.</summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>
-At least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> must be set before using this object.
-  </para>
-          </block>
-        </remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must set at least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property before you start the process. The file name is any application or document. In this case, a document is defined to be any file type that has an open or default action associated with it. You can view registered file types and their associated applications for your computer by using the <ui>Folder Options</ui> dialog box, which is available through the operating system. The <ui>Advanced</ui> button leads to a dialog box that shows whether there is an open action associated with a specific registered file type.</para>
+          <para>Optionally, you can also set other properties before you start the process. The <see cref="P:System.Diagnostics.ProcessStartInfo.Verb" /> property supplies actions to take, such as "print", with the file indicated in the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property. The <see cref="P:System.Diagnostics.ProcessStartInfo.Arguments" /> property supplies a way to pass command-line arguments to the file when the system opens it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessStartInfo" /> class without specifying a file name with which to start the process.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ProcessStartInfo (string filename);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filename) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
         <param name="filename">Value the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property should be set to.</param>
-        <summary>Creates a new <see cref="T:System.Diagnostics.ProcessStartInfo" /> object with its <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> set to the specified value.</summary>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file name is any application or document. In this case, a document is defined to be any file type that has an open or default action associated with it. You can view registered file types and their associated applications for your computer by using the <ui>Folder Options</ui> dialog box, which is available through the operating system. The <ui>Advanced</ui> button leads to a dialog box that shows whether there is an open action associated with a specific registered file type.</para>
+          <para>You can change the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property after you call this constructor, up to the time that the process starts. After you start the process, changing these values has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessStartInfo" /> class and specifies a file name such as an application or document with which to start the process.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ProcessStartInfo (string filename, string arguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filename, string arguments) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="filename" Type="System.String" />
@@ -70,25 +105,51 @@ At least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> must 
       </Parameters>
       <Docs>
         <param name="filename">To be added.</param>
-        <param name="arguments">Value the <see cref="P:System.Diagnostics.ProcessStartInfo.Arguments" /> property should be set to.</param>
-        <summary>Creates a new <see cref="T:System.Diagnostics.ProcessStartInfo" /> object with its <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> and  <see cref="P:System.Diagnostics.ProcessStartInfo.Arguments" /> set to the specified values.</summary>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file name is any application or document. In this case, a document is defined to be any file type that has an open or default action associated with it. You can view registered file types and their associated applications for your computer by using the <ui>Folder Options</ui> dialog box, which is available through the operating system. The <ui>Advanced</ui> button leads to a dialog box that shows whether there is an open action associated with a specific registered file type.</para>
+          <para>You can change the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> or <see cref="P:System.Diagnostics.ProcessStartInfo.Arguments" /> properties after you call this constructor, up to the time that the process starts. After you start the process, changing these values has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessStartInfo" /> class, specifies an application file name with which to start the process, and specifies a set of command-line arguments to pass to the application.</para>
+        </summary>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />Command-line arguments to pass to the application when the process starts. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Arguments">
+      <MemberSignature Language="C#" Value="public string Arguments { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Arguments" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Arguments">
-      <MemberSignature Language="C#" Value="public string Arguments { set; get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("Command line agruments for this process.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Get or Set the arguments that should be passed to the program specified in <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" />.</summary>
         <value>Arguments that should be passed to the program specified in <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" />.</value>
         <remarks>
           <block subset="none" type="note">
@@ -97,63 +158,56 @@ At least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> must 
   </para>
           </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the set of command-line arguments to use when starting the application.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("Command line agruments for this process.")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(true)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="CreateNoWindow">
-      <MemberSignature Language="C#" Value="public bool CreateNoWindow { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool CreateNoWindow { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CreateNoWindow" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-      </Parameters>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Start this process with a new window.")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
-        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property is true or the <see cref="P:System.Diagnostics.ProcessStartInfo.UserName" /> and <see cref="P:System.Diagnostics.ProcessStartInfo.Password" /> properties are not null, the <see cref="P:System.Diagnostics.ProcessStartInfo.CreateNoWindow" /> property value is ignored and a new window is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to start the process in a new window.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Domain">
-      <MemberSignature Language="C#" Value="public string Domain { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Domain { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Domain" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -164,142 +218,184 @@ At least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> must 
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that identifies the domain to use when starting the process. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnvironmentVariables">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringDictionary EnvironmentVariables { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringDictionary EnvironmentVariables" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'Collections.Specialized.StringDictionary'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("Environment variables used for this process.")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Editor("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(null)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Editor("System.Diagnostics.Design.StringDictionaryEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("Environment variables used for this process.")</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'Collections.Specialized.StringDictionary'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although you cannot set the <see cref="P:System.Diagnostics.ProcessStartInfo.EnvironmentVariables" /> property, you can modify the <see cref="T:System.Collections.Specialized.StringDictionary" /> returned by the property. For example, the following code adds a TempPath environment variable: myProcess.StartInfo.EnvironmentVariables.Add("TempPath", "C:\\Temp").  You must set the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property to false to start the process after changing the <see cref="P:System.Diagnostics.ProcessStartInfo.EnvironmentVariables" /> property. If <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is true, an <see cref="T:System.InvalidOperationException" /> is thrown when the <see cref="M:System.Diagnostics.Process.Start" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets search paths for files, directories for temporary files, application-specific options, and other similar information.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ErrorDialog">
-      <MemberSignature Language="C#" Value="public bool ErrorDialog { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ErrorDialog { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ErrorDialog" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-      </Parameters>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Thread shows dialogboxes for errors.")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
-        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> must be true if you want to set <see cref="P:System.Diagnostics.ProcessStartInfo.ErrorDialog" /> to true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether an error dialog box is displayed to the user if the process cannot be started.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ErrorDialogParentHandle">
-      <MemberSignature Language="C#" Value="public IntPtr ErrorDialogParentHandle { set; get; }" />
+      <MemberSignature Language="C#" Value="public IntPtr ErrorDialogParentHandle { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance native int ErrorDialogParentHandle" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IntPtr'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Diagnostics.ProcessStartInfo.ErrorDialog" /> is true, the <see cref="P:System.Diagnostics.ProcessStartInfo.ErrorDialogParentHandle" /> property specifies the parent window for the dialog box that is shown. It is useful to specify a parent to keep the dialog box in front of the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the window handle to use when an error dialog box is shown for a process that cannot be started.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="FileName">
+      <MemberSignature Language="C#" Value="public string FileName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FileName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+          <AttributeName>System.ComponentModel.Editor("System.Diagnostics.Design.StartFileNameEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("The name of the resource to start this process.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="FileName">
-      <MemberSignature Language="C#" Value="public string FileName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Get or set the path to the application to be executed.</summary>
         <value>Path to the application to be executed.</value>
-        <remarks>The FileName property can specify either a relative or absolute path. When just the name of the executable is given without specifying the path to it, the operating system path resolution mechanism is used (for example, the PATH environment variable on Unix like operating systems).</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must set at least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property before you start the process. The file name is any application or document. A document is defined to be any file type that has an open or default action associated with it. You can view registered file types and their associated applications for your computer by using the <ui>Folder Options</ui> dialog box, which is available through the operating system. The <ui>Advanced</ui> button leads to a dialog box that shows whether there is an open action associated with a specific registered file type.</para>
+          <para>The set of file types available to you depends in part on the value of the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property. If <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is true, you can start any document and perform operations on the file, such as printing, with the <see cref="T:System.Diagnostics.Process" /> component. When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is false, you can start only executables with the <see cref="T:System.Diagnostics.Process" /> component.</para>
+          <para>You can start a ClickOnce application by setting the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property to the location (for example, a Web address) from which you originally installed the application. Do not start a ClickOnce application by specifying its installed location on your hard disk.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the application or document to start.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("The name of the resource to start this process.")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Editor("System.Diagnostics.Design.StartFileNameEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(true)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="LoadUserProfile">
-      <MemberSignature Language="C#" Value="public bool LoadUserProfile { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool LoadUserProfile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool LoadUserProfile" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -310,238 +406,412 @@ At least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> must 
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is referenced if the process is being started by using the user name, password, and domain.</para>
+          <para>If the value is true, the user's profile in the HKEY_USERS registry key is loaded. Loading the profile can be time-consuming. Therefore, it is best to use this value only if you must access the information in the HKEY_CURRENT_USER registry key. </para>
+          <para>In Windows Server 2003 and Windows 2000, the profile is unloaded after the new process has been terminated, regardless of whether the process has created child processes.</para>
+          <para>In Windows XP, the profile is unloaded after the new process and all child processes it has created have been terminated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the Windows user profile is to be loaded from the registry. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Password">
-      <MemberSignature Language="C#" Value="public System.Security.SecureString Password { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.SecureString Password { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.SecureString Password" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.SecureString</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>   The <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property must be set if <see cref="P:System.Diagnostics.ProcessStartInfo.UserName" /> and <see cref="P:System.Diagnostics.ProcessStartInfo.Password" /> are provided. If the property is not set, the default working directory is %SYSTEMROOT%\system32.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>   Setting the <see cref="P:System.Diagnostics.ProcessStartInfo.Domain" />, <see cref="P:System.Diagnostics.ProcessStartInfo.UserName" />, and the <see cref="P:System.Diagnostics.ProcessStartInfo.Password" /> properties in a <see cref="T:System.Diagnostics.ProcessStartInfo" /> object is the recommended practice for starting a process with user credentials.</para>
+          </block>
+          <para>A <see cref="T:System.Security.SecureString" /> object is like a <see cref="T:System.String" /> object in that it has a text value. However, the value of a <see cref="T:System.Security.SecureString" /> object is automatically encrypted, it can be modified until your application marks it as read-only, and it can be deleted from computer memory by either your application or the .NET Framework garbage collector.</para>
+          <para>For more information about secure strings and an example of how to obtain a password to set this property, see the <see cref="T:System.Security.SecureString" /> class.</para>
+          <block subset="none" type="note">
+            <para>If you provide a value for the <see cref="P:System.Diagnostics.ProcessStartInfo.Password" /> property, the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property must be false, or an <see cref="T:System.InvalidOperationException" /> will be thrown when the <see cref="M:System.Diagnostics.Process.Start(System.Diagnostics.ProcessStartInfo)" /> method is called. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a secure string that contains the user password to use when starting the process.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RedirectStandardError">
-      <MemberSignature Language="C#" Value="public bool RedirectStandardError { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool RedirectStandardError { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RedirectStandardError" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-      </Parameters>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Errors of this process are redirected.")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
-        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="RedirectStandardInput">
-      <MemberSignature Language="C#" Value="public bool RedirectStandardInput { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Diagnostics.Process" /> writes text to its standard error stream, that text is typically displayed on the console. By redirecting the <see cref="P:System.Diagnostics.Process.StandardError" /> stream, you can manipulate or suppress the error output of a process. For example, you can filter the text, format it differently, or write the output to both the console and a designated log file.</para>
+          <block subset="none" type="note">
+            <para>You must set <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> to false if you want to set <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardError" /> to true. Otherwise, reading from the <see cref="P:System.Diagnostics.Process.StandardError" /> stream throws an exception.</para>
+          </block>
+          <para>The redirected <see cref="P:System.Diagnostics.Process.StandardError" /> stream can be read synchronously or asynchronously. Methods such as <see cref="M:System.IO.StreamReader.Read" />, <see cref="M:System.IO.StreamReader.ReadLine" /> and <see cref="M:System.IO.StreamReader.ReadToEnd" /> perform synchronous read operations on the error output stream of the process. These synchronous read operations do not complete until the associated <see cref="T:System.Diagnostics.Process" /> writes to its <see cref="P:System.Diagnostics.Process.StandardError" /> stream, or closes the stream.</para>
+          <para>In contrast, <see cref="M:System.Diagnostics.Process.BeginErrorReadLine" /> starts asynchronous read operations on the <see cref="P:System.Diagnostics.Process.StandardError" /> stream. This method enables a designated event handler for the stream output and immediately returns to the caller, which can perform other work while the stream output is directed to the event handler.</para>
+          <block subset="none" type="note">
+            <para>The application that is processing the asynchronous output should call the <see cref="M:System.Diagnostics.Process.WaitForExit" /> method to ensure that the output buffer has been flushed.</para>
+          </block>
+          <para>Synchronous read operations introduce a dependency between the caller reading from the <see cref="P:System.Diagnostics.Process.StandardError" /> stream and the child process writing to that stream. These dependencies can cause deadlock conditions. When the caller reads from the redirected stream of a child process, it is dependent on the child. The caller waits for the read operation until the child writes to the stream or closes the stream. When the child process writes enough data to fill its redirected stream, it is dependent on the parent. The child process waits for the next write operation until the parent reads from the full stream or closes the stream. The deadlock condition results when the caller and child process wait for each other to complete an operation, and neither can continue. You can avoid deadlocks by evaluating dependencies between the caller and child process.</para>
+          <para>For example, the following C# code shows how to read from a redirected stream and wait for the child process to exit.</para>
+          <code>// Start the child process.
+ Process p = new Process();
+ // Redirect the error stream of the child process.
+ p.StartInfo.UseShellExecute = false;
+ p.StartInfo.RedirectStandardError = true;
+ p.StartInfo.FileName = "Write500Lines.exe";
+ p.Start();
+ // Do not wait for the child process to exit before
+ // reading to the end of its redirected error stream.
+ // p.WaitForExit();
+ // Read the error stream first and then wait.
+ string error = p.StandardError.ReadToEnd();
+ p.WaitForExit();</code>
+          <para>The code example avoids a deadlock condition by calling p.StandardError.ReadToEnd before p.WaitForExit. A deadlock condition can result if the parent process calls p.WaitForExit before p.StandardError.ReadToEnd and the child process writes enough text to fill the redirected stream. The parent process would wait indefinitely for the child process to exit. The child process would wait indefinitely for the parent to read from the full <see cref="P:System.Diagnostics.Process.StandardError" /> stream.</para>
+          <para>There is a similar issue when you read all text from both the standard output and standard error streams. For example, the following C# code performs a read operation on both streams.</para>
+          <code> // Do not perform a synchronous read to the end of both
+ // redirected streams.
+ // string output = p.StandardOutput.ReadToEnd();
+ // string error = p.StandardError.ReadToEnd();
+ // p.WaitForExit();
+ // Use asynchronous read operations on at least one of the streams.
+ p.BeginOutputReadLine();
+ string error = p.StandardError.ReadToEnd();
+ p.WaitForExit();</code>
+          <para>The code example avoids the deadlock condition by performing asynchronous read operations on the <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream. A deadlock condition results if the parent process calls p.StandardOutput.ReadToEnd followed by p.StandardError.ReadToEnd and the child process writes enough text to fill its error stream. The parent process would wait indefinitely for the child process to close its <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream. The child process would wait indefinitely for the parent to read from the full <see cref="P:System.Diagnostics.Process.StandardError" /> stream.</para>
+          <para>You can use asynchronous read operations to avoid these dependencies and their deadlock potential. Alternately, you can avoid the deadlock condition by creating two threads and reading the output of each stream on a separate thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the error output of an application is written to the <see cref="P:System.Diagnostics.Process.StandardError" /> stream.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="RedirectStandardInput">
+      <MemberSignature Language="C#" Value="public bool RedirectStandardInput { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RedirectStandardInput" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Standard input of this process is redirected.")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
-        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="RedirectStandardOutput">
-      <MemberSignature Language="C#" Value="public bool RedirectStandardOutput { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Process" /> can read input text from its standard input stream, typically the keyboard. By redirecting the <see cref="P:System.Diagnostics.Process.StandardInput" /> stream, you can programmatically specify the input of a process. For example, instead of using keyboard input, you can provide text from the contents of a designated file or output from another application.</para>
+          <block subset="none" type="note">
+            <para>You must set <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> to false if you want to set <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardInput" /> to true. Otherwise, writing to the <see cref="P:System.Diagnostics.Process.StandardInput" /> stream throws an exception.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the input for an application is read from the <see cref="P:System.Diagnostics.Process.StandardInput" /> stream.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="RedirectStandardOutput">
+      <MemberSignature Language="C#" Value="public bool RedirectStandardOutput { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RedirectStandardOutput" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Standart output of this process is redirected.")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
-        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="StandardErrorEncoding">
-      <MemberSignature Language="C#" Value="public System.Text.Encoding StandardErrorEncoding { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Text.Encoding</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="StandardOutputEncoding">
-      <MemberSignature Language="C#" Value="public System.Text.Encoding StandardOutputEncoding { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Text.Encoding</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="UserName">
-      <MemberSignature Language="C#" Value="public string UserName { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="UseShellExecute">
-      <MemberSignature Language="C#" Value="public bool UseShellExecute { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Diagnostics.Process" /> writes text to its standard stream, that text is typically displayed on the console. By redirecting the <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream, you can manipulate or suppress the output of a process. For example, you can filter the text, format it differently, or write the output to both the console and a designated log file.</para>
+          <block subset="none" type="note">
+            <para>You must set <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> to false if you want to set <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardOutput" /> to true. Otherwise, reading from the <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream throws an exception.</para>
+          </block>
+          <para>The redirected <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream can be read synchronously or asynchronously. Methods such as <see cref="M:System.IO.StreamReader.Read" />, <see cref="M:System.IO.StreamReader.ReadLine" />, and <see cref="M:System.IO.StreamReader.ReadToEnd" /> perform synchronous read operations on the output stream of the process. These synchronous read operations do not complete until the associated <see cref="T:System.Diagnostics.Process" /> writes to its <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream, or closes the stream.</para>
+          <para>In contrast, <see cref="M:System.Diagnostics.Process.BeginOutputReadLine" /> starts asynchronous read operations on the <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream. This method enables a designated event handler for the stream output and immediately returns to the caller, which can perform other work while the stream output is directed to the event handler.</para>
+          <block subset="none" type="note">
+            <para>The application that is processing the asynchronous output should call the <see cref="M:System.Diagnostics.Process.WaitForExit" /> method to ensure that the output buffer has been flushed.</para>
+          </block>
+          <para>Synchronous read operations introduce a dependency between the caller reading from the <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream and the child process writing to that stream. These dependencies can cause deadlock conditions. When the caller reads from the redirected stream of a child process, it is dependent on the child. The caller waits for the read operation until the child writes to the stream or closes the stream. When the child process writes enough data to fill its redirected stream, it is dependent on the parent. The child process waits for the next write operation until the parent reads from the full stream or closes the stream. The deadlock condition results when the caller and child process wait for each other to complete an operation, and neither can continue. You can avoid deadlocks by evaluating dependencies between the caller and child process.</para>
+          <para>For example, the following C# code shows how to read from a redirected stream and wait for the child process to exit.</para>
+          <code>// Start the child process.
+ Process p = new Process();
+ // Redirect the output stream of the child process.
+ p.StartInfo.UseShellExecute = false;
+ p.StartInfo.RedirectStandardOutput = true;
+ p.StartInfo.FileName = "Write500Lines.exe";
+ p.Start();
+ // Do not wait for the child process to exit before
+ // reading to the end of its redirected stream.
+ // p.WaitForExit();
+ // Read the output stream first and then wait.
+ string output = p.StandardOutput.ReadToEnd();
+ p.WaitForExit();</code>
+          <para>The code example avoids a deadlock condition by calling p.StandardOutput.ReadToEnd before p.WaitForExit. A deadlock condition can result if the parent process calls p.WaitForExit before p.StandardOutput.ReadToEnd and the child process writes enough text to fill the redirected stream. The parent process would wait indefinitely for the child process to exit. The child process would wait indefinitely for the parent to read from the full <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream.</para>
+          <para>There is a similar issue when you read all text from both the standard output and standard error streams. For example, the following C# code performs a read operation on both streams.</para>
+          <code> // Do not perform a synchronous read to the end of both 
+ // redirected streams.
+ // string output = p.StandardOutput.ReadToEnd();
+ // string error = p.StandardError.ReadToEnd();
+ // p.WaitForExit();
+ // Use asynchronous read operations on at least one of the streams.
+ p.BeginOutputReadLine();
+ string error = p.StandardError.ReadToEnd();
+ p.WaitForExit();</code>
+          <para>The code example avoids the deadlock condition by performing asynchronous read operations on the <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream. A deadlock condition results if the parent process calls p.StandardOutput.ReadToEnd followed by p.StandardError.ReadToEnd and the child process writes enough text to fill its error stream. The parent process would wait indefinitely for the child process to close its <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream. The child process would wait indefinitely for the parent to read from the full <see cref="P:System.Diagnostics.Process.StandardError" /> stream.</para>
+          <para>You can use asynchronous read operations to avoid these dependencies and their deadlock potential. Alternately, you can avoid the deadlock condition by creating two threads and reading the output of each stream on a separate thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the output of an application is written to the <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="StandardErrorEncoding">
+      <MemberSignature Language="C#" Value="public System.Text.Encoding StandardErrorEncoding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding StandardErrorEncoding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <see cref="P:System.Diagnostics.ProcessStartInfo.StandardErrorEncoding" /> property is null, the process uses the default standard error encoding for error output. The <see cref="P:System.Diagnostics.ProcessStartInfo.StandardErrorEncoding" /> property must be set before the process is started. Setting this property does not guarantee that the process will use the specified encoding; the process will use only those encodings that it supports. The application should be tested to determine which encodings are supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the preferred encoding for error output.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StandardOutputEncoding">
+      <MemberSignature Language="C#" Value="public System.Text.Encoding StandardOutputEncoding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding StandardOutputEncoding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <see cref="P:System.Diagnostics.ProcessStartInfo.StandardOutputEncoding" /> property is null, the process uses the default standard output encoding for the standard output. The <see cref="P:System.Diagnostics.ProcessStartInfo.StandardOutputEncoding" /> property must be set before the process is started. Setting this property does not guarantee that the process will use the specified encoding. The application should be tested to determine which encodings the process supports.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the preferred encoding for standard output.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UserName">
+      <MemberSignature Language="C#" Value="public string UserName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string UserName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>   The <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property must be set if <see cref="P:System.Diagnostics.ProcessStartInfo.UserName" /> and <see cref="P:System.Diagnostics.ProcessStartInfo.Password" /> are provided. If the property is not set, the default working directory is %SYSTEMROOT%\system32.</para>
+          </block>
+          <para>If the <see cref="P:System.Diagnostics.ProcessStartInfo.UserName" /> property is not null or an empty string, the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property must be false, or an <see cref="T:System.InvalidOperationException" /> will be thrown when the <see cref="M:System.Diagnostics.Process.Start(System.Diagnostics.ProcessStartInfo)" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the user name to be used when starting the process.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseShellExecute">
+      <MemberSignature Language="C#" Value="public bool UseShellExecute { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseShellExecute" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(true)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Use the shell to start this process.")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(true)</AttributeName>
-        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to false enables you to redirect input, output, and error streams.</para>
+          <block subset="none" type="note">
+            <para>   <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> must be false if the <see cref="P:System.Diagnostics.ProcessStartInfo.UserName" /> property is not null or an empty string, or an <see cref="T:System.InvalidOperationException" /> will be thrown when the <see cref="M:System.Diagnostics.Process.Start(System.Diagnostics.ProcessStartInfo)" /> method is called.</para>
+          </block>
+          <para>When you use the operating system shell to start processes, you can start any document (which is any registered file type associated with an executable that has a default open action) and perform operations on the file, such as printing, by using the <see cref="T:System.Diagnostics.Process" /> object. When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is false, you can start only executables by using the <see cref="T:System.Diagnostics.Process" /> object.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> must be true if you set the <see cref="P:System.Diagnostics.ProcessStartInfo.ErrorDialog" /> property to true.</para>
+          </block>
+          <para>The <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property behaves differently depending on the value of the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property. When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is true, the <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property specifies the location of the executable. If <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> is an empty string, it is assumed that the current directory contains the executable.</para>
+          <para>When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is false, the <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property is not used to find the executable. Instead, it is used only by the process that is started and has meaning only within the context of the new process. When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is false, the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property must be a fully qualified path to the executable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to use the operating system shell to start the process.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Verb">
-      <MemberSignature Language="C#" Value="public string Verb { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Verb { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Verb" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.VerbConverter, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("The verb to apply to a used document.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each file name extension has its own set of verbs, which can be obtained by using the <see cref="P:System.Diagnostics.ProcessStartInfo.Verbs" /> property. For example, the "print" verb will print a document specified by using <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" />. The default verb can be specified by using an empty string (""). Examples of verbs are "Edit", "Open", "OpenAsReadOnly", "Print", and "Printto". You should use only verbs that appear in the set of verbs returned by the <see cref="P:System.Diagnostics.ProcessStartInfo.Verbs" /> property.</para>
+          <para>When you use the <see cref="P:System.Diagnostics.ProcessStartInfo.Verb" /> property, you must include the file name extension when you set the value of the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property. The file name does not need to have an extension if you manually enter a value for the <see cref="P:System.Diagnostics.ProcessStartInfo.Verb" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the verb to use when opening the application or document specified by the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("The verb to apply to a used document.")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.VerbConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Verbs">
       <MemberSignature Language="C#" Value="public string[] Verbs { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] Verbs" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string []'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -551,73 +821,109 @@ At least the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> must 
           <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string []'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.ProcessStartInfo.Verbs" /> property enables you to determine the verbs that can be used with the file specified by the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property. You can set the <see cref="P:System.Diagnostics.ProcessStartInfo.Verb" /> property to the value of any verb in the set. Examples of verbs are "Edit", "Open", "OpenAsReadOnly", "Print", and "Printto".</para>
+          <para>When you use the <see cref="P:System.Diagnostics.ProcessStartInfo.Verbs" /> property, you must include the file name extension when you set the value of the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property. The file name extension determines the set of possible verbs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the set of verbs associated with the type of file specified by the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> property.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WindowStyle">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.ProcessWindowStyle WindowStyle { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.ProcessWindowStyle WindowStyle { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.ProcessWindowStyle WindowStyle" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Diagnostics.ProcessWindowStyle</ReturnType>
-      </ReturnValue>
-      <Parameters>
-      </Parameters>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'ProcessWindowStyle'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(typeof(System.Diagnostics.ProcessWindowStyle), "Normal")</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The window style used to start this process.")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(typeof(System.Diagnostics.ProcessWindowStyle), "Normal")</AttributeName>
-        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.ProcessWindowStyle</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <value>To be added: an object of type 'ProcessWindowStyle'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the window state to use when the process is started.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WorkingDirectory">
-      <MemberSignature Language="C#" Value="public string WorkingDirectory { set; get; }" />
+      <MemberSignature Language="C#" Value="public string WorkingDirectory { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string WorkingDirectory" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Editor("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("The initial directory for this process.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property must be set if <see cref="P:System.Diagnostics.ProcessStartInfo.UserName" /> and <see cref="P:System.Diagnostics.ProcessStartInfo.Password" /> are provided. If the property is not set, the default working directory is %SYSTEMROOT%\system32.</para>
+          </block>
+          <para>If the directory is already part of the system path variable, you do not have to repeat the directory's location in this property.</para>
+          <para>The <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property behaves differently when <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is true than when <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is false. When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is true, the <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property specifies the location of the executable. If <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> is an empty string, the current directory is understood to contain the executable.</para>
+          <block subset="none" type="note">
+            <para>When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is true, the working directory of the application that starts the executable is also the working directory of the executable.</para>
+          </block>
+          <para>When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is false, the <see cref="P:System.Diagnostics.ProcessStartInfo.WorkingDirectory" /> property is not used to find the executable. Instead, its value applies to the process that is started and only has meaning within the context of the new process.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> property is false, gets or sets the working directory for the process to be started. When <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute" /> is true, gets or sets the directory that contains the process to be started.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("The initial directory for this process.")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.TypeConverter("System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Editor("System.Diagnostics.Design.WorkingDirectoryEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(true)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
 </Type>

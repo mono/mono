@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebServicesInteroperability" FullName="System.Web.Services.Description.WebServicesInteroperability">
   <TypeSignature Language="C#" Value="public sealed class WebServicesInteroperability" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The WS-I publishes non-proprietary Web services specifications to promote the interoperability of Web services across platforms.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Description.WebServicesInteroperability" /> class provides methods to verify whether a given Web service or services conforms to a given Web Services Interoperability (WS-I) Organization specification.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CheckConformance">
@@ -26,13 +33,24 @@
         <Parameter Name="violations" Type="System.Web.Services.Description.BasicProfileViolationCollection" />
       </Parameters>
       <Docs>
-        <param name="claims">To be added.</param>
         <param name="service">To be added.</param>
-        <param name="violations">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The WS-I publishes non-proprietary Web services specifications to promote the interoperability of Web services across platforms.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether a given Web service or services conforms to a given WS-I specification, and provides a list of any violations that it finds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the Web service described by <paramref name="description" /> conforms to the Web services interoperability specification indicated by <paramref name="claims" />; otherwise false.</para>
+        </returns>
+        <param name="claims">
+          <attribution license="cc4" from="Microsoft" modified="false" />A member of <see cref="T:System.Web.Services.WsiProfiles" /> that indicates a Web services interoperability specification.</param>
+        <param name="violations">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" /> that contains any violations that were found.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,13 +68,24 @@
         <Parameter Name="violations" Type="System.Web.Services.Description.BasicProfileViolationCollection" />
       </Parameters>
       <Docs>
-        <param name="claims">To be added.</param>
         <param name="services">To be added.</param>
-        <param name="violations">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The WS-I publishes non-proprietary Web services specifications to promote the interoperability of Web services across platforms.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether a given Web service or services conforms to a given WS-I specification, and provides a list of any violations that it finds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the Web service descriptions contained in <paramref name="descriptions" /> conform to the Web services interoperability specification indicated by <paramref name="claims" />; false otherwise.</para>
+        </returns>
+        <param name="claims">
+          <attribution license="cc4" from="Microsoft" modified="false" />A member of <see cref="T:System.Web.Services.WsiProfiles" /> that indicates a Web services interoperability specification.</param>
+        <param name="violations">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" /> that contains any violations that were found.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,13 +103,25 @@
         <Parameter Name="violations" Type="System.Web.Services.Description.BasicProfileViolationCollection" />
       </Parameters>
       <Docs>
-        <param name="claims">To be added.</param>
-        <param name="webReference">To be added.</param>
-        <param name="violations">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The WS-I publishes non-proprietary Web services specifications to promote the interoperability of Web services across platforms.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether a given Web service or services conforms to a given WS-I specification, and provides a list of any violations that it finds.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the Web service described by <paramref name="webReference" /> conforms to the Web services interoperability specification indicated by <paramref name="claims" />; false otherwise.</para>
+        </returns>
+        <param name="claims">
+          <attribution license="cc4" from="Microsoft" modified="false" />A member of <see cref="T:System.Web.Services.WsiProfiles" /> that indicates a Web services interoperability specification.</param>
+        <param name="webReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.WebReference" /> that describes a Web service.</param>
+        <param name="violations">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" /> that contains any violations that were found.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

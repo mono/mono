@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IParameterInspector" FullName="System.ServiceModel.Dispatcher.IParameterInspector">
+  <TypeSignature Language="C#" Value="public interface IParameterInspector" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IParameterInspector" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IParameterInspector" /> interface to create a custom parameter inspector that can view and modify the contents of a call both before the call and after the call in either client or service applications. </para>
+      <para>On outbound calls from a client, the inspector is invoked before the request contents are serialized and sent to the service. The inspector is also called after the response has been deserialized but before the return values have been dispatched to the proxy method. </para>
+      <para>On inbound calls to a service, the inspector is invoked after parameters are deserialized but before they are dispatched to the service operation.</para>
+      <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.ParameterInspectors" /> or the <see cref="P:System.ServiceModel.Dispatcher.DispatchOperation.ParameterInspectors" /> properties to add an <see cref="T:System.ServiceModel.Dispatcher.IParameterInspector" /> implementation to the inspectors collection for a particular operation.  </para>
+      <para>Note   Developers and administrators must ensure that the interaction with other <see cref="T:System.ServiceModel.Dispatcher.IParameterInspector" /> implementations is understood.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract implemented by custom parameter inspectors that enables inspection or modification of information prior to and subsequent to calls on either the client or the service.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AfterCall">
+      <MemberSignature Language="C#" Value="public void AfterCall (string operationName, object[] outputs, object returnValue, object correlationState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AfterCall(string operationName, object[] outputs, object returnValue, object correlationState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="operationName" Type="System.String" />
+        <Parameter Name="outputs" Type="System.Object[]" />
+        <Parameter Name="returnValue" Type="System.Object" />
+        <Parameter Name="correlationState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On outbound calls from a client, the inspector is invoked before the request contents are serialized and sent to the service. The inspector is also called after the response has been deserialized but before the return values have been dispatched to the proxy method. </para>
+          <para>On inbound calls to a service, the inspector is invoked after parameters are deserialized but before they are dispatched to the service operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called after client calls are returned and before service responses are sent.</para>
+        </summary>
+        <param name="operationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the invoked operation.</param>
+        <param name="outputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any output objects.</param>
+        <param name="returnValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return value of the operation.</param>
+        <param name="correlationState">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any correlation state returned from the <see cref="M:System.ServiceModel.Dispatcher.IParameterInspector.BeforeCall(System.String,System.Object[])" /> method, or null. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeforeCall">
+      <MemberSignature Language="C#" Value="public object BeforeCall (string operationName, object[] inputs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object BeforeCall(string operationName, object[] inputs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="operationName" Type="System.String" />
+        <Parameter Name="inputs" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On outbound calls from a client, the inspector is invoked before the request contents are serialized and sent to the service. The inspector is also called after the response has been deserialized but before the return values have been dispatched to the proxy method. </para>
+          <para>On inbound calls to a service, the inspector is invoked after the request contents are deserialized and dispatched to the service operation and before the response contents are serialized and sent to the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called before client calls are sent and after service responses are returned.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The correlation state that is returned as the <paramref name="correlationState" /> parameter in <see cref="M:System.ServiceModel.Dispatcher.IParameterInspector.AfterCall(System.String,System.Object[],System.Object,System.Object)" />. Return null if you do not intend to use correlation state.</para>
+        </returns>
+        <param name="operationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the operation.</param>
+        <param name="inputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The objects passed to the method by the client.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

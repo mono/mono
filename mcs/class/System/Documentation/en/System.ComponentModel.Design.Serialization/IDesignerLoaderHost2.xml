@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IDesignerLoaderHost2" FullName="System.ComponentModel.Design.Serialization.IDesignerLoaderHost2">
+  <TypeSignature Language="C#" Value="public interface IDesignerLoaderHost2 : IServiceProvider, System.ComponentModel.Design.Serialization.IDesignerLoaderHost" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesignerLoaderHost2 implements class System.ComponentModel.Design.IDesignerHost, class System.ComponentModel.Design.IServiceContainer, class System.ComponentModel.Design.Serialization.IDesignerLoaderHost, class System.IServiceProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ComponentModel.Design.Serialization.IDesignerLoaderHost</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IServiceProvider</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderHost2" /> interface to specify whether the designer loader can continue loading when errors occur during deserialization. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that extends <see cref="T:System.ComponentModel.Design.Serialization.IDesignerLoaderHost" /> to specify whether errors are tolerated while loading a design document.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CanReloadWithErrors">
+      <MemberSignature Language="C#" Value="public bool CanReloadWithErrors { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanReloadWithErrors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In some scenarios, loading errors cannot be ignored. The designer loader implementation should return false when this is the case.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether it is possible to reload with errors. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IgnoreErrorsDuringReload">
+      <MemberSignature Language="C#" Value="public bool IgnoreErrorsDuringReload { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreErrorsDuringReload" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.Serialization.IDesignerLoaderHost2.IgnoreErrorsDuringReload" /> property can only be set to true if <see cref="P:System.ComponentModel.Design.Serialization.IDesignerLoaderHost2.CanReloadWithErrors" /> is true. If <see cref="P:System.ComponentModel.Design.Serialization.IDesignerLoaderHost2.CanReloadWithErrors" /> is false, the value of <see cref="P:System.ComponentModel.Design.Serialization.IDesignerLoaderHost2.IgnoreErrorsDuringReload" /> is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether errors should be ignored when <see cref="M:System.ComponentModel.Design.Serialization.IDesignerLoaderHost.Reload" /> is called.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

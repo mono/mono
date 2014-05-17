@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HebrewCalendar" FullName="System.Globalization.HebrewCalendar">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class HebrewCalendar : System.Globalization.Calendar" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit HebrewCalendar extends System.Globalization.Calendar" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,28 +15,311 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Hebrew calendar recognizes two eras: B.C.E. (before the common era) and A.M. (Latin "Anno Mundi", which means "the year of the world"). This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the current era (A.M.) and the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+      <block subset="none" type="note">
+        <para>For information about using the <see cref="T:System.Globalization.HebrewCalendar" /> class and the other calendar classes in the .NET Framework, see <format type="text/html"><a href="0c1534e5-979b-4c8a-a588-1c24301aefb3">Working with Calendars</a></format>.</para>
+      </block>
+      <para>In every 19-year cycle that ends with a year that is evenly divisible by 19, the 3rd, 6th, 8th, 11th, 14th, 17th, and 19th years are leap years. A common year can have from 353 to 355 days, depending on the placement of Jewish holidays. A leap year can have from 383 to 385 days.</para>
+      <para>The Hebrew calendar has 12 months during common years and 13 months during leap years: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>GetMonth value (common year) </para>
+            </term>
+            <description>
+              <para>GetMonth value (leap year) </para>
+            </description>
+            <description>
+              <para>Month </para>
+            </description>
+            <description>
+              <para>Days in common years </para>
+            </description>
+            <description>
+              <para>Days in leap years </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>1 </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>תשרי (Tishrei) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2 </para>
+          </term>
+          <description>
+            <para>2 </para>
+          </description>
+          <description>
+            <para>חשון (Cheshvan) </para>
+          </description>
+          <description>
+            <para>29/30 </para>
+          </description>
+          <description>
+            <para>29/30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>3 </para>
+          </term>
+          <description>
+            <para>3 </para>
+          </description>
+          <description>
+            <para>כסלו (Kislev) </para>
+          </description>
+          <description>
+            <para>29/30 </para>
+          </description>
+          <description>
+            <para>29/30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>4 </para>
+          </term>
+          <description>
+            <para>4 </para>
+          </description>
+          <description>
+            <para>טבת (Tevet) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>5 </para>
+          </term>
+          <description>
+            <para>5 </para>
+          </description>
+          <description>
+            <para>שבט (Shevat) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>6 </para>
+          </term>
+          <description>
+            <para>- </para>
+          </description>
+          <description>
+            <para>אדר (Adar) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>- </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>- </para>
+          </term>
+          <description>
+            <para>6 </para>
+          </description>
+          <description>
+            <para>אדר א (Adar Alef) </para>
+          </description>
+          <description>
+            <para>- </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>- </para>
+          </term>
+          <description>
+            <para>7 </para>
+          </description>
+          <description>
+            <para>אדר ב (Adar Beit) </para>
+          </description>
+          <description>
+            <para>- </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>7 </para>
+          </term>
+          <description>
+            <para>8 </para>
+          </description>
+          <description>
+            <para>ניסן (Nissan) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>8 </para>
+          </term>
+          <description>
+            <para>9 </para>
+          </description>
+          <description>
+            <para>אייר (Iyar) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>9 </para>
+          </term>
+          <description>
+            <para>10 </para>
+          </description>
+          <description>
+            <para>סיון (Sivan) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>10 </para>
+          </term>
+          <description>
+            <para>11 </para>
+          </description>
+          <description>
+            <para>תמוז (Tamuz) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>11 </para>
+          </term>
+          <description>
+            <para>12 </para>
+          </description>
+          <description>
+            <para>אב (Av) </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+          <description>
+            <para>30 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>12 </para>
+          </term>
+          <description>
+            <para>13 </para>
+          </description>
+          <description>
+            <para>אלול (Elul) </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+          <description>
+            <para>29 </para>
+          </description>
+        </item>
+      </list>
+      <para>The days in Cheshvan and Kislev vary depending on the placement of Jewish holidays. During leap years, Adar is replaced by Adar Alef with 30 days and Adar Beit with 29 days. Adar Alef is considered the leap month. The last day of Adar Alef and all the days in Adar Beit are considered leap days; that is, the <see cref="M:System.Globalization.HebrewCalendar.IsLeapDay(System.Int32,System.Int32,System.Int32,System.Int32)" /> method returns true for these days. </para>
+      <para>The date January 1, 2001 A.D. in the Gregorian calendar is equivalent to the sixth day of Tevet in the year 5761 A.M. in the Hebrew calendar.</para>
+      <para>Each <see cref="T:System.Globalization.CultureInfo" /> supports a set of calendars. The <see cref="P:System.Globalization.CultureInfo.Calendar" /> property returns the default calendar for the culture, and the <see cref="P:System.Globalization.CultureInfo.OptionalCalendars" /> property returns an array containing all the calendars supported by the culture. To change the calendar used by a <see cref="T:System.Globalization.CultureInfo" />, the application should set the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> to a new <see cref="T:System.Globalization.Calendar" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the Hebrew calendar.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HebrewCalendar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.HebrewCalendar" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AddMonths">
       <MemberSignature Language="C#" Value="public override DateTime AddMonths (DateTime time, int months);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime AddMonths(valuetype System.DateTime time, int32 months) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -43,21 +328,38 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="months">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. The year part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting month is outside the year of the specified <see cref="T:System.DateTime" />. This implementation supports only the current era. Therefore, <see cref="T:System.ArgumentException" /> is thrown if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />. The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>For example, if the specified month is Av, which has 30 days, the specified day is the 30th day of that month, and the value of the <paramref name="months" /> parameter is 5, the resulting year is one more than the specified year, the resulting month is Tevet, and the resulting day is the 29th day, which is the last day in Tevet.</para>
+          <para>If the value of the <paramref name="months" /> parameter is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#5</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of months away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of months to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add <paramref name="months" />. </param>
+        <param name="months">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of months to add. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddYears">
+      <MemberSignature Language="C#" Value="public override DateTime AddYears (DateTime time, int years);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime AddYears(valuetype System.DateTime time, int32 years) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddYears">
-      <MemberSignature Language="C#" Value="public override DateTime AddYears (DateTime time, int years);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -66,55 +368,85 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <param name="years">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+          <para>The day part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting day is not a valid day in the resulting month of the resulting year. It is changed to the last valid day in the resulting month of the resulting year. For example, Cheshvan can have 29 or 30 days, depending on the placement of Jewish holidays. Suppose that Cheshvan has 30 days in the current year and 29 in the following year. If the specified date is the 30th day of Cheshvan in the current year and the value of <paramref name="years" /> is 1, the resulting date will be the 29th day of Cheshvan in the following year.</para>
+          <para>The month part of the resulting <see cref="T:System.DateTime" /> is affected if the resulting month is not a valid month in the resulting year. It is changed to the last valid month in the resulting year. For example, if the month in the <paramref name="time" /> parameter is the 13th month of a leap year and the value of <paramref name="years" /> is 1, the month in the resulting <see cref="T:System.DateTime" /> is the 12th month of the following year, which is a non-leap year. Note that even when the month part does not change, it might still refer to a different month. For example, Adar Beit is the 7th month in leap years, but Nissan is the 7th month in common years.</para>
+          <para>This implementation supports only the current era. Therefore, <see cref="T:System.ArgumentException" /> is thrown if the resulting year is outside the era of the specified <see cref="T:System.DateTime" />.</para>
+          <para>The time-of-day part of the resulting <see cref="T:System.DateTime" /> remains the same as the specified <see cref="T:System.DateTime" />.</para>
+          <para>If <paramref name="years" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
+          <para>The <see cref="P:System.DateTime.Kind" /> property of the returned <see cref="T:System.DateTime" /> value always equals <see cref="F:System.DateTimeKind.Unspecified" />. You can preserve the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="time" /> parameter by calling the <see cref="M:System.DateTime.SpecifyKind(System.DateTime,System.DateTimeKind)" /> method, as the following example shows.</para>
+          <para>code reference: System.Globalization.Calendar.AddMethods#8</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of years away from the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of years to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add <paramref name="years" />. </param>
+        <param name="years">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of years to add. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AlgorithmType">
       <MemberSignature Language="C#" Value="public override System.Globalization.CalendarAlgorithmType AlgorithmType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Globalization.CalendarAlgorithmType AlgorithmType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current calendar is solar-based, lunar-based, or a combination of both.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Eras">
       <MemberSignature Language="C#" Value="public override int[] Eras { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32[] Eras" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Hebrew calendar recognizes two eras: B.C.E. (before the common era) and A.M. (Latin "Anno Mundi", which means "the year of the world"). This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the current era (A.M.). This property always returns an array with only one element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of eras in the <see cref="T:System.Globalization.HebrewCalendar" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetDayOfMonth">
       <MemberSignature Language="C#" Value="public override int GetDayOfMonth (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDayOfMonth(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -122,20 +454,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 30 that represents the day of the month in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayOfWeek">
+      <MemberSignature Language="C#" Value="public override DayOfWeek GetDayOfWeek (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DayOfWeek GetDayOfWeek(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayOfWeek">
-      <MemberSignature Language="C#" Value="public override DayOfWeek GetDayOfWeek (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DayOfWeek</ReturnType>
       </ReturnValue>
@@ -143,20 +483,99 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DayOfWeek" /> values are as follows: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DayOfWeek value </para>
+                </term>
+                <description>
+                  <para>Day of Week </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Sunday </para>
+              </term>
+              <description>
+                <para>יום ראשון (Yom Rishon) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Monday </para>
+              </term>
+              <description>
+                <para>יום שני (Yom Sheni) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Tuesday </para>
+              </term>
+              <description>
+                <para>יום שלישי (Yom Shlishi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Wednesday </para>
+              </term>
+              <description>
+                <para>יום רביעי (Yom Reviee) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Thursday </para>
+              </term>
+              <description>
+                <para>יום חמישי (Yom Chamishi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Friday </para>
+              </term>
+              <description>
+                <para>יום שישי (Yom Shishi) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Saturday </para>
+              </term>
+              <description>
+                <para>שבת (Shabat) </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the week in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DayOfWeek" /> value that represents the day of the week in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayOfYear">
+      <MemberSignature Language="C#" Value="public override int GetDayOfYear (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDayOfYear(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayOfYear">
-      <MemberSignature Language="C#" Value="public override int GetDayOfYear (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -164,20 +583,32 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The day of the year is defined as the number of days from the first day of the year. For example, <see cref="M:System.Globalization.HebrewCalendar.GetDayOfYear(System.DateTime)" /> for the first day of the first month returns 1, and <see cref="M:System.Globalization.HebrewCalendar.GetDayOfYear(System.DateTime)" /> for the last day of the last month returns the total number of days in that year, which is the same value returned by <see cref="M:System.Globalization.HebrewCalendar.GetDaysInYear(System.Int32,System.Int32)" />.</para>
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the day of the year in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 385 that represents the day of the year in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaysInMonth">
+      <MemberSignature Language="C#" Value="public override int GetDaysInMonth (int year, int month, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDaysInMonth(int32 year, int32 month, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaysInMonth">
-      <MemberSignature Language="C#" Value="public override int GetDaysInMonth (int year, int month, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -187,22 +618,36 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, this method returns 29 or 30 for Cheshvan, depending on the placement of Jewish holidays.</para>
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified month in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 13 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or Calendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaysInYear">
+      <MemberSignature Language="C#" Value="public override int GetDaysInYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetDaysInYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaysInYear">
-      <MemberSignature Language="C#" Value="public override int GetDaysInYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -211,21 +656,34 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, this method returns an integer from 353 to 355 or from 383 to 385, depending on the placement of Jewish holidays and depending on whether <paramref name="year" /> is a leap year.</para>
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of days in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year in the specified era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or HebrewCalendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetEra">
+      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetEra(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEra">
-      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -233,19 +691,25 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Hebrew calendar recognizes two eras: B.C.E. (before the common era) and A.M. (Latin "Anno Mundi", which means "the year of the world"). This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the current era (A.M.) and only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the era in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the era in the specified <see cref="T:System.DateTime" />. The return value is always <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLeapMonth">
       <MemberSignature Language="C#" Value="public override int GetLeapMonth (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetLeapMonth(int32 year, int32 era) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -259,16 +723,33 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a calendar that supports the notion of a leap month, the leap month can occur either after a particular month or after any month in a year. For example, the <see cref="M:System.Globalization.EastAsianLunisolarCalendar.GetMonth(System.DateTime)" /> method returns a number between 1 and 13 that indicates the month associated with a specified date. If there is a leap month between the eighth and ninth months of the year, the <see cref="M:System.Globalization.EastAsianLunisolarCalendar.GetMonth(System.DateTime)" /> method returns 8 for the eighth month, 9 for the leap eighth month, and 10 for the ninth month.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the leap month for a specified year and era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer that indicates the leap month in the specified year and era. The return value is 7 if the <paramref name="year" /> and <paramref name="era" /> parameters specify a leap year, or 0 if the year is not a leap year.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />A year.</param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or HebrewCalendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
     </Member>
     <Member MemberName="GetMonth">
       <MemberSignature Language="C#" Value="public override int GetMonth (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMonth(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -276,20 +757,28 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the month in the specified <see cref="T:System.DateTime" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 13 that represents the month in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetMonthsInYear">
+      <MemberSignature Language="C#" Value="public override int GetMonthsInYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMonthsInYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMonthsInYear">
-      <MemberSignature Language="C#" Value="public override int GetMonthsInYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -298,21 +787,33 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of months in the specified year in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of months in the specified year in the specified era. The return value is either 12 in a common year, or 13 in a leap year.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or HebrewCalendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetYear">
+      <MemberSignature Language="C#" Value="public override int GetYear (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetYear(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetYear">
-      <MemberSignature Language="C#" Value="public override int GetYear (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -320,38 +821,57 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the year in the specified <see cref="T:System.DateTime" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the year in the specified <see cref="T:System.DateTime" /> value.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="HebrewEra">
+      <MemberSignature Language="C#" Value="public static readonly int HebrewEra;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 HebrewEra" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HebrewEra">
-      <MemberSignature Language="C#" Value="public static readonly int HebrewEra;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <MemberValue>1</MemberValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this field is 1.</para>
+          <para>The Hebrew calendar recognizes two eras: B.C.E. (before the common era) and A.M. (Latin "Anno Mundi", which means "the year of the world"). This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the current era (A.M.). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the current era. This field is constant.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsLeapDay">
+      <MemberSignature Language="C#" Value="public override bool IsLeapDay (int year, int month, int day, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapDay(int32 year, int32 month, int32 day, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapDay">
-      <MemberSignature Language="C#" Value="public override bool IsLeapDay (int year, int month, int day, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -362,23 +882,39 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+          <para>In every 19-year cycle that ends with a year that is evenly divisible by 19, the 3rd, 6th, 8th, 11th, 14th, 17th, and 19th years are leap years. A common year can have from 353 to 355 days, depending on the placement of Jewish holidays. A leap year can have from 383 to 385 days.</para>
+          <para>A leap day is a day that occurs only in a leap year. In the Hebrew calendar, the last day of Adar Alef and all the days in Adar Beit are considered leap days.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified date in the specified era is a leap day.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified day is a leap day; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 13 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 30 that represents the day. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or HebrewCalendar.Eras[Calendar.CurrentEra]..</param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapMonth">
+      <MemberSignature Language="C#" Value="public override bool IsLeapMonth (int year, int month, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapMonth(int32 year, int32 month, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapMonth">
-      <MemberSignature Language="C#" Value="public override bool IsLeapMonth (int year, int month, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -388,22 +924,37 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+          <para>In every 19-year cycle that ends with a year that is evenly divisible by 19, the 3rd, 6th, 8th, 11th, 14th, 17th, and 19th years are leap years. A common year can have from 353 to 355 days, depending on the placement of Jewish holidays. A leap year can have from 383 to 385 days.</para>
+          <para>A leap month is an entire month that occurs only in a leap year. In the Hebrew calendar, Adar Beit is the only leap month.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified month in the specified year in the specified era is a leap month.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified month is a leap month; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 13 that represents the month. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or HebrewCalendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLeapYear">
+      <MemberSignature Language="C#" Value="public override bool IsLeapYear (int year, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsLeapYear(int32 year, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLeapYear">
-      <MemberSignature Language="C#" Value="public override bool IsLeapYear (int year, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -412,55 +963,79 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+          <para>In every 19-year cycle that ends with a year that is evenly divisible by 19, the 3rd, 6th, 8th, 11th, 14th, 17th, and 19th years are leap years. A common year can have from 353 to 355 days, depending on the placement of Jewish holidays. A leap year can have from 383 to 385 days.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified year in the specified era is a leap year.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified year is a leap year; otherwise, false.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or HebrewCalendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
+    </Member>
+    <Member MemberName="MaxSupportedDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime MaxSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MaxSupportedDateTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the latest date and time supported by the <see cref="T:System.Globalization.HebrewCalendar" /> type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MinSupportedDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime MinSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MinSupportedDateTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Microsoft Visual Basic represents time of day as the specified time on the minimum date supported by the <see cref="T:System.DateTime" /> type, which is January 1, 0001 C.E. However, the <see cref="T:System.Globalization.HebrewCalendar" /> type does not support that minimum date. Consequently, if you call a method to format the time of day using the current calendar but you do not specify a format specifier, formatting uses the ISO 8601 sortable ("s") date/time pattern format specifier instead of the default general ("G") date/time pattern format specifier. For more information, see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard DateTime Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the earliest date and time supported by the <see cref="T:System.Globalization.HebrewCalendar" /> type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="C#" Value="public override DateTime ToDateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.DateTime ToDateTime(int32 year, int32 month, int32 day, int32 hour, int32 minute, int32 second, int32 millisecond, int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxSupportedDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime MaxSupportedDateTime { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="MinSupportedDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime MinSupportedDateTime { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToDateTime">
-      <MemberSignature Language="C#" Value="public override DateTime ToDateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -475,27 +1050,46 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <param name="month">To be added.</param>
-        <param name="day">To be added.</param>
-        <param name="hour">To be added.</param>
-        <param name="minute">To be added.</param>
-        <param name="second">To be added.</param>
-        <param name="millisecond">To be added.</param>
-        <param name="era">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Globalization.HebrewCalendar.ToDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" /> method is useful because it can convert any date in the current calendar to a Gregorian calendar date. The Gregorian date can subsequently be used, for example, to compare dates in different calendars or create an equivalent date in a particular calendar.</para>
+          <para>This implementation of the <see cref="T:System.Globalization.HebrewCalendar" /> class recognizes only the Hebrew years 5343 to 5999 (1583 to 2239 in the Gregorian calendar).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.DateTime" /> that is set to the specified date and time in the specified era.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
+        <param name="month">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 13 that represents the month. </param>
+        <param name="day">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 to 30 that represents the day. </param>
+        <param name="hour">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 23 that represents the hour. </param>
+        <param name="minute">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the minute. </param>
+        <param name="second">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 59 that represents the second. </param>
+        <param name="millisecond">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer from 0 to 999 that represents the millisecond. </param>
+        <param name="era">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the era. Specify either <see cref="F:System.Globalization.HebrewCalendar.HebrewEra" /> or HebrewCalendar.Eras[Calendar.CurrentEra].</param>
       </Docs>
+    </Member>
+    <Member MemberName="ToFourDigitYear">
+      <MemberSignature Language="C#" Value="public override int ToFourDigitYear (int year);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ToFourDigitYear(int32 year) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToFourDigitYear">
-      <MemberSignature Language="C#" Value="public override int ToFourDigitYear (int year);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -503,33 +1097,50 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Globalization.HebrewCalendar.ToFourDigitYear(System.Int32)" /> method uses the <paramref name="year" /> parameter, the <see cref="P:System.Globalization.HebrewCalendar.TwoDigitYearMax" /> property, and a year to calculate a 4-digit year. The century is determined by finding the sole occurrence of the <paramref name="year" /> parameter within that 100-year range. For example, if <see cref="P:System.Globalization.HebrewCalendar.TwoDigitYearMax" /> is set to 5729, the 100-year range is from 5630 to 5729. Therefore, a value of 30 is interpreted as 5630, while a value of 29 is interpreted as 5729.</para>
+          <para>If the <see cref="P:System.Globalization.HebrewCalendar.TwoDigitYearMax" /> property has the special value 99, the <see cref="M:System.Globalization.HebrewCalendar.ToFourDigitYear(System.Int32)" /> method ignores the settings in the regional and language options in Control Panel and returns the value of the <paramref name="year" /> parameter unchanged. </para>
+          <para>
+            <see cref="M:System.Globalization.HebrewCalendar.ToFourDigitYear(System.Int32)" /> supports either a two-digit year or a four-digit year. Passing a two-digit year value (less than 100) causes the method to convert the value to a four-digit value according to the <see cref="P:System.Globalization.HebrewCalendar.TwoDigitYearMax" /> value representing the appropriate century. If the application supplies a four-digit year value that is within the supported calendar range to <see cref="M:System.Globalization.HebrewCalendar.ToFourDigitYear(System.Int32)" />, the method returns the actual input value. If the application supplies a four-digit value that is outside the supported calendar range, or if it supplies a negative value, the method throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified year to a 4-digit year by using the <see cref="P:System.Globalization.HebrewCalendar.TwoDigitYearMax" /> property to determine the appropriate century.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="year" /> parameter is a 2-digit year, the return value is the corresponding 4-digit year. If the <paramref name="year" /> parameter is a 4-digit year, the return value is the unchanged <paramref name="year" /> parameter.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />A 2-digit year from 0 through 99, or a 4-digit Hebrew calendar year from 5343 through 5999.</param>
       </Docs>
+    </Member>
+    <Member MemberName="TwoDigitYearMax">
+      <MemberSignature Language="C#" Value="public override int TwoDigitYearMax { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 TwoDigitYearMax" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TwoDigitYearMax">
-      <MemberSignature Language="C#" Value="public override int TwoDigitYearMax { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.HebrewCalendar.TwoDigitYearMax" /> property allows a 2-digit year to be properly translated to a 4-digit year. For example, if this property is set to 5729, the 100-year range is from 5630 to 5729. Therefore, a 2-digit value of 30 is interpreted as 5630, while a 2-digit value of 29 is interpreted as 5729.</para>
+          <para>The initial value of this property is derived from the settings in the regional and language options portion of Control Panel. If the initial system setting changes during the life of your application the <see cref="T:System.Globalization.HebrewCalendar" /> class does not automatically detect the change.</para>
+          <para>The special value 99 causes the <see cref="M:System.Globalization.HebrewCalendar.ToFourDigitYear(System.Int32)" /> method to ignore the system settings and return the specified year unchanged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the last year of a 100-year range that can be represented by a 2-digit year.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeDomSerializer" FullName="System.ComponentModel.Design.Serialization.CodeDomSerializer">
   <TypeSignature Language="C#" Value="public class CodeDomSerializer : System.ComponentModel.Design.Serialization.CodeDomSerializerBase" />
   <AssemblyInfo>
@@ -9,8 +10,41 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can implement a custom <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> to control the generation of component initialization code for a type of component at design time.</para>
+      <para>To implement a custom <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> for a type, you must: </para>
+      <list type="ordered">
+        <item>
+          <para>Define a class that derives from <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" />.</para>
+        </item>
+        <item>
+          <para>Implement method overrides for serialization or deserialization methods. (See the information below for details.) </para>
+        </item>
+        <item>
+          <para>Associate your custom <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> implementation with a type of component using a <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializerAttribute" />.</para>
+        </item>
+      </list>
+      <para>To implement a serialization method for generating configuration code for a component: </para>
+      <list type="ordered">
+        <item>
+          <para>Within a class that derives from <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" />, override an appropriate serialization or deserialization method of the base class.</para>
+        </item>
+        <item>
+          <para>If you want the default serializer to generate code statements that perform the default component configuration, you must obtain and call the base serializer for the component. To obtain the base serializer for the component, call the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method of the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> passed to your method override. Pass the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method the type of the component to serialize the configuration of, along with the base type of serializer you are requesting, which is <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" />. Call the method of the same name you are overriding on the base serializer, using the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> and object passed to your method override. If you are implementing the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method, the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method of the base serializer will return an object. The type of this object depends on the type of base serializer which depends on the type of component you are serializing the values of. If you are implementing the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvents(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" />, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeProperties(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" />, or <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializePropertiesToResources(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" /> method, you must create a new <see cref="T:System.CodeDom.CodeStatementCollection" /> to contain the generated code statements, and pass it to the method.</para>
+        </item>
+        <item>
+          <para>If you have called a base serializer method, you will have a <see cref="T:System.CodeDom.CodeStatementCollection" /> that contains the statements to generate to initialize the component. Otherwise you should create a <see cref="T:System.CodeDom.CodeStatementCollection" />. You can add <see cref="T:System.CodeDom.CodeStatement" /> objects representing statements to generate in the component configuration code to this collection.</para>
+        </item>
+        <item>
+          <para>Return the <see cref="T:System.CodeDom.CodeStatementCollection" /> that represents the source code to generate to configure the component.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serializes an object graph to a series of CodeDOM statements. This class provides an abstract base class for a serializer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -18,8 +52,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,11 +73,22 @@
         <Parameter Name="codeObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="codeObject">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the serialization manager to create objects and resolve data types. The root of the object graph is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the specified serialized CodeDOM object into an object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized CodeDOM object.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />A serialization manager interface that is used during the deserialization process. </param>
+        <param name="codeObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A serialized CodeDOM object to deserialize. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,11 +108,22 @@
         <Parameter Name="statement" Type="System.CodeDom.CodeStatement" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="statement">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializer.DeserializeStatementToInstance(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatement)" /> is equivalent of calling <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializeStatement(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatement)" />, except that it returns an object instance if the resulting statement was a variable assign statement, a variable declaration with an init expression, or a field assignment statement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes a single statement.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object instance resulting from deserializing <paramref name="statement" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="statement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The statement to deserialize.</param>
       </Docs>
     </Member>
     <Member MemberName="GetTargetComponentName">
@@ -82,12 +141,21 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="statement">To be added.</param>
-        <param name="expression">To be added.</param>
-        <param name="targetType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines which statement group the given statement should belong to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the component with which <paramref name="statement" /> should be grouped.</para>
+        </returns>
+        <param name="statement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatement" /> for which to determine the group.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that <paramref name="statement" /> has been reduced to.</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of <paramref name="statement" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
@@ -101,11 +169,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified object into a CodeDOM object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM object representing the object that has been serialized.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use during serialization. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,11 +201,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object, accounting for default values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDom object representing <paramref name="value" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeMember">
@@ -147,12 +231,20 @@
         <Parameter Name="member" Type="System.ComponentModel.MemberDescriptor" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="owningobject">To be added.</param>
-        <param name="member">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given member on the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeStatementCollection" /> representing the serialized state of <paramref name="member" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeMemberAbsolute">
@@ -170,12 +262,20 @@
         <Parameter Name="member" Type="System.ComponentModel.MemberDescriptor" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="owningobject">To be added.</param>
-        <param name="member">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given member, accounting for default values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDom object representing <paramref name="member" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeToReferenceExpression">
@@ -189,11 +289,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" />, except that it stops if it cannot obtain a simple reference expression for the value. Call this method when you expect the resulting expression to be used as a parameter or target of a statement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified value to a CodeDOM expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialized value. This returns null if no reference expression can be obtained for the specified value, or the value cannot be serialized.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use during serialization. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

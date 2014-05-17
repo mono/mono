@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="HostedTransportConfiguration" FullName="System.ServiceModel.Activation.HostedTransportConfiguration">
+  <TypeSignature Language="C#" Value="public abstract class HostedTransportConfiguration" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit HostedTransportConfiguration extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Transports that support process activation using the Windows Process Activation Service (WAS) use WAS site bindings to store information about the network addresses on which the transport is listening. The transport implementation is responsible for reading this information from the ApplicationHost.config file and for constructing a set of base address URIs that can then be passed to the constructor of <see cref="T:System.ServiceModel.ServiceHostBase" />. The process by which these base addresses are constructed is transport protocol specific. Implementations of a transport that support WAS activation must provide an implementation that derives from <see cref="T:System.ServiceModel.Activation.HostedTransportConfiguration" /> to encapsulate this logic. For more information about the use of this class, see the <format type="text/html"><a href="4b0ccd10-0dfb-4603-93f9-f0857c581cb7">UDP Activation</a></format> sample, which demonstrates how to create a custom user datagram protocol (UDP) to be activated by WAS.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides transport-specific configuration for transport implementations hosted in Windows Process Activation Service (WAS).</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected HostedTransportConfiguration ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Activation.HostedTransportConfiguration" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBaseAddresses">
+      <MemberSignature Language="C#" Value="public abstract Uri[] GetBaseAddresses (string virtualPath);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Uri[] GetBaseAddresses(string virtualPath) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="virtualPath" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the use of this class, see the <format type="text/html"><a href="4b0ccd10-0dfb-4603-93f9-f0857c581cb7">UDP Activation</a></format> sample, which demonstrates how to create a custom user datagram protocol (UDP) to be activated by WAS.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, retrieves the base address of the host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Uri" /> that contains the base address of the host.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the service.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

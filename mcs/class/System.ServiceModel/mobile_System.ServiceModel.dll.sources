@@ -71,6 +71,7 @@ System.ServiceModel.Channels/ChannelFactoryBase.cs
 System.ServiceModel.Channels/ChannelManagerBase.cs
 System.ServiceModel.Channels/ChannelParameterCollection.cs
 System.ServiceModel.Channels/ChannelPoolSettings.cs
+System.ServiceModel.Channels/CompressionFormat.cs
 System.ServiceModel.Channels/CommunicationObject.cs
 System.ServiceModel.Channels/ContentType.cs
 System.ServiceModel.Channels/CustomBinding.cs

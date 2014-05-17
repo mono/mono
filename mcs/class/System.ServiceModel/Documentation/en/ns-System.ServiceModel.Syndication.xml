@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.ServiceModel.Syndication">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides classes related to service model syndication.</para>
+    </summary>
+  </Docs>
+</Namespace>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodInvoker" FullName="System.Windows.Forms.MethodInvoker">
   <TypeSignature Language="C#" Value="public delegate void MethodInvoker();" />
   <AssemblyInfo>
@@ -13,7 +14,14 @@
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.MethodInvoker" /> provides a simple delegate that is used to invoke a method with a void parameter list. This delegate can be used when making calls to a control's <see cref="M:System.Windows.Forms.Control.Invoke(System.Delegate)" /> method, or when you need a simple delegate but do not want to define one yourself.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a delegate that can execute any method in managed code that is declared void and takes no parameters. </para>
+    </summary>
   </Docs>
 </Type>

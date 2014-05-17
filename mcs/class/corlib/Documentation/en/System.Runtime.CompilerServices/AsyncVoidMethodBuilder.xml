@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AsyncVoidMethodBuilder" FullName="System.Runtime.CompilerServices.AsyncVoidMethodBuilder">
+  <TypeSignature Language="C#" Value="public struct AsyncVoidMethodBuilder" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit AsyncVoidMethodBuilder extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type and its members are intended for use by the compiler.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a builder for asynchronous methods that do not return a value.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AwaitOnCompleted&lt;TAwaiter,TStateMachine&gt;">
+      <MemberSignature Language="C#" Value="public void AwaitOnCompleted&lt;TAwaiter,TStateMachine&gt; (ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : System.Runtime.CompilerServices.INotifyCompletion where TStateMachine : System.Runtime.CompilerServices.IAsyncStateMachine;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AwaitOnCompleted&lt;(class System.Runtime.CompilerServices.INotifyCompletion) TAwaiter, (class System.Runtime.CompilerServices.IAsyncStateMachine) TStateMachine&gt;(!!TAwaiter awaiter, !!TStateMachine stateMachine) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TAwaiter">
+          <Constraints>
+            <InterfaceName>System.Runtime.CompilerServices.INotifyCompletion</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+        <TypeParameter Name="TStateMachine">
+          <Constraints>
+            <InterfaceName>System.Runtime.CompilerServices.IAsyncStateMachine</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="awaiter" Type="TAwaiter&amp;" RefType="ref" />
+        <Parameter Name="stateMachine" Type="TStateMachine&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TAwaiter">To be added.</typeparam>
+        <typeparam name="TStateMachine">To be added.</typeparam>
+        <param name="awaiter">To be added.</param>
+        <param name="stateMachine">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AwaitUnsafeOnCompleted&lt;TAwaiter,TStateMachine&gt;">
+      <MemberSignature Language="C#" Value="public void AwaitUnsafeOnCompleted&lt;TAwaiter,TStateMachine&gt; (ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : System.Runtime.CompilerServices.ICriticalNotifyCompletion where TStateMachine : System.Runtime.CompilerServices.IAsyncStateMachine;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AwaitUnsafeOnCompleted&lt;(class System.Runtime.CompilerServices.ICriticalNotifyCompletion) TAwaiter, (class System.Runtime.CompilerServices.IAsyncStateMachine) TStateMachine&gt;(!!TAwaiter awaiter, !!TStateMachine stateMachine) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TAwaiter">
+          <Constraints>
+            <InterfaceName>System.Runtime.CompilerServices.ICriticalNotifyCompletion</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+        <TypeParameter Name="TStateMachine">
+          <Constraints>
+            <InterfaceName>System.Runtime.CompilerServices.IAsyncStateMachine</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="awaiter" Type="TAwaiter&amp;" RefType="ref" />
+        <Parameter Name="stateMachine" Type="TStateMachine&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TAwaiter">To be added.</typeparam>
+        <typeparam name="TStateMachine">To be added.</typeparam>
+        <param name="awaiter">To be added.</param>
+        <param name="stateMachine">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.AsyncVoidMethodBuilder Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Runtime.CompilerServices.AsyncVoidMethodBuilder Create() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.AsyncVoidMethodBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This type and its members are intended for use by the compiler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Runtime.CompilerServices.AsyncVoidMethodBuilder" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the builder.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="SetException">
+      <MemberSignature Language="C#" Value="public void SetException (Exception exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetException(class System.Exception exception) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exception" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This type and its members are intended for use by the compiler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds an exception to the method builder.</para>
+        </summary>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to bind.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetResult">
+      <MemberSignature Language="C#" Value="public void SetResult ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetResult() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This type and its members are intended for use by the compiler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the method builder as successfully completed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetStateMachine">
+      <MemberSignature Language="C#" Value="public void SetStateMachine (System.Runtime.CompilerServices.IAsyncStateMachine stateMachine);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetStateMachine(class System.Runtime.CompilerServices.IAsyncStateMachine stateMachine) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stateMachine" Type="System.Runtime.CompilerServices.IAsyncStateMachine" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the builder with the specified state machine.</para>
+        </summary>
+        <param name="stateMachine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state machine instance to associate with the builder.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Start&lt;TStateMachine&gt;">
+      <MemberSignature Language="C#" Value="public void Start&lt;TStateMachine&gt; (ref TStateMachine stateMachine) where TStateMachine : System.Runtime.CompilerServices.IAsyncStateMachine;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Start&lt;(class System.Runtime.CompilerServices.IAsyncStateMachine) TStateMachine&gt;(!!TStateMachine stateMachine) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TStateMachine">
+          <Constraints>
+            <InterfaceName>System.Runtime.CompilerServices.IAsyncStateMachine</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="stateMachine" Type="TStateMachine&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TStateMachine">To be added.</typeparam>
+        <param name="stateMachine">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

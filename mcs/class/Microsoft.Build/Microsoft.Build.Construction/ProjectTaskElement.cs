@@ -109,16 +109,16 @@ namespace Microsoft.Build.Construction
                 internal override string XmlName {
                         get { return Name; }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "Output":
                                 var output = ContainingProject.CreateOutputElement (null, null, null);
                                 AppendChild (output);
                                 return output;
                         default:
                                 throw new InvalidProjectFileException (string.Format (
-                                        "Child \"{0}\" is not a known node type.", name));
+                                        "Child \"{0}\" is not a known node type.", reader.LocalName));
                         }
                 }
                 internal override void LoadAttribute (string name, string value)
@@ -127,6 +127,17 @@ namespace Microsoft.Build.Construction
                         case "ContinueOnError":
                                 ContinueOnError = value;
                                 break;
+#if NET_4_5
+                        case "ExecuteTargets":
+                                ExecuteTargets = value;
+                                break;
+                        case "MSBuildArchitecture":
+                                MSBuildArchitecture = value;
+                                break;
+                        case "MSBuildRuntime":
+                                MSBuildRuntime = value;
+                                break;
+#endif
                         case "xmlns":
                                 break;
                         case "Label":
@@ -149,5 +160,15 @@ namespace Microsoft.Build.Construction
                         base.SaveValue (writer);
                 }
                 private Dictionary<string, string> parameters = new Dictionary<string, string> ();
+
+                public string ExecuteTargets { get; set; }
+                #if NET_4_5
+                public ElementLocation ExecuteTargetsLocation { get; set; }
+                public ElementLocation ContinueOnErrorLocation { get; set; }
+                public string MSBuildArchitecture { get; set; }
+                public ElementLocation MSBuildArchitectureLocation { get; set; }
+                public string MSBuildRuntime { get; set; }
+                public ElementLocation MSBuildRuntimeLocation { get; set; }
+                #endif
         }
 }

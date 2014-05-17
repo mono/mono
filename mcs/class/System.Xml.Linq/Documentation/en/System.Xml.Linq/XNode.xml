@@ -1,0 +1,920 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XNode" FullName="System.Xml.Linq.XNode">
+  <TypeSignature Language="C#" Value="public abstract class XNode : System.Xml.Linq.XObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XNode extends System.Xml.Linq.XObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Xml.Linq.XObject</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Xml.Linq.XNode" /> is an abstract common base class for the following types:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Xml.Linq.XComment" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Linq.XContainer" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Linq.XDocumentType" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Linq.XProcessingInstruction" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Linq.XText" />
+          </para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.Xml.Linq.XContainer" /> is an abstract common base class for the following types:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Xml.Linq.XDocument" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Linq.XElement" />
+          </para>
+        </item>
+      </list>
+      <para>Objects of classes that derive from <see cref="T:System.Xml.Linq.XContainer" /> can contain child nodes.</para>
+      <block subset="none" type="note">
+        <para>An <see cref="T:System.Xml.Linq.XAttribute" /> is not an <see cref="T:System.Xml.Linq.XNode" />. Attributes are maintained as a list of name/value pairs on an element.</para>
+      </block>
+      <para>If you are writing a complex XML application, such as an XML editor or a word processor that stores content as XML, you will often work at the node level. Typical activities when working at the node level include adding nodes, deleting nodes, transforming nodes, and iterating through axes that return collections of nodes. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract concept of a node (element, comment, document type, processing instruction, or text node) in the XML tree.  </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AddAfterSelf">
+      <MemberSignature Language="C#" Value="public void AddAfterSelf (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAfterSelf(object content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about the valid content that can be passed to this method, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>
+            <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content immediately after this node.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A content object that contains simple content or a collection of content objects to be added after this node.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAfterSelf">
+      <MemberSignature Language="C#" Value="public void AddAfterSelf (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAfterSelf(object[] content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about the valid content that can be passed to this method, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content immediately after this node.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter list of content objects.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddBeforeSelf">
+      <MemberSignature Language="C#" Value="public void AddBeforeSelf (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddBeforeSelf(object content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about the valid content that can be passed to this method, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="Overload:System.Xml.Linq.XNode.AddBeforeSelf" /> method must traverse the list of direct child nodes under the parent container. Therefore, using this method might  affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content immediately before this node.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A content object that contains simple content or a collection of content objects to be added before this node.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddBeforeSelf">
+      <MemberSignature Language="C#" Value="public void AddBeforeSelf (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddBeforeSelf(object[] content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about the valid content that can be passed to this method, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="Overload:System.Xml.Linq.XNode.AddBeforeSelf" /> method must traverse the list of direct child nodes under the parent container. Therefore, using this function might affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content immediately before this node.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter list of content objects.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Ancestors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; Ancestors ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; Ancestors() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return itself in the results.</para>
+          <para>The nodes in the returned collection are in reverse document order.</para>
+          <para>This method uses deferred execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the ancestor elements of this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the ancestor elements of this node.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Ancestors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; Ancestors (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; Ancestors(class System.Xml.Linq.XName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will not return itself in the results.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a filtered collection of the ancestor elements of this node. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the ancestor elements of this node. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+          <para>The nodes in the returned collection are in reverse document order.</para>
+          <para>This method uses deferred execution.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CompareDocumentOrder">
+      <MemberSignature Language="C#" Value="public static int CompareDocumentOrder (System.Xml.Linq.XNode n1, System.Xml.Linq.XNode n2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 CompareDocumentOrder(class System.Xml.Linq.XNode n1, class System.Xml.Linq.XNode n2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="n1" Type="System.Xml.Linq.XNode" />
+        <Parameter Name="n2" Type="System.Xml.Linq.XNode" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="M:System.Xml.Linq.XNode.CompareDocumentOrder" /> method must traverse the ancestors of the two nodes being compared until it finds the common parent. Then it must traverse the list of the common parent’s child nodes to determine the order of the two nodes being compared. Therefore, using this method might affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two nodes to determine their relative XML document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An int containing 0 if the nodes are equal; -1 if <paramref name="n1" /> is before <paramref name="n2" />; 1 if <paramref name="n1" /> is after <paramref name="n2" />.</para>
+        </returns>
+        <param name="n1">
+          <attribution license="cc4" from="Microsoft" modified="false" />First <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
+        <param name="n2">
+          <attribution license="cc4" from="Microsoft" modified="false" />Second <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateReader">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlReader CreateReader ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlReader CreateReader() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method when you have to supply another component with an <see cref="T:System.Xml.XmlReader" />. For example, you can create an <see cref="T:System.Xml.XmlReader" /> from a sqltecxlinq tree, and then pass that reader to <see cref="M:System.Xml.XmlDocument.Load(System.Xml.XmlReader)" />.</para>
+          <para>All of the readers returned by <see cref="Overload:System.Xml.XmlReader.Create" /> are normalizing readers. They always perform line break normalization and full normalization of attributes. In contrast, the <see cref="T:System.Xml.XmlReader" /> returned by <see cref="M:System.Xml.Linq.XNode.CreateReader" /> is not a normalizing reader. It does not transform any white space. It also returns attributes in the order that they were added, not in attribute name order.</para>
+          <para>sqltecxlinq does not keep information about whether attributes are default attributes. <see cref="P:System.Xml.XmlReader.IsDefault" /> will always return false regardless of whether the attribute was populated from a default value or not.</para>
+          <para>The the PUBLIC and SYSTEM pseudo attributes on <see cref="T:System.Xml.Linq.XDocumentType" /> are not available through the <see cref="M:System.Xml.XmlReader.MoveToAttribute(System.Int32)" /> method. They are only available through the <see cref="M:System.Xml.XmlReader.GetAttribute(System.String)" /> method that takes the qualified name of the attribute as a parameter. If you have to retrieve the PUBLIC or SYSTEM attributes, you should use the <see cref="M:System.Xml.XmlReader.GetAttribute(System.String)" /> method.</para>
+          <para>Base64 and BinHex data are not supported. If you attempt to retrieve these types of data (for example, by calling <see cref="M:System.Xml.XmlReader.ReadElementContentAsBase64(System.Byte[],System.Int32,System.Int32)" />), the reader will throw <see cref="T:System.NotSupportedException" />.</para>
+          <para>The xml declaration is not surfaced by the reader. While reading, you will not encounter a node of type <see cref="F:System.Xml.XmlNodeType.XmlDeclaration" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.XmlReader" /> for this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> that can be used to read this node and its descendants.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateReader">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlReader CreateReader (System.Xml.Linq.ReaderOptions readerOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlReader CreateReader(valuetype System.Xml.Linq.ReaderOptions readerOptions) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="readerOptions" Type="System.Xml.Linq.ReaderOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.XmlReader" /> with the options specified by the <paramref name="readerOptions" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object.</para>
+        </returns>
+        <param name="readerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.ReaderOptions" /> object that specifies whether to omit duplicate namespaces.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeepEquals">
+      <MemberSignature Language="C#" Value="public static bool DeepEquals (System.Xml.Linq.XNode n1, System.Xml.Linq.XNode n2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool DeepEquals(class System.Xml.Linq.XNode n1, class System.Xml.Linq.XNode n2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="n1" Type="System.Xml.Linq.XNode" />
+        <Parameter Name="n2" Type="System.Xml.Linq.XNode" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following criteria determine whether two nodes are equal:</para>
+          <list type="bullet">
+            <item>
+              <para>A null node is equal to another null node but unequal to a non-null node. </para>
+            </item>
+            <item>
+              <para>Two <see cref="T:System.Xml.Linq.XNode" /> objects of different types are never equal. </para>
+            </item>
+            <item>
+              <para>Two <see cref="T:System.Xml.Linq.XText" /> nodes are equal if they contain the same text. </para>
+            </item>
+            <item>
+              <para>Two <see cref="T:System.Xml.Linq.XElement" /> nodes are equal if they have the same tag name, the same set of attributes with the same values, and (ignoring comments and processing instructions) contain two equal length sequences of equal content nodes. </para>
+            </item>
+            <item>
+              <para>Two <see cref="T:System.Xml.Linq.XDocument" /> nodes are equal if their root nodes are equal.</para>
+            </item>
+            <item>
+              <para>Two <see cref="T:System.Xml.Linq.XComment" /> nodes are equal if they contain the same comment text. </para>
+            </item>
+            <item>
+              <para>Two <see cref="T:System.Xml.Linq.XProcessingInstruction" /> nodes are equal if they have the same target and data. </para>
+            </item>
+            <item>
+              <para>Two <see cref="T:System.Xml.Linq.XDocumentType" /> nodes are equal if the have the same name, public ID, system ID, and internal subset.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the values of two nodes, including the values of all descendant nodes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the nodes are equal; otherwise false.</para>
+        </returns>
+        <param name="n1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
+        <param name="n2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DocumentOrderComparer">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XNodeDocumentOrderComparer DocumentOrderComparer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Xml.Linq.XNodeDocumentOrderComparer DocumentOrderComparer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNodeDocumentOrderComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is primarily used internally for implementing the <see cref="M:System.Xml.Linq.Extensions.InDocumentOrder``1(System.Collections.Generic.IEnumerable{``0})" /> extension method. The recommended approach is to use that extension method instead of using this property directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a comparer that can compare the relative position of two nodes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ElementsAfterSelf">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; ElementsAfterSelf ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; ElementsAfterSelf() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the sibling elements after this node, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements after this node, in document order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ElementsAfterSelf">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; ElementsAfterSelf (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; ElementsAfterSelf(class System.Xml.Linq.XName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a filtered collection of the sibling elements after this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements after this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ElementsBeforeSelf">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; ElementsBeforeSelf ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; ElementsBeforeSelf() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the sibling elements before this node, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements before this node, in document order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ElementsBeforeSelf">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; ElementsBeforeSelf (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; ElementsBeforeSelf(class System.Xml.Linq.XName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a filtered collection of the sibling elements before this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> of the sibling elements before this node, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EqualityComparer">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XNodeEqualityComparer EqualityComparer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Xml.Linq.XNodeEqualityComparer EqualityComparer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNodeEqualityComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a comparer that can compare two nodes for value equality.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsAfter">
+      <MemberSignature Language="C#" Value="public bool IsAfter (System.Xml.Linq.XNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsAfter(class System.Xml.Linq.XNode node) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="M:System.Xml.Linq.XNode.CompareDocumentOrder" /> method must traverse the ancestors of the two nodes being compared until it finds the common parent. Then it must traverse the list of the common parent’s child nodes to determine the order of the two nodes being compared. Therefore, using this method might affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the current node appears after a specified node in terms of document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this node appears after the specified node; otherwise false.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> to compare for document order.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsBefore">
+      <MemberSignature Language="C#" Value="public bool IsBefore (System.Xml.Linq.XNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsBefore(class System.Xml.Linq.XNode node) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.Linq.XNode" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="M:System.Xml.Linq.XNode.IsBefore" /> method must traverse the ancestors of the two nodes being compared until it finds the common parent. Then it must traverse the list of the common parent’s child nodes to determine the order of the two nodes being compared. Therefore, using this method might affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the current node appears before a specified node in terms of document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this node appears before the specified node; otherwise false.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> to compare for document order.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="NextNode">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XNode NextNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XNode NextNode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this <see cref="T:System.Xml.Linq.XNode" /> does not have a parent, or if there is no next node, this property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next sibling node of this node.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NodesAfterSelf">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt; NodesAfterSelf ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XNode&gt; NodesAfterSelf() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the sibling nodes after this node, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> of the sibling nodes after this node, in document order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="NodesBeforeSelf">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt; NodesBeforeSelf ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XNode&gt; NodesBeforeSelf() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only includes siblings in the returned collection. It does not include descendants.</para>
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the sibling nodes before this node, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> of the sibling nodes before this node, in document order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="PreviousNode">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XNode PreviousNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XNode PreviousNode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this <see cref="T:System.Xml.Linq.XNode" /> does not have a parent, or if there is no previous node, this property returns null.</para>
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="P:System.Xml.Linq.XNode.PreviousNode" /> property must traverse the list of direct child nodes under the parent container. Therefore, using this property might affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous sibling node of this node.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadFrom">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XNode ReadFrom (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XNode ReadFrom(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to write a method that returns a collection of nodes, yielding each node as the node is read from the reader. This method enables you to process arbitrarily large XML files with a very small memory footprint.</para>
+          <para>The reader that you pass to this method might throw exceptions. <see cref="M:System.Xml.Linq.XNode.ReadFrom(System.Xml.XmlReader)" /> does not catch all exceptions thrown by the reader; the unhandled exceptions bubble up to the code that called <see cref="M:System.Xml.Linq.XNode.ReadFrom(System.Xml.XmlReader)" />. In particular, your code should be prepared to handle <see cref="T:System.Xml.XmlException" />.</para>
+          <para>For an example of how to stream a more complex document, see <format type="text/html"><a href="01311522-9d03-4977-8641-2932c6f56092">How to: Stream XML Fragments with Access to Header Information</a></format>.</para>
+          <para>Certain standard query operators, such as <see cref="Overload:System.Linq.Enumerable.OrderBy" />, iterate their source, collect all of the data, sort it, and then finally yield the first item in the sequence. If you use a query operator that materializes its source before yielding the first item, you will not retain a small memory footprint.</para>
+          <para>For an example of using sqltecxlinq to transform extremely large XML documents while maintaining a small memory footprint, see <format type="text/html"><a href="0759e428-6e59-4d80-a506-365d3a6a2b73">How to: Perform Streaming Transform of Large XML Documents</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.Linq.XNode" /> from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XNode" /> that contains the node and its descendant nodes that were read from the reader. The runtime type of the node is determined by the node type (<see cref="P:System.Xml.Linq.XObject.NodeType" />) of the first node encountered in the reader.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> positioned at the node to read into this <see cref="T:System.Xml.Linq.XNode" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Remove() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In sqltecxlinq programming, you should not manipulate or modify a set of nodes while you are querying for nodes in that set. In practical terms, this means that you should not iterate over a set of nodes and remove them. Instead, you should materialize them into a <see cref="T:System.Collections.Generic.List`1" /> by using the <see cref="M:System.Linq.Enumerable.ToList``1(System.Collections.Generic.IEnumerable{``0})" /> extension method. Then, you can iterate over the list to remove the nodes. For more information, see <format type="text/html"><a href="d9a5c404-2b0e-46cd-a358-0e78773b3094">Mixed Declarative Code/Imperative Code Bugs (C#) (LINQ to XML)</a></format>.</para>
+          <para>Alternatively, if you want to remove a set of nodes, it is recommended that you use the <see cref="Overload:System.Xml.Linq.Extensions.Remove" /> method. This method copies the nodes to a list, and then iterates over the list to remove the nodes.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="M:System.Xml.Linq.XNode.Remove" /> method must traverse the list of direct child nodes under the parent container. Therefore, using this method might affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes this node from its parent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplaceWith">
+      <MemberSignature Language="C#" Value="public void ReplaceWith (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReplaceWith(object content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method first removes this node from its parent, and then adds the specified content to this node's parent, in the place of this node.</para>
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="Overload:System.Xml.Linq.XNode.ReplaceWith" /> method must traverse the list of direct child nodes under the parent container. Therefore, using this method might affect your performance.</para>
+          <para>For details about the valid content that can be passed to this method, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces this node with the specified content.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />Content that replaces this node.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplaceWith">
+      <MemberSignature Language="C#" Value="public void ReplaceWith (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReplaceWith(object[] content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method first removes this node from its parent, and then adds the specified content to this node's parent, in the place of this node.</para>
+          <para>The <see cref="T:System.Xml.Linq.XContainer" /> stores its child nodes as a singly-linked list of <see cref="T:System.Xml.Linq.XNode" /> objects. This means that the <see cref="Overload:System.Xml.Linq.XNode.ReplaceWith" /> method must traverse the list of direct child nodes under the parent container. Therefore, using this method might affect your performance.</para>
+          <para>For details about the valid content that can be passed to this method, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces this node with the specified content.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter list of the new content.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the indented XML for this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the indented XML.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML for this node, optionally disabling formatting.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the XML.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public abstract void WriteTo (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteTo(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to write code that does a streaming transform of a very large document. For more information, see <format type="text/html"><a href="0759e428-6e59-4d80-a506-365d3a6a2b73">How to: Perform Streaming Transform of Large XML Documents</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes this node to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> into which this method will write.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

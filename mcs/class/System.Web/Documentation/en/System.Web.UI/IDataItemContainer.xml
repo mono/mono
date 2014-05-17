@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataItemContainer" FullName="System.Web.UI.IDataItemContainer">
   <TypeSignature Language="C#" Value="public interface IDataItemContainer : System.Web.UI.INamingContainer" />
   <AssemblyInfo>
@@ -10,9 +11,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Container classes that implement the <see cref="T:System.Web.UI.IDataItemContainer" /> interface can specify which of their properties identifies the data item for data-binding operations, such as late binding with the <see cref="T:System.Web.UI.DataBinder" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables data-bound control containers to identify a data item object for simplified data-binding operations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DataItem">
@@ -22,10 +29,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.IDataItemContainer.DataItem" /> property identifies an object that is used in data-binding operations and late-binding expressions. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets an object that is used in simplified data-binding operations.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +51,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In implementing classes such as <see cref="T:System.Web.UI.WebControls.FormView" />, <see cref="T:System.Web.UI.WebControls.GridViewRow" />, and <see cref="T:System.Web.UI.WebControls.DetailsView" />, the <see cref="P:System.Web.UI.IDataItemContainer.DataItemIndex" /> property is used to determine the index of the data item bound to the control from the data source. The <see cref="P:System.Web.UI.IDataItemContainer.DataItemIndex" /> property does not refer to the index of the data item as displayed by the data control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets the index of the data item bound to a control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +73,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In implementing classes such as <see cref="T:System.Windows.Forms.DataGridViewColumn" />, the <see cref="P:System.Web.UI.IDataItemContainer.DisplayIndex" /> property is set according to the index of the row among the displayed rows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets the position of the data item as displayed in a control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

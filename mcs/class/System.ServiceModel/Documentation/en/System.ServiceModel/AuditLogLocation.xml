@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AuditLogLocation" FullName="System.ServiceModel.AuditLogLocation">
+  <TypeSignature Language="C#" Value="public enum AuditLogLocation" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AuditLogLocation extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When creating a indigo1 application that requires authentication and/or authorization of callers, you can specify that events related to security be recorded for either success, failure, or both. The location of the log is determined by this enumeration.</para>
+      <para>The level of the audit log is specified by setting the <see cref="P:System.ServiceModel.Description.ServiceSecurityAuditBehavior.MessageAuthenticationAuditLevel" /> or the <see cref="P:System.ServiceModel.Description.ServiceSecurityAuditBehavior.ServiceAuthorizationAuditLevel" /> property of the <see cref="T:System.ServiceModel.Description.ServiceSecurityAuditBehavior" /> class to one of the <see cref="T:System.ServiceModel.AuditLevel" /> values. </para>
+      <para>You can also specify audit behavior using the <format type="text/html"><a href="ba517369-a034-4f8e-a2c4-66517716062b">serviceSecurityAudit element</a></format> binding.</para>
+      <block subset="none" type="note">
+        <para>If the <see cref="P:System.ServiceModel.Description.ServiceSecurityAuditBehavior.AuditLogLocation" /> property is set to <see cref="F:System.ServiceModel.AuditLogLocation.Security" /> and <paramref name="Audit Object Access" /> is not set in the <paramref name="Local Security Policy" />, audit events will not be written to the Security log. No failure is returned, but audit entries will not be written to the Security log. In addition, the calling thread must have SeAuditPrivilege to be able to write to the Security log.</para>
+      </block>
+      <format type="text/html">
+        <h2>Default Dependent on Operating System</h2>
+      </format>
+      <para>When setting the property to the <see cref="F:System.ServiceModel.AuditLogLocation.Default" /> value, the operating system determines which log will actually be written to. For more information, see <format type="text/html"><a href="5633f61c-a3c9-40dd-8070-1c373b66a716">Auditing Security Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the location where security-related event logs are written.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Application">
+      <MemberSignature Language="C#" Value="Application" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AuditLogLocation Application = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLogLocation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the Application log in the event log.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AuditLogLocation Default = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLogLocation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default location, which is determined by the operating system. If writing to the Security log is supported (such as on wv and ws2003 and later platforms), the default log location is the Security log. Otherwise (such as in wxpsp2), the default log location is the Application log.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Security">
+      <MemberSignature Language="C#" Value="Security" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AuditLogLocation Security = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLogLocation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the Security log in the event log. The calling thread must have SeAuditPrivilege to be able to write to the Security log.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

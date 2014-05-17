@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{114A51BC-8AB2-4B25-A9A7-CB78C43745B8}</ProjectGuid>
+    <ProjectGuid>{B96416B1-91AE-466C-BDD0-9A8FF4331E61}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>bin\Debug\Mono.Messaging.RabbitMQ-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -66,29 +66,32 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_4_5.csproj">
-      <Project>{A8B93174-06DF-4FC7-8E3E-45F395A943EB}</Project>
+      <Project>{1CBEC0FC-5926-42FA-A0CF-A19617FABB78}</Project>
       <Name>System.Messaging\System.Messaging-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging\Mono.Messaging-net_4_5.csproj">
-      <Project>{1CB843E3-75E7-4115-9EE6-7B7262AC6C96}</Project>
+      <Project>{DDCC93B5-9425-4E9A-95DC-3400D0028508}</Project>
       <Name>Mono.Messaging\Mono.Messaging-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\RabbitMQ.Client\src\client\RabbitMQ.Client-net_4_5.csproj">
-      <Project>{8BA87CBE-8098-4512-B008-A347E1EA281C}</Project>
+      <Project>{55AA0C89-63D9-438E-A139-3ED9F72AE295}</Project>
       <Name>client\RabbitMQ.Client-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -96,3 +99,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

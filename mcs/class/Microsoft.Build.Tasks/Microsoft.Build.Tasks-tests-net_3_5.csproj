@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9B12933E-EAF8-4271-9C54-CFC4657AD5FB}</ProjectGuid>
+    <ProjectGuid>{9F28ECCF-DED4-4082-AF73-9360557BD741}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Tasks-tests-net_3_5</OutputPath>
@@ -84,34 +84,41 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_3_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_3_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_3_5.csproj">
-      <Project>{B71721D7-C95E-41D5-82A6-67DDD79C9477}</Project>
+      <Project>{BF8AC1F8-37FC-49D4-BC64-A4481523212D}</Project>
       <Name>Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_3_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5.csproj">
-      <Project>{874516A3-F5F6-4EAB-B005-4D1A567C5E4D}</Project>
+      <Project>{9DEA0C0A-BF6D-4C05-B3C5-1429F70A6FF5}</Project>
       <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5.csproj">
-      <Project>{50A41B06-27A6-4003-BA97-763C6CA4D51B}</Project>
+      <Project>{88FC8C2C-9157-41EB-A47C-981B2205ED7E}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_3_5.csproj">
+      <Project>{A5EB5B9E-9335-43AD-A9C7-41FDF9A52045}</Project>
+      <Name>Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_3_5</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5.csproj">
-      <Project>{5EA25213-0854-4620-A67B-67E9BC6D213E}</Project>
+      <Project>{C3F8A358-9DA1-423C-8466-58AB30893EB0}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
+      <Project>{FBEC45AD-4493-41EA-9BCC-F3F29A08EB9E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -119,3 +126,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

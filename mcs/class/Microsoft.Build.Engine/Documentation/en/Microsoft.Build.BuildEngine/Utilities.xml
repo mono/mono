@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Utilities" FullName="Microsoft.Build.BuildEngine.Utilities">
   <TypeSignature Language="C#" Value="public static class Utilities" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains utility methods used by vstecmsbuild. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Escape">
@@ -24,11 +28,21 @@
         <Parameter Name="unescapedExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="unescapedExpression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Certain characters have special meaning in vstecmsbuild project files. Examples of the characters include semicolons (;) and asterisks (*). In order to use these special characters as literals, they must be specified with the syntax %nn, where nn represents the ASCII hexadecimal value of the character. This method performs that conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string into a syntax that allows the vstecmsbuild engine to interpret the character literally.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the specified string.</para>
+        </returns>
+        <param name="unescapedExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="BufferManager" FullName="System.ServiceModel.Channels.BufferManager">
+  <TypeSignature Language="C#" Value="public abstract class BufferManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit BufferManager extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is commonly used while implementing custom encoders or custom transport channels.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Many indigo1 features require the use of buffers, which are expensive to create and destroy. You can use the <see cref="T:System.ServiceModel.Channels.BufferManager" /> class to manage a buffer pool. The pool and its buffers are created when you instantiate this class and destroyed when the buffer pool is reclaimed by garbage collection. Every time you need to use a buffer, you take one from the pool, use it, and return it to the pool when done. This process is much faster than creating and destroying a buffer every time you need to use one.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BufferManager ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because this constructor is protected, you can only call it from a derived class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.BufferManager" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public abstract void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the buffers currently cached in the manager.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBufferManager">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.BufferManager CreateBufferManager (long maxBufferPoolSize, int maxBufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.BufferManager CreateBufferManager(int64 maxBufferPoolSize, int32 maxBufferSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.BufferManager</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="maxBufferPoolSize" Type="System.Int64" />
+        <Parameter Name="maxBufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a new buffer pool with as many buffers as can be created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new BufferManager with a specified maximum buffer pool size and a maximum size for each individual buffer in the pool.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Channels.BufferManager" /> object with the specified parameters.</para>
+        </returns>
+        <param name="maxBufferPoolSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the pool.</param>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of an individual buffer.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReturnBuffer">
+      <MemberSignature Language="C#" Value="public abstract void ReturnBuffer (byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ReturnBuffer(unsigned int8[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The buffer is returned to the pool and is available for re-use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a buffer to the pool.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the buffer being returned.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TakeBuffer">
+      <MemberSignature Language="C#" Value="public abstract byte[] TakeBuffer (int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] TakeBuffer(int32 bufferSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the system returns a byte array buffer of at least the requested size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a buffer of at least the specified size from the pool. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that is the requested size of the buffer.</para>
+        </returns>
+        <param name="bufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the requested buffer.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

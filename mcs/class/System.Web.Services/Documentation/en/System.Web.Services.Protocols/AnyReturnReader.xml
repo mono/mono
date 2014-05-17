@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AnyReturnReader" FullName="System.Web.Services.Protocols.AnyReturnReader">
   <TypeSignature Language="C#" Value="public class AnyReturnReader : System.Web.Services.Protocols.MimeReturnReader" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> and other classes in the <see cref="N:System.Web.Services.Protocols" /> namespace support the .NET Framework's implementations of Web services via the HTTP-GET and HTTP-POST operations. Web service writers and readers serialize and deserialize, respectively, between the parameters or return objects of Web methods and the HTTP request or response streams. Web service writers and readers use HTTP for transport but don't exchange messages using the SOAP standard. </para>
+      <para>The <see cref="T:System.Web.Services.Protocols.AnyReturnReader" />  class provides a minimal implementation of the interface of the abstract parent class <see cref="T:System.Web.Services.Protocols.MimeReturnReader" />.You typically will not need to use <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> directly. When the Wsdl.exe tool generates client proxy code according to the HTTP-GET or HTTP-POST implementations, it applies the <see cref="T:System.Web.Services.Protocols.HttpMethodAttribute" /> to each Web method and by default sets the attribute's <see cref="P:System.Web.Services.Protocols.HttpMethodAttribute.ReturnFormatter" /> property to <see cref="T:System.Web.Services.Protocols.XmlReturnReader" />, another class derived from <see cref="T:System.Web.Services.Protocols.MimeReturnReader" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a minimal reader of incoming response return values for Web service clients implemented using HTTP but without SOAP. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +32,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,10 +53,21 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <param name="methodInfo">a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" /> method. For the <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> class, the initializer is the instance referred to by the keyword this, unless the <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> parameter value has a void return type, in which case the initializer is set to null.</para>
+          <para>The <see cref="M:System.Web.Services.Protocols.AnyReturnReader.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method is invoked during service initialization. Later, at the time a response is processed, the initializer <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> object is passed to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" /> method of another <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> instance. The other instance takes the call to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the parameter passed to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter passed to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" /> method.</para>
+        </returns>
+        <param name="methodInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />  that indicates the Web method for which the initializer is obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +84,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" />  method does nothing.</para>
+          <para>This method is invoked at the time a response is processed. The input parameter, <paramref name="initializer" />, is another instance of <see cref="T:System.Web.Services.Protocols.AnyReturnReader" />, obtained during client initialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> class.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />Another instance of the <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> class, on which the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method was previously called.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,11 +112,22 @@
         <Parameter Name="responseStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="response">a <see cref="T:System.Net.WebResponse" /></param>
-        <param name="responseStream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> class's implementation of the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method does no reading. Instead it simply returns the <see cref="T:System.IO.Stream" /> object passed as a parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the input HTTP response stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The input HTTP response stream.</para>
+        </returns>
+        <param name="response">
+          <attribution license="cc4" from="Microsoft" modified="false" />A representation of the HTTP response sent by a Web service, containing the output message for an operation.</param>
+        <param name="responseStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />An output stream whose content is the body of the HTTP response represented by the <paramref name="response" /> parameter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

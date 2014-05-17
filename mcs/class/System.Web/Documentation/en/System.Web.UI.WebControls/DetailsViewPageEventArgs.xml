@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DetailsViewPageEventArgs" FullName="System.Web.UI.WebControls.DetailsViewPageEventArgs">
   <TypeSignature Language="C#" Value="public class DetailsViewPageEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control raises the <see cref="E:System.Web.UI.WebControls.DetailsView.PageIndexChanging" /> event when a pager button (a button with its CommandName property set to "Page") within the control is clicked, but before the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control handles the paging operation. This allows you to provide an event handler that performs a custom routine, such as canceling the paging operation, whenever this event occurs.</para>
+      <block subset="none" type="note">
+        <para>Pager buttons are usually located in the pager row of a <see cref="T:System.Web.UI.WebControls.DetailsView" /> control.</para>
+      </block>
+      <para>A <see cref="T:System.Web.UI.WebControls.DetailsViewPageEventArgs" /> object is passed to the event handler, which allows you to determine the index of the page selected by the user and to indicate whether the paging operation should be canceled. To determine the index of the page selected by the user, use the <see cref="P:System.Web.UI.WebControls.DetailsViewPageEventArgs.NewPageIndex" /> property. To cancel the paging operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.DetailsViewPageEventArgs" /> object to true.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewPageEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.DetailsViewPageEventArgs.#ctor(System.Int32)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DetailsView.PageIndexChanging" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +35,41 @@
       </Parameters>
       <Docs>
         <param name="pageIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewPageEventArgs" /> class.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.DetailsViewPageEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewPageEventArgs.NewPageIndex" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="newPageIndex" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewPageEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +82,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="E:System.Web.UI.WebControls.DetailsView.PageIndexChanging" /> event occurs before the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control performs the paging operation, the <see cref="P:System.Web.UI.WebControls.DetailsView.PageIndex" /> property of the control contains the index of the previously displayed page and cannot be used to determine the index of the page selected by the user. Use the <see cref="P:System.Web.UI.WebControls.DetailsViewPageEventArgs.NewPageIndex" /> property to determine the page index. You can also use this property to programmatically override the page index selected by the user by setting it to another value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the new page to display in the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

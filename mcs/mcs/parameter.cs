@@ -223,6 +223,7 @@ namespace Mono.CSharp {
 		}
 
 		static readonly string[] attribute_targets = new string[] { "param" };
+		static readonly string[] attribute_targets_primary = new string[] { "param", "field" };
 
 		FullNamedExpression texpr;
 		Modifier modFlags;
@@ -233,6 +234,7 @@ namespace Mono.CSharp {
 		protected int idx;
 		public bool HasAddressTaken;
 
+		Constructor primary_constructor;
 		TemporaryVariableReference expr_tree_variable;
 
 		HoistedParameter hoisted_variant;
@@ -307,7 +309,7 @@ namespace Mono.CSharp {
 
 		public override string[] ValidAttributeTargets {
 			get {
-				return attribute_targets;
+				return primary_constructor != null ? attribute_targets_primary : attribute_targets;
 			}
 		}
 
@@ -315,6 +317,12 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
+			if (a.Target == AttributeTargets.Field) {
+				var field = MemberCache.FindMember (primary_constructor.Spec.DeclaringType, MemberFilter.Field (name, parameter_type), BindingRestriction.DeclaredOnly);
+				((Field)field.MemberDefinition).ApplyAttributeBuilder (a, ctor, cdata, pa);
+				return;
+			}
+
 			if (a.Type == pa.In && ModFlags == Modifier.OUT) {
 				a.Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
 				return;
@@ -381,6 +389,10 @@ namespace Mono.CSharp {
 
 			if (attributes != null)
 				attributes.AttachTo (this, rc);
+
+			var ctor = rc.CurrentMemberDefinition as Constructor;
+			if (ctor != null && ctor.IsPrimaryConstructor)
+				primary_constructor = ctor;
 
 			parameter_type = texpr.ResolveAsType (rc);
 			if (parameter_type == null)
@@ -501,7 +513,7 @@ namespace Mono.CSharp {
 					} else {
 						rc.Report.Error (1909, default_expr.Location,
 							"The DefaultParameterValue attribute is not applicable on parameters of type `{0}'",
-							default_expr.Type.GetSignatureForError ()); ;
+							default_expr.Type.GetSignatureForError ());
 					}
 
 					default_expr = null;
@@ -635,7 +647,7 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (HasDefaultValue) {
+			if (HasDefaultValue && default_expr.Type != null) {
 				//
 				// Emit constant values for true constants only, the other
 				// constant-like expressions will rely on default value expression
@@ -648,9 +660,9 @@ namespace Mono.CSharp {
 					} else {
 						builder.SetConstant (c.GetValue ());
 					}
-				} else if (default_expr.Type.IsStruct) {
+				} else if (default_expr.Type.IsStruct || default_expr.Type.IsGenericParameter) {
 					//
-					// Handles special case where default expression is used with value-type
+					// Handles special case where default expression is used with value-type or type parameter
 					//
 					// void Foo (S s = default (S)) {}
 					//
@@ -1333,16 +1345,13 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			return base.DoResolve (rc);
-		}
-
 		public void Resolve (ResolveContext rc, Parameter p)
 		{
 			var expr = Resolve (rc);
-			if (expr == null)
+			if (expr == null) {
+				this.expr = ErrorExpression.Instance;
 				return;
+			}
 
 			expr = Child;
 

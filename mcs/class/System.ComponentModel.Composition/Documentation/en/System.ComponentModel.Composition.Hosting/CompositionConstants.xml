@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CompositionConstants" FullName="System.ComponentModel.Composition.Hosting.CompositionConstants">
+  <TypeSignature Language="C#" Value="public static class CompositionConstants" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CompositionConstants extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Do not create metadata by using any of the keys in this class, except to deliberately interact with the composition system. Other uses will cause unpredictable behavior.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains static metadata keys used by the composition system.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ExportTypeIdentityMetadataName">
+      <MemberSignature Language="C#" Value="public const string ExportTypeIdentityMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string ExportTypeIdentityMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the metadata key created by the composition system to mark a part with a unique identifier.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GenericContractMetadataName">
+      <MemberSignature Language="C#" Value="public const string GenericContractMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string GenericContractMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the metadata key created by the composition system to mark a generic contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GenericParametersMetadataName">
+      <MemberSignature Language="C#" Value="public const string GenericParametersMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string GenericParametersMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the metadata key created by the composition system to mark generic parameters.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportSourceMetadataName">
+      <MemberSignature Language="C#" Value="public const string ImportSourceMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string ImportSourceMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the metadata key created by the composition system to mark an import source.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsGenericPartMetadataName">
+      <MemberSignature Language="C#" Value="public const string IsGenericPartMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string IsGenericPartMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the metadata key created by the composition system to mark an IsGenericPart method.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PartCreationPolicyMetadataName">
+      <MemberSignature Language="C#" Value="public const string PartCreationPolicyMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string PartCreationPolicyMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the metadata key created by the composition system to mark a part with a creation policy.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

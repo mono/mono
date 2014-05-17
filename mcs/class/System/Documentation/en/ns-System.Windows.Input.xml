@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Windows.Input">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides types to support the TLA#tla_wpf input system. This includes device abstraction classes for mouse, keyboard, and stylus devices, a common input manager class, support for commanding and custom commands, and various utility classes.</para>
+    </summary>
+  </Docs>
+</Namespace>

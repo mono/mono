@@ -443,7 +443,7 @@ namespace MonoTests.System.Reflection
 		public void ToStringTest ()
 		{
 			var pa = typeof (TestC).GetProperty ("Item");
-			Assert.AreEqual ("Int32 Item [System.Double[]]", pa.ToString ());
+			Assert.AreEqual ("Int32 Item [Double[]]", pa.ToString ());
 		}
 
 		static bool HasAttribute (object [] attrs, Type attributeType)

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ExceptionHandler" FullName="System.ServiceModel.Dispatcher.ExceptionHandler">
+  <TypeSignature Language="C#" Value="public abstract class ExceptionHandler" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ExceptionHandler extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extend the <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> class and override the <see cref="M:System.ServiceModel.Dispatcher.ExceptionHandler.HandleException(System.Exception)" /> method to determine whether an exception should terminate the application. Then create a new instance of your custom <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> class and assign it to the static <see cref="P:System.ServiceModel.Dispatcher.ExceptionHandler.AsynchronousThreadExceptionHandler" /> or <see cref="P:System.ServiceModel.Dispatcher.ExceptionHandler.TransportExceptionHandler" /> property prior to creating indigo2 clients or services.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extend the <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> class to create an exception handler for unhandled exceptions that occur within the indigo1 runtime.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ExceptionHandler ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AlwaysHandle">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Dispatcher.ExceptionHandler AlwaysHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.Dispatcher.ExceptionHandler AlwaysHandle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.ExceptionHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> that handles all exceptions.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AsynchronousThreadExceptionHandler">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Dispatcher.ExceptionHandler AsynchronousThreadExceptionHandler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.Dispatcher.ExceptionHandler AsynchronousThreadExceptionHandler" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.ExceptionHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.ServiceModel.Dispatcher.ExceptionHandler.AsynchronousThreadExceptionHandler" /> property is null, and unhandled exceptions on asynchronous indigo2 threads terminate the application.  Set this property to an <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> object to receive and react to these exceptions.</para>
+          <para>If an unhandled exception occurs on an asynchronous indigo2 thread and reaches this handler, the state of the application domain may be compromised.  <see cref="M:System.ServiceModel.Dispatcher.ExceptionHandler.HandleException(System.Exception)" /> should not return true for these exceptions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> implementation for the application domain.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HandleException">
+      <MemberSignature Language="C#" Value="public abstract bool HandleException (Exception e);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool HandleException(class System.Exception e) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="e">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Dispatcher.ExceptionHandler.HandleException(System.Exception)" /> property returns true if the exception has been handled. If it returns false or throws a different exception, the original exception is rethrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns true if the exception has been handled, or false if the exception should be rethrown and the application terminated. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the exception has been handled; otherwise, false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TransportExceptionHandler">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Dispatcher.ExceptionHandler TransportExceptionHandler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.Dispatcher.ExceptionHandler TransportExceptionHandler" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.ExceptionHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.ServiceModel.Dispatcher.ExceptionHandler.TransportExceptionHandler" /> property is set to the value of <see cref="P:System.ServiceModel.Dispatcher.ExceptionHandler.AlwaysHandle" />, causing unhandled exceptions within indigo2 transports to be ignored.  Set this property to an instance of <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> to receive and react to these exceptions.</para>
+          <para>If an unhandled exception occurs within a global indigo2 transport and reaches this handler, there is a possibility that the state of the application domain is compromised. <see cref="M:System.ServiceModel.Dispatcher.ExceptionHandler.HandleException(System.Exception)" /> can return false for these exceptions to cause the application to be terminated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current transport <see cref="T:System.ServiceModel.Dispatcher.ExceptionHandler" /> implementation for the application domain.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

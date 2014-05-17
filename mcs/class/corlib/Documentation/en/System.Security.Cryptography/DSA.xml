@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DSA" FullName="System.Security.Cryptography.DSA">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class DSA : System.Security.Cryptography.AsymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DSA extends System.Security.Cryptography.AsymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,50 +15,77 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Abstract base class for all implementations of the Digital Signature Algorithm (DSA) algorithm. </summary>
     <remarks>
-      <para>There is a serious bug in version 1.0 and 1.1 of the .NET framework. The constructor for DSA was declared internal (not protected) this makes it impossible to inherit from the DSA class outside the mscorlib.dll assembly (which is quite limiting).</para>
-      <para>More information about DSA can be found in NIST FIPS PUB 186-2: Digital Signature Standard (DSS) available at http://csrc.nist.gov/publications/fips/fips186-2/fips186-2-change1.pdf
-</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Security.Cryptography.DSA" /> class and derived classes to create digital signatures that help protect the integrity of your data.  The <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> provides an implementation of this class.</para>
+      <para>To use a public-key system to digitally sign a message, the sender first applies a hash function to the message to create a message digest. The sender then encrypts the message digest with the sender's private key to create the sender's personal signature. Upon receiving the message and signature, the receiver decrypts the signature using the sender's public key to recover the message digest and hashes the message using the same hash algorithm that the sender used. If the message digest that the receiver computes exactly matches the message digest received from the sender, the receiver can assume that the message was not altered while in transit. Note that a signature can be verified by anyone, because the sender's public key is common knowledge.</para>
+      <para>Newer asymmetric algorithms are available. Consider using the <see cref="T:System.Security.Cryptography.RSA" /> class, the <see cref="T:System.Security.Cryptography.ECDSA" /> class, or the <see cref="T:System.Security.Cryptography.ECDiffieHellman" /> class instead of the <see cref="T:System.Security.Cryptography.DSA" /> class. Use <see cref="T:System.Security.Cryptography.DSA" /> only for compatibility with legacy applications and data.</para>
+      <para>This algorithm supports key lengths from 512 bits to 1024 bits in increments of 64 bits.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract base class from which all implementations of the Digital Signature Algorithm (<see cref="T:System.Security.Cryptography.DSA" />) must inherit.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected DSA ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.DSA" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.DSA Create() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Create an instance of the default DSA implementation.</summary>
-        <returns>To be added: an object of type 'DSA'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the default cryptographic object used to perform the asymmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object used to perform the asymmetric algorithm.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA Create (string algName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.DSA Create(string algName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.DSA</ReturnType>
       </ReturnValue>
@@ -64,20 +93,31 @@
         <Parameter Name="algName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="algName">To be added: an object of type 'string'</param>
-        <summary>Create an instance of the specified DSA implementation.</summary>
-        <returns>To be added: an object of type 'DSA'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For <see cref="T:System.Security.Cryptography.DSA" />, use the name System.Security.Cryptography.DSA.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the specified cryptographic object used to perform the asymmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object used to perform the asymmetric algorithm.</para>
+        </returns>
+        <param name="algName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.DSA" /> to use. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateSignature">
+      <MemberSignature Language="C#" Value="public abstract byte[] CreateSignature (byte[] rgbHash);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] CreateSignature(unsigned int8[] rgbHash) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateSignature">
-      <MemberSignature Language="C#" Value="public abstract byte[] CreateSignature (byte[] rgbHash);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -85,20 +125,28 @@
         <Parameter Name="rgbHash" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbHash">The SHA1 hash to be signed.</param>
-        <summary>Sign the specified hash value using the instance private key.</summary>
-        <returns>An array of 40 bytes containing the DSA signature of the specified hash.</returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the instance doesn't have a private key or if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are).</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digital signature for the specified data.</para>
+        </returns>
+        <param name="rgbHash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be signed. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ExportParameters">
+      <MemberSignature Language="C#" Value="public abstract System.Security.Cryptography.DSAParameters ExportParameters (bool includePrivateParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Security.Cryptography.DSAParameters ExportParameters(bool includePrivateParameters) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExportParameters">
-      <MemberSignature Language="C#" Value="public abstract System.Security.Cryptography.DSAParameters ExportParameters (bool includePrivateParameters);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.DSAParameters</ReturnType>
       </ReturnValue>
@@ -106,20 +154,28 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="includePrivateParameters">True to include private parameters; otherwise, false.</param>
-        <summary>Export the instance key into a <see cref="T:System.Security.Cryptography.DSAParameters" /> structure.</summary>
-        <returns>a DSAParameters structure contaning each parameters of the key.</returns>
         <remarks>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.DSAParameters" />.<see cref="M:System.Security.Cryptography.DSAParameters.X" />) if you export it from the instance.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, exports the <see cref="T:System.Security.Cryptography.DSAParameters" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters for <see cref="T:System.Security.Cryptography.DSA" />.</para>
+        </returns>
+        <param name="includePrivateParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
+    </Member>
+    <Member MemberName="FromXmlString">
+      <MemberSignature Language="C#" Value="public override void FromXmlString (string xmlString);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void FromXmlString(string xmlString) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromXmlString">
-      <MemberSignature Language="C#" Value="public override void FromXmlString (string xmlString);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -127,19 +183,24 @@
         <Parameter Name="xmlString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xmlString">An string containing a DSA key in XML.</param>
-        <summary>Import the DSA key from the specified XML string.</summary>
         <remarks>The schema definition for DSA keys is detailled in section 4.4.2.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a <see cref="T:System.Security.Cryptography.DSA" /> object from an XML string.</para>
+        </summary>
+        <param name="xmlString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML string to use to reconstruct the <see cref="T:System.Security.Cryptography.DSA" /> object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ImportParameters">
+      <MemberSignature Language="C#" Value="public abstract void ImportParameters (System.Security.Cryptography.DSAParameters parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ImportParameters(valuetype System.Security.Cryptography.DSAParameters parameters) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ImportParameters">
-      <MemberSignature Language="C#" Value="public abstract void ImportParameters (System.Security.Cryptography.DSAParameters parameters);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -147,19 +208,24 @@
         <Parameter Name="parameters" Type="System.Security.Cryptography.DSAParameters" />
       </Parameters>
       <Docs>
-        <param name="parameters">A DSAParameters containing the DSA key parameters.</param>
-        <summary>Import the key from the <see cref="T:System.Security.Cryptography.DSAParameters" /> structure into the current instance.</summary>
         <remarks>Parameter <see cref="M:System.Security.Cryptography.DSAParameters.X" /> is required if you want to import the DSA private key into the instance. Note that you are responsable to zeroize the private key inside the <see cref="T:System.Security.Cryptography.DSAParameters" /> after it's been imported.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, imports the specified <see cref="T:System.Security.Cryptography.DSAParameters" />.</para>
+        </summary>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters for <see cref="T:System.Security.Cryptography.DSA" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToXmlString">
+      <MemberSignature Language="C#" Value="public override string ToXmlString (bool includePrivateParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToXmlString(bool includePrivateParameters) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToXmlString">
-      <MemberSignature Language="C#" Value="public override string ToXmlString (bool includePrivateParameters);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -167,20 +233,28 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="includePrivateParameters">True to include private parameters; otherwise, false.</param>
-        <summary>Convert the current DSA key into an XML string.</summary>
-        <returns>An XML string containing the representation of the DSA key.</returns>
         <remarks>The schema definition for DSA keys is detailled in section 4.4.2.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns an XML string representation of the current <see cref="T:System.Security.Cryptography.DSA" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML string encoding of the current <see cref="T:System.Security.Cryptography.DSA" /> object.</para>
+        </returns>
+        <param name="includePrivateParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
+    </Member>
+    <Member MemberName="VerifySignature">
+      <MemberSignature Language="C#" Value="public abstract bool VerifySignature (byte[] rgbHash, byte[] rgbSignature);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool VerifySignature(unsigned int8[] rgbHash, unsigned int8[] rgbSignature) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VerifySignature">
-      <MemberSignature Language="C#" Value="public abstract bool VerifySignature (byte[] rgbHash, byte[] rgbSignature);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -189,22 +263,20 @@
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbHash">The SHA1 hash to be verified.</param>
-        <param name="rgbSignature">An array of 40 bytes containing the DSA signature of the specified hash.</param>
-        <summary>Verify that signature match the hash value using the instance public key.</summary>
-        <returns>True if the signature can be verified, false otherwise.</returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are) or if the signature length isn't 40 bytes long (as all DSA signatures are).</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, verifies the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="rgbSignature" /> matches the signature computed using the specified hash algorithm and key on <paramref name="rgbHash" />; otherwise, false.</para>
+        </returns>
+        <param name="rgbHash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash of the data signed with <paramref name="rgbSignature" />. </param>
+        <param name="rgbSignature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The signature to be verified for <paramref name="rgbData" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

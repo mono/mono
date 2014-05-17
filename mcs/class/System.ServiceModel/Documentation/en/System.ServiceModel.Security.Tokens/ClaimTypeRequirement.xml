@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ClaimTypeRequirement" FullName="System.ServiceModel.Security.Tokens.ClaimTypeRequirement">
+  <TypeSignature Language="C#" Value="public class ClaimTypeRequirement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ClaimTypeRequirement extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a federated scenario, services state the requirements on incoming credentials. For example, the incoming credentials must possess a certain set of claim types. This requirement is manifested in a security policy. When a client requests a security token from a security token service (for example, infocard), it puts the requirements into a token request so that the security token service can issue the security token that satisfies the requirements accordingly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the types of required and optional claims expected to appear in the federated credential.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ClaimTypeRequirement (string claimType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string claimType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="claimType" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The predefined claim types can be found at   <see cref="T:System.IdentityModel.Claims.ClaimTypes" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.ClaimTypeRequirement" /> class for a required claim of the specified type. </para>
+        </summary>
+        <param name="claimType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The claim type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ClaimTypeRequirement (string claimType, bool isOptional);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string claimType, bool isOptional) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="claimType" Type="System.String" />
+        <Parameter Name="isOptional" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.ClaimTypeRequirement" /> class for a claim of the specified type. </para>
+        </summary>
+        <param name="claimType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The claim type.</param>
+        <param name="isOptional">
+          <attribution license="cc4" from="Microsoft" modified="false" />If false, the claim is required; otherwise, it is optional.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ClaimType">
+      <MemberSignature Language="C#" Value="public string ClaimType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ClaimType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a URI that defines the type of a claim.  For example, to purchase a product from a Web site, the user must present a valid credit card with a sufficient credit limit. The claim type would be the credit card URI.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the claim type that was specified in the constructor.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsOptional">
+      <MemberSignature Language="C#" Value="public bool IsOptional { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsOptional" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of how to use this property is the scenario in which the service asks for some information but does not require it. For instance, you are required to enter your first name, last name, and address, but your phone number is optional. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the claim is optional.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

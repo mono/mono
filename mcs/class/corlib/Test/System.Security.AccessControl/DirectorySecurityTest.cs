@@ -27,7 +27,7 @@ namespace MonoTests.System.Security.AccessControl
 				 AccessControlType.Allow);
 
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			string dirpath = Path.Combine (Path.GetTempPath (), Path.GetRandomFileName ());

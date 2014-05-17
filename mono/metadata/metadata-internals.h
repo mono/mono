@@ -44,6 +44,7 @@ struct _MonoType {
 #define MONO_PROCESSOR_ARCHITECTURE_X86 2
 #define MONO_PROCESSOR_ARCHITECTURE_IA64 3
 #define MONO_PROCESSOR_ARCHITECTURE_AMD64 4
+#define MONO_PROCESSOR_ARCHITECTURE_ARM 5
 
 struct _MonoAssemblyName {
 	const char *name;
@@ -223,7 +224,7 @@ struct _MonoImage {
 	/*
 	 * Indexed by fielddef and memberref tokens
 	 */
-	GHashTable *field_cache;
+	GHashTable *field_cache; /*protected by the image lock*/
 
 	/* indexed by typespec tokens. */
 	GHashTable *typespec_cache;
@@ -322,6 +323,7 @@ struct _MonoImage {
 	GSList *reflection_info_unregister_classes;
 
 	/* List of image sets containing this image */
+	/* Protected by image_sets_lock */
 	GSList *image_sets;
 
 	/* Caches for MonoClass-es representing anon generic params */
@@ -335,6 +337,9 @@ struct _MonoImage {
 
 	/* Maps malloc-ed char* pinvoke scope -> malloced-ed char* filename */
 	GHashTable *pinvoke_scope_filenames;
+
+	/* Indexed by MonoGenericParam pointers */
+	GHashTable *gsharedvt_types;
 
 	/*
 	 * No other runtime locks must be taken while holding this lock.
@@ -571,6 +576,9 @@ mono_install_image_unload_hook (MonoImageUnloadFunc func, gpointer user_data) MO
 void
 mono_remove_image_unload_hook (MonoImageUnloadFunc func, gpointer user_data) MONO_INTERNAL;
 
+void
+mono_image_append_class_to_reflection_info_set (MonoClass *class) MONO_INTERNAL;
+
 gpointer
 mono_image_set_alloc  (MonoImageSet *set, guint size) MONO_INTERNAL;
 
@@ -585,7 +593,7 @@ mono_image_set_strdup (MonoImageSet *set, const char *s) MONO_INTERNAL;
 MonoType*
 mono_metadata_get_shared_type (MonoType *type) MONO_INTERNAL;
 
-GSList*
+void
 mono_metadata_clean_for_image (MonoImage *image) MONO_INTERNAL;
 
 void

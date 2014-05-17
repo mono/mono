@@ -45,7 +45,10 @@ namespace MonoTests.System.ServiceModel.Web
 	[TestFixture]
 	public class WebOperationContextTest
 	{
+// MonoTouch does not support dynamic proxy code generation.
+#if !MONOTOUCH
 		[Test]
+#endif
 		public void Current ()
 		{
 #if !MOBILE
@@ -61,6 +64,9 @@ namespace MonoTests.System.ServiceModel.Web
 				Assert.IsNotNull (WebOperationContext.Current.IncomingRequest, "#4");
 				Assert.IsNotNull (WebOperationContext.Current.IncomingResponse, "#5");
 				Assert.IsNotNull (WebOperationContext.Current.OutgoingResponse, "#6"); // pointless though.
+
+				Assert.IsNotNull (WebOperationContext.Current.OutgoingRequest.Headers, "#7");
+				Assert.AreEqual (0, WebOperationContext.Current.OutgoingRequest.Headers.Count, "#8");
 #endif
 			}
 			ch.Close ();

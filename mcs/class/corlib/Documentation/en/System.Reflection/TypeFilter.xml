@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeFilter" FullName="System.Reflection.TypeFilter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public delegate bool TypeFilter(Type m, object filterCriteria);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TypeFilter extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,14 +13,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="m">To be added.</param>
-    <param name="filterCriteria">To be added.</param>
-    <summary>To be added</summary>
-    <value>To be added.</value>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="m" Type="System.Type" />
     <Parameter Name="filterCriteria" Type="System.Object" />
@@ -26,9 +25,18 @@
   <ReturnValue>
     <ReturnType>System.Boolean</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="m">To be added.</param>
+    <param name="filterCriteria">To be added.</param>
+    <returns>To be added.</returns>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The TypeFilter delegate is used to filter a list of classes. Specifically, you use it to filter the classes represented in an array of <see cref="T:System.Type" /> objects. The <see cref="M:System.Type.FindInterfaces(System.Reflection.TypeFilter,System.Object)" /> method uses this delegate to filter the list of interfaces that it returns. Every derived class of <see cref="T:System.Delegate" /> and <see cref="T:System.MulticastDelegate" /> has a constructor and a DynamicInvoke method. See the Visual C++ code example given in the description for Delegate.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Filters the classes represented in an array of <see cref="T:System.Type" /> objects.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

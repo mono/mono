@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PipeAccessRights" FullName="System.IO.Pipes.PipeAccessRights">
+  <TypeSignature Language="C#" Value="public enum PipeAccessRights" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PipeAccessRights extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.Pipes.PipeAccessRights" /> enumeration specifies which file system actions are allowed for a particular user account and which file system actions are audited for a particular user account.      </para>
+      <para>Use the <see cref="T:System.IO.Pipes.PipeAccessRights" /> enumeration when you create an access rule with the <see cref="T:System.IO.Pipes.PipeAccessRule" /> class or when you create an audit rule with the <see cref="T:System.IO.Pipes.PipeAuditRule" /> class.</para>
+      <para>This enumeration contains several specific system rights values and several values that are a combination of those specific values.  It is easier to use the combination values, such as <see cref="F:System.IO.Pipes.PipeAccessRights.FullControl" />, <see cref="F:System.IO.Pipes.PipeAccessRights.Read" />, and <see cref="F:System.IO.Pipes.PipeAccessRights.Write" />, rather than specifying each component value separately.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the access rights to use when you create access and audit rules. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AccessSystemSecurity">
+      <MemberSignature Language="C#" Value="AccessSystemSecurity" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights AccessSystemSecurity = int32(16777216)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to make changes to the system access control list (SACL).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangePermissions">
+      <MemberSignature Language="C#" Value="ChangePermissions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights ChangePermissions = int32(262144)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to change the security and audit rules that are associated with a pipe.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNewInstance">
+      <MemberSignature Language="C#" Value="CreateNewInstance" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights CreateNewInstance = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to create a new pipe. Setting this right also sets the <see cref="F:System.IO.Pipes.PipeAccessRights.Synchronize" /> right.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="Delete" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights Delete = int32(65536)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to delete a pipe.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FullControl">
+      <MemberSignature Language="C#" Value="FullControl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights FullControl = int32(2032031)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to exert full control over a pipe, and to modify access control and audit rules. This value represents the combination of all rights in this enumeration.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="Read" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights Read = int32(131209)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to read from the pipe. This right includes the <see cref="F:System.IO.Pipes.PipeAccessRights.ReadAttributes" />, <see cref="F:System.IO.Pipes.PipeAccessRights.ReadData" />, <see cref="F:System.IO.Pipes.PipeAccessRights.ReadExtendedAttributes" />, and <see cref="F:System.IO.Pipes.PipeAccessRights.ReadPermissions" /> rights.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadAttributes">
+      <MemberSignature Language="C#" Value="ReadAttributes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights ReadAttributes = int32(128)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to read file system attributes from a pipe. This does not include the right to read data, extended file system attributes, or access and audit rules.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadData">
+      <MemberSignature Language="C#" Value="ReadData" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights ReadData = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to read data from the pipe. This does not include the right to read file system attributes, extended file system attributes, or access and audit rules.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadExtendedAttributes">
+      <MemberSignature Language="C#" Value="ReadExtendedAttributes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights ReadExtendedAttributes = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to read extended file system attributes from a pipe. This does not include the right to read data, file system attributes, or access and audit rules.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadPermissions">
+      <MemberSignature Language="C#" Value="ReadPermissions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights ReadPermissions = int32(131072)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to read access and audit rules from the pipe. This does not include the right to read data, file system attributes, or extended file system attributes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadWrite">
+      <MemberSignature Language="C#" Value="ReadWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights ReadWrite = int32(131483)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to read and write from the pipe. This right includes the <see cref="F:System.IO.Pipes.PipeAccessRights.ReadAttributes" />, <see cref="F:System.IO.Pipes.PipeAccessRights.ReadData" />, <see cref="F:System.IO.Pipes.PipeAccessRights.ReadExtendedAttributes" />, <see cref="F:System.IO.Pipes.PipeAccessRights.ReadPermissions" />, <see cref="F:System.IO.Pipes.PipeAccessRights.WriteAttributes" />, <see cref="F:System.IO.Pipes.PipeAccessRights.WriteData" />, and <see cref="F:System.IO.Pipes.PipeAccessRights.WriteExtendedAttributes" /> rights.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Synchronize">
+      <MemberSignature Language="C#" Value="Synchronize" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights Synchronize = int32(1048576)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.IO.Pipes.PipeAccessRights.Synchronize" /> value is automatically set when allowing access to the pipe and automatically excluded when denying access to the pipe.</para>
+          <para>The right to create a pipe requires this value. Note that if you do not explicitly set this value when you create a pipe, the value will be set automatically for you.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the application can wait for a pipe handle to synchronize with the completion of an I/O operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TakeOwnership">
+      <MemberSignature Language="C#" Value="TakeOwnership" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights TakeOwnership = int32(524288)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to change the owner of a pipe. Note that owners of a pipe have full access to that resource.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="Write" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights Write = int32(274)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to write to the pipe. This right includes the <see cref="F:System.IO.Pipes.PipeAccessRights.WriteAttributes" />, <see cref="F:System.IO.Pipes.PipeAccessRights.WriteData" />, and <see cref="F:System.IO.Pipes.PipeAccessRights.WriteExtendedAttributes" /> rights.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributes">
+      <MemberSignature Language="C#" Value="WriteAttributes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights WriteAttributes = int32(256)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to write file system attributes to a pipe. This does not include the right to write data or extended file system attributes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteData">
+      <MemberSignature Language="C#" Value="WriteData" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights WriteData = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to write data to a pipe. This does not include the right to write file system attributes or extended file system attributes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteExtendedAttributes">
+      <MemberSignature Language="C#" Value="WriteExtendedAttributes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeAccessRights WriteExtendedAttributes = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeAccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the right to write extended file system attributes to a pipe. This does not include the right to write file attributes or data.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XDocument" FullName="System.Xml.Linq.XDocument">
+  <TypeSignature Language="C#" Value="public class XDocument : System.Xml.Linq.XContainer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XDocument extends System.Xml.Linq.XContainer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Xml.Linq.XContainer</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For details about the valid content of an <see cref="T:System.Xml.Linq.XDocument" />, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML document. For the components and usage of an <see cref="T:System.Xml.Linq.XDocument" /> object, see <format type="text/html"><a href="90f78331-1be8-42fb-93e7-bd1325826467">XDocument Class Overview</a></format>.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XDocument ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are not many scenarios that require you to create an <see cref="T:System.Xml.Linq.XDocument" />. Instead, you can usually create your XML trees with an <see cref="T:System.Xml.Linq.XElement" /> root node. Unless you have a specific requirement to create a document (for example, because you have to create processing instructions and comments at the top level, or you have to support document types), it is often more convenient to use <see cref="T:System.Xml.Linq.XElement" /> as your root node.</para>
+          <para>For details about the valid content of an <see cref="T:System.Xml.Linq.XDocument" />, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XDocument" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XDocument (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object[] content) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are not many scenarios that require you to create an <see cref="T:System.Xml.Linq.XDocument" />. Instead, you can usually create your XML trees with an <see cref="T:System.Xml.Linq.XElement" /> root node. Unless you have a specific requirement to create a document (for example, because you have to create processing instructions and comments at the top level, or you have to support document types), it is often more convenient to use <see cref="T:System.Xml.Linq.XElement" /> as your root node.</para>
+          <para>For details about the valid content of an <see cref="T:System.Xml.Linq.XDocument" />, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XDocument" /> class with the specified content.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter list of content objects to add to this document.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XDocument (System.Xml.Linq.XDocument other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XDocument other) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="other" Type="System.Xml.Linq.XDocument" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You use this constructor to make a deep copy of an <see cref="T:System.Xml.Linq.XDocument" />.</para>
+          <para>This constructor traverses all nodes and attributes in the document specified in the <paramref name="other" /> parameter, and creates copies of all nodes as it assembles the newly initialized <see cref="T:System.Xml.Linq.XDocument" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XDocument" /> class from an existing <see cref="T:System.Xml.Linq.XDocument" /> object.</para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XDocument" /> object that will be copied.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XDocument (System.Xml.Linq.XDeclaration declaration, object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XDeclaration declaration, object[] content) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="declaration" Type="System.Xml.Linq.XDeclaration" />
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are not many scenarios that require you to create an <see cref="T:System.Xml.Linq.XDocument" />. Instead, you can usually create your XML trees with an <see cref="T:System.Xml.Linq.XElement" /> root node. Unless you have a specific requirement to create a document (for example, because you have to create processing instructions and comments at the top level, or you have to support document types), it is often more convenient to use <see cref="T:System.Xml.Linq.XElement" /> as your root node.</para>
+          <para>For details about the valid content of an <see cref="T:System.Xml.Linq.XDocument" />, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XDocument" /> class with the specified <see cref="T:System.Xml.Linq.XDeclaration" /> and content.</para>
+        </summary>
+        <param name="declaration">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XDeclaration" /> for the document.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The content of the document.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Declaration">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XDeclaration Declaration { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XDeclaration Declaration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDeclaration</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sometimes you have to create an XML declaration for a document. If you want to indicate that a document is standalone, you must use this property. If you want to encode your document with an encoding other than utf-8, you can specify an encoding through the <see cref="T:System.Xml.Linq.XDeclaration" />. Another approach for encoding a document is to specify the encoding on an <see cref="T:System.Xml.XmlWriter" /> that you pass to LINQ to XML for writing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML declaration for this document.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DocumentType">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XDocumentType DocumentType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XDocumentType DocumentType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocumentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>sqltecxlinq provides limited support for DTDs.</para>
+          <para>You can populate an XML tree with an XML document that contains a DTD. The XML tree will then contain a <see cref="P:System.Xml.Linq.XDocument.DocumentType" /> node. When you serialize or save the tree, the DTD will also be serialized. sqltecxlinq will expand any entities in the DTD. When you serialize or save the XML tree, the entity references are not saved; instead, the nodes are saved with the entity references replaced by the text of the entity.</para>
+          <para>If the DTD contains default attributes, the attributes are created in the XML tree as ordinary attributes.</para>
+          <para>By default, sqltecxlinq does not validate a document based on its DTD. To validate a document based on a DTD, create an <see cref="T:System.Xml.XmlReader" /> that will validate based on a DTD, and then create an XML tree from the <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Document Type Definition (DTD) for this document.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to control load options, use the <see cref="Overload:System.Xml.Linq.XDocument.Load" /> overload that takes <see cref="T:System.Xml.Linq.LoadOptions" /> as a parameter.</para>
+          <para>The loading functionality of LINQ to XML is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document. </para>
+          <para>If you have to modify <see cref="T:System.Xml.XmlReaderSettings" />, follow these steps:</para>
+          <list type="ordered">
+            <item>
+              <para>Create an <see cref="T:System.Xml.XmlReader" /> by calling one of the <see cref="Overload:System.Xml.XmlReader.Create" /> overloads that take <see cref="T:System.Xml.XmlReaderSettings" /> as a parameter.</para>
+            </item>
+            <item>
+              <para>Pass the <see cref="T:System.Xml.XmlReader" /> to one of the <see cref="Overload:System.Xml.Linq.XDocument.Load" /> overloads of <see cref="T:System.Xml.Linq.XDocument" /> that takes <see cref="T:System.Xml.XmlReader" /> as a parameter.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> instance by using the specified stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> object that reads the data that is contained in the stream. </para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the XML data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (System.IO.TextReader textReader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(class System.IO.TextReader textReader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textReader" Type="System.IO.TextReader" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a <see cref="T:System.IO.TextReader" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified <see cref="T:System.IO.TextReader" />.</para>
+        </returns>
+        <param name="textReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> that contains the content for the <see cref="T:System.Xml.Linq.XDocument" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (string uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(string uri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses an underlying <see cref="T:System.Xml.XmlReader" /> to read the XML into an XML tree.</para>
+          <para>Use <see cref="Overload:System.Xml.Linq.XDocument.Parse" /> to create an <see cref="T:System.Xml.Linq.XDocument" /> from a string that contains XML.</para>
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a file. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified file.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI string that references the file to load into a new <see cref="T:System.Xml.Linq.XDocument" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One possible use for this method is to create a copy of a DOM document in a LINQ to XML tree. To do this, you create an <see cref="T:System.Xml.XmlNodeReader" /> from a DOM document, and then use the <see cref="T:System.Xml.XmlNodeReader" /> to create an <see cref="T:System.Xml.Linq.XDocument" />.</para>
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from an <see cref="T:System.Xml.XmlReader" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlReader" /> that contains the content for the <see cref="T:System.Xml.Linq.XDocument" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (System.IO.Stream stream, System.Xml.Linq.LoadOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(class System.IO.Stream stream, valuetype System.Xml.Linq.LoadOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loading functionality of LINQ to XML is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document. </para>
+          <para>If you have to modify <see cref="T:System.Xml.XmlReaderSettings" />, follow these steps:</para>
+          <list type="ordered">
+            <item>
+              <para>Create an <see cref="T:System.Xml.XmlReader" /> by calling one of the <see cref="Overload:System.Xml.XmlReader.Create" /> overloads that takes <see cref="T:System.Xml.XmlReaderSettings" /> as a parameter.</para>
+            </item>
+            <item>
+              <para>Pass the <see cref="T:System.Xml.XmlReader" /> to one of the <see cref="Overload:System.Xml.Linq.XDocument.Load" /> overloads of <see cref="T:System.Xml.Linq.XDocument" /> that takes <see cref="T:System.Xml.XmlReader" /> as a parameter.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> instance by using the specified stream, optionally preserving white space, setting the base URI, and retaining line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> object that reads the data that is contained in the stream.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.LoadOptions" /> that specifies whether to load base URI and line information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (System.IO.TextReader textReader, System.Xml.Linq.LoadOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(class System.IO.TextReader textReader, valuetype System.Xml.Linq.LoadOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textReader" Type="System.IO.TextReader" />
+        <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the source XML is indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to read all white space in the source XML. Nodes of type <see cref="T:System.Xml.Linq.XText" /> are created for both significant and insignificant white space.</para>
+          <para>If the source XML is indented, not setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to ignore all of the insignificant white space in the source XML. The XML tree is created without any text nodes for insignificant white space.</para>
+          <para>If the source XML is not indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> has no effect. Significant white space is still preserved, and there are no spans of insignificant white space that could cause the creation of more white space text nodes.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+          <para>Use <see cref="Overload:System.Xml.Linq.XDocument.Parse" /> to create an <see cref="T:System.Xml.Linq.XElement" /> from a string that contains XML.</para>
+          <para>Setting <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" /> is not valid when loading from a <see cref="T:System.IO.TextReader" />.</para>
+          <para>There is a performance penalty if you set the <see cref="F:System.Xml.Linq.LoadOptions.SetLineInfo" /> flag.</para>
+          <para>The line information is accurate immediately after loading the XML document. If you modify the XML tree after loading the document, the line information may become meaningless.</para>
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a <see cref="T:System.IO.TextReader" />, optionally preserving white space, setting the base URI, and retaining line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the XML that was read from the specified <see cref="T:System.IO.TextReader" />.</para>
+        </returns>
+        <param name="textReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> that contains the content for the <see cref="T:System.Xml.Linq.XDocument" />.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.LoadOptions" /> that specifies white space behavior, and whether to load base URI and line information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (string uri, System.Xml.Linq.LoadOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(string uri, valuetype System.Xml.Linq.LoadOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.String" />
+        <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the source XML is indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to read all white space in the source XML. Nodes of type <see cref="T:System.Xml.Linq.XText" /> are created for both significant and insignificant white space.</para>
+          <para>If the source XML is indented, not setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to ignore all of the insignificant white space in the source XML. The XML tree is created without any text nodes for insignificant white space.</para>
+          <para>If the source XML is not indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> has no effect. Significant white space is still preserved, and there are no spans of insignificant white space that could cause the creation of more white space text nodes.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+          <para>Use <see cref="Overload:System.Xml.Linq.XDocument.Parse" /> to create an <see cref="T:System.Xml.Linq.XDocument" /> from a string that contains XML.</para>
+          <para>There is a performance penalty if you set the <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" /> and the <see cref="F:System.Xml.Linq.LoadOptions.SetLineInfo" /> flags.</para>
+          <para>The base URI and the line information are accurate immediately after loading the XML document. If you modify the XML tree after loading the document, the base URI and line information may become meaningless.</para>
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a file, optionally preserving white space, setting the base URI, and retaining line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified file.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI string that references the file to load into a new <see cref="T:System.Xml.Linq.XDocument" />.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.LoadOptions" /> that specifies white space behavior, and whether to load base URI and line information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Load (System.Xml.XmlReader reader, System.Xml.Linq.LoadOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Load(class System.Xml.XmlReader reader, valuetype System.Xml.Linq.LoadOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By creating an <see cref="T:System.Xml.XmlNodeReader" /> from a DOM document, and then using the <see cref="T:System.Xml.XmlNodeReader" /> to create an <see cref="T:System.Xml.Linq.XElement" />, this method can be used to create a copy of a DOM document in a LINQ to XML tree.</para>
+          <para>Use <see cref="Overload:System.Xml.Linq.XDocument.Parse" /> to create an <see cref="T:System.Xml.Linq.XDocument" /> from a string that contains XML.</para>
+          <para>Setting <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> is not valid when loading from a <see cref="T:System.Xml.XmlReader" />. The <see cref="T:System.Xml.XmlReader" /> will be configured to either read whitespace or not. The LINQ to XML tree will be populated with the whitespace nodes that the reader surfaces. This will be the behavior regardless of whether <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> is set or not.</para>
+          <para>The <see cref="T:System.Xml.XmlReader" /> may have a valid base URI or not. If you set <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" />, the base URI will be set in the XML tree from the base URI that is reported by the <see cref="T:System.Xml.XmlReader" />.</para>
+          <para>The <see cref="T:System.Xml.XmlReader" /> may have a valid line information or not. If you set <see cref="F:System.Xml.Linq.LoadOptions.SetLineInfo" />, the line information will be set in the XML tree from the line information that is reported by the <see cref="T:System.Xml.XmlReader" />.</para>
+          <para>There is a performance penalty if you set the <see cref="F:System.Xml.Linq.LoadOptions.SetLineInfo" /> flag.</para>
+          <para>The line information is accurate immediately after loading the XML document. If you modify the XML tree after loading the document, the line information may become meaningless.</para>
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads an <see cref="T:System.Xml.Linq.XDocument" /> from an <see cref="T:System.Xml.XmlReader" />, optionally setting the base URI, and retaining line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the XML that was read from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlReader" /> that will be read for the content of the <see cref="T:System.Xml.Linq.XDocument" />.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.LoadOptions" /> that specifies whether to load base URI and line information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="NodeType">
+      <MemberSignature Language="C#" Value="public override System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlNodeType NodeType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because all classes that derive from <see cref="T:System.Xml.Linq.XObject" /> contain a <see cref="P:System.Xml.Linq.XObject.NodeType" /> property, you can write code that operates on collections of objects where the type of each is a subclass of <see cref="T:System.Xml.Linq.XObject" />. Your code can then test for the node type of each object in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node type for this node.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Parse (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Parse(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not preserve white space. If you want to preserve white space in the XML tree, use the overload of <see cref="Overload:System.Xml.Linq.XDocument.Parse" /> that takes <see cref="T:System.Xml.Linq.LoadOptions" /> as a parameter.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> populated from the string that contains XML.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains XML.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XDocument Parse (string text, System.Xml.Linq.LoadOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XDocument Parse(string text, valuetype System.Xml.Linq.LoadOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XDocument</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the source XML is indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to read all white space in the source XML. Nodes of type <see cref="T:System.Xml.Linq.XText" /> are created for both significant and insignificant white space.</para>
+          <para>If the source XML is indented, not setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to ignore all of the insignificant white space in the source XML. The XML tree is created without any text nodes for insignificant white space.</para>
+          <para>If the source XML is not indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> has no effect. Significant white space is still preserved, and there are no spans of insignificant white space that could cause the creation of more white space text nodes.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+          <para>Setting <see cref="F:System.Xml.Linq.LoadOptions.SetBaseUri" /> is not valid when parsing from a <see cref="T:System.String" />.</para>
+          <para>There is a performance penalty if you set the <see cref="F:System.Xml.Linq.LoadOptions.SetLineInfo" /> flag.</para>
+          <para>The line information is accurate immediately after loading the XML document. If you modify the XML tree after loading the document, the line information may become meaningless.</para>
+          <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a string, optionally preserving white space, setting the base URI, and retaining line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> populated from the string that contains XML.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains XML.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.LoadOptions" /> that specifies white space behavior, and whether to load base URI and line information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Root">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XElement Root { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XElement Root" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XElement</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful when you want to compose sqltecxlinq queries in the same context as when composing them for a tree rooted in <see cref="T:System.Xml.Linq.XElement" />. See <format type="text/html"><a href="d266f58d-f2f3-4668-b661-e716e658d13a">Querying an XDocument vs. Querying an XElement</a></format> for more details.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root element of the XML Tree for this document.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialized XML will be indented. All insignificant white space will be removed, and additional white space will be added so that the XML will be properly indented. The behavior of this method is that insignificant white space will not be preserved.</para>
+          <para>If you want to control white space, use the overload of <see cref="Overload:System.Xml.Linq.XDocument.Save" /> that takes <see cref="T:System.Xml.Linq.SaveOptions" /> as a parameter. Use the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> option to save unindented XML. This will cause the writer to write all white spaces exactly as represented in the XML tree.</para>
+          <para>Use <see cref="F:System.Xml.Linq.SaveOptions.OmitDuplicateNamespaces" /> option if you want to remove duplicate namespace declarations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs this <see cref="T:System.Xml.Linq.XDocument" /> to the specified <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to output this <see cref="T:System.Xml.Linq.XDocument" /> to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.TextWriter textWriter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.TextWriter textWriter) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialized XML will be indented. All insignificant white space will be removed, and additional white space will be added so that the XML will be properly indented. The behavior of this method is that insignificant white space will not be preserved.</para>
+          <para>If you want to control white space, use the overload of <see cref="Overload:System.Xml.Linq.XDocument.Save" /> that takes <see cref="T:System.Xml.Linq.SaveOptions" /> as a parameter. For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this <see cref="T:System.Xml.Linq.XDocument" /> to a <see cref="T:System.IO.TextWriter" />.</para>
+        </summary>
+        <param name="textWriter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> that the <see cref="T:System.Xml.Linq.XDocument" /> will be written to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(string fileName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialized XML will be indented. All insignificant white space will be removed, and additional white space will be added so that the XML will be properly indented. The behavior of this method is that insignificant white space will not be preserved.</para>
+          <para>If you want to control white space, use the overload of <see cref="Overload:System.Xml.Linq.XDocument.Save" /> that takes <see cref="T:System.Xml.Linq.SaveOptions" /> as a parameter. For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this <see cref="T:System.Xml.Linq.XDocument" /> to a file, overwriting an existing file, if it exists.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this <see cref="T:System.Xml.Linq.XDocument" /> to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlWriter" /> that the <see cref="T:System.Xml.Linq.XDocument" /> will be written to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.Stream stream, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.Stream stream, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default the <paramref name="options" /> are set to <see cref="F:System.Xml.Linq.SaveOptions.None" />. This option will remove all extraneous insignificant white space, and add appropriate insignificant white space so that the XML is properly indented. </para>
+          <para>If you want to save unindented XML, specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will cause the writer to write all white spaces exactly as represented in the XML tree.</para>
+          <para>Use <see cref="F:System.Xml.Linq.SaveOptions.OmitDuplicateNamespaces" /> option if you want to remove duplicate namespace declarations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs this <see cref="T:System.Xml.Linq.XDocument" /> to the specified <see cref="T:System.IO.Stream" />, optionally specifying formatting behavior.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to output this <see cref="T:System.Xml.Linq.XDocument" /> to.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.TextWriter textWriter, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.TextWriter textWriter, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to save unindented XML, specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will cause the writer to write all white space exactly as represented in the XML tree.</para>
+          <para>If you want to save indented XML, do not specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will remove all extraneous insignificant white space, and add appropriate insignificant white space so that the XML is properly indented. This is the default behavior, and the behavior of the overloads of the <see cref="Overload:System.Xml.Linq.XDocument.Save" /> methods that do not take <paramref name="options" /> as a parameter.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this <see cref="T:System.Xml.Linq.XDocument" /> to a <see cref="T:System.IO.TextWriter" />, optionally disabling formatting.</para>
+        </summary>
+        <param name="textWriter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to output the XML to.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string fileName, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(string fileName, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to save unindented XML, specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will cause the writer to write all white space exactly as represented in the XML tree.</para>
+          <para>If you want to save indented XML, do not specify the <see cref="F:System.Xml.Linq.SaveOptions.DisableFormatting" /> flag for <paramref name="options" />. This will remove all extraneous insignificant white space, and add appropriate insignificant white space so that the XML is properly indented. This is the default behavior, and the behavior of the overloads of the <see cref="Overload:System.Xml.Linq.XDocument.Save" /> methods that do not take <paramref name="options" /> as a parameter.</para>
+          <para>For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize this <see cref="T:System.Xml.Linq.XDocument" /> to a file, optionally disabling formatting.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Linq.SaveOptions" /> that specifies formatting behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public override void WriteTo (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteTo(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write this document to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> into which this method will write.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

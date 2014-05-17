@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParallelOptions" FullName="System.Threading.Tasks.ParallelOptions">
   <TypeSignature Language="C#" Value="public class ParallelOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ParallelOptions extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,24 +11,36 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores options that configure the operation of methods on the <see cref="T:System.Threading.Tasks.Parallel" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ParallelOptions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the instance with default values. <see cref="P:System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> is initialized to -1, signifying that there is no upper bound set on how much parallelism should be employed. <see cref="P:System.Threading.Tasks.ParallelOptions.CancellationToken" /> is initialized to a non-cancelable token, and <see cref="P:System.Threading.Tasks.ParallelOptions.TaskScheduler" /> is initialized to the default scheduler (TaskScheduler.Default). </para>
+          <para> All of these defaults may be overwritten using the property set accessors on the instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Tasks.ParallelOptions" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CancellationToken">
-      <MemberSignature Language="C#" Value="public System.Threading.CancellationToken CancellationToken { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationToken CancellationToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.CancellationToken CancellationToken" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,13 +49,20 @@
         <ReturnType>System.Threading.CancellationToken</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Providing a <see cref="T:System.Threading.CancellationToken" /> to a <see cref="T:System.Threading.Tasks.Parallel" /> method enables the operation to be exited early. Code external to the operation may cancel the token, and if the operation observes the token being set, it may exit early by throwing an <see cref="T:System.OperationCanceledException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Threading.CancellationToken" /> associated with this <see cref="T:System.Threading.Tasks.ParallelOptions" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxDegreeOfParallelism">
-      <MemberSignature Language="C#" Value="public int MaxDegreeOfParallelism { set; get; }" />
+      <MemberSignature Language="C#" Value="public int MaxDegreeOfParallelism { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxDegreeOfParallelism" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -50,13 +71,33 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> property is positive, it limits the number of concurrent operations run by <see cref="T:System.Threading.Tasks.Parallel" /> method calls that are passed this <see cref="T:System.Threading.Tasks.ParallelOptions" /> instance to the set value. If it is -1,  there is no limit on the number of concurrently running operations.</para>
+          <para>By default, <see cref="Overload:System.Threading.Tasks.Parallel.For" /> and <see cref="Overload:System.Threading.Tasks.Parallel.ForEach" /> will utilize however many threads the underlying scheduler provides, so changing <see cref="P:System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> from the default only limits how many concurrent tasks will be used. </para>
+          <para>Ordinarily, you do not need to modify this setting. However, you may choose to set it explicitly in advanced usage scenarios such as the following: , Or, if </para>
+          <list type="bullet">
+            <item>
+              <para>You know that a particular algorithm you're using won't scale beyond a certain number of cores. You can set the property to avoid wasting cycles on additional cores. </para>
+            </item>
+            <item>
+              <para>You're running multiple algorithms concurrently and want to manually define how much of the system each can utilize. You can set a <see cref="P:System.Threading.Tasks.ParallelOptions.MaxDegreeOfParallelism" /> value for each.</para>
+            </item>
+            <item>
+              <para>For certain workloads, the thread pool's heuristics may be unable to determine the right number of threads to use and could end up injecting too many threads. For example, in long-running loop body iterations, the thread pool may not be able to tell the difference between reasonable progress or livelock or deadlock, and may not be able to reclaim threads added to improve performance. In this case, you can set the property to ensure that you don't use more than a reasonable number of threads. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum degree of parallelism enabled by this <see cref="T:System.Threading.Tasks.ParallelOptions" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TaskScheduler">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.TaskScheduler TaskScheduler { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.TaskScheduler TaskScheduler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.Tasks.TaskScheduler TaskScheduler" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -65,9 +106,12 @@
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Threading.Tasks.TaskScheduler" /> associated with this <see cref="T:System.Threading.Tasks.ParallelOptions" /> instance. Setting this property to null indicates that the current scheduler should be used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

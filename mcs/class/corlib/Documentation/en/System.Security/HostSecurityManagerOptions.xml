@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HostSecurityManagerOptions" FullName="System.Security.HostSecurityManagerOptions">
   <TypeSignature Language="C#" Value="public enum HostSecurityManagerOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed HostSecurityManagerOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,115 +19,146 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the security policy components to be used by the host security manager.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllFlags">
       <MemberSignature Language="C#" Value="AllFlags" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.HostSecurityManagerOptions AllFlags = int32(31)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use all security policy components.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="HostAppDomainEvidence">
       <MemberSignature Language="C#" Value="HostAppDomainEvidence" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.HostSecurityManagerOptions HostAppDomainEvidence = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the application domain evidence.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="HostAssemblyEvidence">
       <MemberSignature Language="C#" Value="HostAssemblyEvidence" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.HostSecurityManagerOptions HostAssemblyEvidence = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the assembly evidence.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="HostDetermineApplicationTrust">
       <MemberSignature Language="C#" Value="HostDetermineApplicationTrust" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.HostSecurityManagerOptions HostDetermineApplicationTrust = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Route calls to the <see cref="M:System.Security.Policy.ApplicationSecurityManager.DetermineApplicationTrust(System.ActivationContext,System.Security.Policy.TrustManagerContext)" /> method to the <see cref="M:System.Security.HostSecurityManager.DetermineApplicationTrust(System.Security.Policy.Evidence,System.Security.Policy.Evidence,System.Security.Policy.TrustManagerContext)" /> method first.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="HostPolicyLevel">
       <MemberSignature Language="C#" Value="HostPolicyLevel" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.HostSecurityManagerOptions HostPolicyLevel = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the policy level specified in the <see cref="P:System.Security.HostSecurityManager.DomainPolicy" /> property.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="HostResolvePolicy">
       <MemberSignature Language="C#" Value="HostResolvePolicy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.HostSecurityManagerOptions HostResolvePolicy = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.HostSecurityManager.ResolvePolicy(System.Security.Policy.Evidence)" /> method to resolve the application evidence.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.HostSecurityManagerOptions None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use none of the security policy components.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

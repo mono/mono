@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventMappingSettings" FullName="System.Web.Configuration.EventMappingSettings">
   <TypeSignature Language="C#" Value="public sealed class EventMappingSettings : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class corresponds to the eventMappings configuration-file element. The eventMappings element allows you to assign friendly names to event sources. These names are then used to associate event sources with the related event consumers, called providers, in the rules subsection of the healthMonitoring section of the configuration file.</para>
+      <para>Event codes are mapped to events defined by the constants in the <see cref="T:System.Web.Management.WebEventCodes" /> object. The mapping uses a range specified with the <see cref="P:System.Web.Configuration.EventMappingSettings.StartEventCode" /> and <see cref="P:System.Web.Configuration.EventMappingSettings.EndEventCode" /> properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the ASP.NET event mapping settings for event providers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +30,52 @@
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the default settings that are used for this constructor.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Setting</para>
+                </term>
+                <description>
+                  <para>Default Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.EventMappingSettings.StartEventCode" />
+                </para>
+              </term>
+              <description>
+                <para>0.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.EventMappingSettings.EndEventCode" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Int32.MaxValue" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.EventMappingSettings" /> class using the specified name and type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.Configuration.EventMappingSettings" /> object being created.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified type of the event class to use.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,13 +91,20 @@
         <Parameter Name="endEventCode" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="startEventCode">To be added.</param>
-        <param name="endEventCode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.BufferModeSettings" /> class using the specified values.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.Configuration.EventMappingSettings" /> object being created.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified type of the event class to use.</param>
+        <param name="startEventCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting event code range.</param>
+        <param name="endEventCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ending event code range.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +125,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Event codes are mapped to events defined by the constants in the <see cref="T:System.Web.Management.WebEventCodes" /> object. The mapping uses a range specified with the <see cref="P:System.Web.Configuration.EventMappingSettings.StartEventCode" /> and <see cref="P:System.Web.Configuration.EventMappingSettings.EndEventCode" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ending event code of the range.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,10 +152,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique name is required. Duplicate names may result in a loss of data when the configuration section is saved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Web.Configuration.EventMappingSettings" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,10 +198,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Event codes are mapped to events defined by the constants in the <see cref="T:System.Web.Management.WebEventCodes" /> object. The mapping uses a range specified with the <see cref="P:System.Web.Configuration.EventMappingSettings.StartEventCode" /> and <see cref="P:System.Web.Configuration.EventMappingSettings.EndEventCode" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the starting event code of the range.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,10 +225,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the type of the event. The specified type can be the actual class type or a parent type of the event class. If it is an empty string (""), no event is mapped, and the <see cref="T:System.Web.Configuration.EventMappingSettings" /> object acts as a placeholder.</para>
+          <para>The type reference is formed as follows (items in brackets are not required): Namespace.Typename, Assemblyname[,] [Version=x,] [Culture=y,] [PublicKeyToken=z]. For example "ExampleNameSpace.ExampleType, Example.Assembly, Version=%ASSEMBLY_VERSION%, Culture=neutral, PublicKeyToken=%MICROSOFT_PUBLICKEY%"</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom event type.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

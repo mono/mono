@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventWaitHandle" FullName="System.Threading.EventWaitHandle">
   <TypeSignature Language="C#" Value="public class EventWaitHandle : System.Threading.WaitHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventWaitHandle extends System.Threading.WaitHandle" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,55 +11,104 @@
     <BaseTypeName>System.Threading.WaitHandle</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.EventWaitHandle" /> class allows threads to communicate with each other by signaling. Typically, one or more threads block on an <see cref="T:System.Threading.EventWaitHandle" /> until an unblocked thread calls the <see cref="M:System.Threading.EventWaitHandle.Set" /> method, releasing one or more of the blocked threads. A thread can signal an <see cref="T:System.Threading.EventWaitHandle" /> and then block on it, by calling the static (Shared in Visual Basic) <see cref="Overload:System.Threading.WaitHandle.SignalAndWait" /> method.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Threading.EventWaitHandle" /> class provides access to named system synchronization events.</para>
+      </block>
+      <para>The behavior of an <see cref="T:System.Threading.EventWaitHandle" /> that has been signaled depends on its reset mode. An <see cref="T:System.Threading.EventWaitHandle" /> created with the <see cref="F:System.Threading.EventResetMode.AutoReset" /> flag resets automatically when signaled, after releasing a single waiting thread. An <see cref="T:System.Threading.EventWaitHandle" /> created with the <see cref="F:System.Threading.EventResetMode.ManualReset" /> flag remains signaled until its <see cref="M:System.Threading.EventWaitHandle.Reset" /> method is called.</para>
+      <para>Automatic reset events provide exclusive access to a resource. If an automatic reset event is signaled when no threads are waiting, it remains signaled until a thread attempts to wait on it. The event releases the thread and immediately resets, blocking subsequent threads.</para>
+      <para>Manual reset events are like gates. When the event is not signaled, threads that wait on it will block. When the event is signaled, all waiting threads are released, and the event remains signaled (that is, subsequent waits do not block) until its <see cref="M:System.Threading.EventWaitHandle.Reset" /> method is called. Manual reset events are useful when one thread must complete an activity before other threads can proceed.</para>
+      <para>
+        <see cref="T:System.Threading.EventWaitHandle" /> objects can be used with the static (Shared in Visual Basic) <see cref="Overload:System.Threading.WaitHandle.WaitAll" /> and <see cref="Overload:System.Threading.WaitHandle.WaitAny" /> methods.</para>
+      <para>For more information about thread synchronization mechanisms, see <format type="text/html"><a href="cd94fc34-ac15-427f-b723-a1240a4fab7d">EventWaitHandle, AutoResetEvent, and ManualResetEvent</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a thread synchronization event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
       </Parameters>
       <Docs>
-        <param name="initialState">To be added.</param>
-        <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the initial state of the event is nonsignaled, threads that wait on the event will block. If the initial state is signaled, and the <see cref="F:System.Threading.EventResetMode.ManualReset" /> flag is specified for <paramref name="mode" />, threads that wait on the event will not block. If the initial state is signaled, and <paramref name="mode" /> is <see cref="F:System.Threading.EventResetMode.AutoReset" />, the first thread that waits on the event will be released immediately, after which the event will reset, and subsequent threads will block.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.EventWaitHandle" /> class, specifying whether the wait handle is initially signaled, and whether it resets automatically or manually.</para>
+        </summary>
+        <param name="initialState">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to set the initial state to signaled; false to set it to nonsignaled.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Threading.EventResetMode" /> values that determines whether the event resets automatically or manually.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode, string name) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="initialState">To be added.</param>
-        <param name="mode">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="name" /> is null or an empty string, a local <see cref="T:System.Threading.EventWaitHandle" /> is created.</para>
+          <para>If a system event with the name specified for the <paramref name="name" /> parameter already exists, the <paramref name="initialState" /> parameter is ignored.</para>
+          <block subset="none" type="note">
+            <para>When using this constructor for named system events, specify false for <paramref name="initialState" />. This constructor provides no way to determine whether a named system event was created, so you cannot make any assumptions about the state of the named event. To determine whether a named event was created, use the <see cref="M:System.Threading.EventWaitHandle.#ctor(System.Boolean,System.Threading.EventResetMode,System.String,System.Boolean@)" /> constructor or the <see cref="M:System.Threading.EventWaitHandle.#ctor(System.Boolean,System.Threading.EventResetMode,System.String,System.Boolean@,System.Security.AccessControl.EventWaitHandleSecurity)" /> constructor.</para>
+          </block>
+          <para>If the initial state of the event is nonsignaled, threads that wait on the event will block. If the initial state is signaled, and the <see cref="F:System.Threading.EventResetMode.ManualReset" /> flag is specified for <paramref name="mode" />, threads that wait on the event will not block. If the initial state is signaled, and <paramref name="mode" /> is <see cref="F:System.Threading.EventResetMode.AutoReset" />, the first thread that waits on the event will be released immediately, after which the event will reset, and subsequent threads will block.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.EventWaitHandle" /> class, specifying whether the wait handle is initially signaled if created as a result of this call, whether it resets automatically or manually, and the name of a system synchronization event.</para>
+        </summary>
+        <param name="initialState">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to set the initial state to signaled if the named event is created as a result of this call; false to set it to nonsignaled.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Threading.EventResetMode" /> values that determines whether the event resets automatically or manually.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a system-wide synchronization event.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode, string name, bool createdNew) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
@@ -73,14 +124,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew, System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode, string name, bool createdNew, class System.Security.AccessControl.EventWaitHandleSecurity eventSecurity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew, System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
@@ -98,32 +150,44 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.EventWaitHandleSecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.EventWaitHandleSecurity GetAccessControl() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAccessControl">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.EventWaitHandleSecurity GetAccessControl ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.EventWaitHandleSecurity</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.EventWaitHandle.GetAccessControl" /> method uses the following combination of flags (combined using the bitwise OR operation) to search for permissions: <see cref="F:System.Security.AccessControl.AccessControlSections.Access" />, <see cref="F:System.Security.AccessControl.AccessControlSections.Owner" />, and <see cref="F:System.Security.AccessControl.AccessControlSections.Group" />.</para>
+          <para>The user must have <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ReadPermissions" /> rights to call this method, and the event must have been opened with the <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ReadPermissions" /> flag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> object that represents the access control security for the named system event represented by the current <see cref="T:System.Threading.EventWaitHandle" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> object that represents the access control security for the named system event.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.EventWaitHandle OpenExisting(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenExisting">
-      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.EventWaitHandle</ReturnType>
       </ReturnValue>
@@ -131,20 +195,34 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Threading.EventWaitHandle.OpenExisting" /> method tries to open the specified named system event. If the system event does not exist, this method throws an exception instead of creating the system event. To create the system event when it does not already exist, use one of the <see cref="M:System.Threading.EventWaitHandle.#ctor(System.Boolean,System.Threading.EventResetMode,System.String,System.Boolean@,System.Security.AccessControl.EventWaitHandleSecurity)" /> constructors that has a <paramref name="name" /> parameter. </para>
+          <para>Multiple calls to this method that use the same value for <paramref name="name" /> do not necessarily return the same <see cref="T:System.Threading.EventWaitHandle" /> object, even though the objects that are returned represent the same named system event.  </para>
+          <para>This method overload is equivalent to calling the <see cref="M:System.Threading.EventWaitHandle.OpenExisting(System.String,System.Security.AccessControl.EventWaitHandleRights)" /> method overload and specifying <see cref="F:System.Security.AccessControl.EventWaitHandleRights.Synchronize" /> and <see cref="F:System.Security.AccessControl.EventWaitHandleRights.Modify" /> rights, combined by using the bitwise OR operation.</para>
+          <para>Specifying the <see cref="F:System.Security.AccessControl.EventWaitHandleRights.Synchronize" /> flag allows a thread to wait on the named system event, and specifying the <see cref="F:System.Security.AccessControl.EventWaitHandleRights.Modify" /> flag allows a thread to call the <see cref="M:System.Threading.EventWaitHandle.Set" /> and <see cref="M:System.Threading.EventWaitHandle.Reset" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified named synchronization event, if it already exists.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An  object that represents the named system event.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the system synchronization event to open.</param>
       </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name, System.Security.AccessControl.EventWaitHandleRights rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.EventWaitHandle OpenExisting(string name, valuetype System.Security.AccessControl.EventWaitHandleRights rights) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenExisting">
-      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name, System.Security.AccessControl.EventWaitHandleRights rights);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.EventWaitHandle</ReturnType>
       </ReturnValue>
@@ -153,57 +231,92 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.EventWaitHandleRights" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="rights">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="rights" /> parameter must include the <see cref="F:System.Security.AccessControl.EventWaitHandleRights.Synchronize" /> flag to allow threads to wait on the event, and the <see cref="F:System.Security.AccessControl.EventWaitHandleRights.Modify" /> flag to allow threads to call the <see cref="M:System.Threading.EventWaitHandle.Set" /> and <see cref="M:System.Threading.EventWaitHandle.Reset" /> methods. </para>
+          <para>The <see cref="Overload:System.Threading.EventWaitHandle.OpenExisting" /> method tries to open an existing named system event. If the system event does not exist, this method throws an exception instead of creating the system event. To create the system event when it does not already exist, use one of the <see cref="M:System.Threading.EventWaitHandle.#ctor(System.Boolean,System.Threading.EventResetMode,System.String,System.Boolean@,System.Security.AccessControl.EventWaitHandleSecurity)" /> constructors that has a <paramref name="name" /> parameter.</para>
+          <para>Multiple calls to this method that use the same value for <paramref name="name" /> do not necessarily return the same <see cref="T:System.Threading.EventWaitHandle" /> object, even though the objects that are returned represent the same named system event.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified named synchronization event, if it already exists, with the desired security access.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the named system event.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the system synchronization event to open.</param>
+        <param name="rights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that represent the desired security access.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public bool Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Reset() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the state of the event to nonsignaled, causing threads to block.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation succeeds; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Set">
       <MemberSignature Language="C#" Value="public bool Set ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Set() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For an <see cref="T:System.Threading.EventWaitHandle" /> with <see cref="F:System.Threading.EventResetMode.AutoReset" /> (including <see cref="T:System.Threading.AutoResetEvent" />), the <see cref="M:System.Threading.EventWaitHandle.Set" /> method releases a single thread. If there are no waiting threads, the wait handle remains signaled until a thread attempts to wait on it, or until its <see cref="M:System.Threading.EventWaitHandle.Reset" /> method is called.</para>
+          <block subset="none" type="note">
+            <para>There is no guarantee that every call to the <see cref="M:System.Threading.EventWaitHandle.Set" /> method will release a thread from an <see cref="T:System.Threading.EventWaitHandle" /> whose reset mode is <see cref="F:System.Threading.EventResetMode.AutoReset" />. If two calls are too close together, so that the second call occurs before a thread has been released, only one thread is released. It is as if the second call did not happen. Also, if <see cref="M:System.Threading.EventWaitHandle.Set" /> is called when there are no threads waiting and the <see cref="T:System.Threading.EventWaitHandle" /> is already signaled, the call has no effect. </para>
+          </block>
+          <para>For an <see cref="T:System.Threading.EventWaitHandle" /> with <see cref="F:System.Threading.EventResetMode.ManualReset" /> (including <see cref="T:System.Threading.ManualResetEvent" />), calling the <see cref="M:System.Threading.EventWaitHandle.Set" /> method leaves the wait handle in a signaled state until its <see cref="M:System.Threading.EventWaitHandle.Reset" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the state of the event to signaled, allowing one or more waiting threads to proceed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation succeeds; otherwise, false.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.Security.AccessControl.EventWaitHandleSecurity eventSecurity) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetAccessControl">
-      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -211,20 +324,64 @@
         <Parameter Name="eventSecurity" Type="System.Security.AccessControl.EventWaitHandleSecurity" />
       </Parameters>
       <Docs>
-        <param name="eventSecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user must have <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ChangePermissions" /> rights to call this method, and the event must have been opened with the <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ChangePermissions" /> flag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the access control security for a named system event.</para>
+        </summary>
+        <param name="eventSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" />  object that represents the access control security to be applied to the named system event.</param>
       </Docs>
+    </Member>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, out System.Threading.EventWaitHandle result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, class System.Threading.EventWaitHandle result) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="result" Type="System.Threading.EventWaitHandle&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, System.Security.AccessControl.EventWaitHandleRights rights, out System.Threading.EventWaitHandle result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, valuetype System.Security.AccessControl.EventWaitHandleRights rights, class System.Threading.EventWaitHandle result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="rights" Type="System.Security.AccessControl.EventWaitHandleRights" />
+        <Parameter Name="result" Type="System.Threading.EventWaitHandle&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="rights">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ComponentGuaranteesAttribute" FullName="System.Runtime.Versioning.ComponentGuaranteesAttribute">
+  <TypeSignature Language="C#" Value="public sealed class ComponentGuaranteesAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ComponentGuaranteesAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Module | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Event | System.AttributeTargets.Interface | System.AttributeTargets.Delegate | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> is used by developers of components and class libraries to indicate the level of compatibility that consumers of their libraries can expect across multiple versions. It indicates the level of guarantee that a future version of the library or component will not break an existing client. Clients can then use the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> as an aid in designing their own interfaces to ensure stability across versions.</para>
+      <block subset="none" type="note">
+        <para>The common language runtime (CLR) does not use this attribute in any way. Its value lies in formally documenting the intent of the component author. Compile-time tools can also use these declarations to detect compile-time errors that would otherwise break the declared guarantee.</para>
+      </block>
+      <format type="text/html">
+        <h2>Levels of Compatibility</h2>
+      </format>
+      <para>The <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> supports the following levels of compatibility, which are represented by members of the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesOptions" /> enumeration:</para>
+      <list type="bullet">
+        <item>
+          <para>No version-to-version compatibility (<see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" />). The client can expect that future versions will break the existing client. For more information, see the <format type="text/html"><a href="#None">No Compatibility</a></format> section later in this topic.</para>
+        </item>
+        <item>
+          <para>Side-by-side version-to-version compatibility (<see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.SideBySide" />). The component has been tested to work when more than one version of the assembly is loaded in the same application domain. In general, future versions can break compatibility. However, when breaking changes are made, the old version is not modified but exists alongside the new version. Side-by-side execution is the expected way to make existing clients work when breaking changes are made. For more information, see the <format type="text/html"><a href="#SideBySide">Side-by-Side Compatibility</a></format> section later in this topic.</para>
+        </item>
+        <item>
+          <para>Stable version-to-version compatibility (<see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" />). Future versions should not break the client, and side-by-side execution should not be needed. However, if the client is inadvertently broken, it may be possible to use side-by-side execution to fix the problem. For more information, see the <format type="text/html"><a href="#Standard">Stable Compatibility</a></format> section.</para>
+        </item>
+        <item>
+          <para>Exchange version-to-version compatibility (<see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" />). Extraordinary care is taken to ensure that future versions will not break the client. The client should use only these types in the signature of interfaces that are used for communication with other assemblies that are deployed independently of one another. Only one version of these types is expected to be in a given application domain, which means that if a client breaks, side-by-side execution cannot fix the compatibility problem. For more information, see the <format type="text/html"><a href="#Exchange">Exchange Type Compatibility</a></format> section. </para>
+        </item>
+      </list>
+      <para>The following sections discuss each level of guarantee in greater detail.</para>
+      <format type="text/html">
+        <a href="#None" />
+      </format>
+      <format type="text/html">
+        <h2>No Compatibility</h2>
+      </format>
+      <para>Marking a component as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" /> indicates that the provider makes no guarantees about compatibility. Clients should avoid taking any dependencies on the exposed interfaces. This level of compatibility is useful for types that are experimental or that are publicly exposed but are intended only for components that are always updated at the same time. <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" /> explicitly indicates that this component should not be used by external components.</para>
+      <format type="text/html">
+        <a href="#SideBySide" />
+      </format>
+      <format type="text/html">
+        <h2>Side-by-Side Compatibility</h2>
+      </format>
+      <para>Marking a component as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.SideBySide" /> indicates that the component has been tested to work when more than one version of the assembly is loaded into the same application domain. Breaking changes are allowed as long as they are made to the assembly that has the greater version number. Components that are bound to an old version of the assembly are expected to continue to bind to the old version, and other components can bind to the new version. It is also possible to update a component that is declared to be <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.SideBySide" /> by destructively modifying the old version.</para>
+      <format type="text/html">
+        <a href="#Standard" />
+      </format>
+      <format type="text/html">
+        <h2>Stable Compatibility</h2>
+      </format>
+      <para>Marking a type as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" /> indicates that the type should remain stable across versions. However, it may also be possible for side-by-side versions of a stable type to exist in the same application domain. </para>
+      <para>Stable types maintain a high binary compatibility bar. Because of this, providers should avoid making breaking changes to stable types. The following kinds of changes are acceptable:</para>
+      <list type="bullet">
+        <item>
+          <para>Adding private instance fields to, or removing fields from, a type, as long as this does not break the serialization format. </para>
+        </item>
+        <item>
+          <para>Changing a non-serializable type to a serializable type. (However, a serializable type cannot be changed to a non-serializable type.)</para>
+        </item>
+        <item>
+          <para>Throwing new, more derived exceptions from a method.</para>
+        </item>
+        <item>
+          <para>Improving the performance of a method.</para>
+        </item>
+        <item>
+          <para>Changing the range of return values, as long as the change does not adversely affect the majority of clients.</para>
+        </item>
+        <item>
+          <para>Fixing serious bugs, if the business justification is high and the number of adversely affected clients is low.</para>
+        </item>
+      </list>
+      <para>Because new versions of stable components are not expected to break existing clients, generally only one version of a stable component is needed in an application domain. However, this is not a requirement, because stable types are not used as well-known exchange types that all components agree upon. Therefore, if a new version of a stable component does inadvertently break some component, and if other components need the new version, it may be possible to fix the problem by loading both the old and new component.</para>
+      <para>
+        <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" /> provides a stronger version compatibility guarantee than <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" />. It is a common default for multi-version components.</para>
+      <para>
+        <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" /> can be combined with <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.SideBySide" />, which states that the component will not break compatibility but is tested to work when more than one version is loaded in a given application domain. </para>
+      <para>After a type or method is marked as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" />, it can be upgraded to <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" />. However, it cannot be downgraded to <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" />.</para>
+      <format type="text/html">
+        <a href="#Exchange" />
+      </format>
+      <format type="text/html">
+        <h2>Exchange Type Compatibility</h2>
+      </format>
+      <para>Marking a type as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" /> provides a stronger version compatibility guarantee than <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" />, and should be applied to the most stable of all types. These types are intended to be used for interchange between independently built components across all component boundaries in both time (any version of the CLR or any version of a component or application) and space (cross-process, cross-CLR in one process, cross-application domain in one CLR). If a breaking change is made to an exchange type, it is impossible to fix the issue by loading multiple versions of the type.</para>
+      <para>Exchange types should be changed only when a problem is very serious (such as a severe security issue) or the probability of breakage is very low (that is, if the behavior was already broken in a random way that code could not have conceivably taken a dependency on). You can make the following kinds of changes to an exchange type:</para>
+      <list type="bullet">
+        <item>
+          <para>Add inheritance of new interface definitions.</para>
+        </item>
+        <item>
+          <para>Add new private methods that implement the methods of newly inherited interface definitions.</para>
+        </item>
+        <item>
+          <para>Add new static fields.</para>
+        </item>
+        <item>
+          <para>Add new static methods.</para>
+        </item>
+        <item>
+          <para>Add new non-virtual instance methods.</para>
+        </item>
+      </list>
+      <para>The following are considered breaking changes and are not allowed for primitive types:</para>
+      <list type="bullet">
+        <item>
+          <para>Changing serialization formats. Version-tolerant serialization is required.</para>
+        </item>
+        <item>
+          <para>Adding or removing private instance fields. This risks changing the serialization format of the type and breaking client code that uses reflection.</para>
+        </item>
+        <item>
+          <para>Changing the serializability of a type. A non-serializable type may not be made serializable, and vice versa.</para>
+        </item>
+        <item>
+          <para>Throwing different exceptions from a method.</para>
+        </item>
+        <item>
+          <para>Changing the range of a method's return values, unless the member definition raises this possibility and clearly indicates how clients should handle unknown values.</para>
+        </item>
+        <item>
+          <para>Fixing most bugs. Consumers of the type will rely on the existing behavior.</para>
+        </item>
+      </list>
+      <para>After a component, type, or member is marked with the <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" /> guarantee, it cannot be changed to either <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" /> or <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" />.</para>
+      <para>Typically, exchange types are the basic types (such as <see cref="T:System.Int32" /> and <see cref="T:System.String" /> in the .NET Framework) and interfaces (such as <see cref="T:System.Collections.Generic.IList`1" />, <see cref="T:System.Collections.Generic.IEnumerable`1" />, and <see cref="T:System.IComparable`1" />) that are commonly used in public interfaces.</para>
+      <para>Exchange types may publicly expose only other types that are also marked with <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" /> compatibility. In addition, exchange types cannot depend on the behavior of Windows APIs that are prone to change.</para>
+      <format type="text/html">
+        <h2>Component Guarantees: A Summary</h2>
+      </format>
+      <para>The following table indicates how a component's characteristics and usage affect its compatibility guarantee.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Component characteristics</para>
+            </term>
+            <description>
+              <para>Exchange</para>
+            </description>
+            <description>
+              <para>Stable</para>
+            </description>
+            <description>
+              <para>Side-by-Side</para>
+            </description>
+            <description>
+              <para>None</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Can be used in interfaces between components that version independently.</para>
+          </term>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Can be used (privately) by an assembly that versions independently.</para>
+          </term>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Can have multiple versions in a single application domain.</para>
+          </term>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Can make breaking changes</para>
+          </term>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Tested to make certain multiple versions of the assembly can be loaded together.</para>
+          </term>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Can make breaking changes in place.</para>
+          </term>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>N</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Can make very safe non-breaking servicing changes in place.</para>
+          </term>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+          <description>
+            <para>Y</para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Applying the Attribute</h2>
+      </format>
+      <para>You can apply the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> to an assembly, a type, or a type member. Its application is hierarchical. That is, by default, the guarantee defined by the <see cref="P:System.Runtime.Versioning.ComponentGuaranteesAttribute.Guarantees" /> property of the attribute at the assembly level defines the guarantee of all types in the assembly and all members in those types. Similarly, if the guarantee is applied to the type, by default it also applies to each member of the type. </para>
+      <para>This inherited guarantee can be overridden by applying the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> to individual types and type members. However, guarantees that override the default can only weaken the guarantee; they cannot strengthen it. For example, if an assembly is marked with the <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" /> guarantee, its types and members have no compatibility guarantee, and any other guarantee that is applied to types or members in the assembly is ignored. </para>
+      <format type="text/html">
+        <h2>Testing the Guarantee</h2>
+      </format>
+      <para>The <see cref="P:System.Runtime.Versioning.ComponentGuaranteesAttribute.Guarantees" /> property returns a member of the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesOptions" /> enumeration, which is marked with the <see cref="T:System.FlagsAttribute" /> attribute. This means that you should test for the flag that you are interested in by masking away potentially unknown flags. For example, the following example tests whether a type is marked as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" />.</para>
+      <para>code reference: System.Runtime.Versioning.ComponentGuaranteesAttribute.Class#1</para>
+      <para>The following example tests whether a type is marked as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" /> or <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" />.</para>
+      <para>code reference: System.Runtime.Versioning.ComponentGuaranteesAttribute.Class#2</para>
+      <para>The following example tests wither a type is marked as <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" /> (that is, neither <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" /> nor <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" />).</para>
+      <para>code reference: System.Runtime.Versioning.ComponentGuaranteesAttribute.Class#3</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the compatibility guarantee of a component, type, or type member that may span multiple versions.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComponentGuaranteesAttribute (System.Runtime.Versioning.ComponentGuaranteesOptions guarantees);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.Versioning.ComponentGuaranteesOptions guarantees) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="guarantees" Type="System.Runtime.Versioning.ComponentGuaranteesOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> class is instantiated, the value of the <paramref name="guarantees" /> parameter is assigned to the <see cref="P:System.Runtime.Versioning.ComponentGuaranteesAttribute.Guarantees" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> class with a value that indicates a library, type, or member's guaranteed level of compatibility across multiple versions.</para>
+        </summary>
+        <param name="guarantees">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the level of compatibility that is guaranteed across multiple versions.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Guarantees">
+      <MemberSignature Language="C#" Value="public System.Runtime.Versioning.ComponentGuaranteesOptions Guarantees { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.Versioning.ComponentGuaranteesOptions Guarantees" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ComponentGuaranteesOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Runtime.Versioning.ComponentGuaranteesAttribute.Guarantees" /> property corresponds to the <paramref name="guarantees" /> parameter of the <see cref="M:System.Runtime.Versioning.ComponentGuaranteesAttribute.#ctor(System.Runtime.Versioning.ComponentGuaranteesOptions)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the guaranteed level of compatibility of a library, type, or type member that spans multiple versions.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IStreamProvider" FullName="System.Xml.IStreamProvider">
+  <TypeSignature Language="C#" Value="public interface IStreamProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IStreamProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When writing an outgoing message containing a streamed body to an XML writer, the <see cref="T:System.ServiceModel.Channels.Message" /> will use a sequence of calls similar to the following in its <see cref="M:System.ServiceModel.Channels.Message.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" /> implementation:</para>
+      <list type="bullet">
+        <item>
+          <para>Write any necessary information preceding the stream (For example, the opening XML tag).</para>
+        </item>
+        <item>
+          <para>Write the stream.</para>
+        </item>
+        <item>
+          <para>Write any information following the stream (For example, the closing XML tag).</para>
+        </item>
+      </list>
+      <para>This works well with encodings that are similar to the textual XML encoding. However, there are some encodings that do not place XML infoset information (For example, tags for starting and ending XML elements) together with the data contained within elements. For example, in the MTOM encoding, the message is split into multiple parts. One part contains the XML infoset, which may contain references to other parts for actual element contents. Since the XML infoset will normally be small compared to the streamed contents, it makes sense to buffer the infoset, write it out, and then write the contents in a streamed way. This means that by the time the closing element tag is written, we should not have written out the stream yet.</para>
+      <para>For this purpose, the <see cref="T:System.Xml.IStreamProvider" /> interface is used. The interface has a <see cref="M:System.Xml.IStreamProvider.GetStream" /> method that returns the stream to be written. The correct way to write out a streamed message body in <see cref="M:System.ServiceModel.Channels.Message.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" /> is as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>Write any necessary information preceding the stream (For example, the opening XML tag)</para>
+        </item>
+        <item>
+          <para>Call the WriteValue overload on the <see cref="T:System.Xml.XmlDictionaryWriter" /> that takes an <see cref="T:System.Xml.IStreamProvider" />, with an IStreamProvider implementation that returns the stream to be written.</para>
+        </item>
+        <item>
+          <para>Write any information following the stream (For example, the closing XML tag)</para>
+        </item>
+      </list>
+      <para>With this approach, the XML writer has a choice of when to call <see cref="M:System.Xml.IStreamProvider.GetStream" /> and write out the streamed data. For example, the textual and binary XML writers will call it immediately and write out the streamed contents in between the start and end tags. The MTOM writer may decide to call <see cref="M:System.Xml.IStreamProvider.GetStream" /> later, when it is ready to write the appropriate part of the message.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an interface that can be implemented by classes providing streams.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to return the stream to be written.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ReleaseStream">
+      <MemberSignature Language="C#" Value="public void ReleaseStream (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ReleaseStream(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a stream to output.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream being released.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

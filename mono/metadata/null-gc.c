@@ -23,6 +23,7 @@ mono_gc_base_init (void)
 	memset (&cb, 0, sizeof (cb));
 	cb.mono_method_is_critical = mono_runtime_is_critical_method;
 	cb.mono_gc_pthread_create = (gpointer)mono_gc_pthread_create;
+	cb.thread_exit = mono_gc_pthread_exit;
 
 	mono_threads_init (&cb, sizeof (MonoThreadInfo));
 }
@@ -193,6 +194,12 @@ mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 }
 
 void
+mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
+{
+	InterlockedWritePointer (ptr, value);
+}
+
+void
 mono_gc_wbarrier_generic_nostore (gpointer ptr)
 {
 }
@@ -275,6 +282,12 @@ mono_gc_clear_domain (MonoDomain *domain)
 
 int
 mono_gc_get_suspend_signal (void)
+{
+	return -1;
+}
+
+int
+mono_gc_get_restart_signal (void)
 {
 	return -1;
 }

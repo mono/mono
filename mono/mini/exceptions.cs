@@ -24,11 +24,18 @@ using System.Runtime.CompilerServices;
  * the IL code looks.
  */
 
-class Tests {
+#if MOBILE
+class ExceptionTests
+#else
+class Tests
+#endif
+{
 
+#if !MOBILE
 	public static int Main (string[] args) {
 		return TestDriver.RunTests (typeof (Tests), args);
 	}
+#endif
 
 	public static int test_0_catch () {
 		Exception x = new Exception ();
@@ -2313,16 +2320,6 @@ class Tests {
 
 		try {
 			failed = true;
-			int[] mem1 = new int [Int32.MaxValue];
-		}
-		catch (OutOfMemoryException e) {
-			failed = false;
-		}
-		if (failed)
-			return 1;
-
-		try {
-			failed = true;
 			int[,] mem2 = new int [Int32.MaxValue, Int32.MaxValue];
 		}
 		catch (OutOfMemoryException e) {
@@ -2408,7 +2405,7 @@ class Tests {
 	}
 
 	public static int test_0_nonvirt_nullref_at_clause_start () {
-		Tests t = null;
+		ExceptionTests t = null;
 		try {
 			t.amethod ();
 		} catch (NullReferenceException) {
@@ -2528,7 +2525,11 @@ class Tests {
 	public static int test_0_lmf_filter () {
 		try {
 			// The invoke calls a runtime-invoke wrapper which has a filter clause
+#if MOBILE
+			typeof (ExceptionTests).GetMethod ("lmf_filter").Invoke (null, new object [] { });
+#else
 			typeof (Tests).GetMethod ("lmf_filter").Invoke (null, new object [] { });
+#endif
 		} catch (TargetInvocationException) {
 		}
 		return 0;
@@ -2732,3 +2733,8 @@ class Tests {
 	}
 }
 
+#if !MOBILE
+class ExceptionTests : Tests
+{
+}
+#endif

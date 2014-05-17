@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Predicate&lt;T&gt;" FullName="System.Predicate&lt;T&gt;">
   <TypeSignature Language="C#" Value="public delegate bool Predicate&lt;in T&gt;(T obj);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Predicate`1&lt;- T&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -24,24 +26,25 @@
   <Docs>
     <typeparam name="T">To be added.</typeparam>
     <param name="obj">To be added.</param>
-    <summary>
-      <para>Represents the method that defines a Boolean query on an object.</para>
-    </summary>
-    <value>
+    <returns>
       <para>
         <see langword="true" /> if <paramref name="obj" /> meets the criteria defined within the method represented by this delegate; otherwise, <see langword="false" />.</para>
-    </value>
-    <value>
+    </returns>
+    <returns>
       <para>
         <see langword="true" /> if <paramref name="obj" /> meets the criteria defined within the method represented by this delegate; otherwise, <see langword="false" />.</para>
-    </value>
-    <value>To be added.</value>
-    <remarks>
-      <para>Predicate methods are expected to not throw exceptions. If they do throw exceptions, other methods that use that delegate might exhibit unspecified behavior. It is also intended that predicate methods not produce side-effects; however, such methods need not be thread safe.</para>
-      <block subset="none" type="note">
-        <para>This delegate is used by several methods in <see cref="T:System.Array" />, and in <see cref="T:System.Collections.Generic.List&lt;T&gt; " /> to search for elements in the collection.</para>
-      </block>
-    </remarks>
+    </returns>
+    <returns>To be added.</returns>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate is used by several methods of the <see cref="T:System.Array" /> and <see cref="T:System.Collections.Generic.List`1" /> classes to search for elements in the collection.</para>
+      <para>Typically, the <see cref="T:System.Predicate`1" /> delegate is represented by a lambda expression. Because locally scoped variables are available to the lambda expression, it is easy to test for a condition that is not precisely known at compile time. This is simulated in the following example, which defines a HockeyTeam class that contains information about a National Hockey League team and the year in which it was founded. The example defines an array of integer values that represent years, and randomly assigns one element of the array to foundedBeforeYear, which is a variable that is locally scoped to the example's Main method. Because locally scoped variables are available to a lambda expression, the lambda expression passed to the <see cref="M:System.Collections.Generic.List`1.FindAll(System.Predicate{`0})" /> method is able to return a HockeyTeam object for each team founded on or before that year. </para>
+      <para>code reference: System.Predicate`1#3</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that defines a set of criteria and determines whether the specified object meets those criteria.</para>
+    </summary>
   </Docs>
 </Type>

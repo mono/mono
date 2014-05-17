@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComImportAttribute" FullName="System.Runtime.InteropServices.ComImportAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ComImportAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ComImportAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,24 +23,39 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to classes or interfaces, although the <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrfTypeLibraryImporterTlbimpexe&gt;]</a></format> typically applies it for you when it imports a type library.</para>
+      <para>
+        <see cref="T:System.Runtime.InteropServices.ComImportAttribute" /> is a pseudo-custom attribute that indicates that a type has been defined in a previously published type library. The common language runtime treats these types differently when activating, exporting, coercing, and so on.</para>
+      <block subset="none" type="note">
+        <para>All base COM types that are inherited by a managed object must aggregate the Free Threaded Marshaller (FTM).  COM types that do not aggregate the FTM can't be inherited by managed objects. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the attributed type was previously defined in COM.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ComImportAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComImportAttribute" />.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

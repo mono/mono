@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeDescriptionProviderAttribute" FullName="System.ComponentModel.TypeDescriptionProviderAttribute">
   <TypeSignature Language="C#" Value="public sealed class TypeDescriptionProviderAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TypeDescriptionProviderAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -14,53 +17,92 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This attribute supplies a way for developers to provide custom metadata for their authored classes. This capability extends the static type information functionality in the <see cref="T:System.ComponentModel.TypeDescriptor" /> class, which by default only obtains type information directly from metadata of the compiled classes.</para>
+      <block subset="none" type="note">
+        <para>For a more dynamic way to provide custom metadata for your authored classes, see the <see cref="Overload:System.ComponentModel.TypeDescriptor.AddProvider" /> method.</para>
+      </block>
+      <para>Tagging a class with a <see cref="T:System.ComponentModel.TypeDescriptionProviderAttribute" /> will associate a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> with that class. A <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> provides supplemental metadata information about the tagged class. For example, the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method returns an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> that defines additional type information, such as attributes, events, and properties. Subsequently, if a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> member is used to investigate the tagged class, it will discover both the default and custom type information.</para>
+      <para>This attribute can only be applied to classes and is inherited by derived classes.</para>
+      <para>This attribute cannot be derived from.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the custom type description provider for a class. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TypeDescriptionProviderAttribute (string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string typeName) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptionProviderAttribute.#ctor(System.String)" /> constructor associates the specified <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> with the tagged class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.TypeDescriptionProviderAttribute" /> class using the specified type name.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the type.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TypeDescriptionProviderAttribute (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptionProviderAttribute.#ctor(System.Type)" /> constructor associates the specified <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> with the tagged class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.TypeDescriptionProviderAttribute" /> class using the specified type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to store in the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="TypeName">
       <MemberSignature Language="C#" Value="public string TypeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TypeName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This read-only property retrieves the name of the type description provider set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type name for the type description provider.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

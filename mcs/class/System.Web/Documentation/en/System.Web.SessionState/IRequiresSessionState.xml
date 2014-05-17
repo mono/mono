@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRequiresSessionState" FullName="System.Web.SessionState.IRequiresSessionState">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IRequiresSessionState" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.Web.SessionState.IRequiresSessionState" /> interface in your custom HTTP handler to identify that your handler requires read and write access to session-state values.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that the target HTTP handler requires read and write access to session-state values. This is a marker interface and has no methods.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

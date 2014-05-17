@@ -1,23 +1,20 @@
 // Compiler options: -warnaserror -warn:4
 
 using System;
-using System.Reflection;
+using System.Runtime.InteropServices;
 
-public class EventTestClass : IEventTest {
-        public event EventHandler Elapsed; // No warning is reported
-}
-
-public interface IEventTest {
-        event EventHandler Elapsed;
-}
-
-
-public class EntryPoint
+[StructLayout (LayoutKind.Sequential)]
+public class EventTestClass : IEventTest
 {
-	public static bool test (Type type) { return type.GetEvent ("Elapsed").IsSpecialName; }	
-        public static int Main ()
-        {
-                return (test (typeof (EventTestClass)) 
-			|| test (typeof (IEventTest))) ? 1 : 0;
-        }
+	int i;
+	public event EventHandler Elapsed;
+
+	public static void Main ()
+	{		
+	}
+}
+
+public interface IEventTest 
+{
+	event EventHandler Elapsed;
 }

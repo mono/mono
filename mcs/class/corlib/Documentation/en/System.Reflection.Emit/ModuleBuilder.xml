@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ModuleBuilder" FullName="System.Reflection.Emit.ModuleBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ModuleBuilder : System.Reflection.Module, System.Runtime.InteropServices._ModuleBuilder" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi beforefieldinit ModuleBuilder extends System.Reflection.Module implements class System.Runtime.InteropServices._ModuleBuilder" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,13 +18,31 @@
       <InterfaceName>System.Runtime.InteropServices._ModuleBuilder</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._ModuleBuilder))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To get an instance of <see cref="T:System.Reflection.Emit.ModuleBuilder" />, use the <see cref="M:System.Reflection.Emit.AssemblyBuilder.DefineDynamicModule(System.String)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines and represents a module in a dynamic assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Assembly">
       <MemberSignature Language="C#" Value="public override System.Reflection.Assembly Assembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.Assembly Assembly" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -31,31 +51,53 @@
         <ReturnType>System.Reflection.Assembly</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Reflection.Assembly" /> object that is returned is the <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> that defined this instance of <see cref="T:System.Reflection.Emit.ModuleBuilder" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dynamic assembly that defined this instance of <see cref="T:System.Reflection.Emit.ModuleBuilder" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateGlobalFunctions">
       <MemberSignature Language="C#" Value="public void CreateGlobalFunctions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CreateGlobalFunctions() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should be called when the user is done with defining all the global functions within this dynamic module. After calling this function, no more new global functions or new global data are allowed.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the global function definitions and global data definitions for this dynamic module.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DefineDocument">
       <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Diagnostics.SymbolStore.ISymbolDocumentWriter DefineDocument(string url, valuetype System.Guid language, valuetype System.Guid languageVendor, valuetype System.Guid documentType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolDocumentWriter</ReturnType>
       </ReturnValue>
@@ -66,23 +108,39 @@
         <Parameter Name="documentType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="language">To be added: an object of type 'Guid'</param>
-        <param name="languageVendor">To be added: an object of type 'Guid'</param>
-        <param name="documentType">To be added: an object of type 'Guid'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Diagnostics.SymbolStore.ISymbolDocumentWriter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Earlier versions of the .NET Framework throw <see cref="T:System.ArgumentException" /> instead of <see cref="T:System.ArgumentNullException" /> when <paramref name="url" /> is null.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a document for source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined document.</para>
+        </returns>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL for the document. </param>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The GUID that identifies the document language. This can be <see cref="F:System.Guid.Empty" />. </param>
+        <param name="languageVendor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The GUID that identifies the document language vendor. This can be <see cref="F:System.Guid.Empty" />. </param>
+        <param name="documentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The GUID that identifies the document type. This can be <see cref="F:System.Guid.Empty" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineEnum">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.EnumBuilder DefineEnum (string name, System.Reflection.TypeAttributes visibility, Type underlyingType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.EnumBuilder DefineEnum(string name, valuetype System.Reflection.TypeAttributes visibility, class System.Type underlyingType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineEnum">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.EnumBuilder DefineEnum (string name, System.Reflection.TypeAttributes visibility, Type underlyingType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.EnumBuilder</ReturnType>
       </ReturnValue>
@@ -92,22 +150,42 @@
         <Parameter Name="underlyingType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="visibility">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="underlyingType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EnumBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined enum is a derived class of <see cref="T:System.Enum" />. The <paramref name="value__" /> field has <see cref="F:System.Reflection.FieldAttributes.Private" /> and <see cref="F:System.Reflection.FieldAttributes.SpecialName" /> attributes set.</para>
+          <para>For more information about the built-in integer types that can be specified as the underlying types of enumerations, see <format type="text/html"><a href="7e4c5921-955d-4b06-8709-101873acf157">.NET Framework Class Library Overview</a></format>. </para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, it is necessary to define enumerations using <see cref="T:System.Reflection.Emit.TypeBuilder" /> because <see cref="T:System.Reflection.Emit.EnumBuilder" /> emits enumerations whose elements are of type <see cref="T:System.Int32" /> instead of the enumeration type. In the .NET Framework version 2.0, <see cref="T:System.Reflection.Emit.EnumBuilder" /> emits enumerations whose elements have the correct type.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an enumeration type that is a value type with a single non-static field called <paramref name="value__" /> of the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined enumeration.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the enumeration type. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="visibility">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type attributes for the enumeration. The attributes are any bits defined by <see cref="F:System.Reflection.TypeAttributes.VisibilityMask" />. </param>
+        <param name="underlyingType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying type for the enumeration. This must be a built-in integer type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineGlobalMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefineGlobalMethod (string name, System.Reflection.MethodAttributes attributes, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.MethodBuilder DefineGlobalMethod(string name, valuetype System.Reflection.MethodAttributes attributes, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineGlobalMethod">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefineGlobalMethod (string name, System.Reflection.MethodAttributes attributes, Type returnType, Type[] parameterTypes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.MethodBuilder</ReturnType>
       </ReturnValue>
@@ -118,23 +196,40 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.MethodAttributes'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The global method that this method defines is not usable until you call <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" />.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a global method with the specified name, attributes, return type, and parameter types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined global method.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the method. <paramref name="attributes" /> must include <see cref="F:System.Reflection.MethodAttributes.Static" />. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the method's parameters. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineGlobalMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefineGlobalMethod (string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.MethodBuilder DefineGlobalMethod(string name, valuetype System.Reflection.MethodAttributes attributes, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineGlobalMethod">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefineGlobalMethod (string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.MethodBuilder</ReturnType>
       </ReturnValue>
@@ -146,24 +241,41 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.MethodAttributes'</param>
-        <param name="callingConvention">To be added: an object of type 'Reflection.CallingConventions'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot use the global method that this method defines until you call <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" />.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a global method with the specified name, attributes, calling convention, return type, and parameter types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined global method.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the method. <paramref name="attributes" /> must include <see cref="F:System.Reflection.MethodAttributes.Static" />.</param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention for the method. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the method's parameters. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineGlobalMethod">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefineGlobalMethod (string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] requiredReturnTypeCustomModifiers, Type[] optionalReturnTypeCustomModifiers, Type[] parameterTypes, Type[][] requiredParameterTypeCustomModifiers, Type[][] optionalParameterTypeCustomModifiers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.MethodBuilder DefineGlobalMethod(string name, valuetype System.Reflection.MethodAttributes attributes, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] requiredReturnTypeCustomModifiers, class System.Type[] optionalReturnTypeCustomModifiers, class System.Type[] parameterTypes, class System.Type[][] requiredParameterTypeCustomModifiers, class System.Type[][] optionalParameterTypeCustomModifiers) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.MethodBuilder</ReturnType>
       </ReturnValue>
@@ -179,28 +291,52 @@
         <Parameter Name="optionalParameterTypeCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <param name="callingConvention">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="requiredReturnTypeCustomModifiers">To be added.</param>
-        <param name="optionalReturnTypeCustomModifiers">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="requiredParameterTypeCustomModifiers">To be added.</param>
-        <param name="optionalParameterTypeCustomModifiers">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for designers of managed compilers.</para>
+          <para>You cannot use the global method that this method defines until you call <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" />.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a global method with the specified name, attributes, calling convention, return type, custom modifiers for the return type, parameter types, and custom modifiers for the parameter types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined global method.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded null characters. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the method. <paramref name="attributes" /> must include <see cref="F:System.Reflection.MethodAttributes.Static" />.</param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention for the method. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method. </param>
+        <param name="requiredReturnTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the required custom modifiers for the return type, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the return type has no required custom modifiers, specify null. </param>
+        <param name="optionalReturnTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of types representing the optional custom modifiers for the return type, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsBoxed" />. If the return type has no optional custom modifiers, specify null. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the method's parameters. </param>
+        <param name="requiredParameterTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the required custom modifiers for the corresponding parameter of the global method. If a particular argument has no required custom modifiers, specify null instead of an array of types. If the global method has no arguments, or if none of the arguments have required custom modifiers, specify null instead of an array of arrays.</param>
+        <param name="optionalParameterTypeCustomModifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arrays of types. Each array of types represents the optional custom modifiers for the corresponding parameter. If a particular argument has no optional custom modifiers, specify null instead of an array of types. If the global method has no arguments, or if none of the arguments have optional custom modifiers, specify null instead of an array of arrays.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineInitializedData">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.FieldBuilder DefineInitializedData (string name, byte[] data, System.Reflection.FieldAttributes attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.FieldBuilder DefineInitializedData(string name, unsigned int8[] data, valuetype System.Reflection.FieldAttributes attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.FieldBuilder</ReturnType>
       </ReturnValue>
@@ -210,22 +346,39 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="data">To be added: an object of type 'byte []'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.FieldAttributes'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FieldBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Reflection.FieldAttributes.Static" /> is automatically included in <paramref name="attributes" />.</para>
+          <para>The data defined by this method is not created until the <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" /> method is called.  </para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an initialized data field in the .sdata section of the portable executable (PE) file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field to reference the data.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used to refer to the data. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binary large object (BLOB) of data. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes for the field. The default is Static. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineManifestResource">
       <MemberSignature Language="C#" Value="public void DefineManifestResource (string name, System.IO.Stream stream, System.Reflection.ResourceAttributes attribute);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DefineManifestResource(string name, class System.IO.Stream stream, valuetype System.Reflection.ResourceAttributes attribute) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -235,21 +388,47 @@
         <Parameter Name="attribute" Type="System.Reflection.ResourceAttributes" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="stream">To be added.</param>
-        <param name="attribute">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resources that are recorded in the assembly manifest can be managed resources or manifest resource BLOBs, and each of these can be included in the assembly either by linking or by embedding. All four scenarios are supported for dynamic assemblies. </para>
+          <list type="bullet">
+            <item>
+              <para>This method allows you to embed a manifest resource BLOB into a dynamic assembly. </para>
+            </item>
+            <item>
+              <para>To embed a managed resource into the manifest module of a dynamic assembly or into a satellite module, use the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineResource(System.String,System.String)" /> method to get a resource writer, and use the <see cref="M:System.Resources.ResourceWriter.AddResource(System.String,System.String)" /> method to add the resource.</para>
+            </item>
+            <item>
+              <para>To link a managed resource into a dynamic assembly, use the <see cref="M:System.Reflection.Emit.AssemblyBuilder.DefineResource(System.String,System.String,System.String,System.Reflection.ResourceAttributes)" /> method to get a resource writer, and use the <see cref="M:System.Resources.ResourceWriter.AddResource(System.String,System.String)" /> method to add the linked resource.</para>
+            </item>
+            <item>
+              <para>To link a manifest resource BLOB into a dynamic assembly, use the <see cref="M:System.Reflection.Emit.AssemblyBuilder.AddResourceFile(System.String,System.String)" /> method to add the linked resource.</para>
+            </item>
+          </list>
+          <para>In addition, a single Win32 resource can be attached to an assembly by using the <see cref="M:System.Reflection.Emit.AssemblyBuilder.DefineUnmanagedResource(System.String)" /> method or the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineUnmanagedResource(System.Byte[])" /> method. This resource does not appear in the assembly manifest.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a binary large object (BLOB) that represents a manifest resource to be embedded in the dynamic assembly.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name for the resource.</param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A stream that contains the bytes for the resource.</param>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration value that specifies whether the resource is public or private.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefinePInvokeMethod">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefinePInvokeMethod (string name, string dllName, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, System.Runtime.InteropServices.CallingConvention nativeCallConv, System.Runtime.InteropServices.CharSet nativeCharSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.MethodBuilder DefinePInvokeMethod(string name, string dllName, valuetype System.Reflection.MethodAttributes attributes, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes, valuetype System.Runtime.InteropServices.CallingConvention nativeCallConv, valuetype System.Runtime.InteropServices.CharSet nativeCharSet) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.MethodBuilder</ReturnType>
       </ReturnValue>
@@ -264,27 +443,48 @@
         <Parameter Name="nativeCharSet" Type="System.Runtime.InteropServices.CharSet" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="dllName">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.MethodAttributes'</param>
-        <param name="callingConvention">To be added: an object of type 'Reflection.CallingConventions'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <param name="nativeCallConv">To be added: an object of type 'Runtime.InteropServices.CallingConvention'</param>
-        <param name="nativeCharSet">To be added: an object of type 'Runtime.InteropServices.CharSet'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some DLL import attributes (see the description of System.Runtime.InteropServices.DllImportAttribute) cannot be specified as arguments to this method. Such attributes should be set by emitting a custom attribute for the method. For example, the DLL import attribute PreserveSig is set by emitting a custom attribute.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a PInvoke method with the specified name, the name of the DLL in which the method is defined, the attributes of the method, the calling convention of the method, the return type of the method, the types of the parameters of the method, and the PInvoke flags.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined PInvoke method.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the PInvoke method. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="dllName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the DLL in which the PInvoke method is defined. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the method. </param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method's calling convention. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method's return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the method's parameters. </param>
+        <param name="nativeCallConv">
+          <attribution license="cc4" from="Microsoft" modified="false" />The native calling convention. </param>
+        <param name="nativeCharSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method's native character set. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefinePInvokeMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, System.Runtime.InteropServices.CallingConvention nativeCallConv, System.Runtime.InteropServices.CharSet nativeCharSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.MethodBuilder DefinePInvokeMethod(string name, string dllName, string entryName, valuetype System.Reflection.MethodAttributes attributes, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes, valuetype System.Runtime.InteropServices.CallingConvention nativeCallConv, valuetype System.Runtime.InteropServices.CharSet nativeCharSet) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefinePInvokeMethod">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, System.Runtime.InteropServices.CallingConvention nativeCallConv, System.Runtime.InteropServices.CharSet nativeCharSet);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.MethodBuilder</ReturnType>
       </ReturnValue>
@@ -300,28 +500,50 @@
         <Parameter Name="nativeCharSet" Type="System.Runtime.InteropServices.CharSet" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="dllName">To be added: an object of type 'string'</param>
-        <param name="entryName">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.MethodAttributes'</param>
-        <param name="callingConvention">To be added: an object of type 'Reflection.CallingConventions'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <param name="nativeCallConv">To be added: an object of type 'Runtime.InteropServices.CallingConvention'</param>
-        <param name="nativeCharSet">To be added: an object of type 'Runtime.InteropServices.CharSet'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some DLL import attributes (see the description of <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />) cannot be specified as arguments to this method. Such attributes should be set by emitting a custom attribute for the method. For example, the DLL import attribute PreserveSig is set by emitting a custom attribute.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a PInvoke method with the specified name, the name of the DLL in which the method is defined, the attributes of the method, the calling convention of the method, the return type of the method, the types of the parameters of the method, and the PInvoke flags.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined PInvoke method.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the PInvoke method. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="dllName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the DLL in which the PInvoke method is defined. </param>
+        <param name="entryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the entry point in the DLL. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the method. </param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method's calling convention. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method's return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the method's parameters. </param>
+        <param name="nativeCallConv">
+          <attribution license="cc4" from="Microsoft" modified="false" />The native calling convention. </param>
+        <param name="nativeCharSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method's native character set. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineResource">
+      <MemberSignature Language="C#" Value="public System.Resources.IResourceWriter DefineResource (string name, string description);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Resources.IResourceWriter DefineResource(string name, string description) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineResource">
-      <MemberSignature Language="C#" Value="public System.Resources.IResourceWriter DefineResource (string name, string description);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Resources.IResourceWriter</ReturnType>
       </ReturnValue>
@@ -330,21 +552,37 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The caller must not call the ResourceWriter.Generate() and ResourceWriter.Close() methods, because these methods are called by ModuleBuilder.Save when the dynamic assembly is written to disk.</para>
+          <para>Use this method to embed a managed resource. To embed a manifest resource blob, use the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineManifestResource(System.String,System.IO.Stream,System.Reflection.ResourceAttributes)" /> method. For a summary of embedding and linking managed resources and manifest resource blobs, see the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineManifestResource(System.String,System.IO.Stream,System.Reflection.ResourceAttributes)" /> method.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the named managed embedded resource to be stored in this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A resource writer for the defined resource.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the resource. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineResource">
+      <MemberSignature Language="C#" Value="public System.Resources.IResourceWriter DefineResource (string name, string description, System.Reflection.ResourceAttributes attribute);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Resources.IResourceWriter DefineResource(string name, string description, valuetype System.Reflection.ResourceAttributes attribute) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineResource">
-      <MemberSignature Language="C#" Value="public System.Resources.IResourceWriter DefineResource (string name, string description, System.Reflection.ResourceAttributes attribute);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Resources.IResourceWriter</ReturnType>
       </ReturnValue>
@@ -354,22 +592,39 @@
         <Parameter Name="attribute" Type="System.Reflection.ResourceAttributes" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <param name="attribute">To be added: an object of type 'Reflection.ResourceAttributes'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The caller must not call the ResourceWriter.Generate() and ResourceWriter.Close() methods, because these methods are called by ModuleBuilder.Save when the dynamic assembly is written to disk.</para>
+          <para>Use this method to embed a managed resource. To embed a manifest resource blob, use the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineManifestResource(System.String,System.IO.Stream,System.Reflection.ResourceAttributes)" /> method. For a summary of embedding and linking managed resources and manifest resource blobs, see the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineManifestResource(System.String,System.IO.Stream,System.Reflection.ResourceAttributes)" /> method.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the named managed embedded resource with the given attributes that is to be stored in this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A resource writer for the defined resource.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the resource. </param>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The resource attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineType">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.TypeBuilder DefineType(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineType">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
       </ReturnValue>
@@ -377,20 +632,34 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a TypeBuilder for a private type with the specified name in this module. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A private type with the specified name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type, including the namespace. <paramref name="name" /> cannot contain embedded nulls. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineType">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.TypeBuilder DefineType(string name, valuetype System.Reflection.TypeAttributes attr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineType">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
       </ReturnValue>
@@ -399,21 +668,36 @@
         <Parameter Name="attr" Type="System.Reflection.TypeAttributes" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attr">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a TypeBuilder given the type name and the type attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the defined type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineType">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.TypeBuilder DefineType(string name, valuetype System.Reflection.TypeAttributes attr, class System.Type parent) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineType">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
       </ReturnValue>
@@ -423,22 +707,38 @@
         <Parameter Name="parent" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attr">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="parent">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a TypeBuilder given type name, its attributes, and the type that the defined type extends.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to be associated with the type. </param>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the defined type extends. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineType">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent, int typesize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.TypeBuilder DefineType(string name, valuetype System.Reflection.TypeAttributes attr, class System.Type parent, int32 typesize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineType">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent, int typesize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
       </ReturnValue>
@@ -449,23 +749,40 @@
         <Parameter Name="typesize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attr">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="parent">To be added: an object of type 'Type'</param>
-        <param name="typesize">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type names must be unique within an assembly. It is forbidden to have two types with the same name in two different modules of an assembly.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a TypeBuilder given the type name, the attributes, the type that the defined type extends, and the total size of the type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder object.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the defined type. </param>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the defined type extends. </param>
+        <param name="typesize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total size of the type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineType">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent, System.Reflection.Emit.PackingSize packsize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.TypeBuilder DefineType(string name, valuetype System.Reflection.TypeAttributes attr, class System.Type parent, valuetype System.Reflection.Emit.PackingSize packsize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineType">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent, System.Reflection.Emit.PackingSize packsize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
       </ReturnValue>
@@ -476,41 +793,35 @@
         <Parameter Name="packsize" Type="System.Reflection.Emit.PackingSize" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attr">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="parent">To be added: an object of type 'Type'</param>
-        <param name="packsize">To be added: an object of type 'PackingSize'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a TypeBuilder given the type name, the attributes, the type that the defined type extends, and the packing size of the type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder object.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the defined type. </param>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the defined type extends. </param>
+        <param name="packsize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The packing size of the type. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineType">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent, Type[] interfaces);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.TypeBuilder DefineType(string name, valuetype System.Reflection.TypeAttributes attr, class System.Type parent, class System.Type[] interfaces) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-        <Parameter Name="attr" Type="System.Reflection.TypeAttributes" />
-        <Parameter Name="parent" Type="System.Type" />
-        <Parameter Name="interfaces" Type="System.Type[]" />
-      </Parameters>
-      <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attr">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="parent">To be added: an object of type 'Type'</param>
-        <param name="interfaces">To be added: an object of type 'Type []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -521,10 +832,50 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="attr" Type="System.Reflection.TypeAttributes" />
+        <Parameter Name="parent" Type="System.Type" />
+        <Parameter Name="interfaces" Type="System.Type[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a TypeBuilder given the type name, attributes, the type that the defined type extends, and the interfaces that the defined type implements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes to be associated with the type. </param>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the defined type extends. </param>
+        <param name="interfaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of interfaces that the type implements. </param>
+      </Docs>
     </Member>
     <Member MemberName="DefineType">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeBuilder DefineType (string name, System.Reflection.TypeAttributes attr, Type parent, System.Reflection.Emit.PackingSize packingSize, int typesize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.TypeBuilder DefineType(string name, valuetype System.Reflection.TypeAttributes attr, class System.Type parent, valuetype System.Reflection.Emit.PackingSize packingSize, int32 typesize) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeBuilder</ReturnType>
       </ReturnValue>
@@ -536,24 +887,42 @@
         <Parameter Name="typesize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attr">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="parent">To be added: an object of type 'Type'</param>
-        <param name="packingSize">To be added.</param>
-        <param name="typesize">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type names must be unique within an assembly. You cannot have two types with the same name in two different modules of an assembly.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a TypeBuilder given the type name, attributes, the type that the defined type extends, the packing size of the defined type, and the total size of the defined type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A TypeBuilder created with all of the requested attributes.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full path of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="attr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the defined type. </param>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the defined type extends. </param>
+        <param name="packingSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The packing size of the type. </param>
+        <param name="typesize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total size of the type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineUninitializedData">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.FieldBuilder DefineUninitializedData (string name, int size, System.Reflection.FieldAttributes attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.FieldBuilder DefineUninitializedData(string name, int32 size, valuetype System.Reflection.FieldAttributes attributes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineUninitializedData">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.FieldBuilder DefineUninitializedData (string name, int size, System.Reflection.FieldAttributes attributes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.FieldBuilder</ReturnType>
       </ReturnValue>
@@ -563,22 +932,40 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.FieldAttributes'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FieldBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Reflection.FieldAttributes.Static" /> is automatically included in <paramref name="attributes" />.</para>
+          <para>The data defined by this method is not created until the <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" /> method is called.  </para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an uninitialized data field in the .sdata section of the portable executable (PE) file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field to reference the data.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used to refer to the data. <paramref name="name" /> cannot contain embedded nulls. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the data field. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes for the field. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineUnmanagedResource">
+      <MemberSignature Language="C#" Value="public void DefineUnmanagedResource (byte[] resource);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DefineUnmanagedResource(unsigned int8[] resource) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineUnmanagedResource">
-      <MemberSignature Language="C#" Value="public void DefineUnmanagedResource (byte[] resource);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -586,19 +973,30 @@
         <Parameter Name="resource" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="resource">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An assembly can be associated with only one unmanaged resource. This means that calling DefineVersionInfoResource or DefineUnmanagedResource after either one of the methods was called previously throws <see cref="T:System.ArgumentException" />. Multiple unmanaged resources need to be merged with a tool such as the Microsoft ResMerge utility (not supplied with the common language runtime).</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an unmanaged embedded resource given an opaque binary large object (BLOB) of bytes.</para>
+        </summary>
+        <param name="resource">
+          <attribution license="cc4" from="Microsoft" modified="false" />An opaque BLOB that represents an unmanaged resource </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineUnmanagedResource">
+      <MemberSignature Language="C#" Value="public void DefineUnmanagedResource (string resourceFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DefineUnmanagedResource(string resourceFileName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineUnmanagedResource">
-      <MemberSignature Language="C#" Value="public void DefineUnmanagedResource (string resourceFileName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -606,36 +1004,84 @@
         <Parameter Name="resourceFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="resourceFileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An assembly can be associated with only one unmanaged resource. This means that calling DefineVersionInfoResource or DefineUnmanagedResource after either one of the methods was called previously throws <see cref="T:System.ArgumentException" />. Multiple unmanaged resources need to be merged with a tool such as the Microsoft ResMerge utility (not supplied with the common language runtime).</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an unmanaged resource given the name of Win32 resource file.</para>
+        </summary>
+        <param name="resourceFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the unmanaged resource file. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this instance is equal to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FullyQualifiedName">
+      <MemberSignature Language="C#" Value="public override string FullyQualifiedName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullyQualifiedName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FullyQualifiedName">
-      <MemberSignature Language="C#" Value="public override string FullyQualifiedName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the name without the path, use Name.</para>
+          <block subset="none" type="note">
+            <para>The case of a module name is platform dependent.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a String representing the fully qualified name and path to this module.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetArrayMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetArrayMethod (Type arrayClass, string methodName, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetArrayMethod(class System.Type arrayClass, string methodName, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetArrayMethod">
-      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetArrayMethod (Type arrayClass, string methodName, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -647,24 +1093,39 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="arrayClass">To be added: an object of type 'Type'</param>
-        <param name="methodName">To be added: an object of type 'string'</param>
-        <param name="callingConvention">To be added: an object of type 'Reflection.CallingConventions'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.MethodInfo'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>GetArrayMethod is useful when you have an array of a type whose definition has not been completed and you want to access methods defined on <see cref="T:System.Array" />. For example, you might define a type and want to define a method that takes an array of the type as a parameter. In order to access the elements of the array, you will need to call methods of the <see cref="T:System.Array" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the named method on an array class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The named method on an array class.</para>
+        </returns>
+        <param name="arrayClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array class. </param>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a method on the array class. </param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method's calling convention. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the method's parameters. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetArrayMethodToken">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodToken GetArrayMethodToken (Type arrayClass, string methodName, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.MethodToken GetArrayMethodToken(class System.Type arrayClass, string methodName, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetArrayMethodToken">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodToken GetArrayMethodToken (Type arrayClass, string methodName, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.MethodToken</ReturnType>
       </ReturnValue>
@@ -676,36 +1137,34 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="arrayClass">To be added: an object of type 'Type'</param>
-        <param name="methodName">To be added: an object of type 'string'</param>
-        <param name="callingConvention">To be added: an object of type 'Reflection.CallingConventions'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="parameterTypes">To be added: an object of type 'Type []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodToken'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to <see cref="M:System.Reflection.Emit.ModuleBuilder.GetArrayMethod(System.Type,System.String,System.Reflection.CallingConventions,System.Type,System.Type[])" />, except that it returns the token of the array method instead of the method itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token for the named method on an array class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token for the named method on an array class.</para>
+        </returns>
+        <param name="arrayClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object for the array. </param>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the method. </param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention for the method. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the method. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The types of the parameters of the method. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetConstructorToken">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodToken GetConstructorToken (System.Reflection.ConstructorInfo con);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.MethodToken GetConstructorToken(class System.Reflection.ConstructorInfo con) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.MethodToken</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
-      </Parameters>
-      <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodToken'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -716,10 +1175,161 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.MethodToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token used to identify the specified constructor within this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the specified constructor within this module.</para>
+        </returns>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor to get a token for. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public override object[] GetCustomAttributes (bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object[] GetCustomAttributes(bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the custom attributes that have been applied to the current <see cref="T:System.Reflection.Emit.ModuleBuilder" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the custom attributes; the array is empty if there are no attributes.</para>
+        </returns>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This argument is ignored for objects of this type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public override object[] GetCustomAttributes (Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object[] GetCustomAttributes(class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the custom attributes that have been applied to the current <see cref="T:System.Reflection.Emit.ModuleBuilder" />, and that derive from a specified attribute type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the custom attributes that are derived, at any level, from <paramref name="attributeType" />; the array is empty if there are no such attributes.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base type from which attributes derive.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This argument is ignored for objects of this type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetField">
+      <MemberSignature Language="C#" Value="public override System.Reflection.FieldInfo GetField (string name, System.Reflection.BindingFlags bindingAttr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.FieldInfo GetField(string name, valuetype System.Reflection.BindingFlags bindingAttr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you emit dynamic assemblies, fields in the .sdata region of the portable executable (PE) file are defined by using the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineInitializedData(System.String,System.Byte[],System.Reflection.FieldAttributes)" /> or <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineUninitializedData(System.String,System.Int32,System.Reflection.FieldAttributes)" /> methods. </para>
+          <block subset="none" type="note">
+            <para>Module-level fields cannot be retrieved until after the <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" /> method has been called for the module.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a module-level field, defined in the .sdata region of the portable executable (PE) file, that has the specified name and binding attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field that has the specified name and binding attributes, or null if the field does not exist.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The field name. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of the BindingFlags bit flags used to control the search. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFields">
+      <MemberSignature Language="C#" Value="public override System.Reflection.FieldInfo[] GetFields (System.Reflection.BindingFlags bindingFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.FieldInfo[] GetFields(valuetype System.Reflection.BindingFlags bindingFlags) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bindingFlags" Type="System.Reflection.BindingFlags" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you emit dynamic assemblies, fields in the .sdata region of the portable executable (PE) file are defined by using the <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineInitializedData(System.String,System.Byte[],System.Reflection.FieldAttributes)" /> or <see cref="M:System.Reflection.Emit.ModuleBuilder.DefineUninitializedData(System.String,System.Int32,System.Reflection.FieldAttributes)" /> methods. </para>
+          <block subset="none" type="note">
+            <para>Module-level fields cannot be retrieved until after the <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" /> method has been called for the module.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all fields defined in the .sdata region of the portable executable (PE) file that match the specified binding flags.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of fields that match the specified flags; the array is empty if no such fields exist.</para>
+        </returns>
+        <param name="bindingFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of the BindingFlags bit flags used to control the search.</param>
+      </Docs>
     </Member>
     <Member MemberName="GetFieldToken">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.FieldToken GetFieldToken (System.Reflection.FieldInfo field);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.FieldToken GetFieldToken(class System.Reflection.FieldInfo field) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.FieldToken</ReturnType>
       </ReturnValue>
@@ -727,19 +1337,45 @@
         <Parameter Name="field" Type="System.Reflection.FieldInfo" />
       </Parameters>
       <Docs>
-        <param name="field">To be added: an object of type 'Reflection.FieldInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FieldToken'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token used to identify the specified field within this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the specified field within this module.</para>
+        </returns>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The field to get a token for. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="GetMethodImpl">
       <MemberSignature Language="C#" Value="protected override System.Reflection.MethodInfo GetMethodImpl (string name, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConvention, Type[] types, System.Reflection.ParameterModifier[] modifiers);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.Reflection.MethodInfo GetMethodImpl(string name, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, valuetype System.Reflection.CallingConventions callConvention, class System.Type[] types, valuetype System.Reflection.ParameterModifier[] modifiers) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -756,20 +1392,77 @@
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="callConvention">To be added.</param>
-        <param name="types">To be added.</param>
-        <param name="modifiers">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides the implementation for all overloads of the inherited <see cref="Overload:System.Reflection.Module.GetMethod" /> method. Use the inherited <see cref="Overload:System.Reflection.Module.GetMethod" /> method to get methods that have been declared at the module level. Module-level methods are defined in emitted code by using the <see cref="Overload:System.Reflection.Emit.ModuleBuilder.DefineGlobalMethod" /> method. </para>
+          <block subset="none" type="note">
+            <para>Module-level methods cannot be retrieved until after the <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" /> method has been called for the module.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the module-level method that matches the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A method that is defined at the module level, and matches the specified criteria; or null if such a method does not exist.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method name. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of BindingFlags bit flags used to control the search. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements Binder, containing properties related to this method. </param>
+        <param name="callConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention for the method. </param>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter types of the method. </param>
+        <param name="modifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of parameter modifiers used to make binding work with parameter signatures in which the types have been modified. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMethods">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MethodInfo[] GetMethods (System.Reflection.BindingFlags bindingFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.MethodInfo[] GetMethods(valuetype System.Reflection.BindingFlags bindingFlags) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bindingFlags" Type="System.Reflection.BindingFlags" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Module-level methods are defined in emitted code by using the <see cref="Overload:System.Reflection.Emit.ModuleBuilder.DefineGlobalMethod" /> method. </para>
+          <block subset="none" type="note">
+            <para>Module-level methods cannot be retrieved until after the <see cref="M:System.Reflection.Emit.ModuleBuilder.CreateGlobalFunctions" /> method has been called for the module.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the methods that have been defined at the module level for the current <see cref="T:System.Reflection.Emit.ModuleBuilder" />, and that match the specified binding flags.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the module-level methods that match <paramref name="bindingFlags" />.</para>
+        </returns>
+        <param name="bindingFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of BindingFlags bit flags used to control the search.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMethodToken">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.MethodToken GetMethodToken (System.Reflection.MethodInfo method);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.MethodToken GetMethodToken(class System.Reflection.MethodInfo method) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.MethodToken</ReturnType>
       </ReturnValue>
@@ -777,20 +1470,28 @@
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <param name="method">To be added: an object of type 'Reflection.MethodInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MethodToken'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token used to identify the specified method within this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the specified method within this module.</para>
+        </returns>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to get a token for. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSignatureToken">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.SignatureToken GetSignatureToken (System.Reflection.Emit.SignatureHelper sigHelper);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.SignatureToken GetSignatureToken(class System.Reflection.Emit.SignatureHelper sigHelper) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSignatureToken">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.SignatureToken GetSignatureToken (System.Reflection.Emit.SignatureHelper sigHelper);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureToken</ReturnType>
       </ReturnValue>
@@ -798,20 +1499,31 @@
         <Parameter Name="sigHelper" Type="System.Reflection.Emit.SignatureHelper" />
       </Parameters>
       <Docs>
-        <param name="sigHelper">To be added: an object of type 'SignatureHelper'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureToken'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method defines a metadata token for the signature described by <paramref name="sigHelper" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a token for the signature that is defined by the specified <see cref="T:System.Reflection.Emit.SignatureHelper" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token for the defined signature.</para>
+        </returns>
+        <param name="sigHelper">
+          <attribution license="cc4" from="Microsoft" modified="false" />The signature. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSignatureToken">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.SignatureToken GetSignatureToken (byte[] sigBytes, int sigLength);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.SignatureToken GetSignatureToken(unsigned int8[] sigBytes, int32 sigLength) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSignatureToken">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.SignatureToken GetSignatureToken (byte[] sigBytes, int sigLength);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.SignatureToken</ReturnType>
       </ReturnValue>
@@ -820,21 +1532,30 @@
         <Parameter Name="sigLength" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="sigBytes">To be added: an object of type 'byte []'</param>
-        <param name="sigLength">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SignatureToken'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a token for the signature that has the specified character array and signature length.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token for the specified signature.</para>
+        </returns>
+        <param name="sigBytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The signature binary large object (BLOB). </param>
+        <param name="sigLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the signature BLOB. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetStringConstant">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.StringToken GetStringConstant (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.StringToken GetStringConstant(string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetStringConstant">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.StringToken GetStringConstant (string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.StringToken</ReturnType>
       </ReturnValue>
@@ -842,50 +1563,56 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'StringToken'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="str" /> has already been defined, the existing token will be returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token of the given string in the module’s constant pool.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token of the string in the constant pool.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to add to the module's constant pool. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSymWriter">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolWriter GetSymWriter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Diagnostics.SymbolStore.ISymbolWriter GetSymWriter() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSymWriter">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolWriter GetSymWriter ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolWriter</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Diagnostics.SymbolStore.ISymbolWriter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the symbol writer associated with this dynamic module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The symbol writer associated with this dynamic module.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
       <MemberSignature Language="C#" Value="public override Type GetType (string className);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Type GetType(string className) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Type</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="className" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="className">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -896,10 +1623,46 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="className" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this method to generate array types, pointer types, or byref types. Use the <see cref="M:System.Reflection.Emit.TypeBuilder.MakeArrayType" />, <see cref="M:System.Reflection.Emit.TypeBuilder.MakePointerType" />, and <see cref="M:System.Reflection.Emit.TypeBuilder.MakeByRefType" /> methods instead.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the named type defined in the module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested type, if the type is defined in this module; otherwise, null.</para>
+        </returns>
+        <param name="className">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Type" /> to get. </param>
+      </Docs>
     </Member>
     <Member MemberName="GetType">
       <MemberSignature Language="C#" Value="public override Type GetType (string className, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Type GetType(string className, bool ignoreCase) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -908,12 +1671,31 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="className">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this method to generate array types, pointer types, or byref types. Use the <see cref="M:System.Reflection.Emit.TypeBuilder.MakeArrayType" />, <see cref="M:System.Reflection.Emit.TypeBuilder.MakePointerType" />, and <see cref="M:System.Reflection.Emit.TypeBuilder.MakeByRefType" /> methods instead.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the named type defined in the module, optionally ignoring the case of the type name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested type, if the type is defined in this module; otherwise, null.</para>
+        </returns>
+        <param name="className">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Type" /> to get. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, the search is case-insensitive. If false, the search is case-sensitive. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public override Type GetType (string className, bool throwOnError, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Type GetType(string className, bool throwOnError, bool ignoreCase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -924,10 +1706,6 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetType">
-      <MemberSignature Language="C#" Value="public override Type GetType (string className, bool throwOnError, bool ignoreCase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -937,45 +1715,71 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="className">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="throwOnError" /> parameter only affects what happens when the type is not found. It does not affect any other exceptions that might be thrown. In particular, if the type is found but cannot be loaded, <see cref="T:System.TypeLoadException" /> can be thrown even if <paramref name="throwOnError" /> is false.</para>
+          <para>Do not use this method to generate array types, pointer types, or byref types. Use the <see cref="M:System.Reflection.Emit.TypeBuilder.MakeArrayType" />, <see cref="M:System.Reflection.Emit.TypeBuilder.MakePointerType" />, and <see cref="M:System.Reflection.Emit.TypeBuilder.MakeByRefType" /> methods instead.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the named type defined in the module, optionally ignoring the case of the type name. Optionally throws an exception if the type is not found.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified type, if the type is declared in this module; otherwise, null.</para>
+        </returns>
+        <param name="className">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Type" /> to get. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if the type cannot be found; false to return null. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, the search is case-insensitive. If false, the search is case-sensitive. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetTypes">
+      <MemberSignature Language="C#" Value="public override Type[] GetTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Type[] GetTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetTypes">
-      <MemberSignature Language="C#" Value="public override Type[] GetTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ReflectionTypeLoadException is a special class load exception. The ReflectionTypeLoadException.Types property contains the array of classes that were defined in the module and loaded. This array can contain some null values. The ReflectionTypeLoadException.LoaderExceptions property is an array of exceptions that represent the exceptions that were thrown by the class loader. The holes in the class array line up with the exceptions.</para>
+          <para>For example, if the class initializers of one of the classes throws an exception while it is being loaded, a TargetInvocationException is stored in the corresponding element of the LoaderExceptions array.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the classes defined within this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the types defined within the module that is reflected by this instance.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetTypeToken">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeToken GetTypeToken (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.TypeToken GetTypeToken(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetTypeToken">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeToken GetTypeToken (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeToken</ReturnType>
       </ReturnValue>
@@ -983,20 +1787,31 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeToken'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful for clients of the <see cref="T:System.Reflection.Emit.MethodRental" /> class who want to directly modify the body of a method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token used to identify the type with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the type with the specified name within this module.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the class, including the namespace. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetTypeToken">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeToken GetTypeToken (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Reflection.Emit.TypeToken GetTypeToken(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetTypeToken">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.TypeToken GetTypeToken (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.TypeToken</ReturnType>
       </ReturnValue>
@@ -1004,19 +1819,55 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeToken'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tokens are used in Microsoft intermediate language (MSIL) instructions to identify objects. Tokens are relative to the module in which they are contained. For example, the token value for String is likely to be different from module to module. When GetTypeToken is invoked, a reference is added to the module. The reference becomes a permanent part of the module; multiple calls with the same argument have no additional effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the token used to identify the specified type within this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token used to identify the given type within this module.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type object that represents the class type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public override bool IsDefined (Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsDefined(class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified attribute type has been applied to this module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instances of <paramref name="attributeType" /> have been applied to this module; otherwise, false.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of custom attribute to test for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This argument is ignored for objects of this type.</param>
+      </Docs>
     </Member>
     <Member MemberName="IsResource">
       <MemberSignature Language="C#" Value="public override bool IsResource ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsResource() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1026,31 +1877,70 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the object is a resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is a resource; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsTransient">
       <MemberSignature Language="C#" Value="public bool IsTransient ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsTransient() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this dynamic module is transient.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this dynamic module is transient; otherwise, false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="MetadataToken">
+      <MemberSignature Language="C#" Value="public override int MetadataToken { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MetadataToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tokens obtained using this property can be passed to the unmanaged Reflection API. For more information, see <format type="text/html"><a href="0c5bb9de-0cf6-438d-ba47-134e6c775fb8">The Unmanaged Reflection API</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a token that identifies the current dynamic module in metadata.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ModuleVersionId">
       <MemberSignature Language="C#" Value="public override Guid ModuleVersionId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Guid ModuleVersionId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1059,13 +1949,23 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In unmanaged metadata, the GUID returned by the <see cref="P:System.Reflection.Module.ModuleVersionId" /> property is referred to as the mvid, and is stored in the GUID heap.</para>
+          <block subset="none" type="note">
+            <para>More information about metadata can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a universally unique identifier (UUID) that can be used to distinguish between two versions of a module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1074,13 +1974,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a dynamic module cannot be obtained until the module has been saved and reloaded from disk.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that indicates that this is an in-memory module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResolveField">
       <MemberSignature Language="C#" Value="public override System.Reflection.FieldInfo ResolveField (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.FieldInfo ResolveField(int32 metadataToken, class System.Type[] genericTypeArguments, class System.Type[] genericMethodArguments) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1094,16 +2001,33 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="metadataToken">To be added.</param>
-        <param name="genericTypeArguments">To be added.</param>
-        <param name="genericMethodArguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+          <para>For code that demonstrates token resolution using the generic context (that is, the generic type parameters of the generic type and/or the generic method in which the token is embedded) see the <see cref="M:System.Reflection.Module.ResolveMethod(System.Int32,System.Type[],System.Type[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the field identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field that is identified by the specified metadata token.</para>
+        </returns>
+        <param name="metadataToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a field in the module.</param>
+        <param name="genericTypeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the type where the token is in scope, or null if that type is not generic. </param>
+        <param name="genericMethodArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the method where the token is in scope, or null if that method is not generic.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveMember">
       <MemberSignature Language="C#" Value="public override System.Reflection.MemberInfo ResolveMember (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.MemberInfo ResolveMember(int32 metadataToken, class System.Type[] genericTypeArguments, class System.Type[] genericMethodArguments) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1117,16 +2041,33 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="metadataToken">To be added.</param>
-        <param name="genericTypeArguments">To be added.</param>
-        <param name="genericMethodArguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+          <para>For code that demonstrates token resolution using the generic context (that is, the generic type parameters of the generic type and/or the generic method in which the token is embedded) see the <see cref="M:System.Reflection.Module.ResolveMethod(System.Int32,System.Type[],System.Type[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type or member identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MemberInfo" /> object representing the type or member that is identified by the specified metadata token.</para>
+        </returns>
+        <param name="metadataToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type or member in the module.</param>
+        <param name="genericTypeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the type where the token is in scope, or null if that type is not generic. </param>
+        <param name="genericMethodArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the method where the token is in scope, or null if that method is not generic.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveMethod">
       <MemberSignature Language="C#" Value="public override System.Reflection.MethodBase ResolveMethod (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.MethodBase ResolveMethod(int32 metadataToken, class System.Type[] genericTypeArguments, class System.Type[] genericMethodArguments) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1140,16 +2081,33 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="metadataToken">To be added.</param>
-        <param name="genericTypeArguments">To be added.</param>
-        <param name="genericMethodArguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericMethodArguments" />. It is always safe to provide these arguments, even when they are not needed. </para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+          <para>For code that demonstrates token resolution using the generic context (that is, the generic type parameters of the generic type and/or the generic method in which the token is embedded) see the <see cref="M:System.Reflection.Module.ResolveMethod(System.Int32,System.Type[],System.Type[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the method or constructor identified by the specified metadata token, in the context defined by the specified generic type parameters. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodBase" /> object representing the method that is identified by the specified metadata token.</para>
+        </returns>
+        <param name="metadataToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a method or constructor in the module.</param>
+        <param name="genericTypeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the type where the token is in scope, or null if that type is not generic. </param>
+        <param name="genericMethodArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the method where the token is in scope, or null if that method is not generic.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveSignature">
       <MemberSignature Language="C#" Value="public override byte[] ResolveSignature (int metadataToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance unsigned int8[] ResolveSignature(int32 metadataToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1161,14 +2119,27 @@
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="metadataToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Information about metadata tokens and signatures can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the signature blob identified by a metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes representing the signature blob.</para>
+        </returns>
+        <param name="metadataToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a signature in the module.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveString">
       <MemberSignature Language="C#" Value="public override string ResolveString (int metadataToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ResolveString(int32 metadataToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1180,14 +2151,27 @@
         <Parameter Name="metadataToken" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="metadataToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the string identified by the specified metadata token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing a string value from the metadata string heap.</para>
+        </returns>
+        <param name="metadataToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a string in the string heap of the module.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveType">
       <MemberSignature Language="C#" Value="public override Type ResolveType (int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Type ResolveType(int32 metadataToken, class System.Type[] genericTypeArguments, class System.Type[] genericMethodArguments) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1201,16 +2185,33 @@
         <Parameter Name="genericMethodArguments" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="metadataToken">To be added.</param>
-        <param name="genericTypeArguments">To be added.</param>
-        <param name="genericMethodArguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Type.GetGenericArguments" /> method on the type where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. Use the <see cref="M:System.Reflection.MethodInfo.GetGenericArguments" /> method on the method where <paramref name="metadataToken" /> is in scope to obtain an array of generic type arguments for <paramref name="genericTypeArguments" />. It is always safe to provide these arguments, even when they are not needed.</para>
+          <block subset="none" type="note">
+            <para>Information about metadata tokens can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the ECMA Web site. </para>
+          </block>
+          <para>For code that demonstrates token resolution using the generic context (that is, the generic type parameters of the generic type and/or the generic method in which the token is embedded) see the <see cref="M:System.Reflection.Module.ResolveMethod(System.Int32,System.Type[],System.Type[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type identified by the specified metadata token, in the context defined by the specified generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the type that is identified by the specified metadata token.</para>
+        </returns>
+        <param name="metadataToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A metadata token that identifies a type in the module.</param>
+        <param name="genericTypeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the type where the token is in scope, or null if that type is not generic. </param>
+        <param name="genericMethodArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects representing the generic type arguments of the method where the token is in scope, or null if that method is not generic.</param>
       </Docs>
     </Member>
     <Member MemberName="ScopeName">
       <MemberSignature Language="C#" Value="public override string ScopeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ScopeName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1219,14 +2220,23 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that represents the name of the dynamic module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
       <MemberSignature Language="C#" Value="public void SetCustomAttribute (System.Reflection.Emit.CustomAttributeBuilder customBuilder);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCustomAttribute(class System.Reflection.Emit.CustomAttributeBuilder customBuilder) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1234,32 +2244,24 @@
         <Parameter Name="customBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
       </Parameters>
       <Docs>
-        <param name="customBuilder">To be added: an object of type 'CustomAttributeBuilder'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a custom attribute to this module by using a custom attribute builder.</para>
+        </summary>
+        <param name="customBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of a helper class that specifies the custom attribute to apply. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCustomAttribute">
       <MemberSignature Language="C#" Value="public void SetCustomAttribute (System.Reflection.ConstructorInfo con, byte[] binaryAttribute);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCustomAttribute(class System.Reflection.ConstructorInfo con, unsigned int8[] binaryAttribute) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
-        <Parameter Name="binaryAttribute" Type="System.Byte[]" />
-      </Parameters>
-      <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="binaryAttribute">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1270,10 +2272,40 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
+        <Parameter Name="binaryAttribute" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to format <paramref name="binaryAttribute" />, see the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a custom attribute to this module by using a specified binary large object (BLOB) that represents the attribute.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="binaryAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte BLOB representing the attribute. </param>
+      </Docs>
     </Member>
     <Member MemberName="SetSymCustomAttribute">
       <MemberSignature Language="C#" Value="public void SetSymCustomAttribute (string name, byte[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetSymCustomAttribute(string name, unsigned int8[] data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1282,20 +2314,32 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="data">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does nothing. </para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does nothing.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom attribute </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An opaque binary large object (BLOB) of bytes that represents the value of the custom attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SetUserEntryPoint">
+      <MemberSignature Language="C#" Value="public void SetUserEntryPoint (System.Reflection.MethodInfo entryPoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetUserEntryPoint(class System.Reflection.MethodInfo entryPoint) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetUserEntryPoint">
-      <MemberSignature Language="C#" Value="public void SetUserEntryPoint (System.Reflection.MethodInfo entryPoint);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1303,19 +2347,30 @@
         <Parameter Name="entryPoint" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <param name="entryPoint">To be added: an object of type 'Reflection.MethodInfo'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The compiler might generate a startup stub before calling user main. The startup stub will be the entry point. While the user main will be the user entry point so that debugger will not step into the compiler entry point.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the user entry point.</para>
+        </summary>
+        <param name="entryPoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user entry point. </param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _ModuleBuilder.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ModuleBuilder.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.GetIDsOfNames">
-      <MemberSignature Language="C#" Value="void _ModuleBuilder.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1335,15 +2390,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ModuleBuilder.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1353,21 +2409,32 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Reflection.Emit.ModuleBuilder" /> instance is cast to an <see cref="T:System.Runtime.InteropServices._ModuleBuilder" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Runtime.InteropServices._ModuleBuilder.GetTypeInfo(System.UInt32,System.UInt32,System.IntPtr)" />.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the requested type information object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ModuleBuilder.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1379,15 +2446,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.Invoke">
+      <MemberSignature Language="C#" Value="void _ModuleBuilder.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ModuleBuilder.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ModuleBuilder.Invoke">
-      <MemberSignature Language="C#" Value="void _ModuleBuilder.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1413,22 +2481,6 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._ModuleBuilder))</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyKeyFileAttribute" FullName="System.Reflection.AssemblyKeyFileAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AssemblyKeyFileAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AssemblyKeyFileAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,44 +23,75 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When building a strong-named assembly, the author must supply either this attribute or <see cref="T:System.Reflection.AssemblyKeyNameAttribute" />. If <see cref="T:System.Reflection.AssemblyDelaySignAttribute" /> has also been specified, it is likely that this file will only contain the public key.</para>
+      <para>An example of the syntax is [assembly:AssemblyKeyFileAttribute("myKey.snk")].</para>
+      <block subset="none" type="note">
+        <para>Since the path and file name persist, ensure that the string you use with AssemblyKeyFileAttribute does not contain sensitive information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the name of a file containing the key pair used to generate a strong name.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AssemblyKeyFileAttribute (string keyFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string keyFile) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="keyFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyFile">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There is no default path for the <see cref="T:System.Reflection.AssemblyKeyFileAttribute" /> constructor. The value set by the constructor is interpreted by the linker, or by vsprvsext, that invokes the linker. </para>
+          <para>The default setting for the <format type="text/html"><a href="b5382965-0053-47cf-b92f-862860275a01">Assembly Linker (Al.exe)</a></format> tool assumes that the key file is in the current directory. In vsprvslong, the Visual Basic and Visual C# compilers build and link to subdirectories of the project directory, so if you put the key file in the project directory the relative path might be "..\..\keyfile.snk" or "..\keyfile.snk" in Visual Basic, or "..\\..\\keyfile.snk" or "..\\keyfile.snk" in C#. For C#, this attribute can be set in the project properties.</para>
+          <block subset="none" type="note">
+            <para>Because the path and file name persist, ensure that the string you use with AssemblyKeyFileAttribute does not contain sensitive information.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the AssemblyKeyFileAttribute class with the name of the file containing the key pair to generate a strong name for the assembly being attributed.</para>
+        </summary>
+        <param name="keyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file containing the key pair. </param>
       </Docs>
+    </Member>
+    <Member MemberName="KeyFile">
+      <MemberSignature Language="C#" Value="public string KeyFile { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string KeyFile" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="KeyFile">
-      <MemberSignature Language="C#" Value="public string KeyFile { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Because the path and file name persist, ensure that the string you use with AssemblyKeyFileAttribute does not contain sensitive information.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the file containing the key pair used to generate a strong name for the attributed assembly.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

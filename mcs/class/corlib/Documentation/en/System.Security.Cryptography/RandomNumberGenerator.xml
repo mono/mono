@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RandomNumberGenerator" FullName="System.Security.Cryptography.RandomNumberGenerator">
-  <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class RandomNumberGenerator" />
+  <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class RandomNumberGenerator : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit RandomNumberGenerator extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,58 +13,85 @@
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
-  <Interfaces />
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Abtract base class for all implementations of cryptographic-quality random number generators (RNG).</summary>
     <remarks>
-      <para>The following example use the default random number generator (RNG) defined on the current computer to generate random data.</para>
-      <example>
-        <code lang="C#">
-byte[] buffer = new byte [16];
-RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-rng.GetBytes (buffer);
-  </code>
-      </example>
-      <para>All symmetric keys and initialization vectors (IV) are generated using the default RNG. Asymmetric key pairs also use the default RNG to create big integers.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Cryptographic random number generators create cryptographically strong random values.</para>
+      <para>Application code does not directly use this class. This abstract class is provided as the base class for all cryptographic random number generators.</para>
+      <para>For an implementation of a cryptographic random number generator, use the derived class <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" />.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract class from which all implementations of cryptographic random number generators derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected RandomNumberGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code will create a new instance of a derived class. For an implementation of a cryptographic random number generator, use the derived class <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Cryptography.RandomNumberGenerator" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RandomNumberGenerator Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.RandomNumberGenerator Create() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.RandomNumberGenerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Create an instance of the default random number generation implementation.</summary>
-        <returns>To be added: an object of type 'RandomNumberGenerator'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates an instance of the default implementation of a cryptographic random number generator that can be used to generate random data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of a cryptographic random number generator.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RandomNumberGenerator Create (string rngName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.RandomNumberGenerator Create(string rngName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RandomNumberGenerator Create (string rngName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.RandomNumberGenerator</ReturnType>
       </ReturnValue>
@@ -70,20 +99,81 @@ rng.GetBytes (buffer);
         <Parameter Name="rngName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="rngName">To be added: an object of type 'string'</param>
-        <summary>Create an instance of the specified random number generator implementation.</summary>
-        <returns>To be added: an object of type 'RandomNumberGenerator'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates an instance of the specified implementation of a cryptographic random number generator.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of a cryptographic random number generator.</para>
+        </returns>
+        <param name="rngName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the random number generator implementation to use. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" />. The Dispose method leaves the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, releases all resources used by the current instance of the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. Finalize invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.RandomNumberGenerator" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.RandomNumberGenerator" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+      </Docs>
     </Member>
     <Member MemberName="GetBytes">
       <MemberSignature Language="C#" Value="public abstract void GetBytes (byte[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetBytes(unsigned int8[] data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -91,19 +181,27 @@ rng.GetBytes (buffer);
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="data">The buffer to be filled with random bytes.</param>
-        <summary>Fill the supplied buffer with random bytes.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The length of the byte array determines how many random bytes are produced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, fills an array of bytes with a cryptographically strong random sequence of values.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to fill with cryptographically strong random bytes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetNonZeroBytes">
-      <MemberSignature Language="C#" Value="public abstract void GetNonZeroBytes (byte[] data);" />
+      <MemberSignature Language="C#" Value="public virtual void GetNonZeroBytes (byte[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetNonZeroBytes(unsigned int8[] data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -111,20 +209,17 @@ rng.GetBytes (buffer);
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="data">The buffer to be filled with random bytes. </param>
-        <summary>Fill the supplied buffer with random bytes excluding zeros (0x00). </summary>
-        <remarks>Some cryptographic functions requires random that do not contain zeros. However this restriction do not apply to most application code so this method shouldn't be used.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The length of the byte array determines how many random bytes are produced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, fills an array of bytes with a cryptographically strong random sequence of nonzero values.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to fill with cryptographically strong random nonzero bytes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

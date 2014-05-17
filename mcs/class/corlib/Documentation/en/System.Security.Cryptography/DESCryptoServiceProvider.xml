@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DESCryptoServiceProvider" FullName="System.Security.Cryptography.DESCryptoServiceProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class DESCryptoServiceProvider : System.Security.Cryptography.DES" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DESCryptoServiceProvider extends System.Security.Cryptography.DES" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,18 +15,34 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Managed implementation of the Data Encryption Standard (DES), a 64 bits (56 bits effective) symmetric cipher.</summary>
-    <remarks>In Mono this class is completely implemented in managed code.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This algorithm supports a key length of 64 bits.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a wrapper object to access the cryptographic service provider (CSP) version of the Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) algorithm. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DESCryptoServiceProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>
           <para>
 In general you should not use this constructor directly - unless you require a special service from the class that isn't available from the <see cref="T:System.Security.Cryptography.DES" /> base class. The prefered way to create a DES instance is to use <see cref="T:System.Security.Cryptography.DES" />.<see cref="M:System.Security.Cryptography.DES.Create" /> (). This will allow the system owners to replace the DES implementation if required (e.g. buggy implementation or hardware acceleration).
@@ -39,16 +57,21 @@ DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
   </code>
           </example>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.DESCryptoServiceProvider" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDecryptor">
       <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.Cryptography.ICryptoTransform CreateDecryptor(unsigned int8[] rgbKey, unsigned int8[] rgbIV) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
       </ReturnValue>
@@ -57,21 +80,33 @@ DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">Secret key to be used for the decryption transform.</param>
-        <param name="rgbIV">Initialization Vector (IV) to be used by the decryption transform.</param>
-        <summary>Creates a symmetric DES decryptor transform.</summary>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to decrypt data.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method decrypts an encrypted message that was created using the <see cref="M:System.Security.Cryptography.DESCryptoServiceProvider.CreateEncryptor(System.Byte[],System.Byte[])" /> overload with the same parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) decryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.DES" /> decryptor object.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
+        <param name="rgbIV">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialization vector to use for the symmetric algorithm. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateEncryptor">
       <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.Cryptography.ICryptoTransform CreateEncryptor(unsigned int8[] rgbKey, unsigned int8[] rgbIV) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
       </ReturnValue>
@@ -80,75 +115,72 @@ DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">Secret key to be used for the encryption transform.</param>
-        <param name="rgbIV">Initialization Vector (IV) to be used by the encryption transform.</param>
-        <summary>Creates a symmetric DES encryptor transform. </summary>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to encrypt data.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.DESCryptoServiceProvider.CreateDecryptor(System.Byte[],System.Byte[])" /> overload with the same parameters to decrypt the result of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) encryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.DES" /> encryptor object.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
+        <param name="rgbIV">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialization vector to use for the symmetric algorithm. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateIV">
       <MemberSignature Language="C#" Value="public override void GenerateIV ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GenerateIV() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Generate a new random Initialization Vector (IV) required for some block cipher modes.</summary>
-        <remarks>
-          <para>
-The IV is used for most <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Mode" /> of operation (except <see cref="E:System.Security.Cryptography.CipherMode.ECB" />). The value can be made public and must be available when decrypting the data.
-</para>
-          <para>
-IMPORTANT: If you reuse the same DES object for multiple encryption using the same key it is CAPITAL that you use a different IV each time.
-</para>
-          <example>
-            <code lang="C#">
-DES des = DES.Create ();
-des.Key = new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
-foreach (string file in files) {
-	// each file MUST be encrypted with a different IV
-	des.GenerateIV ();
-	// encrypt the specified file with our DES key
-	EncryptFile (file, des);
-}
-  </code>
-          </example>
-        </remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to generate a random <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" /> when none is specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />) to use for the algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GenerateKey">
       <MemberSignature Language="C#" Value="public override void GenerateKey ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GenerateKey() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Generate a new 64 bits (56 bits effective) DES key.</summary>
-        <remarks>This method will never generate a weak or semi-weak key.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to generate a random key when none is specified. This method will never return a weak key (see <see cref="M:System.Security.Cryptography.DES.IsWeakKey(System.Byte[])" />) or a semi-weak key (see <see cref="M:System.Security.Cryptography.DES.IsSemiWeakKey(System.Byte[])" />).</para>
+          <para>This algorithm supports a key length of 64 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) to be used for the algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

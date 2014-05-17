@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="OperationFormatStyle" FullName="System.ServiceModel.OperationFormatStyle">
+  <TypeSignature Language="C#" Value="public enum OperationFormatStyle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OperationFormatStyle extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>By default, the message body is formatted with the Style set to <see cref="F:System.ServiceModel.OperationFormatStyle.Document" />. The style RPC means that the WSDL representation of messages exchanged for an operation contains parameters as if it were a remote procedure call. The following is an example.</para>
+      <code>  &lt;wsdl:message name="IUseAndStyleCalculator_Add_InputMessage"&gt;
+    &lt;wsdl:part name="n1" type="xsd:double"/&gt;
+    &lt;wsdl:part name="n2" type="xsd:double"/&gt;
+  &lt;/wsdl:message&gt;
+</code>
+      <para>Setting the style to Document means that the WSDL representation contains a single element that represents the document that is exchanged for an operation as shown in the following example.</para>
+      <code>  &lt;wsdl:message name="IUseAndStyleCalculator_Add_InputMessage"&gt;
+    &lt;wsdl:part name="parameters" element="tns:Add"/&gt;
+  &lt;/wsdl:message&gt;</code>
+      <para>Use the <see cref="T:System.ServiceModel.XmlSerializerFormatAttribute" /> to set this value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the SOAP style that determines how the WSDL metadata for the service is formatted.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Document">
+      <MemberSignature Language="C#" Value="Document" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.OperationFormatStyle Document = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.OperationFormatStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the WSDL representation to contain a single element that represents the document that is exchanged for the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Rpc">
+      <MemberSignature Language="C#" Value="Rpc" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.OperationFormatStyle Rpc = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.OperationFormatStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the WSDL representation of messages exchanged for an operation and contains parameters as if it were a remote procedure call.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

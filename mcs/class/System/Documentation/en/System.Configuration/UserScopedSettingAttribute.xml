@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UserScopedSettingAttribute" FullName="System.Configuration.UserScopedSettingAttribute">
   <TypeSignature Language="C#" Value="public sealed class UserScopedSettingAttribute : System.Configuration.SettingAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit UserScopedSettingAttribute extends System.Configuration.SettingAttribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Configuration.SettingAttribute</BaseTypeName>
@@ -14,23 +17,39 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Application settings properties have a scope that is based either at the application or the user level. As the categories imply, application-scoped properties present uniform values to all users of the application, whereas user-scoped properties have dedicated values for each user of the application.</para>
+      <para>The <see cref="T:System.Configuration.UserScopedSettingAttribute" /> indicates that a property should be considered a user level setting, and that appropriate storage decisions should be made accordingly by the settings provider. </para>
+      <para>A scope attribute is required for each application settings property. If a property is not applied with either a <see cref="T:System.Configuration.ApplicationScopedSettingAttribute" /> or <see cref="T:System.Configuration.UserScopedSettingAttribute" />, the property is ignored by the settings provider—it is not serialized. It is invalid, however, to apply both attributes to the same settings property. Such an attempt will cause a <see cref="T:System.Configuration.ConfigurationErrorsException" /> to be thrown.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that an application settings group or property contains distinct values for each user of an application. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UserScopedSettingAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each application settings property must be applied with a single scope attribute in order for it to be recognized and serialized by the settings provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.UserScopedSettingAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

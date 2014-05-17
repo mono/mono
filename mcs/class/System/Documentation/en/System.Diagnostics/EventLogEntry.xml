@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventLogEntry" FullName="System.Diagnostics.EventLogEntry">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class EventLogEntry : System.ComponentModel.Component, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit EventLogEntry extends System.ComponentModel.Component implements class System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -25,97 +28,141 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You usually will not create instances of <see cref="T:System.Diagnostics.EventLogEntry" /> directly when working with the <see cref="T:System.Diagnostics.EventLog" /> class. The <see cref="P:System.Diagnostics.EventLog.Entries" /> member of the <see cref="T:System.Diagnostics.EventLog" /> class contains a collection of <see cref="T:System.Diagnostics.EventLogEntry" /> instances, which you iterate over when reading by using the <see cref="P:System.Diagnostics.EventLogEntryCollection.Item(System.Int32)" /> class index member.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a single record in the event log. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Category">
       <MemberSignature Language="C#" Value="public string Category { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Category" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The category of this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each application (event source) can define its own numbered categories and the text strings to which they are mapped. The Event Viewer can use the category to filter events in the log.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text associated with the <see cref="P:System.Diagnostics.EventLogEntry.CategoryNumber" /> property for this entry.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CategoryNumber">
       <MemberSignature Language="C#" Value="public short CategoryNumber { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 CategoryNumber" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int16</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'short'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("An ID for the category of this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'short'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each application (event source) can define its own numbered categories and the text strings to which they are mapped. The Event Viewer can use the category to filter events in the log. The categories must be numbered consecutively beginning with the number 1. The category number is specified by the <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> property. The Event Viewer can display the category as a numeric value, or it can use the category as a resource identifier to display a localized category string. For more information, see <see cref="T:System.Diagnostics.EventInstance" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the category number of the event log entry.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Data">
       <MemberSignature Language="C#" Value="public byte[] Data { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Data" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'byte []'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Binary data associated with this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'byte []'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Getting this property creates an array that holds a copy of the entry's event-specific binary data, which the Event Viewer displays in combined hexadecimal and text format. Event-specific data is sometimes used to store information that the application will process independently of the Event Viewer, for example, to make reports from the log file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the binary data associated with the entry.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="EntryType">
       <MemberSignature Language="C#" Value="public System.Diagnostics.EventLogEntryType EntryType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.EventLogEntryType EntryType" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Diagnostics.EventLogEntryType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'EventLogEntryType'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The type of this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.EventLogEntryType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'EventLogEntryType'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All event types have well-defined common data and can optionally include event-specific data. Each event is of a single type, which the application indicates when it reports the event. The Event Viewer uses the event type to determine which icon to display in the list view of the event log.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the event type of this entry.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (System.Diagnostics.EventLogEntry otherEntry);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(class System.Diagnostics.EventLogEntry otherEntry) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -123,30 +170,30 @@
         <Parameter Name="otherEntry" Type="System.Diagnostics.EventLogEntry" />
       </Parameters>
       <Docs>
-        <param name="otherEntry">To be added: an object of type 'EventLogEntry'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method performs a byte-by-byte comparison between the two objects. It does not determine whether the two <see cref="T:System.Diagnostics.EventLogEntry" /> instances refer to the same object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a comparison between two event log entries.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Diagnostics.EventLogEntry" /> objects are identical; otherwise, false.</para>
+        </returns>
+        <param name="otherEntry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.EventLogEntry" /> to compare. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EventID">
       <MemberSignature Language="C#" Value="public int EventID { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 EventID" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -156,33 +203,58 @@
           <AttributeName>System.Obsolete("Use InstanceId")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Index">
-      <MemberSignature Language="C#" Value="public int Index { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value represents the event identifier for the entry in the event log, with the top two bits masked off. The <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> property for an event log entry represents the full 32-bit resource identifier for the event in the message resource file for the event source. Two event log entries from the same source can have matching <see cref="P:System.Diagnostics.EventLogEntry.EventID" /> values, but have different <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> values due to differences in the top two bits of the event identifier.</para>
+          <para>If the application wrote the event entry using one of the <see cref="Overload:System.Diagnostics.EventLog.WriteEntry" /> methods, the <see cref="P:System.Diagnostics.EventLogEntry.EventID" /> property matches the optional <paramref name="eventId" /> parameter. If the application wrote the event using <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> or the Win32 API ReportEvent, the <see cref="P:System.Diagnostics.EventLogEntry.EventID" /> property matches the resource identifier for the event, with the top two bits masked off.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application-specific event identifier for the current event entry.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Index">
+      <MemberSignature Language="C#" Value="public int Index { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Index" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Sequence numer of this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This number is not necessarily zero-based.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of this entry in the event log.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="InstanceId">
       <MemberSignature Language="C#" Value="public long InstanceId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 InstanceId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -196,105 +268,157 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> property uniquely identifies an event entry for a configured event source. The <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> for an event log entry represents the full 32-bit resource identifier for the event in the message resource file for the event source. The <see cref="P:System.Diagnostics.EventLogEntry.EventID" /> property equals the <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> with the top two bits masked off. Two event log entries from the same source can have matching <see cref="P:System.Diagnostics.EventLogEntry.EventID" /> values, but have different <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> values due to differences in the top two bits of the resource identifier.</para>
+          <para>If the application wrote the event entry using one of the <see cref="Overload:System.Diagnostics.EventLog.WriteEntry" /> methods, the <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> property matches the optional <paramref name="eventId" /> parameter. If the application wrote the event using <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" />, the <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> property matches the resource identifier specified in the <see cref="P:System.Diagnostics.EventInstance.InstanceId" /> of the <paramref name="instance" /> parameter. If the application wrote the event using the Win32 API ReportEvent, the <see cref="P:System.Diagnostics.EventLogEntry.InstanceId" /> property matches the resource identifier specified in the <paramref name="dwEventID" /> parameter.</para>
+          <para>For details about defining event messages and building event log resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>. For details about event log identifiers, see the "Event Identifiers" topic in the Platform SDK.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the resource identifier that designates the message text of the event entry.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MachineName">
       <MemberSignature Language="C#" Value="public string MachineName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MachineName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The Computer on which this event entry occured.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Message">
-      <MemberSignature Language="C#" Value="public string Message { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the computer on which this entry was generated.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public string Message { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Message" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("The message of this event entry.")</AttributeName>
+          <AttributeName>System.ComponentModel.Editor("System.ComponentModel.Design.BinaryEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.Editor("System.ComponentModel.Design.BinaryEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+          <AttributeName>System.Diagnostics.MonitoringDescription("The message of this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Getting this property opens the registry to determine the file name of the .dll file that contains the localized text. If you receive a registry error when testing your source code, verify that the .dll file exists on the computer. If insertion strings are included in the message, catch errors in their allocation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the localized message associated with this event entry.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ReplacementStrings">
       <MemberSignature Language="C#" Value="public string[] ReplacementStrings { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] ReplacementStrings" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string []'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Application strings for this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string []'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property retrieves only the replacement strings for the entry. To retrieve the full message, read the <see cref="P:System.Diagnostics.EventLogEntry.Message" /> property. </para>
+          <para>The <see cref="P:System.Diagnostics.EventLogEntry.ReplacementStrings" /> property contains the localized versions of replacement strings that are used in the event log entry. If you provide resource files that contain strings in each target language for your application, you can emit event log messages in the language that is used on that computer. To do that, create an instance of the <see cref="T:System.Resources.ResourceManager" /> class for the resource assembly that contains your replacement strings. The first parameter of the <see cref="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly)" /> constructor identifies the resource assembly to be used. Use the <see cref="M:System.Resources.ResourceManager.GetString(System.String)" /> method of that instance to supply localized messages for log events. The following code automatically sets the message to the language for the current culture.</para>
+          <code>ResourceManager LocRM = new ResourceManager("ReplacementStrings.TestStrings", 
+      typeof(Program).Assembly);
+EventLog e1 = new EventLog("LocTest", "MyMachine", "LocTest");
+// Get the string associated with the current culture.
+e1.WriteEntry(LocRM.GetString("strMessage"),
+   EventLogEntryType.Information);</code>
+          <para>For information about how to create localized resource files, see <format type="text/html"><a href="9a96220d-a19b-4de0-9f48-01e5d82679e5">Walkthrough: Localizing Windows Forms</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the replacement strings associated with the event log entry.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Source">
       <MemberSignature Language="C#" Value="public string Source { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Source" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The source application of this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event source indicates what logged the event. It is often the name of the application or the name of a subcomponent of the application if the application is large. Applications and services usually write to (and therefore are sources for) the Application log or a custom log. Device drivers usually write to the System log.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the application that generated this event.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
       <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.Serialization.ISerializable.GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Needs serialization support")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -303,74 +427,104 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization. </param>
       </Docs>
     </Member>
     <Member MemberName="TimeGenerated">
       <MemberSignature Language="C#" Value="public DateTime TimeGenerated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime TimeGenerated" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("Generation time of this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="TimeWritten">
-      <MemberSignature Language="C#" Value="public DateTime TimeWritten { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member holds the time that an event was generated. This might not be the same as the time when the event information was written to the event log. For the latter, read the <see cref="P:System.Diagnostics.EventLogEntry.TimeWritten" /> property.</para>
+          <para>There is usually a lag between the time that an event is generated and the time it is logged. It is more important to know when the event was generated, unless you want to see if there is a significant lag in logging. That can happen if your log files are on a different server and you are experiencing a bottleneck.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local time at which this event was generated.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="TimeWritten">
+      <MemberSignature Language="C#" Value="public DateTime TimeWritten { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime TimeWritten" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The time at which this event entry was written to the logfile.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'DateTime'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member holds the time that an event's information is written to the event log. This might not be the same time as when the event was generated. For the latter, read the <see cref="P:System.Diagnostics.EventLogEntry.TimeGenerated" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local time at which this event was written to the log.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="UserName">
       <MemberSignature Language="C#" Value="public string UserName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string UserName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("The name of a user associated with this event entry.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is often blank for events in logs other than the Security log.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the user who is responsible for this event.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

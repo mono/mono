@@ -22,7 +22,7 @@ VERSION = 0.93
 
 Q=$(if $(V),,@)
 # echo -e "\\t" does not work on some systems, so use 5 spaces
-Q_MCS=$(if $(V),,@echo "MCS     [$(PROFILE)] $(notdir $(@))";)
+Q_MCS=$(if $(V),,@echo "MCS     [$(intermediate)$(PROFILE)] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
@@ -81,10 +81,14 @@ include $(topdir)/build/config-default.make
 
 ifndef PLATFORM
 ifeq ($(OS),Windows_NT)
+ifneq ($(V),)
 $(info *** Assuming PLATFORM is 'win32'.)
+endif
 PLATFORM = win32
 else
+ifneq ($(V),)
 $(info *** Assuming PLATFORM is 'linux'.)
+endif
 PLATFORM = linux
 endif
 endif

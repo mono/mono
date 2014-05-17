@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IDynamicMetaObjectProvider" FullName="System.Dynamic.IDynamicMetaObjectProvider">
+  <TypeSignature Language="C#" Value="public interface IDynamicMetaObjectProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDynamicMetaObjectProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Objects that want to participate in the binding process should implement an IDynamicMetaObjectProvider interface, and implement <see cref="M:System.Dynamic.IDynamicMetaObjectProvider.GetMetaObject(System.Linq.Expressions.Expression)" /> to return a <see cref="T:System.Dynamic.DynamicMetaObject" />.</para>
+      <para>For more information, see documentation on the <see cref="http://go.microsoft.com/fwlink/?LinkId=141028">CodePlex</see> Web site and the MSDN article <see cref="http://go.microsoft.com/fwlink/?LinkID=198161">Implementing Dynamic Interfaces</see>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a dynamic object, that can have its operations bound at runtime.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetMetaObject">
+      <MemberSignature Language="C#" Value="public System.Dynamic.DynamicMetaObject GetMetaObject (System.Linq.Expressions.Expression parameter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Dynamic.DynamicMetaObject GetMetaObject(class System.Linq.Expressions.Expression parameter) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.DynamicMetaObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameter" Type="System.Linq.Expressions.Expression" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Dynamic.DynamicMetaObject" /> responsible for binding operations performed on this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> to bind this object.</para>
+        </returns>
+        <param name="parameter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression tree representation of the runtime value.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,34 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GenericUriParser" FullName="System.GenericUriParser">
   <TypeSignature Language="C#" Value="public class GenericUriParser : UriParser" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit GenericUriParser extends System.UriParser" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.UriParser</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you want to create a parser based on a well-known scheme, use <see cref="T:System.HttpStyleUriParser" />, <see cref="T:System.FtpStyleUriParser" />, <see cref="T:System.GopherStyleUriParser" />, <see cref="T:System.LdapStyleUriParser" />, or <see cref="T:System.NewsStyleUriParser" />.</para>
+      <para>When creating a customizable parser, the behavior of the parser is specified by passing a bitwise combination of the values available in the <see cref="T:System.GenericUriParserOptions" /> enumeration to the <see cref="T:System.GenericUriParser" /> constructor.</para>
+      <para>The existing <see cref="T:System.Uri" /> class has been extended to provide support for International Resource Identifiers (IRI) and Internationalized Domain Names (IDN). Current users will not see any change from the .NET Framework 2.0 behavior unless they specifically enable IRI. This ensures application compatibility with prior versions of the .NET Framework.</para>
+      <para>All parsers derived from <see cref="T:System.GenericUriParser" /> will not gain IRI and IDN support by default. The <see cref="F:System.GenericUriParserOptions.Default" /> option does not include IRI and IDN support. Two new values are added to the <see cref="T:System.GenericUriParserOptions" /> enumeration to indicate if a custom parser supports IRI and IDN.</para>
+      <para>For more information on IRI and IDN support, see the Remarks section for the <see cref="T:System.Uri" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A customizable parser for a hierarchical URI.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public GenericUriParser (GenericUriParserOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.GenericUriParserOptions options) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="options" Type="System.GenericUriParserOptions" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor as an argument to <see cref="M:System.UriParser.Register(System.UriParser,System.String,System.Int32)" /> </para>
+          <para>If you want to create a parser based on a well-known scheme, use <see cref="T:System.HttpStyleUriParser" />, <see cref="T:System.FtpStyleUriParser" />, <see cref="T:System.GopherStyleUriParser" />, <see cref="T:System.LdapStyleUriParser" />, or <see cref="T:System.NewsStyleUriParser" />.</para>
+          <para>When creating a customizable parser, the behavior of the parser is specified by passing a bitwise combination of the values available in the <see cref="T:System.GenericUriParserOptions" /> enumeration to the <see cref="T:System.GenericUriParser" /> constructor.</para>
+          <para>The existing <see cref="T:System.Uri" /> class has been extended to provide support for International Resource Identifiers (IRI) and Internationalized Domain Names (IDN). Current users will not see any change from the .NET Framework 2.0 behavior unless they specifically enable IRI. This ensures application compatibility with prior versions of the .NET Framework.</para>
+          <para>All parsers derived from <see cref="T:System.GenericUriParser" /> will not gain IRI and IDN support by default. The <see cref="F:System.GenericUriParserOptions.Default" /> option does not include IRI and IDN support. Two new values are added to the <see cref="T:System.GenericUriParserOptions" /> enumeration to indicate if a custom parser supports IRI and IDN.</para>
+          <para>The <see cref="F:System.GenericUriParserOptions.IriParsing" /> type indicates the parser supports the parsing rules specified in RFC 3987 for International Resource Identifiers (IRI). Whether IRI is used is dictated by configuration values. </para>
+          <para>The <see cref="F:System.GenericUriParserOptions.Idn" /> type indicates the parser supports Internationalized Domain Name (IDN) parsing (IDN) of host names. Whether IDN is used is dictated by configuration values. </para>
+          <para>The configuration setting for the <see cref="T:System.Configuration.IdnElement" /> is indirectly controlled by the <see cref="T:System.Configuration.IriParsingElement" /> configuration setting that controls IRI processing in the <see cref="T:System.Uri" /> class. IRI processing must be enabled for IDN processing to be possible. If IRI processing is disabled, then IDN processing will be set to the default setting where the .NET Framework 2.0 behavior is used for compatibility and IDN names are not used.</para>
+          <para>The Internationalized Domain Name (IDN) attribute only controls IDN processing. All other IRI processing (character normalization, for example) is performed by default.</para>
+          <para>For more information on IRI and IDN support, see the Remarks section for the <see cref="T:System.Uri" /> class.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Create a customizable parser for a hierarchical URI.</para>
+        </summary>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specify the options for this <see cref="T:System.GenericUriParser" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

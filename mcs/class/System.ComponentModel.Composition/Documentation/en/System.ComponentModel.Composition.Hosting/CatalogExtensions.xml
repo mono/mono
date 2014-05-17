@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CatalogExtensions" FullName="System.ComponentModel.Composition.Hosting.CatalogExtensions">
+  <TypeSignature Language="C#" Value="public static class CatalogExtensions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CatalogExtensions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides extension methods for constructing composition services.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateCompositionService">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Hosting.CompositionService CreateCompositionService (this System.ComponentModel.Composition.Primitives.ComposablePartCatalog composablePartCatalog);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Hosting.CompositionService CreateCompositionService(class System.ComponentModel.Composition.Primitives.ComposablePartCatalog composablePartCatalog) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Hosting.CompositionService</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="composablePartCatalog" Type="System.ComponentModel.Composition.Primitives.ComposablePartCatalog" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new composition service by using the specified catalog as a source for exports.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new composition service.</para>
+        </returns>
+        <param name="composablePartCatalog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The catalog that will provide exports.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

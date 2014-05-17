@@ -1,0 +1,1203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageHeaders" FullName="System.ServiceModel.Channels.MessageHeaders">
+  <TypeSignature Language="C#" Value="public sealed class MessageHeaders : System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Channels.MessageHeaderInfo&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MessageHeaders extends System.Object implements class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Channels.MessageHeaderInfo&gt;, class System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Channels.MessageHeaderInfo&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A message header contains optional metadata that describe a message encapsulated by the <see cref="T:System.ServiceModel.Channels.Message" /> class.  </para>
+      <para>A <see cref="T:System.ServiceModel.Channels.Message" /> can have zero or more headers that are used as an extension mechanism to pass information in messages that are application-specific. You can use <see cref="P:System.ServiceModel.Channels.Message.Headers" /> to add message headers to a message by calling the <see cref="M:System.ServiceModel.Channels.MessageHeaders.Add(System.ServiceModel.Channels.MessageHeader)" /> method. </para>
+      <para>indigo1 provides a number of predefined message headers: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Header Name </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>To </para>
+          </term>
+          <description>
+            <para>Contains the role that the message is targeting. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Action </para>
+          </term>
+          <description>
+            <para>Provides a description of how the message should be processed. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>FaultTo </para>
+          </term>
+          <description>
+            <para>Contains the address of the node to which faults should be sent. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>From </para>
+          </term>
+          <description>
+            <para>Contains the address of the node that sent the message. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Request </para>
+          </term>
+          <description>
+            <para>Indicates whether the message is a request. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>MessageID </para>
+          </term>
+          <description>
+            <para>Contains the unique ID of the message. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>RelatesTo </para>
+          </term>
+          <description>
+            <para>Contains the IDs of messages that are related to this message. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ReplyTo </para>
+          </term>
+          <description>
+            <para>Contains the address of the node to which a reply should be sent for a request. </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of message headers for a message. This class cannot be inherited.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageHeaders (System.ServiceModel.Channels.MessageHeaders headers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.MessageHeaders headers) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="headers" Type="System.ServiceModel.Channels.MessageHeaders" />
+      </Parameters>
+      <Docs>
+        <param name="headers">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageHeaders" /> class with the specified collection of message headers.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageHeaders (System.ServiceModel.Channels.MessageVersion version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.MessageVersion version) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageHeaders" /> class with the specified message version.</para>
+        </summary>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SOAP version of the message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageHeaders (System.ServiceModel.Channels.MessageVersion version, int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.MessageVersion version, int32 capacity) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="capacity">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageHeaders" /> class with the specified message version and size.</para>
+        </summary>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SOAP version of the message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public string Action { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Action" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the &lt;Action&gt; element described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=96163">WS-Addressing specification</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a description of how the message should be processed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (System.ServiceModel.Channels.MessageHeader header);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.ServiceModel.Channels.MessageHeader header) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.ServiceModel.Channels.MessageHeader" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified message header to the collection.</para>
+        </summary>
+        <param name="header">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message header to be added to the collection.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the headers from the collection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyHeaderFrom">
+      <MemberSignature Language="C#" Value="public void CopyHeaderFrom (System.ServiceModel.Channels.Message m, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyHeaderFrom(class System.ServiceModel.Channels.Message m, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="m" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="m">To be added.</param>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the header content located at the specified index from the specified message to this instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyHeaderFrom">
+      <MemberSignature Language="C#" Value="public void CopyHeaderFrom (System.ServiceModel.Channels.MessageHeaders headers, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyHeaderFrom(class System.ServiceModel.Channels.MessageHeaders headers, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headers" Type="System.ServiceModel.Channels.MessageHeaders" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="headers">To be added.</param>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the header content located at the specified index from the specified message header collection to this instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyHeadersFrom">
+      <MemberSignature Language="C#" Value="public void CopyHeadersFrom (System.ServiceModel.Channels.Message m);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyHeadersFrom(class System.ServiceModel.Channels.Message m) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="m" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <param name="m">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the content of all the headers from the specified message to this instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyHeadersFrom">
+      <MemberSignature Language="C#" Value="public void CopyHeadersFrom (System.ServiceModel.Channels.MessageHeaders headers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyHeadersFrom(class System.ServiceModel.Channels.MessageHeaders headers) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="headers" Type="System.ServiceModel.Channels.MessageHeaders" />
+      </Parameters>
+      <Docs>
+        <param name="headers">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the content from the specified header collection to this instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (System.ServiceModel.Channels.MessageHeaderInfo[] dst, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(class System.ServiceModel.Channels.MessageHeaderInfo[] dst, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dst" Type="System.ServiceModel.Channels.MessageHeaderInfo[]" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="dst">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the headers from this collection to an array, starting at a particular index of the array. </para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in the array at which copying begins. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of message headers in this collection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FaultTo">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointAddress FaultTo { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointAddress FaultTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the &lt;FaultTo&gt; element described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=96163">WS-Addressing specification</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the address of the node to which faults should be sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FindHeader">
+      <MemberSignature Language="C#" Value="public int FindHeader (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindHeader(string name, string ns) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a message header in this collection by the specified LocalName and namespace URI of the header element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the message header in this collection if found or -1 if the header specified does not exist.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FindHeader">
+      <MemberSignature Language="C#" Value="public int FindHeader (string name, string ns, string[] actors);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindHeader(string name, string ns, string[] actors) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="actors" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a message header in this collection by the specified LocalName, namespace URI and actors of the header element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the message header in this collection if found, or -1 if the header specified does not exist.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
+        <param name="actors">
+          <attribution license="cc4" from="Microsoft" modified="false" />The targeted recipient of the message header.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="From">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointAddress From { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointAddress From" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the &lt;From&gt; element described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=96163">WS-Addressing specification</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the address of the node that sent the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;System.ServiceModel.Channels.MessageHeaderInfo&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class System.ServiceModel.Channels.MessageHeaderInfo&gt; GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerator&lt;System.ServiceModel.Channels.MessageHeaderInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for iterating through the collection. This method cannot be inherited.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHeader&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetHeader&lt;T&gt; (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetHeader&lt;T&gt;(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only uses the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. It does not try to detect from the type whether it should use the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> or DataContractSerializer. To use the XML serializer, call <see cref="M:System.ServiceModel.Channels.MessageHeaders.GetHeader``1(System.String,System.String,System.Runtime.Serialization.XmlObjectSerializer)" /> or obtain the reader at the contents and call directly into the serializer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a message header at a specific position in this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header at the specified index.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the header to get.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHeader&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetHeader&lt;T&gt; (int index, System.Runtime.Serialization.XmlObjectSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetHeader&lt;T&gt;(int32 index, class System.Runtime.Serialization.XmlObjectSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a message header at a specific position in this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header at the specified index.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the header to get.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> that is used to serialize the header.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHeader&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetHeader&lt;T&gt; (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetHeader&lt;T&gt;(string name, string ns) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only uses the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. It does not try to detect from the type whether it should use the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> or the DataContractSerializer. To use the XML serializer, call <see cref="M:System.ServiceModel.Channels.MessageHeaders.GetHeader``1(System.String,System.String,System.Runtime.Serialization.XmlObjectSerializer)" /> or obtain the reader at the contents and call directly into the serializer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a message header in this collection by the specified LocalName and namespace URI of the header element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header with the specified name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHeader&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetHeader&lt;T&gt; (string name, string ns, System.Runtime.Serialization.XmlObjectSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetHeader&lt;T&gt;(string name, string ns, class System.Runtime.Serialization.XmlObjectSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a message header in this collection by the specified LocalName, namespace URI and serializer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header with the specified name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> that is used to serialize the header.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHeader&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetHeader&lt;T&gt; (string name, string ns, string[] actors);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetHeader&lt;T&gt;(string name, string ns, string[] actors) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="actors" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method only uses the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. It does not try to detect from the type whether it should use the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> or DataContractSerializer. To use the XML serializer, call <see cref="M:System.ServiceModel.Channels.MessageHeaders.GetHeader``1(System.String,System.String,System.Runtime.Serialization.XmlObjectSerializer)" /> or obtain the reader at the contents and call directly into the serializer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a message header in this collection by the specified LocalName, namespace URI and actors of the header element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header with the specified name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
+        <param name="actors">
+          <attribution license="cc4" from="Microsoft" modified="false" />The targeted recipient of the message header.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetReaderAtHeader">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlDictionaryReader GetReaderAtHeader (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlDictionaryReader GetReaderAtHeader(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a XML dictionary reader that consumes the message header at the specified location of the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> object that consumes the message header at the specified location of the collection.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="HaveMandatoryHeadersBeenUnderstood">
+      <MemberSignature Language="C#" Value="public bool HaveMandatoryHeadersBeenUnderstood ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool HaveMandatoryHeadersBeenUnderstood() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the message receiver cannot interpret the message headers marked with MustUnderstand, the message is not processed and an exception is thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether all the message headers marked with MustUnderstand have been properly interpreted and processed. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the recipients specified by <paramref name="actors" /> have properly interpreted and processed all the message headers marked with MustUnderstand; otherwise, false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="HaveMandatoryHeadersBeenUnderstood">
+      <MemberSignature Language="C#" Value="public bool HaveMandatoryHeadersBeenUnderstood (string[] actors);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool HaveMandatoryHeadersBeenUnderstood(string[] actors) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="actors" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the message receiver cannot interpret the message headers marked with MustUnderstand, the message is not processed and an exception is thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether the specified recipients have properly interpreted and processed all the message headers marked with MustUnderstand. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the recipients specified by <paramref name="actors" /> have properly interpreted and processed all the message headers marked with MustUnderstand; otherwise, false.</para>
+        </returns>
+        <param name="actors">
+          <attribution license="cc4" from="Microsoft" modified="false" />The targeted recipient of the message header.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="C#" Value="public void Insert (int index, System.ServiceModel.Channels.MessageHeader header);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Insert(int32 index, class System.ServiceModel.Channels.MessageHeader header) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="header" Type="System.ServiceModel.Channels.MessageHeader" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a message header into the collection at the specified index.</para>
+        </summary>
+        <param name="header">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message header to insert.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageHeaderInfo this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageHeaderInfo Item(int32)" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageHeaderInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageId">
+      <MemberSignature Language="C#" Value="public System.Xml.UniqueId MessageId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.UniqueId MessageId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the &lt;MessageID&gt; element described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=96163">WS-Addressing specification</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the unique ID of the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageVersion">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageVersion MessageVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageVersion MessageVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the SOAP version of the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RelatesTo">
+      <MemberSignature Language="C#" Value="public System.Xml.UniqueId RelatesTo { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.UniqueId RelatesTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the &lt;RelateTo&gt; element described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=96163">WS-Addressing specification</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the IDs of messages that are related to this message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAll">
+      <MemberSignature Language="C#" Value="public void RemoveAll (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAll(string name, string ns) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all headers with the specified name and namespace from the collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAt">
+      <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAt(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the message header at the specified index from the collection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplyTo">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointAddress ReplyTo { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointAddress ReplyTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the &lt;ReplyTo&gt; element described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=96163">WS-Addressing specification</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the address of the node to which a reply should be sent for a request.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAction">
+      <MemberSignature Language="C#" Value="public void SetAction (System.Xml.XmlDictionaryString action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAction(class System.Xml.XmlDictionaryString action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="action" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the action element of the header.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of how the message should be processed.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for iterating through the collection. This method cannot be inherited.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="To">
+      <MemberSignature Language="C#" Value="public Uri To { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri To" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the &lt;To&gt; element described in the <see cref="http://go.microsoft.com/fwlink/?LinkId=96163">WS-Addressing specification</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the destination endpoint of a message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UnderstoodHeaders">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.UnderstoodHeaders UnderstoodHeaders { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.UnderstoodHeaders UnderstoodHeaders" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.UnderstoodHeaders</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the message receiver cannot interpret the message headers contained in this property, the message is not processed and an exception is thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the message headers that must be understood, according to SOAP 1.1/1.2 specification. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteHeader">
+      <MemberSignature Language="C#" Value="public void WriteHeader (int index, System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteHeader(int32 index, class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the header from the specified location using the specified XML writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryWriter" /> that is used to serialize the header.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteHeader">
+      <MemberSignature Language="C#" Value="public void WriteHeader (int index, System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteHeader(int32 index, class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the header from the specified location using the specified XML writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> that is used to serialize the header.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteHeaderContents">
+      <MemberSignature Language="C#" Value="public void WriteHeaderContents (int index, System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteHeaderContents(int32 index, class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified header content using the specified XML writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryWriter" /> that is used to serialize the header contents.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteHeaderContents">
+      <MemberSignature Language="C#" Value="public void WriteHeaderContents (int index, System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteHeaderContents(int32 index, class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified header content using the specified XML writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> that is used to serialize the header contents.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartHeader">
+      <MemberSignature Language="C#" Value="public void WriteStartHeader (int index, System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteStartHeader(int32 index, class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the start header using the specified XML writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryWriter" /> that is used to serialize the start header.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartHeader">
+      <MemberSignature Language="C#" Value="public void WriteStartHeader (int index, System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteStartHeader(int32 index, class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the start header using the specified XML writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> that is used to serialize the start header.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

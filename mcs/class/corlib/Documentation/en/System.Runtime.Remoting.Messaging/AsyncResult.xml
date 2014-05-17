@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AsyncResult" FullName="System.Runtime.Remoting.Messaging.AsyncResult">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class AsyncResult : IAsyncResult, System.Runtime.Remoting.Messaging.IMessageSink" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi beforefieldinit AsyncResult extends System.Object implements class System.IAsyncResult, class System.Runtime.Remoting.Messaging.IMessageSink" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -19,31 +21,57 @@
       <InterfaceName>System.Runtime.Remoting.Messaging.IMessageSink</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> class is used in conjunction with asynchronous method calls made using delegates. The <see cref="T:System.IAsyncResult" /> returned from the delegate's BeginInvoke method can be cast to an <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" />. The <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> has the <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.AsyncDelegate" /> property that holds the delegate object on which the asynchronous call was invoked.</para>
+      <para>For more information about BeginInvoke and asynchronous calls using delegates, see <format type="text/html"><a href="38A345CA-6963-4436-9608-5C9DEFEF9C64">Asynchronous Programming Using Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the results of an asynchronous operation on a delegate.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AsyncDelegate">
       <MemberSignature Language="C#" Value="public virtual object AsyncDelegate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object AsyncDelegate" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'object'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.AsyncDelegate" /> property can be cast to the actual class of the user-defined delegate.</para>
+          <para>For example, if the delegate that was used to make the asynchronous call is of type MyDelegate, the delegate that is returned by this property must be cast to MyDelegate. The callback method can then call the delegate's EndInvoke method with the correct signature, in order to obtain the results of the asynchronous method call.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the delegate object on which the asynchronous call was invoked.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AsyncProcessMessage">
       <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.Messaging.IMessageCtrl AsyncProcessMessage (System.Runtime.Remoting.Messaging.IMessage msg, System.Runtime.Remoting.Messaging.IMessageSink replySink);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.Messaging.IMessageCtrl AsyncProcessMessage(class System.Runtime.Remoting.Messaging.IMessage msg, class System.Runtime.Remoting.Messaging.IMessageSink replySink) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessageCtrl</ReturnType>
       </ReturnValue>
@@ -52,141 +80,208 @@
         <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'IMessage'</param>
-        <param name="replySink">To be added: an object of type 'IMessageSink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IMessageCtrl'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)" /> method of the <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> interface is not relevant to the <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> class. Implementation by <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> throws a <see cref="T:System.NotSupportedException" />. Instead, obtain an <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> by casting the <see cref="T:System.IAsyncResult" /> interface returned by an asynchronous call made using a delegate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No value is returned.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> interface. </param>
+        <param name="replySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The response <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> interface. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AsyncState">
+      <MemberSignature Language="C#" Value="public virtual object AsyncState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object AsyncState" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AsyncState">
-      <MemberSignature Language="C#" Value="public virtual object AsyncState { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the BeginInvoke method, see <format type="text/html"><a href="38A345CA-6963-4436-9608-5C9DEFEF9C64">[&lt;topic://cpovrasynchronousdelegates&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object provided as the last parameter of a BeginInvoke method call.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="AsyncWaitHandle">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.WaitHandle AsyncWaitHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.WaitHandle AsyncWaitHandle" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AsyncWaitHandle">
-      <MemberSignature Language="C#" Value="public virtual System.Threading.WaitHandle AsyncWaitHandle { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.WaitHandle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Threading.WaitHandle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.WaitHandle" /> returned by this method is automatically signaled when the asynchronous operation has completed.</para>
+          <para>The wait handle is not closed automatically when you call EndInvoke on the delegate that was used to make the asynchronous method call. If you release all references to the wait handle, system resources are freed when garbage collection reclaims the wait handle. To free the system resources as soon as you are finished using the wait handle, call the <see cref="M:System.Threading.WaitHandle.Close" /> method. Garbage collection works more efficiently when disposable objects are explicitly closed or disposed. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Threading.WaitHandle" /> contained in the <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.AsyncWaitHandle" /> property can be used to block the current thread until the asynchronous call is complete. However the <see cref="T:System.Threading.WaitHandle" /> will ignore the <see cref="T:System.AsyncCallback" />, if one was specified during the BeginInvoke call. Therefore, a situation can occur where the application shuts down before the <see cref="T:System.AsyncCallback" /> has finished executing, even if a <see cref="T:System.Threading.WaitHandle" /> is used to block until the asynchronous call completion. For an example of such a situation, see the example for the <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> class, and remove the <see cref="M:System.Threading.Thread.Sleep(System.Int32)" /> statement.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Threading.WaitHandle" /> that encapsulates Win32 synchronization handles, and allows the implementation of various synchronization schemes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompletedSynchronously">
       <MemberSignature Language="C#" Value="public virtual bool CompletedSynchronously { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CompletedSynchronously" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If it is detected that the BeginInvoke call completed synchronously in the <see cref="T:System.AsyncCallback" /> delegate, it is probable that the thread that called BeginInvoke is the current thread. Most providers of the <see cref="T:System.IAsyncResult" /> interface will not use the capability and will return a default false.</para>
+          <para>Current implementation of <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.CompletedSynchronously" /> always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the BeginInvoke call completed synchronously.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="EndInvokeCalled">
-      <MemberSignature Language="C#" Value="public bool EndInvokeCalled { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool EndInvokeCalled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EndInvokeCalled" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether EndInvoke has been called on the current <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetReplyMessage">
       <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.Messaging.IMessage GetReplyMessage ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.Messaging.IMessage GetReplyMessage() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessage</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IMessage'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.GetReplyMessage" /> method can return an object after the <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> method is called. The <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> return value can be cast to an <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" />.</para>
+          <para>However, you do not need to call either of these methods directly. They are intended for use by the remoting infrastructure of the .NET Framework.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the response message for the asynchronous call.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A remoting message that should represent a response to a method call on a remote object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="IsCompleted">
+      <MemberSignature Language="C#" Value="public virtual bool IsCompleted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCompleted" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsCompleted">
-      <MemberSignature Language="C#" Value="public virtual bool IsCompleted { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server must not use any client supplied resources outside of the agreed upon sharing semantics after it sets the <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.IsCompleted" /> property to true. Thus, it is safe for the client to destroy the resources after the <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.IsCompleted" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the server has completed the call.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="NextSink">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.Messaging.IMessageSink NextSink { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Remoting.Messaging.IMessageSink NextSink" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NextSink">
-      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.Messaging.IMessageSink NextSink { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessageSink</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IMessageSink'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current implementation of <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.NextSink" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next message sink in the sink chain.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SetMessageCtrl">
+      <MemberSignature Language="C#" Value="public virtual void SetMessageCtrl (System.Runtime.Remoting.Messaging.IMessageCtrl mc);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetMessageCtrl(class System.Runtime.Remoting.Messaging.IMessageCtrl mc) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetMessageCtrl">
-      <MemberSignature Language="C#" Value="public virtual void SetMessageCtrl (System.Runtime.Remoting.Messaging.IMessageCtrl mc);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -194,19 +289,27 @@
         <Parameter Name="mc" Type="System.Runtime.Remoting.Messaging.IMessageCtrl" />
       </Parameters>
       <Docs>
-        <param name="mc">To be added: an object of type 'IMessageCtrl'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.SetMessageCtrl(System.Runtime.Remoting.Messaging.IMessageCtrl)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> for the current remote method call, which provides a way to control asynchronous messages after they have been dispatched.</para>
+        </summary>
+        <param name="mc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> for the current remote method call. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SyncProcessMessage">
+      <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.Messaging.IMessage SyncProcessMessage (System.Runtime.Remoting.Messaging.IMessage msg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.Messaging.IMessage SyncProcessMessage(class System.Runtime.Remoting.Messaging.IMessage msg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SyncProcessMessage">
-      <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.Messaging.IMessage SyncProcessMessage (System.Runtime.Remoting.Messaging.IMessage msg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessage</ReturnType>
       </ReturnValue>
@@ -214,21 +317,25 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'IMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IMessage'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> method implements the <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> interface. You do not need to call this method directly. It is intended for use by the remoting infrastructure of the .NET Framework.</para>
+          <para>
+            <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> invokes the consumer code's <see cref="T:System.AsyncCallback" /> delegate. It also sets the <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" /> instance returned by the <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.GetReplyMessage" /> method. If the <paramref name="msg" /> parameter is of type <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" />, the same object is returned by <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.GetReplyMessage" />. Otherwise, a reply message that contains a remoting exception is returned.</para>
+          <para>
+            <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> also modifies the value returned by the <see cref="P:System.Runtime.Remoting.Messaging.AsyncResult.IsCompleted" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronously processes a response message returned by a method call on a remote object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A response message to a method call on a remote object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

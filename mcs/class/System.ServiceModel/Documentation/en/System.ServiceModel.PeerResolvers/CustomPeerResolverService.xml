@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CustomPeerResolverService" FullName="System.ServiceModel.PeerResolvers.CustomPeerResolverService">
+  <TypeSignature Language="C#" Value="public class CustomPeerResolverService : System.ServiceModel.PeerResolvers.IPeerResolverContract" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CustomPeerResolverService extends System.Object implements class System.ServiceModel.PeerResolvers.IPeerResolverContract" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.PeerResolvers.IPeerResolverContract</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ServiceModel.ServiceBehavior(ConcurrencyMode=System.ServiceModel.ConcurrencyMode.Multiple, InstanceContextMode=System.ServiceModel.InstanceContextMode.Single, UseSynchronizationContext=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.PeerResolvers.CustomPeerResolverService" /> class defines the base implementation of a custom peer resolver service and provides lookup for the resolution of registration IDs to peer endpoint addresses within the mesh maintained by this resolver. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a basic implementation of a custom peer resolver service.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomPeerResolverService ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new default instance of the <see cref="T:System.ServiceModel.PeerResolvers.CustomPeerResolverService" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CleanupInterval">
+      <MemberSignature Language="C#" Value="public TimeSpan CleanupInterval { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan CleanupInterval" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must be set before the peer resolver service has been and must not be zero. The default interval is 1 minute.</para>
+          <para>This value must be less than the value of <see cref="P:System.ServiceModel.PeerResolvers.CustomPeerResolverService.RefreshInterval" /> to avoid the occurrence of stale entries in the peer resolver service's registration lookup table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the recurring length of time after which stale entries are deleted from the peer resolver service's registration lookup table.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the peer resolver service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ControlShape">
+      <MemberSignature Language="C#" Value="public bool ControlShape { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ControlShape" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether referrals are shared by the peer resolver service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetServiceSettings">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo GetServiceSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo GetServiceSettings() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Obtains the specific response settings for the peer resolver service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo" /> that contains the specific response settings for the custom peer resolver service, including cleanup and refresh interval settings.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public virtual void Open ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Open() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this method is called, it schedules the first registration lookup table cleanup based on the value set for the <see cref="P:System.ServiceModel.PeerResolvers.CustomPeerResolverService.CleanupInterval" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the peer resolver service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Refresh">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.PeerResolvers.RefreshResponseInfo Refresh (System.ServiceModel.PeerResolvers.RefreshInfo refreshInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.RefreshResponseInfo Refresh(class System.ServiceModel.PeerResolvers.RefreshInfo refreshInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.RefreshResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="refreshInfo" Type="System.ServiceModel.PeerResolvers.RefreshInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A refresh of an entry extends the length of time for which it remains valid. All information used to uniquely identify the entry must be supplied in the <see cref="T:System.ServiceModel.PeerResolvers.RefreshInfo" /> object supplied to this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the expiry of an entry in the peer resolver service's registration lookup table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.RefreshResponseInfo" /> that contains the newly refreshed registration entry.</para>
+        </returns>
+        <param name="refreshInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.PeerResolvers.RefreshInfo" /> object that contains the mesh ID and the registration ID of the entry to refresh in the peer resolver service's registration lookup table.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RefreshInterval">
+      <MemberSignature Language="C#" Value="public TimeSpan RefreshInterval { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan RefreshInterval" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must be set before the peer resolver service has been and must not be zero. The default interval is 2 minutes.</para>
+          <para>When the amount of time supplied to this property has passed for a given entry in a peer resolver service's registration lookup table, that entry is marked for deletion. The delete occurs when interval specified in the <see cref="P:System.ServiceModel.PeerResolvers.CustomPeerResolverService.CleanupInterval" /> property occurs.  For example, if this property is set to a timespan of 10 minutes, entries in the registration lookup table will become stale and marked for deletion after the interval has passed. As a result, the peer resolver client must update every ten minutes to avoid having their entry deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the length of time that entries remain valid in a peer resolver service's registration lookup table. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.PeerResolvers.RegisterResponseInfo Register (System.ServiceModel.PeerResolvers.RegisterInfo registerInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.RegisterResponseInfo Register(class System.ServiceModel.PeerResolvers.RegisterInfo registerInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.RegisterResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="registerInfo" Type="System.ServiceModel.PeerResolvers.RegisterInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds a new entry to the registration lookup table of the peer resolver service. Note that registrations made after the service is closed  have no effect -- these entries are not returned by resolve requests.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new entry to the registration lookup table of the peer resolver service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.RegisterResponseInfo" /> that contains a copy of the entry added to the peer resolver service's registration lookup table.</para>
+        </returns>
+        <param name="registerInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.PeerResolvers.RegisterInfo" />  that contains information about the registration entry to register with the peer resolver service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.PeerResolvers.RegisterResponseInfo Register (Guid clientId, string meshId, System.ServiceModel.PeerNodeAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.RegisterResponseInfo Register(valuetype System.Guid clientId, string meshId, class System.ServiceModel.PeerNodeAddress address) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.RegisterResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clientId" Type="System.Guid" />
+        <Parameter Name="meshId" Type="System.String" />
+        <Parameter Name="address" Type="System.ServiceModel.PeerNodeAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new entry to the registration lookup table of the peer resolver service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.PeerResolvers.RegisterResponseInfo" /> that contains a copy of the entry added to the peer resolver service's registration lookup table.</para>
+        </returns>
+        <param name="clientId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Guid" /> that specifies a unique identifier for the registration entry to register with the resolver service.</param>
+        <param name="meshId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that specifies the mesh ID of the peer mesh in which the registration entry participates.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.PeerNodeAddress" /> that contains the endpoint address of the registration entry.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.PeerResolvers.ResolveResponseInfo Resolve (System.ServiceModel.PeerResolvers.ResolveInfo resolveInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.ResolveResponseInfo Resolve(class System.ServiceModel.PeerResolvers.ResolveInfo resolveInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.ResolveResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="resolveInfo" Type="System.ServiceModel.PeerResolvers.ResolveInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method looks up a registration entry based on the data supplied in a <see cref="T:System.ServiceModel.PeerResolvers.ResolveInfo" /> object and returns any corresponding endpoint addresses found in the peer resolver service's registration lookup table. The number of endpoint addresses returned is equal to or less than the value of the  <see cref="P:System.ServiceModel.PeerResolvers.ResolveInfo.MaxAddresses" /> property set on the <see cref="T:System.ServiceModel.PeerResolvers.ResolveInfo" /> object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of known endpoints for a registration entry.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.ResolveResponseInfo" /> that contains the endpoints for the registration entry in the lookup table that matches the information supplied in the <paramref name="resolveInfo" /> parameter. </para>
+        </returns>
+        <param name="resolveInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.PeerResolvers.ResolveInfo" /> that contains information on the registration entry for which endpoints, if known, are to be looked up by the peer resolver service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Unregister">
+      <MemberSignature Language="C#" Value="public virtual void Unregister (System.ServiceModel.PeerResolvers.UnregisterInfo unregisterInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Unregister(class System.ServiceModel.PeerResolvers.UnregisterInfo unregisterInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unregisterInfo" Type="System.ServiceModel.PeerResolvers.UnregisterInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a specific entry from the registration lookup table of the peer resolver service.</para>
+        </summary>
+        <param name="unregisterInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.PeerResolvers.UnregisterInfo" /> that contains the information used to uniquely identify the registration entry to remove from the registration lookup table.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.PeerResolvers.RegisterResponseInfo Update (System.ServiceModel.PeerResolvers.UpdateInfo updateInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.RegisterResponseInfo Update(class System.ServiceModel.PeerResolvers.UpdateInfo updateInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.RegisterResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="updateInfo" Type="System.ServiceModel.PeerResolvers.UpdateInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates an existing registration entry entry in the registration lookup table of the peer resolver service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.UpdateInfo" /> that contains a copy of the updated registration entry entry.</para>
+        </returns>
+        <param name="updateInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.PeerResolvers.UpdateInfo" /> that uniquely identifies a specific registration entry and provides updated information for it.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

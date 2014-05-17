@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyName" FullName="System.Reflection.AssemblyName">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AssemblyName : ICloneable, System.Runtime.InteropServices._AssemblyName, System.Runtime.Serialization.IDeserializationCallback, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit AssemblyName extends System.Object implements class System.ICloneable, class System.Runtime.InteropServices._AssemblyName, class System.Runtime.Serialization.IDeserializationCallback, class System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -25,155 +27,369 @@
       <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._AssemblyName))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Reflection.AssemblyName" /> object contains information about an assembly, which you can use to bind to that assembly. An assembly's identity consists of the following:</para>
+      <list type="bullet">
+        <item>
+          <para>Simple name.</para>
+        </item>
+        <item>
+          <para>Version number.</para>
+        </item>
+        <item>
+          <para>Cryptographic key pair.</para>
+        </item>
+        <item>
+          <para>Supported culture.</para>
+        </item>
+      </list>
+      <para>The simple name is typically the file name for the manifest file without its extension. The key pair includes a public and private key, used to create strong-name signatures for assemblies.</para>
+      <para>All compilers that support the common language runtime will emit the simple name of a nested class, and reflection constructs a mangled name when queried, in accordance with the following conventions.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Delimiter </para>
+            </term>
+            <description>
+              <para>Meaning </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Backslash (\) </para>
+          </term>
+          <description>
+            <para>Escape character. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Comma (,) </para>
+          </term>
+          <description>
+            <para>Precedes the assembly name. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Plus sign (+) </para>
+          </term>
+          <description>
+            <para>Precedes a nested class. </para>
+          </description>
+        </item>
+      </list>
+      <para>For example, the fully qualified name for a class might look like this: </para>
+      <para>ContainingClass+NestedClass,MyAssembly </para>
+      <para> </para>
+      <para>A "++" becomes "\+\+", and a "\" becomes "\\".</para>
+      <para>This qualified name can be persisted and later used to load the <see cref="T:System.Type" />. To search for and load a <see cref="T:System.Type" />, use <see cref="M:System.Type.GetType" /> either with the type name only or with the assembly qualified type name. <see cref="M:System.Type.GetType" /> with the type name only will look for the <see cref="T:System.Type" /> in the caller's assembly and then in the System assembly. <see cref="M:System.Type.GetType" /> with the assembly qualified type name will look for the <see cref="T:System.Type" /> in any assembly.</para>
+      <para>A fully specified <see cref="T:System.Reflection.AssemblyName" /> must have the name, culture, public key or public key token, major version, minor version, build number, and revision number parameters. The last four are packaged in the <see cref="T:System.Version" /> type. </para>
+      <para />
+      <para>To create a simple name, create an <see cref="T:System.Reflection.AssemblyName" /> object using the default constructor and set the <see cref="P:System.Reflection.AssemblyName.Name" />. The other properties are optional.</para>
+      <para>To create a full strong name, create an <see cref="T:System.Reflection.AssemblyName" /> object using the default constructor and set the <see cref="P:System.Reflection.AssemblyName.Name" /> and <see cref="P:System.Reflection.AssemblyName.KeyPair" />. The other properties are optional. Use <see cref="M:System.Reflection.AssemblyName.SetPublicKey(System.Byte[])" /> and <see cref="M:System.Reflection.AssemblyName.SetPublicKeyToken(System.Byte[])" /> to set the public key and the strong name. The strong name signing always uses the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm.</para>
+      <para>To ensure that the names are constructed correctly, use the following properties:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.Reflection.Assembly.FullName" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Reflection.AssemblyName.FullName" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Type.AssemblyQualifiedName" />
+          </para>
+        </item>
+      </list>
+      <para>You can also get the name by using the <userInput>/l</userInput> option with the <format type="text/html"><a href="4c7be9c8-72ae-481f-a01c-1a4716806e99">Global Assembly Cache Tool (Gacutil.exe)</a></format></para>
+      <para>For a partially specified strong name, create an <see cref="T:System.Reflection.AssemblyName" /> object using the default constructor and set the name and public key. An assembly created using such an <see cref="T:System.Reflection.AssemblyName" /> can be signed later using the Assembly Linker (Al.exe).</para>
+      <para>It is possible to specify a public key and a <see cref="P:System.Reflection.AssemblyName.KeyPair" /> with inconsistent values. This can be useful in developer scenarios. In this case, the public key retrieved with <see cref="M:System.Reflection.AssemblyName.GetPublicKey" /> specifies the correct public key, while the <see cref="P:System.Reflection.AssemblyName.KeyPair" /> specifies the public and private keys used during development. When the runtime detects a mismatch between the <see cref="P:System.Reflection.AssemblyName.KeyPair" /> and the public key, it looks up in the registry the correct key that matches the public key.</para>
+      <para>The format of the display name of an <see cref="T:System.Reflection.AssemblyName" /> is a comma-delimited Unicode string that begins with the name, as follows: </para>
+      <para>Name &lt;,Culture = CultureInfo&gt; &lt;,Version = Major.Minor.Build.Revision&gt; &lt;, StrongName&gt; &lt;,PublicKeyToken&gt; '\0' </para>
+      <para>Name is the textual name of the assembly. CultureInfo is the RFC1766-format-defined culture. Major, Minor, Build, and Revision are the major version, minor version, build number, and revision number of the assembly. StrongName is the hexadecimal-encoded low-order 64 bits of the hash value of the public key generated using the SHA-1 hashing algorithm and the public key specified by <see cref="M:System.Reflection.AssemblyName.SetPublicKey(System.Byte[])" />. PublicKeyToken is the hexadecimal-encoded public key specified by <see cref="M:System.Reflection.AssemblyName.SetPublicKey(System.Byte[])" />.</para>
+      <para>Hexadecimal encoding is defined as the conversion of each byte of a binary object to two hexadecimal characters, progressing from least to most significant byte. Additional display values will be added as deemed necessary.</para>
+      <para>If the full public key is known, then PublicKey may be substituted for StrongName.</para>
+      <para>Also note that except for Name, which must come first, the lexical order of parameters is unimportant. However, any parameter (Version, Culture, StrongName or PublicKey) not specifically set is considered to be omitted, and the <see cref="T:System.Reflection.AssemblyName" /> is then considered partial. When specifying partial information, Name parameters must be specified in the order described above.</para>
+      <para>When supplying a display name, the convention StrongName =null or PublicKey= null indicates that binding and matching against a simply named assembly is required. Additionally, the convention Culture= "" (double quote representing an empty string) indicates matching against the default culture.</para>
+      <para>The following example shows an <see cref="T:System.Reflection.AssemblyName" /> for a simply named assembly with default culture.</para>
+      <code>ExampleAssembly, Culture=""</code>
+      <para>The following example shows a fully specified reference for a strongly named assembly with culture "en".</para>
+      <code>ExampleAssembly, Version=1.0.0.0, Culture=en, PublicKeyToken=a5d015c7d5a0b012</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes an assembly's unique identity in full.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AssemblyName ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyName" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AssemblyName (string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string assemblyName) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="assemblyName" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="assemblyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The supplied <paramref name="assemblyName" /> is parsed, and the appropriate fields of the new <see cref="T:System.Reflection.AssemblyName" /> are initialized with values from the display name. This is the recommended way of parsing display names. Writing your own code to parse display names is not recommended. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyName" /> class with the specified display name.</para>
+        </summary>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly, as returned by the <see cref="P:System.Reflection.AssemblyName.FullName" /> property.</param>
+      </Docs>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object is created, identical to the original.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Makes a copy of this <see cref="T:System.Reflection.AssemblyName" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a copy of this <see cref="T:System.Reflection.AssemblyName" /> object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="CodeBase">
+      <MemberSignature Language="C#" Value="public string CodeBase { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CodeBase" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CodeBase">
-      <MemberSignature Language="C#" Value="public string CodeBase { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an assembly is loaded, this value can also be obtained using the <see cref="P:System.Reflection.Assembly.CodeBase" /> property. </para>
+          <para>If the assembly was loaded as a byte array, this property returns the location of the caller of the <see cref="M:System.Reflection.Assembly.Load(System.Byte[])" /> method overload, not the location of the loaded assembly.</para>
+          <block subset="none" type="note">
+            <para>Do not use an <see cref="T:System.Reflection.AssemblyName" /> with only the <see cref="P:System.Reflection.AssemblyName.CodeBase" /> property set. The <see cref="P:System.Reflection.AssemblyName.CodeBase" /> property does not supply any elements of the assembly identity (such as name or version), so loading does not occur according to load-by-identity rules, as you would expect from the <see cref="M:System.Reflection.Assembly.Load(System.Reflection.AssemblyName)" /> method. Instead, the assembly is loaded using load-from rules. For information about the disadvantages of using the load-from context, see the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> method overload or <format type="text/html"><a href="68d1c539-6a47-4614-ab59-4b071c9d4b4c">Best Practices for Assembly Loading</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location of the assembly as a URL.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ContentType">
+      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyContentType ContentType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.AssemblyContentType ContentType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Reflection.AssemblyContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates what type of content the assembly contains.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CultureInfo">
+      <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo CultureInfo { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Globalization.CultureInfo CultureInfo" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CultureInfo">
-      <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo CultureInfo { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Globalization.CultureInfo'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the culture supported by the assembly.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CultureName">
+      <MemberSignature Language="C#" Value="public string CultureName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CultureName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EscapedCodeBase">
-      <MemberSignature Language="C#" Value="public string EscapedCodeBase { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the culture associated with the assembly.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="EscapedCodeBase">
+      <MemberSignature Language="C#" Value="public string EscapedCodeBase { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string EscapedCodeBase" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI, including escape characters, that represents the codebase.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Flags">
-      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyNameFlags Flags { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyNameFlags Flags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.AssemblyNameFlags Flags" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyNameFlags</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'AssemblyNameFlags'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the attributes of the assembly.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="FullName">
+      <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FullName">
-      <MemberSignature Language="C#" Value="public string FullName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The display name typically consists of the simple name, version number, supported culture, and public key. For example: </para>
+          <code>mylib, Version=1.2.1900.0, Culture=neutral, PublicKeyToken=a14f3033def15840</code>
+          <para>Writing your own code to parse display names is not recommended. Instead, pass the display name to the <see cref="M:System.Reflection.AssemblyName.#ctor(System.String)" /> constructor, which parses it and populates the appropriate fields of the new <see cref="T:System.Reflection.AssemblyName" />. </para>
+          <para>When an assembly is loaded, this value can also be obtained using the <see cref="P:System.Reflection.Assembly.FullName" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full name of the assembly, also known as the display name.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetAssemblyName">
+      <MemberSignature Language="C#" Value="public static System.Reflection.AssemblyName GetAssemblyName (string assemblyFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.AssemblyName GetAssemblyName(string assemblyFile) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAssemblyName">
-      <MemberSignature Language="C#" Value="public static System.Reflection.AssemblyName GetAssemblyName (string assemblyFile);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyName</ReturnType>
       </ReturnValue>
@@ -181,20 +397,31 @@
         <Parameter Name="assemblyFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyFile">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'AssemblyName'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This will only work if the file contains an assembly manifest. This method causes the file to be opened and closed, but the assembly is not added to this domain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Reflection.AssemblyName" /> for a given file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the given assembly file.</para>
+        </returns>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path for the assembly whose <see cref="T:System.Reflection.AssemblyName" /> is to be returned. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -203,113 +430,157 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets serialization information with all the data needed to recreate an instance of this AssemblyName.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be populated with serialization information. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination context of the serialization. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPublicKey">
       <MemberSignature Language="C#" Value="public byte[] GetPublicKey ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetPublicKey() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the public key of the assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the public key of the assembly.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="GetPublicKeyToken">
       <MemberSignature Language="C#" Value="public byte[] GetPublicKeyToken ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetPublicKeyToken() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the public key token, which is the last 8 bytes of the SHA-1 hash of the public key under which the application or assembly is signed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the public key token.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="HashAlgorithm">
-      <MemberSignature Language="C#" Value="public System.Configuration.Assemblies.AssemblyHashAlgorithm HashAlgorithm { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Configuration.Assemblies.AssemblyHashAlgorithm HashAlgorithm { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm HashAlgorithm" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Configuration.Assemblies.AssemblyHashAlgorithm'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the net_v40_long, the <see cref="P:System.Reflection.AssemblyName.HashAlgorithm" /> property of an <see cref="T:System.Reflection.AssemblyName" /> object that is returned by the <see cref="M:System.Reflection.Assembly.GetReferencedAssemblies" /> method is <see cref="F:System.Configuration.Assemblies.AssemblyHashAlgorithm.None" /> if there is no hash algorithm for the referenced assembly, or if the hash algorithm of the referenced assembly is not identified by the <see cref="T:System.Configuration.Assemblies.AssemblyHashAlgorithm" /> enumeration. In previous versions of the .NET Framework, the <see cref="P:System.Reflection.AssemblyName.HashAlgorithm" /> property returned <see cref="F:System.Configuration.Assemblies.AssemblyHashAlgorithm.SHA1" /> in this situation. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the hash algorithm used by the assembly manifest.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="KeyPair">
+      <MemberSignature Language="C#" Value="public System.Reflection.StrongNameKeyPair KeyPair { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.StrongNameKeyPair KeyPair" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="KeyPair">
-      <MemberSignature Language="C#" Value="public System.Reflection.StrongNameKeyPair KeyPair { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.StrongNameKeyPair</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StrongNameKeyPair'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the runtime loads an assembly, it does not set the <see cref="P:System.Reflection.AssemblyName.KeyPair" /> property. The getter for the property is only useful if the user set the property before using the <see cref="T:System.Reflection.AssemblyName" /> object to create a dynamic assembly, and subsequently wants to retrieve the key pair.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the public and private cryptographic key pair that is used to create a strong name signature for the assembly.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The manifest file is the file that contains the assembly manifest.</para>
+          <para>For example, the simple name of a single-file assembly named "MyAssembly.dll" is "MyAssembly".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the simple name of the assembly. This is usually, but not necessarily, the file name of the manifest file of the assembly, minus its extension.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="OnDeserialization">
+      <MemberSignature Language="C#" Value="public void OnDeserialization (object sender);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void OnDeserialization(object sender) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OnDeserialization">
-      <MemberSignature Language="C#" Value="public void OnDeserialization (object sender);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -317,35 +588,42 @@
         <Parameter Name="sender" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface and is called back by the deserialization event when deserialization is complete.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the deserialization event. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ProcessorArchitecture">
+      <MemberSignature Language="C#" Value="public System.Reflection.ProcessorArchitecture ProcessorArchitecture { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.ProcessorArchitecture ProcessorArchitecture" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ProcessorArchitecture">
-      <MemberSignature Language="C#" Value="public System.Reflection.ProcessorArchitecture ProcessorArchitecture { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Beginning with the net_v40_long, this property always returns <see cref="F:System.Reflection.ProcessorArchitecture.None" /> for reference assemblies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that identifies the processor and bits-per-word of the platform targeted by an executable.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReferenceMatchesDefinition">
       <MemberSignature Language="C#" Value="public static bool ReferenceMatchesDefinition (System.Reflection.AssemblyName reference, System.Reflection.AssemblyName definition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ReferenceMatchesDefinition(class System.Reflection.AssemblyName reference, class System.Reflection.AssemblyName definition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -359,16 +637,33 @@
         <Parameter Name="definition" Type="System.Reflection.AssemblyName" />
       </Parameters>
       <Docs>
-        <param name="reference">To be added.</param>
-        <param name="definition">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The comparison depends only on the simple assembly name. It ignores version, culture, and public key token.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two assembly names are the same. The comparison is based on the simple assembly names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the simple assembly names are the same; otherwise, false.</para>
+        </returns>
+        <param name="reference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference assembly name.</param>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly name that is compared to the reference assembly.</param>
       </Docs>
     </Member>
     <Member MemberName="SetPublicKey">
       <MemberSignature Language="C#" Value="public void SetPublicKey (byte[] publicKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetPublicKey(unsigned int8[] publicKey) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -376,19 +671,27 @@
         <Parameter Name="publicKey" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="publicKey">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must also use the <see cref="M:System.Reflection.AssemblyName.SetPublicKeyToken(System.Byte[])" /> method to provide a public key token. Otherwise, a <see cref="T:System.Security.SecurityException" /> is thrown when the <see cref="M:System.Reflection.AssemblyName.GetPublicKey" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the public key identifying the assembly.</para>
+        </summary>
+        <param name="publicKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array containing the public key of the assembly. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SetPublicKeyToken">
+      <MemberSignature Language="C#" Value="public void SetPublicKeyToken (byte[] publicKeyToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetPublicKeyToken(unsigned int8[] publicKeyToken) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetPublicKeyToken">
-      <MemberSignature Language="C#" Value="public void SetPublicKeyToken (byte[] publicKeyToken);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -396,19 +699,27 @@
         <Parameter Name="publicKeyToken" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="publicKeyToken">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you set the public key by calling the <see cref="M:System.Reflection.AssemblyName.SetPublicKey(System.Byte[])" /> method, you must also use the <see cref="M:System.Reflection.AssemblyName.SetPublicKeyToken(System.Byte[])" /> method to provide a public key token. Otherwise, a <see cref="T:System.Security.SecurityException" /> is thrown when the <see cref="M:System.Reflection.AssemblyName.GetPublicKey" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the public key token, which is the last 8 bytes of the SHA-1 hash of the public key under which the application or assembly is signed.</para>
+        </summary>
+        <param name="publicKeyToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array containing the public key token of the assembly. </param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._AssemblyName.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _AssemblyName.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._AssemblyName.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._AssemblyName.GetIDsOfNames">
-      <MemberSignature Language="C#" Value="void _AssemblyName.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -428,15 +739,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._AssemblyName.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _AssemblyName.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._AssemblyName.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._AssemblyName.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _AssemblyName.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -446,21 +758,31 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._AssemblyName.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _AssemblyName.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._AssemblyName.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._AssemblyName.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _AssemblyName.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -472,15 +794,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._AssemblyName.Invoke">
+      <MemberSignature Language="C#" Value="void _AssemblyName.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._AssemblyName.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._AssemblyName.Invoke">
-      <MemberSignature Language="C#" Value="void _AssemblyName.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -506,78 +829,88 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the description of <see cref="T:System.Reflection.AssemblyName" /> for the format of the returned string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the full name of the assembly, also known as the display name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The full name of the assembly, or the class name if the full name cannot be determined.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="C#" Value="public Version Version { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Version Version" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Version">
-      <MemberSignature Language="C#" Value="public Version Version { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Version'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All components of the version must be integers greater than or equal to zero. Metadata restricts the major, minor, build, and revision components for an assembly to a maximum value of <see cref="F:System.UInt16.MaxValue" /> - 1. If a component exceeds this value, no error is thrown; however, in a dynamic assembly, that component is zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the major, minor, build, and revision numbers of the assembly.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="VersionCompatibility">
+      <MemberSignature Language="C#" Value="public System.Configuration.Assemblies.AssemblyVersionCompatibility VersionCompatibility { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Configuration.Assemblies.AssemblyVersionCompatibility VersionCompatibility" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VersionCompatibility">
-      <MemberSignature Language="C#" Value="public System.Configuration.Assemblies.AssemblyVersionCompatibility VersionCompatibility { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Configuration.Assemblies.AssemblyVersionCompatibility</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Configuration.Assemblies.AssemblyVersionCompatibility'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Reflection.AssemblyName.VersionCompatibility" /> information indicates, for example, that the assembly cannot execute side-by-side with other versions due to conflicts over a device driver.</para>
+          <para>Currently, <see cref="P:System.Reflection.AssemblyName.VersionCompatibility" /> always returns <see cref="F:System.Configuration.Assemblies.AssemblyVersionCompatibility.SameMachine" />, and is not used by the loader. This property is reserved for a future feature.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the information related to the assembly's compatibility with other assemblies.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._AssemblyName))</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

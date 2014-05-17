@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComEventInterfaceAttribute" FullName="System.Runtime.InteropServices.ComEventInterfaceAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ComEventInterfaceAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ComEventInterfaceAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,63 +23,99 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to interfaces, although the <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrfTypeLibraryImporterTlbimpexe&gt;]</a></format> typically applies it for you when it imports a type library.</para>
+      <para>When a source interface is imported from a type library, any methods it implements are added as events to a generated event interface. Tlbimp.exe applies <see cref="T:System.Runtime.InteropServices.ComEventInterfaceAttribute" /> to the event interface to identify the managed class that implements the methods of the event interface and implements the original source interface. The common language runtime uses this attribute at run time to perform the following tasks: </para>
+      <list type="bullet">
+        <item>
+          <para>Associate events exposed by the interface to their implementation in the event provider class.</para>
+        </item>
+        <item>
+          <para>Link the events to the original COM source interface.</para>
+        </item>
+      </list>
+      <para>You rarely apply this attribute. However, if you plan to write source code that produces metadata that closely simulates metadata produced by Tlbimp.exe, you should create a event interface for each original source interface. For a detailed description about how Tlbimp.exe imports events, see <format type="text/html"><a href="7A272ADF-41D7-4409-B0E2-5C0C5EF5266D">[&lt;topic://cpcontlbimpmemberconversion&gt;]</a></format>. For instruction about how to expose a COM event to a.NET client, see <format type="text/html"><a href="12BB67BD-91A2-4554-82FB-BDBA3D2C8B04">[&lt;topic://cpconhandlingeventsraisedbycomsource&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the source interface and the class that implements the methods of the event interface that is generated when a coclass is imported from a COM type library.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ComEventInterfaceAttribute (Type SourceInterface, Type EventProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type SourceInterface, class System.Type EventProvider) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="SourceInterface" Type="System.Type" />
         <Parameter Name="EventProvider" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="SourceInterface">To be added: an object of type 'Type'</param>
-        <param name="EventProvider">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComEventInterfaceAttribute" /> class with the source interface and event provider class.</para>
+        </summary>
+        <param name="SourceInterface">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that contains the original source interface from the type library. COM uses this interface to call back to the managed class. </param>
+        <param name="EventProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that contains the class that implements the methods of the event interface. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EventProvider">
       <MemberSignature Language="C#" Value="public Type EventProvider { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type EventProvider" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Type</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'Type'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is set to the type of the event provider class generated by the <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrfTypeLibraryImporterTlbimpexe&gt;]</a></format>. Tlbimp.exe appends the source interface name with EventProvider. For example, IMyInterface becomes IMyInterfaceEventProvider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class that implements the methods of the event interface.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SourceInterface">
       <MemberSignature Language="C#" Value="public Type SourceInterface { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type SourceInterface" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Type</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'Type'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A source interface has at least one event member, and typically one for each method of the source interface. COM uses this interface to call back to the managed class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the original source interface from the type library.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

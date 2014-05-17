@@ -1,47 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaCompilationSettings" FullName="System.Xml.Schema.XmlSchemaCompilationSettings">
   <TypeSignature Language="C#" Value="public sealed class XmlSchemaCompilationSettings" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlSchemaCompilationSettings extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Schema.XmlSchemaCompilationSettings" /> class provides schema compilation options for the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class. For example, the <see cref="P:System.Xml.Schema.XmlSchemaCompilationSettings.EnableUpaCheck" /> property specifies that the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> should check for Unique Particle Attribution (UPA) violations when schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> are compiled.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides schema compilation options for the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaCompilationSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaCompilationSettings" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="EnableUpaCheck">
-      <MemberSignature Language="C#" Value="public bool EnableUpaCheck { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool EnableUpaCheck { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EnableUpaCheck" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Xml.Schema.XmlSchemaCompilationSettings.EnableUpaCheck" /> property is set to false, validation will be performed based on the following rules.</para>
+          <list type="ordered">
+            <item>
+              <para>If there is a choice between a strong type and a wildcard, the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> will pick the strongly typed particle as illustrated in the following schema and Xml examples.</para>
+            </item>
+          </list>
+          <para>&lt;xs:sequence&gt;</para>
+          <para>    &lt;xs:any namespace="##any"/&gt;</para>
+          <para>    &lt;xs:element name="A" type="xs:string" minOccurs="0"/&gt;</para>
+          <para>&lt;/xs:sequence&gt;</para>
+          <para>In the following Xml, the A element will be associated with &lt;xs:element name="A" type="xs:string" minOccurs="0"/&gt; in the schema.</para>
+          <para>&lt;A&gt;some text&lt;/A&gt;</para>
+          <list type="ordered">
+            <item>
+              <para>If there is a choice between two strongly typed elements, the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> will pick the first one.</para>
+            </item>
+          </list>
+          <para>&lt;xs:sequence&gt;</para>
+          <para>    &lt;xs:element name="A" type="xs:string"/&gt;</para>
+          <para>    &lt;xs:element name="B" type="xs:string" minOccurs="0"/&gt;</para>
+          <para>    &lt;xs:element name="B" type="xs:string"/&gt;</para>
+          <para>&lt;/xs:sequence&gt;</para>
+          <para>In the following Xml, the B element will be associated with &lt;xs:element name="B" type="xs:string" minOccurs="0"/&gt; in the schema.</para>
+          <para>&lt;A/&gt;</para>
+          <para>&lt;B/&gt;</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> should check for Unique Particle Attribution (UPA) violations.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -53,7 +53,12 @@ namespace System.Web.Services.Description {
 		}
 
 		public Message this [string name] {
-			get { return this [IndexOf ((Message) Table [name])]; }
+			get {
+				int index = IndexOf ((Message) Table [name]);
+				if (index >= 0)
+					return this [index];
+				return null;
+			}
 		}
 
 		#endregion // Properties

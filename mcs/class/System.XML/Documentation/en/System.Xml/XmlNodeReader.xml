@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlNodeReader" FullName="System.Xml.XmlNodeReader">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlNodeReader : System.Xml.XmlReader, Mono.Xml.IHasXmlParserContext, System.Xml.IXmlNamespaceResolver" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlNodeReader extends System.Xml.XmlReader implements class Mono.Xml.IHasXmlParserContext, class System.Xml.IXmlNamespaceResolver" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -19,142 +22,244 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+      </block>
+      <para>The XmlNodeReader has the ability to read an XML DOM subtree. This class does not support document type definition (DTD) or schema validation. To perform data validation, use a validating <see cref="T:System.Xml.XmlReader" /> object.</para>
+      <para>For further discussion on the XmlReader classes, see <format type="text/html"><a href="3029834C-A27E-4331-B7AA-711924062182">Read XML with the XmlReader</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reader that provides fast, non-cached forward only access to XML data in an <see cref="T:System.Xml.XmlNode" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlNodeReader (System.Xml.XmlNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlNode node) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="node" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added: an object of type 'XmlNode'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>For more information and examples of the code used to create an XmlNodeReader, see <see cref="T:System.Xml.XmlReader" /> and overloads of the <see cref="M:System.Xml.XmlReader.Create(System.IO.Stream)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the XmlNodeReader class using the specified <see cref="T:System.Xml.XmlNode" />.</para>
+        </summary>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNode you want to read. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AttributeCount">
       <MemberSignature Language="C#" Value="public override int AttributeCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 AttributeCount" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This property is relevant to Element, DocumentType and XmlDeclaration nodes only. (Other node types do not have attributes.) </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of attributes on the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BaseURI">
       <MemberSignature Language="C#" Value="public override string BaseURI { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BaseURI" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>A networked XML document is comprised of chunks of data aggregated using various W3C standard inclusion mechanisms and therefore contains nodes that come from different places. DTD entities are an example of this, but this is not limited to DTDs. The base URI tells you where these nodes came from. If there is no base URI for the nodes being returned (for example, they were parsed from an in-memory string), String.Empty is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base URI of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanReadBinaryContent">
       <MemberSignature Language="C#" Value="public override bool CanReadBinaryContent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanReadBinaryContent" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>The binary content read methods include the <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" />, <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" />, <see cref="M:System.Xml.XmlNodeReader.ReadElementContentAsBase64(System.Byte[],System.Int32,System.Int32)" />, and <see cref="M:System.Xml.XmlNodeReader.ReadElementContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Xml.XmlNodeReader" /> implements the binary content read methods.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanResolveEntity">
       <MemberSignature Language="C#" Value="public override bool CanResolveEntity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanResolveEntity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this reader can parse and resolve entities.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This method also releases any resources held while reading. If Close has already been called, no action is performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the <see cref="P:System.Xml.XmlNodeReader.ReadState" /> to Closed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Depth">
       <MemberSignature Language="C#" Value="public override int Depth { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Depth" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the depth of the current node in the XML document.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EOF">
       <MemberSignature Language="C#" Value="public override bool EOF { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EOF" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the reader is positioned at the end of the stream.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttribute">
       <MemberSignature Language="C#" Value="public override string GetAttribute (int attributeIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetAttribute(int32 attributeIndex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -162,19 +267,34 @@
         <Parameter Name="attributeIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="attributeIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This method does not move the reader.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the attribute with the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute.</para>
+        </returns>
+        <param name="attributeIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the attribute. The index is zero-based. (The first attribute has index 0.) </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttribute">
       <MemberSignature Language="C#" Value="public override string GetAttribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetAttribute(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -182,19 +302,35 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This method does not move the reader.</para>
+          <para>If the reader is positioned on a DocumentType node, this method can be used to get the PUBLIC and SYSTEM literals, for example, reader.GetAttribute("PUBLIC") </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the attribute with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found, null is returned.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttribute">
       <MemberSignature Language="C#" Value="public override string GetAttribute (string name, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetAttribute(string name, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -203,80 +339,228 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="namespaceURI">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>The following XML contains an attribute in a specific namespace: </para>
+          <code>&lt;test xmlns:dt="urn:datatypes" dt:type="int"/&gt;</code>
+          <para>You can lookup the dt:type attribute using one argument (prefix and local name) or two arguments (local name and namespace URI): </para>
+          <code>String dt = reader.GetAttribute("dt:type");
+String dt2 = reader.GetAttribute("type","urn:datatypes");</code>
+          <para>To lookup the xmlns:dt attribute, use one of the following arguments: </para>
+          <code>String dt3 = reader.GetAttribute("xmlns:dt");
+String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
+          <para>You can also get this information using the <see cref="P:System.Xml.XmlNodeReader.Prefix" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the attribute with the specified local name and namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found, null is returned.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasAttributes">
       <MemberSignature Language="C#" Value="public override bool HasAttributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasAttributes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current node has any attributes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasValue">
       <MemberSignature Language="C#" Value="public override bool HasValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>The following table lists node types that have a value to return.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Node Type </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>The value of the attribute. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CDATA </para>
+              </term>
+              <description>
+                <para>The content of the CDATA section. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Comment </para>
+              </term>
+              <description>
+                <para>The content of the comment. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentType </para>
+              </term>
+              <description>
+                <para>The internal subset. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProcessingInstruction </para>
+              </term>
+              <description>
+                <para>The entire content, excluding the target. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SignificantWhitespace </para>
+              </term>
+              <description>
+                <para>The white space between markup in a mixed content model. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text </para>
+              </term>
+              <description>
+                <para>The content of the text node. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Whitespace </para>
+              </term>
+              <description>
+                <para>The white space between markup. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XmlDeclaration </para>
+              </term>
+              <description>
+                <para>The content of the declaration. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current node can have a <see cref="P:System.Xml.XmlNodeReader.Value" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsDefault">
       <MemberSignature Language="C#" Value="public override bool IsDefault { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDefault" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This property applies to attribute nodes only. If the reader is not positioned on an attribute node, this property returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current node is an attribute that was generated from the default value defined in the document type definition (DTD) or schema.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsEmptyElement">
       <MemberSignature Language="C#" Value="public override bool IsEmptyElement { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsEmptyElement" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This property enables you to determine the difference between the following: </para>
+          <para>&lt;item num="123"/&gt; (IsEmptyElement is true).</para>
+          <para>&lt;item num="123"&gt; (IsEmptyElement is false, although element content is empty).</para>
+          <para>A corresponding EndElement node is not generated for empty elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current node is an empty element (for example, &lt;MyElement/&gt;).</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public virtual string this[int i] { get; }" />
@@ -342,23 +626,39 @@
     </Member>
     <Member MemberName="LocalName">
       <MemberSignature Language="C#" Value="public override string LocalName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LocalName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local name of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LookupNamespace">
       <MemberSignature Language="C#" Value="public override string LookupNamespace (string prefix);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string LookupNamespace(string prefix) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -366,19 +666,39 @@
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>In the following XML string, if the reader is positioned on the href attribute, the prefix a is resolved by calling reader.LookupNamespace("a"). The returned string is urn:456.</para>
+          <code> &lt;root xmlns:a="urn:456"&gt;
+  &lt;item&gt;
+  &lt;ref href="a:b"/&gt;
+  &lt;/item&gt;
+ &lt;/root&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a namespace prefix in the current element's scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI to which the prefix maps or null if no matching prefix is found.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you want to resolve. To match the default namespace, pass an empty string. This string does not have to be atomized. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Mono.Xml.IHasXmlParserContext.ParserContext">
       <MemberSignature Language="C#" Value="System.Xml.XmlParserContext Mono.Xml.IHasXmlParserContext.ParserContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlParserContext Mono.Xml.IHasXmlParserContext.ParserContext" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlParserContext</ReturnType>
       </ReturnValue>
@@ -387,33 +707,46 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="MoveToAttribute">
+      <MemberSignature Language="C#" Value="public override void MoveToAttribute (int attributeIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void MoveToAttribute(int32 attributeIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveToAttribute">
-      <MemberSignature Language="C#" Value="public override void MoveToAttribute (int i);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="i" Type="System.Int32" />
+        <Parameter Name="attributeIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the attribute with the specified index.</para>
+        </summary>
+        <param name="attributeIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToAttribute">
       <MemberSignature Language="C#" Value="public override bool MoveToAttribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToAttribute(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -421,168 +754,286 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>After calling this method, the <see cref="P:System.Xml.XmlNodeReader.Name" />, <see cref="P:System.Xml.XmlNodeReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlNodeReader.Prefix" /> properties reflect the properties of that attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the attribute with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the reader's position does not change.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MoveToAttribute">
+      <MemberSignature Language="C#" Value="public override bool MoveToAttribute (string name, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToAttribute(string name, string namespaceURI) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveToAttribute">
-      <MemberSignature Language="C#" Value="public override bool MoveToAttribute (string localName, string namespaceURI);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceURI">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>After calling this method, the <see cref="P:System.Xml.XmlNodeReader.Name" />, <see cref="P:System.Xml.XmlNodeReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlNodeReader.Prefix" /> properties reflect the properties of that attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the attribute with the specified local name and namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the reader's position does not change.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToElement">
       <MemberSignature Language="C#" Value="public override bool MoveToElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToElement() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>Use this method to return to an element after navigating through its attributes. This method moves the reader to one of the following node types: Element, DocumentType, or XmlDeclaration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the element that contains the current attribute node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reader is positioned on an attribute (the reader moves to the element that owns the attribute); false if the reader is not positioned on an attribute (the position of the reader does not change).</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToFirstAttribute">
       <MemberSignature Language="C#" Value="public override bool MoveToFirstAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToFirstAttribute() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the first attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute exists (the reader moves to the first attribute); otherwise, false (the position of the reader does not change).</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToNextAttribute">
       <MemberSignature Language="C#" Value="public override bool MoveToNextAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToNextAttribute() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>If the current node is not an attribute node, this method is equivalent to <see cref="M:System.Xml.XmlNodeReader.MoveToFirstAttribute" />. If MoveToNextAttribute returns true, the reader moves to the next attribute; otherwise, the position of the reader does not change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the next attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a next attribute; false if there are no more attributes.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the qualified name of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NamespaceURI">
       <MemberSignature Language="C#" Value="public override string NamespaceURI { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NamespaceURI" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This property is relevant to Element and Attribute nodes only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace URI (as defined in the W3C Namespace specification) of the node on which the reader is positioned.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NameTable">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNameTable NameTable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNameTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>All node and attribute names returned from this class are atomized using the NameTable. When the same name is returned multiple times (for example, Customer), then the same String object is returned for that name. This makes it possible for you to write efficient code that does object comparisons on these strings instead of expensive string comparisons.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlNameTable" /> associated with this implementation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeType">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlNodeType NodeType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Prefix">
       <MemberSignature Language="C#" Value="public override string Prefix { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Prefix" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace prefix associated with the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="QuoteChar">
       <MemberSignature Language="C#" Value="public virtual char QuoteChar { get; }" />
@@ -591,9 +1042,17 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the quotation mark character used to enclose the value of an attribute node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -602,218 +1061,434 @@
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public override bool Read ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Read() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>When a reader is first created and initialized, there is no information available. You must call Read to read the first node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the next node from the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the next node was read successfully; false if there are no more nodes to read.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadAttributeValue">
       <MemberSignature Language="C#" Value="public override bool ReadAttributeValue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool ReadAttributeValue() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>Use this method after calling <see cref="M:System.Xml.XmlNodeReader.MoveToAttribute(System.String)" /> to read through the text or entity reference nodes that make up the attribute value. The <see cref="P:System.Xml.XmlNodeReader.Depth" /> of the attribute value nodes is one plus the depth of the attribute node; it increments and decrements by one when you step into and out of general entity references.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the attribute value into one or more Text, EntityReference, or EndEntity nodes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are nodes to return.</para>
+          <para>false if the reader is not positioned on an attribute node when the initial call is made or if all the attribute values have been read.</para>
+          <para>An empty attribute, such as, misc="", returns true with a single node with a value of String.Empty.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadContentAsBase64">
-      <MemberSignature Language="C#" Value="public override int ReadContentAsBase64 (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadContentAsBase64 (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadContentAsBase64(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This method streams the content, decodes the Base64 content, and returns the decoded binary bytes (for example, an inline Base64 encoded GIF image) into the buffer. This method can be called successively to read large streams of embedded text. For more information, see RFC 1521, "MIME (Multipurpose Internet Mail Extensions) Part One: Mechanisms for Specifying and Describing the Format of Internet Message Bodies". You can obtain RFCs from the Request for Comments Web site at http://www.rfc-editor.org.</para>
+          <block subset="none" type="note">
+            <para>You should not access any of the reader properties between calls to the <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> method until the method returns the value 0.</para>
+          </block>
+          <para>This method has the following behavior:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> returns the value 0 when it has reached the end of the byte stream it was operating on. The reader is positioned on the first non-content node.</para>
+            </item>
+            <item>
+              <para>If you ask for fewer, or the exact number, of bytes than are left in the stream the reader remains in its current position.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> is not supported on the following XML node types: Element, XmlDeclaration, None, Document, DocumentType, Notation, Entity, DocumentFragment.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content and returns the Base64 decoded binary bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadContentAsBinHex">
-      <MemberSignature Language="C#" Value="public override int ReadContentAsBinHex (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadContentAsBinHex (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadContentAsBinHex(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This method streams the content, decodes the BinHex content, and returns the decoded binary bytes (for example, an inline BinHex encoded GIF image) into the buffer. This method can be called successively to read large streams of embedded text.</para>
+          <block subset="none" type="note">
+            <para>You should not access any of the reader properties between calls to the <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> method until the method returns the value 0.</para>
+          </block>
+          <para>This method has the following behavior:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> returns the value 0 when it has reached the end of the byte stream it was operating on. The reader is positioned on the first non-content node.</para>
+            </item>
+            <item>
+              <para>If you ask for fewer, or the exact number, of bytes than are left in the stream the reader remains in its current position.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> is not supported on the following XML node types: Element, XmlDeclaration, None, Document, DocumentType, Notation, Entity, DocumentFragment.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content and returns the BinHex decoded binary bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadElementContentAsBase64">
-      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBase64 (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBase64 (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadElementContentAsBase64(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This method reads the content, decodes it using Base64 encoding, and returns the decoded binary bytes (for example, an inline Base64 encoded GIF image) into the buffer. For more information, see RFC 1521, "MIME (Multipurpose Internet Mail Extensions) Part One: Mechanisms for Specifying and Describing the Format of Internet Message Bodies". You can obtain RFCs from the Request for Comments Web site at http://www.rfc-editor.org.</para>
+          <para>This method can only read simple-content elements. The element can contain text, white space, significant white space, CDATA sections, comments and processing instructions. It can also contain entity references, which are automatically expanded. The element cannot have child elements.</para>
+          <para>This method is very similar to the <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> method except that it can only be called on element node types.</para>
+          <para>If the count value is higher than the number of bytes in the document, or if it is equal to the number of bytes in the document, the <see cref="T:System.Xml.XmlNodeReader" /> reads all the remaining bytes in the document and returns the number of bytes read. The next <see cref="M:System.Xml.XmlNodeReader.ReadElementContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> method call returns a zero and moves the reader to the node following the <see cref="F:System.Xml.XmlNodeType.EndElement" /> node.</para>
+          <para>If you call <see cref="M:System.Xml.XmlNodeReader.Read" /> before all of the element content is consumed, the reader may behave as if the first content was consumed and then the <see cref="M:System.Xml.XmlNodeReader.Read" /> method was called. This means that the reader reads all the text until the end element is encountered. It then reads the end tag node, read the next node, and then position itself on the next subsequent node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the element and decodes the Base64 content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadElementContentAsBinHex">
-      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBinHex (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBinHex (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadElementContentAsBinHex(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This method reads the element content, decodes it using BinHex encoding, and returns the decoded binary bytes (for example, an inline BinHex encoded GIF image) into the buffer.</para>
+          <para>This method can only read simple-content elements. The element can contain text, white space, significant white space, CDATA sections, comments and processing instructions. It can also contain entity references, which are automatically expanded. The element cannot have child elements.</para>
+          <para>This method is very similar to the <see cref="M:System.Xml.XmlNodeReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> method except that it can only be called on element node types.</para>
+          <para>If the count value is higher than the number of bytes in the document, or if it is equal to the number of bytes in the document, the <see cref="T:System.Xml.XmlNodeReader" /> reads all the remaining bytes in the document and returns the number of bytes read. The next <see cref="T:System.Xml.XmlNodeReader" /> method call returns a zero and moves the reader to the node following the <see cref="F:System.Xml.XmlNodeType.EndElement" /> node.</para>
+          <para>If you call <see cref="M:System.Xml.XmlNodeReader.Read" /> before all of the element content is consumed, the reader may behave as if the first content was consumed and then the <see cref="M:System.Xml.XmlNodeReader.Read" /> method was called. This means that the reader reads all the text until the end element is encountered. It then reads the end tag node, read the next node, and then position itself on the next subsequent node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the element and decodes the BinHex content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadState">
       <MemberSignature Language="C#" Value="public override System.Xml.ReadState ReadState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.ReadState ReadState" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.ReadState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the reader.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadString">
       <MemberSignature Language="C#" Value="public override string ReadString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ReadString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>If positioned on an element, ReadString concatenates all text, significant white space, white space, and CData section node types together and returns the concatenated data as the element content. It stops when any markup is encountered. This could occur in a mixed content model, or when an element end tag is read.</para>
+          <para>If positioned on a text-like node, ReadString performs the same concatenation from the text node to the element end tag. If the reader is positioned on an attribute text node, ReadString has the same functionality as if the reader were position on the element start tag. It returns all the concatenated element text nodes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of an element or text node as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the element or text-like node (This can include CDATA, Text nodes, and so on). This can be an empty string if the reader is positioned on something other than an element or text node, or if there is no more text content to return in the current context.</para>
+          <para>Note: The text node can be either an element or an attribute text node.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveEntity">
       <MemberSignature Language="C#" Value="public override void ResolveEntity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void ResolveEntity() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>If the reader is positioned on an EntityReference node (XmlNodeType.EntityReference), if <see cref="M:System.Xml.XmlNodeReader.Read" /> is called after calling this method, the entity replacement text is parsed. When the entity replacement text is finished, an EndEntity node is returned to close the entity reference scope.</para>
+          <block subset="none" type="note">
+            <para>After calling this method, if the entity is part of an attribute value, you must call <see cref="M:System.Xml.XmlNodeReader.ReadAttributeValue" /> to step into the entity.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves the entity reference for EntityReference nodes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SchemaInfo">
       <MemberSignature Language="C#" Value="public override System.Xml.Schema.IXmlSchemaInfo SchemaInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.IXmlSchemaInfo SchemaInfo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>The <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> interface represents the Post Schema Validation Infoset (PSVI) of the underlying XML node. The PSVI contents of this property are set after the node has been validated. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the schema information that has been assigned to the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Skip">
       <MemberSignature Language="C#" Value="public override void Skip ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Skip() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>For example, suppose you have the following XML input: </para>
+          <code> &lt;a name="bob" age="123"&gt;
+    &lt;x/&gt;abc&lt;y/&gt;
+  &lt;/a&gt;
+  &lt;b&gt;
+ ...
+  &lt;/b&gt;</code>
+          <para>If the reader is positioned on the "&lt;a&gt;" node or any of its attributes, calling Skip positions the reader to the "&lt;b&gt;" node.</para>
+          <para>If the reader is positioned on a leaf node already (such as element "x" or the text node "abc"), calling Skip is the same as calling <see cref="M:System.Xml.XmlNodeReader.Read" />.</para>
+          <para>This method checks for well-formed XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Skips the children of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Xml.IXmlNamespaceResolver.GetNamespacesInScope">
       <MemberSignature Language="C#" Value="System.Collections.Generic.IDictionary&lt;string,string&gt; IXmlNamespaceResolver.GetNamespacesInScope (System.Xml.XmlNamespaceScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.Generic.IDictionary`2&lt;string, string&gt; System.Xml.IXmlNamespaceResolver.GetNamespacesInScope(valuetype System.Xml.XmlNamespaceScope scope) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;</ReturnType>
       </ReturnValue>
@@ -821,19 +1496,33 @@
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlNodeReader" /> instance is cast to an <see cref="T:System.Xml.IXmlNamespaceResolver" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.IXmlNamespaceResolver.GetNamespacesInScope(System.Xml.XmlNamespaceScope)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Collections.IDictionary" /> object that contains the namespaces that are in scope.</para>
+        </returns>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlNamespaceScope" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Xml.IXmlNamespaceResolver.LookupPrefix">
       <MemberSignature Language="C#" Value="string IXmlNamespaceResolver.LookupPrefix (string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance string System.Xml.IXmlNamespaceResolver.LookupPrefix(string ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -842,62 +1531,105 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlNodeReader" /> instance is cast to an <see cref="T:System.Xml.IXmlNamespaceResolver" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.IXmlNamespaceResolver.LookupPrefix(System.String)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.String" /> object that contains the namespace prefix.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="C#" Value="public override string Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text value of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlLang">
       <MemberSignature Language="C#" Value="public override string XmlLang { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string XmlLang" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+          <para>This property represents the xml:lang scope within which the current node resides. For example, here is an XML fragment with xml:lang set to US English in the root element: </para>
+          <code>&lt;root xml:lang="en-us"&gt; 
+&lt;name&gt;Fred&lt;/name&gt; 
+&lt;/root&gt; </code>
+          <para>When the reader is positioned on the name element, you can use this property to find that it is in the scope of a US English xml:lang attribute.</para>
+          <para>The string returned is also in <see cref="P:System.Xml.XmlNodeReader.NameTable" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current xml:lang scope.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlSpace">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlSpace XmlSpace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlSpace XmlSpace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlSpace</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext, the recommended practice is to create <see cref="T:System.Xml.XmlReader" /> instances using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. This allows you to take full advantage of all the new features introduced in the dnprdnshort. For more information, see <format type="text/html"><a href="441e5aac-dfa9-41ed-9336-cd541b11c2d1">Creating XML Readers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current xml:space scope.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

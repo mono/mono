@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AsyncCompletedEventHandler" FullName="System.ComponentModel.AsyncCompletedEventHandler">
   <TypeSignature Language="C#" Value="public delegate void AsyncCompletedEventHandler(object sender, AsyncCompletedEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AsyncCompletedEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -17,8 +20,16 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create an <see cref="T:System.ComponentModel.AsyncCompletedEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event-handler method is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+      <para>For an asynchronous method, called MethodName, in your component, you will have a corresponding MethodNameCompleted event, and an optional MethodNameCompletedEventArgs class.</para>
+      <para>For a component that supports multiple concurrent invocations of its asynchronous methods, the client can supply a unique token, or task ID, to distinguish which asynchronous task is raising particular events. The client's <see cref="T:System.ComponentModel.AsyncCompletedEventHandler" /> can read the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property to determine which task is reporting completion. Your implementation should use the <see cref="T:System.ComponentModel.AsyncOperationManager" /> to create an <see cref="T:System.ComponentModel.AsyncOperation" /> that associates the client's task IDs with pending asynchronous tasks.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the MethodNameCompleted event of an asynchronous operation.</para>
+    </summary>
   </Docs>
 </Type>

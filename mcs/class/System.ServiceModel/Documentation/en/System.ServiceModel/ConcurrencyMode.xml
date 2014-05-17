@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ConcurrencyMode" FullName="System.ServiceModel.ConcurrencyMode">
+  <TypeSignature Language="C#" Value="public enum ConcurrencyMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ConcurrencyMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ServiceModel.ConcurrencyMode" /> is used in conjunction with the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> property to specify whether a service class supports single-threaded or multi-threaded modes of operation. A single-threaded operation can be either reentrant or non-reentrant. </para>
+      <para>The following table shows when indigo1 permits an operation to be invoked while another one is in progress, depending upon the <see cref="T:System.ServiceModel.ConcurrencyMode" />.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>ConcurrencyMode Value</para>
+            </term>
+            <description>
+              <para>Can a new operation be invoked?</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.ServiceModel.ConcurrencyMode.Single" />
+            </para>
+          </term>
+          <description>
+            <para>Never.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.ServiceModel.ConcurrencyMode.Reentrant" />
+            </para>
+          </term>
+          <description>
+            <para>Only while invoking another service or a callback.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.ServiceModel.ConcurrencyMode.Multiple" />
+            </para>
+          </term>
+          <description>
+            <para>Always.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a service class supports single-threaded or multi-threaded modes of operation. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Multiple">
+      <MemberSignature Language="C#" Value="Multiple" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.ConcurrencyMode Multiple = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ConcurrencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service instance is multi-threaded. No synchronization guarantees are made. Because other threads can change your service object at any time, you must handle synchronization and state consistency at all times.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Reentrant">
+      <MemberSignature Language="C#" Value="Reentrant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.ConcurrencyMode Reentrant = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ConcurrencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service instance is single-threaded and accepts reentrant calls. The reentrant service accepts calls when you call another service; it is therefore your responsibility to leave your object state consistent before callouts and you must confirm that operation-local data is valid after callouts. Note that the service instance is unlocked only by calling another service over a indigo2 channel. In this case, the called service can reenter the first service via a callback. If the first service is not reentrant, the sequence of calls results in a deadlock. For details, see <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" />. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Single">
+      <MemberSignature Language="C#" Value="Single" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.ConcurrencyMode Single = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ConcurrencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service instance is single-threaded and does not accept reentrant calls. If the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property is <see cref="F:System.ServiceModel.InstanceContextMode.Single" />, and additional messages arrive while the instance services a call, these messages must wait until the service is available or until the messages time out.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

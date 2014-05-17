@@ -71,7 +71,6 @@ static void mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gklass
 
 
 void (*mono_debugger_class_init_func) (MonoClass *klass) = NULL;
-void (*mono_debugger_class_loaded_methods_func) (MonoClass *klass) = NULL;
 
 
 /*
@@ -172,8 +171,11 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 	idx = cols [MONO_TYPEREF_SCOPE] >> MONO_RESOLTION_SCOPE_BITS;
 	switch (cols [MONO_TYPEREF_SCOPE] & MONO_RESOLTION_SCOPE_MASK) {
 	case MONO_RESOLTION_SCOPE_MODULE:
-		if (!idx)
-			g_error ("null ResolutionScope not yet handled");
+		/*
+		LAMESPEC The spec says that a null module resolution scope should go through the exported type table.
+		This is not the observed behavior of existing implementations.
+		The defacto behavior is that it's just a typedef in disguise.
+		*/
 		/* a typedef in disguise */
 		return mono_class_from_name (image, nspace, name);
 	case MONO_RESOLTION_SCOPE_MODULEREF:
@@ -2169,9 +2171,6 @@ mono_class_setup_methods (MonoClass *class)
 
 	class->methods = methods;
 
-	if (mono_debugger_class_loaded_methods_func)
-		mono_debugger_class_loaded_methods_func (class);
-
 	mono_loader_unlock ();
 }
 
@@ -2923,9 +2922,12 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 	 * We collect the types needed to build the
 	 * instantiations in interfaces at intervals of 3/5, because 3/5 are
 	 * the generic interfaces needed to implement.
+	 *
+	 * On 4.5, as an optimization, we don't expand ref classes for the variant generic interfaces
+	 * (IEnumerator, IReadOnlyList and IReadOnlyColleciton). The regular dispatch code can handle those cases.
 	 */
-	nifaces = generic_ireadonlylist_class ? 5 : 3;
 	if (eclass->valuetype) {
+		nifaces = generic_ireadonlylist_class ? 5 : 3;
 		fill_valuetype_array_derived_types (valuetype_types, eclass, original_rank);
 
 		/* IList, ICollection, IEnumerable, IReadOnlyList`1 */
@@ -2947,6 +2949,7 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 		int idepth = eclass->idepth;
 		if (!internal_enumerator)
 			idepth--;
+		nifaces = generic_ireadonlylist_class ? 2 : 3;
 
 		// FIXME: This doesn't seem to work/required for generic params
 		if (!(eclass->this_arg.type == MONO_TYPE_VAR || eclass->this_arg.type == MONO_TYPE_MVAR || (eclass->image->dynamic && !eclass->wastypebuilder)))
@@ -3010,10 +3013,16 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 
 		interfaces [i + 0] = inflate_class_one_arg (mono_defaults.generic_ilist_class, iface);
 		interfaces [i + 1] = inflate_class_one_arg (generic_icollection_class, iface);
-		interfaces [i + 2] = inflate_class_one_arg (generic_ienumerable_class, iface);
-		if (generic_ireadonlylist_class) {
-			interfaces [i + 3] = inflate_class_one_arg (generic_ireadonlylist_class, iface);
-			interfaces [i + 4] = inflate_class_one_arg (generic_ireadonlycollection_class, iface);
+
+		if (eclass->valuetype) {
+			interfaces [i + 2] = inflate_class_one_arg (generic_ienumerable_class, iface);
+			if (generic_ireadonlylist_class) {
+				interfaces [i + 3] = inflate_class_one_arg (generic_ireadonlylist_class, iface);
+				interfaces [i + 4] = inflate_class_one_arg (generic_ireadonlycollection_class, iface);
+			}
+		} else {
+			if (!generic_ireadonlylist_class)
+				interfaces [i + 2] = inflate_class_one_arg (generic_ienumerable_class, iface);
 		}
 	}
 	if (internal_enumerator) {
@@ -3606,10 +3615,6 @@ mono_class_setup_vtable_full (MonoClass *class, GList *in_setup)
 
 	if (class->vtable)
 		return;
-
-	if (mono_debug_using_mono_debugger ())
-		/* The debugger currently depends on this */
-		mono_class_setup_methods (class);
 
 	if (MONO_CLASS_IS_INTERFACE (class)) {
 		/* This sets method->slot for all methods if this is an interface */
@@ -5484,7 +5489,7 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
  *  - supertypes: array of classes: each element has a class in the hierarchy
  *    starting from @class up to System.Object
  * 
- * LOCKING: this assumes the loader lock is held
+ * LOCKING: This function is atomic, in case of contention we waste memory.
  */
 void
 mono_class_setup_supertypes (MonoClass *class)
@@ -5492,7 +5497,8 @@ mono_class_setup_supertypes (MonoClass *class)
 	int ms;
 	MonoClass **supertypes;
 
-	if (class->supertypes)
+	mono_atomic_load_acquire (supertypes, void*, &class->supertypes);
+	if (supertypes)
 		return;
 
 	if (class->parent && !class->parent->supertypes)
@@ -6637,6 +6643,9 @@ mono_class_data_size (MonoClass *klass)
 {	
 	if (!klass->inited)
 		mono_class_init (klass);
+	/* This can happen with dynamically created types */
+	if (!klass->fields_inited)
+		mono_class_setup_fields_locking (klass);
 
 	/* in arrays, sizes.class_size is unioned with element_size
 	 * and arrays have no static fields
@@ -7446,7 +7455,11 @@ search_modules (MonoImage *image, const char *name_space, const char *name)
  * @name: the type short name.
  *
  * Obtains a MonoClass with a given namespace and a given name which
- * is located in the given MonoImage.   
+ * is located in the given MonoImage.
+ *
+ * To reference nested classes, use the "/" character as a separator.
+ * For example use "Foo/Bar" to reference the class Bar that is nested
+ * inside Foo, like this: "class Foo { class Bar {} }".
  */
 MonoClass *
 mono_class_from_name (MonoImage *image, const char* name_space, const char *name)
@@ -7558,11 +7571,31 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 	return class;
 }
 
-/*FIXME test for interfaces with variant generic arguments*/
+/**
+ * mono_class_is_subclass_of:
+ * @klass: class to probe if it is a subclass of another one
+ * @klassc: the class we suspect is the base class
+ * @check_interfaces: whether we should perform interface checks
+ *
+ * This method determines whether @klass is a subclass of @klassc.
+ *
+ * If the @check_interfaces flag is set, then if @klassc is an interface
+ * this method return true if the @klass implements the interface or
+ * if @klass is an interface, if one of its base classes is @klass.
+ *
+ * If @check_interfaces is false then, then if @klass is not an interface
+ * then it returns true if the @klass is a subclass of @klassc.
+ *
+ * if @klass is an interface and @klassc is System.Object, then this function
+ * return true.
+ *
+ */
 gboolean
 mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc, 
 			   gboolean check_interfaces)
 {
+/*FIXME test for interfaces with variant generic arguments*/
+	
 	if (check_interfaces && MONO_CLASS_IS_INTERFACE (klassc) && !MONO_CLASS_IS_INTERFACE (klass)) {
 		if (MONO_CLASS_IMPLEMENTS_INTERFACE (klass, klassc->interface_id))
 			return TRUE;
@@ -7979,6 +8012,10 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 			}
 		} else {
 			/*setup_interfaces don't mono_class_init anything*/
+			/*FIXME this doesn't handle primitive type arrays.
+			ICollection<sbyte> x byte [] won't work because candidate->interfaces, for byte[], won't have IList<sbyte>.
+			A possible way to fix this would be to move that to setup_interfaces from setup_interface_offsets.
+			*/
 			mono_class_setup_interfaces (candidate, &error);
 			if (!mono_error_ok (&error)) {
 				mono_error_cleanup (&error);
@@ -8024,7 +8061,34 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
  	if (target->delegate && mono_class_has_variant_generic_params (target))
 		return mono_class_is_variant_compatible (target, candidate, FALSE);
 
-	/*FIXME properly handle nullables and arrays */
+	if (target->rank) {
+		MonoClass *eclass, *eoclass;
+
+		if (target->rank != candidate->rank)
+			return FALSE;
+
+		/* vectors vs. one dimensional arrays */
+		if (target->byval_arg.type != candidate->byval_arg.type)
+			return FALSE;
+
+		eclass = target->cast_class;
+		eoclass = candidate->cast_class;
+
+		/*
+		 * a is b does not imply a[] is b[] when a is a valuetype, and
+		 * b is a reference type.
+		 */
+
+		if (eoclass->valuetype) {
+			if ((eclass == mono_defaults.enum_class) ||
+				(eclass == mono_defaults.enum_class->parent) ||
+				(eclass == mono_defaults.object_class))
+				return FALSE;
+		}
+
+		return mono_class_is_assignable_from_slow (target->cast_class, candidate->cast_class);
+	}
+	/*FIXME properly handle nullables */
 	/*FIXME properly handle (M)VAR */
 	return FALSE;
 }
@@ -8630,7 +8694,7 @@ mono_class_get_virtual_methods (MonoClass* klass, gpointer *iter)
 	MonoMethod** method;
 	if (!iter)
 		return NULL;
-	if (klass->methods || !MONO_CLASS_HAS_STATIC_METADATA (klass) || mono_debug_using_mono_debugger ()) {
+	if (klass->methods || !MONO_CLASS_HAS_STATIC_METADATA (klass)) {
 		if (!*iter) {
 			mono_class_setup_methods (klass);
 			/*
@@ -8875,6 +8939,32 @@ mono_class_get_nested_types (MonoClass* klass, gpointer *iter)
 		return item->data;
 	}
 	return NULL;
+}
+
+
+/**
+ * mono_class_is_delegate
+ * @klass: the MonoClass to act on
+ *
+ * Returns: true if the MonoClass represents a System.Delegate.
+ */
+mono_bool
+mono_class_is_delegate (MonoClass *klass)
+{
+	return klass->delegate;
+}
+
+/**
+ * mono_class_implements_interface
+ * @klass: The MonoClass to act on
+ * @interface: The interface to check if @klass implements.
+ *
+ * Returns: true if @klass implements @interface.
+ */
+mono_bool
+mono_class_implements_interface (MonoClass* klass, MonoClass* iface)
+{
+	return mono_class_is_assignable_from (iface, klass);
 }
 
 /**

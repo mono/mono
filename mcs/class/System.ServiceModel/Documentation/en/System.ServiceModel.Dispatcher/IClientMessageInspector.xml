@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IClientMessageInspector" FullName="System.ServiceModel.Dispatcher.IClientMessageInspector">
+  <TypeSignature Language="C#" Value="public interface IClientMessageInspector" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IClientMessageInspector" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IClientMessageInspector" /> interface and add it to the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MessageInspectors" /> collection to inspect or modify messages as they pass through a indigo2 client object. For details, see <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a message inspector object that can be added to the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MessageInspectors" /> collection to view or modify messages.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AfterReceiveReply">
+      <MemberSignature Language="C#" Value="public void AfterReceiveReply (ref System.ServiceModel.Channels.Message message, object correlationState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AfterReceiveReply(class System.ServiceModel.Channels.Message message, object correlationState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message&amp;" RefType="ref" />
+        <Parameter Name="correlationState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="correlationState">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeforeSendRequest">
+      <MemberSignature Language="C#" Value="public object BeforeSendRequest (ref System.ServiceModel.Channels.Message message, System.ServiceModel.IClientChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object BeforeSendRequest(class System.ServiceModel.Channels.Message message, class System.ServiceModel.IClientChannel channel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message&amp;" RefType="ref" />
+        <Parameter Name="channel" Type="System.ServiceModel.IClientChannel" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <param name="channel">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

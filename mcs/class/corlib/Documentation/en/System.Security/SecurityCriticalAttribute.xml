@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityCriticalAttribute" FullName="System.Security.SecurityCriticalAttribute">
   <TypeSignature Language="C#" Value="public sealed class SecurityCriticalAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SecurityCriticalAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -11,62 +13,93 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Module | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Event | System.AttributeTargets.Interface | System.AttributeTargets.Delegate | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Field | System.AttributeTargets.Interface | System.AttributeTargets.Delegate | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Security-critical operations are actions that affect code access security, such as elevation of privilege through suppression of code access security checks by using the <see cref="M:System.Security.CodeAccessPermission.Assert" /> method, calling unsafe managed code, and so forth. Either the <see cref="T:System.Security.SecurityCriticalAttribute" /> attribute or the <see cref="T:System.Security.SecuritySafeCriticalAttribute" /> attribute must be applied to code for the code to perform security-critical operations. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Security.SecurityCriticalAttribute" /> is equivalent to a link demand for full trust. A type or member marked with the <see cref="T:System.Security.SecurityCriticalAttribute" /> can be called only by fully trusted code; it does not have to demand specific permissions. It cannot be called by partially trusted code.</para>
+      </block>
+      <para>Applying the <see cref="T:System.Security.SecurityCriticalAttribute" /> at the assembly level identifies the assembly as a security-critical assembly. The entire assembly can be identified as critical by setting the scope parameter <see cref="F:System.Security.SecurityCriticalScope.Everything" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that code or an assembly performs security-critical operations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SecurityCriticalAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SecurityCriticalAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SecurityCriticalAttribute (System.Security.SecurityCriticalScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.SecurityCriticalScope scope) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="scope" Type="System.Security.SecurityCriticalScope" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is provided for compatibility with the .NET Framework version 2.0 transparency model. It does not apply to the net_v40_long. For more information, see <format type="text/html"><a href="4d05610a-0da6-4f08-acea-d54c9d6143c0">Security-Transparent Code, Level 2</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SecurityCriticalAttribute" /> class with the specified scope. </para>
+        </summary>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the scope of the attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Scope">
+      <MemberSignature Language="C#" Value="public System.Security.SecurityCriticalScope Scope { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.SecurityCriticalScope Scope" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Scope">
-      <MemberSignature Language="C#" Value="public System.Security.SecurityCriticalScope Scope { get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.SecurityCriticalScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the scope for the attribute.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

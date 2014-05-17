@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SuppressUnmanagedCodeSecurityAttribute" FullName="System.Security.SuppressUnmanagedCodeSecurityAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SuppressUnmanagedCodeSecurityAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SuppressUnmanagedCodeSecurityAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,24 +23,44 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>Use this attribute with extreme care. Incorrect use can create security weaknesses.</para>
+      </block>
+      <para>This attribute can be applied to methods that want to call into native code without incurring the performance loss of a run-time security check when doing so. The stack walk performed when calling unmanaged code is omitted at run time, resulting in substantial performance savings. Using this attribute in a class applies it to all contained methods.</para>
+      <para>Generally, whenever managed code calls into unmanaged code (by PInvoke or COM interop into native code), there is a demand for the UnmanagedCode permission to ensure all callers have the necessary permission to allow this. By applying this explicit attribute, developers can suppress the demand at run time. The developer must take responsibility for assuring that the transition into unmanaged code is sufficiently protected by other means. The demand for the UnmanagedCode permission will still occur at link time. For example, if function A calls function B and function B is marked with <see cref="T:System.Security.SuppressUnmanagedCodeSecurityAttribute" />, function A will be checked for unmanaged code permission during just-in-time compilation, but not subsequently during run time.</para>
+      <para>This attribute is only effective when applied to PInvoke methods (or classes that contain PInvoke methods) or the definition of an interface through which interop calls will be made. It will be ignored in all other contexts.</para>
+      <para>This attribute is useful for implementing a class that provides access to system resources through unmanaged code. Code that does not have permission to access unmanaged code can call a class with this attribute to access unmanaged code. This is only safe if the writer of the class with this attribute has programmed the class to be secure. If not, this attribute is dangerous and can allow the code that uses it to be misused.</para>
+      <para>This is not a declarative security attribute, but a regular attribute (it derives from <see cref="T:System.Attribute" />, not <see cref="T:System.Security.Permissions.SecurityAttribute" />).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows managed code to call into unmanaged code without a stack walk. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SuppressUnmanagedCodeSecurityAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes any fields to their default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SuppressUnmanagedCodeSecurityAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ChannelFactoryBase&lt;TChannel&gt;" FullName="System.ServiceModel.Channels.ChannelFactoryBase&lt;TChannel&gt;">
+  <TypeSignature Language="C#" Value="public abstract class ChannelFactoryBase&lt;TChannel&gt; : System.ServiceModel.Channels.ChannelFactoryBase, System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ChannelFactoryBase`1&lt;TChannel&gt; extends System.ServiceModel.Channels.ChannelFactoryBase implements class System.ServiceModel.Channels.IChannelFactory, class System.ServiceModel.Channels.IChannelFactory`1&lt;!TChannel&gt;, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TChannel" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.ChannelFactoryBase</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="TChannel">To be added.</typeparam>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The channels created by channel factories on the client are accepted on the server by channel listeners. Once the channel connection is established between client and service, they can communicate by exchanging messages.</para>
+      <para>The <see cref="Overload:System.ServiceModel.Channels.ChannelFactoryBase`1.CreateChannel" /> uses the specified address as the destination for outgoing messages. The ServiceAddress.Uri property is used as the To header in the message. The ServiceReference.Via property is used as the physical destination to send messages to. This is typically the same as the ServiceAddress.Uri value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common base implementation for channel factories on the client to create channels of a specified type connected to a specified address.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ChannelFactoryBase ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes timeout properties with the service model timeout values when exchanging messages. The default value is 1 minute for open, send, and close operations and 10 minutes for the receive operation. Use <see cref="M:System.ServiceModel.Channels.ChannelFactoryBase`1.#ctor(System.ServiceModel.IDefaultCommunicationTimeouts)" /> if you want to specify other values for these operation timeouts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.ChannelFactoryBase`1" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ChannelFactoryBase (System.ServiceModel.IDefaultCommunicationTimeouts timeouts);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.IDefaultCommunicationTimeouts timeouts) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="timeouts" Type="System.ServiceModel.IDefaultCommunicationTimeouts" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.ServiceModel.Channels.ChannelFactoryBase`1.#ctor(System.ServiceModel.IDefaultCommunicationTimeouts)" /> instead of the default constructor if you want to specify custom values for the open, send, receive, and close operation timeouts instead of using the service model default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.ChannelFactoryBase`1" /> class with the default communication timeouts specified.</para>
+        </summary>
+        <param name="timeouts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.IDefaultCommunicationTimeouts" /> that specifies the default timeouts for open, send, receive, and close operations when exchanging messages.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public TChannel CreateChannel (System.ServiceModel.EndpointAddress remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !TChannel CreateChannel(class System.ServiceModel.EndpointAddress remoteAddress) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <param name="remoteAddress">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls <see cref="M:System.ServiceModel.Channels.ChannelFactoryBase`1.OnCreateChannel(System.ServiceModel.EndpointAddress,System.Uri)" /> when invoked. This method cannot be overridden by a derived class. </para>
+          <para>This uses <see cref="P:System.ServiceModel.EndpointAddress.Uri" /> as the transport address to which messages are sent on the output channel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a particular type of channel with a specified endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> with the specified <paramref name="address" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public TChannel CreateChannel (System.ServiceModel.EndpointAddress remoteAddress, Uri via);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !TChannel CreateChannel(class System.ServiceModel.EndpointAddress remoteAddress, class System.Uri via) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="via" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="remoteAddress">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls <see cref="M:System.ServiceModel.Channels.ChannelFactoryBase`1.OnCreateChannel(System.ServiceModel.EndpointAddress,System.Uri)" /> when invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a particular type of channel with specified transport and endpoint addresses.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> with the specified remote and transport addresses.</para>
+        </returns>
+        <param name="via">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which messages are sent on the output channel.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnAbort">
+      <MemberSignature Language="C#" Value="protected override void OnAbort ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void OnAbort() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by <see cref="M:System.ServiceModel.Channels.CommunicationObject.Abort" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Aborts each channel managed by the channel factory.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnBeginClose">
+      <MemberSignature Language="C#" Value="protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.IAsyncResult OnBeginClose(valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to close all the channels associated with the channel factory within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on-close operation. </para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-close operation has to complete before timing out.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous completion of the on-close operation.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous on-close operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnClose">
+      <MemberSignature Language="C#" Value="protected override void OnClose (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void OnClose(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sequentially attempts to close all of the active channels associated with the channel factory in no particular order. The timeout parameter is the cumulative amount of time available for closing all of the channels. If a graceful close of one of the channels fails (for example, if the channel is faulted causing an exception to be thrown) then this operation fails and does not attempt to close the remaining channels. Failure in this method causes the factory and any remaining channels to be aborted rather than closed.</para>
+          <para>This method is called by <see cref="M:System.ServiceModel.Channels.CommunicationObject.Close" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes all the channels associated with the channel factory within a specified interval of time.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-close operation has to complete before timing out.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnCreateChannel">
+      <MemberSignature Language="C#" Value="protected abstract TChannel OnCreateChannel (System.ServiceModel.EndpointAddress remoteAddress, Uri via);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance !TChannel OnCreateChannel(class System.ServiceModel.EndpointAddress remoteAddress, class System.Uri via) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="via" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="remoteAddress">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by <see cref="Overload:System.ServiceModel.Channels.ChannelFactoryBase`1.CreateChannel" /> when invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented in a derived class, provides an extensibility point when creating channels.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> with the specified addresses.</para>
+        </returns>
+        <param name="via">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which messages are sent on the output channel.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndClose">
+      <MemberSignature Language="C#" Value="protected override void OnEndClose (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void OnEndClose(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to close all the channels associated with the channel factory within a specified interval of time.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="M:System.ServiceModel.Channels.ChannelFactoryBase`1.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateCreateChannel">
+      <MemberSignature Language="C#" Value="protected void ValidateCreateChannel ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ValidateCreateChannel() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method throws one of the exceptions listed and checks for the conditions in the order they are listed in the table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Confirms that the channel factory is opened and ready to create channels.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

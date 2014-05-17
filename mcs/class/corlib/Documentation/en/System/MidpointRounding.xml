@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MidpointRounding" FullName="System.MidpointRounding">
   <TypeSignature Language="C#" Value="public enum MidpointRounding" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MidpointRounding extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,40 +16,160 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.MidpointRounding" /> with appropriate overloads of <see cref="Overload:System.Math.Round" /> to provide more control of the rounding process. </para>
+      <para>A rounding operation takes an original number with an implicit or specified precision; examines the next digit, which is at that precision plus one; and returns the nearest number with the same precision as the original number. For positive numbers, if the next digit is from 0 through 4, the nearest number is toward negative infinity. If the next digit is from 6 through 9, the nearest number is toward positive infinity. For negative numbers, if the next digit is from 0 through 4, the nearest number is toward positive infinity. If the next digit is from 6 through 9, the nearest number is toward negative infinity. </para>
+      <para>In the previous cases, the <see cref="T:System.MidpointRounding" /> enumeration does not affect the result of the rounding operation. However, if the next digit is 5, which is the midpoint between two possible results, the nearest number is ambiguous. In this case, the <see cref="T:System.MidpointRounding" /> enumeration enables you to specify whether the rounding operation returns the nearest number away from zero or the nearest even number. </para>
+      <para>The following table demonstrates the results of rounding some negative and positive numbers in conjunction with the values of <see cref="T:System.MidpointRounding" />. The precision used to round the numbers is zero, which means the number after the decimal point affects the rounding operation. For example, for the number -2.5, the digit after the decimal point is 5. Because that digit is the midpoint, you can use a <see cref="T:System.MidpointRounding" /> value to determine the result of rounding. If <see cref="F:System.MidpointRounding.AwayFromZero" /> is specified, -3 is returned because it is the nearest number away from zero with a precision of zero. If <see cref="F:System.MidpointRounding.ToEven" /> is specified, -2 is returned because it is the nearest even number with a precision of zero.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Original number</para>
+            </term>
+            <description>
+              <para>AwayFromZero</para>
+            </description>
+            <description>
+              <para>ToEven</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>3.5</para>
+          </term>
+          <description>
+            <para>4</para>
+          </description>
+          <description>
+            <para>4</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2.8</para>
+          </term>
+          <description>
+            <para>3</para>
+          </description>
+          <description>
+            <para>3</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2.5</para>
+          </term>
+          <description>
+            <para>3</para>
+          </description>
+          <description>
+            <para>2</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>2.1</para>
+          </term>
+          <description>
+            <para>2</para>
+          </description>
+          <description>
+            <para>2</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>-2.1</para>
+          </term>
+          <description>
+            <para>-2</para>
+          </description>
+          <description>
+            <para>-2</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>-2.5</para>
+          </term>
+          <description>
+            <para>-3</para>
+          </description>
+          <description>
+            <para>-2</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>-2.8</para>
+          </term>
+          <description>
+            <para>-3</para>
+          </description>
+          <description>
+            <para>-3</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>-3.5 </para>
+          </term>
+          <description>
+            <para>-4</para>
+          </description>
+          <description>
+            <para>-4</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how mathematical rounding methods should process a number that is midway between two numbers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AwayFromZero">
       <MemberSignature Language="C#" Value="AwayFromZero" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.MidpointRounding AwayFromZero = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.MidpointRounding</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.MidpointRounding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a number is halfway between two others, it is rounded toward the nearest number that is away from zero.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ToEven">
       <MemberSignature Language="C#" Value="ToEven" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.MidpointRounding ToEven = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.MidpointRounding</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.MidpointRounding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a number is halfway between two others, it is rounded toward the nearest even number.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

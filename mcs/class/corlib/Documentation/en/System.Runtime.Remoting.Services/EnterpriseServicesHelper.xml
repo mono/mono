@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EnterpriseServicesHelper" FullName="System.Runtime.Remoting.Services.EnterpriseServicesHelper">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class EnterpriseServicesHelper" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EnterpriseServicesHelper extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,43 +14,47 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>This class makes a link demand. A SecurityException is thrown if the immediate caller does not have infrastructure permission. See <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> for more information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides APIs that are needed for communication and operation with unmanaged classes outside of the <see cref="T:System.AppDomain" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EnterpriseServicesHelper ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.Services.EnterpriseServicesHelper" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreateConstructionReturnMessage">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Activation.IConstructionReturnMessage CreateConstructionReturnMessage (System.Runtime.Remoting.Activation.IConstructionCallMessage ctorMsg, MarshalByRefObject retObj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.Activation.IConstructionReturnMessage CreateConstructionReturnMessage(class System.Runtime.Remoting.Activation.IConstructionCallMessage ctorMsg, class System.MarshalByRefObject retObj) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Remoting.Activation.IConstructionReturnMessage</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="ctorMsg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
-        <Parameter Name="retObj" Type="System.MarshalByRefObject" />
-      </Parameters>
-      <Docs>
-        <param name="ctorMsg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionCallMessage'</param>
-        <param name="retObj">To be added: an object of type 'MarshalByRefObject'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.Activation.IConstructionReturnMessage'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +65,38 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Activation.IConstructionReturnMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ctorMsg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
+        <Parameter Name="retObj" Type="System.MarshalByRefObject" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> from the specified <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" /> returned from the construction call that is specified in the <paramref name="ctorMsg" /> parameter.</para>
+        </returns>
+        <param name="ctorMsg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A construction call to the object from which the new <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> instance is returning. </param>
+        <param name="retObj">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Remoting.ObjRef" /> that represents the object that is constructed with the construction call in <paramref name="ctorMsg" />. </param>
+      </Docs>
     </Member>
     <Member MemberName="SwitchWrappers">
       <MemberSignature Language="C#" Value="public static void SwitchWrappers (System.Runtime.Remoting.Proxies.RealProxy oldcp, System.Runtime.Remoting.Proxies.RealProxy newcp);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SwitchWrappers(class System.Runtime.Remoting.Proxies.RealProxy oldcp, class System.Runtime.Remoting.Proxies.RealProxy newcp) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -71,20 +105,31 @@
         <Parameter Name="newcp" Type="System.Runtime.Remoting.Proxies.RealProxy" />
       </Parameters>
       <Docs>
-        <param name="oldcp">To be added: an object of type 'Runtime.Remoting.Proxies.RealProxy'</param>
-        <param name="newcp">To be added: an object of type 'Runtime.Remoting.Proxies.RealProxy'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method can cause unwanted behavior. Before calling it, the user must ensure that this is a thread-safe operation, and that a call is not being made through the CCW to one of the instances of the class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Switches a <format type="text/html"><a href="D04BE3B5-27B9-4F5B-8469-A44149FABF78">[&lt;topic://cpconcomcallablewrapper&gt;]</a></format> (CCW) from one instance of a class to another instance of the same class.</para>
+        </summary>
+        <param name="oldcp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A proxy that represents the old instance of a class that is referenced by a CCW. </param>
+        <param name="newcp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A proxy that represents the new instance of a class that is referenced by a CCW. </param>
       </Docs>
+    </Member>
+    <Member MemberName="WrapIUnknownWithComObject">
+      <MemberSignature Language="C#" Value="public static object WrapIUnknownWithComObject (IntPtr punk);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object WrapIUnknownWithComObject(native int punk) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WrapIUnknownWithComObject">
-      <MemberSignature Language="C#" Value="public static object WrapIUnknownWithComObject (IntPtr punk);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -92,21 +137,21 @@
         <Parameter Name="punk" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="punk">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Services.EnterpriseServicesHelper.WrapIUnknownWithComObject(System.IntPtr)" /> method is similar to the <see cref="M:System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(System.IntPtr)" /> method, but does not attempt to maintain the identity of the unmanaged object. For example, two calls with the same IUnknown to the current method return two different RCWs, but two calls to the <see cref="M:System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(System.IntPtr)" /> method with the same IUnknown return the same RCW.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Wraps the specified IUnknown COM interface with a <format type="text/html"><a href="7E542583-1E31-4E10-B523-8CF2F29CB4A4">[&lt;topic://cpconruntimecallablewrapper&gt;]</a></format> (RCW).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RCW where the specified IUnknown is wrapped.</para>
+        </returns>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the IUnknown COM interface to wrap. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

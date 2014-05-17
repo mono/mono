@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IInvokeOnGetBinder" FullName="System.Dynamic.IInvokeOnGetBinder">
+  <TypeSignature Language="C#" Value="public interface IInvokeOnGetBinder" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IInvokeOnGetBinder" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents information about a dynamic get member operation that indicates if the get member should invoke properties when they perform the get operation.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="InvokeOnGet">
+      <MemberSignature Language="C#" Value="public bool InvokeOnGet { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool InvokeOnGet" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by some languages to get a better TLA2#tla_com interoperation experience.</para>
+          <para>When the value is set to false, the dynamic TLA2#tla_com object will not invoke the object but will instead bind to the name, and return an object that can be invoked or indexed later. This is useful for indexed properties and languages that do not produce InvokeMember call sites.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value indicating if this get member operation should invoke properties when they perform the get operation. The default value when this interface is not present is true.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

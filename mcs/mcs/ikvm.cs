@@ -91,12 +91,12 @@ namespace Mono.CSharp
 
 		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
 		{
-			// It can be used more than once when importing same assembly
-			// into 2 or more global aliases
-			// TODO: Should be just Add
-			GetAssemblyDefinition (assembly);
-
 			try {
+				// It can be used more than once when importing same assembly
+				// into 2 or more global aliases
+				// TODO: Should be just Add
+				GetAssemblyDefinition (assembly);
+
 				var all_types = assembly.GetTypes ();
 				ImportTypes (all_types, targetNamespace, true);
 
@@ -124,6 +124,9 @@ namespace Mono.CSharp
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
 			foreach (var t in types) {
+				if (!t.__IsTypeForwarder)
+					continue;
+
 				// IsMissing tells us the type has been forwarded and target assembly is missing 
 				if (!t.__IsMissing)
 					continue;
@@ -186,6 +189,8 @@ namespace Mono.CSharp
 		{
 			if (loader.Corlib != null && !(loader.Corlib is AssemblyBuilder)) {
 				Builder.__SetImageRuntimeVersion (loader.Corlib.ImageRuntimeVersion, 0x20000);
+			} else if (module.Compiler.Settings.RuntimeMetadataVersion != null) {
+				Builder.__SetImageRuntimeVersion (module.Compiler.Settings.RuntimeMetadataVersion, 0x20000);
 			} else {
 				// Sets output file metadata version when there is no mscorlib
 				switch (module.Compiler.Settings.StdLibRuntimeVersion) {
@@ -226,7 +231,7 @@ namespace Mono.CSharp
 		readonly StaticImporter importer;
 		readonly Universe domain;
 		Assembly corlib;
-		List<Tuple<AssemblyName, string, Assembly>> loaded_names;
+		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
 
 		static StaticLoader ()
@@ -241,7 +246,7 @@ namespace Mono.CSharp
 			: base (compiler)
 		{
 			this.importer = importer;
-			domain = new Universe (UniverseOptions.MetadataOnly | UniverseOptions.ResolveMissingMembers);
+			domain = new Universe (UniverseOptions.MetadataOnly | UniverseOptions.ResolveMissingMembers | UniverseOptions.DisableFusion);
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 
@@ -282,6 +287,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public AssemblyDefinitionStatic CompiledAssembly {  get; set; }
+
 		public Universe Domain {
 			get {
 				return domain;
@@ -307,7 +314,7 @@ namespace Mono.CSharp
 
 			foreach (var assembly in domain.GetAssemblies ()) {
 				AssemblyComparisonResult result;
-				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
+				if (!domain.CompareAssemblyIdentity (refname, false, assembly.FullName, false, out result)) {
 					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
 						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version) &&
 						!is_fx_assembly) {
@@ -364,6 +371,14 @@ namespace Mono.CSharp
 
 				return version_mismatch;
 			}
+
+			//
+			// Recursive reference to compiled assembly checks name only. Any other
+			// details (PublicKey, Version, etc) are not yet known hence cannot be checked
+			//
+			ParsedAssemblyName referenced_assembly;
+			if (Fusion.ParseAssemblyName (args.Name, out referenced_assembly) == ParseAssemblyResult.OK && CompiledAssembly.Name == referenced_assembly.Name)
+				return CompiledAssembly.Builder;
 
 			// AssemblyReference has not been found in the domain
 			// create missing reference and continue
@@ -449,12 +464,12 @@ namespace Mono.CSharp
 									return null;
 								}
 
-								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
+								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey)) {
 									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
 									compiler.Report.SymbolRelatedToPreviousError (fileName);
 									compiler.Report.Error (1703,
-										"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
-										an.FullName);
+										"An assembly `{0}' with the same identity has already been imported. Consider removing one of the references",
+										an.Name);
 									return null;
 								}
 							}

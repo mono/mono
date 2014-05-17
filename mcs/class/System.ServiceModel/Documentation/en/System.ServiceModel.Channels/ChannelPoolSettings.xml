@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ChannelPoolSettings" FullName="System.ServiceModel.Channels.ChannelPoolSettings">
+  <TypeSignature Language="C#" Value="public class ChannelPoolSettings" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ChannelPoolSettings extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Quotas are used as a policy mechanism to prevent the consumption of excessive resources. They prevent Denial of Service (DOS) attacks that are either malicious or unintentional. Use this class when setting channel quotas on a custom channel.</para>
+      <para>
+        <see cref="T:System.ServiceModel.Channels.ChannelPoolSettings" /> specifies three quotas:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.IdleTimeout" /> to specify the maximum interval of time for which the channels in the pool can be idle before being closed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.LeaseTimeout" /> to specify the interval of time after which a channel, when returned to the pool, is closed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.MaxOutboundChannelsPerEndpoint" /> to specify the maximum number of channels that can be stored in the pool for each remote endpoint.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies quotas for channels that belong to a pool of channels used by a service endpoint.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ChannelPoolSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default values set are:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.IdleTimeout" />: 2 minutes.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.LeaseTimeout" />: 10 minutes.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.MaxOutboundChannelsPerEndpoint" />: 10 channels.</para>
+            </item>
+          </list>
+          <para>These default quota values are based on a conservatively modest allocation of resources that are suitable for development environments and small installation scenarios. Service administrators should review channel quotas and tune individual quota values if an installation is running out of resources or if connections are being limited despite the availability of additional resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.ChannelPoolSettings" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IdleTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan IdleTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan IdleTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.IdleTimeout" /> quota is used to mitigate Denial of Service (DOS) attacks on the server that rely on tying up resources for an extended period of time. On the client, setting the correct value can increase the reliability of connecting with the service. The default value is based on a conservatively modest allocation of resources. It is suitable for a development environment and small installation scenarios. Service administrators should review the value if an installation is running out of resources or if connections are being limited despite the availability of additional resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get or sets the maximum interval of time for which the channels in the pool can be idle before being closed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LeaseTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan LeaseTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan LeaseTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.LeaseTimeout" /> quota is used to for integration with load balancers and for improving reliability. The default value is based on a conservative allocation of resources. It is suitable for a development environment and small installation scenarios. Service administrators should review the value if an installation is running out of resources or if connections are being limited despite the availability of additional resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lifetime of a channel, after which it is closed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxOutboundChannelsPerEndpoint">
+      <MemberSignature Language="C#" Value="public int MaxOutboundChannelsPerEndpoint { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxOutboundChannelsPerEndpoint" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Channels.ChannelPoolSettings.MaxOutboundChannelsPerEndpoint" /> quota sets cache limits on both the server and the client and is used to improve reliability. The default value is based on a conservatively modest allocation of resources that is suitable for a development environment and small installation scenarios. Service administrators should review the value if an installation is running out of resources or if connections are being limited despite the availability of additional resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of channels connecting to remote endpoints that can be initiated by the service.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResolveEventHandler" FullName="System.ResolveEventHandler">
   <TypeSignature Maintainer="auto" Language="C#" Value="public delegate System.Reflection.Assembly ResolveEventHandler(object sender, ResolveEventArgs args);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ResolveEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,14 +13,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="sender">An instance of <see cref="T:System.AppDomain" /></param>
-    <param name="args">The arguments to the resolution callback.</param>
-    <summary>Signature for various events emitted by the <see cref="T:System.AppDomain" />.</summary>
-    <value>The assembly that this event resolved to.</value>
-    <remarks />
-  </Docs>
-  <Members />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="sender" Type="System.Object" />
     <Parameter Name="args" Type="System.ResolveEventArgs" />
@@ -26,9 +25,22 @@
   <ReturnValue>
     <ReturnType>System.Reflection.Assembly</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="sender">An instance of <see cref="T:System.AppDomain" /></param>
+    <param name="args">The arguments to the resolution callback.</param>
+    <returns>The assembly that this event resolved to.</returns>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If the runtime class loader cannot resolve a reference to an assembly, type, or resource, the corresponding events are raised to give the callback a chance to tell the runtime which assembly the referenced assembly, type, or resource is in. It is the responsibility of the <see cref="T:System.ResolveEventHandler" /> to return the assembly that resolves the type, assembly, or resource, or to return null if the assembly is not recognized. For more information, see <format type="text/html"><a href="5099e549-f4fd-49fb-a290-549edd456c6a">Resolving Assembly Loads</a></format> and the <see cref="E:System.AppDomain.ResourceResolve" />, <see cref="E:System.AppDomain.AssemblyResolve" />, and <see cref="E:System.AppDomain.ReflectionOnlyAssemblyResolve" /> events.</para>
+      <block subset="none" type="note">
+        <para>Beginning with the net_v40_long, the <see cref="T:System.ResolveEventHandler" /> event is raised for all assemblies, including resource assemblies. In earlier versions, the event was not raised for resource assemblies. If the operating system is localized, the handler might be called multiple times: once for each culture in the fallback chain.</para>
+      </block>
+      <para>Every derived class of <see cref="T:System.Delegate" /> and <see cref="T:System.MulticastDelegate" /> has a constructor and an Invoke method. See the C++ code example in the description for the <see cref="T:System.Delegate" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a method that handles the <see cref="E:System.AppDomain.TypeResolve" />, <see cref="E:System.AppDomain.ResourceResolve" />, or <see cref="E:System.AppDomain.AssemblyResolve" /> event of an <see cref="T:System.AppDomain" />.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DES" FullName="System.Security.Cryptography.DES">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class DES : System.Security.Cryptography.SymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DES extends System.Security.Cryptography.SymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,47 +15,124 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Abstract base class for all implementations of the Data Encryption Standard. A 64 bits (56 bits effective) symmetric cipher.</summary>
-    <remarks>NIST FIPS PUB 46-3: Data Encryption Standard (http://csrc.nist.gov/publications/fips/fips46-3/fips46-3.pdf).</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This algorithm supports a key length of 64 bits.</para>
+      <block subset="none" type="note">
+        <para>A newer asymmetric encryption algorithm, Advanced Encryption Standard (AES), is available. Consider using the <see cref="T:System.Security.Cryptography.Aes" /> class instead of the <see cref="T:System.Security.Cryptography.DES" /> class. Use <see cref="T:System.Security.Cryptography.DES" /> only for compatibility with legacy applications and data.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class for the Data Encryption Standard (DES) algorithm from which all <see cref="T:System.Security.Cryptography.DES" /> implementations must derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected DES ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code will create a new instance of a derived class.</para>
+          <para>This method initializes the protected fields of the <see cref="T:System.Security.Cryptography.SymmetricAlgorithm" /> class to the default values shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Field </para>
+                </term>
+                <description>
+                  <para>Default Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.KeySizeValue" /> </para>
+              </term>
+              <description>
+                <para>64 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.BlockSizeValue" /> </para>
+              </term>
+              <description>
+                <para>64 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.FeedbackSizeValue" /> </para>
+              </term>
+              <description>
+                <para>64 </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.DES" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DES Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.DES Create() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.DES</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Create an instance of the default implementation of DES.</summary>
-        <returns>To be added: an object of type 'DES'</returns>
-        <remarks>By default this will create a new <see cref="T:System.Security.Cryptography.DESCryptoServiceProvider" /> instance. This can be changed by modifying the machine.config configuration file.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Security.Cryptography.DES" /> object that can be used for encrypting and decrypting data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a cryptographic object to perform the Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DES Create (string algName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.DES Create(string algName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DES Create (string algName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.DES</ReturnType>
       </ReturnValue>
@@ -61,20 +140,28 @@
         <Parameter Name="algName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="algName">DES implementation to be instancied.</param>
-        <summary>Create an instance of the specified implementation of DES.</summary>
-        <returns>To be added: an object of type 'DES'</returns>
         <remarks>New implementation can be added, or currents can be modified, by modifying the machine.config configuration file.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a cryptographic object to perform the specified implementation of the Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object.</para>
+        </returns>
+        <param name="algName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.DES" /> to use. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSemiWeakKey">
       <MemberSignature Language="C#" Value="public static bool IsSemiWeakKey (byte[] rgbKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsSemiWeakKey(unsigned int8[] rgbKey) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -82,20 +169,32 @@
         <Parameter Name="rgbKey" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">The secret key to be verified.</param>
-        <summary>Check if the specified key is a known DES semi-weak key.</summary>
-        <returns>True if the key is a known semi-weak key, false otherwise.</returns>
-        <remarks>The DES implementation included in Mono won't accept a weak or semi-weak key.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Semi-weak keys are pairs of keys that result in ciphers that are easy to break. If text is encrypted with a semi-weak key, encrypting the resulting cipher with the partner of that semi-weak key returns the original text. There are six known semi-weak key pairs for the Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) algorithm; this method checks for those semi-weak keys.</para>
+          <para>Attempting to set a semi-weak key results in a <see cref="T:System.Security.Cryptography.CryptographicException" />. When <see cref="M:System.Security.Cryptography.DESCryptoServiceProvider.GenerateKey" /> is called to create a random key, a semi-weak key will never be returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is semi-weak.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key is semi-weak; otherwise, false.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to test for semi-weakness. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsWeakKey">
       <MemberSignature Language="C#" Value="public static bool IsWeakKey (byte[] rgbKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsWeakKey(unsigned int8[] rgbKey) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -103,38 +202,48 @@
         <Parameter Name="rgbKey" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">The secret key to be verified.</param>
-        <summary>Check if the specified key is a known DES weak key.</summary>
-        <returns>True if the key is a known weak key, false otherwise.</returns>
-        <remarks>The DES implementation included in Mono won't accept a weak or semi-weak key.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Weak keys are keys that result in ciphers that are easy to break. If text is encrypted with a weak key, encrypting the resulting cipher again with the same weak key returns the original text. There are four known weak keys for the Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) algorithm; this method checks for those weak keys.</para>
+          <para>Attempting to set a weak key results in a <see cref="T:System.Security.Cryptography.CryptographicException" />. When <see cref="M:System.Security.Cryptography.DESCryptoServiceProvider.GenerateKey" /> is called to create a random key, a weak key will never be returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is weak.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key is weak; otherwise, false.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to test for weakness. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Key">
+      <MemberSignature Language="C#" Value="public override byte[] Key { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Key" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Key">
-      <MemberSignature Language="C#" Value="public override byte[] Key { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is null when it is used, <see cref="M:System.Security.Cryptography.SymmetricAlgorithm.GenerateKey" /> is called to create a new random value.</para>
+          <para>The length of the key must be equal to <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.BlockSizeValue" />.</para>
+          <para>This algorithm supports a key length of 64 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the secret key for the Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) algorithm.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

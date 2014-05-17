@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CustomValidator" FullName="System.Web.UI.WebControls.CustomValidator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CustomValidator : System.Web.UI.WebControls.BaseValidator" />
   <AssemblyInfo>
@@ -22,8 +23,47 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control to provide a user-defined validation function for an input control. The <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control is a separate control from the input control it validates, which allows you to control where the validation message is displayed.</para>
+      <para>Validation controls always perform validation on the server. They also have complete client-side implementation that allows script-enabled browsers (such as Microsoft Internet Explorer 4.0 and later) to perform validation on the client. Client-side validation enhances the validation process by checking user input before it is sent to the server. This allows errors to be detected on the client before the form is submitted, thus avoiding the round trip of information necessary for server-side validation.</para>
+      <para>To create a server-side validation function, provide a handler for the <see cref="E:System.Web.UI.WebControls.CustomValidator.ServerValidate" /> event that performs the validation. The string from the input control to validate can be accessed by using the <see cref="P:System.Web.UI.WebControls.ServerValidateEventArgs.Value" /> property of the <see cref="T:System.Web.UI.WebControls.ServerValidateEventArgs" /> object passed into the event handler as a parameter. The result of the validation is then stored in the <see cref="P:System.Web.UI.WebControls.ServerValidateEventArgs.IsValid" /> property of the <see cref="T:System.Web.UI.WebControls.ServerValidateEventArgs" /> object.</para>
+      <para>To create a client-side validation function, first add the server-side validation function described earlier. Next, add the client-side validation script function to the ASP.NET (.aspx) page.</para>
+      <para>If you are using Visual Basic Scripting Edition (VBScript), the function must be in this form: </para>
+      <code> Sub ValidationFunctionName(source, arguments)</code>
+      <para>If you are using JScript, the function must be in this form: </para>
+      <code> function ValidationFunctionName(source, arguments)</code>
+      <para>The <paramref name="source" /> parameter is a reference to the &lt;span&gt; element rendered for the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control. This allows you to programmatically control the &lt;span&gt; tag, such as modifying the <see cref="P:System.Windows.Forms.HtmlElement.InnerHtml" /> attribute. The <paramref name="arguments" /> parameter is an object with two properties: Value and IsValid. This parameter allows you to get the value of the control to validate and to indicate whether the value is valid based on your custom validation routine.</para>
+      <para>Use the <see cref="P:System.Web.UI.WebControls.CustomValidator.ClientValidationFunction" /> property to specify the name of the client-side validation script function associated with the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control. Because the script function is executed on the client, the function must be in a language that the target browser supports, such as VBScript or JScript.</para>
+      <block subset="none" type="note">
+        <para>When you use the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control inside an <see cref="T:System.Web.UI.UpdatePanel" /> control, make sure that the validator control and the control it is associated with are in the same panel. For more information about using the <see cref="T:System.Web.UI.UpdatePanel" /> control for partial-page updates, see <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>.</para>
+      </block>
+      <para>Like server-side validation, the string from the input control to validate is accessed by using the <see cref="P:System.Web.UI.WebControls.ServerValidateEventArgs.Value" /> property of the <paramref name="arguments" /> parameter. Return the result of the validation by setting the <see cref="P:System.Web.UI.WebControls.ServerValidateEventArgs.IsValid" /> property of the <paramref name="arguments" /> parameter.</para>
+      <block subset="none" type="note">
+        <para>When using validator controls, you should always check the results of server-side validation before performing any processing. After a postback but before your event methods are called, the page calls the validator controls and aggregates their results into the <see cref="P:System.Web.UI.Page.IsValid" /> property. (You can also call the validator controls explicitly using the Validate method.) In your own code, you should check that the <see cref="P:System.Web.UI.Page.IsValid" /> property returns true before processing input. Even though script-enabled browsers might prevent a postback from occurring on the client if a validation check has failed, you should always also check <see cref="P:System.Web.UI.Page.IsValid" /> in server code before processing validated data.</para>
+      </block>
+      <para>Multiple validation controls can be used with an individual input control to validate different criteria. For example, you can apply multiple validation controls on a <see cref="T:System.Web.UI.WebControls.TextBox" /> control that allows the user to enter the quantity of items to add to a shopping cart. You can use a <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control to ensure that the value specified is less than the amount in inventory and a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> control to ensure that the user enters a value into the <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+      <block subset="none" type="note">
+        <para>If the input control is empty, no validation functions are called and validation succeeds. Use a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> control to require the user to enter data in the input control.</para>
+      </block>
+      <para>It is possible to use a <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control without setting the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> property. This is commonly done when you are validating multiple input controls or validating input controls that cannot be used with validation controls, such as the <see cref="T:System.Web.UI.WebControls.CheckBox" /> control. In this case, the <see cref="P:System.Web.UI.WebControls.ServerValidateEventArgs.Value" /> property of the <paramref name="arguments" /> parameter passed to the event handler for the <see cref="E:System.Web.UI.WebControls.CustomValidator.ServerValidate" /> event and to the client-side validation function always contains an empty string (""). However, these validation functions are still called, where appropriate, to determine validity on both the server and client. To access the value to validate, you must programmatically reference the input control you want to validate and then retrieve the value from the appropriate property. For example, to validate a <see cref="T:System.Web.UI.WebControls.CheckBox" /> control on the server, do not set the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate" /> property of the validation control and use the following code for the handler for the <see cref="E:System.Web.UI.WebControls.CustomValidator.ServerValidate" /> event.</para>
+      <code>Sub ServerValidation (source As object, args As ServerValidateEventArgs)
+    args.IsValid = (CheckBox1.Checked = True)
+ End Sub</code>
+      <code>void ServerValidation (object source, ServerValidateEventArgs args)
+ {
+    args.IsValid = (CheckBox1.Checked == true);
+ }</code>
+      <para>For more information on validation controls, see <see cref="T:System.Web.UI.WebControls.BaseValidator" />.</para>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Performs user-defined validation on an input control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +72,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,9 +93,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the properties of the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control to the output stream for rendering on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that contains the output stream for rendering on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,9 +114,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to the name of the function that performs the client-side validation.</para>
+          <para>Because the client validation function runs on the target browser, the function must be written using a scripting language supported by the browser, such as JScript or VBScript.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the custom client-side script function used for validation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,9 +147,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks the properties of the control for valid values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control properties are valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,9 +170,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="M:System.Web.UI.MobileControls.BaseValidator.EvaluateIsValid" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value in the input control is valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -128,10 +195,22 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CustomValidator.ServerValidate" /> event is raised when validation is performed on the server.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CustomValidator.OnServerValidate(System.String)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.CustomValidator.ServerValidate" /> event for the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value specified by the <paramref name="value" /> parameter passes validation; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,8 +225,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.CustomValidator.ServerValidate" /> event is raised when validation is performed on the server. This event is used to provide a custom validation routine for an input control, such as a <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when validation is performed on the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -172,9 +258,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each validator can be associated with a targeted control. In previous versions of the .NET Framework, if the targeted control had an empty string value, such as a  <see cref="P:System.Web.UI.WebControls.TextBox.Text" /> property having a value of <see cref="F:System.String.Empty" />, the validator (except for the <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> validator) would not evaluate the targeted control and would simply return that the validation passed. </para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CustomValidator.ValidateEmptyText" /> property is new for the .NET Framework version 2.0.  If <see cref="P:System.Web.UI.WebControls.CustomValidator.ValidateEmptyText" /> is set to true, the validator evaluates the control's value (using the criteria specified to the <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control) and returns the validation results. This property allows developers to evaluate the results of a <see cref="T:System.Web.UI.WebControls.CustomValidator" /> control regardless of the value of the targeted control.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value indicating whether empty text should be validated.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

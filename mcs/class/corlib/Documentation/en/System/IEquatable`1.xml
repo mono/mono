@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IEquatable&lt;T&gt;" FullName="System.IEquatable&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IEquatable&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEquatable`1&lt;T&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -11,18 +13,29 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>
-      <para>Defines generalized equality methods that a value type or class implements to create a type-specific equality method.</para>
-    </summary>
-    <remarks>
-      <para>This interface is implemented by types whose values can be ordered; for example, the numeric and string classes.</para>
-    </remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is implemented by types whose values can be equated (for example, the numeric and string classes). A value type or class implements the <see cref="M:System.IEquatable`1.Equals(`0)" /> method to create a type-specific method suitable for determining equality of instances.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.IComparable`1" /> interface defines the <see cref="M:System.IComparable`1.CompareTo(`0)" /> method, which determines the sort order of instances of the implementing type. The <see cref="T:System.IEquatable`1" /> interface defines the <see cref="M:System.IEquatable`1.Equals(`0)" /> method, which determines the equality of instances of the implementing type. </para>
+      </block>
+      <para>The <see cref="T:System.IEquatable`1" /> interface is used by generic collection objects such as <see cref="T:System.Collections.Generic.Dictionary`2" />, <see cref="T:System.Collections.Generic.List`1" />, and <see cref="T:System.Collections.Generic.LinkedList`1" /> when testing for equality in such methods as Contains, IndexOf, LastIndexOf, and Remove. It should be implemented for any object that might be stored in a generic collection.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a generalized method that a value type or class implements to create a type-specific method for determining equality of instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (T other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(!T other) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -45,10 +58,6 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPartVerbCollection" FullName="System.Web.UI.WebControls.WebParts.WebPartVerbCollection">
   <TypeSignature Language="C#" Value="public sealed class WebPartVerbCollection : System.Collections.ReadOnlyCollectionBase" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Web Parts verbs are interactive user interface (UI) elements that are displayed in a menu or title bar of a Web Parts control. A Web Parts zone provides to a Web Parts control a standard set of verbs that are rendered in the Web Parts verb menu. A custom Web Parts zone or a Web Parts control can add additional verbs to this menu. </para>
+      <para>ASP.NET provides several standard verbs by default to all controls in a Web Parts zone, including the close and minimize verbs. There are standard verbs for opening, closing, editing, and minimizing a control, and other verbs for exporting a definition for the control or loading a Help file. </para>
+      <para>You can create new verbs that are added to the Web Parts verb menu. A control can inherit from the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> base class and add <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> objects to a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> collection. This collection can then be added to the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.Verbs" /> collection of the control.</para>
+      <para>A control can also implement the <see cref="T:System.Web.UI.WebControls.WebParts.IWebActionable" /> interface and override the <see cref="P:System.Web.UI.WebControls.WebParts.IWebActionable.Verbs" /> property. You can then use a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> collection to add custom verbs to a control. </para>
+      <para>This class implements <see cref="T:System.Collections.ReadOnlyCollectionBase" />, which provides a non-generic, read-only collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of custom Web Parts verbs. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an empty <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> object. To create a new instance of <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> using an existing collection of Web Parts verbs, you can use <see cref="M:System.Web.UI.WebControls.WebParts.WebPartVerbCollection.#ctor(System.Collections.ICollection)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +51,17 @@
         <Parameter Name="verbs" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="verbs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an instance of <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> using the specified verbs collection. This collection can be any object derived from <see cref="T:System.Collections.ICollection" /> that contains a set of Web Parts verbs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> class using the specified collection.</para>
+        </summary>
+        <param name="verbs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from <see cref="T:System.Collections.ICollection" /> that contains a set of Web Parts verbs.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,11 +75,19 @@
         <Parameter Name="verbs" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="existingVerbs">To be added.</param>
-        <param name="verbs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor can be used to combine two Web Parts verb collections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> class using the specified collections.</para>
+        </summary>
+        <param name="existingVerbs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An existing <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" />.</param>
+        <param name="verbs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from <see cref="T:System.Collections.ICollection" /> that contains a set of Web Parts verbs.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,11 +103,21 @@
         <Parameter Name="value" Type="System.Web.UI.WebControls.WebParts.WebPartVerb" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on using this method, see its base method, <see cref="M:System.Collections.CollectionBase.System#Collections#IList#Contains(System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the Web Parts verb collection for the specified <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the Web Parts verb; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> to be found.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,11 +134,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on using this method, see <see cref="M:System.Collections.ICollection.CopyTo(System.Array,System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies elements of the collection to the specified array, starting at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that elements are to be copied to.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index where copying should begin.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,9 +159,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.WebPartVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A static, read-only, empty instance of <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerbCollection" /> reduces memory usage in cases where you want an empty collection instance to return the proper object type from a method or to compare the instance with another object, but you do not need to add members to the instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an empty collection that you can use instead of creating a new one. This static field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -127,11 +183,21 @@
         <Parameter Name="value" Type="System.Web.UI.WebControls.WebParts.WebPartVerb" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on using this method, see <see cref="M:System.Collections.CollectionBase.System#Collections#IList#IndexOf(System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified Web Parts verb and returns the zero-based index of the first occurrence within the entire collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the Web Parts verb.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> to be located.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

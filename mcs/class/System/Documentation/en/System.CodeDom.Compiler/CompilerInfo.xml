@@ -1,72 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilerInfo" FullName="System.CodeDom.Compiler.CompilerInfo">
   <TypeSignature Language="C#" Value="public sealed class CompilerInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CompilerInfo extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> class to determine whether a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation is configured on the computer, or to examine the configuration and compiler settings for a specific language provider.</para>
+      <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt; Element</a></format> in the machine configuration file contains the language provider and compiler configuration settings. Each configured language provider has a corresponding compiler configuration element. Each element defines the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation type, supported language names, supported file name extensions, and compiler parameters.</para>
+      <para>The .NET Framework defines the initial compiler settings in the machine configuration file. Developers and compiler vendors can add configuration settings for a new <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation.</para>
+      <para>The <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> class provides read-only access to these settings in the machine configuration file. Use the <see cref="M:System.CodeDom.Compiler.CompilerInfo.GetLanguages" />, <see cref="M:System.CodeDom.Compiler.CompilerInfo.GetExtensions" />, and <see cref="P:System.CodeDom.Compiler.CompilerInfo.CodeDomProviderType" /> members to examine the corresponding configuration attributes for a language provider. Use the <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateDefaultCompilerParameters" /> method to obtain the compiler options and warning level attribute values for a language provider.</para>
+      <para>For more details on language provider settings in the configuration file, see <format type="text/html"><a href="c020b139-8699-4f0d-9ac9-70d0c5b2a8c8">Compiler and Language Provider Settings Schema</a></format>.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the immediate caller does not have full-trust permission. For details about link demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration settings of a language provider. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CodeDomProviderType">
       <MemberSignature Language="C#" Value="public Type CodeDomProviderType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type CodeDomProviderType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The machine configuration file contains the fully qualified type name for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. The <see cref="P:System.CodeDom.Compiler.CompilerInfo.CodeDomProviderType" /> property value is a <see cref="T:System.Type" /> instance that represents a configured language provider implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the configured <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDefaultCompilerParameters">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CompilerParameters CreateDefaultCompilerParameters ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.CodeDom.Compiler.CompilerParameters CreateDefaultCompilerParameters() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerParameters</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateDefaultCompilerParameters" /> method to examine the compiler settings of the <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instances returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> and <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> methods.</para>
+          <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt; Element</a></format> in the machine configuration file contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. Each language provider configuration element can contain optional compilerOptions and warningLevel attributes. These attributes define the default values for the <see cref="P:System.CodeDom.Compiler.CompilerParameters.CompilerOptions" /> and <see cref="P:System.CodeDom.Compiler.CompilerParameters.WarningLevel" /> properties.</para>
+          <para>If the language provider configuration element does not define the compilerOptions attribute, the <see cref="P:System.CodeDom.Compiler.CompilerParameters.CompilerOptions" /> property value is an empty string (""). If the language provider configuration element does not define the warningLevel attribute, the <see cref="P:System.CodeDom.Compiler.CompilerParameters.WarningLevel" /> property value is –1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configured compiler settings for the language provider implementation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> instance that contains the compiler options and settings configured for the language provider. </para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateProvider">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CodeDomProvider CreateProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.CodeDom.Compiler.CodeDomProvider CreateProvider() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CodeDomProvider</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateProvider" /> method returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the current language provider settings.</para>
+          <para>Use the <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateProvider" /> method to get a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation for a <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> or <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the current language provider settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider associated with the language provider configuration. </para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="CreateProvider">
+      <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.CodeDomProvider CreateProvider (System.Collections.Generic.IDictionary&lt;string,string&gt; providerOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.CodeDom.Compiler.CodeDomProvider CreateProvider(class System.Collections.Generic.IDictionary`2&lt;string, string&gt; providerOptions) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.Compiler.CodeDomProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="providerOptions" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateProvider(System.Collections.Generic.IDictionary{System.String,System.String})" /> method returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the current language provider settings and the specified provider options. For information about supported provider options, see the specific CodeDOM provider documentation.</para>
+          <para>Use the <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateProvider(System.Collections.Generic.IDictionary{System.String,System.String})" /> method to get a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation for a <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> or <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the current language provider settings and specified options.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider associated with the language provider configuration and specified options.</para>
+        </returns>
+        <param name="providerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of provider options from the configuration file.</param>
+      </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object o) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -74,82 +159,140 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+          <para>The two instances are considered equal if the values of the following properties are equal:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.CodeDom.Compiler.CompilerInfo.CodeDomProviderType" /> property. </para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.CodeDom.Compiler.CompilerParameters.WarningLevel" />, <see cref="P:System.CodeDom.Compiler.CompilerParameters.CompilerOptions" />, and <see cref="P:System.CodeDom.Compiler.CompilerParameters.IncludeDebugInformation" /> properties of the <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> instance returned by the <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateDefaultCompilerParameters" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object represents the same language provider and compiler settings as the current <see cref="T:System.CodeDom.Compiler.CompilerInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is a <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> object and its value is the same as this instance; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.CodeDom.Compiler.CompilerInfo" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetExtensions">
       <MemberSignature Language="C#" Value="public string[] GetExtensions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetExtensions() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt; Element</a></format> in the machine configuration file contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. Each configured language provider supports one or more file name extensions. For example, a <see cref="T:Microsoft.CSharp.CSharpCodeProvider" /> might support the file name extensions ".cs" and ".c#".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the file name extensions supported by the language provider.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of file name extensions supported by the language provider.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.Object.GetHashCode" /> method.</para>
+          <para>This method generates the same hash code for two objects that are equal according to the <see cref="M:System.CodeDom.Compiler.CompilerInfo.Equals(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code for the current <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance, suitable for use in hashing algorithms and data structures such as a hash table. </para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLanguages">
       <MemberSignature Language="C#" Value="public string[] GetLanguages ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetLanguages() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt; Element</a></format> in the machine configuration file contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. Each configured language provider supports one or more language names. For example, the <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> object for a <see cref="T:Microsoft.CSharp.CSharpCodeProvider" /> might return an array with the language names "c#", "cs", and "csharp".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the language names supported by the language provider.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of language names supported by the language provider.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCodeDomProviderTypeValid">
       <MemberSignature Language="C#" Value="public bool IsCodeDomProviderTypeValid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCodeDomProviderTypeValid" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.CodeDom.Compiler.CompilerInfo.IsCodeDomProviderTypeValid" /> property to check the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation before accessing the provider properties or methods. For example, after you get the language provider settings from the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> method, use the <see cref="P:System.CodeDom.Compiler.CompilerInfo.IsCodeDomProviderTypeValid" /> property to verify the provider type implementation before calling the <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateProvider" /> method or using the <see cref="P:System.CodeDom.Compiler.CompilerInfo.CodeDomProviderType" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the language provider implementation is configured on the computer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

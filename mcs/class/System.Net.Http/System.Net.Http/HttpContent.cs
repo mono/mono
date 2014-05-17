@@ -75,6 +75,12 @@ namespace System.Net.Http
 			}
 		}
 
+		internal long? LoadedBufferLength {
+			get {
+				return buffer == null ? (long?)null : buffer.Length;
+			}
+		}
+
 		public Task CopyToAsync (Stream stream)
 		{
 			return CopyToAsync (stream, null);
@@ -161,14 +167,32 @@ namespace System.Net.Http
 			if (buffer.Length == 0)
 				return string.Empty;
 
+			var buf = buffer.GetBuffer ();
+			var buf_length = (int) buffer.Length;
+			int preambleLength = 0;
 			Encoding encoding;
+
 			if (headers != null && headers.ContentType != null && headers.ContentType.CharSet != null) {
 				encoding = Encoding.GetEncoding (headers.ContentType.CharSet);
+				preambleLength = StartsWith (buf, buf_length, encoding.GetPreamble ());
 			} else {
-				encoding = Encoding.UTF8;
+				encoding = WebClient.GetEncodingFromBuffer (buf, buf_length, ref preambleLength) ?? Encoding.UTF8;
 			}
 
-			return encoding.GetString (buffer.GetBuffer (), 0, (int) buffer.Length);
+			return encoding.GetString (buf, preambleLength, buf_length - preambleLength);
+		}
+
+		static int StartsWith (byte[] array, int length, byte[] value)
+		{
+			if (length < value.Length)
+				return 0;
+
+			for (int i = 0; i < value.Length; ++i) {
+				if (array [i] != value [i])
+					return 0;
+			}
+
+			return value.Length;
 		}
 
 		protected internal abstract Task SerializeToStreamAsync (Stream stream, TransportContext context);

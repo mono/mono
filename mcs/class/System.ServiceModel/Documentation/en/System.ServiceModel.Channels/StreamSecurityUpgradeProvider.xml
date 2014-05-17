@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="StreamSecurityUpgradeProvider" FullName="System.ServiceModel.Channels.StreamSecurityUpgradeProvider">
+  <TypeSignature Language="C#" Value="public abstract class StreamSecurityUpgradeProvider : System.ServiceModel.Channels.StreamUpgradeProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit StreamSecurityUpgradeProvider extends System.ServiceModel.Channels.StreamUpgradeProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.StreamUpgradeProvider</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To add a security upgrade, you implement a class that derives from <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider" />. </para>
+      <para>The upgrade process has the following steps:</para>
+      <list type="ordered">
+        <item>
+          <para>Implement a class that derives from <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider" />. </para>
+        </item>
+        <item>
+          <para>Register it. You do this by creating a binding element for it, and registering the provider in a custom binding.</para>
+        </item>
+        <item>
+          <para>The derived class that you implement creates an instance of <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeInitiator" />, which at run time initiates a request to the other end of its connection to upgrade the channel transport layer.</para>
+        </item>
+        <item>
+          <para>The derived class that you implement creates an instance of <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeAcceptor" />, which at run time receives the upgrade request from the preceding step, and if possible, accepts the upgrade, and returns the upgraded stream to the other side of its connection.</para>
+        </item>
+      </list>
+      <para>The security upgrade request can be one of many similar requests. If so, the requests are processed in a definite order. For more information, see <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a custom security upgrade provider, inherited from this abstract base class.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected StreamSecurityUpgradeProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected StreamSecurityUpgradeProvider (System.ServiceModel.IDefaultCommunicationTimeouts timeouts);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.IDefaultCommunicationTimeouts timeouts) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="timeouts" Type="System.ServiceModel.IDefaultCommunicationTimeouts" />
+      </Parameters>
+      <Docs>
+        <param name="timeouts">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>These time-outs control the default Close and Open time-outs when using the custom security upgrade provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Identity">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.EndpointIdentity Identity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointIdentity Identity" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This identity can be used for developing custom stream-level authentication schemes through inheriting from the upgrade provider class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identity being used for the security upgrade.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

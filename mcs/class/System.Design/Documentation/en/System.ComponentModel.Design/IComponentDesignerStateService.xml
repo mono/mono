@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComponentDesignerStateService" FullName="System.ComponentModel.Design.IComponentDesignerStateService">
   <TypeSignature Language="C#" Value="public interface IComponentDesignerStateService" />
   <AssemblyInfo>
@@ -6,8 +7,18 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Designer state is keyed by the component with which the designer is associated. The Web Forms design surface offers this service and component designers use the service. This is an optional host service, and control designers should not assume it will always be provided. </para>
+      <para>Designer state is represented as a set of name/value pairs, in the form of a dictionary. Values stored in the dictionary must be serializable. The specified component should be sited in the designer and should have a non-empty name.</para>
+      <block subset="none" type="note">
+        <para>Do not store sensitive information to the <see cref="T:System.ComponentModel.Design.IComponentDesignerStateService" />. Sensitive information includes password and authentication data, or any data you do not want to expose to an unwanted source. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows a designer to store and retrieve its state.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetState">
@@ -24,11 +35,19 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a state item specified by the key for the given component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The designer state for <paramref name="component" /> specified by <paramref name="key" />.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component for which to retrieve the designer state item.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the designer state item.</param>
       </Docs>
     </Member>
     <Member MemberName="SetState">
@@ -46,11 +65,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="key">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a state item specified by the key for the given component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component for which to set the designer state item.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the designer state item.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The designer state item for <paramref name="component" />.</param>
       </Docs>
     </Member>
   </Members>

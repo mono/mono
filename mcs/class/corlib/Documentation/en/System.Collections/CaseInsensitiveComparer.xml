@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CaseInsensitiveComparer" FullName="System.Collections.CaseInsensitiveComparer">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CaseInsensitiveComparer : System.Collections.IComparer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CaseInsensitiveComparer extends System.Object implements class System.Collections.IComparer" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,47 +18,83 @@
       <InterfaceName>System.Collections.IComparer</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Collections.CaseInsensitiveComparer" /> implements the <see cref="T:System.Collections.IComparer" /> interface supporting case-insensitive comparisons on strings, just as <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> implements the <see cref="T:System.Collections.IHashCodeProvider" /> interface supporting case-insensitive comparisons on strings.</para>
+      <para>The <see cref="T:System.Collections.Comparer" /> class is the default implementation of the <see cref="T:System.Collections.IComparer" /> interface and performs case-sensitive string comparisons.</para>
+      <para>The objects used as keys by a <see cref="T:System.Collections.Hashtable" /> are required to override the <see cref="M:System.Object.GetHashCode" /> method (or the <see cref="T:System.Collections.IHashCodeProvider" /> interface) and the <see cref="M:System.Object.Equals(System.Object)" /> method (or the <see cref="T:System.Collections.IComparer" /> interface). The implementation of both methods or interfaces must handle case sensitivity the same way; otherwise, the <see cref="T:System.Collections.Hashtable" /> might behave incorrectly. For example, when creating a <see cref="T:System.Collections.Hashtable" />, you must use this class with the <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> class or any case-insensitive <see cref="T:System.Collections.IHashCodeProvider" /> implementation.</para>
+      <para>String comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Compares two objects for equivalence, ignoring the case of strings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CaseInsensitiveComparer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Collections.CaseInsensitiveComparer" /> instance is created using this constructor, the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread is saved. Comparison procedures use the saved culture to determine the sort order and casing rules; therefore, string comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.CaseInsensitiveComparer" /> class using the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CaseInsensitiveComparer (System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Globalization.CultureInfo culture) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="culture">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Comparison procedures use the specified <see cref="T:System.Globalization.CultureInfo" /> to determine the sort order and casing rules. String comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.CaseInsensitiveComparer" /> class using the specified <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </summary>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> to use for the new <see cref="T:System.Collections.CaseInsensitiveComparer" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public int Compare (object a, object b);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Compare(object a, object b) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Compare">
-      <MemberSignature Language="C#" Value="public int Compare (object a, object b);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -65,56 +103,112 @@
         <Parameter Name="b" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="a">To be added: an object of type 'object'</param>
-        <param name="b">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="a" /> and <paramref name="b" /> are both strings, this method uses <see cref="M:System.Globalization.CompareInfo.Compare(System.String,System.String)" /> to compare the strings with the casing ignored; otherwise, it uses the <see cref="T:System.IComparable" /> implementation of either object. That is, if <paramref name="a" /> implements <see cref="T:System.IComparable" />, then this method returns the result of <paramref name="a" />. CompareTo (<paramref name="b" />); otherwise, if <paramref name="b" /> implements <see cref="T:System.IComparable" />, then it returns the negated result of <paramref name="b" />. CompareTo (<paramref name="a" />).</para>
+          <para>Comparing null with any type is allowed and does not generate an exception when using <see cref="T:System.IComparable" />. When sorting, null is considered to be less than any other object.</para>
+          <para>String comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a case-insensitive comparison of two objects of the same type and returns a value indicating whether one is less than, equal to, or greater than the other.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="a" /> and <paramref name="b" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> is less than <paramref name="b" />, with casing ignored. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> equals <paramref name="b" />, with casing ignored. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> is greater than <paramref name="b" />, with casing ignored. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
+        <param name="b">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="public static System.Collections.CaseInsensitiveComparer Default { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.CaseInsensitiveComparer Default" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.CaseInsensitiveComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'CaseInsensitiveComparer'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.CaseInsensitiveComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'CaseInsensitiveComparer'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Collections.CaseInsensitiveComparer" /> instance is created using the parameterless constructor, the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread is saved. Comparison procedures use the saved culture to determine the sort order and casing rules; therefore, string comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of <see cref="T:System.Collections.CaseInsensitiveComparer" /> that is associated with the <see cref="P:System.Threading.Thread.CurrentCulture" /> of the current thread and that is always available.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DefaultInvariant">
       <MemberSignature Language="C#" Value="public static System.Collections.CaseInsensitiveComparer DefaultInvariant { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.CaseInsensitiveComparer DefaultInvariant" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.CaseInsensitiveComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.CaseInsensitiveComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Comparison procedures use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> to determine the sort order and casing rules. String comparisons might have different results depending on the culture. For more information on culture-specific comparisons, see the <see cref="N:System.Globalization" /> namespace and <format type="text/html"><a href="9a59696b-d89b-45bd-946d-c75da4732d02">Encoding and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of <see cref="T:System.Collections.CaseInsensitiveComparer" /> that is associated with <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> and that is always available.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VersioningHelper" FullName="System.Runtime.Versioning.VersioningHelper">
   <TypeSignature Language="C#" Value="public static class VersioningHelper" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit VersioningHelper extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,14 +12,25 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is intended to facilitate the use of the <see cref="T:System.Runtime.Versioning.ResourceConsumptionAttribute" /> and <see cref="T:System.Runtime.Versioning.ResourceExposureAttribute" /> classes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods to aid developers in writing version-safe code. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MakeVersionSafeName">
       <MemberSignature Language="C#" Value="public static string MakeVersionSafeName (string name, System.Runtime.Versioning.ResourceScope from, System.Runtime.Versioning.ResourceScope to);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string MakeVersionSafeName(string name, valuetype System.Runtime.Versioning.ResourceScope from, valuetype System.Runtime.Versioning.ResourceScope to) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -27,22 +40,35 @@
         <Parameter Name="to" Type="System.Runtime.Versioning.ResourceScope" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The original name is returned with a scope related suffix. The suffix may include the process identity, the current <see cref="T:System.AppDomain" /> identity, or both.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a version-safe name based on the specified resource name and the intended resource consumption source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A version-safe name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scope of the resource.</param>
+        <param name="to">
+          <attribution license="cc4" from="Microsoft" modified="false" />The desired resource consumption scope.</param>
       </Docs>
+    </Member>
+    <Member MemberName="MakeVersionSafeName">
+      <MemberSignature Language="C#" Value="public static string MakeVersionSafeName (string name, System.Runtime.Versioning.ResourceScope from, System.Runtime.Versioning.ResourceScope to, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string MakeVersionSafeName(string name, valuetype System.Runtime.Versioning.ResourceScope from, valuetype System.Runtime.Versioning.ResourceScope to, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MakeVersionSafeName">
-      <MemberSignature Language="C#" Value="public static string MakeVersionSafeName (string name, System.Runtime.Versioning.ResourceScope from, System.Runtime.Versioning.ResourceScope to, Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -53,19 +79,28 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The original name is returned with a scope related suffix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a version-safe name based on the specified resource name, the intended resource consumption scope, and the type using the resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A version-safe name.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The beginning of the scope range.</param>
+        <param name="to">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end of the scope range.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the resource.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrivateFontCollection" FullName="System.Drawing.Text.PrivateFontCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class PrivateFontCollection : System.Drawing.Text.FontCollection" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Drawing.Text.PrivateFontCollection" /> class allows applications to install a private version of an existing font without the requirement to replace the system version of the font. For example, ndptecgdiplus can create a private version of the Arial font in addition to the Arial font that the system uses. <see cref="T:System.Drawing.Text.PrivateFontCollection" /> can also be used to install fonts that do not exist in the operating system. This is a temporary font install that does not affect the system-installed collection. To see the installed collection, use the <see cref="T:System.Drawing.Text.InstalledFontCollection" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a collection of font families built from font files that are provided by the client application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +31,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Text.PrivateFontCollection" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +52,16 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Windows Forms applications support TrueType fonts and have limited support for OpenType fonts. If you try to use a font that is not supported, such as an unsupported OpenType font or a Bitmap font, an exception will occur. The <see cref="M:System.Drawing.Text.PrivateFontCollection.AddFontFile(System.String)" /> is not supported on operating systems before win2kfamily. When using a private font on operating systems before win2kfamily, the default font, typically Microsoft Sans Serif, will be substituted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a font from the specified file to this <see cref="T:System.Drawing.Text.PrivateFontCollection" />. </para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the file name of the font to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,10 +79,18 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="memory">To be added: an object of type 'IntPtr'</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To use the memory font, text on a control must be rendered with GDI+. Use the <see cref="M:System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(System.Boolean)" /> method, passing true, to set GDI+ rendering on the application, or on individual controls by setting the control's <see cref="P:System.Windows.Forms.GroupBox.UseCompatibleTextRendering" /> property to true. Some controls cannot be rendered with GDI+.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a font contained in system memory to this <see cref="T:System.Drawing.Text.PrivateFontCollection" />.</para>
+        </summary>
+        <param name="memory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The memory address of the font to add. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The memory length of the font to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

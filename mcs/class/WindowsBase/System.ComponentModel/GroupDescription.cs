@@ -31,12 +31,15 @@ namespace System.ComponentModel {
 
 	public abstract class GroupDescription : INotifyPropertyChanged
 	{
+		readonly ObservableCollection<object> groupNames;
+
 		protected GroupDescription ()
 		{
+			groupNames = new ObservableCollection<object> ();
 		}
 
 		public ObservableCollection<object> GroupNames {
-			get { throw new NotImplementedException (); }
+			get { return groupNames; }
 		}
 
 		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
@@ -48,7 +51,7 @@ namespace System.ComponentModel {
 
 		public virtual bool NamesMatch (object groupName, object itemName)
 		{
-			throw new NotImplementedException ();
+			return Equals (groupName, itemName);
 		}
 
 		protected virtual void OnPropertyChanged (PropertyChangedEventArgs e)
@@ -60,7 +63,7 @@ namespace System.ComponentModel {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public bool ShouldSerializeGroupNames ()
 		{
-			throw new NotImplementedException ();
+			return GroupNames.Count != 0;
 		}
 
 		public abstract object GroupNameFromItem (object item, int level, CultureInfo culture);

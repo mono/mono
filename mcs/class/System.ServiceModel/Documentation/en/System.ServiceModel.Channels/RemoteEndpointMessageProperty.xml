@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="RemoteEndpointMessageProperty" FullName="System.ServiceModel.Channels.RemoteEndpointMessageProperty">
+  <TypeSignature Language="C#" Value="public sealed class RemoteEndpointMessageProperty" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RemoteEndpointMessageProperty extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The property is added to each incoming message to a indigo1 service through both the HTTP and TCP transports. </para>
+      <para>The property is not present on messages received through either a named pipes or MSMQ transport.</para>
+      <para>Availability of the property when using HTTP hosted in IIS depends on having a currently active request.  Therefore, this property is not available after the request has completed, such as when performing a one-way receive.</para>
+      <para>The IP address and port number are that of the node from which the message was received. If a message goes through a relay or proxy, the IP address and port number of the respective relay or proxy is the one attached to the message by this property.</para>
+      <para>Be aware that the IP address and port could be spoofed by an attacker and thus should not be relied upon for security sensitive authentication or authorization unless additional application specific logic is added.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Makes available the client IP address and port number associated with the remote endpoint from which a message was sent.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RemoteEndpointMessageProperty (string address, int port);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string address, int32 port) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Be aware that the IP address and port could be spoofed by an attacker and thus should not be relied upon for security sensitive authentication or authorization unless additional application specific logic is added.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.RemoteEndpointMessageProperty" /> class for a specified IP address and port that identify the client from which the message was sent.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IP address of the remote endpoint associated with the message.</param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port number of the remote endpoint associated with the message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Address">
+      <MemberSignature Language="C#" Value="public string Address { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Address" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the IP address of the client from which the message was sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public static string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the string "System.ServiceModel.Channels.RemoteEndpointMessageProperty".</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="C#" Value="public int Port { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Port" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the port number of the client from which the message was sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

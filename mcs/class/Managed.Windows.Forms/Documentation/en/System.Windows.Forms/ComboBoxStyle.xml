@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComboBoxStyle" FullName="System.Windows.Forms.ComboBoxStyle">
   <TypeSignature Language="C#" Value="public enum ComboBoxStyle" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Windows.Forms.ComboBox.DropDownStyle" /> property specifies whether the list is always displayed or whether the list is displayed in a drop-down. The <see cref="P:System.Windows.Forms.ComboBox.DropDownStyle" /> property also specifies whether the text portion can be edited.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the <see cref="T:System.Windows.Forms.ComboBox" /> style.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DropDown">
@@ -20,7 +27,10 @@
         <ReturnType>System.Windows.Forms.ComboBoxStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the list is displayed by clicking the down arrow and that the text portion is editable. This means that the user can enter a new value and is not limited to selecting an existing value in the list. When using this setting, the <see cref="F:System.Windows.Forms.AutoCompleteMode.Append" /> value of <see cref="P:System.Windows.Forms.ComboBox.AutoCompleteMode" /> works the same as the <see cref="F:System.Windows.Forms.AutoCompleteMode.SuggestAppend" /> value. This is the default style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,7 +44,10 @@
         <ReturnType>System.Windows.Forms.ComboBoxStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the list is displayed by clicking the down arrow and that the text portion is not editable. This means that the user cannot enter a new value. Only values already in the list can be selected. The list displays only if <see cref="P:System.Windows.Forms.ComboBox.AutoCompleteMode" /> is <see cref="F:System.Windows.Forms.AutoCompleteMode.Suggest" /> or <see cref="F:System.Windows.Forms.AutoCompleteMode.SuggestAppend" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,7 +61,10 @@
         <ReturnType>System.Windows.Forms.ComboBoxStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the list is always visible and that the text portion is editable. This means that the user can enter a new value and is not limited to selecting an existing value in the list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

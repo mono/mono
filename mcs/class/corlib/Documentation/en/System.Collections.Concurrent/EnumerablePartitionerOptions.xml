@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="EnumerablePartitionerOptions" FullName="System.Collections.Concurrent.EnumerablePartitionerOptions">
+  <TypeSignature Language="C#" Value="public enum EnumerablePartitionerOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed EnumerablePartitionerOptions extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Out-of-the-box partitioners are created with a set of default behaviors. For example, by default, some form of buffering and chunking will be used to achieve optimal performance in the common scenario where an <see cref="T:System.Collections.Generic.IEnumerable`1" /> implementation is fast and non-blocking. These behaviors can be overridden by this enumeration by using the <see cref="M:System.Collections.Concurrent.Partitioner.Create``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Concurrent.EnumerablePartitionerOptions)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies options to control the buffering behavior of a partitioner</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="NoBuffering">
+      <MemberSignature Language="C#" Value="NoBuffering" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Collections.Concurrent.EnumerablePartitionerOptions NoBuffering = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.EnumerablePartitionerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Create a partitioner that takes items from the source enumerable one at a time and does not use intermediate storage that can be accessed more efficiently by multiple threads. This option provides support for low latency (items will be processed as soon as they are available from the source) and provides partial support for dependencies between items (a thread cannot deadlock waiting for an item that the thread itself is responsible for processing).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Collections.Concurrent.EnumerablePartitionerOptions None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.EnumerablePartitionerOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the default behavior, which is to use buffering to achieve optimal performance.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

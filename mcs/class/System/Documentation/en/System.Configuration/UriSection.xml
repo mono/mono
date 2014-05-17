@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="UriSection" FullName="System.Configuration.UriSection">
+  <TypeSignature Language="C#" Value="public sealed class UriSection : System.Configuration.ConfigurationSection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed UriSection extends System.Configuration.ConfigurationSection" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Configuration.ConfigurationSection</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The existing <see cref="T:System.Uri" /> class has been extended to provide support for International Resource Identifiers (IRI) and Internationalized Domain Names. Current users will not see any change from the .NET Framework 2.0 behavior unless they specifically enable IRI and IDN. This ensures application compatibility with prior versions of the .NET Framework.</para>
+      <para>The configuration settings for IRI and IDN can be retrieved using the <see cref="T:System.Configuration.UriSection" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the Uri section within a configuration file.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriSection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The existing <see cref="T:System.Uri" /> class has been extended to provide support for International Resource Identifiers (IRI) and Internationalized Domain Names. Current users will not see any change from the .NET Framework 2.0 behavior unless they specifically enable IRI and IDN. This ensures application compatibility with prior versions of the .NET Framework.</para>
+          <para>The configuration settings for IRI and IDN can be retrieved using the <see cref="T:System.Configuration.UriSection" /> class.</para>
+          <para>For more information on IRI support, see the Remarks section for the <see cref="T:System.Uri" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.UriSection" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Idn">
+      <MemberSignature Language="C#" Value="public System.Configuration.IdnElement Idn { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.IdnElement Idn" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("idn")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Configuration.IdnElement</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The existing <see cref="T:System.Uri" /> class has been extended to provide support for International Resource Identifiers (IRI) and Internationalized Domain Names. Current users will not see any change from the .NET Framework 2.0 behavior unless they specifically enable IRI and IDN. This ensures application compatibility with prior versions of the .NET Framework.</para>
+          <para>The configuration settings for IRI and IDN can be retrieved using the <see cref="T:System.Configuration.UriSection" /> class. The <see cref="P:System.Configuration.UriSection.Idn" /> property returns the configuration setting for IDN processing in the <see cref="T:System.Uri" /> class. </para>
+          <para>IRI processing must be enabled for IDN processing to be possible. If IRI processing is disabled, then IDN processing will be set to the default setting where the .NET Framework 2.0 behavior is used for compatibility and IDN names are not used.</para>
+          <para>The Internationalized Domain Name (IDN) attribute only controls IDN processing. All other IRI processing (character normalization, for example) is performed by default.</para>
+          <para>The configuration setting for the <see cref="T:System.Configuration.IdnElement" /> will be read once when the first <see cref="T:System.Uri" /> class is constructed. Changes to configuration settings after that time are ignored.</para>
+          <para>For more information on IRI support, see the Remarks section for the <see cref="T:System.Uri" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Configuration.IdnElement" /> object that contains the configuration setting for International Domain Name (IDN) processing in the <see cref="T:System.Uri" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IriParsing">
+      <MemberSignature Language="C#" Value="public System.Configuration.IriParsingElement IriParsing { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.IriParsingElement IriParsing" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("iriParsing")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Configuration.IriParsingElement</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The existing <see cref="T:System.Uri" /> class has been extended to provide support for International Resource Identifiers (IRI) and Internationalized Domain Names. Current users will not see any change from the .NET Framework 2.0 behavior unless they specifically enable IRI and IDN. This ensures application compatibility with prior versions of the .NET Framework.</para>
+          <para>The configuration settings for IRI and IDN can be retrieved using the <see cref="T:System.Configuration.UriSection" /> class. The <see cref="P:System.Configuration.UriSection.IriParsing" /> property returns the configuration setting for IRI parsing in the <see cref="T:System.Uri" /> class. </para>
+          <para>IRI processing must be enabled for IDN processing to be possible. If IRI processing is disabled, then IDN processing will be set to the default setting where the .NET Framework 2.0 behavior is used for compatibility and IDN names are not used.</para>
+          <para>The Internationalized Domain Name (IDN) attribute only controls IDN processing. All other IRI processing (character normalization, for example) is performed by default.</para>
+          <para>The configuration setting for the <see cref="T:System.Configuration.IriParsingElement" /> will be read once when the first <see cref="T:System.Uri" /> class is constructed. Changes to configuration settings after that time are ignored.</para>
+          <para>For more information on IRI support, see the Remarks section for the <see cref="T:System.Uri" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Configuration.IriParsingElement" /> object that contains the configuration setting for International Resource Identifiers (IRI) parsing in the <see cref="T:System.Uri" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

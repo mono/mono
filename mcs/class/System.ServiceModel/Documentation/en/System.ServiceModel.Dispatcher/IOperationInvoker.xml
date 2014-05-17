@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IOperationInvoker" FullName="System.ServiceModel.Dispatcher.IOperationInvoker">
+  <TypeSignature Language="C#" Value="public interface IOperationInvoker" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOperationInvoker" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IOperationInvoker" /> interface to control the conversion from an untyped object and array of parameters to a strongly-typed method call on that object. It has a synchronous <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)" /> method, which takes an instance and set of inputs of type object and returns an object and a set of outputs of type object. It also has a <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.InvokeBegin(System.Object,System.Object[],System.AsyncCallback,System.Object)" /> and <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.InvokeEnd(System.Object,System.Object[]@,System.IAsyncResult)" /> variant.  The <see cref="P:System.ServiceModel.Dispatcher.IOperationInvoker.IsSynchronous" /> property specifies whether the synchronous or asynchronous method should be used.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Declares methods that take an object and an array of parameters extracted from a message, invoke a method on that object with those parameters, and return the method's return value and output parameters.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AllocateInputs">
+      <MemberSignature Language="C#" Value="public object[] AllocateInputs ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object[] AllocateInputs() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement this to return an array of parameters for the operation. This array is filled by the formatter and passed back to the invoker when <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Array" /> of parameter objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters that are to be used as arguments to the operation.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public object Invoke (object instance, object[] inputs, out object[] outputs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Invoke(object instance, object[] inputs, object[] outputs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="inputs" Type="System.Object[]" />
+        <Parameter Name="outputs" Type="System.Object[]&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="instance">To be added.</param>
+        <param name="inputs">To be added.</param>
+        <param name="outputs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeBegin">
+      <MemberSignature Language="C#" Value="public IAsyncResult InvokeBegin (object instance, object[] inputs, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult InvokeBegin(object instance, object[] inputs, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="inputs" Type="System.Object[]" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An asynchronous implementation of the <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IAsyncResult" /> used to complete the asynchronous call.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be invoked.</param>
+        <param name="inputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The inputs to the method.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback object.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />Associated state data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeEnd">
+      <MemberSignature Language="C#" Value="public object InvokeEnd (object instance, out object[] outputs, IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object InvokeEnd(object instance, object[] outputs, class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instance" Type="System.Object" />
+        <Parameter Name="outputs" Type="System.Object[]&amp;" RefType="out" />
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="instance">To be added.</param>
+        <param name="outputs">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSynchronous">
+      <MemberSignature Language="C#" Value="public bool IsSynchronous { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSynchronous" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default invoker dispatches messages to the synchronous operation by default. This value is cached by the dispatcher and therefore should not change over the lifetime of the object that implements <see cref="T:System.ServiceModel.Dispatcher.IOperationInvoker" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether the <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)" /> or <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.InvokeBegin(System.Object,System.Object[],System.AsyncCallback,System.Object)" /> method is called by the dispatcher.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

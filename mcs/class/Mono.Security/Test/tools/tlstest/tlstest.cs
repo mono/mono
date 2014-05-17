@@ -2,15 +2,18 @@
 // TlsTest.cs: TLS/SSL Test Program
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2004 Novell (http://www.novell.com)
+// Copyright 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -127,11 +130,6 @@ public class TlsTest {
 			}
 		}
 
-		if ((web) && (protocol != Mono.Security.Protocol.Tls.SecurityProtocolType.Default)) {
-			Usage ("You can't set the protocol when using the WebRequest/WebResponse class");
-			return;
-		}
-
 		if (urls.Count == 0) {
 			Usage ("no URL were specified");
 			return;
@@ -151,9 +149,8 @@ public class TlsTest {
 				}
 			}
 			catch (Exception e) {
-				// HResult is protected - but very useful in debugging
-				PropertyInfo pi = e.GetType ().GetProperty ("HResult", BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.Instance);
-				Console.WriteLine ("FAILED: #{0}", (int)pi.GetValue (e, null));
+				// HResult is now public (was protected before 4.5)
+				Console.WriteLine ("FAILED: #{0}", e.HResult);
 				Console.WriteLine (e.ToString ());
 			}
 
@@ -170,6 +167,18 @@ public class TlsTest {
 	public static string GetWebPage (string url) 
 	{
 		ServicePointManager.CertificatePolicy = new TestCertificatePolicy ();
+		ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType) (int) protocol;
+
+		ServicePointManager.ClientCipherSuitesCallback += (System.Net.SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+			Console.WriteLine ("Protocol: {0}", p);
+//			var ciphers = allCiphers;
+			var ciphers = from cipher in allCiphers where !cipher.Contains ("EXPORT") select cipher;
+			string prefix = p == System.Net.SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+			//			var ciphers = new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
+			foreach (var cipher in ciphers)
+				Console.WriteLine ("\t{0}", cipher);
+			return ciphers;
+		};
 
 		Uri uri = new Uri (url);
 		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (uri);

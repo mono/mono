@@ -1,10 +1,12 @@
 // 
 // SynchronizationContextScheduler.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar  <marek.safar@gmail.com>
 // 
 // Copyright (c) 2011 Novell
+// Copyright 2014 Xamarin Inc (http://www.xamarin.com).
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,13 +66,12 @@ namespace System.Threading.Tasks
 
 		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 		{
-			ctx.Send (callback, task);
-			return true;
+			return ctx == SynchronizationContext.Current && TryExecuteTask (task);
 		}
 
 		public override int MaximumConcurrencyLevel {
 			get {
-				return base.MaximumConcurrencyLevel;
+				return 1;
 			}
 		}
 	}

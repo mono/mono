@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventDescriptorCollection" FullName="System.ComponentModel.EventDescriptorCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class EventDescriptorCollection : System.Collections.IList" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventDescriptorCollection extends System.Object implements class System.Collections.ICollection, class System.Collections.IEnumerable, class System.Collections.IList" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -22,47 +25,85 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.EventDescriptorCollection" /> is read-only; it does not implement methods that add or remove events. You must inherit from this class to implement these methods.</para>
+      <para>Using the properties available in the <see cref="T:System.ComponentModel.EventDescriptorCollection" /> class, you can query the collection about its contents. Use the <see cref="P:System.ComponentModel.EventDescriptorCollection.Count" /> property to determine the number of elements in the collection. Use the <see cref="P:System.ComponentModel.EventDescriptorCollection.Item(System.Int32)" /> property to get a specific property by index number or by name.</para>
+      <para>You can also use the <see cref="M:System.ComponentModel.EventDescriptorCollection.Find(System.String,System.Boolean)" /> method to get a description of the event with the specified name from the collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ComponentModel.EventDescriptor" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventDescriptorCollection (System.ComponentModel.EventDescriptor[] events);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.EventDescriptor[] events) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="events" Type="System.ComponentModel.EventDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="events">To be added: an object of type 'EventDescriptor []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="events" /> parameter is empty, this constructor creates an empty <see cref="T:System.ComponentModel.EventDescriptorCollection" /> class.</para>
+          <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this member has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.EventDescriptorCollection" /> class with the given array of <see cref="T:System.ComponentModel.EventDescriptor" /> objects.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.ComponentModel.EventDescriptor" /> that provides the events for this collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventDescriptorCollection (System.ComponentModel.EventDescriptor[] events, bool readOnly);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.EventDescriptor[] events, bool readOnly) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="events" Type="System.ComponentModel.EventDescriptor[]" />
         <Parameter Name="readOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <param name="readOnly">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="events" /> parameter is empty, this constructor creates an empty <see cref="T:System.ComponentModel.EventDescriptorCollection" /> class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.EventDescriptorCollection" /> class with the given array of <see cref="T:System.ComponentModel.EventDescriptor" /> objects. The collection is optionally read-only.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.ComponentModel.EventDescriptor" /> that provides the events for this collection. </param>
+        <param name="readOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify a read-only collection; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public int Add (System.ComponentModel.EventDescriptor value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Add(class System.ComponentModel.EventDescriptor value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -70,35 +111,59 @@
         <Parameter Name="value" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'EventDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an <see cref="T:System.ComponentModel.EventDescriptor" /> to the end of the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position of the <see cref="T:System.ComponentModel.EventDescriptor" /> within the collection.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.EventDescriptor" /> to add to the collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all objects from the collection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Contains">
       <MemberSignature Language="C#" Value="public bool Contains (System.ComponentModel.EventDescriptor value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Contains(class System.ComponentModel.EventDescriptor value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -106,51 +171,81 @@
         <Parameter Name="value" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'EventDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the collection contains the given <see cref="T:System.ComponentModel.EventDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the <paramref name="value" /> parameter given; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.EventDescriptor" /> to find within the collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.EventDescriptorCollection.Count" /> property can be used to set the limits of a loop that iterates through a collection of objects. If the collection is zero-based, be sure to use Count - 1 as the upper boundary of the loop.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of event descriptors in the collection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Empty">
       <MemberSignature Language="C#" Value="public static readonly System.ComponentModel.EventDescriptorCollection Empty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.ComponentModel.EventDescriptorCollection Empty" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an empty collection to use, rather than creating a new one with no items. This static field is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Find">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.EventDescriptor Find (string name, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.EventDescriptor Find(string name, bool ignoreCase) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -159,37 +254,65 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ignoreCase">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the event with the specified name in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.EventDescriptor" /> with the specified name, or null if the event does not exist.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the event to get from the collection. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if you want to ignore the case of the event; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.IEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an enumerator for this <see cref="T:System.ComponentModel.EventDescriptorCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that implements <see cref="T:System.Collections.IEnumerator" />.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndexOf">
       <MemberSignature Language="C#" Value="public int IndexOf (System.ComponentModel.EventDescriptor value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(class System.ComponentModel.EventDescriptor value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -197,19 +320,33 @@
         <Parameter Name="value" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'EventDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the given <see cref="T:System.ComponentModel.EventDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the given <see cref="T:System.ComponentModel.EventDescriptor" /> within the collection.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.EventDescriptor" /> to find within the collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Insert">
       <MemberSignature Language="C#" Value="public void Insert (int index, System.ComponentModel.EventDescriptor value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Insert(int32 index, class System.ComponentModel.EventDescriptor value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -218,19 +355,31 @@
         <Parameter Name="value" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'EventDescriptor'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an <see cref="T:System.ComponentModel.EventDescriptor" /> to the collection at a specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the collection in which to insert the <paramref name="value" /> parameter. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.EventDescriptor" /> to insert into the collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InternalSort">
       <MemberSignature Language="C#" Value="protected void InternalSort (System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void InternalSort(class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -239,17 +388,28 @@
       </Parameters>
       <Docs>
         <param name="comparer">To be added: an object of type 'Collections.IComparer'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="sorter" /> parameter is null, the default sort order is used.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this <see cref="T:System.ComponentModel.EventDescriptorCollection" />, using the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InternalSort">
       <MemberSignature Language="C#" Value="protected void InternalSort (string[] order);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void InternalSort(string[] order) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -258,17 +418,27 @@
       </Parameters>
       <Docs>
         <param name="order">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this <see cref="T:System.ComponentModel.EventDescriptorCollection" />. The specified order is applied first, followed by the default sort for this collection, which is usually alphabetical.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.EventDescriptor this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.EventDescriptor Item(int32)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -281,14 +451,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.EventDescriptor this[string name] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.EventDescriptor Item(string)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -301,14 +473,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="C#" Value="public void Remove (System.ComponentModel.EventDescriptor value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Remove(class System.ComponentModel.EventDescriptor value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -316,18 +490,29 @@
         <Parameter Name="value" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'EventDescriptor'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.ComponentModel.EventDescriptor" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.EventDescriptor" /> to remove from the collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAt">
       <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAt(int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -335,35 +520,59 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.ComponentModel.EventDescriptor" /> at the specified index from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.ComponentModel.EventDescriptor" /> to remove. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Sort">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.EventDescriptorCollection Sort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.EventDescriptorCollection Sort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this <see cref="T:System.ComponentModel.EventDescriptorCollection" />, using the default sort for this collection, which is usually alphabetical.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.ComponentModel.EventDescriptorCollection" />.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Sort">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.EventDescriptorCollection Sort (System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.EventDescriptorCollection Sort(class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -371,19 +580,34 @@
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <param name="comparer">To be added: an object of type 'Collections.IComparer'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified <see cref="T:System.Collections.IComparer" /> is applied first, followed by the default sort for this collection, which is usually alphabetical.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this <see cref="T:System.ComponentModel.EventDescriptorCollection" />, using the specified <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.ComponentModel.EventDescriptorCollection" />.</para>
+        </returns>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IComparer" /> to use to sort the <see cref="T:System.ComponentModel.EventDescriptor" /> objects in this collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Sort">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.EventDescriptorCollection Sort (string[] order);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.EventDescriptorCollection Sort(string[] order) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -392,18 +616,32 @@
       </Parameters>
       <Docs>
         <param name="order">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified order is applied first, followed by the default sort for this collection, which is usually alphabetical.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this <see cref="T:System.ComponentModel.EventDescriptorCollection" />, given a specified sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.ComponentModel.EventDescriptorCollection" />.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Sort">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.EventDescriptorCollection Sort (string[] order, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.EventDescriptorCollection Sort(string[] order, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -413,22 +651,33 @@
       </Parameters>
       <Docs>
         <param name="order">To be added.</param>
-        <param name="comparer">To be added: an object of type 'Collections.IComparer'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified sort order is applied first, followed by the sort using the specified <see cref="T:System.Collections.IComparer" />.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the members of this <see cref="T:System.ComponentModel.EventDescriptorCollection" />, given a specified sort order and an <see cref="T:System.Collections.IComparer" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.ComponentModel.EventDescriptorCollection" />.</para>
+        </returns>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IComparer" /> to use to sort the <see cref="T:System.ComponentModel.EventDescriptor" /> objects in this collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.ICollection.CopyTo">
       <MemberSignature Language="C#" Value="void ICollection.CopyTo (Array array, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.ICollection.CopyTo(class System.Array array, int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -438,83 +687,138 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the collection to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from collection. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.Count">
       <MemberSignature Language="C#" Value="int System.Collections.ICollection.Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 System.Collections.ICollection.Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
       <MemberSignature Language="C#" Value="bool System.Collections.ICollection.IsSynchronized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.Collections.ICollection.IsSynchronized" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
       <MemberSignature Language="C#" Value="object System.Collections.ICollection.SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.ICollection.SyncRoot" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
       <MemberSignature Language="C#" Value="int IList.Add (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IList.Add(object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -523,34 +827,58 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an item to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Clear">
       <MemberSignature Language="C#" Value="void IList.Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.Clear() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the items from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
       <MemberSignature Language="C#" Value="bool IList.Contains (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.IList.Contains(object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -559,18 +887,32 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the collection contains a specific value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Object" /> is found in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
       <MemberSignature Language="C#" Value="int IList.IndexOf (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IList.IndexOf(object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -579,18 +921,32 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of a specific item in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if found in the list; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
       <MemberSignature Language="C#" Value="void IList.Insert (int index, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.Insert(int32 index, object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -600,50 +956,82 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an item to the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to insert into the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
       <MemberSignature Language="C#" Value="bool System.Collections.IList.IsFixedSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.Collections.IList.IsFixedSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
       <MemberSignature Language="C#" Value="bool System.Collections.IList.IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.Collections.IList.IsReadOnly" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
-      <MemberSignature Language="C#" Value="object System.Collections.IList.Item[int index] { set; get; }" />
+      <MemberSignature Language="C#" Value="object System.Collections.IList.Item[int index] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IList.Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -660,10 +1048,12 @@
     </Member>
     <Member MemberName="System.Collections.IList.Remove">
       <MemberSignature Language="C#" Value="void IList.Remove (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.Remove(object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -672,17 +1062,28 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of a specific object from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to remove from the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.RemoveAt">
       <MemberSignature Language="C#" Value="void IList.RemoveAt (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.RemoveAt(int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -691,9 +1092,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove.</param>
       </Docs>
     </Member>
   </Members>

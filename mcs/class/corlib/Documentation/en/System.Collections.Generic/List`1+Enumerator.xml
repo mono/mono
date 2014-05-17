@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="List&lt;T&gt;+Enumerator" FullName="System.Collections.Generic.List&lt;T&gt;+Enumerator">
   <TypeSignature Language="C#" Value="public struct List&lt;T&gt;.Enumerator : System.Collections.Generic.IEnumerator&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class nested public sequential ansi serializable sealed beforefieldinit List`1/Enumerator&lt;T&gt; extends System.ValueType implements class System.Collections.Generic.IEnumerator`1&lt;!T&gt;, class System.Collections.IEnumerator, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,14 +19,48 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Collections.Generic.List`1" /> class is the generic equivalent of the <see cref="T:System.Collections.ArrayList" /> class. It implements the <see cref="T:System.Collections.Generic.IList`1" /> generic interface by using an array whose size is dynamically increased as required.</para>
+      <para>You can add items to a <see cref="T:System.Collections.Generic.List`1" /> by using the <see cref="M:System.Collections.Generic.List`1.Add(`0)" /> or <see cref="M:System.Collections.Generic.List`1.AddRange(System.Collections.Generic.IEnumerable{`0})" /> methods.</para>
+      <para>The <see cref="T:System.Collections.Generic.List`1" /> class uses both an equality comparer and an ordering comparer. </para>
+      <list type="bullet">
+        <item>
+          <para>Methods such as <see cref="M:System.Collections.Generic.List`1.Contains(`0)" />, <see cref="M:System.Collections.Generic.List`1.IndexOf(`0)" />, <see cref="Overload:System.Collections.Generic.List`1.LastIndexOf" />, and <see cref="M:System.Collections.Generic.Dictionary`2.Remove(`0)" /> use an equality comparer for the list elements. The default equality comparer for type <paramref name="T" /> is determined as follows. If type <paramref name="T" /> implements the <see cref="T:System.IEquatable`1" /> generic interface, then the equality comparer is the <see cref="M:System.IEquatable`1.Equals(`0)" /> method of that interface; otherwise, the default equality comparer is <see cref="M:System.Object.Equals(System.Object)" />.</para>
+        </item>
+        <item>
+          <para>Methods such as <see cref="Overload:System.Collections.Generic.List`1.BinarySearch" /> and <see cref="Overload:System.Collections.Generic.List`1.Sort" /> use an ordering comparer for the list elements. The default comparer for type <paramref name="T" /> is determined as follows.  If type <paramref name="T" /> implements the <see cref="T:System.IComparable`1" /> generic interface, then the default comparer is the <see cref="M:System.IComparable`1.CompareTo(`0)" /> method of that interface; otherwise, if type <paramref name="T" /> implements the nongeneric <see cref="T:System.IComparable" /> interface, then the default comparer is the <see cref="M:System.IComparable.CompareTo(System.Object)" /> method of that interface. If type <paramref name="T" /> implements neither interface, then there is no default comparer, and a comparer or comparison delegate must be provided explicitly.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Collections.Generic.List`1" /> is not guaranteed to be sorted.  You must sort the <see cref="T:System.Collections.Generic.List`1" /> before performing operations (such as <see cref="Overload:System.Collections.Generic.List`1.BinarySearch" />) that require the <see cref="T:System.Collections.Generic.List`1" /> to be sorted.</para>
+      <para>Elements in this collection can be accessed using an integer index.  Indexes in this collection are zero-based.</para>
+      <para>For very large <see cref="T:System.Collections.Generic.List`1" /> objects, you can increase the maximum capacity to 2 billion elements on a 64-bit system by setting the enabled attribute of the <format type="text/html"><a href="5c7ea24a-39ac-4e5f-83b7-b9f9a1b556ab">gcAllowVeryLargeObjects</a></format> configuration element to true in the run-time environment.</para>
+      <para>
+        <see cref="T:System.Collections.Generic.List`1" /> accepts null as a valid value for reference types and allows duplicate elements.</para>
+      <para>For an immutable version of the <see cref="T:System.Collections.Generic.List`1" /> class, see <see cref="T:System.Collections.Immutable.ImmutableList`1" />.</para>
+      <format type="text/html">
+        <h2>Performance Considerations</h2>
+      </format>
+      <para>In deciding whether to use the <see cref="T:System.Collections.Generic.List`1" /> or <see cref="T:System.Collections.ArrayList" /> class, both of which have similar functionality, remember that the <see cref="T:System.Collections.Generic.List`1" /> class performs better in most cases and is type safe. If a reference type is used for type <paramref name="T" /> of the <see cref="T:System.Collections.Generic.List`1" /> class, the behavior of the two classes is identical. However, if a value type is used for type <paramref name="T" />, you need to consider implementation and boxing issues.</para>
+      <para>If a value type is used for type <paramref name="T" />, the compiler generates an implementation of the <see cref="T:System.Collections.Generic.List`1" /> class specifically for that value type. That means a list element of a <see cref="T:System.Collections.Generic.List`1" /> object does not have to be boxed before the element can be used, and after about 500 list elements are created the memory saved not boxing list elements is greater than the memory used to generate the class implementation. </para>
+      <para>Make certain the value type used for type <paramref name="T" /> implements the <see cref="T:System.IEquatable`1" /> generic interface. If not, methods such as <see cref="M:System.Collections.Generic.List`1.Contains(`0)" /> must call the <see cref="M:System.Object.Equals(System.Object)" /> method, which boxes the affected list element. If the value type implements the <see cref="T:System.IComparable" /> interface and you own the source code, also implement the <see cref="T:System.IComparable`1" /> generic interface to prevent the <see cref="Overload:System.Collections.Generic.List`1.BinarySearch" /> and <see cref="Overload:System.Collections.Generic.List`1.Sort" /> methods from boxing list elements. If you do not own the source code, pass an <see cref="T:System.Collections.Generic.IComparer`1" /> object to the <see cref="Overload:System.Collections.Generic.List`1.BinarySearch" /> and <see cref="Overload:System.Collections.Generic.List`1.Sort" /> methods</para>
+      <para>It is to your advantage to use the type-specific implementation of the <see cref="T:System.Collections.Generic.List`1" /> class instead of using the <see cref="T:System.Collections.ArrayList" /> class or writing a strongly typed wrapper collection yourself. The reason is your implementation must do what the .NET Framework does for you already, and the common language runtime can share Microsoft intermediate language code and metadata, which your implementation cannot.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a strongly typed list of objects that can be accessed by index. Provides methods to search, sort, and manipulate lists.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
       <MemberSignature Language="C#" Value="public T Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T Current" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
@@ -34,14 +70,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -51,14 +88,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="MoveNext">
+      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MoveNext() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveNext">
-      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -69,14 +107,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerator.Current">
+      <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IEnumerator.Current" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEnumerator.Current">
-      <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -86,14 +125,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerator.Reset">
+      <MemberSignature Language="C#" Value="void IEnumerator.Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IEnumerator.Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEnumerator.Reset">
-      <MemberSignature Language="C#" Value="void IEnumerator.Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -103,10 +143,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

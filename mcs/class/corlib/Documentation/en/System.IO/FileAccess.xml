@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileAccess" FullName="System.IO.FileAccess" FullNameSP="System_IO_FileAccess" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable FileAccess extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum FileAccess" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileAccess extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -21,79 +23,88 @@
     </Attribute>
   </Attributes>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For an example of creating a file and writing text to a file, see <format type="text/html"><a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a></format>. For an example of reading text from a file, see <format type="text/html"><a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a></format>. For an example of reading from and writing to a binary file, see <format type="text/html"><a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a></format>.</para>
+      <para>A FileAccess parameter is specified in many of the constructors for <see cref="T:System.IO.File" />, <see cref="T:System.IO.FileInfo" />, <see cref="T:System.IO.FileStream" />, and other constructors where it is important to control the kind of access users have to a file.</para>
+    </remarks>
     <summary>
-      <para> Defines constants used to specify the level of file access being requested.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines constants for read, write, or read/write access to a file.</para>
     </summary>
-    <remarks>To be added.</remarks>
   </Docs>
   <Members>
     <Member MemberName="Read">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileAccess Read = 0x1" />
       <MemberSignature Language="C#" Value="Read" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAccess Read = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAccess</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Read</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies read access for a file.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read access to the file. Data can be read from the file. Combine with Write for read/write access.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadWrite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileAccess ReadWrite = Read | Write" />
+      <MemberSignature Language="C#" Value="ReadWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAccess ReadWrite = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadWrite">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileAccess ReadWrite = Read | Write" />
-      <MemberSignature Language="C#" Value="ReadWrite" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileAccess</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>ReadWrite</MemberValue>
       <Docs>
-        <summary>
-          <para> 
-      Specifies read and write access for a file.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read and write access to the file. Data can be written to and read from the file.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileAccess Write = 0x2" />
+      <MemberSignature Language="C#" Value="Write" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAccess Write = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileAccess Write = 0x2" />
-      <MemberSignature Language="C#" Value="Write" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileAccess</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Write</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies write access for
-      a file.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write access to the file. Data can be written to the file. Combine with Read for read/write access.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

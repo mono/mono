@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventHandler" FullName="System.EventHandler" FullNameSP="System_EventHandler" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable EventHandler extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void EventHandler(object sender, EventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed EventHandler extends System.MulticastDelegate" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,30 +14,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="sender">The object that raised the event.</param>
-    <param name="e">A <see cref="T:System.EventArgs" /> instance that contains the event data.</param>
-    <summary>
-      <para> Defines the shape of methods that are called in response to an event.</para>
-    </summary>
-    <remarks>
-      <block subset="none" type="note">
-        <para> A <see cref="T:System.EventHandler" /> instance is used to specify the methods that
-      are invoked in response to an event. To associate an instance of
-   <see langword="EventHandler" /> with an event, add the
-   <see langword="EventHandler" /> instance to the event. The methods referenced by the
-   <see langword="EventHandler " />instance are invoked
-      whenever the event is raised, until the
-   <see langword="EventHandler" />
-   instance is removed from the event. </para>
-        <para>If the event does not generate data, applications use the base
-   class <see cref="T:System.EventArgs" /> for the event data object
-<paramref name="e" />. For more information, see <see cref="T:System.EventArgs" />.  For additional information about events, see Partitions I and II of the CLI Specification. </para>
-      </block>
-    </remarks>
-  </Docs>
-  <Members />
-  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="sender" Type="System.Object" />
     <Parameter Name="e" Type="System.EventArgs" />
@@ -43,9 +26,31 @@
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="sender">The object that raised the event.</param>
+    <param name="e">A <see cref="T:System.EventArgs" /> instance that contains the event data.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The event model in the .NET Framework is based on having an event delegate that connects an event with its handler. To raise an event, two elements are needed: </para>
+      <list type="bullet">
+        <item>
+          <para>A delegate that identifies the method that provides the response to the event. </para>
+        </item>
+        <item>
+          <para>Optionally, a class that holds the event data, if the event provides data. </para>
+        </item>
+      </list>
+      <para>The delegate is a type that defines a signature, that is, the return value type and parameter list types for a method. You can use the delegate type to declare a variable that can refer to any method with the same signature as the delegate. </para>
+      <para>The standard signature of an event handler delegate defines a method that does not return a value. This method's first parameter is of type <see cref="T:System.Object" /> and refers to the instance that raises the event. Its second parameter is derived from type <see cref="T:System.EventArgs" /> and holds the event data. If the event does not generate event data, the second parameter is simply the value of the <see cref="F:System.EventArgs.Empty" /> field. Otherwise, the second parameter is a type derived from <see cref="T:System.EventArgs" /> and supplies any fields or properties needed to hold the event data.</para>
+      <para>The <see cref="T:System.EventHandler" /> delegate is a predefined delegate that specifically represents an event handler method for an event that does not generate data. If your event does generate data, you must use the generic <see cref="T:System.EventHandler`1" /> delegate class.</para>
+      <para>To associate the event with the method that will handle the event, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. </para>
+      <para>For more information about event handler delegates, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle an event that has no event data.</para>
+    </summary>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
 </Type>

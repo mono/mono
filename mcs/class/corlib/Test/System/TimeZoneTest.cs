@@ -122,6 +122,32 @@ public class TimeZoneTest {
 		Assert.AreEqual(0L, t1.GetUtcOffset (d5).Ticks, "D14");
 	}
 
+	private void NZST(TimeZone t1) {
+		Assert.AreEqual("NZST", t1.StandardName, "E01");
+		Assert.AreEqual("NZDT", t1.DaylightName, "E02");
+
+		DaylightTime d1 = t1.GetDaylightChanges (2013);
+		Assert.AreEqual("09/29/2013 02:00:00", d1.Start.ToString ("G"), "E03");
+		Assert.AreEqual("04/07/2013 03:00:00", d1.End.ToString ("G"), "E04");
+		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "E05");
+
+		DaylightTime d2 = t1.GetDaylightChanges (2001);
+		Assert.AreEqual("10/07/2001 02:00:00", d2.Start.ToString ("G"), "E06");
+		Assert.AreEqual("03/18/2001 03:00:00", d2.End.ToString ("G"), "E07");
+		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "E08");
+
+		DateTime d3 = new DateTime(2013,02,15);
+		Assert.AreEqual(true, t1.IsDaylightSavingTime (d3), "E09");
+		DateTime d4 = new DateTime(2013,04,30);
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d4), "E10");
+		DateTime d5 = new DateTime(2013,11,03);
+		Assert.AreEqual(true, t1.IsDaylightSavingTime (d5), "E11");
+
+		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d3).Ticks, "E12");
+		Assert.AreEqual(36000000000L /*hour*/ * 12L, t1.GetUtcOffset (d4).Ticks, "E13");
+		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d5).Ticks, "E14");
+	}
+
 	[Test]
 	[Culture ("")]
 	public void TestCtors ()
@@ -140,6 +166,9 @@ public class TimeZoneTest {
 				break;
 			case "GMT":
 				GMT (t1);
+				break;
+			case "NZST":
+				NZST (t1);
 				break;
 			default:
 				NUnit.Framework.Assert.Ignore ("Your time zone (" + t1.StandardName + ") isn't defined in the test case");
@@ -243,13 +272,52 @@ public class TimeZoneTest {
 		DateTime dst_start_utc = tz.GetDaylightChanges(2007).Start.ToUniversalTime ();
 
 		if (dst_start_utc == DateTime.MinValue)
-			return;
+			Assert.Ignore ("Couldn't get beginning of daylight saving time in 2007.");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Subtract (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc), "0:1:59 < 0:3:00");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))), "0:3:00 < 0:3:01");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))), "0:3:01 < 0:3:59");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))), "0:3:59 < 0:4:00");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 1, 0))), "0:4:00 < 0:4:01");
 	}
+
+		[Test]
+		public void GetUtcOffsetAtDSTBoundary ()
+		{
+			/*
+			 * Getting a definitive list of timezones which do or don't observe Daylight
+			 * Savings is difficult (can't say America's or USA definitively) and lengthy see 
+			 *
+			 * http://en.wikipedia.org/wiki/Daylight_saving_time_by_country
+			 *
+			 * as a good starting point for a list.
+			 *
+			 * The following are SOME of the timezones/regions which do support daylight savings.
+			 *
+			 * Pacific/Auckland
+			 * Pacific/Sydney
+			 * USA (EST, CST, MST, PST, AKST) note this does not cover all states or regions
+			 * Europe/London (GMT)
+			 * CET (member states of the European Union)
+			 *
+			 * This test should work in all the above timezones
+			 */
+
+
+			TimeZone tz = TimeZone.CurrentTimeZone;
+			DaylightTime daylightChanges = tz.GetDaylightChanges(2007);
+			DateTime dst_end = daylightChanges.End;
+
+			if (dst_end == DateTime.MinValue)
+				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during 2007.");
+
+			var standardOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(-1));
+
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
+			Assert.AreNotEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
+		}
+
 
 		[Test]
 		public void StaticProperties ()

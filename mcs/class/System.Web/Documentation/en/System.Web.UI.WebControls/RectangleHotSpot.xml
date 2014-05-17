@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RectangleHotSpot" FullName="System.Web.UI.WebControls.RectangleHotSpot">
   <TypeSignature Language="C#" Value="public sealed class RectangleHotSpot : System.Web.UI.WebControls.HotSpot" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class defines a rectangular hot spot region in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. To define the region of the <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object, set the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Left" /> property to the value that represents the x-coordinate of the rectangular region's top left corner. Set the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Top" /> property to the value that represents the y-coordinate of the rectangular region's top left corner. Set the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Right" /> property to the value that represents the x-coordinate of the rectangular region's bottom right corner. Set of the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Bottom" /> property to the value that represents the y-coordinate of the rectangular region's bottom right corner.</para>
+      <para>When a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> control is clicked, the page navigates to a URL, generates a post back to the server, or does nothing. The <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property specifies this behavior. To navigate to a URL, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Navigate and use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to. To post back to the server, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.PostBack and use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify a name for the <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data when the <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> is clicked. . If you want the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to have no behavior, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Inactive.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a rectangular hot spot region in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +53,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Bottom" /> property allows you to get or set a value that represents the y-coordinate of the bottom side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object. To completely define a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object, you must specify a value for the this property and for the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Left" />, <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Top" />, and <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Right" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the y-coordinate of the bottom side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +76,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a string that represents the coordinates of a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object's top left corner and the coordinates of its bottom right corner. This method uses the values assigned to the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Left" /> and <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Top" /> properties to return the coordinates for the top left corner. It uses the values assigned to the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Right" /> and <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Bottom" /> properties to return the coordinates for the bottom right corner.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.RectangleHotSpot.GetCoordinates" /> method is used internally by ASP.NET to get the text to use for the coordinates of a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> when it is rendered. The string that is returned is specific to the browser and markup language.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the x -and y-coordinates of a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object's top left corner and the x- and y-coordinates of its bottom right corner.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the x- and y-coordinates of a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object's top left corner and the x- and y-coordinates of its bottom right corner.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +107,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Left" /> property allows you to get or set a value that represents the x-coordinate of the left side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object. To completely define a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object, you must specify a value for the this property and for the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Top" />, <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Right" />, and <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Bottom" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the x-coordinate of the left side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,9 +132,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.MarkupName" /> property is used internally by ASP.NET to get the string representation for the <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object's shape. This property always returns the string "rect". You cannot access this property directly from your application's code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string representation for the <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object's shape.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Right">
@@ -113,10 +155,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Right" /> property allows you to get or set a value that represents the x-coordinate of the right side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object. To completely define a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object, you must specify a value for this property and for the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Left" />, <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Top" />, and <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Bottom" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the x-coordinate of the right side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -134,10 +182,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Top" /> property allows you to get or set a value that represents the y-coordinate of the top side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object. To completely define a <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object. you must specify a value for this property and for the <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Left" />, <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Right" />, and <see cref="P:System.Web.UI.WebControls.RectangleHotSpot.Bottom" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the y-coordinate of the top side of the rectangular region defined by this <see cref="T:System.Web.UI.WebControls.RectangleHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

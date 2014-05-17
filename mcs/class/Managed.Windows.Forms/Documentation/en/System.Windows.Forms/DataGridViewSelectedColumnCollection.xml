@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewSelectedColumnCollection" FullName="System.Windows.Forms.DataGridViewSelectedColumnCollection">
   <TypeSignature Language="C#" Value="public class DataGridViewSelectedColumnCollection : System.Windows.Forms.BaseCollection, System.Collections.IList" />
   <AssemblyInfo>
@@ -18,9 +19,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The order of columns in the collection is not guaranteed to match the order in which they were selected.</para>
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> does not perform efficiently when working with large numbers of columns. Typically, <see cref="T:System.Windows.Forms.DataGridView" /> controls will not contain enough columns for this to be an issue, but if you are working with large numbers of columns, you can use the <see cref="M:System.Windows.Forms.DataGridView.AreAllCellsSelected(System.Boolean)" /> to determine if the entire grid is selected, or you can use the <see cref="M:System.Windows.Forms.DataGridViewColumnCollection.GetColumnCount(System.Windows.Forms.DataGridViewElementStates)" /> to determine the number of selected columns (or the number of columns in a specified state). For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Windows.Forms.DataGridViewColumn" /> objects that are selected in a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Clear">
@@ -31,9 +39,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not relevant for this class. You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> class directly. To clear the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />, use the <see cref="M:System.Windows.Forms.DataGridView.ClearSelection" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,11 +68,18 @@
         <Parameter Name="dataGridViewColumn" Type="System.Windows.Forms.DataGridViewColumn" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewColumn">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified column is contained in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="dataGridViewColumn" /> parameter is in the collection; otherwise, false.</para>
+        </returns>
+        <param name="dataGridViewColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewColumn" /> to locate in the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,11 +96,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the collection to the specified array, starting at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional array that is the destination of the elements copied from the collection. The array must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in the array at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,11 +122,19 @@
         <Parameter Name="dataGridViewColumn" Type="System.Windows.Forms.DataGridViewColumn" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="dataGridViewColumn">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not relevant for this class. You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> class directly. To insert a column into the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />, use the <see cref="P:System.Windows.Forms.DataGridViewBand.Selected" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a column into the collection at the specified position.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which the column should be inserted. </param>
+        <param name="dataGridViewColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewColumn" /> to insert into the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -160,10 +194,21 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> class directly. To add a column to the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />, use the <see cref="P:System.Windows.Forms.DataGridViewBand.Selected" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Collections.IList.Add(System.Object)" /> method. Always throws <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not applicable. Always throws an exception.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to be added to the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Clear">
@@ -177,8 +222,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> class directly. To clear the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />, use the <see cref="M:System.Windows.Forms.DataGridView.ClearSelection" /> method.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Collections.IList.Clear" /> method. Always throws <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -194,10 +246,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified value is contained in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to locate in the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -213,10 +275,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the specified element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the <paramref name="value" /> parameter if it is found in the collection; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element to locate in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -233,10 +305,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> class directly. To add a column to the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />, use the <see cref="P:System.Windows.Forms.DataGridViewBand.Selected" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Collections.IList.Insert(System.Int32,System.Object)" /> method. Always throws <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which <paramref name="value" /> should be inserted.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be added to the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -249,9 +330,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -286,9 +373,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> class directly. To remove a column from the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />, use the <see cref="P:System.Windows.Forms.DataGridViewBand.Selected" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Collections.IList.Remove(System.Object)" /> method. Always throws <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be removed from the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.RemoveAt">
@@ -304,9 +399,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> class directly. To remove a column from the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" />, use the <see cref="P:System.Windows.Forms.DataGridViewBand.Selected" /> property.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedColumnCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" /> method. Always throws <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove.</param>
       </Docs>
     </Member>
   </Members>

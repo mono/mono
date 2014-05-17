@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Comparer&lt;T&gt;" FullName="System.Collections.Generic.Comparer&lt;T&gt;">
   <TypeSignature Language="C#" Value="public abstract class Comparer&lt;T&gt; : System.Collections.Generic.IComparer&lt;T&gt;, System.Collections.IComparer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit Comparer`1&lt;T&gt; extends System.Object implements class System.Collections.Generic.IComparer`1&lt;!T&gt;, class System.Collections.IComparer" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,28 +23,53 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Derive from this class to provide a custom implementation of the <see cref="T:System.Collections.Generic.IComparer`1" /> interface for use with collection classes such as the <see cref="T:System.Collections.Generic.SortedList`2" /> and <see cref="T:System.Collections.Generic.SortedDictionary`2" /> generic classes.</para>
+      <para>The difference between deriving from the <see cref="T:System.Collections.Generic.Comparer`1" /> class and implementing the <see cref="T:System.IComparable" /> interface is as follows:</para>
+      <list type="bullet">
+        <item>
+          <para>To specify how two objects should be compared by default, implement the <see cref="T:System.IComparable" /> interface in your class. This ensures that sort operations will use the default comparison code that you provided.</para>
+        </item>
+        <item>
+          <para>To define a comparer to use instead of the default comparer, derive from the <see cref="T:System.Collections.Generic.Comparer`1" /> class. You can then use this comparer in sort operations that take a comparer as a parameter.</para>
+        </item>
+      </list>
+      <para>The object returned by the <see cref="P:System.Collections.Generic.Comparer`1.Default" /> property uses the <see cref="T:System.IComparable`1" /> generic interface (IComparable&lt;T&gt; in C#, IComparable(Of T) in Visual Basic) to compare two objects. If type <paramref name="T" /> does not implement the <see cref="T:System.IComparable`1" /> generic interface, the <see cref="P:System.Collections.Generic.Comparer`1.Default" /> property returns a <see cref="T:System.Collections.Generic.Comparer`1" /> that uses the <see cref="T:System.IComparable" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for implementations of the <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Comparer ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Generic.Comparer`1" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public abstract int Compare (T x, T y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Compare(!T x, !T y) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -58,31 +85,59 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.Comparer&lt;T&gt; Create (Comparison&lt;T&gt; comparison);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.Comparer`1&lt;!T&gt; Create(class System.Comparison`1&lt;!T&gt; comparison) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Comparer&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="comparison" Type="System.Comparison&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="comparison">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.Comparer&lt;T&gt; Default { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.Generic.Comparer`1&lt;!T&gt; Default" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Default">
-      <MemberSignature Language="C#" Value="public static System.Collections.Generic.Comparer&lt;T&gt; Default { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.Comparer&lt;T&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Generic.Comparer`1" /> returned by this property uses the <see cref="T:System.IComparable`1" /> generic interface (IComparable&lt;T&gt; in C#, IComparable(Of T) in Visual Basic) to compare two objects. If type <paramref name="T" /> does not implement the <see cref="T:System.IComparable`1" /> generic interface, this property returns a <see cref="T:System.Collections.Generic.Comparer`1" /> that uses the <see cref="T:System.IComparable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a default sort order comparer for the type specified by the generic argument.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IComparer.Compare">
+      <MemberSignature Language="C#" Value="int IComparer.Compare (object x, object y);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IComparer.Compare(object x, object y) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IComparer.Compare">
-      <MemberSignature Language="C#" Value="int IComparer.Compare (object x, object y);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -91,17 +146,64 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a wrapper for the <see cref="M:System.Collections.Generic.Comparer`1.Compare(`0,`0)" /> method, so <paramref name="obj" /> must be cast to the type specified by the generic argument <paramref name="T" /> of the current instance. If it cannot be cast to <paramref name="T" />, an <see cref="T:System.ArgumentException" /> is thrown.</para>
+          <para>Comparing null with any reference type is allowed and does not generate an exception. When sorting, null is considered to be less than any other object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="x" /> and <paramref name="y" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is less than <paramref name="y" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> equals <paramref name="y" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is greater than <paramref name="y" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

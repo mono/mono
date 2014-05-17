@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CreationPolicy" FullName="System.ComponentModel.Composition.CreationPolicy">
+  <TypeSignature Language="C#" Value="public enum CreationPolicy" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CreationPolicy extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In the course of composition, the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" /> needs instances of the objects described by exports in order to fill imports. If a one export is used to fill multiple imports, there are two possible behaviors. Either a single instance of the exported object is created, and a reference to the same object is given to every importer, or a separate instance of the exported object is created for each importer. </para>
+      <para>Which behavior occurs depends on the <see cref="P:System.ComponentModel.Composition.PartCreationPolicyAttribute.CreationPolicy" /> property of the <see cref="T:System.ComponentModel.Composition.PartCreationPolicyAttribute" /> attached to the export and the <see cref="P:System.ComponentModel.Composition.ImportAttribute.RequiredCreationPolicy" /> of the <see cref="T:System.ComponentModel.Composition.ImportAttribute" />. Both of which will contain a value from the <see cref="T:System.ComponentModel.Composition.CreationPolicy" /> enumeration. If the policies are incompatible, that export will not be considered a match for the given import. The following table summarizes the interaction of these two properties.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>
+                <see cref="P:System.ComponentModel.Composition.ImportAttribute.RequiredCreationPolicy" />
+              </para>
+            </term>
+            <description>
+              <para>Export's <see cref="P:System.ComponentModel.Composition.PartCreationPolicyAttribute.CreationPolicy" /> specifies <see cref="F:System.ComponentModel.Composition.CreationPolicy.Any" /> or none specified.</para>
+            </description>
+            <description>
+              <para>Export's <see cref="P:System.ComponentModel.Composition.PartCreationPolicyAttribute.CreationPolicy" /> specifies <see cref="F:System.ComponentModel.Composition.CreationPolicy.Shared" /></para>
+            </description>
+            <description>
+              <para>Export's <see cref="P:System.ComponentModel.Composition.PartCreationPolicyAttribute.CreationPolicy" /> specifies <see cref="F:System.ComponentModel.Composition.CreationPolicy.NonShared" /></para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.ComponentModel.Composition.CreationPolicy.Any" />
+            </para>
+          </term>
+          <description>
+            <para>A single, shared instance of the exported object will be created.</para>
+          </description>
+          <description>
+            <para>A single, shared instance of the exported object will be created.</para>
+          </description>
+          <description>
+            <para>A new instance of the exported object will be created for each importer.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.ComponentModel.Composition.CreationPolicy.Shared" />
+            </para>
+          </term>
+          <description>
+            <para>A single, shared instance of the exported object will be created.</para>
+          </description>
+          <description>
+            <para>A single, shared instance of the exported object will be created.</para>
+          </description>
+          <description>
+            <para>The export will not be considered a match for the import.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.ComponentModel.Composition.CreationPolicy.NonShared" />
+            </para>
+          </term>
+          <description>
+            <para>A new instance of the exported object will be created for each importer.</para>
+          </description>
+          <description>
+            <para>The export will not be considered a match for the import.</para>
+          </description>
+          <description>
+            <para>A new instance of the exported object will be created for each importer.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies when and how a part will be instantiated.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Any">
+      <MemberSignature Language="C#" Value="Any" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.CreationPolicy Any = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.CreationPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" /> will use the most appropriate <see cref="T:System.ComponentModel.Composition.CreationPolicy" /> for the part given the current context. This is the default <see cref="T:System.ComponentModel.Composition.CreationPolicy" />. By default, <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" /> will use <see cref="F:System.ComponentModel.Composition.CreationPolicy.Shared" />, unless the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> or importer requests <see cref="F:System.ComponentModel.Composition.CreationPolicy.NonShared" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NewScope">
+      <MemberSignature Language="C#" Value="NewScope" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.CreationPolicy NewScope = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.CreationPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NonShared">
+      <MemberSignature Language="C#" Value="NonShared" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.CreationPolicy NonShared = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.CreationPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a new non-shared instance of the associated <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> will be created by the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" /> for every requestor.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Shared">
+      <MemberSignature Language="C#" Value="Shared" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.CreationPolicy Shared = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.CreationPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a single shared instance of the associated <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> will be created by the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" /> and shared by all requestors.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -83,6 +83,10 @@
 #endif
 #elif defined(__arm__) && defined(__ARM_EABI__) && !defined(PIC)
 #define MONO_THREAD_VAR_OFFSET(var,offset) __asm ("	ldr	%0, 1f; b 2f; 1: .word " #var "(tpoff); 2:" : "=r" (offset))
+#elif defined(__aarch64__) && !defined(PIC)
+#define MONO_THREAD_VAR_OFFSET(var,offset) \
+	__asm ( "mov %0, #0\n add %0, %0, #:tprel_hi12:" #var "\n add %0, %0, #:tprel_lo12_nc:" #var "\n" \
+			: "=r" (offset))
 #elif defined(__mono_ppc__) && defined(__GNUC__)
 #if defined(PIC)
 #ifdef PIC_INITIAL_EXEC
@@ -186,6 +190,12 @@
 
 /* Deal with Microsoft C compiler differences */
 #ifdef _MSC_VER
+
+#include <math.h>
+
+#if _MSC_VER < 1800 /* VS 2013 */
+#define strtoull _strtoui64
+#endif
 
 #include <float.h>
 #define isnan(x)	_isnan(x)

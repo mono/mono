@@ -31,6 +31,8 @@ typedef struct {
 	guint8 info [MONO_ZERO_LEN_ARRAY];
 } MonoUnwindInfo;
 
+#define ALIGN_TO(val,align) ((((size_t)val) + ((align) - 1)) & ~((align) - 1))
+
 static CRITICAL_SECTION unwind_mutex;
 
 static MonoUnwindInfo **cached_info;
@@ -49,10 +51,20 @@ static int map_hw_reg_to_dwarf_reg [] = { 0, 2, 1, 3, 7, 6, 4, 5, 8, 9, 10, 11, 
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (AMD64_RIP))
 #elif defined(TARGET_ARM)
 // http://infocenter.arm.com/help/topic/com.arm.doc.ihi0040a/IHI0040A_aadwarf.pdf
-static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-#define NUM_REGS 16
+/* Assign d8..d15 to hregs 16..24 */
+static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 264, 265, 266, 267, 268, 269, 270, 271 };
+#define NUM_REGS 272
 #define DWARF_DATA_ALIGN (-4)
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (ARMREG_LR))
+#elif defined(TARGET_ARM64)
+/* +1 is for pc */
+#define NUM_REGS (32 + 1)
+#define DWARF_DATA_ALIGN (-8)
+#define DWARF_PC_REG 32
+static int map_hw_reg_to_dwarf_reg [] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+};
 #elif defined (TARGET_X86)
 #ifdef __APPLE__
 /*
@@ -248,6 +260,68 @@ decode_sleb128 (guint8 *buf, guint8 **endbuf)
 	return res;
 }
 
+void
+mono_print_unwind_info (guint8 *unwind_info, int unwind_info_len)
+{
+	guint8 *p;
+	int pos, reg, offset, cfa_reg, cfa_offset;
+
+	p = unwind_info;
+	pos = 0;
+	while (p < unwind_info + unwind_info_len) {
+		int op = *p & 0xc0;
+
+		switch (op) {
+		case DW_CFA_advance_loc:
+			pos += *p & 0x3f;
+			p ++;
+			break;
+		case DW_CFA_offset:
+			reg = *p & 0x3f;
+			p ++;
+			offset = decode_uleb128 (p, &p) * DWARF_DATA_ALIGN;
+			if (reg == DWARF_PC_REG)
+				printf ("CFA: [%x] offset: %s at cfa-0x%x\n", pos, "pc", -offset);
+			else
+				printf ("CFA: [%x] offset: %s at cfa-0x%x\n", pos, mono_arch_regname (mono_dwarf_reg_to_hw_reg (reg)), -offset);
+			break;
+		case 0: {
+			int ext_op = *p;
+			p ++;
+			switch (ext_op) {
+			case DW_CFA_def_cfa:
+				cfa_reg = decode_uleb128 (p, &p);
+				cfa_offset = decode_uleb128 (p, &p);
+				printf ("CFA: [%x] def_cfa: %s+0x%x\n", pos, mono_arch_regname (mono_dwarf_reg_to_hw_reg (cfa_reg)), cfa_offset);
+				break;
+			case DW_CFA_def_cfa_offset:
+				cfa_offset = decode_uleb128 (p, &p);
+				printf ("CFA: [%x] def_cfa_offset: 0x%x\n", pos, cfa_offset);
+				break;
+			case DW_CFA_def_cfa_register:
+				cfa_reg = decode_uleb128 (p, &p);
+				printf ("CFA: [%x] def_cfa_reg: %s\n", pos, mono_arch_regname (mono_dwarf_reg_to_hw_reg (cfa_reg)));
+				break;
+			case DW_CFA_offset_extended_sf:
+				reg = decode_uleb128 (p, &p);
+				offset = decode_sleb128 (p, &p) * DWARF_DATA_ALIGN;
+				printf ("CFA: [%x] offset_extended_sf: %s at cfa-0x%x\n", pos, mono_arch_regname (mono_dwarf_reg_to_hw_reg (reg)), -offset);
+				break;
+			case DW_CFA_advance_loc4:
+				pos += read32 (p);
+				p += 4;
+				break;
+			default:
+				g_assert_not_reached ();
+			}
+			break;
+		}
+		default:
+			g_assert_not_reached ();
+		}
+	}
+}
+
 /*
  * mono_unwind_ops_encode:
  *
@@ -330,14 +404,14 @@ mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len)
 #endif
 
 static G_GNUC_UNUSED void
-print_dwarf_state (int cfa_reg, int cfa_offset, int ip, int nregs, Loc *locations)
+print_dwarf_state (int cfa_reg, int cfa_offset, int ip, int nregs, Loc *locations, guint8 *reg_saved)
 {
 	int i;
 
 	printf ("\t%x: cfa=r%d+%d ", ip, cfa_reg, cfa_offset);
 
 	for (i = 0; i < nregs; ++i)
-		if (locations [i].loc_type == LOC_OFFSET)
+		if (reg_saved [i] && locations [i].loc_type == LOC_OFFSET)
 			printf ("r%d@%d(cfa) ", i, locations [i].offset);
 	printf ("\n");
 }
@@ -358,12 +432,12 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 				   guint8 **out_cfa)
 {
 	Loc locations [NUM_REGS];
-	int i, pos, reg, cfa_reg, cfa_offset;
+	guint8 reg_saved [NUM_REGS];
+	int i, pos, reg, cfa_reg, cfa_offset, offset;
 	guint8 *p;
 	guint8 *cfa_val;
 
-	for (i = 0; i < NUM_REGS; ++i)
-		locations [i].loc_type = LOC_SAME;
+	memset (reg_saved, 0, sizeof (reg_saved));
 
 	p = unwind_info;
 	pos = 0;
@@ -381,6 +455,7 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 		case DW_CFA_offset:
 			reg = *p & 0x3f;
 			p ++;
+			reg_saved [reg] = TRUE;
 			locations [reg].loc_type = LOC_OFFSET;
 			locations [reg].offset = decode_uleb128 (p, &p) * DWARF_DATA_ALIGN;
 			break;
@@ -400,8 +475,19 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 				break;
 			case DW_CFA_offset_extended_sf:
 				reg = decode_uleb128 (p, &p);
+				offset = decode_sleb128 (p, &p);
+				g_assert (reg < NUM_REGS);
+				reg_saved [reg] = TRUE;
 				locations [reg].loc_type = LOC_OFFSET;
-				locations [reg].offset = decode_sleb128 (p, &p) * DWARF_DATA_ALIGN;
+				locations [reg].offset = offset * DWARF_DATA_ALIGN;
+				break;
+			case DW_CFA_offset_extended:
+				reg = decode_uleb128 (p, &p);
+				offset = decode_uleb128 (p, &p);
+				g_assert (reg < NUM_REGS);
+				reg_saved [reg] = TRUE;
+				locations [reg].loc_type = LOC_OFFSET;
+				locations [reg].offset = offset * DWARF_DATA_ALIGN;
 				break;
 			case DW_CFA_advance_loc4:
 				pos += read32 (p);
@@ -422,7 +508,7 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 
 	cfa_val = (guint8*)regs [mono_dwarf_reg_to_hw_reg (cfa_reg)] + cfa_offset;
 	for (i = 0; i < NUM_REGS; ++i) {
-		if (locations [i].loc_type == LOC_OFFSET) {
+		if (reg_saved [i] && locations [i].loc_type == LOC_OFFSET) {
 			int hreg = mono_dwarf_reg_to_hw_reg (i);
 			g_assert (hreg < nregs);
 			regs [hreg] = *(mgreg_t*)(cfa_val + locations [i].offset);
@@ -647,32 +733,26 @@ read_encoded_val (guint32 encoding, guint8 *p, guint8 **endp)
 /*
  * decode_lsda:
  *
- *   Decode the Language Specific Data Area generated by LLVM.
+ *   Decode the Mono specific Language Specific Data Area generated by LLVM.
  */
 static void
 decode_lsda (guint8 *lsda, guint8 *code, MonoJitExceptionInfo **ex_info, guint32 *ex_info_len, gpointer **type_info, int *this_reg, int *this_offset)
 {
-	gint32 ttype_offset, call_site_length;
-	gint32 ttype_encoding, call_site_encoding;
-	guint8 *ttype, *action_table, *call_site, *p;
-	int i, ncall_sites;
+	guint8 *p;
+	int i, ncall_sites, this_encoding;
+	guint32 mono_magic, version;
 
-	/*
-	 * LLVM generates a c++ style LSDA, which can be decoded by looking at
-	 * eh_personality.cc in gcc.
-	 */
 	p = lsda;
 
-	if (*p == DW_EH_PE_udata4) {
-		/* This is the modified LSDA generated by the LLVM mono branch */
-		guint32 mono_magic, version;
+	/* This is the modified LSDA generated by the LLVM mono branch */
+	mono_magic = decode_uleb128 (p, &p);
+	g_assert (mono_magic == 0x4d4fef4f);
+	version = decode_uleb128 (p, &p);
+	g_assert (version == 1);
+	this_encoding = *p;
+	p ++;
+	if (this_encoding == DW_EH_PE_udata4) {
 		gint32 op, reg, offset;
-
-		p ++;
-		mono_magic = decode_uleb128 (p, &p);
-		g_assert (mono_magic == 0x4d4fef4f);
-		version = decode_uleb128 (p, &p);
-		g_assert (version == 1);
 
 		/* 'this' location */
 		op = *p;
@@ -684,61 +764,24 @@ decode_lsda (guint8 *lsda, guint8 *code, MonoJitExceptionInfo **ex_info, guint32
 		*this_reg = mono_dwarf_reg_to_hw_reg (reg);
 		*this_offset = offset;
 	} else {
-		/* Read @LPStart */
-		g_assert (*p == DW_EH_PE_omit);
-		p ++;
+		g_assert (this_encoding == DW_EH_PE_omit);
 
 		*this_reg = -1;
 		*this_offset = -1;
 	}
-
-	/* Read @TType */
-	ttype_encoding = *p;
-	p ++;
-	ttype_offset = decode_uleb128 (p, &p);
-	ttype = p + ttype_offset;
-
-	/* Read call-site table */
-	call_site_encoding = *p;
-	g_assert (call_site_encoding == DW_EH_PE_udata4);
-	p ++;
-	call_site_length = decode_uleb128 (p, &p);
-	call_site = p;
-	p += call_site_length;
-	action_table = p;
-
-	/* Calculate the size of our table */
-	ncall_sites = 0;
-	p = call_site;
-	while (p < action_table) {
-		int block_start_offset, block_size, landing_pad, action_offset;
-
-		block_start_offset = read32 (p);
-		p += sizeof (gint32);
-		block_size = read32 (p);
-		p += sizeof (gint32);
-		landing_pad = read32 (p);
-		p += sizeof (gint32);
-		action_offset = decode_uleb128 (p, &p);
-
-		/* landing_pad == 0 means the region has no landing pad */
-		if (landing_pad)
-			ncall_sites ++;
-	}
+	ncall_sites = decode_uleb128 (p, &p);
+	p = (guint8*)ALIGN_TO ((mgreg_t)p, 4);
 
 	if (ex_info) {
 		*ex_info = g_malloc0 (ncall_sites * sizeof (MonoJitExceptionInfo));
 		*ex_info_len = ncall_sites;
 	}
-
 	if (type_info)
 		*type_info = g_malloc0 (ncall_sites * sizeof (gpointer));
 
-	p = call_site;
-	i = 0;
-	while (p < action_table) {
-		int block_start_offset, block_size, landing_pad, action_offset, type_offset;
-		guint8 *action, *tinfo;
+	for (i = 0; i < ncall_sites; ++i) {
+		int block_start_offset, block_size, landing_pad;
+		guint8 *tinfo;
 
 		block_start_offset = read32 (p);
 		p += sizeof (gint32);
@@ -746,49 +789,19 @@ decode_lsda (guint8 *lsda, guint8 *code, MonoJitExceptionInfo **ex_info, guint32
 		p += sizeof (gint32);
 		landing_pad = read32 (p);
 		p += sizeof (gint32);
-		action_offset = decode_uleb128 (p, &p);
+		tinfo = p;
+		p += sizeof (gint32);
 
-		if (!action_offset)
-			continue;
+		g_assert (landing_pad);
+		g_assert (((size_t)tinfo % 4) == 0);
+		//printf ("X: %p %d\n", landing_pad, *(int*)tinfo);
 
-		action = action_table + action_offset - 1;
-
-		type_offset = decode_sleb128 (action, &action);
-
-		if (landing_pad) {
-			//printf ("BLOCK: %p-%p %p, %d\n", code + block_start_offset, code + block_start_offset + block_size, code + landing_pad, action_offset);
-
-			g_assert (ttype_offset);
-
-			if (ttype_encoding == DW_EH_PE_absptr) {
-				guint8 *ttype_entry = (ttype - (type_offset * sizeof (gpointer)));
-				tinfo = *(gpointer*)ttype_entry;
-			} else if (ttype_encoding == (DW_EH_PE_indirect | DW_EH_PE_pcrel | DW_EH_PE_sdata4)) {
-				guint8 *ttype_entry = (ttype - (type_offset * 4));
-				gint32 offset = *(gint32*)ttype_entry;
-				guint8 *stub = ttype_entry + offset;
-				tinfo = *(gpointer*)stub;
-			} else if (ttype_encoding == (DW_EH_PE_pcrel | DW_EH_PE_sdata4)) {
-				guint8 *ttype_entry = (ttype - (type_offset * 4));
-				gint32 offset = *(gint32*)ttype_entry;
-				tinfo = ttype_entry + offset;
-			} else if (ttype_encoding == DW_EH_PE_udata4) {
-				/* Embedded directly */
-				guint8 *ttype_entry = (ttype - (type_offset * 4));
-				tinfo = ttype_entry;
-			} else {
-				g_assert_not_reached ();
-			}
-
-			if (ex_info) {
-				if (*type_info)
-					(*type_info) [i] = tinfo;
-				(*ex_info)[i].try_start = code + block_start_offset;
-				(*ex_info)[i].try_end = code + block_start_offset + block_size;
-				(*ex_info)[i].handler_start = code + landing_pad;
-
-			}
-			i ++;
+		if (ex_info) {
+			if (*type_info)
+				(*type_info) [i] = tinfo;
+			(*ex_info)[i].try_start = code + block_start_offset;
+			(*ex_info)[i].try_end = code + block_start_offset + block_size;
+			(*ex_info)[i].handler_start = code + landing_pad;
 		}
 	}
 }

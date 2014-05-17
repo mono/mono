@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridCell" FullName="System.Windows.Forms.DataGridCell">
   <TypeSignature Language="C#" Value="public struct DataGridCell" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridCell" /> can be used in conjunction with the <see cref="T:System.Windows.Forms.DataGrid" /> control's <see cref="P:System.Windows.Forms.DataGrid.CurrentCell" /> property to get or set the value of any cell. Setting the <see cref="T:System.Windows.Forms.DataGrid" /> control's <see cref="P:System.Windows.Forms.DataGrid.CurrentCell" /> property to a <see cref="T:System.Windows.Forms.DataGridCell" /> causes the focus to move to the cell specified by the <see cref="T:System.Windows.Forms.DataGridCell" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a cell in the grid.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,10 +29,15 @@
         <Parameter Name="c" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="r">To be added.</param>
-        <param name="c">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridCell" /> class.</para>
+        </summary>
+        <param name="r">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of a row in the <see cref="T:System.Windows.Forms.DataGrid" />. </param>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of a column in the <see cref="T:System.Windows.Forms.DataGrid" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +51,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.DataGridCell.ColumnNumber" /> value to specify a <see cref="T:System.Data.DataColumn" /> in the <see cref="T:System.Data.DataTable" /> associated with the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of a column in the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,10 +76,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.DataGridCell" /> is identical to a second <see cref="T:System.Windows.Forms.DataGridCell" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the second object is identical to the first; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object you are to comparing. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +101,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a hash value that can be added to a <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that uniquely identifies the <see cref="T:System.Windows.Forms.DataGridCell" /> in a <see cref="T:System.Collections.Hashtable" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,9 +123,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.DataGridCell.RowNumber" /> value to specify a <see cref="T:System.Data.DataRow" /> in the <see cref="T:System.Data.DataTable" /> associated with the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of a row in the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,9 +146,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the row number and column number of the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the row number and column number.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

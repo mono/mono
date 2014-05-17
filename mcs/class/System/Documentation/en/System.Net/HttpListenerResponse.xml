@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpListenerResponse" FullName="System.Net.HttpListenerResponse">
   <TypeSignature Language="C#" Value="public sealed class HttpListenerResponse : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit HttpListenerResponse extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -13,30 +16,50 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a client makes a request for a resource handled by an <see cref="T:System.Net.HttpListener" /> object, the request and response are made available to your application in an <see cref="T:System.Net.HttpListenerContext" /> object. The request is represented by an <see cref="T:System.Net.HttpListenerRequest" /> object and is available in the <see cref="P:System.Net.HttpListenerContext.Request" /> property. The response is represented by an <see cref="T:System.Net.HttpListenerResponse" /> object and is available in the <see cref="P:System.Net.HttpListenerContext.Response" /> property.</para>
+      <para>You can customize the response by setting various properties, such as <see cref="P:System.Net.HttpListenerResponse.StatusCode" />, <see cref="P:System.Net.HttpListenerResponse.StatusDescription" />, and <see cref="P:System.Net.HttpListenerResponse.Cookies" />. Use the <see cref="P:System.Net.HttpListenerResponse.OutputStream" /> property to obtain a <see cref="T:System.IO.Stream" /> instance to which response data can be written. Finally, send the response data to the client by calling the <see cref="Overload:System.Net.HttpListenerResponse.Close" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a response to a request being handled by an <see cref="T:System.Net.HttpListener" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abort">
       <MemberSignature Language="C#" Value="public void Abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Abort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method on an object that has already been closed has no effect. If the response has not already been closed, this method closes it and the associated <see cref="T:System.Net.HttpListenerRequest" /> and <see cref="T:System.Net.HttpListenerContext" /> objects. The connection to the client is also closed, regardless of the <see cref="P:System.Net.HttpListenerRequest.KeepAlive" /> property value of the client request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the connection to the client without sending a response.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddHeader">
       <MemberSignature Language="C#" Value="public void AddHeader (string name, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddHeader(string name, string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -45,19 +68,30 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method is equivalent to calling the <see cref="Overload:System.Net.WebHeaderCollection.Set" /> method on the collection returned by the <see cref="P:System.Net.HttpListenerResponse.Headers" /> property.</para>
+          <para>If the header specified in <paramref name="name" /> does not exist, this method inserts a new header into the <see cref="P:System.Net.HttpListenerResponse.Headers" /> property's collection. If <paramref name="name" /> is present in the collection, this method replaces the existing value with <paramref name="value" />. To add a value to an existing header without replacing the existing value, use the <see cref="M:System.Net.HttpListenerResponse.AppendHeader(System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified header and value to the HTTP headers for this response.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the HTTP header to set.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value for the <paramref name="name" /> header.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AppendCookie">
       <MemberSignature Language="C#" Value="public void AppendCookie (System.Net.Cookie cookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AppendCookie(class System.Net.Cookie cookie) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -65,18 +99,28 @@
         <Parameter Name="cookie" Type="System.Net.Cookie" />
       </Parameters>
       <Docs>
-        <param name="cookie">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method is equivalent to calling the <see cref="M:System.Net.CookieCollection.Add(System.Net.Cookie)" /> method on the collection returned by the <see cref="P:System.Net.HttpListenerResponse.Cookies" /> property. </para>
+          <para>If the specified cookie does not exist in the <see cref="P:System.Net.HttpListenerResponse.Cookies" /> property's collection, <paramref name="cookie" /> is added. If the cookie exists in the collection, <paramref name="cookie" /> replaces it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Net.Cookie" /> to the collection of cookies for this response.</para>
+        </summary>
+        <param name="cookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Cookie" /> to add to the collection to be sent with this response</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AppendHeader">
       <MemberSignature Language="C#" Value="public void AppendHeader (string name, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AppendHeader(string name, string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -85,35 +129,54 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method is equivalent to calling the <see cref="M:System.Net.WebHeaderCollection.Add(System.String,System.String)" /> method on the collection returned by the <see cref="P:System.Net.HttpListenerResponse.Headers" /> property.</para>
+          <para>If the header specified in <paramref name="header" /> does not exist, this method inserts a new header into the <see cref="P:System.Net.HttpListenerResponse.Headers" /> property's collection. If <paramref name="header" /> is present in the collection, this method adds <paramref name="value" /> to the existing values. To replace the value of an existing header, use the <see cref="M:System.Net.HttpListenerResponse.AddHeader(System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a value to the specified HTTP header to be sent with this response.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the HTTP header to append <paramref name="value" /> to.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to append to the <paramref name="name" /> header.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method closes the response stream and the <see cref="T:System.Net.HttpListenerRequest" /> associated with the response.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the response to the client and releases the resources held by this <see cref="T:System.Net.HttpListenerResponse" /> instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close (byte[] responseEntity, bool willBlock);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close(unsigned int8[] responseEntity, bool willBlock) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -122,83 +185,128 @@
         <Parameter Name="willBlock" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="responseEntity">To be added.</param>
-        <param name="willBlock">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are sending body data with the response, you can use this method to send it as a <see cref="T:System.Byte" /> array instead of writing the body data to the <see cref="P:System.Net.HttpListenerResponse.OutputStream" /> property and calling the <see cref="M:System.Net.HttpListenerResponse.Close" /> method. </para>
+          <para>This method closes the response stream and the <see cref="T:System.Net.HttpListenerRequest" /> associated with the response.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified byte array to the client and releases the resources held by this <see cref="T:System.Net.HttpListenerResponse" /> instance.</para>
+        </summary>
+        <param name="responseEntity">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains the response to send to the client.</param>
+        <param name="willBlock">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to block execution while flushing the stream to the client; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentEncoding">
-      <MemberSignature Language="C#" Value="public System.Text.Encoding ContentEncoding { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Text.Encoding ContentEncoding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding ContentEncoding" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Text.Encoding" /> object can be used to convert byte sequences into character sets (code pages) and characters into byte sequences. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Text.Encoding" /> for this response's <see cref="P:System.Net.HttpListenerResponse.OutputStream" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentLength64">
-      <MemberSignature Language="C#" Value="public long ContentLength64 { set; get; }" />
+      <MemberSignature Language="C#" Value="public long ContentLength64 { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ContentLength64" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-Length header expresses the length, in bytes, of the response's body data. When using a format that is not send the data chunked or raw, you must set the <see cref="P:System.Net.HttpListenerResponse.ContentLength64" /> property. If you do not, the <see cref="T:System.Net.HttpListener" /> does not send the response data.</para>
+          <para>For a complete list of response headers, see the <see cref="T:System.Net.HttpResponseHeader" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of bytes in the body data included in the response.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentType">
-      <MemberSignature Language="C#" Value="public string ContentType { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ContentType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When communicating with a Web browser, you should explicitly set this property when returning any content type other than text/html.</para>
+          <para>For a complete list of response headers, see the <see cref="T:System.Net.HttpResponseHeader" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the MIME type of the content returned.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Cookies">
-      <MemberSignature Language="C#" Value="public System.Net.CookieCollection Cookies { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.CookieCollection Cookies { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.CookieCollection Cookies" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.CookieCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cookie is name/value text data from a Web server that is stored on the local (client) computer. The following cookie formats are supported: Netscape, RFC 2109, and RFC 2965. The Netscape cookie specification is available at http://wp.netscape.com/newsref/std/cookie_spec.html; the RFC documents are available at <see cref="http://www.rfc-editor.org">http://www.rfc-editor.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the collection of cookies returned with the response.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CopyFrom">
       <MemberSignature Language="C#" Value="public void CopyFrom (System.Net.HttpListenerResponse templateResponse);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyFrom(class System.Net.HttpListenerResponse templateResponse) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -206,82 +314,164 @@
         <Parameter Name="templateResponse" Type="System.Net.HttpListenerResponse" />
       </Parameters>
       <Docs>
-        <param name="templateResponse">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you regularly change many properties from their default values to a fixed set of new values, it is convenient to use an <see cref="T:System.Net.HttpListenerResponse" /> instance as a template. Customize the template response once and, instead of configuring each response separately, call the <see cref="M:System.Net.HttpListenerResponse.CopyFrom(System.Net.HttpListenerResponse)" /> method to configure a new response based on property values in the template response.</para>
+          <para>The following properties are copied from <paramref name="templateResponse" /> to the current instance.</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Net.HttpListenerResponse.Headers" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Net.HttpListenerResponse.ContentLength64" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Net.HttpListenerResponse.StatusCode" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Net.HttpListenerResponse.StatusDescription" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Net.HttpListenerResponse.KeepAlive" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Net.HttpListenerResponse.ProtocolVersion" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies properties from the specified <see cref="T:System.Net.HttpListenerResponse" /> to this response.</para>
+        </summary>
+        <param name="templateResponse">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.HttpListenerResponse" /> instance to copy.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Headers">
-      <MemberSignature Language="C#" Value="public System.Net.WebHeaderCollection Headers { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.WebHeaderCollection Headers { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.WebHeaderCollection Headers" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebHeaderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Response headers contain metadata information such as the date and time of the response, the identity of the responding server, and the MIME type of the data contained in the response body.</para>
+          <para>For a complete list of response headers, see the <see cref="T:System.Net.HttpResponseHeader" /> enumeration.</para>
+          <block subset="none" type="note">
+            <para>If you attempt to set a Content-Length, Keep-Alive, Transfer-Encoding, or WWW-Authenticate header using the Headers property, an exception will be thrown. Use the <see cref="P:System.Net.HttpListenerResponse.KeepAlive" /> or <see cref="P:System.Net.HttpListenerResponse.ContentLength64" /> properties to set these headers. You cannot set the Transfer-Encoding or WWW-Authenticate headers manually.</para>
+          </block>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the collection of header name/value pairs returned by the server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KeepAlive">
-      <MemberSignature Language="C#" Value="public bool KeepAlive { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool KeepAlive { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool KeepAlive" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an HTTP client and server expect to exchange data multiple times in a short period, a persistent connection speeds up their communications by allowing them to avoid the overhead required to open and close a TCP connection for each message. Persistent connections are in widespread use in communications between modern Web browsers and Web servers.</para>
+          <para>Persistent connections are described in detail in the HTTP/1.1 protocol specification (RFC 2616) available at the RTF Editor Web site (<see cref="http://www.rfc-editor.org">http://www.rfc-editor.org</see>).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the server requests a persistent connection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputStream">
       <MemberSignature Language="C#" Value="public System.IO.Stream OutputStream { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Stream OutputStream" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.HttpListenerResponse.ContentLength64" /> property must be set explicitly before writing to the returned <see cref="T:System.IO.Stream" /> object.</para>
+          <block subset="none" type="note">
+            <para> Closing the request does not close the stream returned by this property. When you no longer need the stream, you should close it by calling the Close method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.IO.Stream" /> object to which a response can be written.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProtocolVersion">
-      <MemberSignature Language="C#" Value="public Version ProtocolVersion { set; get; }" />
+      <MemberSignature Language="C#" Value="public Version ProtocolVersion { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Version ProtocolVersion" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The capabilities of different HTTP versions are specified in the documents available at http://www.ietf.org.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP version used for the response.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Redirect">
       <MemberSignature Language="C#" Value="public void Redirect (string url);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Redirect(string url) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -289,50 +479,78 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.HttpListenerResponse.Redirect(System.String)" /> method is used to redirect a client to the new location for a resource. This method sets the response's Location header to <paramref name="url" />, the <see cref="P:System.Net.HttpListenerResponse.StatusCode" /> property to <see cref="F:System.Net.HttpStatusCode.Redirect" />, and the <see cref="P:System.Net.HttpListenerResponse.StatusDescription" /> property to "Found".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures the response to redirect the client to the specified URL.</para>
+        </summary>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL that the client should use to locate the requested resource.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RedirectLocation">
-      <MemberSignature Language="C#" Value="public string RedirectLocation { set; get; }" />
+      <MemberSignature Language="C#" Value="public string RedirectLocation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string RedirectLocation" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Location header specifies the URL to which the client is directed to locate a requested resource.</para>
+          <block subset="none" type="note">
+            <para>Setting this property does not automatically set the <see cref="P:System.Net.HttpListenerResponse.StatusCode" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the HTTP Location header in this response.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendChunked">
-      <MemberSignature Language="C#" Value="public bool SendChunked { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SendChunked { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SendChunked" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The body of a chunked message is made up of a series of chunks. Each chunk comprises of two parts—the size of the chunk data and the actual data. When set to true the response is sent using chunked transfer encoding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the response uses chunked transfer encoding.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCookie">
       <MemberSignature Language="C#" Value="public void SetCookie (System.Net.Cookie cookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCookie(class System.Net.Cookie cookie) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -340,60 +558,89 @@
         <Parameter Name="cookie" Type="System.Net.Cookie" />
       </Parameters>
       <Docs>
-        <param name="cookie">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two cookies are considered the same if the values of their <see cref="P:System.Net.Cookie.Name" />, <see cref="P:System.Net.Cookie.Domain" />, and <see cref="P:System.Net.Cookie.Path" /> properties are the same. If these three pieces of information are the same, the method attempts to update the cookie. The name and domain comparisons are not case sensitive, but the path comparison is case sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds or updates a <see cref="T:System.Net.Cookie" /> in the collection of cookies sent with this response. </para>
+        </summary>
+        <param name="cookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Cookie" /> for this response.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StatusCode">
-      <MemberSignature Language="C#" Value="public int StatusCode { set; get; }" />
+      <MemberSignature Language="C#" Value="public int StatusCode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 StatusCode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clients use the status code returned by the server to decide how to proceed. A value of <see cref="F:System.Net.HttpStatusCode.OK" /> indicates that the server successfully processed the client's request and included the requested resource in the response body. Other common status codes include <see cref="F:System.Net.HttpStatusCode.NotFound" />, indicating that the requested resource was not found on the server, and <see cref="F:System.Net.HttpStatusCode.NotModified" />, indicating that it was unnecessary to return the requested resource in the response body because the client's cached copy of the resource is up-to-date.</para>
+          <para>For a complete list of possible status codes, see the <see cref="T:System.Net.HttpStatusCode" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP status code to be returned to the client.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StatusDescription">
-      <MemberSignature Language="C#" Value="public string StatusDescription { set; get; }" />
+      <MemberSignature Language="C#" Value="public string StatusDescription { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StatusDescription" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The status description typically provides details that explain the <see cref="P:System.Net.HttpListenerResponse.StatusCode" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a text description of the HTTP status code returned to the client.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.IDisposable.Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Net.HttpListenerResponse.Close" /> method to send the response and release resources held by an <see cref="T:System.Net.HttpListenerResponse" />. To discard the response and release the resources held by this instance, use the <see cref="M:System.Net.HttpListenerResponse.Abort" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Net.HttpListenerResponse" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

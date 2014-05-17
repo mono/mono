@@ -30,6 +30,7 @@
 using System;
 using System.Text;
 using System.Xml;
+using System.Collections.Generic;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -120,10 +121,8 @@ namespace Microsoft.Build.BuildEngine {
 			BuildProperty evaluated = new BuildProperty (Name, Value);
 
 			// In evaluate phase, properties are not expanded
-			Expression exp = new Expression ();
-			exp.Parse (Value, ParseOptions.None);
-			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string),
-					ExpressionOptions.DoNotExpandItemRefs);
+			evaluated.finalValue = Expression.ParseAs<string> (Value, ParseOptions.None, 
+				parentProject, ExpressionOptions.DoNotExpandItemRefs);
 
 			parentProject.EvaluatedProperties.AddProperty (evaluated);
 		}
@@ -240,6 +239,14 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal XmlElement XmlElement {
 			get { return propertyElement; }
+		}
+
+		internal IEnumerable<string> GetAttributes ()
+		{
+			if (!FromXml)
+				yield break;
+			foreach (XmlAttribute attr in propertyElement.Attributes)
+				yield return attr.Value;
 		}
 	}
 

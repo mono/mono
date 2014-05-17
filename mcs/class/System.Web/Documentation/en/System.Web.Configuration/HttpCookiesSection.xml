@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCookiesSection" FullName="System.Web.Configuration.HttpCookiesSection">
   <TypeSignature Language="C#" Value="public sealed class HttpCookiesSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.HttpCookiesSection" /> class provides a way to programmatically access and modify the httpCookies section of a configuration file.</para>
+      <para>It defines the settings applied by default to all cookies issued by the application, unless the code issuing the cookie overrides them.</para>
+      <para>One objective of the httpCookies element is to support the use of HttpOnly cookies. HttpOnly cookies (cookies with the HttpOnly attribute) were introduced in Internet Explorer 6 to help mitigate the risk of cross-site scripting. The HttpOnly attribute prevents cookies from being accessed through client-side script. Any information contained in an HttpOnly cookie is less likely to be disclosed to a hacker or a malicious Web site. For more information, search MSDN (msdn.microsoft.com) for "HttpOnly."</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.Configuration.HttpCookiesSection" /> can read and write information from and to the related section of the configuration file according to the section property <see cref="P:System.Configuration.SectionInformation.AllowDefinition" /> whose value is <see cref="F:System.Configuration.ConfigurationAllowDefinition.Everywhere" />. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures properties for cookies used by a Web application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +31,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be used directly from your code. It is called by the ASP.NET configuration system. You obtain an instance of the <see cref="T:System.Web.Configuration.HttpCookiesSection" /> class by using the <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.HttpCookiesSection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +57,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cookie domain name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +81,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The httpCookies element supports the use of HttpOnly cookies. HttpOnly cookies (cookies with the HttpOnly attribute) were introduced in Internet Explorer 6 to help mitigate the risk of cross-site scripting. The HttpOnly attribute prevents cookies from being accessed through client-side script. Any information contained in an HttpOnly cookie is less likely to be disclosed to a hacker or a malicious Web site. For more information, search MSDN (msdn.microsoft.com) for "HttpOnly." </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the support for the browser's HttpOnly cookie is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,10 +124,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpCookiesSection.RequireSSL" /> property enables or disables output of the secure cookie attribute as described in RFC 2109. When used by compliant browsers, the cookie will only be sent back over a connection using SSL/TLS. The default is false. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether Secure Sockets Layer (SSL) communication is required.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

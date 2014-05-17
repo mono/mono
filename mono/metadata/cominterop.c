@@ -525,11 +525,11 @@ cominterop_type_from_handle (MonoType *handle)
 void
 mono_cominterop_init (void)
 {
-	char* com_provider_env = NULL;
+	const char* com_provider_env;
 
 	InitializeCriticalSection (&cominterop_mutex);
 
-	com_provider_env = getenv ("MONO_COM");
+	com_provider_env = g_getenv ("MONO_COM");
 	if (com_provider_env && !strcmp(com_provider_env, "MS"))
 		com_provider = MONO_COM_MS;
 
@@ -2000,11 +2000,9 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 			cominterop_setup_marshal_context (&m, adjust_method);
 			m.mb = mb;
 			mono_marshal_emit_managed_wrapper (mb, sig_adjusted, mspecs, &m, adjust_method, 0);
-			mono_loader_lock ();
 			mono_cominterop_lock ();
 			wrapper_method = mono_mb_create_method (mb, m.csig, m.csig->param_count + 16);
 			mono_cominterop_unlock ();
-			mono_loader_unlock ();
 
 			vtable [vtable_index--] = mono_compile_method (wrapper_method);
 
@@ -2208,11 +2206,9 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	mono_loader_lock ();
 	mono_cominterop_lock ();
 	res = mono_mb_create_method (mb, sig_native, sig_native->param_count + 16);	
 	mono_cominterop_unlock ();
-	mono_loader_unlock ();
 
 	mono_mb_free (mb);
 
@@ -2412,32 +2408,51 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 											 gunichar2** rgszNames, guint32 cNames,
 											 guint32 lcid, gint32 *rgDispId)
 {
-       int i,ret = MONO_S_OK;
-       MonoMethod* method;
-       gchar* methodname;
-       MonoClass *klass = NULL;
-       MonoCCW* ccw = ccwe->ccw;
-       MonoObject* object = mono_gchandle_get_target (ccw->gc_handle);
+	static MonoClass *ComDispIdAttribute = NULL;
+	MonoCustomAttrInfo *cinfo = NULL;
+	int i,ret = MONO_S_OK;
+	MonoMethod* method;
+	gchar* methodname;
+	MonoClass *klass = NULL;
+	MonoCCW* ccw = ccwe->ccw;
+	MonoObject* object = mono_gchandle_get_target (ccw->gc_handle);
 
-       g_assert (object);
-       klass = mono_object_class (object);
+	/* Handle DispIdAttribute */
+	if (!ComDispIdAttribute)
+		ComDispIdAttribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
 
-       if (!mono_domain_get ())
-               mono_thread_attach (mono_get_root_domain ());
+	g_assert (object);
+	klass = mono_object_class (object);
 
-       for (i=0; i < cNames; i++) {
-               methodname = mono_unicode_to_external (rgszNames[i]);
+	if (!mono_domain_get ())
+		 mono_thread_attach (mono_get_root_domain ());
 
-               method = mono_class_get_method_from_name(klass, methodname, -1);
-               if (method)
-                       rgDispId[i] = (gint32)method->token;
-               else {
-                       rgDispId[i] = MONO_E_DISPID_UNKNOWN;
-                       ret = MONO_E_DISP_E_UNKNOWNNAME;
-               }
-       }
+	for (i=0; i < cNames; i++) {
+		methodname = mono_unicode_to_external (rgszNames[i]);
 
-       return ret;
+		method = mono_class_get_method_from_name(klass, methodname, -1);
+		if (method) {
+			cinfo = mono_custom_attrs_from_method (method);
+			if (cinfo) {
+				MonoObject *result = mono_custom_attrs_get_attr (cinfo, ComDispIdAttribute);
+
+				if (result)
+					rgDispId[i] = *(gint32*)mono_object_unbox (result);
+				else
+					rgDispId[i] = (gint32)method->token;
+
+				if (!cinfo->cached)
+					mono_custom_attrs_free (cinfo);
+			}
+			else
+				rgDispId[i] = (gint32)method->token;
+		} else {
+			rgDispId[i] = MONO_E_DISPID_UNKNOWN;
+			ret = MONO_E_DISP_E_UNKNOWNNAME;
+		}
+	}
+
+	return ret;
 }
 
 static int STDCALL 

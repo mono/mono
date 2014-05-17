@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegistryView" FullName="Microsoft.Win32.RegistryView">
   <TypeSignature Language="C#" Value="public enum RegistryView" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed RegistryView extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,12 +10,21 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>On the 64-bit version of Windows, portions of the registry are stored separately for 32-bit and 64-bit applications.  There is a 32-bit view for 32-bit applications and a 64-bit view for 64-bit applications.</para>
+      <para>You can specify a registry view when you use the <see cref="M:Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive,Microsoft.Win32.RegistryView)" /> and <see cref="M:Microsoft.Win32.RegistryKey.OpenRemoteBaseKey(Microsoft.Win32.RegistryHive,System.String,Microsoft.Win32.RegistryView)" /> methods, and the <see cref="M:Microsoft.Win32.RegistryKey.FromHandle(Microsoft.Win32.SafeHandles.SafeRegistryHandle,Microsoft.Win32.RegistryView)" /> property on a <see cref="T:Microsoft.Win32.RegistryKey" /> object.</para>
+      <para>If you request a 64-bit view on a 32-bit operating system, the returned keys will be in the 32-bit view.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies which registry view to target on a 64-bit operating system.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Microsoft.Win32.RegistryView Default = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -22,11 +33,15 @@
         <ReturnType>Microsoft.Win32.RegistryView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default view.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Registry32">
       <MemberSignature Language="C#" Value="Registry32" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Microsoft.Win32.RegistryView Registry32 = int32(512)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,11 +50,15 @@
         <ReturnType>Microsoft.Win32.RegistryView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit view.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Registry64">
       <MemberSignature Language="C#" Value="Registry64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Microsoft.Win32.RegistryView Registry64 = int32(256)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -48,7 +67,10 @@
         <ReturnType>Microsoft.Win32.RegistryView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 64-bit view.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

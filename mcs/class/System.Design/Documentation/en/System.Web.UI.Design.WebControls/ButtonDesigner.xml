@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ButtonDesigner" FullName="System.Web.UI.Design.WebControls.ButtonDesigner">
   <TypeSignature Language="C#" Value="public class ButtonDesigner : System.Web.UI.Design.ControlDesigner" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a visual designer, when you switch from Source to Design view, the markup source code that describes the <see cref="T:System.Web.UI.WebControls.Button" /> control is parsed and a design-time version of the control is created on the design surface. When you switch back to Source view, the design-time control is persisted to the markup source code and edited into the markup for the Web page. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used to provide design-time support in a visual designer for the <see cref="T:System.Web.UI.WebControls.Button" /> Web server control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +26,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework internally constructs a new instance of the <see cref="T:System.Web.UI.Design.WebControls.ButtonDesigner" /> class when it creates the associated <see cref="T:System.Web.UI.WebControls.Button" /> control or a copy of that control on the design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.WebControls.ButtonDesigner" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -35,9 +48,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.ButtonDesigner.GetDesignTimeHtml" /> method replaces the <see cref="P:System.Web.UI.WebControls.Button.Text" /> property with the <see cref="P:System.Web.UI.Control.ID" /> property of the <see cref="T:System.Web.UI.WebControls.Button" /> control if the <see cref="P:System.Web.UI.WebControls.Button.Text" /> contains no displayable characters. Then, the <see cref="M:System.Web.UI.Design.WebControls.ButtonDesigner.GetDesignTimeHtml" /> method calls its base method, <see cref="M:System.Web.UI.Design.ControlDesigner.GetDesignTimeHtml" />, which calls into the <see cref="M:System.Web.UI.Control.RenderControl(System.Web.UI.HtmlTextWriter)" /> method to generate the markup.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the markup that is used to render the associated control at design time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the markup used to render the <see cref="T:System.Web.UI.WebControls.Button" /> at design time.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

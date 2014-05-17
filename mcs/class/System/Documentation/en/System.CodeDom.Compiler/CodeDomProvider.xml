@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeDomProvider" FullName="System.CodeDom.Compiler.CodeDomProvider">
   <TypeSignature Language="C#" Maintainer="auto" Value="public abstract class CodeDomProvider : System.ComponentModel.Component" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CodeDomProvider extends System.ComponentModel.Component" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -22,29 +25,52 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> can be used to create and retrieve instances of code generators and code compilers. Code generators can be used to generate code in a particular language, and code compilers can be used to compile code into assemblies.</para>
+      <block subset="none" type="note">
+        <para>In the dnprdnext, the methods made available in the code generator and code compiler are available directly from the code provider. You do not need to call <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> or <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateCompiler" /> to access the methods, and those methods are marked as obsolete. This applies to preexisting as well as new code provider implementations. </para>
+      </block>
+      <para>A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation typically provides code generation and/or code compilation interfaces for generating code and managing compilation for a single programming language. Several languages are supported by <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations that ship with the winsdklong. These languages include C#, Visual Basic, C++, and JScript. Developers or compiler vendors can implement the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> and <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interfaces and provide a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> that extends CodeDOM support to other programming languages.</para>
+      <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config) provides a mechanism for developers and compiler vendors to add configuration settings for additional <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations.</para>
+      <para>The <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> class provides static methods to discover and enumerate the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations on a computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> method returns the settings for all <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations on a computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> method returns the settings for a specific <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation, based on the programming language name. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> method returns an instance of a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation for a specific language.</para>
+      <para>For more details on language provider settings in the configuration file, see <format type="text/html"><a href="c020b139-8699-4f0d-9ac9-70d0c5b2a8c8">Compiler and Language Provider Settings Schema</a></format>.</para>
+      <block subset="none" type="note">
+        <para>This class makes a link demand and an inheritance demand at the class level. A <see cref="T:System.Security.SecurityException" /> is thrown if either the immediate caller or the derived class does not have full trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations. This class is abstract. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected CodeDomProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CompileAssemblyFromDom">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.CompilerResults CompileAssemblyFromDom (System.CodeDom.Compiler.CompilerParameters options, System.CodeDom.CodeCompileUnit[] compilationUnits);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromDom(class System.CodeDom.Compiler.CompilerParameters options, class System.CodeDom.CodeCompileUnit[] compilationUnits) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
@@ -60,18 +86,33 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="compilationUnits">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateCompiler" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly based on the <see cref="N:System.CodeDom" /> trees contained in the specified array of <see cref="T:System.CodeDom.CodeCompileUnit" /> objects, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of the compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for the compilation.</param>
+        <param name="compilationUnits">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.CodeDom.CodeCompileUnit" /> that indicates the code to compile.</param>
       </Docs>
     </Member>
     <Member MemberName="CompileAssemblyFromFile">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.CompilerResults CompileAssemblyFromFile (System.CodeDom.Compiler.CompilerParameters options, string[] fileNames);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromFile(class System.CodeDom.Compiler.CompilerParameters options, string[] fileNames) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
@@ -87,25 +128,40 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="fileNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateCompiler" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly from the source code contained in the specified files, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for the compilation. </param>
+        <param name="fileNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of the names of the files to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="CompileAssemblyFromSource">
-      <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.CompilerResults CompileAssemblyFromSource (System.CodeDom.Compiler.CompilerParameters options, string[] fileNames);" />
+      <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.CompilerResults CompileAssemblyFromSource (System.CodeDom.Compiler.CompilerParameters options, string[] sources);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.CompilerResults CompileAssemblyFromSource(class System.CodeDom.Compiler.CompilerParameters options, string[] sources) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CompilerResults</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="options" Type="System.CodeDom.Compiler.CompilerParameters" />
-        <Parameter Name="fileNames" Type="System.String[]">
+        <Parameter Name="sources" Type="System.String[]">
           <Attributes>
             <Attribute>
               <AttributeName>System.ParamArray</AttributeName>
@@ -114,40 +170,66 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="fileNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateCompiler" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles an assembly from the specified array of strings containing source code, using the specified compiler settings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler settings for this compilation. </param>
+        <param name="sources">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of source code strings to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateCompiler">
       <MemberSignature Language="C#" Value="public abstract System.CodeDom.Compiler.ICodeCompiler CreateCompiler ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.ICodeCompiler CreateCompiler() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.CodeDom.Compiler.ICodeCompiler</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ICodeCompiler'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("ICodeCompiler is obsolete")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.Compiler.ICodeCompiler</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is obsolete in the dnprdnext. The recommended alternative is to call the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> methods that are directly available in the code provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a new code compiler. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> that can be used for compilation of <see cref="N:System.CodeDom" /> based source code representations. </para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="CreateEscapedIdentifier">
       <MemberSignature Language="C#" Value="public virtual string CreateEscapedIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string CreateEscapedIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -156,37 +238,68 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateEscapedIdentifier(System.String)" /> tests whether the identifier conflicts with any reserved or language keywords, and if so, returns an equivalent name with language-specific escape code formatting. This is referred to an escaped identifier. The escaped identifier contains the same <paramref name="value" /> but has escape-code formatting added to differentiate the identifier from the keyword. Two implementation examples are preceding the <paramref name="value" /> with "@" or bracketing the <paramref name="value" /> with "[" and "]".</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an escaped identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string for which to create an escaped identifier.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateGenerator">
       <MemberSignature Language="C#" Value="public abstract System.CodeDom.Compiler.ICodeGenerator CreateGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.ICodeGenerator CreateGenerator() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.CodeDom.Compiler.ICodeGenerator</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ICodeGenerator'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("ICodeGenerator is obsolete")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.Compiler.ICodeGenerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is obsolete in the dnprdnext. The recommended alternative is to call the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> methods that are directly available in the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a new code generator.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> that can be used to generate <see cref="N:System.CodeDom" /> based source code representations.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="CreateGenerator">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.ICodeGenerator CreateGenerator (System.IO.TextWriter output);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.ICodeGenerator CreateGenerator(class System.IO.TextWriter output) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.ICodeGenerator</ReturnType>
       </ReturnValue>
@@ -194,19 +307,34 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="output">To be added: an object of type 'IO.TextWriter'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ICodeGenerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the specified <see cref="T:System.IO.TextWriter" /> for output. This method supports more optimized code generation that incrementally updates the source code.</para>
+          <block subset="none" type="note">
+            <para>The base class implementation calls the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method, which is obsolete in the dnprdnext and results in a <see cref="T:System.NotSupportedException" /> if an <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> object is not returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a new code generator using the specified <see cref="T:System.IO.TextWriter" /> for output.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> that can be used to generate <see cref="N:System.CodeDom" /> based source code representations.</para>
+        </returns>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> to use to output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateGenerator">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.ICodeGenerator CreateGenerator (string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.ICodeGenerator CreateGenerator(string fileName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.ICodeGenerator</ReturnType>
       </ReturnValue>
@@ -214,43 +342,62 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ICodeGenerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the specified file name for output.</para>
+          <block subset="none" type="note">
+            <para>The base class implementation calls the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method, which is obsolete in the dnprdnext and results in a <see cref="T:System.NotSupportedException" /> if an <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> object is not returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a new code generator using the specified file name for output.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> that can be used to generate <see cref="N:System.CodeDom" /> based source code representations.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name to output to. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateParser">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.ICodeParser CreateParser ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.Compiler.ICodeParser CreateParser() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.CodeDom.Compiler.ICodeParser</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ICodeParser'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("ICodeParser is obsolete")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.Compiler.ICodeParser</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a new code parser.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeParser" /> that can be used to parse source code. The base implementation always returns null.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="CreateProvider">
       <MemberSignature Language="C#" Value="public static System.CodeDom.Compiler.CodeDomProvider CreateProvider (string language);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.CodeDom.Compiler.CodeDomProvider CreateProvider(string language) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -264,17 +411,80 @@
         <Parameter Name="language" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="language">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is most commonly used to create an instance of a code provider in an application that may optionally use one of several providers. <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> allows you to specify at run time the code provider you wish to instantiate. If you know at design time which code provider is to be used, you should create an instance of that code provider rather than use the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> method. </para>
+          </block>
+          <para>The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> method returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for a specific language name; it is similar to calling the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method with the language provider type. Use <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> when you want to dynamically find a configured provider implementation for a language name. </para>
+          <para>If more than one provider implementation is configured for the language name, <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> returns a provider instance for the last matching configuration element.</para>
+          <para>Use the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method overload when you want a specific language provider implementation. For example, use the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> method to get a provider instance that supports the language name "CSharp"; use the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method overload to get a provider instance specifically for the <see cref="T:Microsoft.CSharp.CSharpCodeProvider" /> implementation. You should use the <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[])" /> method if you have multiple code providers for a language and you desire to instantiate a specific code provider.</para>
+          <para>The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedLanguage(System.String)" /> method checks whether at least one provider implementation supports a specific language. You can validate a language name using <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedLanguage(System.String)" /> before passing it to <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" />. If you pass an unsupported language name to <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> a <see cref="T:System.Configuration.ConfigurationException" /> is thrown.</para>
+          <para>The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> method can be used to determine all <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations on a computer, including additional implementations provided by developers and compiler vendors that are identified in the <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config). </para>
+          <para>The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> method returns an instance of a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation for a specific language.</para>
+          <para>Language names are case-insensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the specified language.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider that is implemented for the specified language name.</para>
+        </returns>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language name. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateProvider">
+      <MemberSignature Language="C#" Value="public static System.CodeDom.Compiler.CodeDomProvider CreateProvider (string language, System.Collections.Generic.IDictionary&lt;string,string&gt; providerOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.CodeDom.Compiler.CodeDomProvider CreateProvider(string language, class System.Collections.Generic.IDictionary`2&lt;string, string&gt; providerOptions) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.Compiler.CodeDomProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="language" Type="System.String" />
+        <Parameter Name="providerOptions" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is most commonly used to create an instance of a code provider in an application that may optionally use one of several providers. <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String,System.Collections.Generic.IDictionary{System.String,System.String})" /> enables you to specify at run time the version of the code provider you want to instantiate. If you know at design time which code provider is to be used, you should create an instance of that code provider instead of using the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String,System.Collections.Generic.IDictionary{System.String,System.String})" /> method. </para>
+          </block>
+          <para>Use <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String,System.Collections.Generic.IDictionary{System.String,System.String})" /> when you want to dynamically find a configured provider implementation for a specific language and options. Language names are case-insensitive. For information about supported provider options, see the specific CodeDOM provider documentation.</para>
+          <para>For information about validating a provider and calling a provider if more than one provider implementation is configured for the language name, see the Remarks section of the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> method.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the specified language and provider options.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider that is implemented for the specified language name and options.</para>
+        </returns>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language name.</param>
+        <param name="providerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of provider options from the configuration file.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateValidIdentifier">
       <MemberSignature Language="C#" Value="public virtual string CreateValidIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string CreateValidIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -283,33 +493,57 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateValidIdentifier(System.String)" /> tests whether the identifier conflicts with reserved or language keywords, and if so, attempts to return a valid identifier name that does not conflict. Usually the returned identifier is only slightly modified to differentiate the identifier from the keyword; for example, the name might be preceded by the underscore ("_") character.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a valid identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the specified value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string for which to generate a valid identifier.</param>
       </Docs>
     </Member>
     <Member MemberName="FileExtension">
       <MemberSignature Language="C#" Value="public virtual string FileExtension { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FileExtension" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by code generators and code compilers to indicate what file extensions should be generated or used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default file name extension to use for source code files in the current language.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCodeFromCompileUnit">
       <MemberSignature Language="C#" Value="public virtual void GenerateCodeFromCompileUnit (System.CodeDom.CodeCompileUnit compileUnit, System.IO.TextWriter writer, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GenerateCodeFromCompileUnit(class System.CodeDom.CodeCompileUnit compileUnit, class System.IO.TextWriter writer, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -320,18 +554,31 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="compileUnit">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) compilation unit and sends it to the specified text writer, using the specified options.</para>
+        </summary>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> for which to generate code. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which the output code is sent. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> that indicates the options to use for generating code. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateCodeFromExpression">
       <MemberSignature Language="C#" Value="public virtual void GenerateCodeFromExpression (System.CodeDom.CodeExpression expression, System.IO.TextWriter writer, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GenerateCodeFromExpression(class System.CodeDom.CodeExpression expression, class System.IO.TextWriter writer, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -342,18 +589,31 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) expression and sends it to the specified text writer, using the specified options.</para>
+        </summary>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> object that indicates the expression for which to generate code. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which output code is sent. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> that indicates the options to use for generating code. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateCodeFromMember">
       <MemberSignature Language="C#" Value="public virtual void GenerateCodeFromMember (System.CodeDom.CodeTypeMember member, System.IO.TextWriter writer, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GenerateCodeFromMember(class System.CodeDom.CodeTypeMember member, class System.IO.TextWriter writer, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -364,18 +624,29 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="member">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base class implementation throws a <see cref="T:System.NotImplementedException" />. See <see cref="M:Microsoft.CSharp.CSharpCodeProvider.GenerateCodeFromMember(System.CodeDom.CodeTypeMember,System.IO.TextWriter,System.CodeDom.Compiler.CodeGeneratorOptions)" /> for documentation describing an implementation of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) member declaration and sends it to the specified text writer, using the specified options.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeMember" /> object that indicates the member for which to generate code. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which output code is sent. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> that indicates the options to use for generating code. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateCodeFromNamespace">
       <MemberSignature Language="C#" Value="public virtual void GenerateCodeFromNamespace (System.CodeDom.CodeNamespace codeNamespace, System.IO.TextWriter writer, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GenerateCodeFromNamespace(class System.CodeDom.CodeNamespace codeNamespace, class System.IO.TextWriter writer, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -386,18 +657,31 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="codeNamespace">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) namespace and sends it to the specified text writer, using the specified options.</para>
+        </summary>
+        <param name="codeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeNamespace" /> object that indicates the namespace for which to generate code. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which output code is sent. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> that indicates the options to use for generating code. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateCodeFromStatement">
       <MemberSignature Language="C#" Value="public virtual void GenerateCodeFromStatement (System.CodeDom.CodeStatement statement, System.IO.TextWriter writer, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GenerateCodeFromStatement(class System.CodeDom.CodeStatement statement, class System.IO.TextWriter writer, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -408,18 +692,31 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="statement">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) statement and sends it to the specified text writer, using the specified options.</para>
+        </summary>
+        <param name="statement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeStatement" /> containing the CodeDOM elements for which to generate code. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which output code is sent. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> that indicates the options to use for generating code. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateCodeFromType">
       <MemberSignature Language="C#" Value="public virtual void GenerateCodeFromType (System.CodeDom.CodeTypeDeclaration codeType, System.IO.TextWriter writer, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GenerateCodeFromType(class System.CodeDom.CodeTypeDeclaration codeType, class System.IO.TextWriter writer, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -430,18 +727,31 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="codeType">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) type declaration and sends it to the specified text writer, using the specified options.</para>
+        </summary>
+        <param name="codeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeDeclaration" /> object that indicates the type for which to generate code. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which output code is sent. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> that indicates the options to use for generating code. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAllCompilerInfo">
       <MemberSignature Language="C#" Value="public static System.CodeDom.Compiler.CompilerInfo[] GetAllCompilerInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.CodeDom.Compiler.CompilerInfo[] GetAllCompilerInfo() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -453,16 +763,30 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> method to enumerate the language provider settings on a computer. </para>
+          <block subset="none" type="note">
+            <para> In the dnprdnext, the default language providers supplied by the .NET Framework are not specified in the <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> compiler configuration section and cannot be removed, so this method returns information about the default providers and any specified in the configuration file. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the language provider and compiler configuration settings for this computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> representing the settings of all configured <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCompilerInfo">
       <MemberSignature Language="C#" Value="public static System.CodeDom.Compiler.CompilerInfo GetCompilerInfo (string language);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.CodeDom.Compiler.CompilerInfo GetCompilerInfo(string language) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -476,15 +800,34 @@
         <Parameter Name="language" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="language">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. For information about machine configuration files, see the Machine Configuration Files section in <format type="text/html"><a href="86bd26d3-737e-4484-9782-19b17f34cd1f">Configuration Files</a></format>. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> method searches each provider configuration element for the specified language name. The returned <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance contains the configured language provider and compiler settings.</para>
+          <para>The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedLanguage(System.String)" /> method checks whether at least one provider implementation supports a specific language. You can validate a language name using <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedLanguage(System.String)" /> before passing it to <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" />. This prevents throwing a <see cref="T:System.Configuration.ConfigurationException" /> when you access the <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance for an unsupported language name.</para>
+          <para>If more than one provider implementation is configured for the input language name, <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> returns the settings from the last matching provider configuration element.</para>
+          <para>Language names are case-insensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the language provider and compiler configuration settings for the specified language.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> object populated with settings of the configured <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation.</para>
+        </returns>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />A language name. </param>
       </Docs>
     </Member>
     <Member MemberName="GetConverter">
       <MemberSignature Language="C#" Value="public virtual System.ComponentModel.TypeConverter GetConverter (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.TypeConverter GetConverter(class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.TypeConverter</ReturnType>
       </ReturnValue>
@@ -492,21 +835,29 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ComponentModel.TypeConverter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derived class can override this method to provide specific types of type converters for specific data types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.TypeConverter" /> for the specified data type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type, or null if a <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type cannot be found.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to retrieve a type converter for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLanguageFromExtension">
       <MemberSignature Language="C#" Value="public static string GetLanguageFromExtension (string extension);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetLanguageFromExtension(string extension) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -520,17 +871,32 @@
         <Parameter Name="extension" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="extension">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config) contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetLanguageFromExtension(System.String)" /> method searches each provider configuration element for the specified file name extension.</para>
+          <para>The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedExtension(System.String)" /> method checks whether at least one provider implementation supports a specific file name extension. You can validate a file name extension using <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedExtension(System.String)" /> before passing it to <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetLanguageFromExtension(System.String)" />. This prevents <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetLanguageFromExtension(System.String)" /> from throwing a <see cref="T:System.Configuration.ConfigurationException" /> for an unsupported file name extension.</para>
+          <para>If a provider implementation supports the input file name extension, and there are multiple supported languages configured for that provider, then <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetLanguageFromExtension(System.String)" /> returns the first language name for that provider. If more than one provider implementation is configured for the input file name extension, <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetLanguageFromExtension(System.String)" /> returns the language name from the last matching provider configuration element.</para>
+          <para>Language names and file name extensions are case-insensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a language name associated with the specified file name extension, as configured in the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> compiler configuration section.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A language name associated with the file name extension, as configured in the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> compiler configuration settings.</para>
+        </returns>
+        <param name="extension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A file name extension. </param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeOutput">
       <MemberSignature Language="C#" Value="public virtual string GetTypeOutput (System.CodeDom.CodeTypeReference type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetTypeOutput(class System.CodeDom.CodeTypeReference type) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -539,17 +905,31 @@
         <Parameter Name="type" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type indicated by the specified <see cref="T:System.CodeDom.CodeTypeReference" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of the specified type, formatted for the language in which code is generated by this code generator. In Visual Basic, for example, passing in a <see cref="T:System.CodeDom.CodeTypeReference" /> for the <see cref="T:System.Int32" /> type will return "Integer".</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeReference" /> that indicates the type to return.</param>
       </Docs>
     </Member>
     <Member MemberName="IsDefinedExtension">
       <MemberSignature Language="C#" Value="public static bool IsDefinedExtension (string extension);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefinedExtension(string extension) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -563,17 +943,30 @@
         <Parameter Name="extension" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="extension">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config) contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedExtension(System.String)" /> method searches the provider configuration elements for the specified file name extension.</para>
+          <para>File name extensions are case-insensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether a file name extension has an associated <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation configured on the computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation is configured for the specified file name extension; otherwise, false.</para>
+        </returns>
+        <param name="extension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A file name extension. </param>
       </Docs>
     </Member>
     <Member MemberName="IsDefinedLanguage">
       <MemberSignature Language="C#" Value="public static bool IsDefinedLanguage (string language);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefinedLanguage(string language) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -587,17 +980,30 @@
         <Parameter Name="language" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="language">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config) contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedLanguage(System.String)" /> method searches the provider configuration elements for the specified language name.</para>
+          <para>Language names are case-insensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether a language has a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation configured on the computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation is configured for the specified language; otherwise, false.</para>
+        </returns>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language name. </param>
       </Docs>
     </Member>
     <Member MemberName="IsValidIdentifier">
       <MemberSignature Language="C#" Value="public virtual bool IsValidIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsValidIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -606,33 +1012,53 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests whether an identifier is valid. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsValidIdentifier(System.String)" /> method is provider specific. Identifiers that are valid for one provider might not be valid for other providers. If <paramref name="value" /> contains characters outside of the ASCII character range, check the identifier for all the languages that might be used to compile the code.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified value is a valid identifier for the current language.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid identifier; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to verify as a valid identifier.</param>
       </Docs>
     </Member>
     <Member MemberName="LanguageOptions">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.Compiler.LanguageOptions LanguageOptions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.CodeDom.Compiler.LanguageOptions LanguageOptions" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.LanguageOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LanguageOptions'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a language features identifier.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parse">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.CodeCompileUnit Parse (System.IO.TextReader codeStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.CodeCompileUnit Parse(class System.IO.TextReader codeStream) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeCompileUnit</ReturnType>
@@ -641,17 +1067,31 @@
         <Parameter Name="codeStream" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="codeStream">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeParser" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateParser" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeParser" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the code read from the specified text stream into a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeCompileUnit" /> that contains a representation of the parsed code.</para>
+        </returns>
+        <param name="codeStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> object that is used to read the code to be parsed. </param>
       </Docs>
     </Member>
     <Member MemberName="Supports">
       <MemberSignature Language="C#" Value="public virtual bool Supports (System.CodeDom.Compiler.GeneratorSupport supports);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Supports(valuetype System.CodeDom.Compiler.GeneratorSupport supports) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -661,9 +1101,21 @@
       </Parameters>
       <Docs>
         <param name="supports">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be called with a number of <see cref="T:System.CodeDom.Compiler.GeneratorSupport" /> flags at once to test for a set of capabilities by joining a set of appropriate capability flags together with a binary OR operator (|).</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, this method is provided by the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation that is returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateGenerator" /> method of the provider. In version 2.0, this method can be called directly on the code provider even if it is not overridden by the code provider. If the code provider does not override this method, the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation is called by the base class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified code generation support is provided.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code generation support is provided; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

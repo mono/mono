@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="InstanceContextMode" FullName="System.ServiceModel.InstanceContextMode">
+  <TypeSignature Language="C#" Value="public enum InstanceContextMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed InstanceContextMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.InstanceContext" /> manages the association between the channel and the user-defined service objects. Use the <see cref="T:System.ServiceModel.InstanceContextMode" /> enumeration with the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property to specify the lifetime of the <see cref="T:System.ServiceModel.InstanceContext" /> object. indigo1 can create a new <see cref="T:System.ServiceModel.InstanceContext" /> object for every call, every session or specify that the <see cref="T:System.ServiceModel.InstanceContext" /> object is bound to a single service object. For a working example, see the <format type="text/html"><a href="c290fa54-f6ae-45a1-9186-d9504ebc6ee6">Instancing Sample</a></format>. </para>
+      <para>The <see cref="F:System.ServiceModel.InstanceContextMode.Single" /> value specifies that a single <see cref="T:System.ServiceModel.InstanceContext" /> object should be used for the lifetime of the service.</para>
+      <block subset="none" type="note">
+        <para>If the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> value is set to <see cref="F:System.ServiceModel.InstanceContextMode.Single" /> the result is that your service can only process one message at a time unless you also set the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> value to <see cref="F:System.ServiceModel.ConcurrencyMode.Multiple" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the number of service instances available for handling calls that are contained in incoming messages.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="PerCall">
+      <MemberSignature Language="C#" Value="PerCall" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.InstanceContextMode PerCall = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.InstanceContextMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.InstanceContext" /> object is created prior to and recycled subsequent to each call. If the channel does not create a session this value behaves as if it were <see cref="F:System.ServiceModel.InstanceContextMode.PerCall" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PerSession">
+      <MemberSignature Language="C#" Value="PerSession" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.InstanceContextMode PerSession = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.InstanceContextMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.InstanceContext" /> object is created for each session.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Single">
+      <MemberSignature Language="C#" Value="Single" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.InstanceContextMode Single = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.InstanceContextMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>For singleton lifetime behavior (for example, if the host application calls the <see cref="M:System.ServiceModel.ServiceHost.#ctor(System.Object,System.Uri[])" /> constructor and passes an object to use as the service), the service class must set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> to <see cref="F:System.ServiceModel.InstanceContextMode.Single" />, or an exception is thrown when the service host is opened.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only one <see cref="T:System.ServiceModel.InstanceContext" /> object is used for all incoming calls and is not recycled subsequent to the calls. If a service object does not exist, one is created.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OdbcMetaDataColumnNames" FullName="System.Data.Odbc.OdbcMetaDataColumnNames">
   <TypeSignature Language="C#" Value="public static class OdbcMetaDataColumnNames" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides static values that are used for the column names in the <see cref="T:System.Data.Odbc.OdbcMetaDataCollectionNames" /> objects contained in the <see cref="T:System.Data.DataTable" />. The <see cref="T:System.Data.DataTable" /> is created by the GetSchema method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BooleanFalseLiteral">
@@ -24,8 +28,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by the GetSchema method to create the BooleanFalseLiteral column.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BooleanTrueLiteral">
@@ -39,8 +46,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by the GetSchema method to create the BooleanTrueLiteral column.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SQLType">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by the GetSchema method to create the SQLType column. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

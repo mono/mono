@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Serialization.Formatters.Soap">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Serialization.Formatters.Soap" /> namespace contains the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> class, which can be used to serialize and deserialize objects in the SOAP format. When building applications that uses the types in this namespace, you must reference the System.Runtime.Serialization.Formatters.Soap.dll assembly.</para>
+    </summary>
   </Docs>
 </Namespace>

@@ -3,9 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.CompilerServices.SymbolWriter.dll
-LIBRARY_USE_INTERMEDIATE_FILE = yes
+LIB_MCS_FLAGS = -r:System.dll -lib:$(bare_libdir)
 
-LIB_MCS_FLAGS = /r:System.dll
 NO_TEST = yes
 
 ifneq (basic, $(PROFILE))
@@ -17,3 +16,10 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
 include ../../build/library.make
+
+$(build_lib): $(bare_libdir)/System.dll
+
+$(bare_libdir)/System.dll:
+	(cd ../System; make $@)
+
+.NOTPARALLEL: $(bare_libdir)/System.dll

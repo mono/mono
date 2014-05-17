@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SwitchLevelAttribute" FullName="System.Diagnostics.SwitchLevelAttribute">
   <TypeSignature Language="C#" Value="public sealed class SwitchLevelAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SwitchLevelAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -12,40 +15,66 @@
     <Attribute>
       <AttributeName>System.AttributeUsage(System.AttributeTargets.Class)</AttributeName>
     </Attribute>
+    <Attribute>
+      <AttributeName>System.MonoLimitation("This attribute is not considered in trace support.")</AttributeName>
+    </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This attribute is intended to be applied to all classes that inherit from the <see cref="T:System.Diagnostics.Switch" /> class. The purpose of the attribute is to identify the type that specifies the switch criteria of the switch. Each switch determines whether a trace is to be written, based on whether an event type matches or exceeds the value of the <see cref="P:System.Diagnostics.SwitchLevelAttribute.SwitchLevelType" /> property for the switch. The type used for the <see cref="P:System.Diagnostics.SwitchLevelAttribute.SwitchLevelType" /> property varies for different switches. For example, the switch level type for the <see cref="T:System.Diagnostics.BooleanSwitch" /> class is <see cref="T:System.Boolean" />, and the switch level type for the <see cref="T:System.Diagnostics.TraceSwitch" /> class is <see cref="T:System.Diagnostics.TraceLevel" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the level type for a switch. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SwitchLevelAttribute (Type switchLevelType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type switchLevelType) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="switchLevelType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="switchLevelType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="switchLevelType" /> parameter identifies the type that is used by the switch to determine if a trace should be written; for example, the type of the <see cref="P:System.Diagnostics.TraceSwitch.Level" /> property of the <see cref="T:System.Diagnostics.TraceSwitch" /> class is <see cref="T:System.Diagnostics.TraceLevel" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SwitchLevelAttribute" /> class, specifying the type that determines whether a trace should be written.</para>
+        </summary>
+        <param name="switchLevelType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that determines whether a trace should be written.</param>
       </Docs>
     </Member>
     <Member MemberName="SwitchLevelType">
-      <MemberSignature Language="C#" Value="public Type SwitchLevelType { set; get; }" />
+      <MemberSignature Language="C#" Value="public Type SwitchLevelType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type SwitchLevelType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The level property of a switch is not necessarily named Level; for example, the level property of the <see cref="T:System.Diagnostics.BooleanSwitch" /> class is <see cref="P:System.Diagnostics.BooleanSwitch.Enabled" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type that determines whether a trace should be written.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

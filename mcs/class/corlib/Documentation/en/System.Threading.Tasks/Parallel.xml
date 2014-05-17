@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Parallel" FullName="System.Threading.Tasks.Parallel">
   <TypeSignature Language="C#" Value="public static class Parallel" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Parallel extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.Tasks.Parallel" /> class provides library-based data parallel replacements for common operations such as for loops, for each loops, and execution of a set of statements.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for parallel loops and regions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="For">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, Action&lt;int,System.Threading.Tasks.ParallelLoopState&gt; action);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int fromInclusive, int toExclusive, Action&lt;int,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int32 fromInclusive, int32 toExclusive, class System.Action`2&lt;int32, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -23,21 +32,39 @@
         <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="from" Type="System.Int32" />
-        <Parameter Name="to" Type="System.Int32" />
-        <Parameter Name="action" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
+          <para>Calling the <see cref="M:System.Threading.Tasks.ParallelLoopState.Break" /> method informs the for operation that iterations after the current one don't have to execute. However, all iterations before the current one will still have to be executed if they haven't already.</para>
+          <para>Therefore, calling <see cref="M:System.Threading.Tasks.ParallelLoopState.Break" /> is similar to using a break operation within a conventional for loop in a language like C#, but it is not a perfect substitute: For example, there is no guarantee that iterations after the current one will definitely not execute.</para>
+          <para>If executing all iterations before the current one is not necessary, use the <see cref="M:System.Threading.Tasks.ParallelLoopState.Stop" /> method instead of using <see cref="M:System.Threading.Tasks.ParallelLoopState.Break" />. Calling <see cref="M:System.Threading.Tasks.ParallelLoopState.Stop" /> informs the for loop that it may abandon all remaining iterations, regardless of whether they're before or after the current iteration, because all required work will have already been completed. However, as with <see cref="M:System.Threading.Tasks.ParallelLoopState.Break" />, there are no guarantees regarding which other iterations will not execute.</para>
+          <para>If a loop is ended prematurely, the <see cref="T:System.Threading.Tasks.ParallelLoopResult" /> structure that is returned will contain relevant information about the loop's completion.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel and the state of the loop can be monitored and manipulated. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
       </Docs>
     </Member>
     <Member MemberName="For">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, Action&lt;int&gt; action);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int fromInclusive, int toExclusive, Action&lt;int&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int32 fromInclusive, int32 toExclusive, class System.Action`1&lt;int32&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -46,21 +73,35 @@
         <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="from" Type="System.Int32" />
-        <Parameter Name="to" Type="System.Int32" />
-        <Parameter Name="action" Type="System.Action&lt;System.Int32&gt;" />
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int32" />) as a parameter.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
       </Docs>
     </Member>
     <Member MemberName="For">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, System.Threading.Tasks.ParallelOptions options, Action&lt;int,System.Threading.Tasks.ParallelLoopState&gt; action);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (long fromInclusive, long toExclusive, Action&lt;long,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int64 fromInclusive, int64 toExclusive, class System.Action`2&lt;int64, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -69,23 +110,39 @@
         <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="from" Type="System.Int32" />
-        <Parameter Name="to" Type="System.Int32" />
-        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
-        <Parameter Name="action" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int64,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
+          <para>Calling the <see cref="M:System.Threading.Tasks.ParallelLoopState.Break" /> method informs the for operation that iterations after the current one don’t have to be executed, but all iterations before the current one do.</para>
+          <para> Therefore, calling Break is similar to using a break operation within a conventional for loop in a language like C#, but it is not a perfect substitute: For example, there is no guarantee that iterations after the current one will definitely not execute.</para>
+          <para>If executing all iterations before the current one is not necessary, use the <see cref="M:System.Threading.Tasks.ParallelLoopState.Stop" /> method instead of using <see cref="M:System.Threading.Tasks.ParallelLoopState.Break" />. Calling <see cref="M:System.Threading.Tasks.ParallelLoopState.Stop" /> informs the for loop that it may abandon all remaining iterations, regardless of whether they're before or after the current iteration, because all required work will have already been completed. However, as with <see cref="M:System.Threading.Tasks.ParallelLoopState.Break" />, there are no guarantees regarding which other iterations will not execute.</para>
+          <para>If a loop is ended prematurely, the <see cref="T:System.Threading.Tasks.ParallelLoopResult" /> structure that is returned will contain relevant information about the loop's completion.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, then the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop with 64-bit indexes in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.ParallelLoopResult" /> structure that contains information on what portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
       </Docs>
     </Member>
     <Member MemberName="For">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int from, int to, System.Threading.Tasks.ParallelOptions options, Action&lt;int&gt; action);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (long fromInclusive, long toExclusive, Action&lt;long&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int64 fromInclusive, int64 toExclusive, class System.Action`1&lt;int64&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -94,23 +151,195 @@
         <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="from" Type="System.Int32" />
-        <Parameter Name="to" Type="System.Int32" />
-        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
-        <Parameter Name="action" Type="System.Action&lt;System.Int32&gt;" />
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int64" />) as a parameter.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop with 64-bit indexes in which iterations may run in parallel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int fromInclusive, int toExclusive, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;int,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int32 fromInclusive, int32 toExclusive, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`2&lt;int32, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (int fromInclusive, int toExclusive, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;int&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int32 fromInclusive, int32 toExclusive, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`1&lt;int32&gt; body) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int32&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int32" />) as a parameter.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, then the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel and loop options can be configured.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (long fromInclusive, long toExclusive, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;long,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int64 fromInclusive, int64 toExclusive, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`2&lt;int64, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int64,System.Threading.Tasks.ParallelLoopState&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic)  loop with 64-bit indexes in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For (long fromInclusive, long toExclusive, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;long&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For(int64 fromInclusive, int64 toExclusive, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`1&lt;int64&gt; body) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="body" Type="System.Action&lt;System.Int64&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Supports 64-bit indexes. The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int64" />) as a parameter.</para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, then the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for  (For in Visual Basic) loop with 64-bit indexes in which iterations may run in parallel and loop options can be configured.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
       </Docs>
     </Member>
     <Member MemberName="For&lt;TLocal&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (int from, int to, Func&lt;TLocal&gt; init, Func&lt;int,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (int fromInclusive, int toExclusive, Func&lt;TLocal&gt; localInit, Func&lt;int,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt;(int32 fromInclusive, int32 toExclusive, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;int32, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -122,26 +351,46 @@
         <TypeParameter Name="TLocal" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="from" Type="System.Int32" />
-        <Parameter Name="to" Type="System.Int32" />
-        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
-        <Parameter Name="action" Type="System.Func&lt;System.Int32,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
-        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;System.Int32,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <param name="init">To be added.</param>
-        <param name="action">To be added.</param>
-        <param name="destruct">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task's local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.For(System.Int64,System.Int64,System.Action{System.Int64,System.Threading.Tasks.ParallelLoopState})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, then the method returns immediately without performing any iterations.</para>
+          <para>For an example that uses this method, see <format type="text/html"><a href="68384064-7ee7-41e2-90e3-71f00bde01bb">How to: Write a Parallel.For Loop That Has Thread-Local Variables</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop with thread-local data in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="For&lt;TLocal&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (int from, int to, System.Threading.Tasks.ParallelOptions options, Func&lt;TLocal&gt; init, Func&lt;int,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (long fromInclusive, long toExclusive, Func&lt;TLocal&gt; localInit, Func&lt;long,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt;(int64 fromInclusive, int64 toExclusive, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;int64, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -153,28 +402,152 @@
         <TypeParameter Name="TLocal" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="from" Type="System.Int32" />
-        <Parameter Name="to" Type="System.Int32" />
-        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
-        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
-        <Parameter Name="action" Type="System.Func&lt;System.Int32,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
-        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;System.Int64,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="init">To be added.</param>
-        <param name="action">To be added.</param>
-        <param name="destruct">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same task.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task's local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.For(System.Int64,System.Int64,System.Action{System.Int64,System.Threading.Tasks.ParallelLoopState})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, then the method returns immediately without performing any iterations.</para>
+          <para>For an example that uses this method, see <format type="text/html"><a href="68384064-7ee7-41e2-90e3-71f00bde01bb">How to: Write a Parallel.For Loop That Has Thread-Local Variables</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic)  loop with 64-bit indexes and thread-local data in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="For&lt;TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (int fromInclusive, int toExclusive, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;int,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt;(int32 fromInclusive, int32 toExclusive, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;int32, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int32" />
+        <Parameter Name="toExclusive" Type="System.Int32" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;System.Int32,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same task.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task's local state. This delegate might be invoked concurrently on multiple threads; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.For(System.Int64,System.Int64,System.Action{System.Int64,System.Threading.Tasks.ParallelLoopState})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, then the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic)  loop with thread-local data in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="For&lt;TLocal&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt; (long fromInclusive, long toExclusive, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;long,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult For&lt;TLocal&gt;(int64 fromInclusive, int64 toExclusive, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;int64, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.ParallelLoopResult</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TLocal" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="fromInclusive" Type="System.Int64" />
+        <Parameter Name="toExclusive" Type="System.Int64" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;System.Int64,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each thread that participates in the loop's execution and returns the initial local state for each of those threads. These initial states are passed to the first <paramref name="body" /> invocations on each thread. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each thread returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per thread to perform a final action on each thread's local state. This delegate might be invoked concurrently on multiple threads; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.For(System.Int64,System.Int64,System.Action{System.Int64,System.Threading.Tasks.ParallelLoopState})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+          <para>If <paramref name="fromInclusive" /> is greater than or equal to <paramref name="toExclusive" />, then the method returns immediately without performing any iterations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a for (For in Visual Basic) loop with 64-bit indexes and thread-local data in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end index, exclusive.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each thread.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each thread.</param>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; source, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; source, class System.Action`3&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -190,16 +563,29 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Concurrent.Partitioner`1&lt;!!TSource&gt; source, class System.Action`2&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -215,16 +601,29 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, Action&lt;TSource&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Concurrent.Partitioner`1&lt;!!TSource&gt; source, class System.Action`1&lt;!!TSource&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -240,16 +639,29 @@
         <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; enumerable, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; action);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Action`3&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -261,20 +673,33 @@
         <TypeParameter Name="TSource" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="enumerable" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
-        <Parameter Name="action" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="enumerable">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and the current element's index (<see cref="T:System.Int64" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with 64-bit indexes on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; enumerable, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; action);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Action`2&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -286,20 +711,33 @@
         <TypeParameter Name="TSource" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="enumerable" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
-        <Parameter Name="action" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="enumerable">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; enumerable, Action&lt;TSource&gt; action);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, Action&lt;TSource&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Action`1&lt;!!TSource&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -311,20 +749,33 @@
         <TypeParameter Name="TSource" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="enumerable" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
-        <Parameter Name="action" Type="System.Action&lt;TSource&gt;" />
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="enumerable">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the current element as a parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`3&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -341,17 +792,31 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" />method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Concurrent.Partitioner`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`2&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -368,17 +833,31 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Concurrent.Partitioner`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`1&lt;!!TSource&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -395,17 +874,31 @@
         <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel and loop options can be configured.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,long&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`3&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -422,17 +915,31 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and the current element's index (<see cref="T:System.Int64" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with 64-bit indexes on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`2&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -449,17 +956,31 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Action&lt;TSource&gt; body);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action`1&lt;!!TSource&gt; body) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -476,17 +997,31 @@
         <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the current element as a parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel and loop options can be configured.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; source, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`5&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -505,19 +1040,37 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="localInit">To be added.</param>
-        <param name="body">To be added.</param>
-        <param name="localFinally">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task's local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Concurrent.Partitioner`1&lt;!!TSource&gt; source, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -536,19 +1089,37 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="localInit">To be added.</param>
-        <param name="body">To be added.</param>
-        <param name="localFinally">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``2(System.Collections.Concurrent.Partitioner{``0},System.Func{``1},System.Func{``0,System.Threading.Tasks.ParallelLoopState,``1,``1},System.Action{``1})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each thread that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task's local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`5&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -567,19 +1138,37 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="localInit">To be added.</param>
-        <param name="body">To be added.</param>
-        <param name="localFinally">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, the current element's index (<see cref="T:System.Int64" />), and some local state that may be shared amongst iterations that execute on the same thread.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task’s local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -598,19 +1187,37 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="localInit">To be added.</param>
-        <param name="body">To be added.</param>
-        <param name="localFinally">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per thread to perform a final action on each task’s local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; enumerable, System.Threading.Tasks.ParallelOptions options, Func&lt;TLocal&gt; init, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`5&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -623,27 +1230,46 @@
         <TypeParameter Name="TLocal" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="enumerable" Type="System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;" />
-        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
-        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
-        <Parameter Name="action" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64,TLocal,TLocal&gt;" />
-        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+        <Parameter Name="source" Type="System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="enumerable">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="init">To be added.</param>
-        <param name="action">To be added.</param>
-        <param name="destruct">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``2(System.Collections.Concurrent.OrderablePartitioner{``0},System.Threading.Tasks.ParallelOptions,System.Func{``1},System.Func{``0,System.Threading.Tasks.ParallelLoopState,System.Int64,``1,``1},System.Action{``1})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each thread returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task’s local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with 64-bit indexes and  with thread-local data on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel , loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; enumerable, System.Threading.Tasks.ParallelOptions options, Func&lt;TLocal&gt; init, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; action, Action&lt;TLocal&gt; destruct);" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Concurrent.Partitioner&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Concurrent.Partitioner`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -656,27 +1282,46 @@
         <TypeParameter Name="TLocal" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="enumerable" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
-        <Parameter Name="options" Type="System.Threading.Tasks.ParallelOptions" />
-        <Parameter Name="init" Type="System.Func&lt;TLocal&gt;" />
-        <Parameter Name="action" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
-        <Parameter Name="destruct" Type="System.Action&lt;TLocal&gt;" />
+        <Parameter Name="source" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" />
+        <Parameter Name="parallelOptions" Type="System.Threading.Tasks.ParallelOptions" />
+        <Parameter Name="localInit" Type="System.Func&lt;TLocal&gt;" />
+        <Parameter Name="body" Type="System.Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt;" />
+        <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="enumerable">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="init">To be added.</param>
-        <param name="action">To be added.</param>
-        <param name="destruct">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``2(System.Collections.Concurrent.Partitioner{``0},System.Threading.Tasks.ParallelOptions,System.Func{``1},System.Func{``0,System.Threading.Tasks.ParallelLoopState,``1,``1},System.Action{``1})" /> method expects custom partitioners to support dynamic partitioning. This overload is provided for scenarios with small loop bodies that might benefit from static range partitioning. Partitioners must support dynamic partitions.  For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per task to perform a final action on each task's local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation  with thread-local data on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements in <paramref name="source" />.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,long,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`5&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, int64, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -696,20 +1341,39 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="localInit">To be added.</param>
-        <param name="body">To be added.</param>
-        <param name="localFinally">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, the current element's index (<see cref="T:System.Int64" />), and some local state that may be shared amongst iterations that execute on the same thread.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per thread to perform a final action on each task’s local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data and 64-bit indexes on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;TSource,TLocal&gt;">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource,TLocal&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Threading.Tasks.ParallelOptions parallelOptions, Func&lt;TLocal&gt; localInit, Func&lt;TSource,System.Threading.Tasks.ParallelLoopState,TLocal,TLocal&gt; body, Action&lt;TLocal&gt; localFinally);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.Tasks.ParallelLoopResult ForEach&lt;TSource, TLocal&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Func`1&lt;!!TLocal&gt; localInit, class System.Func`4&lt;!!TSource, class System.Threading.Tasks.ParallelLoopState, !!TLocal, !!TLocal&gt; body, class System.Action`1&lt;!!TLocal&gt; localFinally) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -729,20 +1393,39 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <typeparam name="TLocal">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="parallelOptions">To be added.</param>
-        <param name="localInit">To be added.</param>
-        <param name="body">To be added.</param>
-        <param name="localFinally">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
+          <para>The <paramref name="localInit" /> delegate is invoked once for each task that participates in the loop's execution and returns the initial local state for each of those tasks. These initial states are passed to the first <paramref name="body" /> invocations on each task. Then, every subsequent body invocation returns a possibly modified state value that is passed to the next body invocation. Finally, the last body invocation on each task returns a state value that is passed to the <paramref name="localFinally" /> delegate. The <paramref name="localFinally" /> delegate is invoked once per thread to perform a final action on each task’s local state. This delegate might be invoked concurrently on multiple tasks; therefore, you must synchronize access to any shared variables.</para>
+          <para>The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method may use more tasks than threads over the lifetime of its execution, as existing tasks complete and are replaced by new tasks. This gives the underlying <see cref="T:System.Threading.Tasks.TaskScheduler" /> object the chance to add, change, or remove threads that service the loop. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated..</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="localInit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that returns the initial state of the local data for each task.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that is invoked once per iteration.</param>
+        <param name="localFinally">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that performs a final action on the local state of each task.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the data in the source.</typeparam>
+        <typeparam name="TLocal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the thread-local data.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
       <MemberSignature Language="C#" Value="public static void Invoke (Action[] actions);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Invoke(class System.Action[] actions) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -760,13 +1443,23 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="actions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to execute a set of operations, potentially in parallel. </para>
+          <para> No guarantees are made about the order in which the operations execute or whether they execute in parallel. This method does not return until each of the provided operations has completed, regardless of whether completion occurs due to normal or exceptional termination.</para>
+          <para>For more information, see <format type="text/html"><a href="6b3ecd79-dec9-4ce1-abf4-62e5392a59c6">How to: Use Parallel.Invoke to Execute Parallel Operations</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes each of the provided actions, possibly in parallel.</para>
+        </summary>
+        <param name="actions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Action" /> to execute.</param>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
       <MemberSignature Language="C#" Value="public static void Invoke (System.Threading.Tasks.ParallelOptions parallelOptions, Action[] actions);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Invoke(class System.Threading.Tasks.ParallelOptions parallelOptions, class System.Action[] actions) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -785,10 +1478,20 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="parallelOptions">To be added.</param>
-        <param name="actions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to execute a set of operations, potentially in parallel. The cancellation token passed in with the <see cref="T:System.Threading.Tasks.ParallelOptions" /> structure enables the caller to cancel the entire operation. For more information, see <format type="text/html"><a href="eea11fe5-d8b0-4314-bb5d-8a58166fb1c3">Cancellation</a></format>.</para>
+          <para> No guarantees are made about the order in which the operations execute or whether they execute in parallel. This method does not return until each of the provided operations has completed, regardless of whether completion occurs due to normal or exceptional termination.</para>
+          <para>For more information, see <format type="text/html"><a href="6b3ecd79-dec9-4ce1-abf4-62e5392a59c6">How to: Use Parallel.Invoke to Execute Parallel Operations</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes each of the provided actions, possibly in parallel, unless the operation is cancelled by the user.</para>
+        </summary>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="actions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of actions to execute.</param>
       </Docs>
     </Member>
   </Members>

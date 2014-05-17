@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallSite" FullName="System.Runtime.CompilerServices.CallSite">
+  <TypeSignature Language="C#" Value="public class CallSite" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CallSite extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A dynamic call site base class. This type is used as a parameter type to the dynamic site targets.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Binder">
+      <MemberSignature Language="C#" Value="public System.Runtime.CompilerServices.CallSiteBinder Binder { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.CompilerServices.CallSiteBinder Binder" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSiteBinder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Class responsible for binding dynamic operations on the dynamic site.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSite Create (Type delegateType, System.Runtime.CompilerServices.CallSiteBinder binder);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSite Create(class System.Type delegateType, class System.Runtime.CompilerServices.CallSiteBinder binder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSite</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="delegateType" Type="System.Type" />
+        <Parameter Name="binder" Type="System.Runtime.CompilerServices.CallSiteBinder" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a call site with the given delegate type and binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new call site.</para>
+        </returns>
+        <param name="delegateType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The call site delegate type.</param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The call site binder.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

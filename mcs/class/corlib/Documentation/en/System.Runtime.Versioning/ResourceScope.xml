@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceScope" FullName="System.Runtime.Versioning.ResourceScope">
   <TypeSignature Language="C#" Value="public enum ResourceScope" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ResourceScope extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,115 +16,149 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A resource is an object that holds state. Examples of resources include a file on disk, a message queue for a process, and a named <see cref="T:System.Threading.Mutex" />. Knowing an object is a resource does not indicate its appropriate use; the important property of a resource is the scope of the resource. The scope includes both the type and the visibility of the resource. The resource type specifies whether the resource is a machine-level resource, such as a file on disk, a process-wide resource, such as a block of non-shared memory, or an application domain-level resource, such as a lock on an instance of a non-marshal by reference object.  The visibility scopes are <see cref="F:System.Runtime.Versioning.ResourceScope.Assembly" /> and <see cref="F:System.Runtime.Versioning.ResourceScope.Private" />, the default is Public, which is implicit if <see cref="F:System.Runtime.Versioning.ResourceScope.Private" /> or <see cref="F:System.Runtime.Versioning.ResourceScope.Assembly" /> are not indicated.  There is no enumeration value for Public.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the scope of a sharable resource.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AppDomain">
       <MemberSignature Language="C#" Value="AppDomain" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ResourceScope AppDomain = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state is shared by objects within an <see cref="T:System.AppDomain" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Assembly">
       <MemberSignature Language="C#" Value="Assembly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ResourceScope Assembly = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource is visible at an assembly scope.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Library">
       <MemberSignature Language="C#" Value="Library" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ResourceScope Library = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state is shared by objects within a library.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Machine">
       <MemberSignature Language="C#" Value="Machine" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ResourceScope Machine = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state is shared by objects within the machine.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ResourceScope None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There is no shared state.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Private">
       <MemberSignature Language="C#" Value="Private" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ResourceScope Private = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource is visible to only the type.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="Process" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ResourceScope Process = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ResourceScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state is shared within a process.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

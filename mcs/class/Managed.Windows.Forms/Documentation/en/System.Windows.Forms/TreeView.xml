@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeView" FullName="System.Windows.Forms.TreeView">
   <TypeSignature Language="C#" Value="public class TreeView : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -30,8 +31,38 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Windows.Forms.TreeView.Nodes" /> collection holds all the <see cref="T:System.Windows.Forms.TreeNode" /> objects that are assigned to the <see cref="T:System.Windows.Forms.TreeView" /> control. The tree nodes in this collection are referred to as the root tree nodes. Any tree node that is subsequently added to a root tree node is referred to as a child node. Because each <see cref="T:System.Windows.Forms.TreeNode" /> can contain a collection of other <see cref="T:System.Windows.Forms.TreeNode" /> objects, you might find it difficult to determine your location in the tree structure when you iterate through the collection. You can parse the <see cref="P:System.Windows.Forms.TreeNode.FullPath" /> string by using the <see cref="P:System.Windows.Forms.TreeView.PathSeparator" /> string value to determine where a <see cref="T:System.Windows.Forms.TreeNode" /> label begins and ends.</para>
+      <para>You can display images next to the tree nodes by assigning an <see cref="T:System.Windows.Forms.ImageList" /> to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property and referencing the index value of an <see cref="T:System.Drawing.Image" /> in the <see cref="T:System.Windows.Forms.ImageList" /> to assign that <see cref="T:System.Drawing.Image" />. Use the following properties to assign images: </para>
+      <list type="bullet">
+        <item>
+          <para>Set the <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> property to the index value of the <see cref="T:System.Drawing.Image" /> that you want to display when a tree node is not selected.</para>
+        </item>
+        <item>
+          <para>Set the <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> property to the index value of the <see cref="T:System.Drawing.Image" /> that you want to display when a tree node is selected.</para>
+        </item>
+      </list>
+      <para>The images referenced by the <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> and <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> property values are the default images displayed by all the tree nodes that are assigned to the <see cref="P:System.Windows.Forms.TreeView.Nodes" /> collection. Individual tree nodes can override the default images by setting the <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> and <see cref="P:System.Windows.Forms.TreeNode.SelectedImageIndex" /> properties.</para>
+      <para>The state images displayed in the <see cref="T:System.Windows.Forms.TreeView" /> are 16 x 16 pixels by default. Setting the <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> property of the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> will have no effect on how the images are displayed. However, the state images are resized according to the system DPI setting when the app.config file contains the following entry:</para>
+      <code>&lt;appSettings&gt;
+  &lt;add key="EnableWindowsFormsHighDpiAutoResizing" value="true" /&gt;
+&lt;/appSettings&gt;
+</code>
+      <para>Tree nodes can be expanded to display the next level of child tree nodes. The user can expand the <see cref="T:System.Windows.Forms.TreeNode" /> by clicking the plus-sign (+) button, if one is displayed next to the <see cref="T:System.Windows.Forms.TreeNode" />, or you can expand the <see cref="T:System.Windows.Forms.TreeNode" /> by calling the <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method. To expand all the child tree node levels in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> collection, call the <see cref="M:System.Windows.Forms.TreeNode.ExpandAll" /> method. You can collapse the child <see cref="T:System.Windows.Forms.TreeNode" /> level by calling the <see cref="M:System.Windows.Forms.TreeNode.Collapse" /> method, or the user can press the minus-sign (-) button, if one is displayed next to the <see cref="T:System.Windows.Forms.TreeNode" />. You can also call the <see cref="M:System.Windows.Forms.TreeNode.Toggle" /> method to alternate between the expanded and collapsed states.</para>
+      <para>Tree nodes can optionally display check boxes. To display the check boxes, set the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property of the <see cref="T:System.Windows.Forms.TreeView" /> to true. The <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property is set to true for tree nodes that are in a checked state.</para>
+      <block subset="none" type="note">
+        <para>Setting the <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property from within the <see cref="E:System.Windows.Forms.TreeView.BeforeCheck" /> or <see cref="E:System.Windows.Forms.TreeView.AfterCheck" /> event causes the event to be raised multiple times and can result in unexpected behavior. For example, you might set the <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property in the event handler when you are recursively updating the child nodes so that the user does not have to expand and check each one individually. To prevent the event from being raised multiple times, add logic to your event handler that only executes your recursive code if the <see cref="P:System.Windows.Forms.TreeViewEventArgs.Action" /> property of the <see cref="T:System.Windows.Forms.TreeViewEventArgs" /> is not set to <see cref="F:System.Windows.Forms.TreeViewAction.Unknown" />. For an example of how to do this, see the Example section of the <see cref="E:System.Windows.Forms.TreeView.AfterCheck" /> or <see cref="E:System.Windows.Forms.TreeView.BeforeCheck" /> events.</para>
+      </block>
+      <para>You can change the appearance of the <see cref="T:System.Windows.Forms.TreeView" /> control by setting some of its display and style properties. Setting <see cref="P:System.Windows.Forms.TreeView.ShowPlusMinus" /> to true displays a plus-sign or minus-sign button next to each <see cref="T:System.Windows.Forms.TreeNode" /> that can be expanded or collapsed, respectively. Setting the <see cref="P:System.Windows.Forms.TreeView.ShowRootLines" /> property to true causes the <see cref="T:System.Windows.Forms.TreeView" /> to display lines that join all the root tree nodes together. You can display lines that connect child tree nodes to their root node by setting the <see cref="P:System.Windows.Forms.TreeView.ShowLines" /> property to true. Setting the <see cref="P:System.Windows.Forms.TreeView.HotTracking" /> property to true changes the appearance of the tree node labels as the mouse pointer passes over them. When hot-tracked, the tree node labels take on the appearance of a hyperlink. You can also completely customize the appearance of the <see cref="T:System.Windows.Forms.TreeView" /> control. To do this, set the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property to a value other than <see cref="F:System.Windows.Forms.TreeViewDrawMode.Normal" /> and handle the <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event.</para>
+      <block subset="none" type="note">
+        <para>When setting the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" />, <see cref="P:System.Windows.Forms.TreeView.Scrollable" />, <see cref="P:System.Windows.Forms.TreeView.ImageIndex" />, and <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> properties at run time, the <see cref="T:System.Windows.Forms.TreeView" /> handle is recreated (see <see cref="M:System.Windows.Forms.Control.RecreateHandle" />) to update the control's appearance. This causes all tree nodes to be collapsed, except for the selected <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays a hierarchical collection of labeled items, each represented by a <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +70,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeView" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,8 +88,15 @@
         <ReturnType>System.Windows.Forms.TreeViewEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property from within a <see cref="E:System.Windows.Forms.TreeView.BeforeCheck" /> or <see cref="E:System.Windows.Forms.TreeView.AfterCheck" /> event handler causes the event to be raised multiple times and can result in unexpected behavior. To prevent the event from being raised multiple times, add logic to your event handler that only executes your recursive code if the <see cref="P:System.Windows.Forms.TreeViewEventArgs.Action" /> property of the <see cref="T:System.Windows.Forms.TreeViewEventArgs" /> is not set to <see cref="F:System.Windows.Forms.TreeViewAction.Unknown" />.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the tree node check box is checked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,8 +110,14 @@
         <ReturnType>System.Windows.Forms.TreeViewEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the tree node is collapsed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,8 +131,14 @@
         <ReturnType>System.Windows.Forms.TreeViewEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the tree node is expanded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,8 +152,14 @@
         <ReturnType>System.Windows.Forms.NodeLabelEditEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the tree node label text is edited.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,8 +173,15 @@
         <ReturnType>System.Windows.Forms.TreeViewEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event does not occur when the node is unselected. To detect whether the selection was cleared, you can test the <see cref="P:System.Windows.Forms.TreeNode.IsSelected" /> property.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the tree node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,9 +219,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or set the background image for the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -177,8 +249,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.TreeView.BackgroundImage" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -203,9 +278,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property/method/event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the layout of the background image for the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -226,8 +307,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.TreeView.BackgroundImageLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeforeCheck">
@@ -237,8 +321,17 @@
         <ReturnType>System.Windows.Forms.TreeViewCancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property from within the <see cref="E:System.Windows.Forms.TreeView.BeforeCheck" /> or <see cref="E:System.Windows.Forms.TreeView.AfterCheck" /> event causes the event to be raised multiple times and can result in unexpected behavior. For example, you might set the <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property in the event handler when you are recursively updating the child nodes, so that the user does not have to expand and check each one individually. To prevent the event from being raised multiple times, add logic to your event handler that only executes your recursive code if the <see cref="P:System.Windows.Forms.TreeViewEventArgs.Action" /> property of the <see cref="T:System.Windows.Forms.TreeViewEventArgs" /> is not set to <see cref="F:System.Windows.Forms.TreeViewAction.Unknown" />.</para>
+          </block>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the tree node check box is checked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -252,8 +345,14 @@
         <ReturnType>System.Windows.Forms.TreeViewCancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the tree node is collapsed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -267,8 +366,14 @@
         <ReturnType>System.Windows.Forms.TreeViewCancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the tree node is expanded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -282,8 +387,14 @@
         <ReturnType>System.Windows.Forms.NodeLabelEditEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the tree node label text is edited.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -297,8 +408,14 @@
         <ReturnType>System.Windows.Forms.TreeViewCancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the tree node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -313,8 +430,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To maintain performance while items are added one at a time to the <see cref="T:System.Windows.Forms.TreeView" />, call the <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> method. The <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> method prevents the control from painting until the <see cref="M:System.Windows.Forms.TreeView.EndUpdate" /> method is called.</para>
+          <para>The preferred way to add items to a tree view control is to use the <see cref="M:System.Windows.Forms.TreeNodeCollection.AddRange(System.Windows.Forms.TreeNode[])" /> method to add an array of tree node items to a tree view. However, if you want to add items one at a time, use the <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> method to prevent the <see cref="T:System.Windows.Forms.TreeView" /> control from painting during the add operations. To allow the control to resume painting, call the <see cref="M:System.Windows.Forms.TreeView.EndUpdate" /> method when all the tree nodes have been added to the tree view.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables any redrawing of the tree view.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -336,9 +460,15 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.TreeView.BorderStyle" /> property is set to <see cref="F:System.Windows.Forms.BorderStyle.Fixed3D" />, the <see cref="T:System.Windows.Forms.TreeView" /> has a sunken, three-dimensional appearance. To display a flat, thin border around the <see cref="T:System.Windows.Forms.TreeView" /> control, set the <see cref="T:System.Windows.Forms.BorderStyle" /> property to <see cref="F:System.Windows.Forms.BorderStyle.FixedSingle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -357,9 +487,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A check box is displayed to the left of both the tree node label and tree node <see cref="T:System.Drawing.Image" />, if any. Check boxes allow the user to select more than one tree node at a time.</para>
+          <para>When the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property of a <see cref="T:System.Windows.Forms.TreeView" /> is set to true, and the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> property is set, each <see cref="T:System.Windows.Forms.TreeNode" /> that is contained in the <see cref="T:System.Windows.Forms.TreeView" /> displays the first and second images from the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> to indicate an unchecked or checked state, respectively. However, the displayed images may be different if the following situation occurs: If the <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> of the node is set to a value other than 0 or 1, and the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property of the parent <see cref="T:System.Windows.Forms.TreeView" /> is set to false, the <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> will not automatically reset to -1 to indicate it is not set. In this case, the state image at the indicated index position is shown. If <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> is set to true again, the first and second images of the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> are shown to indicate a checked or unchecked state, respectively.</para>
+          <block subset="none" type="note">
+            <para>When setting the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property at run time, the <see cref="T:System.Windows.Forms.TreeView" /> handle is recreated (see <see cref="M:System.Windows.Forms.Control.RecreateHandle" />) to update the control's appearance. This causes all tree nodes to be collapsed, with the exception of the selected <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether check boxes are displayed next to the tree nodes in the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -374,8 +514,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TreeView.CollapseAll" /> method collapses all the <see cref="T:System.Windows.Forms.TreeNode" /> objects, which includes all the child tree nodes, that are in the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+          <block subset="none" type="note">
+            <para>The state of a <see cref="T:System.Windows.Forms.TreeNode" /> persists. For example, suppose that you call the <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method for a root tree node. If the child tree nodes were not previously collapsed, they will appear in their previously-expanded state. Calling the <see cref="M:System.Windows.Forms.TreeView.CollapseAll" /> method ensures that all the tree nodes appear in the collapsed state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collapses all the tree nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -405,9 +554,12 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="P:System.Windows.Forms.Control.CreateParams" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -440,9 +592,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.TreeView" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.TreeView" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -464,9 +624,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.TreeView.DoubleBuffered" /> property does not affect the <see cref="T:System.Windows.Forms.TreeView" /> control. If you want to reduce flicker when the <see cref="T:System.Windows.Forms.TreeView" /> is drawn, use the <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> and <see cref="M:System.Windows.Forms.TreeView.EndUpdate" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control should redraw its surface using a secondary buffer. The <see cref="P:System.Windows.Forms.TreeView.DoubleBuffered" /> property does not affect the <see cref="T:System.Windows.Forms.TreeView" /> control. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawMode">
@@ -484,9 +650,15 @@
         <ReturnType>System.Windows.Forms.TreeViewDrawMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The nodes of a <see cref="T:System.Windows.Forms.TreeView" /> are typically drawn by the operating system. The <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property lets you customize the appearance of the nodes. To do this, set <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> to <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll" /> or <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawText" /> and provide a handler for the <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event. This is called owner drawing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the mode in which the control is drawn.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawNode">
@@ -499,8 +671,48 @@
         <ReturnType>System.Windows.Forms.DrawTreeNodeEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this event to customize the appearance of nodes in a <see cref="T:System.Windows.Forms.TreeView" /> control using owner drawing.</para>
+          <para>This event is raised only when the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to <see cref="T:System.Windows.Forms.TreeViewDrawMode" /> values of <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll" /> or <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawText" />. The following table indicates how the <see cref="T:System.Windows.Forms.TreeNode" /> can be customized when the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to these values. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DrawMode property value </para>
+                </term>
+                <description>
+                  <para>TreeNode customization </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawText" /> </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Windows.Forms.TreeNode" /> label area can be customized. All other <see cref="T:System.Windows.Forms.TreeNode" /> elements are drawn automatically. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll" /> </para>
+              </term>
+              <description>
+                <para>The appearance of the entire <see cref="T:System.Windows.Forms.TreeNode" /> can be customized. Icons, check boxes, plus and minus signs, and lines connecting the nodes must be drawn manually if they are desired. </para>
+              </description>
+            </item>
+          </list>
+          <para>The region that the <see cref="P:System.Windows.Forms.TreeNode.Text" /> value would occupy if it were drawn using the font specified by the <see cref="T:System.Windows.Forms.TreeView" /> control's <see cref="P:System.Windows.Forms.Control.Font" /> property is the region in which a node can be clicked to select it. This is called the hit test region. If you draw outside this region, you should provide your own code that selects a node when its visible area is clicked.</para>
+          <para>The hit test region corresponds to the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Bounds" /> property when using <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawText" />. When using <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll" />, however, the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Bounds" /> property encompasses the entire width of the <see cref="T:System.Windows.Forms.TreeView" />. In this case, you can access the hit test region by getting the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Node" /> value and accessing its <see cref="P:System.Windows.Forms.TreeNode.Bounds" /> property. You can then draw the hit test region of the node within these bounds, or you can provide your own hit test code. Note that setting the <see cref="P:System.Windows.Forms.TreeNode.NodeFont" /> property does not change the size of the hit test region, which is calculated using the font specified for the entire <see cref="T:System.Windows.Forms.TreeView" />.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a <see cref="T:System.Windows.Forms.TreeView" /> is drawn and the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to a <see cref="T:System.Windows.Forms.TreeViewDrawMode" /> value other than <see cref="F:System.Windows.Forms.TreeViewDrawMode.Normal" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndUpdate">
@@ -511,8 +723,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To maintain performance while items are added one at a time to the <see cref="T:System.Windows.Forms.TreeView" />, call the <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> method. The <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> method prevents the control from painting until the <see cref="M:System.Windows.Forms.TreeView.EndUpdate" /> method is called.</para>
+          <para>The preferred way to add items to a tree view control is to use the <see cref="M:System.Windows.Forms.TreeNodeCollection.AddRange(System.Windows.Forms.TreeNode[])" /> method to add an array of tree node items to a tree view. However, if you want to add items one at a time, use the <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> method to prevent the <see cref="T:System.Windows.Forms.TreeView" /> control from painting during the add operations. To allow control the control to resume painting, call the <see cref="M:System.Windows.Forms.TreeView.EndUpdate" /> method when all the tree nodes have been added to the tree view.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables the redrawing of the tree view.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -527,8 +746,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TreeView.ExpandAll" /> method expands all the <see cref="T:System.Windows.Forms.TreeNode" /> objects, which includes all the child tree nodes, that are in the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+          <block subset="none" type="note">
+            <para>The state of a <see cref="T:System.Windows.Forms.TreeNode" /> persists. For example, suppose that you call the <see cref="M:System.Windows.Forms.TreeNode.ExpandAll" /> method, and then the individual root tree nodes are collapsed. The child tree nodes have not been collapsed, and will appear in their previously-expanded state when the root tree nodes are expanded again. Calling the <see cref="M:System.Windows.Forms.TreeView.CollapseAll" /> method ensures that all the tree nodes appear in the collapsed state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Expands all the tree nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -542,9 +770,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current foreground color for this control, which is the color the control uses to draw its text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -563,9 +794,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.TreeView.FullRowSelect" /> is true, a selection highlight spans the entire width of the tree view, display instead of the width of just the tree node label. The <see cref="P:System.Windows.Forms.TreeView.FullRowSelect" /> property is ignored if <see cref="P:System.Windows.Forms.TreeView.ShowLines" /> is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the selection highlight spans the width of the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -583,11 +820,19 @@
         <Parameter Name="state" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Windows.Forms.OwnerDrawPropertyBag" /> for the specified <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.OwnerDrawPropertyBag" /> for the specified <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TreeNode" /> for which to return an <see cref="T:System.Windows.Forms.OwnerDrawPropertyBag" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The visible state of the <see cref="T:System.Windows.Forms.TreeNode" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -604,10 +849,20 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can pass the <see cref="P:System.Windows.Forms.MouseEventArgs.X" /> and <see cref="P:System.Windows.Forms.MouseEventArgs.Y" /> coordinates of the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event as the <see cref="P:System.Drawing.Point.X" /> and <see cref="P:System.Drawing.Point.Y" /> values of a new <see cref="T:System.Drawing.Point" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the tree node that is at the specified point.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TreeNode" /> at the specified point, in tree view (client) coordinates, or null if there is no node at that location.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> to evaluate and retrieve the node from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -625,11 +880,22 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can pass the <see cref="P:System.Windows.Forms.MouseEventArgs.X" /> and <see cref="P:System.Windows.Forms.MouseEventArgs.Y" /> coordinates of the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event as the <paramref name="x" /> and <paramref name="y" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the tree node at the point with the specified coordinates.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TreeNode" /> at the specified location, in tree view (client) coordinates, or null if there is no node at that location.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Point.X" /> position to evaluate and retrieve the node from. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Point.Y" /> position to evaluate and retrieve the node from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -646,10 +912,20 @@
         <Parameter Name="includeSubTrees" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="includeSubTrees">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="includeSubTrees" /> is true, the result is the number of all the tree nodes in the entire tree structure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the number of tree nodes, optionally including those in all subtrees, assigned to the tree view control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of tree nodes, optionally including those in all subtrees, assigned to the tree view control.</para>
+        </returns>
+        <param name="includeSubTrees">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to count the <see cref="T:System.Windows.Forms.TreeNode" /> items that the subtrees contain; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -668,9 +944,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to false, selected nodes in the <see cref="T:System.Windows.Forms.TreeView" /> control remain highlighted in a different color than the current selection color when the <see cref="T:System.Windows.Forms.TreeView" /> control loses focus. You can use this property to keep items that are selected by the user visible when the user clicks a different control on the form or moves to a different window.</para>
+          <block subset="none" type="note">
+            <para>If you are concerned with the accessibility of your applications, it is recommended that you set the <see cref="P:System.Windows.Forms.TreeView.HideSelection" /> property to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the selected tree node remains highlighted even when the tree view has lost the focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -690,10 +975,20 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine whether a point is located in a <see cref="T:System.Windows.Forms.TreeNode" /> and where within the node the point is located, such as on the label or image area.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides node information, given a point.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node information.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> at which to retrieve node information.</param>
       </Docs>
     </Member>
     <Member MemberName="HitTest">
@@ -710,11 +1005,22 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine whether a set of x- and y-coordinates is located in a <see cref="T:System.Windows.Forms.TreeNode" /> and where within the node the point is located, such as on the label or image area.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides node information, given x- and y-coordinates.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node information.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate at which to retrieve node information </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate at which to retrieve node information.</param>
       </Docs>
     </Member>
     <Member MemberName="HotTracking">
@@ -729,9 +1035,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property is set to true, the <see cref="P:System.Windows.Forms.TreeView.HotTracking" /> property has no effect.</para>
+          <block subset="none" type="note">
+            <para>When the <see cref="P:System.Windows.Forms.TreeView.HotTracking" /> property is set to true, each tree node label takes on the appearance of a hyperlink as the mouse pointer passes over it. The <see cref="F:System.Drawing.FontStyle.Underline" /> font style is applied to the <see cref="T:System.Drawing.Font" /> and the <see cref="P:System.Windows.Forms.Control.ForeColor" /> is set to blue to make the label appear as a link. The appearance is not controlled by the Internet settings of the user's operating system.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a tree node label takes on the appearance of a hyperlink as the mouse pointer passes over it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -765,9 +1080,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> value is the index of an <see cref="T:System.Drawing.Image" /> stored in the <see cref="T:System.Windows.Forms.ImageList" /> assigned to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property.</para>
+          <para>The <see cref="P:System.Windows.Forms.TreeView.ImageKey" /> and <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> properties are mutually exclusive; if one is set, the other is ignored. If you set <see cref="P:System.Windows.Forms.TreeView.ImageKey" />, <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> is automatically set to -1. Alternatively, if you set <see cref="P:System.Windows.Forms.TreeView.ImageIndex" />, <see cref="P:System.Windows.Forms.TreeView.ImageKey" /> is automatically set to an empty string (""). </para>
+          <block subset="none" type="note">
+            <para>When setting the <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> property at run time, the <see cref="T:System.Windows.Forms.TreeView" /> handle is recreated (see <see cref="M:System.Windows.Forms.Control.RecreateHandle" />) to update the control's appearance. This causes all tree nodes to be collapsed, with the exception of the selected <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the image-list index value of the default image that is displayed by the tree nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -804,9 +1129,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeView.ImageKey" /> property is case-insensitive.</para>
+          <para>If a <see cref="T:System.Windows.Forms.TreeNode" /> does not have an image set, the image specified by the <see cref="P:System.Windows.Forms.TreeView.ImageKey" /> property will be shown when the node is not selected. When the node is selected, the first item in the <see cref="T:System.Windows.Forms.ImageList" /> will be shown.</para>
+          <para>The <see cref="P:System.Windows.Forms.TreeView.ImageKey" /> and <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> properties are mutually exclusive, meaning if one is set, the other is ignored. If you set the <see cref="P:System.Windows.Forms.TreeView.ImageKey" /> property, the <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> property is automatically set to -1. Alternatively, if you set the <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> property, the <see cref="P:System.Windows.Forms.TreeView.ImageKey" /> is automatically set to an empty string (""). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key of the default image for each node in the <see cref="T:System.Windows.Forms.TreeView" /> control when it is in an unselected state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImageList">
@@ -824,9 +1157,18 @@
         <ReturnType>System.Windows.Forms.ImageList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Windows.Forms.ImageList" /> property value is anything other than null, all the tree nodes display the first <see cref="T:System.Drawing.Image" /> stored in the <see cref="T:System.Windows.Forms.ImageList" />. You can specify which images from the list are displayed for selected and unselected nodes by setting the <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> and <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> properties. Individual <see cref="T:System.Windows.Forms.TreeNode" /> objects can specify which image is displayed by setting their <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> and <see cref="P:System.Windows.Forms.TreeNode.SelectedImageIndex" /> properties. These individual settings will override the settings in the corresponding <see cref="T:System.Windows.Forms.TreeView" /> properties.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework version 1.1, there is an issue that prevents images from appearing on <see cref="T:System.Windows.Forms.TreeView" /> nodes when your application calls <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" />. To work around this issue, call <see cref="M:System.Windows.Forms.Application.DoEvents" /> in your Main method immediately after you call <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" />. This issue is fixed in the dnprdnlong.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Windows.Forms.ImageList" /> that contains the <see cref="T:System.Drawing.Image" /> objects that are used by the tree nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -845,9 +1187,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to a value of -1 does not throw an exception if the value has not yet been changed from its default. This is because the control uses a value of -1 as an internal default before the control handle has been created. This internal default value causes the wrapped control to return its own default value of 19. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the distance to indent each child tree node level.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -864,10 +1212,20 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the user is editing a tree node, the <see cref="T:System.Windows.Forms.TreeView" /> control treats keys such as ENTER, ESC, HOME, and END as input keys.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is a regular input key or a special key that requires preprocessing.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is a regular input key; otherwise, false.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the Keys values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -881,8 +1239,14 @@
         <ReturnType>System.Windows.Forms.ItemDragEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user begins dragging a node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -896,9 +1260,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the item height is set to a value larger than the height of the tree view control, calling the <see cref="M:System.Windows.Forms.TreeNode.EnsureVisible" /> method will have unexpected results.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height of each tree node in the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -917,9 +1287,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TreeNode.BeginEdit" /> method works only if the <see cref="P:System.Windows.Forms.TreeView.LabelEdit" /> property is true. If <see cref="P:System.Windows.Forms.TreeView.LabelEdit" /> is false when you attempt to edit the label, an exception will be thrown and the tree node will not be put in to an editable state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the label text of the tree nodes can be edited.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -941,9 +1317,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color of the lines connecting the nodes of the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeMouseClick">
@@ -956,8 +1335,15 @@
         <ReturnType>System.Windows.Forms.TreeNodeMouseClickEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs when the user clicks any part of a tree node with the mouse, including the plus sign (<ui>+</ui>) or minus sign (<ui>-</ui>) that indicates whether the node is collapsed or expanded.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks a <see cref="T:System.Windows.Forms.TreeNode" /> with the mouse. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeMouseDoubleClick">
@@ -970,8 +1356,15 @@
         <ReturnType>System.Windows.Forms.TreeNodeMouseClickEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs when the user double-clicks any part of a tree node with the mouse, including the plus sign (+) or minus sign (-) that indicates whether the node is collapsed or expanded.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user double-clicks a <see cref="T:System.Windows.Forms.TreeNode" /> with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeMouseHover">
@@ -984,8 +1377,15 @@
         <ReturnType>System.Windows.Forms.TreeNodeMouseHoverEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the mouse is located over a <see cref="T:System.Windows.Forms.TreeNode" />, the <see cref="E:System.Windows.Forms.TreeView.NodeMouseHover" /> event will occur before the <see cref="E:System.Windows.Forms.Control.MouseHover" /> event.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the mouse hovers over a <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Nodes">
@@ -1006,9 +1406,15 @@
         <ReturnType>System.Windows.Forms.TreeNodeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeView.Nodes" /> property holds a collection of <see cref="T:System.Windows.Forms.TreeNode" /> objects, each of which has a <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property that can contain its own <see cref="T:System.Windows.Forms.TreeNodeCollection" />. This nesting of tree nodes can make it difficult to navigate a tree structure, but the <see cref="P:System.Windows.Forms.TreeNode.FullPath" /> property makes it easier to determine your location within the tree structure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of tree nodes that are assigned to the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1029,9 +1435,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnAfterCheck(System.Windows.Forms.TreeViewEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.AfterCheck" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnAfterCollapse">
@@ -1048,9 +1462,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnAfterCollapse(System.Windows.Forms.TreeViewEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.AfterCollapse" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnAfterExpand">
@@ -1067,9 +1489,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnAfterExpand(System.Windows.Forms.TreeViewEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.AfterExpand" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnAfterLabelEdit">
@@ -1082,9 +1512,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.NodeLabelEditEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnAfterLabelEdit(System.Windows.Forms.NodeLabelEditEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.AfterLabelEdit" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.NodeLabelEditEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1101,9 +1539,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnAfterSelect(System.Windows.Forms.TreeViewEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.AfterSelect" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1124,9 +1570,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewCancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnBeforeCheck(System.Windows.Forms.TreeViewCancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.BeforeCheck" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewCancelEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnBeforeCollapse">
@@ -1143,9 +1597,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewCancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnBeforeCollapse(System.Windows.Forms.TreeViewCancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.BeforeCollapse" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewCancelEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnBeforeExpand">
@@ -1162,9 +1624,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewCancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnBeforeExpand(System.Windows.Forms.TreeViewCancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.BeforeExpand" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewCancelEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnBeforeLabelEdit">
@@ -1177,9 +1647,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.NodeLabelEditEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnBeforeLabelEdit(System.Windows.Forms.NodeLabelEditEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.BeforeLabelEdit" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.NodeLabelEditEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1196,9 +1674,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeViewCancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnBeforeSelect(System.Windows.Forms.TreeViewCancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.BeforeSelect" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeViewCancelEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1218,9 +1704,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DrawTreeNodeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnDrawNode(System.Windows.Forms.DrawTreeNodeEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DrawTreeNodeEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnHandleCreated">
@@ -1233,9 +1727,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnHandleCreated(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="M:System.Windows.Forms.Control.OnHandleCreated(System.EventArgs)" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1252,9 +1754,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnHandleDestroyed(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="M:System.Windows.Forms.Control.OnHandleDestroyed(System.EventArgs)" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1271,9 +1781,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.ItemDragEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnItemDrag(System.Windows.Forms.ItemDragEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.ItemDrag" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Windows.Forms.ItemDragEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1290,9 +1808,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property is set to true and the <see cref="P:System.Windows.Forms.KeyEventArgs.Handled" /> property is set to false, the <see cref="M:System.Windows.Forms.TreeView.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> method switches between selecting and clearing the check box when the user presses the SPACEBAR.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyDown" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1309,9 +1836,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyPressEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.KeyPressEventArgs.Handled" /> property is set to false, the <see cref="T:System.Windows.Forms.TreeView" /> control will select the first item that begins with the value of the <see cref="P:System.Windows.Forms.KeyPressEventArgs.KeyChar" /> property of <paramref name="e" />.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1328,9 +1864,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="M:System.Windows.Forms.Control.OnKeyUp(System.Windows.Forms.KeyEventArgs)" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1350,9 +1894,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnMouseHover(System.EventArgs)" /> method performs a hit test to see whether the mouse is located over a <see cref="T:System.Windows.Forms.TreeNode" />, and if it is, raises the <see cref="E:System.Windows.Forms.TreeView.NodeMouseHover" /> event.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnMouseHover(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseHover" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnMouseLeave">
@@ -1368,9 +1921,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnMouseLeave(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnNodeMouseClick">
@@ -1386,9 +1947,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeNodeMouseClickEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnNodeMouseClick(System.Windows.Forms.TreeNodeMouseClickEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.NodeMouseClick" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeNodeMouseClickEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnNodeMouseDoubleClick">
@@ -1404,9 +1973,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeNodeMouseClickEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnNodeMouseDoubleClick(System.Windows.Forms.TreeNodeMouseClickEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.NodeMouseDoubleClick" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TreeNodeMouseClickEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnNodeMouseHover">
@@ -1422,9 +1999,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.TreeNodeMouseHoverEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnNodeMouseHover(System.Windows.Forms.TreeNodeMouseHoverEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.NodeMouseHover" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TreeNodeMouseHoverEventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnRightToLeftLayoutChanged">
@@ -1445,9 +2030,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeView.OnRightToLeftLayoutChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TreeView.RightToLeftLayoutChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Padding">
@@ -1471,9 +2064,15 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the spacing between the <see cref="T:System.Windows.Forms.TreeView" /> control's contents and its edges.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingChanged">
@@ -1494,8 +2093,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TreeView.Padding" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -1513,8 +2115,11 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Windows.Forms.TreeView" /> is drawn.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1533,9 +2138,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tree node path consists of a set of tree node labels separated by the <see cref="P:System.Windows.Forms.TreeView.PathSeparator" /> delimiter strings. The labels range from the root tree node to the tree node that you want.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the delimiter string that the tree node path uses.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1560,9 +2171,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeView.RightToLeftLayout" /> property is for use with international applications where the language is read from right-to-left. If you set <see cref="P:System.Windows.Forms.TreeView.RightToLeftLayout" /> and <see cref="P:System.Windows.Forms.Control.RightToLeft" /> to true the control's contents and text will be laid out from right-to-left.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <see cref="T:System.Windows.Forms.TreeView" /> should be laid out from right-to-left.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftLayoutChanged">
@@ -1575,8 +2192,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TreeView.RightToLeftLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scrollable">
@@ -1591,9 +2214,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set to true, scroll bars are displayed on the <see cref="T:System.Windows.Forms.TreeView" /> when any <see cref="T:System.Windows.Forms.TreeNode" /> is located outside the control's client region.</para>
+          <block subset="none" type="note">
+            <para>When setting the <see cref="P:System.Windows.Forms.TreeView.Scrollable" /> property at run time, the <see cref="T:System.Windows.Forms.TreeView" /> handle is recreated (see <see cref="M:System.Windows.Forms.Control.RecreateHandle" />) to update the control's appearance. This causes all tree nodes to be collapsed, with the exception of the selected <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the tree view control displays scroll bars when they are needed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1624,9 +2256,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> value is the index of an <see cref="T:System.Drawing.Image" /> stored in the <see cref="T:System.Windows.Forms.ImageList" /> assigned to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property.</para>
+          <block subset="none" type="note">
+            <para>When setting the <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> property at run time, the <see cref="T:System.Windows.Forms.TreeView" /> handle is recreated (see <see cref="M:System.Windows.Forms.Control.RecreateHandle" />) to update the control's appearance. This causes all tree nodes to be collapsed, except for the selected <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the image list index value of the image that is displayed when a tree node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1663,9 +2304,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a <see cref="T:System.Windows.Forms.TreeNode" /> does not have a selected image set, the image specified by the <see cref="P:System.Windows.Forms.TreeView.SelectedImageKey" /> property will be shown when the node is not selected.</para>
+          <para>The <see cref="P:System.Windows.Forms.TreeView.SelectedImageKey" /> and <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> properties are mutually exclusive; if one is set, the other is ignored. If you set the <see cref="P:System.Windows.Forms.TreeView.SelectedImageKey" /> property, the <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> property is automatically set to -1. Alternatively, if you set the <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> property, the <see cref="P:System.Windows.Forms.TreeView.SelectedImageKey" /> is automatically set to an empty string (""). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key of the default image shown when a <see cref="T:System.Windows.Forms.TreeNode" /> is in a selected state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectedNode">
@@ -1683,9 +2331,17 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no <see cref="T:System.Windows.Forms.TreeNode" /> is currently selected, the <see cref="P:System.Windows.Forms.TreeView.SelectedNode" /> property is null.</para>
+          <para>When you set this property, the specified node is scrolled into view and any parent nodes are expanded so that the specified node is visible.</para>
+          <para>When the parent node or any ancestor node of the selected node is collapsed either programmatically or through user action, the collapsed node becomes the selected node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the tree node that is currently selected in the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1704,9 +2360,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Windows.Forms.TreeView.ShowLines" /> is set to true, the <see cref="P:System.Windows.Forms.TreeView.FullRowSelect" /> property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether lines are drawn between tree nodes in the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1728,9 +2390,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order for ToolTips to be visible, you must set the <see cref="P:System.Windows.Forms.TreeNode.ToolTipText" /> for a <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating ToolTips are shown when the mouse pointer hovers over a <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShowPlusMinus">
@@ -1745,9 +2413,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The plus sign and minus sign buttons appear next to the root tree nodes only if the <see cref="P:System.Windows.Forms.TreeView.ShowRootLines" /> property value is true. If the plus sign and minus sign buttons are not displayed, no visual cue exists to indicate that the tree node contains child tree nodes and is expandable. The user then must double-click a tree node to determine whether it contains child tree nodes, to expand it, or to collapse it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether plus-sign (+) and minus-sign (-) buttons are displayed next to tree nodes that contain child tree nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1766,9 +2440,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.TreeView.ShowRootLines" /> property is false, the plus-sign and minus-sign buttons will not appear next to the root tree nodes, and the <see cref="P:System.Windows.Forms.TreeView.ShowPlusMinus" /> property will have no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether lines are drawn between the tree nodes that are at the root of the tree view.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1786,8 +2466,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reapplies the default sort, which is alphabetical by node text, or a custom sort specified by the <see cref="P:System.Windows.Forms.TreeView.TreeViewNodeSorter" /> property. You can use this method if the text of existing nodes is changed or nodes are moved by the user, and you want to sort the items again. </para>
+          <block subset="none" type="note">
+            <para>The default sorter uses the <see cref="M:System.Globalization.CompareInfo.Compare(System.String,System.Int32,System.Int32,System.String,System.Int32,System.Int32)" /> method based on the <see cref="P:System.Windows.Forms.Application.CurrentCulture" /> specified by the application. This means that <see cref="T:System.Windows.Forms.TreeNode" /> objects with equal value are kept in the order in which they were added to the <see cref="T:System.Windows.Forms.TreeView" /> control. This behavior may be different if a custom sort is applied.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the items in <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Sorted">
@@ -1808,9 +2497,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.TreeView.Sorted" /> is set to true, the <see cref="T:System.Windows.Forms.TreeNode" /> objects are sorted in alphabetical order by their <see cref="P:System.Windows.Forms.TreeNode.Text" /> property values. You should always use <see cref="M:System.Windows.Forms.TreeView.BeginUpdate" /> and <see cref="M:System.Windows.Forms.TreeView.EndUpdate" /> to maintain performance when you add a large quantity of items to a sorted <see cref="T:System.Windows.Forms.TreeView" />. When the text of an existing node is changed, you must call <see cref="M:System.Windows.Forms.TreeView.Sort" /> to resort the items. </para>
+          <block subset="none" type="note">
+            <para>The default sorter uses the <see cref="M:System.Globalization.CompareInfo.Compare(System.String,System.Int32,System.Int32,System.String,System.Int32,System.Int32)" /> method based on the <see cref="P:System.Windows.Forms.Application.CurrentCulture" /> specified by the application. This means that <see cref="T:System.Windows.Forms.TreeNode" /> objects with equal value are kept in the order in which they were added to the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the tree nodes in the tree view are sorted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1832,9 +2530,21 @@
         <ReturnType>System.Windows.Forms.ImageList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To indicate the state of a <see cref="T:System.Windows.Forms.TreeNode" />, set the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> property and also set the <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> or <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" /> property for each <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+          <para>The state images displayed in the <see cref="T:System.Windows.Forms.TreeView" /> are 16 x 16 pixels by default. Setting the <see cref="P:System.Windows.Forms.ImageList.ImageSize" /> property of the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> will have no effect on how the images are displayed. However, the state images are resized according to the system DPI setting when the app.config file contains the following entry:</para>
+          <code>&lt;appSettings&gt;
+  &lt;add key="EnableWindowsFormsHighDpiAutoResizing" value="true" /&gt;
+&lt;/appSettings&gt;
+</code>
+          <para>When the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property of a <see cref="T:System.Windows.Forms.TreeView" /> is set to true and the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> property is set, each <see cref="T:System.Windows.Forms.TreeNode" /> that is contained in the <see cref="T:System.Windows.Forms.TreeView" /> displays the first and second images from the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> to indicate an unchecked or checked state, respectively. You should set the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> property before you add nodes to the <see cref="T:System.Windows.Forms.TreeView" /> to prevent state images being shown at design time for nodes that do not have a state image set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the image list that is used to indicate the state of the <see cref="T:System.Windows.Forms.TreeView" /> and its nodes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -1855,9 +2565,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the <see cref="T:System.Windows.Forms.TreeView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1879,8 +2595,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.TreeView.Text" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1902,9 +2621,18 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initially, the <see cref="P:System.Windows.Forms.TreeView.TopNode" /> returns the first root tree node, which is located at the top of the <see cref="T:System.Windows.Forms.TreeView" />. However, if the user has scrolled the contents, another tree node might be at the top.</para>
+          <block subset="none" type="note">
+            <para>Setting this property has no effect when the <see cref="P:System.Windows.Forms.TreeView.Scrollable" /> property value is false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the first fully-visible tree node in the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1919,9 +2647,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="M:System.ComponentModel.Component.ToString" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1946,9 +2677,19 @@
         <ReturnType>System.Collections.IComparer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The custom sort is applied when the <see cref="P:System.Windows.Forms.TreeView.TreeViewNodeSorter" /> is set.</para>
+          <para>If a <see cref="T:System.Windows.Forms.TreeNode" /> label is changed, you can call the <see cref="M:System.Windows.Forms.TreeView.Sort" /> method to sort the items again with the custom sorter specified by the <see cref="P:System.Windows.Forms.TreeView.TreeViewNodeSorter" /> property.</para>
+          <block subset="none" type="note">
+            <para>The default sorter uses the <see cref="M:System.Globalization.CompareInfo.Compare(System.String,System.Int32,System.Int32,System.String,System.Int32,System.Int32)" /> method based on the <see cref="P:System.Windows.Forms.Application.CurrentCulture" /> specified by the application. This means that <see cref="T:System.Windows.Forms.TreeNode" /> objects with equal value are kept in the order in which they were added to the <see cref="T:System.Windows.Forms.TreeView" /> control. This behavior may be different if a custom sort is applied.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the implementation of <see cref="T:System.Collections.IComparer" /> to perform a custom sort of the <see cref="T:System.Windows.Forms.TreeView" /> nodes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VisibleCount">
@@ -1966,9 +2707,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeView.VisibleCount" /> value can be greater than the number of tree nodes in the tree view. The value is calculated by dividing the height of the client window by the height of a tree node item. The result is the total number of <see cref="T:System.Windows.Forms.TreeNode" /> objects that the <see cref="T:System.Windows.Forms.TreeView" /> can display within its current dimensions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of tree nodes that can be fully visible in the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

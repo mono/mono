@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SerializationSectionGroup" FullName="System.Runtime.Serialization.Configuration.SerializationSectionGroup">
+  <TypeSignature Language="C#" Value="public sealed class SerializationSectionGroup : System.Configuration.ConfigurationSectionGroup" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SerializationSectionGroup extends System.Configuration.ConfigurationSectionGroup" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Configuration.ConfigurationSectionGroup</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used to handle the <format type="text/html"><a href="f41fb4d5-24e7-4059-8010-286a30bfea93">&lt;dataContractSerializer&gt; Element</a></format> group, which contains the <format type="text/html"><a href="f41fb4d5-24e7-4059-8010-286a30bfea93">&lt;dataContractSerializer&gt;</a></format> element, specifically, to allow the addition of types to the collection of known types. For more information about data contract known types, see <format type="text/html"><a href="1a0baea1-27b7-470d-9136-5bbad86c4337">Data Contract Known Types</a></format>.</para>
+      <para>For an example of using the element to add to the known types collection, see <format type="text/html"><a href="f35184e4-9d9e-4d37-8fb4-d5b58220eb3e">&lt;declaredTypes&gt;</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles the XML elements used to configure serialization by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SerializationSectionGroup ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Configuration.SerializationSectionGroup" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DataContractSerializer">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.Configuration.DataContractSerializerSection DataContractSerializer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.Configuration.DataContractSerializerSection DataContractSerializer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.Configuration.DataContractSerializerSection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Runtime.Serialization.Configuration.DataContractSerializerSection" /> used to set up the known types collection. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSectionGroup">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Serialization.Configuration.SerializationSectionGroup GetSectionGroup (System.Configuration.Configuration config);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Serialization.Configuration.SerializationSectionGroup GetSectionGroup(class System.Configuration.Configuration config) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.Configuration.SerializationSectionGroup</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="config" Type="System.Configuration.Configuration" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the serialization configuration section for the specified configuration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Serialization.Configuration.SerializationSectionGroup" /> that represents the configuration section.</para>
+        </returns>
+        <param name="config">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.Configuration" /> that represents the configuration to retrieve.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

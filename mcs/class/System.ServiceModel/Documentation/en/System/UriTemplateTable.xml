@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="UriTemplateTable" FullName="System.UriTemplateTable">
+  <TypeSignature Language="C#" Value="public class UriTemplateTable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UriTemplateTable extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.UriTemplateTable" /> is an associative set of <see cref="T:System.UriTemplate" /> objects bound to an object of the developer's choosing. It allows you to match candidate Uniform Resource Identifiers (URIs) against the templates in the set and retrieve the data associated with the matching templates. The contents of <see cref="T:System.UriTemplateTable" /> can be changed until the <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> method is called, at which time one of following types of validation occurs:</para>
+      <list type="bullet">
+        <item>
+          <para>When <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> is called passing in false, the <see cref="T:System.UriTemplateTable" /> checks to make sure the table contains no multiple structurally-equivalent templates. If it finds such templates, it throws an exception. This type of validation is used in conjunction with <see cref="M:System.UriTemplateTable.MatchSingle(System.Uri)" /> when you want to ensure only one template matches an incoming URI.</para>
+        </item>
+        <item>
+          <para>When <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> is called passing in true, multiple structurally-equivalent templates can be contained within a <see cref="T:System.UriTemplateTable" />. However, any query strings in the templates must not be ambiguous; identical query strings are allowed. crabout ambiguous query strings, see <format type="text/html"><a href="5cbbe03f-4a9e-4d44-9e02-c5773239cf52">UriTemplate and UriTemplateTable</a></format>.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class that represents an associative set of <see cref="T:System.UriTemplate" /> objects.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplateTable ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplateTable" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplateTable (System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;UriTemplate,object&gt;&gt; keyValuePairs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.UriTemplate, object&gt;&gt; keyValuePairs) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="keyValuePairs" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.UriTemplate,System.Object&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplateTable" /> class with the specified collection of key/value pairs.</para>
+        </summary>
+        <param name="keyValuePairs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of key/value pairs that consist of URI templates and associated data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplateTable (Uri baseAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Uri baseAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplateTable" /> class with the specified base address.</para>
+        </summary>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> instance that contains the base address.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UriTemplateTable (Uri baseAddress, System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;UriTemplate,object&gt;&gt; keyValuePairs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Uri baseAddress, class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.UriTemplate, object&gt;&gt; keyValuePairs) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="baseAddress" Type="System.Uri" />
+        <Parameter Name="keyValuePairs" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.UriTemplate,System.Object&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplateTable" /> class with the specified base address and collection of key/value pairs.</para>
+        </summary>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> instance that contains the base address.</param>
+        <param name="keyValuePairs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of key/value pairs that consist of URI templates and associated data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BaseAddress">
+      <MemberSignature Language="C#" Value="public Uri BaseAddress { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri BaseAddress" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.UriTemplateTable.BaseAddress" /> property can only be set prior to calling <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> or <see cref="M:System.UriTemplateTable.Match(System.Uri)" /> or <see cref="M:System.UriTemplateTable.MatchSingle(System.Uri)" /> otherwise an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the base address for the <see cref="T:System.UriTemplateTable" /> instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.UriTemplateTable" /> is read only after the <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether the <see cref="T:System.UriTemplateTable" /> is read only.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KeyValuePairs">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;System.Collections.Generic.KeyValuePair&lt;UriTemplate,object&gt;&gt; KeyValuePairs { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.UriTemplate, object&gt;&gt; KeyValuePairs" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Collections.Generic.KeyValuePair&lt;System.UriTemplate,System.Object&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each <see cref="T:System.UriTemplate" /> instance in the table has data associated with it. The <see cref="P:System.UriTemplateTable.KeyValuePairs" /> property contains a collection of key value pairs where the key is a <see cref="T:System.UriTemplate" /> instance and the value is the data associated with the <see cref="T:System.UriTemplate" />. Values can only be added to <see cref="P:System.UriTemplateTable.KeyValuePairs" /> property prior to calling <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> or <see cref="M:System.UriTemplateTable.Match(System.Uri)" /> or <see cref="M:System.UriTemplateTable.MatchSingle(System.Uri)" /> otherwise a <see cref="T:System.NotSupportedException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of key/value pairs that consist of <see cref="T:System.UriTemplate" /> objects and their associated data.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MakeReadOnly">
+      <MemberSignature Language="C#" Value="public void MakeReadOnly (bool allowDuplicateEquivalentUriTemplates);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MakeReadOnly(bool allowDuplicateEquivalentUriTemplates) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="allowDuplicateEquivalentUriTemplates" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> method is called, one of the following types of validation occurs: </para>
+          <list type="bullet">
+            <item>
+              <para>When <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> is called passing in false, the <see cref="T:System.UriTemplateTable" /> checks to make sure the table contains no multiple structurally-equivalent templates. If it finds such templates, an exception is thrown. This type of validation is used in conjunction with <see cref="M:System.UriTemplateTable.MatchSingle(System.Uri)" /> when you want to ensure only one template matches an incoming URI.</para>
+            </item>
+            <item>
+              <para>When <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> is called passing in true, multiple structurally-equivalent templates can be contained within a <see cref="T:System.UriTemplateTable" />. However, any query strings in the templates must not be ambiguous; identical query strings are allowed. This type of validation is used in conjunction with <see cref="M:System.UriTemplateTable.Match(System.Uri)" /> when multiple template matches are allowed on the candidate URI.</para>
+            </item>
+          </list>
+          <para>Only the first call to <see cref="M:System.UriTemplateTable.MakeReadOnly(System.Boolean)" /> is honored, subsequent calls are ignored without any exception being thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Makes the <see cref="T:System.UriTemplateTable" /> read only.</para>
+        </summary>
+        <param name="allowDuplicateEquivalentUriTemplates">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to allow duplicate equivalent <see cref="T:System.UriTemplate" /> instances in the <see cref="T:System.UriTemplateTable" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;UriTemplateMatch&gt; Match (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ObjectModel.Collection`1&lt;class System.UriTemplateMatch&gt; Match(class System.Uri uri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.UriTemplateMatch&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method may return multiple matches.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to match a candidate <see cref="T:System.Uri" /> to the <see cref="T:System.UriTemplateTable" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.UriTemplateMatch" /> instances.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The candidate URI.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="MatchSingle">
+      <MemberSignature Language="C#" Value="public UriTemplateMatch MatchSingle (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.UriTemplateMatch MatchSingle(class System.Uri uri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UriTemplateMatch</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns, at most, one match. If more than one match is found, a <see cref="T:System.UriTemplateMatchException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to match a candidate <see cref="T:System.Uri" /> to the <see cref="T:System.UriTemplateTable" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single <see cref="T:System.UriTemplateMatch" /> instance.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The candidate URI.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

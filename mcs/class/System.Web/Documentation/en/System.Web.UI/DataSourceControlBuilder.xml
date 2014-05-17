@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataSourceControlBuilder" FullName="System.Web.UI.DataSourceControlBuilder">
   <TypeSignature Language="C#" Value="public sealed class DataSourceControlBuilder : System.Web.UI.ControlBuilder" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.DataSourceControlBuilder" /> class extends <see cref="T:System.Web.UI.ControlBuilder" /> by overriding the <see cref="M:System.Web.UI.DataSourceControlBuilder.AllowWhitespaceLiterals" /> method to return false. <see cref="T:System.Web.UI.DataSourceControlBuilder" /> ensures that white-space literals are trimmed from the content. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports the page parser in building controls that are connected to a data provider. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.DataSourceControlBuilder" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

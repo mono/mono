@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IpcServerChannel" FullName="System.Runtime.Remoting.Channels.Ipc.IpcServerChannel">
   <TypeSignature Language="C#" Value="public class IpcServerChannel : System.Runtime.Remoting.Channels.IChannelReceiver" />
   <AssemblyInfo>
@@ -13,9 +14,22 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Channels are used by the .NET Framework remoting infrastructure to transport remote calls. When a client calls a remote object, the call is serialized into a message that is sent by a client channel and received by a server channel. After the message is received, it is deserialized and processed. Any returned values are transmitted by the server channel and received by the client channel.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class uses the Windows interprocess communication (IPC) system to transport messages between application domains on the same computer. When communicating between application domains on the same computer, the IPC channel is much faster than the TCP or HTTP channels.</para>
+      <para>To perform additional processing of messages on the server side, specify an implementation of the <see cref="T:System.Runtime.Remoting.Channels.IServerChannelSinkProvider" /> interface through which all messages processed by the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> instance are passed.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> instance accepts messages serialized in either binary or SOAP format.</para>
+      <para>A <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> object has associated configuration properties that can be set at run time either in a configuration file (by invoking the static <see cref="M:System.Runtime.Remoting.RemotingConfiguration.Configure(System.String)" /> method) or programmatically (by passing an <see cref="T:System.Collections.IDictionary" /> collection to the <see cref="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" /> constructor). For a list of these configuration properties, see the documentation for the <see cref="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.#ctor(System.Collections.IDictionary,System.Runtime.Remoting.Channels.IServerChannelSinkProvider)" /> constructor.</para>
+      <block subset="none" type="note">
+        <para>When setting the exclusiveAddressUse property to false in the <paramref name="properties" /> argument, several <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> objects can be registered for the same named pipe. In such a case requests can go to any of the channels registered. This setting is considered secure only if ALCs are also used.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a server channel for remote calls that uses the IPC system to transmit messages.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,10 +39,14 @@
         <Parameter Name="portName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="portName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified IPC port name.</para>
+        </summary>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the IPC port to be used by the channel.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,11 +60,22 @@
         <Parameter Name="serverSinkProvider" Type="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
         <param name="serverSinkProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about channel configuration properties, see <format type="text/html"><a href="226ecf74-ebbd-4ea0-a701-dcf4441deefe">Channel and Formatter Configuration Properties</a></format>.</para>
+          <para>If you do not require sink functionality, set the <paramref name="sinkProvider" /> parameter to null.</para>
+          <block subset="none" type="note">
+            <para>When setting the exclusiveAddressUse property to false in the <paramref name="properties" /> argument, several <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> objects can be registered for the same named pipe. In such a case requests can go to any of the channels registered. This setting is considered secure only if ALCs are also used.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified channel properties and sink.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> collection that specifies values for configuration properties to be used by the channel.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,11 +89,19 @@
         <Parameter Name="portName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="portName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.ChannelName" /> property by using the <paramref name="name" /> parameter. If you want to register more than one channel, each channel must have a unique name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified channel name and IPC port name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the channel.</param>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the IPC port to be used by the channel.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,12 +116,21 @@
         <Parameter Name="serverSinkProvider" Type="System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="portName">To be added.</param>
         <param name="serverSinkProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.ChannelName" /> property by using the <paramref name="name" /> parameter. If you want to register more than one channel, each channel must have a unique name.</para>
+          <para>If you do not require sink functionality, set the <paramref name="sinkProvider" /> parameter to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> class with the specified channel name, IPC port name, and sink.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the channel.</param>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the IPC port to be used by the channel.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,10 +143,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although returned as an instance of the <see cref="T:System.Object" /> class, the value of this property can be cast to an instance of <see cref="T:System.Runtime.Remoting.Channels.ChannelDataStore" /> that describes the channel to which the <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel" /> object listens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets channel-specific data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,10 +165,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every registered channel has a unique name. The name is used to retrieve a specific channel when calling the <see cref="M:System.Runtime.Remoting.Channels.ChannelServices.GetChannel(System.String)" /> method. The default name is "ipc server".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the current channel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -129,10 +187,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The priority controls the order in which channel data appears in a <see cref="T:System.Runtime.Remoting.ObjRef" /> instance; higher priority channels appear before lower priority channels. Clients try to connect to the server channels in the order that they are listed in the <see cref="T:System.Runtime.Remoting.ObjRef" /> instance. The default priority is 20; negative priorities are allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the priority of the current channel.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,10 +210,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The channel URI is used by the client to specify a remote server channel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the URI of the current channel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the URI of the channel.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -165,11 +238,21 @@
         <Parameter Name="objectUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="objectUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by the <see cref="M:System.Runtime.Remoting.Channels.ChannelServices.GetUrlsForObject(System.MarshalByRefObject)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of all the URLs for the object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Ipc.IpcChannel" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the URLs for an object with the specified URI, hosted on the current <see cref="T:System.Runtime.Remoting.Channels.Tcp.TcpChannel" /> instance.</para>
+        </returns>
+        <param name="objectUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the object for which URLs are required.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -207,10 +290,19 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is not necessary to call this method to begin listening on a newly initialized channel.</para>
+          <para>Use this method to restart listening on a channel after the <see cref="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.StopListening(System.Object)" /> method has been called to stop listening on the channel.</para>
+          <para>The data object can be used to pass a specific initialization state to the channel. If you do not want to pass a specific state to the channel, pass null as the <paramref name="data" /> parameter value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the current channel to start listening for requests.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies an initialization state, or null, if you do not want to pass a specific state to the channel.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -226,10 +318,18 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to stop listening on a channel. To restart listening, use the <see cref="M:System.Runtime.Remoting.Channels.Ipc.IpcServerChannel.StartListening(System.Object)" /> method.</para>
+          <para>The data object can be used to pass a specific initialization state to the channel. If you do not want to pass a specific state to the channel, pass null as the <paramref name="data" /> parameter value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the current channel to stop listening for requests.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies an initialization state, or null, if you do not want to pass a specific state to the channel.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

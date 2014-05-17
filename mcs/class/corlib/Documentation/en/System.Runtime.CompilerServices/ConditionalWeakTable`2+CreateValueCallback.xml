@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConditionalWeakTable&lt;TKey,TValue&gt;+CreateValueCallback" FullName="System.Runtime.CompilerServices.ConditionalWeakTable&lt;TKey,TValue&gt;+CreateValueCallback">
   <TypeSignature Language="C#" Value="public delegate TValue ConditionalWeakTable&lt;TKey,TValue&gt;.CreateValueCallback(TKey key) where TKey : class where TValue : class;" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed ConditionalWeakTable`2/CreateValueCallback&lt;class TKey, class TValue&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,8 +29,31 @@
   </ReturnValue>
   <Docs>
     <param name="key">To be added.</param>
-    <summary>To be added.</summary>
-    <value>To be added.</value>
-    <remarks>To be added.</remarks>
+    <returns>To be added.</returns>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> class enables language compilers to attach arbitrary properties to managed objects at run time. A <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> object is a dictionary that binds a managed object, which is represented by a key, to its attached property, which is represented by a value. The object's keys are the individual instances of the <paramref name="TKey" /> class to which the property is attached, and its values are the property values that are assigned to the corresponding objects. </para>
+      <para>Keys must be unique; in other words, the <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> class supports one attached value per managed object. Two keys are equal if passing them to the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method returns true. </para>
+      <block subset="none" type="note">
+        <para>You cannot control equality comparisons by overriding <see cref="M:System.Object.GetHashCode" /> to explicitly set the hash code for a key. The <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> class does not use the <see cref="M:System.Object.GetHashCode" /> method to compute hash codes, and therefore does not invoke <see cref="M:System.Object.GetHashCode" /> overrides.</para>
+      </block>
+      <para>Although the <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> class holds a collection of key/value pairs, it is best thought of as a table rather than a dictionary object. The <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> class differs from a dictionary in several ways:</para>
+      <list type="bullet">
+        <item>
+          <para>It does not persist keys. That is, a key is not kept alive only because it is a member of the collection.</para>
+        </item>
+        <item>
+          <para>It does not include all the methods (such as GetEnumerator or Contains) that a dictionary typically has.</para>
+        </item>
+        <item>
+          <para>It does not implement the <see cref="T:System.Collections.Generic.IDictionary`2" /> interface.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> class differs from other collection objects in its management of the object lifetime of keys stored in the collection. Ordinarily, when an object is stored in a collection, its lifetime lasts until it is removed (and there are no additional references to the object) or until the collection object itself is destroyed. However, in the <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> class, adding a key/value pair to the table does not ensure that the key will persist, even if it can be reached directly from a value stored in the table (for example, if the table contains one key, A, with a value V1, and a second key, B, with a value P2 that contains a reference to A). Instead, <see cref="T:System.Runtime.CompilerServices.ConditionalWeakTable`2" /> automatically removes the key/value entry as soon as no other references to a key exist outside the table. The example provides an illustration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables compilers to dynamically attach object fields to managed objects.</para>
+    </summary>
   </Docs>
 </Type>

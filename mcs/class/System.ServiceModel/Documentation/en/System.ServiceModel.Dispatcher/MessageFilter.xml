@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageFilter" FullName="System.ServiceModel.Dispatcher.MessageFilter">
+  <TypeSignature Language="C#" Value="public abstract class MessageFilter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MessageFilter extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.DataContract</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.KnownType(typeof(System.ServiceModel.Dispatcher.MatchNoneMessageFilter))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.KnownType(typeof(System.ServiceModel.Dispatcher.ActionMessageFilter))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.KnownType(typeof(System.ServiceModel.Dispatcher.MatchAllMessageFilter))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.KnownType(typeof(System.ServiceModel.Dispatcher.XPathMessageFilter))</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> is an abstract class that developers implement in order to specify the criteria to use for inspecting messages. Typically, filters are used by an endpoint application to determine what to do with a message based on an examination of some part of the message. A queuing process, for example, can use an XPath 1.0 query to check the priority element of a known header to determine whether to move a message to the front of the queue. </para>
+      <para>Filters are stored in a filter table that implements <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" />. Each filter in the table is associated with specified filter data that can be used to indicate what actions to take if a message matches the filter. The <see cref="Overload:System.ServiceModel.Dispatcher.MessageFilter.Match" /> methods are used to determine if a message satisfies a filter. </para>
+      <para>The criteria used by a filter cannot be changed once the filter is constructed because the filter tables have no way to detect a change. The only way to modify the criteria of a filter is to construct a new one and delete the existing filter.</para>
+      <para>The following classes implement the abstract <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> class:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilter" /> uses an XPath 1.0 expression to specify the criteria for a match.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Dispatcher.MatchAllMessageFilter" /> matches all messages.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Dispatcher.MatchNoneMessageFilter" /> matches none of the messages.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Dispatcher.ActionMessageFilter" /> tests whether the action of a message is one of a specified set of actions.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Dispatcher.EndpointAddressMessageFilter" /> tests whether a message satisfies a specified endpoint address.</para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.ServiceModel.Channels.ChannelListenerBase`1" /> is an abstract base class that you can use for writing non-queuing listeners.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>abstract base class for different classes of filters used to query messages.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MessageFilter ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor is protected so that only filters that derive from <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> can be instantiated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called in a derived class, initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFilterTable&lt;FilterData&gt;">
+      <MemberSignature Language="C#" Value="protected virtual System.ServiceModel.Dispatcher.IMessageFilterTable&lt;FilterData&gt; CreateFilterTable&lt;FilterData&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.ServiceModel.Dispatcher.IMessageFilterTable`1&lt;!!FilterData&gt; CreateFilterTable&lt;FilterData&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IMessageFilterTable&lt;FilterData&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="FilterData" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is intended to be called by <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" />. Users should create a filter table by calling a constructor for the filter table. The default implementation of this method returns a filter table that calls the <see cref="Overload:System.ServiceModel.Dispatcher.MessageFilter.Match" /> method of each filter sequentially. Override this method to associate a custom filter table when implementing a filter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a filter table for a filter that has a specified type of data associated with it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> object to which filters associated with <paramref name="FilterData" /> can be added.</para>
+        </returns>
+        <typeparam name="FilterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data associated with the filters in the table.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public abstract bool Match (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Match(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method cannot inspect the contents of the message body.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, tests whether a message satisfies the filter criteria. The body cannot be examined.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.Message" /> object satisfies the filter criteria; otherwise, false.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> object to test. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public abstract bool Match (System.ServiceModel.Channels.MessageBuffer buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Match(class System.ServiceModel.Channels.MessageBuffer buffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.ServiceModel.Channels.MessageBuffer" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message must be fully buffered if the body is to be inspected by the filter. The body of the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> is fully buffered and therefore can be inspected by a filter. The body of a <see cref="T:System.ServiceModel.Channels.Message" /> that has not been fully buffered may be consumed by the filter inspection. The header element of a <see cref="T:System.ServiceModel.Channels.Message" /> is automatically buffered and therefore can be inspected without being consumed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, tests whether a buffered message satisfies the criteria of a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object satisfies the filter criteria; otherwise, false.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object to test. </param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WellKnownSidType" FullName="System.Security.Principal.WellKnownSidType">
   <TypeSignature Language="C#" Value="public enum WellKnownSidType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WellKnownSidType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,940 +16,1191 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a set of commonly used security identifiers (SIDs).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AccountAdministratorSid">
       <MemberSignature Language="C#" Value="AccountAdministratorSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountAdministratorSid = int32(38)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account administrators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountCertAdminsSid">
       <MemberSignature Language="C#" Value="AccountCertAdminsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountCertAdminsSid = int32(46)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the certificate administrators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountComputersSid">
       <MemberSignature Language="C#" Value="AccountComputersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountComputersSid = int32(44)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account computer group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountControllersSid">
       <MemberSignature Language="C#" Value="AccountControllersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountControllersSid = int32(45)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account controller group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountDomainAdminsSid">
       <MemberSignature Language="C#" Value="AccountDomainAdminsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountDomainAdminsSid = int32(41)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account domain administrator group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountDomainGuestsSid">
       <MemberSignature Language="C#" Value="AccountDomainGuestsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountDomainGuestsSid = int32(43)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account domain guests group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountDomainUsersSid">
       <MemberSignature Language="C#" Value="AccountDomainUsersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountDomainUsersSid = int32(42)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account domain users group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountEnterpriseAdminsSid">
       <MemberSignature Language="C#" Value="AccountEnterpriseAdminsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountEnterpriseAdminsSid = int32(48)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the enterprise administrators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountGuestSid">
       <MemberSignature Language="C#" Value="AccountGuestSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountGuestSid = int32(39)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account guest group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountKrbtgtSid">
       <MemberSignature Language="C#" Value="AccountKrbtgtSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountKrbtgtSid = int32(40)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account Kerberos target group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountPolicyAdminsSid">
       <MemberSignature Language="C#" Value="AccountPolicyAdminsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountPolicyAdminsSid = int32(49)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the policy administrators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountRasAndIasServersSid">
       <MemberSignature Language="C#" Value="AccountRasAndIasServersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountRasAndIasServersSid = int32(50)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the RAS and IAS server account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AccountSchemaAdminsSid">
       <MemberSignature Language="C#" Value="AccountSchemaAdminsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AccountSchemaAdminsSid = int32(47)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the schema administrators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AnonymousSid">
       <MemberSignature Language="C#" Value="AnonymousSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AnonymousSid = int32(13)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for the anonymous account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AuthenticatedUserSid">
       <MemberSignature Language="C#" Value="AuthenticatedUserSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType AuthenticatedUserSid = int32(17)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for an authenticated user.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BatchSid">
       <MemberSignature Language="C#" Value="BatchSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BatchSid = int32(10)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for a batch process. This SID is added to the process of a token when it logs on as a batch job.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinAccountOperatorsSid">
       <MemberSignature Language="C#" Value="BuiltinAccountOperatorsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinAccountOperatorsSid = int32(30)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the account operators account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinAdministratorsSid">
       <MemberSignature Language="C#" Value="BuiltinAdministratorsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinAdministratorsSid = int32(26)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the administrator account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinAuthorizationAccessSid">
       <MemberSignature Language="C#" Value="BuiltinAuthorizationAccessSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinAuthorizationAccessSid = int32(59)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the Windows Authorization Access group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinBackupOperatorsSid">
       <MemberSignature Language="C#" Value="BuiltinBackupOperatorsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinBackupOperatorsSid = int32(33)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the backup operators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinDomainSid">
       <MemberSignature Language="C#" Value="BuiltinDomainSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinDomainSid = int32(25)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the domain account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinGuestsSid">
       <MemberSignature Language="C#" Value="BuiltinGuestsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinGuestsSid = int32(28)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the guest account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinIncomingForestTrustBuildersSid">
       <MemberSignature Language="C#" Value="BuiltinIncomingForestTrustBuildersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinIncomingForestTrustBuildersSid = int32(56)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that allows a user to create incoming forest trusts. It is added to the token of users who are a member of the Incoming Forest Trust Builders built-in group in the root domain of the forest.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinNetworkConfigurationOperatorsSid">
       <MemberSignature Language="C#" Value="BuiltinNetworkConfigurationOperatorsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinNetworkConfigurationOperatorsSid = int32(37)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the network operators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinPerformanceLoggingUsersSid">
       <MemberSignature Language="C#" Value="BuiltinPerformanceLoggingUsersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinPerformanceLoggingUsersSid = int32(58)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the group of users that have remote access to monitor the computer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinPerformanceMonitoringUsersSid">
       <MemberSignature Language="C#" Value="BuiltinPerformanceMonitoringUsersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinPerformanceMonitoringUsersSid = int32(57)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the group of users that have remote access to schedule logging of performance counters on this computer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinPowerUsersSid">
       <MemberSignature Language="C#" Value="BuiltinPowerUsersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinPowerUsersSid = int32(29)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the power users group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinPreWindows2000CompatibleAccessSid">
       <MemberSignature Language="C#" Value="BuiltinPreWindows2000CompatibleAccessSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinPreWindows2000CompatibleAccessSid = int32(35)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches pre-win2kfamily compatible accounts.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinPrintOperatorsSid">
       <MemberSignature Language="C#" Value="BuiltinPrintOperatorsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinPrintOperatorsSid = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the print operators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinRemoteDesktopUsersSid">
       <MemberSignature Language="C#" Value="BuiltinRemoteDesktopUsersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinRemoteDesktopUsersSid = int32(36)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches remote desktop users.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinReplicatorSid">
       <MemberSignature Language="C#" Value="BuiltinReplicatorSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinReplicatorSid = int32(34)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the replicator account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinSystemOperatorsSid">
       <MemberSignature Language="C#" Value="BuiltinSystemOperatorsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinSystemOperatorsSid = int32(31)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the system operators group.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BuiltinUsersSid">
       <MemberSignature Language="C#" Value="BuiltinUsersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType BuiltinUsersSid = int32(27)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches built-in user accounts.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreatorGroupServerSid">
       <MemberSignature Language="C#" Value="CreatorGroupServerSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType CreatorGroupServerSid = int32(6)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a creator group server SID.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreatorGroupSid">
       <MemberSignature Language="C#" Value="CreatorGroupSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType CreatorGroupSid = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the creator group of an object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreatorOwnerServerSid">
       <MemberSignature Language="C#" Value="CreatorOwnerServerSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType CreatorOwnerServerSid = int32(5)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a creator owner server SID.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreatorOwnerSid">
       <MemberSignature Language="C#" Value="CreatorOwnerSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType CreatorOwnerSid = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the owner or creator of an object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DialupSid">
       <MemberSignature Language="C#" Value="DialupSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType DialupSid = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for a dial-up account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DigestAuthenticationSid">
       <MemberSignature Language="C#" Value="DigestAuthenticationSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType DigestAuthenticationSid = int32(52)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID present when the Microsoft Digest authentication package authenticated the client.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="EnterpriseControllersSid">
       <MemberSignature Language="C#" Value="EnterpriseControllersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType EnterpriseControllersSid = int32(15)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for an enterprise controller.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="InteractiveSid">
       <MemberSignature Language="C#" Value="InteractiveSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType InteractiveSid = int32(11)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for an interactive account. This SID is added to the process of a token when it logs on interactively.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LocalServiceSid">
       <MemberSignature Language="C#" Value="LocalServiceSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType LocalServiceSid = int32(23)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches a local service.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LocalSid">
       <MemberSignature Language="C#" Value="LocalSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType LocalSid = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a local SID.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LocalSystemSid">
       <MemberSignature Language="C#" Value="LocalSystemSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType LocalSystemSid = int32(22)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches the local system.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LogonIdsSid">
       <MemberSignature Language="C#" Value="LogonIdsSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType LogonIdsSid = int32(21)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches logon IDs.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MaxDefined">
       <MemberSignature Language="C#" Value="MaxDefined" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType MaxDefined = int32(60)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the maximum defined SID in the <see cref="T:System.Security.Principal.WellKnownSidType" /> enumeration.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NetworkServiceSid">
       <MemberSignature Language="C#" Value="NetworkServiceSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType NetworkServiceSid = int32(24)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches a network service.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NetworkSid">
       <MemberSignature Language="C#" Value="NetworkSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType NetworkSid = int32(9)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for a network account. This SID is added to the process of a token when it logs on across a network.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NTAuthoritySid">
       <MemberSignature Language="C#" Value="NTAuthoritySid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType NTAuthoritySid = int32(7)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for the Windows NT authority.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NtlmAuthenticationSid">
       <MemberSignature Language="C#" Value="NtlmAuthenticationSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType NtlmAuthenticationSid = int32(51)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID present when the Microsoft NTLM authentication package authenticated the client.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NullSid">
       <MemberSignature Language="C#" Value="NullSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType NullSid = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a null SID.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OtherOrganizationSid">
       <MemberSignature Language="C#" Value="OtherOrganizationSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType OtherOrganizationSid = int32(55)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID present when the user authenticated across a forest with the selective authentication option enabled. If this SID is present, then <see cref="F:System.Security.Principal.WellKnownSidType.ThisOrganizationSid" /> cannot be present.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ProxySid">
       <MemberSignature Language="C#" Value="ProxySid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType ProxySid = int32(14)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a proxy SID.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RemoteLogonIdSid">
       <MemberSignature Language="C#" Value="RemoteLogonIdSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType RemoteLogonIdSid = int32(20)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches remote logons.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RestrictedCodeSid">
       <MemberSignature Language="C#" Value="RestrictedCodeSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType RestrictedCodeSid = int32(18)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for restricted code.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SChannelAuthenticationSid">
       <MemberSignature Language="C#" Value="SChannelAuthenticationSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType SChannelAuthenticationSid = int32(53)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID present when the Secure Channel (SSL/TLS) authentication package authenticated the client.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SelfSid">
       <MemberSignature Language="C#" Value="SelfSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType SelfSid = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for self.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ServiceSid">
       <MemberSignature Language="C#" Value="ServiceSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType ServiceSid = int32(12)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID for a service. This SID is added to the process of a token when it logs on as a service.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="TerminalServerSid">
       <MemberSignature Language="C#" Value="TerminalServerSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType TerminalServerSid = int32(19)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches a terminal server account.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ThisOrganizationSid">
       <MemberSignature Language="C#" Value="ThisOrganizationSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType ThisOrganizationSid = int32(54)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID present when the user authenticated from within the forest or across a trust that does not have the selective authentication option enabled. If this SID is present, then <see cref="F:System.Security.Principal.WellKnownSidType.OtherOrganizationSid" /> cannot be present.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WinBuiltinTerminalServerLicenseServersSid">
       <MemberSignature Language="C#" Value="WinBuiltinTerminalServerLicenseServersSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType WinBuiltinTerminalServerLicenseServersSid = int32(60)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID is present in a server that can issue Terminal Server licenses.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WorldSid">
       <MemberSignature Language="C#" Value="WorldSid" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.WellKnownSidType WorldSid = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.WellKnownSidType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SID that matches everyone.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

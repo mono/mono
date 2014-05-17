@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RemotingServices" FullName="System.Runtime.Remoting.RemotingServices">
-  <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class RemotingServices" />
+  <TypeSignature Maintainer="auto" Language="C#" Value="public static class RemotingServices" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed RemotingServices extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,28 +14,26 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Unless you are a service provider dealing with issues such as activation, lifetime management, or transactions, you do not need to distinguish between proxy references and object references. The remoting infrastructure uses transparent proxies that give the impression that the remote objects reside in the client's space. Proxies achieve this by forwarding calls made on them to the real objects at remote locations.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides several methods for using and publishing remoted objects and proxies. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Connect">
       <MemberSignature Language="C#" Value="public static object Connect (Type classToProxy, string url);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Connect(class System.Type classToProxy, string url) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="classToProxy" Type="System.Type" />
-        <Parameter Name="url" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="classToProxy">To be added: an object of type 'Type'</param>
-        <param name="url">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,10 +44,46 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="classToProxy" Type="System.Type" />
+        <Parameter Name="url" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned proxy object points to an endpoint served by the specified well-known object. No messages are sent over the network until a method is called on the proxy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy for a well-known object, given the <see cref="T:System.Type" /> and URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy to the remote object that points to an endpoint served by the specified well-known object.</para>
+        </returns>
+        <param name="classToProxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of a well-known object on the server end to which you want to connect. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the server class. </param>
+      </Docs>
     </Member>
     <Member MemberName="Connect">
       <MemberSignature Language="C#" Value="public static object Connect (Type classToProxy, string url, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Connect(class System.Type classToProxy, string url, object data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -57,27 +93,36 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="classToProxy">To be added: an object of type 'Type'</param>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned proxy object points to an endpoint served by the specified well-known object. No messages are sent over the network until a method is called on the proxy.</para>
+          <para>The <paramref name="data" /> object is used to communicate information to the channel, and is passed to the <see cref="M:System.Runtime.Remoting.Channels.IChannelSender.CreateMessageSink(System.String,System.Object,System.String@)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy for a well-known object, given the <see cref="T:System.Type" />, URL, and channel-specific data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy that points to an endpoint that is served by the requested well-known object.</para>
+        </returns>
+        <param name="classToProxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the well-known object to which you want to connect. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the well-known object. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />Channel specific data. Can be null. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Disconnect">
+      <MemberSignature Language="C#" Value="public static bool Disconnect (MarshalByRefObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Disconnect(class System.MarshalByRefObject obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public static bool Disconnect (MarshalByRefObject obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -85,20 +130,28 @@
         <Parameter Name="obj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops an object from receiving any further messages through the registered remoting channels.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object was disconnected from the registered remoting channels successfully; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />Object to disconnect from its channel. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ExecuteMessage">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.IMethodReturnMessage ExecuteMessage (MarshalByRefObject target, System.Runtime.Remoting.Messaging.IMethodCallMessage reqMsg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.Messaging.IMethodReturnMessage ExecuteMessage(class System.MarshalByRefObject target, class System.Runtime.Remoting.Messaging.IMethodCallMessage reqMsg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExecuteMessage">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.IMethodReturnMessage ExecuteMessage (MarshalByRefObject target, System.Runtime.Remoting.Messaging.IMethodCallMessage reqMsg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMethodReturnMessage</ReturnType>
       </ReturnValue>
@@ -107,21 +160,33 @@
         <Parameter Name="reqMsg" Type="System.Runtime.Remoting.Messaging.IMethodCallMessage" />
       </Parameters>
       <Docs>
-        <param name="target">To be added: an object of type 'MarshalByRefObject'</param>
-        <param name="reqMsg">To be added: an object of type 'Messaging.IMethodCallMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Messaging.IMethodReturnMessage'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method is used in special cases by the server to forward the specified method call to another, possibly remote, object. This method can be called only when the caller is in the appropriate context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Connects to the specified remote object, and executes the provided <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> on it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The response of the remote method.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote object whose method you want to call. </param>
+        <param name="reqMsg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method call message to the specified remote object's method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetEnvoyChainForProxy">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.IMessageSink GetEnvoyChainForProxy (MarshalByRefObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.Messaging.IMessageSink GetEnvoyChainForProxy(class System.MarshalByRefObject obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEnvoyChainForProxy">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Messaging.IMessageSink GetEnvoyChainForProxy (MarshalByRefObject obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessageSink</ReturnType>
       </ReturnValue>
@@ -129,20 +194,31 @@
         <Parameter Name="obj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Messaging.IMessageSink'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Envoy sinks are sinks sent along with the <see cref="T:System.Runtime.Remoting.ObjRef" /> of an object that is used when returning messages to that object. The current method returns the envoy sinks that are used during communication between the proxy of the object and the object itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a chain of envoy sinks that should be used when sending messages to the remote object represented by the specified proxy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A chain of envoy sinks associated with the specified proxy.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The proxy of the remote object that requested envoy sinks are associated with. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetLifetimeService">
+      <MemberSignature Language="C#" Value="public static object GetLifetimeService (MarshalByRefObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetLifetimeService(class System.MarshalByRefObject obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLifetimeService">
-      <MemberSignature Language="C#" Value="public static object GetLifetimeService (MarshalByRefObject obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -150,20 +226,31 @@
         <Parameter Name="obj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the default lifetime service the returned object will be an object of type <see cref="T:System.Runtime.Remoting.Lifetime.ILease" />. If the <paramref name="obj" /> parameter is null, the method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a lifetime service object that controls the lifetime policy of the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that controls the lifetime of <paramref name="obj" />.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to obtain lifetime service for. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetMethodBaseFromMethodMessage">
+      <MemberSignature Language="C#" Value="public static System.Reflection.MethodBase GetMethodBaseFromMethodMessage (System.Runtime.Remoting.Messaging.IMethodMessage msg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.MethodBase GetMethodBaseFromMethodMessage(class System.Runtime.Remoting.Messaging.IMethodMessage msg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMethodBaseFromMethodMessage">
-      <MemberSignature Language="C#" Value="public static System.Reflection.MethodBase GetMethodBaseFromMethodMessage (System.Runtime.Remoting.Messaging.IMethodMessage msg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodBase</ReturnType>
       </ReturnValue>
@@ -171,20 +258,31 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMethodMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Messaging.IMethodMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.MethodBase'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This determines the method base from the <see cref="P:System.Runtime.Remoting.Messaging.IMethodMessage.TypeName" />, <see cref="P:System.Runtime.Remoting.Messaging.IMethodMessage.MethodName" />, and <see cref="P:System.Runtime.Remoting.Messaging.IMethodMessage.MethodSignature" /> properties of <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> and is used by classes implementing the <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> interface. Consumers of <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> classes should reference the <see cref="P:System.Runtime.Remoting.Messaging.IMethodMessage.MethodBase" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the method base from the given <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method base extracted from the <paramref name="msg" /> parameter.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method message to extract the method base from. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public static void GetObjectData (object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void GetObjectData(object obj, class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public static void GetObjectData (object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -194,21 +292,28 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified marshal by reference object into the provided <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize. </param>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> into which the object is serialized. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source and destination of the serialization. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectUri">
+      <MemberSignature Language="C#" Value="public static string GetObjectUri (MarshalByRefObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetObjectUri(class System.MarshalByRefObject obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectUri">
-      <MemberSignature Language="C#" Value="public static string GetObjectUri (MarshalByRefObject obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -216,20 +321,28 @@
         <Parameter Name="obj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the URI for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URI of the specified object if it has one, or null if the object has not yet been marshaled.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.MarshalByRefObject" /> for which a URI is requested. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjRefForProxy">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjRef GetObjRefForProxy (MarshalByRefObject obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjRef GetObjRefForProxy(class System.MarshalByRefObject obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjRefForProxy">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjRef GetObjRefForProxy (MarshalByRefObject obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjRef</ReturnType>
       </ReturnValue>
@@ -237,20 +350,37 @@
         <Parameter Name="obj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ObjRef'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> is a serializable representation of an object used to transfer an object reference across an application domain boundary. Creating a <see cref="T:System.Runtime.Remoting.ObjRef" /> for an object is known as marshaling. The <see cref="T:System.Runtime.Remoting.ObjRef" /> can be transferred through a channel into another application domain (possibly on another process or computer). Once in the other application domain, the <see cref="T:System.Runtime.Remoting.ObjRef" /> must be parsed to create a proxy for the object, generally connected to the real object. This operation is known as unmarshaling. During unmarshaling, the <see cref="T:System.Runtime.Remoting.ObjRef" /> is parsed to extract the method information of the remote object and both the transparent proxy and <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> objects are created.</para>
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> contains information that describes the <see cref="T:System.Type" /> and class of the object being marshaled, a URI that uniquely identifies the specific object instance, and communication related information about how to reach the remote application where the object is located.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Runtime.Remoting.ObjRef" /> that represents the remote object from the specified proxy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> that represents the remote object the specified proxy is connected to, or null if the object or proxy have not been marshaled.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />A proxy connected to the object you want to create a <see cref="T:System.Runtime.Remoting.ObjRef" /> for. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetRealProxy">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Proxies.RealProxy GetRealProxy (object proxy);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.Proxies.RealProxy GetRealProxy(object proxy) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRealProxy">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Proxies.RealProxy GetRealProxy (object proxy);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Proxies.RealProxy</ReturnType>
       </ReturnValue>
@@ -258,25 +388,33 @@
         <Parameter Name="proxy" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="proxy">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Proxies.RealProxy'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A client that uses an object across any kind of remoting boundary is actually using a transparent proxy for the object. The transparent proxy gives the impression that the actual object resides in the client's space. It achieves this by forwarding calls made on it to the real object using the remoting infrastructure.</para>
+          <para>The transparent proxy is backed by an instance of a managed runtime class of type <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" />. The <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> implements a part of the functionality needed to forward the operations from the transparent proxy. </para>
+          <para>A proxy object inherits the associated semantics of managed objects such as garbage collection, support for members and methods, and can be extended to form new classes. The proxy acts as an object of the same class as the remote object (transparent proxy), and is also a managed object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the real proxy backing the specified transparent proxy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The real proxy instance backing the transparent proxy.</para>
+        </returns>
+        <param name="proxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />A transparent proxy. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetServerTypeForUri">
+      <MemberSignature Language="C#" Value="public static Type GetServerTypeForUri (string URI);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetServerTypeForUri(string URI) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetServerTypeForUri">
-      <MemberSignature Language="C#" Value="public static Type GetServerTypeForUri (string URI);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -284,20 +422,31 @@
         <Parameter Name="URI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="URI">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because remoting identifies endpoints using URIs, the <see cref="M:System.Runtime.Remoting.RemotingServices.GetServerTypeForUri(System.String)" /> method is very useful in the pluggable parts of the remoting infrastructure (for example, channel sinks, dynamic sinks, and context sinks) that use <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> objects, because the current method will return the associated type object from the URI.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Type" /> of the object with the specified URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the object with the specified URI.</para>
+        </returns>
+        <param name="URI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the object whose <see cref="T:System.Type" /> is requested. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSessionIdForMethodMessage">
+      <MemberSignature Language="C#" Value="public static string GetSessionIdForMethodMessage (System.Runtime.Remoting.Messaging.IMethodMessage msg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetSessionIdForMethodMessage(class System.Runtime.Remoting.Messaging.IMethodMessage msg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSessionIdForMethodMessage">
-      <MemberSignature Language="C#" Value="public static string GetSessionIdForMethodMessage (System.Runtime.Remoting.Messaging.IMethodMessage msg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -305,20 +454,32 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMethodMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Messaging.IMethodMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The same session ID might be returned for objects in the same application, but this method will never return the same session ID for two objects in different remote applications.</para>
+          <para>For more information about identifying sessions and session IDs, see ASP.Net <format type="text/html"><a href="6d60d381-6521-4e1d-9089-da6464f2a9bc">Session State</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a session ID for a message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A session ID string that uniquely identifies the current session.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> for which a session ID is requested. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsMethodOverloaded">
+      <MemberSignature Language="C#" Value="public static bool IsMethodOverloaded (System.Runtime.Remoting.Messaging.IMethodMessage msg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsMethodOverloaded(class System.Runtime.Remoting.Messaging.IMethodMessage msg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsMethodOverloaded">
-      <MemberSignature Language="C#" Value="public static bool IsMethodOverloaded (System.Runtime.Remoting.Messaging.IMethodMessage msg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -326,20 +487,28 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMethodMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Messaging.IMethodMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the method in the given message is overloaded.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method called in <paramref name="msg" /> is overloaded; otherwise, false.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message that contains a call to the method in question. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsObjectOutOfAppDomain">
       <MemberSignature Language="C#" Value="public static bool IsObjectOutOfAppDomain (object tp);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsObjectOutOfAppDomain(object tp) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -347,20 +516,31 @@
         <Parameter Name="tp" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="tp">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For information about application domains, see <format type="text/html"><a href="39E57D07-A740-4CD4-AE82-E119EA3856C1">Application Domains</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the object specified by the given transparent proxy is contained in a different application domain than the object that called the current method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is out of the current application domain; otherwise, false.</para>
+        </returns>
+        <param name="tp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to check. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsObjectOutOfContext">
       <MemberSignature Language="C#" Value="public static bool IsObjectOutOfContext (object tp);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsObjectOutOfContext(object tp) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -368,20 +548,31 @@
         <Parameter Name="tp" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="tp">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A context is an ordered sequence of properties that define an environment for the objects that reside inside it. Contexts are created during the activation process for objects that are configured to require certain automatic services such synchronization, transactions, just-in-time activation, security, and so on. Multiple objects can live inside a context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the object represented by the given proxy is contained in a different context than the object that called the current method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is out of the current context; otherwise, false.</para>
+        </returns>
+        <param name="tp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to check. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsOneWay">
+      <MemberSignature Language="C#" Value="public static bool IsOneWay (System.Reflection.MethodBase method);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsOneWay(class System.Reflection.MethodBase method) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsOneWay">
-      <MemberSignature Language="C#" Value="public static bool IsOneWay (System.Reflection.MethodBase method);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -389,32 +580,27 @@
         <Parameter Name="method" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="method">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a one-way method is called, the client does not wait for the server to finish processing the message. The client method returns to the application with no knowledge of whether or not the server will successfully process the message. Methods are marked as one way using the <see cref="T:System.Runtime.Remoting.Messaging.OneWayAttribute" />.</para>
+          <para>One-way methods cannot have a return value or any out parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the client that called the method specified in the given message is waiting for the server to finish processing the method before continuing execution.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method is one way; otherwise, false.</para>
+        </returns>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method in question. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsTransparentProxy">
       <MemberSignature Language="C#" Value="public static bool IsTransparentProxy (object proxy);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsTransparentProxy(object proxy) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="proxy" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="proxy">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -425,21 +611,35 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="proxy" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A client that uses an object across any kind of a remoting boundary is actually using a transparent proxy for the object. The transparent proxy gives the impression that the actual object resides in the client's space. It achieves this by forwarding calls made on it to the real object using the remoting infrastructure.</para>
+          <para>The transparent proxy is itself housed by an instance of a managed runtime class of type <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" />. The <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> implements a part of the functionality needed to forward the operations from the transparent proxy. A proxy object inherits the associated semantics of managed objects such as garbage collection, support for members and methods, and can be extended to form new classes. Thus the proxy has a dual nature; on the one hand it needs to act as an object of the same class as the remote object (transparent proxy), and on the other it is a managed object itself.</para>
+          <para>A proxy object can be used without regard to any remoting subdivisions within a <see cref="T:System.AppDomain" />. Applications need not distinguish between proxy references and object references. However, service providers dealing with issues such as activation, lifetime management, and transactions need to make such distinctions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the given object is a transparent proxy or a real object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value that indicates whether the object specified in the <paramref name="proxy" /> parameter is a transparent proxy or a real object.</para>
+        </returns>
+        <param name="proxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference to the object to check. </param>
+      </Docs>
     </Member>
     <Member MemberName="LogRemotingStage">
       <MemberSignature Language="C#" Value="public static void LogRemotingStage (int stage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void LogRemotingStage(int32 stage) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="stage" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="stage">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -453,10 +653,34 @@
           <AttributeName>System.Obsolete("It existed for only internal use in .NET and unimplemented in mono")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stage" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A "REMOTING_PERF" preprocessing symbol is applied to the method by using the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the stage in a remoting exchange to an external debugger.</para>
+        </summary>
+        <param name="stage">
+          <attribution license="cc4" from="Microsoft" modified="false" />An internally defined constant that identifies the stage in a remoting exchange.</param>
+      </Docs>
     </Member>
     <Member MemberName="Marshal">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjRef Marshal (MarshalByRefObject Obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjRef Marshal(class System.MarshalByRefObject Obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjRef</ReturnType>
       </ReturnValue>
@@ -464,20 +688,34 @@
         <Parameter Name="Obj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <param name="Obj">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ObjRef'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> is a serializable representation of an object used to transfer an object reference across an application domain boundary. Creating a <see cref="T:System.Runtime.Remoting.ObjRef" /> for an object is known as marshaling. The <see cref="T:System.Runtime.Remoting.ObjRef" /> can be transferred through a channel into another application domain (possibly on another process or computer). Once in the other application domain, the <see cref="T:System.Runtime.Remoting.ObjRef" /> must be parsed to create a proxy for the object, generally connected to the real object. This operation is known as unmarshaling. </para>
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> contains information that describes the <see cref="T:System.Type" /> and class of the object being marshaled, a URI that uniquely identifies the specific object instance, and communication related information about how to reach the remoting subdivision where the object is located.</para>
+          <para>During marshaling, the context from the current thread is used, not the context that was active when the object was created. If a URI was not explicitly set by the <see cref="M:System.Runtime.Remoting.RemotingServices.SetObjectUriForMarshal(System.MarshalByRefObject,System.String)" /> method, it is automatically generated by the remoting identity infrastructure.</para>
+          <para>You cannot associate a URI with a proxy for one of two reasons: either the URI was generated at the server side for the object it represents, or the object is well known, in which case the URI is known. For this reason, if the <paramref name="Obj" /> parameter is a proxy, an exception will be thrown. For custom proxies this restriction is relaxed because the transparent proxy is treated as the server object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes a <see cref="T:System.MarshalByRefObject" />, registers it with the remoting infrastructure, and converts it into an instance of the <see cref="T:System.Runtime.Remoting.ObjRef" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Runtime.Remoting.ObjRef" /> class that represents the object specified in the <paramref name="Obj" /> parameter.</para>
+        </returns>
+        <param name="Obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Marshal">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjRef Marshal (MarshalByRefObject Obj, string URI);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjRef Marshal(class System.MarshalByRefObject Obj, string URI) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Marshal">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjRef Marshal (MarshalByRefObject Obj, string URI);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjRef</ReturnType>
       </ReturnValue>
@@ -486,21 +724,36 @@
         <Parameter Name="URI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="Obj">To be added.</param>
-        <param name="URI">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ObjRef'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> is a serializable representation of an object used to transfer an object reference across an application domain boundary. Creating a <see cref="T:System.Runtime.Remoting.ObjRef" /> for an object is known as marshaling. The <see cref="T:System.Runtime.Remoting.ObjRef" /> can be transferred through a channel into another application domain (possibly on another process or computer). Once in the other application domain, the <see cref="T:System.Runtime.Remoting.ObjRef" /> must be parsed to create a proxy for the object, generally connected to the real object. This operation is known as unmarshaling. </para>
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> contains information that describes the <see cref="T:System.Type" /> and class of the object being marshaled, a URI that uniquely identifies the specific object instance, and communication related information about how to reach the remoting subdivision where the object is located.</para>
+          <para>During marshaling, the context from the current thread is used, not the context that was active when the object was created.</para>
+          <para>You cannot associate a URI with a proxy for one of two reasons: either the URI was generated at the server side for the object it represents, or the object is well known, in which case the URI is known. For this reason, if the <paramref name="Obj" /> parameter is a proxy, an exception will be thrown. For custom proxies this restriction is relaxed because the transparent proxy is treated as the server object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the given <see cref="T:System.MarshalByRefObject" /> into an instance of the <see cref="T:System.Runtime.Remoting.ObjRef" /> class with the specified URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Runtime.Remoting.ObjRef" /> class that represents the object specified in the <paramref name="Obj" /> parameter.</para>
+        </returns>
+        <param name="Obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
+        <param name="URI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified URI with which to initialize the new <see cref="T:System.Runtime.Remoting.ObjRef" />. Can be null. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Marshal">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjRef Marshal (MarshalByRefObject Obj, string ObjURI, Type RequestedType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjRef Marshal(class System.MarshalByRefObject Obj, string ObjURI, class System.Type RequestedType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Marshal">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjRef Marshal (MarshalByRefObject Obj, string ObjURI, Type RequestedType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjRef</ReturnType>
       </ReturnValue>
@@ -510,22 +763,39 @@
         <Parameter Name="RequestedType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="Obj">To be added.</param>
-        <param name="ObjURI">To be added.</param>
-        <param name="RequestedType">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ObjRef'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> is a serializable representation of an object used to transfer an object reference across an application domain boundary. Creating a <see cref="T:System.Runtime.Remoting.ObjRef" /> for an object is known as marshaling. The <see cref="T:System.Runtime.Remoting.ObjRef" /> can be transferred through a channel into another application domain (possibly on another process or computer). Once in the other application domain, the <see cref="T:System.Runtime.Remoting.ObjRef" /> must be parsed to create a proxy for the object, generally connected to the real object. This operation is known as unmarshaling. </para>
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> contains information that describes the <see cref="T:System.Type" /> and class of the object being marshaled, a URI that uniquely identifies the specific object instance, and communication related information about how to reach the remoting subdivision where the object is located.</para>
+          <para>The specified <see cref="T:System.Type" /> is used by the remoting infrastructure to limit the scope of the exposed type hierarchy. For example, if object A derives from object B, which derives from object C, and <see cref="M:System.Runtime.Remoting.RemotingServices.Marshal(System.MarshalByRefObject)" /> is called, then the client can cast the proxy between C and B but not to A.</para>
+          <para>During marshaling, the context from the current thread is used, not the context that was active when the object was created.</para>
+          <para>You cannot associate a URI with a proxy for one of two reasons: either the URI was generated at the server side for the object it represents, or the object is well known, in which case the URI is known. For this reason, if the <paramref name="Obj" /> parameter is a proxy, an exception will be thrown. For custom proxies this restriction is relaxed because the transparent proxy is treated as the server object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes a <see cref="T:System.MarshalByRefObject" /> and converts it into an instance of the <see cref="T:System.Runtime.Remoting.ObjRef" /> class with the specified URI, and the provided <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Runtime.Remoting.ObjRef" /> class that represents the object specified in the <paramref name="Obj" /> parameter.</para>
+        </returns>
+        <param name="Obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert into a <see cref="T:System.Runtime.Remoting.ObjRef" />. </param>
+        <param name="ObjURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI the object specified in the <paramref name="Obj" /> parameter is marshaled with. Can be null. </param>
+        <param name="RequestedType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> <paramref name="Obj" /> is marshaled as. Can be null. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SetObjectUriForMarshal">
+      <MemberSignature Language="C#" Value="public static void SetObjectUriForMarshal (MarshalByRefObject obj, string uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetObjectUriForMarshal(class System.MarshalByRefObject obj, string uri) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetObjectUriForMarshal">
-      <MemberSignature Language="C#" Value="public static void SetObjectUriForMarshal (MarshalByRefObject obj, string uri);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -534,20 +804,31 @@
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <param name="uri">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URI set by the current method is used when marshaling the given object.</para>
+          <para>After marshaling, the URI of the specified object is set to the string in the <paramref name="uri" /> parameter appended onto the <see cref="T:System.Guid" /> of the current <see cref="T:System.AppDomain" />.</para>
+          <para>If the current application is listening on an HTTP port, then both the string specified in the <paramref name="uri" /> parameter and the <paramref name="uri" /> string appended onto the <see cref="T:System.Guid" /> of the current <see cref="T:System.AppDomain" /> route to the specified object. For example, if the application is listening on HTTP port 9000, then both http://localhost:9000/objectUri, and http://localhost:9000/&lt;appdomainguid&gt;/objectUri route to the object specified in the <paramref name="obj" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the URI for the subsequent call to the <see cref="M:System.Runtime.Remoting.RemotingServices.Marshal(System.MarshalByRefObject)" /> method.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to set a URI for. </param>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI to assign to the specified object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Unmarshal">
+      <MemberSignature Language="C#" Value="public static object Unmarshal (System.Runtime.Remoting.ObjRef objectRef);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Unmarshal(class System.Runtime.Remoting.ObjRef objectRef) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unmarshal">
-      <MemberSignature Language="C#" Value="public static object Unmarshal (System.Runtime.Remoting.ObjRef objectRef);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -555,20 +836,32 @@
         <Parameter Name="objectRef" Type="System.Runtime.Remoting.ObjRef" />
       </Parameters>
       <Docs>
-        <param name="objectRef">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> is a serializable representation of an object used to transfer an object reference across an application domain boundary. Creating a <see cref="T:System.Runtime.Remoting.ObjRef" /> for an object is known as marshaling. The <see cref="T:System.Runtime.Remoting.ObjRef" /> can be transferred through a channel into another application domain (possibly on another process or computer). Once in the other application domain, the <see cref="T:System.Runtime.Remoting.ObjRef" /> must be parsed to create a proxy for the object, generally connected to the real object. This operation is known as unmarshaling. During unmarshaling, the <see cref="T:System.Runtime.Remoting.ObjRef" /> is parsed to extract the method information of the remote object and both the transparent proxy and <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> objects are created. The content of the parsed <see cref="T:System.Runtime.Remoting.ObjRef" /> is added to the transparent proxy before the transparent proxy is registered with the common language runtime.</para>
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> contains information that describes the <see cref="T:System.Type" /> and class of the object being marshaled, a URI that uniquely identifies the specific object instance, and communication related information about how to reach the remoting subdivision where the object is located.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes a <see cref="T:System.Runtime.Remoting.ObjRef" /> and creates a proxy object out of it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy to the object that the given <see cref="T:System.Runtime.Remoting.ObjRef" /> represents.</para>
+        </returns>
+        <param name="objectRef">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.ObjRef" /> that represents the remote object for which the proxy is being created. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Unmarshal">
+      <MemberSignature Language="C#" Value="public static object Unmarshal (System.Runtime.Remoting.ObjRef objectRef, bool fRefine);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Unmarshal(class System.Runtime.Remoting.ObjRef objectRef, bool fRefine) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unmarshal">
-      <MemberSignature Language="C#" Value="public static object Unmarshal (System.Runtime.Remoting.ObjRef objectRef, bool fRefine);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -577,22 +870,25 @@
         <Parameter Name="fRefine" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="objectRef">To be added.</param>
-        <param name="fRefine">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> is a serializable representation of an object used to transfer an object reference across an application domain boundary. Creating a <see cref="T:System.Runtime.Remoting.ObjRef" /> for an object is known as marshaling. The <see cref="T:System.Runtime.Remoting.ObjRef" /> can be transferred through a channel into another application domain (possibly on another process or computer). Once in the other application domain, the <see cref="T:System.Runtime.Remoting.ObjRef" /> must be parsed to create a proxy for the object, generally connected to the real object. This operation is known as unmarshaling. During unmarshaling, the <see cref="T:System.Runtime.Remoting.ObjRef" /> is parsed to extract the method information of the remote object and both the transparent proxy and <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> objects are created. The content of the parsed <see cref="T:System.Runtime.Remoting.ObjRef" /> is added to the transparent proxy before the transparent proxy is registered with the common language runtime.</para>
+          <para>A <see cref="T:System.Runtime.Remoting.ObjRef" /> contains information that describes the <see cref="T:System.Type" /> and class of the object being marshaled, a URI that uniquely identifies the specific object instance, and communication related information about how to reach the remoting subdivision where the object is located.</para>
+          <para>When first created, the proxy is of type <see cref="T:System.MarshalByRefObject" />. As you cast it into different types, the remoting infrastructure keeps track of the most used type to avoid loading the type unnecessarily.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes a <see cref="T:System.Runtime.Remoting.ObjRef" /> and creates a proxy object out of it, refining it to the type on the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy to the object that the given <see cref="T:System.Runtime.Remoting.ObjRef" /> represents.</para>
+        </returns>
+        <param name="objectRef">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.ObjRef" /> that represents the remote object for which the proxy is being created. </param>
+        <param name="fRefine">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to refine the proxy to the type on the server; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

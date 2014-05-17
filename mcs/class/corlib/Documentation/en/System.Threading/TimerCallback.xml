@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TimerCallback" FullName="System.Threading.TimerCallback" FullNameSP="System_Threading_TimerCallback" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable TimerCallback extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void TimerCallback(object state);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TimerCallback extends System.MulticastDelegate" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,38 +14,32 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="state">A <see cref="T:System.Object" /> containing application-specific information relevant to the methods invoked by instances of this delegate, or <see langword="null" /> . </param>
-    <summary>
-      <para> Defines the shape of methods that are called by an instance of
-      the <see cref="T:System.Threading.Timer" /> class.
-      </para>
-    </summary>
-    <remarks>
-      <para>A <see langword="TimerCallback" /> delegate invokes its
-   methods once after the start time elapses, and continues invoking its methods
-   once per period until the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" qualify="true" /> method is called. <block subset="none" type="note">The start time for a <see cref="T:System.Threading.Timer" /> is passed in the <paramref name="dueTime" />
-   parameter of the <see langword=" Timer" /> constructors, and the period
-   is passed via the <paramref name="period" /> parameter. </block></para>
-      <para>
-        <block subset="none" type="note">For an example that
-   demonstrates creating and using a <see langword=" TimerCallback" />
-   delegate, see the <see cref="T:System.Threading.Timer" />
-   class.</block>
-      </para>
-    </remarks>
-  </Docs>
-  <Members />
-  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="state" Type="System.Object" />
   </Parameters>
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="state">A <see cref="T:System.Object" /> containing application-specific information relevant to the methods invoked by instances of this delegate, or <see langword="null" /> . </param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use a TimerCallback delegate to specify the method that is called by a <see cref="T:System.Threading.Timer" />. This method does not execute in the thread that created the timer; it executes in a separate thread pool thread that is provided by the system. The TimerCallback delegate invokes the method once after the start time elapses, and continues to invoke it once per timer interval until the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" /> method is called, or until the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method is called with the interval value <see cref="F:System.Threading.Timeout.Infinite" />.</para>
+      <block subset="none" type="note">
+        <para>Callbacks can occur after the <see cref="M:System.Threading.Timer.Dispose" /> method overload has been called, because the timer queues callbacks for execution by thread pool threads. You can use the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" /> method overload to wait until all callbacks have completed.</para>
+      </block>
+      <para>The timer delegate is specified when the timer is constructed, and cannot be changed. The start time for a Timer is passed in the <paramref name="dueTime" /> parameter of the Timer constructors, and the period is passed in the <paramref name="period" /> parameter. For an example that demonstrates creating and using a TimerCallback delegate, see <see cref="T:System.Threading.Timer" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles calls from a <see cref="T:System.Threading.Timer" />.</para>
+    </summary>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
 </Type>

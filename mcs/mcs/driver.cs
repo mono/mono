@@ -57,7 +57,7 @@ namespace Mono.CSharp
 				SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
 				var file = new CompilationSourceFile (module, sourceFile);
 
-				Tokenizer lexer = new Tokenizer (reader, file, session);
+				Tokenizer lexer = new Tokenizer (reader, file, session, ctx.Report);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -78,7 +78,7 @@ namespace Mono.CSharp
 
 			Location.Initialize (sources);
 
-			var session = new ParserSession () {
+			var session = new ParserSession {
 				UseJayGlobalArrays = true,
 				LocatedTokens = new LocatedToken[15000]
 			};
@@ -328,6 +328,7 @@ namespace Mono.CSharp
 			tr.Start (TimeReporter.TimerType.CreateTypeTotal);
 			module.CreateContainer ();
 			importer.AddCompiledAssembly (assembly);
+			references_loader.CompiledAssembly = assembly;
 			tr.Stop (TimeReporter.TimerType.CreateTypeTotal);
 
 			references_loader.LoadReferences (module);

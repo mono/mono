@@ -1,19 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IApplicationSettingsProvider" FullName="System.Configuration.IApplicationSettingsProvider">
   <TypeSignature Language="C#" Value="public interface IApplicationSettingsProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IApplicationSettingsProvider" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The application settings architecture enables you to provide a custom storage mechanism for application settings by creating a custom settings provider, which is a class derived from <see cref="T:System.Configuration.SettingsProvider" />. Such a class contains the basic functionality for storing and retrieving properties. However, you can add additional standardized functionality by implementing the <see cref="T:System.Configuration.IApplicationSettingsProvider" /> interface in the custom settings provider. This interface contains three methods that primarily enable the settings provider to more intelligently handle application version changes. Typically, the settings provider will store application settings for different versions of an application separately to anticipate the following circumstances:</para>
+      <list type="bullet">
+        <item>
+          <para>Side-by-side execution of different versions of an application.</para>
+        </item>
+        <item>
+          <para>Retaining application settings when upgrading an application.</para>
+        </item>
+        <item>
+          <para>Resetting the application settings to their default values for the currently used version.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Configuration.LocalFileSettingsProvider" /> class implements the <see cref="T:System.Configuration.IApplicationSettingsProvider" /> interface. The same set of methods contained by <see cref="T:System.Configuration.IApplicationSettingsProvider" /> is also found in the <see cref="T:System.Configuration.ApplicationSettingsBase" /> class, enabling the establishment of a predefined communication channel between an application settings wrapper and its settings provider.</para>
+      <block subset="none" type="note">
+        <para>This interface is optional. If a provider does not implement this interface, the settings infrastructure will fail without notification if it attempts to access any of the methods defined by this interface.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines extended capabilities for client-based application settings providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetPreviousVersion">
       <MemberSignature Language="C#" Value="public System.Configuration.SettingsPropertyValue GetPreviousVersion (System.Configuration.SettingsContext context, System.Configuration.SettingsProperty property);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Configuration.SettingsPropertyValue GetPreviousVersion(class System.Configuration.SettingsContext context, class System.Configuration.SettingsProperty property) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.SettingsPropertyValue</ReturnType>
       </ReturnValue>
@@ -22,20 +51,33 @@
         <Parameter Name="property" Type="System.Configuration.SettingsProperty" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Configuration.IApplicationSettingsProvider.GetPreviousVersion(System.Configuration.SettingsContext,System.Configuration.SettingsProperty)" /> method in conjunction with the <see cref="M:System.Configuration.IApplicationSettingsProvider.Upgrade(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection)" /> method to migrate application settings during or after the installation of a new version of an application. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified settings property for the previous version of the same application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.SettingsPropertyValue" /> containing the value of the specified property setting as it was last set in the previous version of the application; or null if the setting cannot be found.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsContext" /> describing the current application usage.</param>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.SettingsProperty" /> whose value is to be returned.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset (System.Configuration.SettingsContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(class System.Configuration.SettingsContext context) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -43,18 +85,28 @@
         <Parameter Name="context" Type="System.Configuration.SettingsContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Configuration.IApplicationSettingsProvider.Reset(System.Configuration.SettingsContext)" /> method reinitializes the stored values of the specified application settings group. In contrast, <see cref="T:System.Configuration.DefaultSettingValueAttribute" /> supplies a default value for a single settings property during property initialization, if it has no stored value.</para>
+          <para>The settings provider determines what reasonable defaults are for the specified group of application settings. For example, the implementation in <see cref="T:System.Configuration.LocalFileSettingsProvider" /> resets user-scoped settings to their shared values in the application.exe.config file; in contrast, it leaves the application-scoped settings unchanged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the application settings associated with the specified application to their default values.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsContext" /> describing the current application usage.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Upgrade">
       <MemberSignature Language="C#" Value="public void Upgrade (System.Configuration.SettingsContext context, System.Configuration.SettingsPropertyCollection properties);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Upgrade(class System.Configuration.SettingsContext context, class System.Configuration.SettingsPropertyCollection properties) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -63,15 +115,22 @@
         <Parameter Name="properties" Type="System.Configuration.SettingsPropertyCollection" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework enables side-by-side installation and execution of different versions of the same application. The application settings provider stores the application settings for each version of an application separately to ensure isolation. However, you may want to migrate settings from the previous version of an application to the current one. To provide this migration functionality, use the <see cref="M:System.Configuration.IApplicationSettingsProvider.Upgrade(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection)" /> method, implemented in a class derived from <see cref="T:System.Configuration.SettingsProvider" />.</para>
+          <para>You can use the <see cref="M:System.Configuration.IApplicationSettingsProvider.Upgrade(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection)" /> method in conjunction with the <see cref="M:System.Configuration.IApplicationSettingsProvider.GetPreviousVersion(System.Configuration.SettingsContext,System.Configuration.SettingsProperty)" /> method to migrate application settings during or after the installation of a new version of an application.</para>
+          <para>This method should be suppressed for every application setting that has the <see cref="T:System.Configuration.NoSettingsVersionUpgradeAttribute" /> is applied to it, or to the entire settings wrapper class, derived from <see cref="T:System.Configuration.ApplicationSettingsBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates to the provider that the application has been upgraded. This offers the provider an opportunity to upgrade its stored settings as appropriate.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsContext" /> describing the current application usage.</param>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsPropertyCollection" /> containing the settings property group whose values are to be retrieved.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IDuplexChannel" FullName="System.ServiceModel.Channels.IDuplexChannel">
+  <TypeSignature Language="C#" Value="public interface IDuplexChannel : System.ServiceModel.Channels.IInputChannel, System.ServiceModel.Channels.IOutputChannel" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDuplexChannel implements class System.ServiceModel.Channels.IChannel, class System.ServiceModel.Channels.IInputChannel, class System.ServiceModel.Channels.IOutputChannel, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IInputChannel</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IOutputChannel</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.IDuplexChannel" /> interface is the union of the <see cref="T:System.ServiceModel.Channels.IInputChannel" /> and <see cref="T:System.ServiceModel.Channels.IOutputChannel" /> interfaces. The <see cref="T:System.ServiceModel.Channels.IDuplexChannel" /> interface does not mandate any correlation between the <see cref="T:System.ServiceModel.Channels.IInputChannel" /> and <see cref="T:System.ServiceModel.Channels.IOutputChannel" /> when implemented. This means, in particular, that the contract does not mandate that the sender of messages that are received through the <see cref="T:System.ServiceModel.Channels.IInputChannel" /> is equal to the recipient of messages sent through the <see cref="T:System.ServiceModel.Channels.IOutputChannel" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface that a channel must implement to both send and receive messages. </para>
+    </summary>
+  </Docs>
+  <Members />
+</Type>

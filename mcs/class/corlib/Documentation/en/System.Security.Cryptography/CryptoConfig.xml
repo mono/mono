@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CryptoConfig" FullName="System.Security.Cryptography.CryptoConfig">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CryptoConfig" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi CryptoConfig extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,29 +14,514 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Cryptographic configuration class to access the default and overidden (machine.config) configuration settings.</summary>
-    <remarks>The file "machine.config" can be used to change the framework default algorithm implementations or add new ones.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following table shows the simple names recognized by this class and the default algorithm implementations to which they map. Alternatively, you can map other implementations to these names, as described in <format type="text/html"><a href="01327c69-c5e1-4ef6-b73f-0a58351f0492">Mapping Algorithm Names to Cryptography Classes</a></format>.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Simple name </para>
+            </term>
+            <description>
+              <para>Algorithm implementation </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>3DES, Triple DES, TripleDES, System.Security.Cryptography.TripleDES</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.TripleDESCryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AES, System.Security.Cryptography.AesCryptoServiceProvider</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.AesCryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AesManaged, System.Security.Cryptography.AesManaged</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.AesManaged" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.AsymmetricAlgorithm </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.RSACryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DES, System.Security.Cryptography.DES</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.DESCryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DSA, System.Security.Cryptography.DSA</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ECDH, ECDiffieHellman, ECDiffieHellmanCng, System.Security.Cryptography.ECDiffieHellmanCng</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.ECDiffieHellmanCng" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ECDsa, ECDsaCng, System.Security.Cryptography.ECDsaCng</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.ECDsaCng" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.HashAlgorithm</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HMAC, System.Security.Cryptography.HMAC </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACSHA1" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HMACMD5, System.Security.Cryptography.HMACMD5</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACMD5" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HMACRIPEMD160, System.Security.Cryptography.HMACRIPEMD160</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACRIPEMD160" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HMACSHA1, System.Security.Cryptography.HMACSHA1</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACSHA1" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HMACSHA256, System.Security.Cryptography.HMACSHA256</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACSHA256" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HMACSHA384, System.Security.Cryptography.HMACSHA384</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACSHA384" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HMACSHA512, System.Security.Cryptography.HMACSHA512</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACSHA512" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.KeyedHashAlgorithm</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.HMACSHA1" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>MACTripleDES, System.Security.Cryptography.MACTripleDES</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.MACTripleDES" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>MD5, System.Security.Cryptography.MD5</para>
+          </term>
+          <description>
+            <para> <see cref="T:System.Security.Cryptography.MD5CryptoServiceProvider" /></para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.MD5Cng</para>
+          </term>
+          <description>
+            <para> <see cref="T:System.Security.Cryptography.MD5Cng" /></para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>RandomNumberGenerator</para>
+          </term>
+          <description>
+            <para> <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" /></para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>RC2, System.Security.Cryptography.RC2</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Rijndael, System.Security.Cryptography.Rijndael</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.RijndaelManaged" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>RIPEMD160, RIPEMD-160, System.Security.Cryptography.RIPEMD160Managed</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.RIPEMD160Managed" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>RSA, System.Security.Cryptography.RSA </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.RSACryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>SHA, SHA1, System.Security.Cryptography.SHA1</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SHA1Cng </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA1Cng" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>SHA256, SHA-256, System.Security.Cryptography.SHA256</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA256Managed" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SHA256Cng </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA256Cng" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SHA256CryptoServiceProvider</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA256CryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>SHA384, SHA-384, System.Security.Cryptography.SHA384</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA384Managed" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SHA384Cng </para>
+          </term>
+          <description>
+            <para> <see cref="T:System.Security.Cryptography.SHA384Cng" /></para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SHA384CryptoServiceProvider</para>
+          </term>
+          <description>
+            <para> <see cref="T:System.Security.Cryptography.SHA384CryptoServiceProvider" /></para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>SHA512, SHA-512, System.Security.Cryptography.SHA512</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA512Managed" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SHA512Cng </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA512Cng" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SHA512CryptoServiceProvider</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.SHA512CryptoServiceProvider" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>System.Security.Cryptography.SymmetricAlgorithm</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Security.Cryptography.RijndaelManaged" />
+            </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Accesses the cryptography configuration information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CryptoConfig ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>Constructor, no idea why it is here (all class members are static).</summary>
-        <remarks>Included for compatibility with MS.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>Included for compatibility with MS.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptoConfig" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAlgorithm">
+      <MemberSignature Language="C#" Value="public static void AddAlgorithm (Type algorithm, string[] names);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddAlgorithm(class System.Type algorithm, string[] names) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="algorithm" Type="System.Type" />
+        <Parameter Name="names" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified mappings take precedence over the built-in mappings and the mappings in the machine.config file. The mappings are used to prevent partially trust code from using trusted cryptographic operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a set of names to algorithm mappings to be used for the current application domain.  </para>
+        </summary>
+        <param name="algorithm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The algorithm to map to.</param>
+        <param name="names">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of names to map to the algorithm.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddOID">
+      <MemberSignature Language="C#" Value="public static void AddOID (string oid, string[] names);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddOID(string oid, string[] names) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oid" Type="System.String" />
+        <Parameter Name="names" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified mappings take precedence over the built-in mappings and the mappings in the machine.config file. The mappings are used to prevent partially trust code from using trusted cryptographic operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a set of names to object identifier (OID) mappings to be used for the current application domain.  </para>
+        </summary>
+        <param name="oid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object identifier (OID) to map to.</param>
+        <param name="names">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of names to map to the OID.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AllowOnlyFipsAlgorithms">
+      <MemberSignature Language="C#" Value="public static bool AllowOnlyFipsAlgorithms { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool AllowOnlyFipsAlgorithms" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If false, any algorithm may be created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the runtime should enforce the policy to create only Federal Information Processing Standard (FIPS) certified algorithms.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreateFromName">
       <MemberSignature Language="C#" Value="public static object CreateFromName (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateFromName(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -42,20 +529,31 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">Name of the cryptographic algorithm to create.</param>
-        <summary>Create the default cryptographic implementation for the specified algorithm name.</summary>
-        <returns>An instance of the default implementation of the specified algorithm.</returns>
-        <remarks>Default mapping can be modified, or added to, by modifying the machine.config file.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of simple names recognized by this class, see <see cref="T:System.Security.Cryptography.CryptoConfig" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the specified cryptographic object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified cryptographic object.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The simple name of the cryptographic object of which to create an instance. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateFromName">
+      <MemberSignature Language="C#" Value="public static object CreateFromName (string name, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateFromName(string name, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateFromName">
-      <MemberSignature Language="C#" Value="public static object CreateFromName (string name, object[] args);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -70,21 +568,33 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="name">Name of the cryptographic algorithm to create.</param>
-        <param name="args">Parameters to give to the class contructor.</param>
-        <summary>Create the default cryptographic implementation for the specified algorithm name.</summary>
-        <returns>An instance of the default implementation of the specified algorithm.</returns>
-        <remarks>Default mapping can be modified, or added to, by modifying the machine.config file.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of simple names recognized by this class, see <see cref="T:System.Security.Cryptography.CryptoConfig" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the specified cryptographic object with the specified arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified cryptographic object.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The simple name of the cryptographic object of which to create an instance. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments used to create the specified cryptographic object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="EncodeOID">
+      <MemberSignature Language="C#" Value="public static byte[] EncodeOID (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] EncodeOID(string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EncodeOID">
-      <MemberSignature Language="C#" Value="public static byte[] EncodeOID (string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -92,9 +602,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">The OID string in dotted notation (e.g. "1.3.14.3.2.26").</param>
-        <summary>Convert the OID string (dotted notation) into an ASN.1 encoded OID.</summary>
-        <returns>A byte array containing the ASN.1 encoded OID.</returns>
         <remarks>
           <para>
 A <see cref="T:System.Security.Cryptography.CryptographicUnexpectedOperationException" /> will be thrown if the OID is invalid, like: 
@@ -103,16 +610,27 @@ A <see cref="T:System.Security.Cryptography.CryptographicUnexpectedOperationExce
 A <see cref="T:System.OverflowException" /> will be thrown if a part of the OID is bigger than <see cref="T:System.Int32" />.<see cref="M:System.Int32.MaxValue" />.
 </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes the specified object identifier (OID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the encoded OID.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The OID to encode. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MapNameToOID">
+      <MemberSignature Language="C#" Value="public static string MapNameToOID (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string MapNameToOID(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MapNameToOID">
-      <MemberSignature Language="C#" Value="public static string MapNameToOID (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -120,21 +638,21 @@ A <see cref="T:System.OverflowException" /> will be thrown if a part of the OID 
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">The algorithm name or class name (e.g. "SHA1").</param>
-        <summary>Return the name of the class that is mapped to the specified OID.</summary>
-        <returns>The OID string in dotted notation (e.g. "1.3.14.3.2.26") for the specified algorithm.</returns>
-        <remarks>Default mapping can be modified, or added to, by modifying the machine.config file.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of simple names recognized by this class, see <see cref="T:System.Security.Cryptography.CryptoConfig" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object identifier (OID) of the algorithm corresponding to the specified simple name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OID of the specified algorithm.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The simple name of the algorithm for which to get the OID. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

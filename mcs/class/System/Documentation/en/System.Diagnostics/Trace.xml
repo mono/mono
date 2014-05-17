@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Trace" FullName="System.Diagnostics.Trace">
   <TypeSignature Language="C#" Value="public sealed class Trace" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Trace extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>
     All public static members members of this type are safe for multithreaded
@@ -16,42 +19,54 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      Provides a diagnostic message facility.
-    </summary>
-    <remarks>
-      <para>
-        The <see cref="T:System.Diagnostics.Trace" /> class provides a
-        mechanism for applications to generate diagnostic messages based on 
-        the DEBUG conditional define.
-      </para>
-      <para>
-        In practice, this means that you can call methods on the 
-        <see cref="T:System.Diagnostics.Trace" /> class, but in order for them
-        to actually be executed at runtime, you must define the DEBUG symbol
-        during compilation.  This can be done either through the C# 
-        <see langword="#define" /> keyword or through the C# compiler
-        <c>-define</c> compiler option.
-      </para>
-      <para>
-        All diagnostic messages generated are indented by 
-        <see cref="P:System.Diagnostics.Trace.IndentSize" />*<see cref="P:System.Diagnostics.Trace.IndentLevel" /> 
-        space characters.  Initially, 
-        <see cref="P:System.Diagnostics.Trace.IndentLevel" /> is 0 (zero),
-        so no indent is generated.
-      </para>
-      <para>
-        NOTE: The <see cref="T:System.Diagnostics.Trace" /> and
-        <see cref="T:System.Diagnostics.Debug" /> classes share their 
-        public static properties.
-      </para>
-    </remarks>
     <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the properties and methods in the <see cref="T:System.Diagnostics.Trace" /> class to instrument release builds. Instrumentation allows you to monitor the health of your application running in real-life settings. Tracing helps you isolate problems and fix them without disturbing a running system.</para>
+      <para>This class provides methods to display an <see cref="M:System.Diagnostics.Trace.Assert(System.Boolean)" /> dialog box, and to emit an assertion that will always <see cref="M:System.Diagnostics.Trace.Fail(System.String)" />. This class provides write methods in the following variations: <see cref="M:System.Diagnostics.Trace.Write(System.String)" />, <see cref="M:System.Diagnostics.Trace.WriteLine(System.String)" />, <see cref="M:System.Diagnostics.Trace.WriteIf(System.Boolean,System.String)" />, and <see cref="M:System.Diagnostics.Trace.WriteLineIf(System.Boolean,System.String)" />.</para>
+      <para>The <see cref="T:System.Diagnostics.BooleanSwitch" /> and <see cref="T:System.Diagnostics.TraceSwitch" /> classes provide means to dynamically control the tracing output. You can modify the values of these switches without recompiling your application. For information on using the configuration file to set a switch, see the <see cref="T:System.Diagnostics.Switch" /> class and the <format type="text/html"><a href="5a0e41bf-f99c-4692-8799-f89617f5bcf9">How to: Configure Trace Switches</a></format> topic.</para>
+      <para>You can customize the tracing output's target by adding <see cref="T:System.Diagnostics.TraceListener" /> instances to or removing instances from the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. The <see cref="P:System.Diagnostics.Trace.Listeners" /> collection is shared by both the <see cref="T:System.Diagnostics.Debug" /> and the <see cref="T:System.Diagnostics.Trace" /> classes; adding a trace listener to either class adds the listener to both. By default, trace output is emitted using the <see cref="T:System.Diagnostics.DefaultTraceListener" /> class.</para>
+      <block subset="none" type="note">
+        <para>Adding a trace listener to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection can cause an exception to be thrown while tracing, if a resource used by the trace listener is not available. The conditions and the exception thrown depend on the trace listener and cannot be enumerated in this topic. It may be useful to place calls to the <see cref="T:System.Diagnostics.Trace" /> methods in try/catch blocks to detect and handle any exceptions from trace listeners.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>If you add trace listeners to partially trusted code, you will get a <see cref="T:System.Security.SecurityException" /> exception, because adding trace listeners requires <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> permission. To trace partially trusted code that is running in a sandbox in Visual Studio, do not add trace listeners. Instead, view the <see cref="T:System.Diagnostics.Trace" /> and <see cref="T:System.Diagnostics.Debug" /> messages in the <ui>Output</ui> window.</para>
+      </block>
+      <para>The <see cref="T:System.Diagnostics.Trace" /> class provides properties to get or set the level of <see cref="M:System.Diagnostics.Trace.Indent" />, the <see cref="P:System.Diagnostics.Trace.IndentSize" />, and whether to <see cref="P:System.Diagnostics.Trace.AutoFlush" /> after each write.</para>
+      <para>To set the <see cref="P:System.Diagnostics.Trace.AutoFlush" /> and <see cref="P:System.Diagnostics.Trace.IndentSize" /> for <see cref="T:System.Diagnostics.Trace" />, you can edit the configuration file that corresponds to the name of your application. The configuration file should be formatted like the following example: </para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="3" /&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+      <para>The <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute is applied to the methods of <see cref="T:System.Diagnostics.Trace" />. Compilers that support <see cref="T:System.Diagnostics.ConditionalAttribute" /> ignore calls to these methods unless "TRACE" is defined as a conditional compilation symbol. Refer to a compiler's documentation to determine whether <see cref="T:System.Diagnostics.ConditionalAttribute" /> is supported and the syntax for defining a conditional compilation symbol.</para>
+      <block subset="none" type="note">
+        <para>In Visual Studio projects, by default, the "DEBUG" conditional compilation symbol is defined for debug builds, and the "TRACE" symbol is defined for both debug and release builds. For information about how to disable this behavior, see the Visual Studio documentation.</para>
+      </block>
+      <para>To define the "TRACE" conditional compilation symbol in C#, add the /d:TRACE option to the compiler command line when you compile your code using a command line, or add #define TRACE to the top of your file. In Visual Basic, add the /d:TRACE=True option to the compiler command line or add #Const TRACE=True to the file. </para>
+      <para>
+        <see cref="T:System.Diagnostics.ConditionalAttribute" /> is not supported by the C++ compiler. To provide equivalent functionality, you must enclose calls to the methods of <see cref="T:System.Diagnostics.Trace" /> in an #if defined(TRACE) ... #endif block, and add the /DTRACE option to the compiler command line or add #define TRACE to the file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of methods and properties that help you trace the execution of your code. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Assert">
       <MemberSignature Language="C#" Value="public static void Assert (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -59,32 +74,47 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">A boolean condition to check</param>
-        <summary>
-          Displays a message if <paramref name="condition" /> is 
-          <see langword="false" />.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="false" />, then
-          <see cref="M:System.Diagnostics.TraceListener.Fail(System.String)" /> 
-          is invoked on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="Overload:System.Diagnostics.Trace.Assert" /> method if you want to do assertions in release builds. The <see cref="Overload:System.Diagnostics.Debug.Assert" /> method works only in debug builds. For more information, see <format type="text/html"><a href="70ab2522-6486-4076-a1a9-e0f11cd0f3a1">Assertions in Managed Code</a></format>.</para>
+          <para>Typically, the <see cref="M:System.Diagnostics.Trace.Assert(System.Boolean)" /> method is used to identify logic errors during program development. <see cref="M:System.Diagnostics.Trace.Assert(System.Boolean)" /> evaluates the condition. If the result is false, it sends a failure message to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. You can customize this behavior by adding a <see cref="T:System.Diagnostics.TraceListener" /> to, or removing one from, the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </para>
+          <para>When the application runs in user-interface mode, it displays a message box that shows the call stack with file and line numbers. The message box contains three buttons: <ui>Abort</ui>, <ui>Retry</ui>, and <ui>Ignore</ui>. Clicking the <ui>Abort</ui> button terminates the application. Clicking <ui>Retry</ui> sends you to the code in the debugger if your application is running in a debugger, or offers to open a debugger if it is not. Clicking <ui>Ignore</ui> continues with the next instruction in the code. </para>
+          <block subset="none" type="note">
+            <para>The display of the message box depends on the presence of the <see cref="T:System.Diagnostics.DefaultTraceListener" />. If the <see cref="T:System.Diagnostics.DefaultTraceListener" /> is not in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection, the message box is not displayed. The <see cref="T:System.Diagnostics.DefaultTraceListener" /> can be removed by the <format type="text/html"><a href="b44732a8-271f-4a06-ba9e-fe3298d6f192">&lt;clear&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, the <format type="text/html"><a href="9a5cd1b5-be1a-485f-8f0c-2890ad3ef3e0">&lt;remove&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, or by calling the <see cref="M:System.Diagnostics.TraceListenerCollection.Clear" /> method on the <see cref="P:System.Diagnostics.Trace.Listeners" /> property (System.Diagnostics.Trace.Listeners.Clear()).</para>
+          </block>
+          <para>You can change the behavior of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> in the configuration file that corresponds to the name of your application. In this file, you can enable and disable the assert message box or set the <see cref="P:System.Diagnostics.DefaultTraceListener.LogFileName" /> property. The configuration file should be formatted as follows:</para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;switches&gt;
+      &lt;add name="mySwitch" value="4"/&gt;
+    &lt;/switches&gt;
+    &lt;trace autoflush="false" indentsize="4"/&gt;
+    &lt;assert assertuienabled="true" logfilename=".\TraceLog.txt"/&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for a condition; if the condition is false, displays a message box that shows the call stack.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to evaluate. If the condition is true, a failure message is not sent and the message box is not displayed.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition, string message) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Assert">
-      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -93,33 +123,49 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">A boolean condition to check</param>
-        <param name="message">A message to display</param>
-        <summary>
-          Displays <paramref name="message" /> if <paramref name="condition" /> 
-          is <see langword="false" />.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="false" />, then
-          <see cref="M:System.Diagnostics.TraceListener.Fail(System.String)" /> 
-          is invoked on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="Overload:System.Diagnostics.Trace.Assert" /> method if you want to do assertions in release builds. The <see cref="Overload:System.Diagnostics.Debug.Assert" /> method works only in debug builds. For more information, see <format type="text/html"><a href="70ab2522-6486-4076-a1a9-e0f11cd0f3a1">Assertions in Managed Code</a></format>.</para>
+          <para>Typically, the <see cref="M:System.Diagnostics.Trace.Assert(System.Boolean,System.String)" /> method is used to identify logic errors during program development. <see cref="M:System.Diagnostics.Trace.Assert(System.Boolean,System.String)" /> evaluates the condition. If the result is false, it sends the specified diagnostic message to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. You can customize this behavior by adding a <see cref="T:System.Diagnostics.TraceListener" /> to, or removing one from, the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </para>
+          <para>When the application runs in user-interface mode, it displays a message box that shows the call stack with file and line numbers. The message box contains three buttons: <ui>Abort</ui>, <ui>Retry</ui>, and <ui>Ignore</ui>. Clicking the <ui>Abort</ui> button terminates the application. Clicking <ui>Retry</ui> sends you to the code in the debugger if your application is running in a debugger, or offers to open a debugger if it is not. Clicking <ui>Ignore</ui> continues with the next instruction in the code.</para>
+          <block subset="none" type="note">
+            <para>The display of the message box depends on the presence of the <see cref="T:System.Diagnostics.DefaultTraceListener" />. If the <see cref="T:System.Diagnostics.DefaultTraceListener" /> is not in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection, the message box is not displayed. The <see cref="T:System.Diagnostics.DefaultTraceListener" /> can be removed by the <format type="text/html"><a href="b44732a8-271f-4a06-ba9e-fe3298d6f192">&lt;clear&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, the <format type="text/html"><a href="9a5cd1b5-be1a-485f-8f0c-2890ad3ef3e0">&lt;remove&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, or by calling the <see cref="M:System.Diagnostics.TraceListenerCollection.Clear" /> method on the <see cref="P:System.Diagnostics.Trace.Listeners" /> property (System.Diagnostics.Trace.Listeners.Clear()).</para>
+          </block>
+          <para>You can change the behavior of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> in the configuration file that corresponds to the name of your application. In this file, you can enable and disable the assert message box or set the <see cref="P:System.Diagnostics.DefaultTraceListener.LogFileName" /> property. The configuration file should be formatted as follows:</para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;switches&gt;
+      &lt;add name="mySwitch" value="4"/&gt;
+    &lt;/switches&gt;
+    &lt;trace autoflush="false" indentsize="4"/&gt;
+    &lt;assert assertuienabled="true" logfilename=".\TraceLog.txt"/&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for a condition; if the condition is false, outputs a specified message and displays a message box that shows the call stack.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to evaluate. If the condition is true, the specified message is not sent and the message box is not displayed.  </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to send to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message, string detailMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition, string message, string detailMessage) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Assert">
-      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message, string detailMessage);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -129,47 +175,52 @@
         <Parameter Name="detailMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">A boolean condition to check</param>
-        <param name="message">A message to display</param>
-        <param name="detailMessage">A more detailed message to display</param>
-        <summary>
-          Displays <paramref name="message" /> and 
-          <paramref name="detailMessage" /> if <paramref name="condition" /> 
-          is <see langword="false" />.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="false" />, then
-          <see cref="M:System.Diagnostics.TraceListener.Fail(System.String,System.String)" /> 
-          is invoked on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="Overload:System.Diagnostics.Trace.Assert" /> method if you want to do assertions in release builds. The <see cref="Overload:System.Diagnostics.Debug.Assert" /> method works only in debug builds. For more information, see <format type="text/html"><a href="70ab2522-6486-4076-a1a9-e0f11cd0f3a1">Assertions in Managed Code</a></format>.</para>
+          <para>Typically, the <see cref="M:System.Diagnostics.Trace.Assert(System.Boolean,System.String,System.String)" /> method is used to identify logic errors during program development. <see cref="M:System.Diagnostics.Trace.Assert(System.Boolean,System.String,System.String)" /> evaluates the condition. If the result is false, it sends the specified diagnostic message and detailed message to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. You can customize this behavior by adding a <see cref="T:System.Diagnostics.TraceListener" /> to, or removing one from, the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </para>
+          <para>When the application runs in user-interface mode, it displays a message box that shows the call stack with file and line numbers. The message box contains three buttons: <ui>Abort</ui>, <ui>Retry</ui>, and <ui>Ignore</ui>. Clicking the <ui>Abort</ui> button terminates the application. Clicking <ui>Retry</ui> sends you to the code in the debugger if your application is running in a debugger, or offers to open a debugger if it is not. Clicking <ui>Ignore</ui> continues with the next instruction in the code.</para>
+          <block subset="none" type="note">
+            <para>The display of the message box depends on the presence of the <see cref="T:System.Diagnostics.DefaultTraceListener" />. If the <see cref="T:System.Diagnostics.DefaultTraceListener" /> is not in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection, the message box is not displayed. The <see cref="T:System.Diagnostics.DefaultTraceListener" /> can be removed by the <format type="text/html"><a href="b44732a8-271f-4a06-ba9e-fe3298d6f192">&lt;clear&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, the <format type="text/html"><a href="9a5cd1b5-be1a-485f-8f0c-2890ad3ef3e0">&lt;remove&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, or by calling the <see cref="M:System.Diagnostics.TraceListenerCollection.Clear" /> method on the <see cref="P:System.Diagnostics.Trace.Listeners" /> property (System.Diagnostics.Trace.Listeners.Clear()).</para>
+          </block>
+          <para>You can change the behavior of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> in the configuration file that corresponds to the name of your application. In this file, you can enable and disable the assert message box or set the <see cref="P:System.Diagnostics.DefaultTraceListener.LogFileName" /> property. The configuration file should be formatted as follows:</para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;switches&gt;
+      &lt;add name="mySwitch" value="4"/&gt;
+    &lt;/switches&gt;
+    &lt;trace autoflush="false" indentsize="4"/&gt;
+    &lt;assert assertuienabled="true" logfilename=".\TraceLog.txt"/&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for a condition; if the condition is false, outputs two specified messages and displays a message box that shows the call stack.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to evaluate. If the condition is true, the specified messages are not sent and the message box is not displayed.  </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to send to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </param>
+        <param name="detailMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The detailed message to send to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AutoFlush">
+      <MemberSignature Language="C#" Value="public static bool AutoFlush { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool AutoFlush" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="AutoFlush">
-      <MemberSignature Language="C#" Value="public static bool AutoFlush { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>
-          Should 
-          <see cref="M:System.Diagnostics.TraceListener.Flush" /> be called on 
-          the <see cref="P:System.Diagnostics.Trace.Listeners" /> after 
-          writing each message?
-        </summary>
         <value>
           Whether or not the <see cref="T:System.Diagnostics.TraceListener" />
           objects should be 
@@ -177,75 +228,92 @@
           write.
         </value>
         <remarks>
-          <para>
-            If <see langword="true" />, 
-            <see cref="M:System.Diagnostics.TraceListener.Flush" /> will be 
-            invoked on each <see cref="T:System.Diagnostics.TraceListener" />
-            in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection
-            after any modifying operation (such as 
-            <see cref="M:System.Diagnostics.Trace.Fail" />,
-            <see cref="M:System.Diagnostics.Trace.Write" />,
-            <see cref="M:System.Diagnostics.Trace.WriteLine" />, etc.).
-          </para>
-          <para>
-            This value is shared with the 
-            <see cref="T:System.Diagnostics.Debug" /> class.
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default is false.</para>
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call <see cref="M:System.Diagnostics.Trace.Flush" /> or <see cref="M:System.Diagnostics.Trace.Close" />. Setting <see cref="P:System.Diagnostics.Trace.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
+          <para>To set the <see cref="P:System.Diagnostics.Trace.AutoFlush" /> and <see cref="P:System.Diagnostics.Trace.IndentSize" /> for <see cref="T:System.Diagnostics.Trace" />, you can also edit the configuration file that corresponds to the name of your application. The configuration file should be formatted like the following example: </para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="3" /&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether <see cref="M:System.Diagnostics.Trace.Flush" /> should be called on the <see cref="P:System.Diagnostics.Trace.Listeners" /> after every write.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public static void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Close() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          Closes all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
-        <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Close" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when the output is going to a file, such as to the <see cref="T:System.Diagnostics.TextWriterTraceListener" />.</para>
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call <see cref="M:System.Diagnostics.Trace.Flush" /> or <see cref="M:System.Diagnostics.Trace.Close" />. Setting <see cref="P:System.Diagnostics.Trace.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushes the output buffer, and then closes the <see cref="P:System.Diagnostics.Trace.Listeners" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CorrelationManager">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.CorrelationManager CorrelationManager { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Diagnostics.CorrelationManager CorrelationManager" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.CorrelationManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This is an advanced property that most applications should not have occasion to use.</para>
+          </block>
+          <para>The <see cref="T:System.Diagnostics.CorrelationManager" /> class provides methods used to store a logical operation identity in a thread-bound context and automatically tag each trace event generated by the thread with the stored identity.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the correlation manager for the thread for this trace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Fail">
       <MemberSignature Language="C#" Value="public static void Fail (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Fail(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -253,32 +321,36 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A message to display</param>
-        <summary>
-          Send a failure message to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Fail(System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default behavior for the default trace listener is to output the <paramref name="message" /> parameter to a message box when the application runs in user-interface mode, and to the <see cref="T:System.Diagnostics.TraceListener" /> instances in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </para>
+          <block subset="none" type="note">
+            <para>The display of the message box is dependent on the presence of the <see cref="T:System.Diagnostics.DefaultTraceListener" />. If the <see cref="T:System.Diagnostics.DefaultTraceListener" /> is not in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection, the message box is not displayed. The <see cref="T:System.Diagnostics.DefaultTraceListener" /> can be removed by the <format type="text/html"><a href="b44732a8-271f-4a06-ba9e-fe3298d6f192">&lt;clear&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, the <format type="text/html"><a href="9a5cd1b5-be1a-485f-8f0c-2890ad3ef3e0">&lt;remove&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, or by calling the <see cref="M:System.Diagnostics.TraceListenerCollection.Clear" /> method on the <see cref="P:System.Diagnostics.Trace.Listeners" /> property (System.Diagnostics.Trace.Listeners.Clear()).</para>
+          </block>
+          <para>You can customize this behavior by adding a <see cref="T:System.Diagnostics.TraceListener" /> to, or by removing one from, the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits the specified error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to emit. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Fail">
+      <MemberSignature Language="C#" Value="public static void Fail (string message, string detailMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Fail(string message, string detailMessage) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Fail">
-      <MemberSignature Language="C#" Value="public static void Fail (string message, string detailMessage);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -287,212 +359,210 @@
         <Parameter Name="detailMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A message to display</param>
-        <param name="detailMessage">A more detailed message to display</param>
-        <summary>
-          Send a failure message to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Fail(System.String,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default behavior is for the default trace listener to output the <paramref name="message" /> parameter and the <paramref name="detailedMessage" /> parameter to a message box when the application runs in user-interface mode, and to the <see cref="T:System.Diagnostics.TraceListener" /> instances in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. </para>
+          <block subset="none" type="note">
+            <para>The display of the message box is dependent on the presence of the <see cref="T:System.Diagnostics.DefaultTraceListener" />. If the <see cref="T:System.Diagnostics.DefaultTraceListener" /> is not in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection, the message box is not displayed. The <see cref="T:System.Diagnostics.DefaultTraceListener" /> can be removed by the <format type="text/html"><a href="b44732a8-271f-4a06-ba9e-fe3298d6f192">&lt;clear&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, the <format type="text/html"><a href="9a5cd1b5-be1a-485f-8f0c-2890ad3ef3e0">&lt;remove&gt; Element for &lt;listeners&gt; for &lt;trace&gt;</a></format>, or by calling the <see cref="M:System.Diagnostics.TraceListenerCollection.Clear" /> method on the <see cref="P:System.Diagnostics.Trace.Listeners" /> property (System.Diagnostics.Trace.Listeners.Clear()).</para>
+          </block>
+          <para>You can customize this behavior by adding a <see cref="T:System.Diagnostics.TraceListener" /> to, or by removing one from, the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits an error message, and a detailed error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to emit. </param>
+        <param name="detailMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />A detailed message to emit. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Flush">
       <MemberSignature Language="C#" Value="public static void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Flush() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          Flushes the contents of all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
-        <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Flush" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Indent">
-      <MemberSignature Language="C#" Value="public static void Indent ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call <see cref="M:System.Diagnostics.Trace.Flush" /> or <see cref="M:System.Diagnostics.Trace.Close" />. Setting <see cref="P:System.Diagnostics.Trace.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
+        </remarks>
         <summary>
-          Indents subsequent messages until the next
-          <see cref="M:System.Diagnostics.Trace.Unindent" /> call.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushes the output buffer, and causes buffered data to be written to the <see cref="P:System.Diagnostics.Trace.Listeners" />.</para>
         </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Indent">
+      <MemberSignature Language="C#" Value="public static void Indent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Indent() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <remarks>
           <para>
             This is equivalent to incrementing 
             <see cref="P:System.Diagnostics.Trace.IndentLevel" /> by one.
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Increases the current <see cref="P:System.Diagnostics.Trace.IndentLevel" /> by one.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="IndentLevel">
-      <MemberSignature Language="C#" Value="public static int IndentLevel { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int IndentLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 IndentLevel" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>The message indent level.</summary>
         <value>The indent level.</value>
-        <remarks>
-          <para>
-            This effects how many levels of indentation are written 
-            before each message sent to the 
-            <see cref="T:System.Diagnostics.TraceListener" />s.
-          </para>
-          <para>
-            Sets the 
-            <see cref="P:System.Diagnostics.TraceListener.IndentLevel" />
-            property on all 
-            <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-            <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-          </para>
-          <para>
-            This value is shared with the 
-            <see cref="T:System.Diagnostics.Debug" /> class.
-          </para>
-        </remarks>
         <altmember name="T:System.Diagnostics.Trace" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.Trace.IndentLevel" /> property represents the number of times the indent of size <see cref="P:System.Diagnostics.Trace.IndentSize" /> is applied. This property is stored on per-thread/per-request basis.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the indent level.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndentSize">
-      <MemberSignature Language="C#" Value="public static int IndentSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int IndentSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 IndentSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>The message indent size.</summary>
         <value>The indent size.</value>
-        <remarks>
-          <para>
-            The indent size is the number of characters per 
-            <see cref="P:System.Diagnostics.Trace.IndentLevel" />.
-          </para>
-          <para>
-            This effects how many characters of indentation are written 
-            before each message sent to the 
-            <see cref="T:System.Diagnostics.TraceListener" />s.
-          </para>
-          <para>
-            Sets the 
-            <see cref="P:System.Diagnostics.TraceListener.IndentSize" />
-            property on all 
-            <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-            <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-          </para>
-          <para>
-            This value is shared with the 
-            <see cref="T:System.Diagnostics.Debug" /> class.
-          </para>
-        </remarks>
         <altmember name="T:System.Diagnostics.Trace" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.TextWriterTraceListener" /> interprets this number as spaces. An <see cref="T:System.Diagnostics.EventLogTraceListener" /> ignores this value.</para>
+          <para>This property is stored on per-thread/per-request basis.</para>
+          <para>To set the <see cref="P:System.Diagnostics.Trace.AutoFlush" /> and <see cref="P:System.Diagnostics.Trace.IndentSize" /> for <see cref="T:System.Diagnostics.Trace" />, you can also edit the configuration file that corresponds to the name of your application. The configuration file should be formatted like the following example: </para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="3" /&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of spaces in an indent.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Listeners">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.TraceListenerCollection Listeners { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Diagnostics.TraceListenerCollection Listeners" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.TraceListenerCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>
-          Gets the list of <see cref="T:System.Diagnostics.TraceListener" /> objects
-          that messages are forwarded to.
-        </summary>
         <value>
           The list of <see cref="T:System.Diagnostics.TraceListener" /> objects
           to forward messages to.
         </value>
         <remarks>
-          <para>
-            This collection is shared with the 
-            <see cref="T:System.Diagnostics.Debug" /> class.
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The listeners produce formatted output from the trace output. By default, the collection contains an instance of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> class. If you want to remove the default listener, call the <see cref="M:System.Diagnostics.TraceListenerCollection.Remove(System.String)" /> method, and pass it the instance of the <see cref="T:System.Diagnostics.DefaultTraceListener" />. To redirect output to the console window, add an instance of the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Diagnostics.Trace.Listeners" /> collection is shared by both the <see cref="T:System.Diagnostics.Debug" /> and the <see cref="T:System.Diagnostics.Trace" /> classes; adding a trace listener to either class adds the listener to both.</para>
+          </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of listeners that is monitoring the trace output.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Refresh">
       <MemberSignature Language="C#" Value="public static void Refresh ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Refresh() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Trace configuration data is captured when the application is started. If the configuration data is changed after the application is started, call the <see cref="M:System.Diagnostics.Trace.Refresh" /> method to update the trace configuration data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the trace configuration data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TraceError">
       <MemberSignature Language="C#" Value="public static void TraceError (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TraceError(string message) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -506,16 +576,26 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.Trace.TraceError(System.String)" /> calls the TraceEvent method for each trace listener, with the trace event type <see cref="F:System.Diagnostics.TraceEventType.Error" />, passing the informative message as the message string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an error message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection using the specified message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The informative message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceError">
       <MemberSignature Language="C#" Value="public static void TraceError (string message, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TraceError(string message, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -537,16 +617,26 @@
       </Parameters>
       <Docs>
         <param name="message">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.Trace.TraceError(System.String,System.Object[])" /> calls the TraceEvent methods in the trace listeners with the trace event type <see cref="F:System.Diagnostics.TraceEventType.Error" />, passing the message content as an object array with formatting information. See the <see cref="M:System.String.Format(System.String,System.Object[])" /> method for more information about the <paramref name="format" /> and <paramref name="args" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an error message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection using the specified array of objects and formatting information.</para>
+        </summary>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object array containing zero or more objects to format.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceInformation">
       <MemberSignature Language="C#" Value="public static void TraceInformation (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TraceInformation(string message) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -560,16 +650,26 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.Trace.TraceInformation(System.String)" /> calls the TraceEvent method for each trace listener, with the trace event type <see cref="F:System.Diagnostics.TraceEventType.Information" />, passing the informative message as the message string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an informational message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection using the specified message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The informative message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceInformation">
       <MemberSignature Language="C#" Value="public static void TraceInformation (string message, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TraceInformation(string message, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -591,16 +691,26 @@
       </Parameters>
       <Docs>
         <param name="message">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.Trace.TraceInformation(System.String,System.Object[])" /> calls the TraceEvent methods in the trace listeners with the trace event type <see cref="F:System.Diagnostics.TraceEventType.Information" />, passing the message content as an object array with formatting information. See the <see cref="M:System.String.Format(System.String,System.Object[])" /> method for more information about the <paramref name="format" /> and <paramref name="args" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an informational message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection using the specified array of objects and formatting information.</para>
+        </summary>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object array containing zero or more objects to format.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceWarning">
       <MemberSignature Language="C#" Value="public static void TraceWarning (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TraceWarning(string message) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -614,16 +724,26 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.Trace.TraceWarning(System.String)" /> calls the TraceEvent method for each trace listener with the trace event type <see cref="F:System.Diagnostics.TraceEventType.Warning" />, passing the informative message as the message string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a warning message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection using the specified message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The informative message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceWarning">
       <MemberSignature Language="C#" Value="public static void TraceWarning (string message, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TraceWarning(string message, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -645,57 +765,93 @@
       </Parameters>
       <Docs>
         <param name="message">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.Trace.TraceWarning(System.String,System.Object[])" /> calls the TraceEvent methods in the trace listeners with the trace event type <see cref="F:System.Diagnostics.TraceEventType.Warning" />, passing the message content as an object array with formatting information. See the <see cref="M:System.String.Format(System.String,System.Object[])" /> method for more information about the <paramref name="format" /> and <paramref name="args" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a warning message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection using the specified array of objects and formatting information.</para>
+        </summary>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object array containing zero or more objects to format.</param>
       </Docs>
     </Member>
     <Member MemberName="Unindent">
       <MemberSignature Language="C#" Value="public static void Unindent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Unindent() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          Unindents subsequent messages.
-        </summary>
         <remarks>
           <para>
             This is equivalent to decrementing 
             <see cref="P:System.Diagnostics.Trace.IndentLevel" /> by one.
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decreases the current <see cref="P:System.Diagnostics.Trace.IndentLevel" /> by one.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="UseGlobalLock">
-      <MemberSignature Language="C#" Value="public static bool UseGlobalLock { set; get; }" />
+      <MemberSignature Language="C#" Value="public static bool UseGlobalLock { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool UseGlobalLock" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The global lock is always used if the trace listener is not thread safe, regardless of the value of <see cref="P:System.Diagnostics.Trace.UseGlobalLock" />. The <see cref="P:System.Diagnostics.TraceListener.IsThreadSafe" /> property is used to determine if the listener is thread safe. The global lock is not used only if the value of <see cref="P:System.Diagnostics.Trace.UseGlobalLock" /> is false and the value of <see cref="P:System.Diagnostics.TraceListener.IsThreadSafe" /> is true. The default behavior is to use the global lock.</para>
+          <para>To set the <see cref="P:System.Diagnostics.Trace.UseGlobalLock" /> for <see cref="T:System.Diagnostics.Trace" />, you can also edit the configuration file that corresponds to the name of your application. The configuration file should be formatted like the following example: </para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace useGlobalLock="false" /&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the global lock should be used.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public static void Write (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -703,32 +859,37 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">An object to display</param>
-        <summary>
-          Send <paramref name="value" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
+          <block subset="none" type="note">
+            <para> ASP.NET supplies tracing functionality tailored for Web pages. To write trace messages in ASP.NET pages, use the <see cref="P:System.Web.UI.Page.Trace" /> property. </para>
+          </block>
+          <para>By default, in code associated with an ASP.NET Web page, the statement Trace.Write("...") is a call to the <see cref="Overload:System.Web.TraceContext.Write" /> method of the <see cref="P:System.Web.UI.Page.Trace" /> property. To use the <see cref="T:System.Diagnostics.Trace" /> class in Web pages, you must include the namespace, for example, System.Diagnostics.Trace.Write("...").</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public static void Write (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -736,32 +897,37 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A message to display</param>
-        <summary>
-          Send <paramref name="message" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
+          <block subset="none" type="note">
+            <para> ASP.NET supplies tracing functionality tailored for Web pages. To write trace messages in ASP.NET pages, use the <see cref="P:System.Web.UI.Page.Trace" /> property. </para>
+          </block>
+          <para>By default, in code associated with an ASP.NET Web page, the statement Trace.Write("...") is a call to the <see cref="Overload:System.Web.TraceContext.Write" /> method of the <see cref="P:System.Web.UI.Page.Trace" /> property. To use the <see cref="T:System.Diagnostics.Trace" /> class in Web pages, you must include the namespace, for example, System.Diagnostics.Trace.Write("...").</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public static void Write (object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(object value, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -770,34 +936,40 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">An object to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          Send <paramref name="value" /> and its category 
-          <paramref name="category" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
+          <block subset="none" type="note">
+            <para> ASP.NET supplies tracing functionality tailored for Web pages. To write trace messages in ASP.NET pages, use the <see cref="P:System.Web.UI.Page.Trace" /> property. </para>
+          </block>
+          <para>By default, in code associated with an ASP.NET Web page, the statement Trace.Write("...") is a call to the <see cref="Overload:System.Web.TraceContext.Write" /> method of the <see cref="P:System.Web.UI.Page.Trace" /> property. To use the <see cref="T:System.Diagnostics.Trace" /> class in Web pages, you must include the namespace, for example, System.Diagnostics.Trace.Write("...").</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public static void Write (string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string message, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -806,34 +978,40 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A message to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          Send <paramref name="message" /> and its category 
-          <paramref name="message" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.Write(System.String,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
+          <block subset="none" type="note">
+            <para> ASP.NET supplies tracing functionality tailored for Web pages. To write trace messages in ASP.NET pages, use the <see cref="P:System.Web.UI.Page.Trace" /> property. </para>
+          </block>
+          <para>By default, in code associated with an ASP.NET Web page, the statement Trace.Write("...") is a call to the <see cref="Overload:System.Web.TraceContext.Write" /> method of the <see cref="P:System.Web.UI.Page.Trace" /> property. To use the <see cref="T:System.Diagnostics.Trace" /> class in Web pages, you must include the namespace, for example, System.Diagnostics.Trace.Write("...").</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and a message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteIf">
       <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -842,35 +1020,35 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="value" /></param>
-        <param name="value">An object to display</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send a
-          <paramref name="value" /> to all
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteIf">
       <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -879,35 +1057,35 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="message" /></param>
-        <param name="message">A message to display</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send 
-          <paramref name="message" /> to all
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteIf">
       <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, object value, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -917,37 +1095,38 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="value" /></param>
-        <param name="value">An object to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send
-          <paramref name="message" /> and its category 
-          <paramref name="category" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.Object,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteIf">
       <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, string message, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -957,37 +1136,38 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="message" /></param>
-        <param name="message">A message to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send
-          <paramref name="message" /> and its category 
-          <paramref name="category" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.Write(System.String,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public static void WriteLine (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -995,32 +1175,33 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">An object to display</param>
-        <summary>
-          Send <paramref name="value" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public static void WriteLine (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1028,32 +1209,33 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A message to display</param>
-        <summary>
-          Send <paramref name="message" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public static void WriteLine (object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(object value, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1062,34 +1244,36 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">An object to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          Send <paramref name="value" /> and its category 
-          <paramref name="category" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public static void WriteLine (string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string message, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1098,34 +1282,36 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A message to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          Send <paramref name="message" /> and its category 
-          <paramref name="message" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          Invokes the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteLineIf">
       <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1134,35 +1320,35 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="value" /></param>
-        <param name="value">An object to display</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send a
-          <paramref name="value" /> to all
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="WriteLineIf">
       <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1171,35 +1357,35 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="message" /></param>
-        <param name="message">A message to display</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send 
-          <paramref name="message" /> to all
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
       </Docs>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, object value, string category) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="WriteLineIf">
-      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, object value, string category);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1209,37 +1395,38 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="value" /></param>
-        <param name="value">An object to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send
-          <paramref name="message" /> and its category 
-          <paramref name="category" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.Object,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and the value of the object's <see cref="M:System.Object.ToString" /> method to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose name is sent to the <see cref="P:System.Diagnostics.Trace.Listeners" />. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, string message, string category) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="WriteLineIf">
-      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, string message, string category);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1249,33 +1436,23 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">Whether to display <paramref name="message" /></param>
-        <param name="message">A message to display</param>
-        <param name="category">The message category</param>
-        <summary>
-          If <paramref name="condition" /> is <see langword="true" />, send
-          <paramref name="message" /> and its category 
-          <paramref name="category" /> to all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
-        </summary>
         <remarks>
-          If <paramref name="condition" /> is <see langword="true" />, 
-          invoke the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String,System.String)" />
-          method on all 
-          <see cref="T:System.Diagnostics.TraceListener" /> objects in the 
-          <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the output is written to an instance of <see cref="T:System.Diagnostics.DefaultTraceListener" />.</para>
+          <para>The <paramref name="category" /> parameter can be used to group output messages.</para>
+          <para>This method calls the <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> method of the trace listener.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and message to the trace listeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if a condition is true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cause a message to be written; otherwise, false. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
 </Type>

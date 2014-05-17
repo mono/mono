@@ -1,48 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetworkChange" FullName="System.Net.NetworkInformation.NetworkChange">
   <TypeSignature Language="C#" Value="public sealed class NetworkChange" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NetworkChange extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.NetworkInformation.NetworkChange" /> class provides address change notification by raising <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged" /> events. An interface address can change for many reasons, such as a disconnected network cable, moving out of range of a wireless Local Area Network, or hardware failure.</para>
+      <para>To receive notification, you must identify your application's event handlers, which are one or more methods that perform your application-specific tasks each time the event is raised. To have a <see cref="T:System.Net.NetworkInformation.NetworkChange" /> object call your event-handling methods when a <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged" /> event occurs, you must associate the methods with a <see cref="T:System.Net.NetworkInformation.NetworkAddressChangedEventHandler" /> delegate, and add this delegate to the event.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows applications to receive notification when the Internet Protocol (IP) address of a network interface, also called a network card or adapter, changes.</para>
+    </summary>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NetworkChange ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.NetworkChange" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
     <Member MemberName="NetworkAddressChanged">
       <MemberSignature Language="C#" Value="public static event System.Net.NetworkInformation.NetworkAddressChangedEventHandler NetworkAddressChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Net.NetworkInformation.NetworkAddressChangedEventHandler NetworkAddressChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.NetworkAddressChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.NetworkInformation.NetworkChange" /> class raises <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged" /> events when the address of a network interface, also called a network card or adapter, changes.</para>
+          <para>To have a <see cref="T:System.Net.NetworkInformation.NetworkChange" /> object call an event-handling method when a <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged" /> event occurs, you must associate the method with a <see cref="T:System.Net.NetworkInformation.NetworkAddressChangedEventHandler" /> delegate, and add this delegate to this event. </para>
+          <para>The <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged" /> event is supported on Windows 2000 and later.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the IP address of a network interface changes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NetworkAvailabilityChanged">
       <MemberSignature Language="C#" Value="public static event System.Net.NetworkInformation.NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Net.NetworkInformation.NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.NetworkAvailabilityChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.NetworkInformation.NetworkChange" /> class raises <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged" /> events when the availability of the network changes. The network is available when at least one network interface is marked "up" and is not a tunnel or loopback interface.</para>
+          <para>To have a <see cref="T:System.Net.NetworkInformation.NetworkChange" /> object call an event-handling method when a <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged" /> event occurs, you must associate the method with a <see cref="T:System.Net.NetworkInformation.NetworkAvailabilityChangedEventHandler" /> delegate, and add this delegate to this event. </para>
+          <para>The <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged" /> event is supported on Windows 2000 and later.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the availability of the network changes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

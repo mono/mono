@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MultipartFormDataContent" FullName="System.Net.Http.MultipartFormDataContent">
+  <TypeSignature Language="C#" Value="public class MultipartFormDataContent : System.Net.Http.MultipartContent" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MultipartFormDataContent extends System.Net.Http.MultipartContent" />
+  <AssemblyInfo>
+    <AssemblyName>System.Net.Http</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Net.Http.MultipartContent</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type is derived from <see cref="T:System.Net.Http.MultipartContent" /> type. All <see cref="T:System.Net.Http.MultipartFormDataContent" /> does is provide methods to add required Content-Disposition headers to content object added to the collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a container for content encoded using multipart/form-data MIME type.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MultipartFormDataContent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Net.Http.MultipartFormDataContent" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MultipartFormDataContent (string boundary);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string boundary) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="boundary" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Net.Http.MultipartFormDataContent" /> class.</para>
+        </summary>
+        <param name="boundary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The boundary string for the multipart form data content.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public override void Add (System.Net.Http.HttpContent content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Add(class System.Net.Http.HttpContent content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Net.Http.HttpContent" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Add HTTP content to a collection of <see cref="T:System.Net.Http.HttpContent" /> objects that get serialized to multipart/form-data MIME type.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP content to add to the collection.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (System.Net.Http.HttpContent content, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Net.Http.HttpContent content, string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Net.Http.HttpContent" />
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Add HTTP content to a collection of <see cref="T:System.Net.Http.HttpContent" /> objects that get serialized to multipart/form-data MIME type.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP content to add to the collection.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name for the HTTP content to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (System.Net.Http.HttpContent content, string name, string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Net.Http.HttpContent content, string name, string fileName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Net.Http.HttpContent" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="fileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Add HTTP content to a collection of <see cref="T:System.Net.Http.HttpContent" /> objects that get serialized to multipart/form-data MIME type.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP content to add to the collection.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name for the HTTP content to add.</param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name for the HTTP content to add to the collection.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

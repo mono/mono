@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaProviderAttribute" FullName="System.Xml.Serialization.XmlSchemaProviderAttribute">
   <TypeSignature Language="C#" Value="public sealed class XmlSchemaProviderAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlSchemaProviderAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -10,61 +13,102 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Interface)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Interface | System.AttributeTargets.All)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The main purpose of the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute" /> is to enable the <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> class to return a schema when queried by the Web Services Description Language tool (WSDL.exe), or when using the <ui>Add Web Reference</ui> feature of vsprvs. You can control the actual schema for the type in the static method.</para>
+      <block subset="none" type="note">
+        <para>The target class of the attribute must implement the <see cref="T:System.Xml.Serialization.IXmlSerializable" /> interface.</para>
+      </block>
+      <para>The <see cref="P:System.Xml.Serialization.XmlSchemaProviderAttribute.MethodName" /> property returns the name of a static method through reflection. The method, which must be implemented, must take a single parameter, an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object, which the method populates with an <see cref="T:System.Xml.Schema.XmlSchema" /> object. The method must also return an <see cref="T:System.Xml.XmlQualifiedName" /> object that identifies the data type.</para>
+      <format type="text/html">
+        <h2>Returning Anonymous Types</h2>
+      </format>
+      <para>An anonymous complex type cannot be created using a method that returns <see cref="T:System.Xml.XmlQualifiedName" />. Because an anonymous type has no name, and you cannot add an anonymous type to a schema, the anonymous type must be returned as an <see cref="T:System.Xml.Schema.XmlSchemaType" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When applied to a type, stores the name of a static method of the type that returns an XML schema and a <see cref="T:System.Xml.XmlQualifiedName" /> (or <see cref="T:System.Xml.Schema.XmlSchemaType" /> for anonymous types) that controls the serialization of the type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaProviderAttribute (string methodName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string methodName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="methodName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="methodName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute" /> class, taking the name of the static method that supplies the type's XML schema.</para>
+        </summary>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the static method that must be implemented.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsAny">
-      <MemberSignature Language="C#" Value="public bool IsAny { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IsAny { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAny" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The target class of the attribute can be any class. This can be achieved in the following ways:</para>
+          <list type="bullet">
+            <item>
+              <para>The method named by the attribute can return null.</para>
+            </item>
+            <item>
+              <para>Set the value of this property to true to prevent the method from being called.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether the target class is a wildcard, or that the schema for the class has contains only an xs:any element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodName">
       <MemberSignature Language="C#" Value="public string MethodName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MethodName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the static method that supplies the type's XML schema and the name of its XML Schema data type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

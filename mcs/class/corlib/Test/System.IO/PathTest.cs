@@ -199,6 +199,10 @@ namespace MonoTests.System.IO
 			testPath = Path.Combine (testPath, "two" + DSC);
 			expected = "one" + DSC + "two" + DSC;
 			Assert.AreEqual (expected, testPath, "Combine #07");
+
+#if NET_4_0
+			Assert.AreEqual ("a", Path.Combine (new [] { "a", "" }), "Combine #08");
+#endif
 		}
 
 		[Test]
@@ -487,13 +491,18 @@ namespace MonoTests.System.IO
 
 			testFullPath = Path.GetFullPath ("a//./.././foo.txt");
 			Assert.AreEqual (expected, testFullPath, "GetFullPath #02");
+
+			if (!Windows){
+				Assert.AreEqual ("/bin/bash", Path.GetFullPath ("/../bin/bash"));
+			}
+				
 		}
 
 		[Test]
 		public void GetFullPath_Unix ()
 		{
 			if (Windows)
-				return;
+				Assert.Ignore ("Running on Windows.");
 
 			string root =  "/";
 			string [,] test = new string [,] {
@@ -542,7 +551,7 @@ namespace MonoTests.System.IO
 		public void GetFullPath_Windows ()
 		{
 			if (!Windows)
-				return;
+				Assert.Ignore ("Not running on Windows.");
 
 			string root =  "C:\\";
 			string [,] test = new string [,] {
@@ -1024,7 +1033,7 @@ namespace MonoTests.System.IO
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128) || (platform == 6))
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			string curdir = Directory.GetCurrentDirectory ();
 			try {
@@ -1049,7 +1058,7 @@ namespace MonoTests.System.IO
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128) || (platform == 6))
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			string curdir = Directory.GetCurrentDirectory ();
 			try {
@@ -1078,7 +1087,7 @@ namespace MonoTests.System.IO
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128) || (platform == 6))
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			Assert.AreEqual (@"C:\Windows\dir", Path.GetFullPath (@"C:\Windows\System32\..\dir"), "1");
 			Assert.AreEqual (@"C:\dir", Path.GetFullPath (@"C:\Windows\System32\..\..\dir"), "2");

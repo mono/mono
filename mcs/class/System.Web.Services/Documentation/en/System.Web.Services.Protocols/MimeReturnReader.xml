@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MimeReturnReader" FullName="System.Web.Services.Protocols.MimeReturnReader">
   <TypeSignature Language="C#" Value="public abstract class MimeReturnReader : System.Web.Services.Protocols.MimeFormatter" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Services.Protocols.MimeReturnReader" /> and other classes in the <see cref="N:System.Web.Services.Protocols" /> namespace support the .NET Framework's implementations of Web services via the HTTP-GET and HTTP-POST operations. Web service writers and readers serialize and deserialize, respectively, between the parameters or return objects of Web methods and the HTTP request or response streams. Web service writers and readers use HTTP for transport but don't exchange messages using the SOAP standard.</para>
+      <para>The <see cref="T:System.Web.Services.Protocols.MimeReturnReader" /> class establishes a common <see cref="M:System.Web.Services.Protocols.MimeReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> interface for all client-side reading of HTTP response streams into Web method return values.</para>
+      <para>You typically will not need touse <see cref="T:System.Web.Services.Protocols.MimeReturnReader" /> or its descendant classes directly. Instead, when the Wsdl.exe tool generates client proxy code according to the HTTP-GET or HTTP-POST implementations, it applies the <see cref="T:System.Web.Services.Protocols.HttpMethodAttribute" /> to each Web method and sets the attribute's <see cref="P:System.Web.Services.Protocols.HttpMethodAttribute.ReturnFormatter" /> property to the <see cref="T:System.Web.Services.Protocols.XmlReturnReader" /> class, which is derived from <see cref="T:System.Web.Services.Protocols.MimeReturnReader" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common base implementation for readers of incoming response return values for Web service clients implemented using HTTP but without SOAP.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +33,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.MimeReturnReader" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,11 +55,19 @@
         <Parameter Name="responseStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="response">a <see cref="T:System.Net.WebResponse" /></param>
-        <param name="responseStream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, deserializes an HTTP response into a Web method return value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTTP response deserialized into a Web method return value.</para>
+        </returns>
+        <param name="response">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.WebResponse" /> object containing the output message for an operation.</param>
+        <param name="responseStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> whose content is the body of the HTTP response represented by the <see cref="T:System.Net.WebResponse" /> parameter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

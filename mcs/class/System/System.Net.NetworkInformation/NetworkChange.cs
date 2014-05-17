@@ -2,8 +2,8 @@
 // System.Net.NetworkInformation.NetworkChange
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
-//  Aaron Bockover (abock@xamarin.com)
+//   Gonzalo Paniagua Javier (LinuxNetworkChange) (gonzalo@novell.com)
+//   Aaron Bockover (MacNetworkChange) (abock@xamarin.com)
 //
 // Copyright (c) 2006,2011 Novell, Inc. (http://www.novell.com)
 // Copyright (c) 2013 Xamarin, Inc. (http://www.xamarin.com)
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,136 +28,297 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+#if NETWORK_CHANGE_STANDALONE
+namespace NetworkInformation {
+
+	public class NetworkAvailabilityEventArgs : EventArgs
+	{
+		public bool IsAvailable { get; set; }
+
+		public NetworkAvailabilityEventArgs (bool available)
+		{
+			IsAvailable = available;
+		}
+	}
+
+	public delegate void NetworkAddressChangedEventHandler (object sender, EventArgs args);
+	public delegate void NetworkAvailabilityChangedEventHandler (object sender, NetworkAvailabilityEventArgs args);
+#else
 namespace System.Net.NetworkInformation {
-	internal interface INetworkChange {
+#endif
+
+	internal interface INetworkChange : IDisposable {
 		event NetworkAddressChangedEventHandler NetworkAddressChanged;
 		event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged;
+		bool HasRegisteredEvents { get; }
 	}
 
 	public sealed class NetworkChange {
 		static INetworkChange networkChange;
 
-		static NetworkChange ()
-		{
-			if (MacNetworkChange.IsEnabled) {
-				networkChange = new MacNetworkChange ();
-			} else {
-				networkChange = new LinuxNetworkChange ();
+		public static event NetworkAddressChangedEventHandler NetworkAddressChanged {
+			add {
+				lock (typeof (INetworkChange)) {
+					MaybeCreate ();
+					if (networkChange != null)
+						networkChange.NetworkAddressChanged += value;
+				}
+			}
+
+			remove {
+				lock (typeof (INetworkChange)) {
+					if (networkChange != null) {
+						networkChange.NetworkAddressChanged -= value;
+						MaybeDispose ();
+					}
+				}
 			}
 		}
 
-		public static event NetworkAddressChangedEventHandler NetworkAddressChanged {
-			add { networkChange.NetworkAddressChanged += value; }
-			remove { networkChange.NetworkAddressChanged -= value; }
+		public static event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
+			add {
+				lock (typeof (INetworkChange)) {
+					MaybeCreate ();
+					if (networkChange != null)
+						networkChange.NetworkAvailabilityChanged += value;
+				}
+			}
+
+			remove {
+				lock (typeof (INetworkChange)) {
+					if (networkChange != null) {
+						networkChange.NetworkAvailabilityChanged -= value;
+						MaybeDispose ();
+					}
+				}
+			}
 		}
 
-		public static event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
-			add { networkChange.NetworkAvailabilityChanged += value; }
-			remove { networkChange.NetworkAvailabilityChanged -= value; }
+		static void MaybeCreate ()
+		{
+			if (networkChange != null)
+				return;
+
+			try {
+				networkChange = new MacNetworkChange ();
+			} catch {
+#if !NETWORK_CHANGE_STANDALONE && !MONOTOUCH
+				networkChange = new LinuxNetworkChange ();
+#endif
+			}
+		}
+
+		static void MaybeDispose ()
+		{
+			if (networkChange != null && networkChange.HasRegisteredEvents) {
+				networkChange.Dispose ();
+				networkChange = null;
+			}
 		}
 	}
 
-	internal sealed class MacNetworkChange : INetworkChange {
-		public static bool IsEnabled {
-			get { return mono_sc_reachability_enabled () != 0; }
+	internal sealed class MacNetworkChange : INetworkChange
+	{
+		const string DL_LIB = "/usr/lib/libSystem.dylib";
+		const string CORE_SERVICES_LIB = "/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration";
+		const string CORE_FOUNDATION_LIB = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
+
+		[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
+		delegate void SCNetworkReachabilityCallback (IntPtr target, NetworkReachabilityFlags flags, IntPtr info);
+
+		[DllImport (DL_LIB)]
+		static extern IntPtr dlopen (string path, int mode);
+
+		[DllImport (DL_LIB)]
+		static extern IntPtr dlsym (IntPtr handle, string symbol);
+
+		[DllImport (DL_LIB)]
+		static extern int dlclose (IntPtr handle);
+
+		[DllImport (CORE_FOUNDATION_LIB)]
+		static extern void CFRelease (IntPtr handle);
+
+		[DllImport (CORE_FOUNDATION_LIB)]
+		static extern IntPtr CFRunLoopGetMain ();
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern IntPtr SCNetworkReachabilityCreateWithAddress (IntPtr allocator, ref sockaddr_in sockaddr);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilityGetFlags (IntPtr reachability, out NetworkReachabilityFlags flags);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilitySetCallback (IntPtr reachability, SCNetworkReachabilityCallback callback, ref SCNetworkReachabilityContext context);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilityScheduleWithRunLoop (IntPtr reachability, IntPtr runLoop, IntPtr runLoopMode);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilityUnscheduleFromRunLoop (IntPtr reachability, IntPtr runLoop, IntPtr runLoopMode);
+
+		[StructLayout (LayoutKind.Explicit, Size = 28)]
+		struct sockaddr_in {
+			[FieldOffset (0)] public byte sin_len;
+			[FieldOffset (1)] public byte sin_family;
+
+			public static sockaddr_in Create ()
+			{
+				return new sockaddr_in {
+					sin_len = 28,
+					sin_family = 2 // AF_INET
+				};
+			}
 		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		struct SCNetworkReachabilityContext {
+			public IntPtr version;
+			public IntPtr info;
+			public IntPtr retain;
+			public IntPtr release;
+			public IntPtr copyDescription;
+		}
+
+		[Flags]
+		enum NetworkReachabilityFlags {
+			None = 0,
+			TransientConnection = 1 << 0,
+			Reachable = 1 << 1,
+			ConnectionRequired = 1 << 2,
+			ConnectionOnTraffic = 1 << 3,
+			InterventionRequired = 1 << 4,
+			ConnectionOnDemand = 1 << 5,
+			IsLocalAddress = 1 << 16,
+			IsDirect = 1 << 17,
+			IsWWAN = 1 << 18,
+			ConnectionAutomatic = ConnectionOnTraffic
+		}
+
+		IntPtr handle;
+		IntPtr runLoopMode;
+		SCNetworkReachabilityCallback callback;
+		bool scheduledWithRunLoop;
+		NetworkReachabilityFlags flags;
 
 		event NetworkAddressChangedEventHandler networkAddressChanged;
 		event NetworkAvailabilityChangedEventHandler networkAvailabilityChanged;
 
 		public event NetworkAddressChangedEventHandler NetworkAddressChanged {
 			add {
-				if (value != null) {
-					MaybeInitialize ();
-					networkAddressChanged += value;
-					value (null, EventArgs.Empty);
-				}
+				value (null, EventArgs.Empty);
+				networkAddressChanged += value;
 			}
 
-			remove {
-				networkAddressChanged -= value;
-				MaybeDispose ();
-			}
+			remove { networkAddressChanged -= value; }
 		}
 
 		public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
 			add {
-				if (value != null) {
-					MaybeInitialize ();
-					networkAvailabilityChanged += value;
-					var available = handle != IntPtr.Zero && mono_sc_reachability_is_available (handle) != 0;
-					value (null, new NetworkAvailabilityEventArgs (available));
-				}
+				value (null, new NetworkAvailabilityEventArgs (IsAvailable));
+				networkAvailabilityChanged += value;
 			}
 
-			remove {
-				networkAvailabilityChanged -= value;
-				MaybeDispose ();
+			remove { networkAvailabilityChanged -= value; }
+		}
+
+		bool IsAvailable {
+			get {
+				return (flags & NetworkReachabilityFlags.Reachable) != 0 &&
+					(flags & NetworkReachabilityFlags.ConnectionRequired) == 0;
 			}
 		}
 
-		IntPtr handle;
-		MonoSCReachabilityCallback callback;
+		public bool HasRegisteredEvents {
+			get { return networkAddressChanged != null || networkAvailabilityChanged != null; }
+		}
 
-		void Callback (int available)
+		public MacNetworkChange ()
 		{
-			var addressChanged = networkAddressChanged;
-			if (addressChanged != null) {
-				addressChanged (null, EventArgs.Empty);
-			}
+			var sockaddr = sockaddr_in.Create ();
+			handle = SCNetworkReachabilityCreateWithAddress (IntPtr.Zero, ref sockaddr);
+			if (handle == IntPtr.Zero)
+				throw new Exception ("SCNetworkReachabilityCreateWithAddress returned NULL");
 
-			var availabilityChanged = networkAvailabilityChanged;
-			if (availabilityChanged != null) {
-				availabilityChanged (null, new NetworkAvailabilityEventArgs (available != 0));
-			}
+			callback = new SCNetworkReachabilityCallback (HandleCallback);
+			var info = new SCNetworkReachabilityContext {
+				info = GCHandle.ToIntPtr (GCHandle.Alloc (this))
+			};
+
+			SCNetworkReachabilitySetCallback (handle, callback, ref info);
+
+			scheduledWithRunLoop =
+			LoadRunLoopMode () &&
+				SCNetworkReachabilityScheduleWithRunLoop (handle, CFRunLoopGetMain (), runLoopMode);
+
+			SCNetworkReachabilityGetFlags (handle, out flags);
 		}
 
-		void MaybeInitialize ()
+		bool LoadRunLoopMode ()
+		{
+			var cfLibHandle = dlopen (CORE_FOUNDATION_LIB, 0);
+			if (cfLibHandle == IntPtr.Zero)
+				return false;
+
+			try {
+				runLoopMode = dlsym (cfLibHandle, "kCFRunLoopDefaultMode");
+				if (runLoopMode != IntPtr.Zero) {
+					runLoopMode = Marshal.ReadIntPtr (runLoopMode);
+					return runLoopMode != IntPtr.Zero;
+				}
+			} finally {
+				dlclose (cfLibHandle);
+			}
+
+			return false;
+		}
+
+		public void Dispose ()
 		{
 			lock (this) {
-				if (handle == IntPtr.Zero) {
-					callback = new MonoSCReachabilityCallback (Callback);
-					handle = mono_sc_reachability_new (callback);
-				}
+				if (handle == IntPtr.Zero)
+					return;
+
+				if (scheduledWithRunLoop)
+					SCNetworkReachabilityUnscheduleFromRunLoop (handle, CFRunLoopGetMain (), runLoopMode);
+
+				CFRelease (handle);
+				handle = IntPtr.Zero;
+				callback = null;
+				flags = NetworkReachabilityFlags.None;
+				scheduledWithRunLoop = false;
 			}
 		}
 
-		void MaybeDispose ()
-		{
-			lock (this) {
-				var addressChanged = networkAddressChanged;
-				var availabilityChanged = networkAvailabilityChanged;
-				if (handle != IntPtr.Zero && addressChanged == null && availabilityChanged == null) {
-					mono_sc_reachability_free (handle);
-					handle = IntPtr.Zero;
-				}
-			}
-		}
-
-#if MONOTOUCH || MONODROID
-		const string LIBNAME = "__Internal";
-#else
-		const string LIBNAME = "MonoPosixHelper";
+#if MONOTOUCH
+		[MonoTouch.MonoPInvokeCallback (typeof (SCNetworkReachabilityCallback))]
 #endif
+		static void HandleCallback (IntPtr reachability, NetworkReachabilityFlags flags, IntPtr info)
+		{
+			if (info == IntPtr.Zero)
+				return;
 
-		delegate void MonoSCReachabilityCallback (int available);
+			var instance = GCHandle.FromIntPtr (info).Target as MacNetworkChange;
+			if (instance == null || instance.flags == flags)
+				return;
 
-		[DllImport (LIBNAME)]
-		static extern int mono_sc_reachability_enabled ();
+			instance.flags = flags;
 
-		[DllImport (LIBNAME)]
-		static extern IntPtr mono_sc_reachability_new (MonoSCReachabilityCallback callback);
+			var addressChanged = instance.networkAddressChanged;
+			if (addressChanged != null)
+				addressChanged (null, EventArgs.Empty);
 
-		[DllImport (LIBNAME)]
-		static extern void mono_sc_reachability_free (IntPtr handle);
-
-		[DllImport (LIBNAME)]
-		static extern int mono_sc_reachability_is_available (IntPtr handle);
+			var availabilityChanged = instance.networkAvailabilityChanged;
+			if (availabilityChanged != null)
+				availabilityChanged (null, new NetworkAvailabilityEventArgs (instance.IsAvailable));
+		}
 	}
+
+#if !NETWORK_CHANGE_STANDALONE && !MONOTOUCH
 
 	internal sealed class LinuxNetworkChange : INetworkChange {
 		[Flags]
@@ -183,6 +344,14 @@ namespace System.Net.NetworkInformation {
 		public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
 			add { Register (value); }
 			remove { Unregister (value); }
+		}
+
+		public bool HasRegisteredEvents {
+			get { return AddressChanged != null || AvailabilityChanged != null; }
+		}
+
+		public void Dispose ()
+		{
 		}
 
 		//internal Socket (AddressFamily family, SocketType type, ProtocolType proto, IntPtr sock)
@@ -321,5 +490,7 @@ namespace System.Net.NetworkInformation {
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr CloseNLSocket (IntPtr sock);
 	}
-}
 
+#endif
+
+}

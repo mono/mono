@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TcpConnectionPoolSettings" FullName="System.ServiceModel.Channels.TcpConnectionPoolSettings">
+  <TypeSignature Language="C#" Value="public sealed class TcpConnectionPoolSettings" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TcpConnectionPoolSettings extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents properties that control the behavior of the TCP connection pool.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GroupName">
+      <MemberSignature Language="C#" Value="public string GroupName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string GroupName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value can be changed to isolate the connections for a particular client into separate groups.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the group name of the connection pool group on the client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IdleTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan IdleTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan IdleTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum time the connection can be idle in the connection pool before being disconnected.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LeaseTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan LeaseTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan LeaseTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property bounds the overall lifetime of a socket. Once a socket has been around longer than <see cref="P:System.ServiceModel.Channels.TcpConnectionPoolSettings.LeaseTimeout" />, it is closed as soon as it is returned to the connection pool. The connection cache used by the TCP transport creates new connections as required for each endpoint up to the cache limit that is set by <see cref="P:System.ServiceModel.Channels.TcpConnectionPoolSettings.MaxOutboundConnectionsPerEndpoint" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time span after which a connection in the connection pool is closed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxOutboundConnectionsPerEndpoint">
+      <MemberSignature Language="C#" Value="public int MaxOutboundConnectionsPerEndpoint { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxOutboundConnectionsPerEndpoint" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This limits the number of connections that are cached for each unique remote endpoint. If this value is exceeded by having more active client connections, then the service may appear unresponsive to the client and this value should be adjusted to exceed the maximum number of expected connections that are cached for each unique remote endpoint.</para>
+          <para>This setting can also be set on the service side, in which case the value is used to set the <see cref="P:System.ServiceModel.Channels.MaxPooledConnections" /> on the <see cref="T:System.ServiceModel.Channels.TcpChannelListener" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of outbound connections for each endpoint that is cached in the connection pool.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

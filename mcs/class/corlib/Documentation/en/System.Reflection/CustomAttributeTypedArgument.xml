@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CustomAttributeTypedArgument" FullName="System.Reflection.CustomAttributeTypedArgument">
   <TypeSignature Language="C#" Value="public struct CustomAttributeTypedArgument" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit CustomAttributeTypedArgument extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,30 +17,98 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Code that is being examined in the reflection-only context cannot be executed, so it is not always possible to examine custom attributes by creating instances of them and then examining their properties, using methods like <see cref="Overload:System.Attribute.GetCustomAttributes" />, <see cref="Overload:System.Reflection.MemberInfo.GetCustomAttributes" />, and so on. If the code for the attribute type itself is loaded into the reflection-only context, it cannot be executed. </para>
+      <para>The <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structure is used by the <see cref="T:System.Reflection.CustomAttributeData" /> class to provide access to the type and value of a positional argument specified for a custom attribute instance, without executing the attribute constructor. It also provides access to the type and value of a named argument without executing the code of the corresponding property of the custom attribute type. </para>
+      <para>The types and values of all the positional and named arguments of an attribute instance are provided by <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures. The positional attributes returned by the <see cref="P:System.Reflection.CustomAttributeData.ConstructorArguments" /> property are directly represented by <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures, but the named arguments returned by the <see cref="P:System.Reflection.CustomAttributeData.NamedArguments" /> property are represented by <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures; to get the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure for a named argument, use the <see cref="P:System.Reflection.CustomAttributeNamedArgument.TypedValue" /> property.</para>
+      <para>If an argument is an array of values, the <see cref="P:System.Reflection.CustomAttributeTypedArgument.Value" /> property of the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> that represents the argument returns a generic <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> objects. Each <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> object in the collection represents the corresponding element of the array. </para>
+      <para>To create instances of the <see cref="T:System.Reflection.CustomAttributeData" /> class, use the static <see cref="Overload:System.Reflection.CustomAttributeData.GetCustomAttributes" /> factory method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an argument of a custom attribute in the reflection-only context, or an element of an array argument.</para>
+    </summary>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomAttributeTypedArgument (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object value) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="value" /> parameter cannot be null for this constructor, because the argument type is inferred from the type of <paramref name="value" />. To specify a null value, use the <see cref="M:System.Reflection.CustomAttributeTypedArgument.#ctor(System.Type,System.Object)" /> constructor.</para>
+          <para>This constructor is for use by inheritors of the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> class. It is not intended for use in application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> class with the specified value.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the custom attribute argument.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomAttributeTypedArgument (Type argumentType, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type argumentType, object value) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="argumentType" Type="System.Type" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is for use by inheritors of the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> class. It is not intended for use in application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> class with the specified type and value.</para>
+        </summary>
+        <param name="argumentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the custom attribute argument.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the custom attribute argument.</param>
+      </Docs>
+    </Member>
     <Member MemberName="ArgumentType">
       <MemberSignature Language="C#" Value="public Type ArgumentType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ArgumentType" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Type</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For simple arguments or for elements of array arguments, this property identifies the actual type of the value returned by the <see cref="P:System.Reflection.CustomAttributeTypedArgument.Value" /> property. For array arguments, this property returns the array type, but the <see cref="P:System.Reflection.CustomAttributeTypedArgument.Value" /> property returns a ReadOnlyCollection&lt;CustomAttributeTypedArgument&gt; (ReadOnlyCollection(Of CustomAttributeTypedArgument) in Visual Basic) in which each element of the collection represents the corresponding element of the array argument. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the argument or of the array argument element.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,6 +129,7 @@
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,6 +147,7 @@
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (System.Reflection.CustomAttributeTypedArgument left, System.Reflection.CustomAttributeTypedArgument right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Reflection.CustomAttributeTypedArgument left, valuetype System.Reflection.CustomAttributeTypedArgument right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -89,15 +161,24 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeTypedArgument" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure to the left of the equality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure to the right of the equality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Reflection.CustomAttributeTypedArgument left, System.Reflection.CustomAttributeTypedArgument right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Reflection.CustomAttributeTypedArgument left, valuetype System.Reflection.CustomAttributeTypedArgument right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -111,47 +192,70 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeTypedArgument" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are different.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are different; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure to the left of the inequality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure to the right of the inequality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string consisting of the argument name, the equal sign, and a string representation of the argument value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string consisting of the argument name, the equal sign, and a string representation of the argument value.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public object Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public object Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> represents an array argument, this property returns a ReadOnlyCollection&lt;CustomAttributeTypedArgument&gt; (ReadOnlyCollection(Of CustomAttributeTypedArgument) in Visual Basic). Each element of the collection represents the corresponding element of the array argument.</para>
+          <para>The type of the value can be obtained by using the <see cref="P:System.Reflection.CustomAttributeTypedArgument.ArgumentType" /> property. <see cref="P:System.Reflection.CustomAttributeTypedArgument.ArgumentType" /> gets the actual type of the value returned by the <see cref="P:System.Reflection.CustomAttributeTypedArgument.Value" /> property for simple arguments or for elements of array arguments. It returns the array type for array arguments. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the argument for a simple argument or for an element of an array argument; gets a collection of values for an array argument.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

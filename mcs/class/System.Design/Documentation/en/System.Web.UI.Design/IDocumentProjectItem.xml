@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDocumentProjectItem" FullName="System.Web.UI.Design.IDocumentProjectItem">
   <TypeSignature Language="C#" Value="public interface IDocumentProjectItem" />
   <AssemblyInfo>
@@ -6,8 +7,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for accessing a document item retrieved from a design host at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetContents">
@@ -21,9 +25,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides access to the contents of a document item that is retrieved from the design host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Open">
@@ -37,8 +47,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a document item that is retrieved from the design host.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

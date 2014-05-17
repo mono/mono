@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IXmlBinaryReaderInitializer" FullName="System.Xml.IXmlBinaryReaderInitializer">
+  <TypeSignature Language="C#" Value="public interface IXmlBinaryReaderInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlBinaryReaderInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for reinitializing a binary reader to read a new document.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="SetInput">
+      <MemberSignature Language="C#" Value="public void SetInput (System.IO.Stream stream, System.Xml.IXmlDictionary dictionary, System.Xml.XmlDictionaryReaderQuotas quota, System.Xml.XmlBinaryReaderSession session, System.Xml.OnXmlDictionaryReaderClose onClose);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetInput(class System.IO.Stream stream, class System.Xml.IXmlDictionary dictionary, class System.Xml.XmlDictionaryReaderQuotas quota, class System.Xml.XmlBinaryReaderSession session, class System.Xml.OnXmlDictionaryReaderClose onClose) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="dictionary" Type="System.Xml.IXmlDictionary" />
+        <Parameter Name="quota" Type="System.Xml.XmlDictionaryReaderQuotas" />
+        <Parameter Name="session" Type="System.Xml.XmlBinaryReaderSession" />
+        <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
+      </Parameters>
+      <Docs>
+        <param name="quota">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes the binary reader using the given input stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to call when the reader is closed.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetInput">
+      <MemberSignature Language="C#" Value="public void SetInput (byte[] buffer, int offset, int count, System.Xml.IXmlDictionary dictionary, System.Xml.XmlDictionaryReaderQuotas quota, System.Xml.XmlBinaryReaderSession session, System.Xml.OnXmlDictionaryReaderClose onClose);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetInput(unsigned int8[] buffer, int32 offset, int32 count, class System.Xml.IXmlDictionary dictionary, class System.Xml.XmlDictionaryReaderQuotas quota, class System.Xml.XmlBinaryReaderSession session, class System.Xml.OnXmlDictionaryReaderClose onClose) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="dictionary" Type="System.Xml.IXmlDictionary" />
+        <Parameter Name="quota" Type="System.Xml.XmlDictionaryReaderQuotas" />
+        <Parameter Name="session" Type="System.Xml.XmlBinaryReaderSession" />
+        <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
+      </Parameters>
+      <Docs>
+        <param name="quota">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes the binary reader using the given input buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />Starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />Number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to call when the reader is closed.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

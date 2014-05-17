@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignTimeResourceProviderFactory" FullName="System.Web.UI.Design.DesignTimeResourceProviderFactory">
   <TypeSignature Language="C#" Value="public abstract class DesignTimeResourceProviderFactory" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used by control localization to read and write resources at design time. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +25,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.Design.DesignTimeResourceProviderFactory" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignTimeGlobalResourceProvider">
@@ -39,11 +46,19 @@
         <Parameter Name="classKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <param name="classKey">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a global resource provider using the provided <see cref="T:System.IServiceProvider" /> interface and resource class name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Either an <see cref="T:System.Web.Compilation.IResourceProvider" /> or an <see cref="T:System.Web.UI.Design.IDesignTimeResourceWriter" />.</para>
+        </returns>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the design host.</param>
+        <param name="classKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource class.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignTimeLocalResourceProvider">
@@ -59,10 +74,17 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a local resource provider using the provided reference to the design host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.Compilation.IResourceProvider" /> or a class derived from <see cref="T:System.Web.Compilation.IResourceProvider" />.</para>
+        </returns>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the design host.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignTimeLocalResourceWriter">
@@ -78,10 +100,17 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a local resource writer for using the provided reference to the design host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local resource writer for using the provided reference to the design host.</para>
+        </returns>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the design host.</param>
       </Docs>
     </Member>
   </Members>

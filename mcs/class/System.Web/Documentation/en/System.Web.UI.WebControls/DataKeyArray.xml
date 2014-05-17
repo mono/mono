@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataKeyArray" FullName="System.Web.UI.WebControls.DataKeyArray">
   <TypeSignature Language="C#" Value="public sealed class DataKeyArray : System.Collections.ICollection, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -16,9 +17,28 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> class is used to store and manage a collection of <see cref="T:System.Web.UI.WebControls.DataKey" /> objects. A <see cref="T:System.Web.UI.WebControls.DataKey" /> object represents the primary key of a record in a data-bound control. In general, data-bound controls that display multiple records (such as the <see cref="T:System.Web.UI.WebControls.GridView" /> control) use a <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object to store the <see cref="T:System.Web.UI.WebControls.DataKey" /> objects for the records displayed in the control.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> class supports several ways to access the items in the collection:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataKeyArray.Item(System.Int32)" /> indexer to directly retrieve a <see cref="T:System.Web.UI.WebControls.DataKey" /> object from the collection at a specific zero-based index.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataKeyArray.GetEnumerator" /> method to retrieve an enumerator that can be used to iterate through the collection.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataKeyArray.CopyTo(System.Web.UI.WebControls.DataKey[],System.Int32)" /> method to copy the items in the collection into an array, which can then be used to access the items in the collection.</para>
+        </item>
+      </list>
+      <para>To determine the total number of items in the collection, use the <see cref="P:System.Web.UI.WebControls.DataKeyArray.Count" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.UI.WebControls.DataKey" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +48,17 @@
         <Parameter Name="keys" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <param name="keys">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> class using the specified <see cref="T:System.Collections.ArrayList" /> object. The <see cref="T:System.Collections.ArrayList" /> object contains the <see cref="T:System.Web.UI.WebControls.DataKey" /> objects with which to populate the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> class.</para>
+        </summary>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ArrayList" /> of <see cref="T:System.Web.UI.WebControls.DataKey" /> objects with which to populate the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,11 +75,22 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataKeyArray.CopyTo(System.Web.UI.WebControls.DataKey[],System.Int32)" /> method to copy the items from the collection into the specified array, starting at the specified index. The array can then be used to access the items in the collection.</para>
+          <block subset="none" type="note">
+            <para>You must use a zero-based array for the <paramref name="array" /> parameter.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the items from this collection to the specified array of <see cref="T:System.Web.UI.WebControls.DataKey" /> objects, starting at the specified index in the array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based array of <see cref="T:System.Web.UI.WebControls.DataKey" /> objects that receives the copied items from the collection.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first index in the specified array to receive the copied contents.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,10 +103,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataKeyArray.Count" /> property to determine the number of items in the collection. The <see cref="P:System.Web.UI.WebControls.DataKeyArray.Count" /> property is commonly used when iterating through the collection to determine its upper bound. The <see cref="P:System.Web.UI.WebControls.DataKeyArray.Count" /> property is also commonly used to determine whether a collection is empty.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of items in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,10 +126,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataKeyArray.GetEnumerator" /> method to get an enumerator that can be iterated through linearly to access each item in the collection. To access the item at the current position in the enumerator, use the <see cref="P:System.Collections.IEnumerator.Current" /> property. Use the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to move to the next item in the collection. To move the enumerator to its initial position, use the <see cref="M:System.Collections.IEnumerator.Reset" /> method.</para>
+          <block subset="none" type="note">
+            <para>When you initially get the enumerator or use the <see cref="M:System.Collections.IEnumerator.Reset" /> method to move the enumerator to the first item in the collection, you must call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method. Otherwise, the item represented by the <see cref="P:System.Collections.IEnumerator.Current" /> property is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that contains all <see cref="T:System.Web.UI.WebControls.DataKey" /> objects in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" />-implemented object that contains all <see cref="T:System.Web.UI.WebControls.DataKey" /> objects in the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,10 +154,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataKeyArray.IsReadOnly" /> property to determine whether the items in the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> collection can be modified.</para>
+          <block subset="none" type="note">
+            <para>This property has been overridden to always return false, to indicate that the <see cref="T:System.Web.UI.WebControls.DataKey" /> objects in the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object can be added or removed. The <see cref="T:System.Web.UI.WebControls.DataKey" /> objects themselves cannot be changed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the items in the collection can be modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -114,10 +179,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataKeyArray.IsSynchronized" /> property to determine whether the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object is thread safe.</para>
+          <block subset="none" type="note">
+            <para>This property has been overridden to always return false to indicate that the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object is not thread safe.</para>
+          </block>
+          <para>For more information on the <see cref="P:System.Web.UI.WebControls.DataKeyArray.IsSynchronized" /> property, see the <see cref="P:System.Collections.ICollection.IsSynchronized" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -150,10 +225,17 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataKeyArray.SyncRoot" /> property to get an object that can be used to synchronize access to the collection. The object returned in this implementation is the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object itself.</para>
+          <para>For more information on the <see cref="P:System.Web.UI.WebControls.DataKeyArray.SyncRoot" /> property, see the <see cref="P:System.Collections.ICollection.SyncRoot" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -173,10 +255,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="M:System.Web.UI.WebControls.DataKeyArray.System#Collections#ICollection#CopyTo(System.Array,System.Int32)" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> class to copy the items in the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> collection into the specified <see cref="T:System.Array" />, starting at the specified index. The <see cref="T:System.Array" /> can then be used to access the items in the collection.</para>
+          <block subset="none" type="note">
+            <para>You must use a zero-based <see cref="T:System.Array" /> for the <paramref name="array" /> parameter.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the items from this collection to the specified <see cref="T:System.Array" />, starting at the specified index in the <see cref="T:System.Array" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based <see cref="T:System.Array" /> that receives the copied items from the collection.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first index in the specified <see cref="T:System.Array" /> to receive the copied contents.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -189,9 +282,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataKeyArray.System#Web#UI#IStateManager#IsTrackingViewState" /> property is used to determine whether the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object is tracking its view-state changes.</para>
+          <block subset="none" type="note">
+            <para>This property is used primarily by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object is tracking its view-state changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -208,8 +310,14 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataKeyArray.System#Web#UI#IStateManager#LoadViewState(System.Object)" /> method is used to load the previously saved view state of the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the previously saved view state of the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -223,9 +331,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataKeyArray.System#Web#UI#IStateManager#SaveViewState" /> method is a helper method used by the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> class to save the state of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the current view state of the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the saved state of the <see cref="T:System.Web.UI.WebControls.DataKeyArray" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -239,8 +356,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is overridden to mark the starting point at which to begin tracking and saving changes to the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object as part of the object's view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the starting point at which to begin tracking and saving view-state changes to the <see cref="T:System.Web.UI.WebControls.DataKeyArray" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

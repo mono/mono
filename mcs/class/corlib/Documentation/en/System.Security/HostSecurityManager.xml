@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HostSecurityManager" FullName="System.Security.HostSecurityManager">
   <TypeSignature Language="C#" Value="public class HostSecurityManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit HostSecurityManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,28 +17,43 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a new <see cref="T:System.AppDomain" />, the common language runtime queries the <see cref="T:System.AppDomainManager" /> for the presence of a <see cref="T:System.Security.HostSecurityManager" />, which participates in making security decisions for the <see cref="T:System.AppDomain" />.  Host providers should implement a host security manager that inherits from the <see cref="T:System.Security.HostSecurityManager" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows the control and customization of security behavior for application domains.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HostSecurityManager ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.HostSecurityManager" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DetermineApplicationTrust">
       <MemberSignature Language="C#" Value="public virtual System.Security.Policy.ApplicationTrust DetermineApplicationTrust (System.Security.Policy.Evidence applicationEvidence, System.Security.Policy.Evidence activatorEvidence, System.Security.Policy.TrustManagerContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.Policy.ApplicationTrust DetermineApplicationTrust(class System.Security.Policy.Evidence applicationEvidence, class System.Security.Policy.Evidence activatorEvidence, class System.Security.Policy.TrustManagerContext context) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Policy.ApplicationTrust</ReturnType>
       </ReturnValue>
@@ -46,56 +63,100 @@
         <Parameter Name="context" Type="System.Security.Policy.TrustManagerContext" />
       </Parameters>
       <Docs>
-        <param name="applicationEvidence">To be added.</param>
-        <param name="activatorEvidence">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be overridden by a derived class. The base implementation calls the application security manager to determine if the application should be executed. </para>
+          <para>The base implementation does not use the activator evidence. However, an overridden implementation could use the activator evidence to determine the security evidence for the application domain attempting to activate the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an application should be executed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains trust information about the application.</para>
+        </returns>
+        <param name="applicationEvidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence for the application to be activated.</param>
+        <param name="activatorEvidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optionally, the evidence for the activating application domain. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trust context. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DomainPolicy">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.PolicyLevel DomainPolicy { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.PolicyLevel DomainPolicy" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DomainPolicy">
-      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.PolicyLevel DomainPolicy { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be overridden in a derived class. The base implementation always returns null.  </para>
+          <para>This property is called at <see cref="T:System.AppDomain" /> creation time. It allows a host to supply a policy for the current <see cref="T:System.AppDomain" />.  A policy level consists of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>A set of code groups organized into a single rooted tree.</para>
+            </item>
+            <item>
+              <para>A set of named permission sets that are referenced by the code groups to specify permissions to be granted to code belonging to the code group.</para>
+            </item>
+            <item>
+              <para>A list of fully trusted assemblies.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>See the Notes to Inheritors for the <see cref="T:System.Security.HostSecurityManager" /> class for critical implementation information.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the security policy for the current application domain.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Flags">
+      <MemberSignature Language="C#" Value="public virtual System.Security.HostSecurityManagerOptions Flags { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.HostSecurityManagerOptions Flags" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Flags">
-      <MemberSignature Language="C#" Value="public virtual System.Security.HostSecurityManagerOptions Flags { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be overridden in a derived class. The base implementation always returns <see cref="F:System.Security.HostSecurityManagerOptions.AllFlags" />.  </para>
+          <para>The derived host can change the value of this property when only a subset of the <see cref="T:System.Security.HostSecurityManagerOptions" /> is of interest.  The possible subsets include none, the refused set, the policy level, and assembly evidence.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the flag representing the security policy components of concern to the host.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ProvideAppDomainEvidence">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.Evidence ProvideAppDomainEvidence (System.Security.Policy.Evidence inputEvidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.Policy.Evidence ProvideAppDomainEvidence(class System.Security.Policy.Evidence inputEvidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ProvideAppDomainEvidence">
-      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.Evidence ProvideAppDomainEvidence (System.Security.Policy.Evidence inputEvidence);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
@@ -103,20 +164,35 @@
         <Parameter Name="inputEvidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="inputEvidence">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be overridden in a derived class. </para>
+          <para>This method is called whenever an <see cref="T:System.AppDomain" /> object is created. The <paramref name="inputEvidence" /> parameter is the computed evidence from the common language runtime. The host implementation can choose to extend or reduce the evidence. The return value is the evidence to be used for the application domain.  The base implementation always returns the evidence object passed in as the <paramref name="inputEvidence" /> parameter.  </para>
+          <block subset="none" type="note">
+            <para>See the Notes to Inheritors for the <see cref="T:System.Security.HostSecurityManager" /> class for critical implementation information.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the application domain evidence for an assembly being loaded.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The evidence to be used for the <see cref="T:System.AppDomain" />.</para>
+        </returns>
+        <param name="inputEvidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />Additional evidence to add to the <see cref="T:System.AppDomain" /> evidence.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ProvideAssemblyEvidence">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.Evidence ProvideAssemblyEvidence (System.Reflection.Assembly loadedAssembly, System.Security.Policy.Evidence inputEvidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.Policy.Evidence ProvideAssemblyEvidence(class System.Reflection.Assembly loadedAssembly, class System.Security.Policy.Evidence inputEvidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ProvideAssemblyEvidence">
-      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.Evidence ProvideAssemblyEvidence (System.Reflection.Assembly loadedAssembly, System.Security.Policy.Evidence inputEvidence);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
@@ -125,21 +201,37 @@
         <Parameter Name="inputEvidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="loadedAssembly">To be added.</param>
-        <param name="inputEvidence">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be overridden in a derived class. </para>
+          <para>This method is called whenever an assembly is loaded, either implicitly or explicitly. The passed in parameters are the assembly being loaded, and the computed evidence from the common language runtime. The host implementation can choose to extend or reduce the evidence. The return value is the evidence to be used for the assembly.  The base implementation always returns the evidence object passed in as the <paramref name="inputEvidence" /> parameter.  </para>
+          <block subset="none" type="note">
+            <para>See the Notes to Inheritors for the <see cref="T:System.Security.HostSecurityManager" /> class for critical implementation information.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the assembly evidence for an assembly being loaded.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The evidence to be used for the assembly.</para>
+        </returns>
+        <param name="loadedAssembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The loaded assembly. </param>
+        <param name="inputEvidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />Additional evidence to add to the assembly evidence.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ResolvePolicy">
+      <MemberSignature Language="C#" Value="public virtual System.Security.PermissionSet ResolvePolicy (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.PermissionSet ResolvePolicy(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ResolvePolicy">
-      <MemberSignature Language="C#" Value="public virtual System.Security.PermissionSet ResolvePolicy (System.Security.Policy.Evidence evidence);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.PermissionSet</ReturnType>
       </ReturnValue>
@@ -147,16 +239,22 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method invokes the security policy engine, providing it with the specified evidence. The result is determined by the security policy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines what permissions to grant to code based on the specified evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The permission set that can be granted by the security system.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence set used to evaluate policy.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

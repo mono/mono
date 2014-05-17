@@ -169,10 +169,10 @@ namespace System.Collections.Generic
 
 		object IDictionary.this [object key] {
 			get {
-				if (!(key is TKey))
-					return null;
-				else
-					return this [(TKey)key];
+				TValue obj;
+				if (key is TKey && TryGetValue ((TKey)key, out obj))
+					return obj;
+				return null;
 			}
 
 			set {

@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Binding" FullName="System.ServiceModel.Channels.Binding">
+  <TypeSignature Language="C#" Value="public abstract class Binding : System.ServiceModel.IDefaultCommunicationTimeouts" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Binding extends System.Object implements class System.ServiceModel.IDefaultCommunicationTimeouts" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.IDefaultCommunicationTimeouts</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of binding elements, each of which describes an aspect of how an endpoint communicates with other endpoints and that are built, consistently, into a channel factory on the client and into a channel listener on the service. A binding contains a collection of binding elements that correspond to protocol channels, transport channels, and message encoders. There can be any number of binding elements for protocol channels but one and only one binding element for each the transport and message encoder. There are commonly six layers of binding elements in a binding. Only the transport and encoding binding elements at the bottom of the stack are required. Because an encoding is required for each binding, if an encoding is not specified, indigo1 adds a default encoding for you. The default is Text/XML for the HTTP and HTTPS transports, and Binary for other transports. </para>
+      <para>The following table summarizes the options for each layer.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Layer</para>
+            </term>
+            <description>
+              <para>Options</para>
+            </description>
+            <description>
+              <para>Required</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Transaction Flow</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.ServiceModel.Channels.TransactionFlowBindingElement" />
+            </para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Reliability</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" />
+            </para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Security</para>
+          </term>
+          <description>
+            <para>Symmetric, Asymmetric, Transport-Level</para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Shape Change</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.ServiceModel.Channels.CompositeDuplexBindingElement" />
+            </para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Transport Upgrades</para>
+          </term>
+          <description>
+            <para>SSL stream, Windows stream, Peer Resolver</para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Encoding</para>
+          </term>
+          <description>
+            <para>Text, Binary, MTOM, Custom</para>
+          </description>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Transport</para>
+          </term>
+          <description>
+            <para>TCP, Named Pipes, HTTP, HTTPS, MSMQ, Custom</para>
+          </description>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+      </list>
+      <para>Each binding element provides the specification for building a channel factory on the client and a channel listener on the service. When the channel factory stack is constructed, for example, there is one channel factory in the stack for each binding element in the binding. The same sort of mapping applies to the channel listeners in the stack on the service. Consistency on the client and service is critical for establishing the channel-based connection between these endpoints. Each factory and listener, in turn, processes the sending and accepting of the corresponding channels in the channel stack that connects them, and these channels can then send and receive the messages used to communicate.</para>
+      <para>Each instance of a <see cref="T:System.ServiceModel.Channels.Binding" /> has a <see cref="P:System.ServiceModel.Channels.Binding.Name" /> and <see cref="P:System.ServiceModel.Channels.Binding.Namespace" /> that together uniquely identify it in the metadata of the service. If no name or namespace is specified, indigo2 adds a default values for you. The default name is null and the default namespace is http://tempuri.org/. This user name for the binding is distinct from the specification of the protocol name, which is specified by the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" /> property. If you want to add more HTTP bindings, for example, you can name them whatever you want and set all of their schemes to "http". There is no inherent application or machine dispatch based on the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" />. So you avoid the common problem of being unable to register additional handlers for well-known protocols. You can also easily work with multiple versions of a binding side-by-side by giving each version a different name.</para>
+      <para>The <see cref="T:System.ServiceModel.Channels.Binding" /> class implements the <see cref="T:System.ServiceModel.IDefaultCommunicationTimeouts" /> interface to mitigate Denial of Service (DOS) attacks that rely on tying up resources for extended intervals of time. The implementation specifies the communication timeouts values for opening and closing connections and for the reading and writing operations associated with receiving and sending messages. The properties used to get and set these timeouts and their default values operations are summarized in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Timeout Property</para>
+            </term>
+            <description>
+              <para>Default Value</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Channels.Binding.OpenTimeout" />
+            </para>
+          </term>
+          <description>
+            <para>1 minute</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Channels.Binding.CloseTimeout" />
+            </para>
+          </term>
+          <description>
+            <para>1 minute</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Channels.Binding.SendTimeout" />
+            </para>
+          </term>
+          <description>
+            <para>1 minute</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ServiceModel.Channels.Binding.ReceiveTimeout" />
+            </para>
+          </term>
+          <description>
+            <para>10 minutes</para>
+          </description>
+        </item>
+      </list>
+      <para>When you create a binding by inheriting from <see cref="T:System.ServiceModel.Channels.Binding" />, you must override <see cref="M:System.ServiceModel.Channels.Binding.CreateBindingElements" />.</para>
+      <para>In addition, you can define your own binding elements and insert them between any of the defined layers in the preceding table. For more information, see the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the binding elements that specify the protocols, transports, and message encoders used for communication between clients and services.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Binding ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default name is null and the default namespace is http://tempuri.org/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.Binding" /> class with a default name and namespace. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Binding (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string name, string ns) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Channels.Binding.Name" /> and <see cref="P:System.ServiceModel.Channels.Binding.Namespace" /> together uniquely identify an instance of a <see cref="T:System.ServiceModel.Channels.Binding" /> in the metadata of the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.Binding" /> class from a specified binding of the service.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.ServiceModel.Channels.Binding.Name" /> of the binding.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.ServiceModel.Channels.Binding.Namespace" /> of the binding.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelFactory&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt; BuildChannelFactory&lt;TChannel&gt; (object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.IChannelFactory`1&lt;!!TChannel&gt; BuildChannelFactory&lt;TChannel&gt;(object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel factory stack on the client that creates a specified type of channel and that satisfies the features specified by an object array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelFactory`1" /> of type <paramref name="TChannel" /> that satisfies the features specified by the collection.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object array that specifies requirements for the channel factory that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel factory produces.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelFactory&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt; BuildChannelFactory&lt;TChannel&gt; (System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelFactory`1&lt;!!TChannel&gt; BuildChannelFactory&lt;TChannel&gt;(class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel factory stack on the client that creates a specified type of channel and that satisfies the features specified by a collection of binding parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelFactory`1" /> of type <paramref name="TChannel" /> that satisfies the features specified by the collection.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel factory built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel factory produces.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (object[] parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object array that specifies requirements for the channel factory built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (System.ServiceModel.Channels.BindingParameterCollection parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified by a collection of binding parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel listener that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (Uri listenUri, object[] parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.Uri listenUri, object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="listenUri" Type="System.Uri" />
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="listenUri">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object array that specifies requirements for the channel factory that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (Uri listenUri, System.ServiceModel.Channels.BindingParameterCollection parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.Uri listenUri, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="listenUri" Type="System.Uri" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <param name="listenUri">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel listener that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (Uri listenUriBaseAddress, string listenUriRelativeAddress, object[] parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.Uri listenUriBaseAddress, string listenUriRelativeAddress, object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="listenUriBaseAddress" Type="System.Uri" />
+        <Parameter Name="listenUriRelativeAddress" Type="System.String" />
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="listenUriBaseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that provides the base address on which the service listens.</param>
+        <param name="listenUriRelativeAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address, relative to the base address, on which the service listens.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object array that specifies requirements for the channel factory that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (Uri listenUriBaseAddress, string listenUriRelativeAddress, System.ServiceModel.Channels.BindingParameterCollection parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.Uri listenUriBaseAddress, string listenUriRelativeAddress, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="listenUriBaseAddress" Type="System.Uri" />
+        <Parameter Name="listenUriRelativeAddress" Type="System.String" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="listenUriBaseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that provides the base address on which the service listens.</param>
+        <param name="listenUriRelativeAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address, relative to the base address, on which the service listens.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel listener that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (Uri listenUriBaseAddress, string listenUriRelativeAddress, System.ServiceModel.Description.ListenUriMode listenUriMode, object[] parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.Uri listenUriBaseAddress, string listenUriRelativeAddress, valuetype System.ServiceModel.Description.ListenUriMode listenUriMode, object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="listenUriBaseAddress" Type="System.Uri" />
+        <Parameter Name="listenUriRelativeAddress" Type="System.String" />
+        <Parameter Name="listenUriMode" Type="System.ServiceModel.Description.ListenUriMode" />
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="listenUriBaseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that provides the base address on which the service listens.</param>
+        <param name="listenUriRelativeAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address, relative to the base address, on which the service listens.</param>
+        <param name="listenUriMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of the <see cref="T:System.ServiceModel.Description.ListenUriMode" /> that indicates whether the transport must ensure that the URI provided for the service to listen on is unique or can be used exactly as provided.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object array that specifies requirements for the channel factory that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (Uri listenUriBaseAddress, string listenUriRelativeAddress, System.ServiceModel.Description.ListenUriMode listenUriMode, System.ServiceModel.Channels.BindingParameterCollection parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.Uri listenUriBaseAddress, string listenUriRelativeAddress, valuetype System.ServiceModel.Description.ListenUriMode listenUriMode, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="listenUriBaseAddress" Type="System.Uri" />
+        <Parameter Name="listenUriRelativeAddress" Type="System.String" />
+        <Parameter Name="listenUriMode" Type="System.ServiceModel.Description.ListenUriMode" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the channel listener on the service that accepts a specified type of channel and that satisfies the features specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <paramref name="TChannel" /> that satisfies the features specified.</para>
+        </returns>
+        <param name="listenUriBaseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that provides the base address on which the service listens.</param>
+        <param name="listenUriRelativeAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address, relative to the base address, on which the service listens.</param>
+        <param name="listenUriMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of the <see cref="T:System.ServiceModel.Description.ListenUriMode" /> that indicates whether the transport must ensure that the URI provided for the service to listen on is unique or can be used exactly as provided.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel listener that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel the channel listener accepts.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="CanBuildChannelFactory&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public bool CanBuildChannelFactory&lt;TChannel&gt; (object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CanBuildChannelFactory&lt;TChannel&gt;(object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to check that the channel factory for channels of type <paramref name="TChannel" /> can be build for the binding <paramref name="parameters" /> specified before attempting to actually build the factory. Alternatively, try to build the channel factory by calling <see cref="M:System.ServiceModel.Channels.Binding.BuildChannelFactory``1(System.Object[])" /> and catch the exception generated if it cannot be built.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current binding can build a channel factory stack on the client that satisfies the requirements specified by an object array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified channel factory stack can be build on the client; otherwise, false.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object array that specifies requirements for the channel factory that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel for which the factory is being tested.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="CanBuildChannelFactory&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual bool CanBuildChannelFactory&lt;TChannel&gt; (System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CanBuildChannelFactory&lt;TChannel&gt;(class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to check that the channel factory for channels of type <paramref name="TChannel" /> can be build for the binding <paramref name="parameters" /> specified before attempting to actually build the factory. Alternatively, try to build the channel factory by calling <see cref="M:System.ServiceModel.Channels.Binding.BuildChannelFactory``1(System.ServiceModel.Channels.BindingParameterCollection)" /> and catch the exception generated if it cannot be built.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current binding can build a channel factory stack on the client that satisfies the collection of binding parameters specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified channel factory stack can be build on the client; otherwise, false.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel factory that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel for which the factory is being tested.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="CanBuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public bool CanBuildChannelListener&lt;TChannel&gt; (object[] parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CanBuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to check that the channel listener for channels of type <paramref name="TChannel" /> can be build for the binding <paramref name="parameters" /> specified before attempting to actually build the listener. Alternatively, try to build the channel listener by calling <see cref="M:System.ServiceModel.Channels.Binding.BuildChannelListener``1(System.Object[])" /> and catch the exception generated if it cannot be built.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current binding can build a channel listener stack on the service that satisfies the criteria specified in an array of objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified channel listener stack can be build on the service; otherwise, false.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object array that specifies requirements for the channel factory that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel for which the listener is being tested.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="CanBuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public virtual bool CanBuildChannelListener&lt;TChannel&gt; (System.ServiceModel.Channels.BindingParameterCollection parameters) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CanBuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method if you want to check that the channel listener for channels of type <paramref name="TChannel" /> can be build for the binding <paramref name="parameters" /> specified before attempting to actually build the listener. Alternatively, try to build the channel listener by calling <see cref="M:System.ServiceModel.Channels.Binding.BuildChannelListener``1(System.ServiceModel.Channels.BindingParameterCollection)" /> and catch the exception generated if it cannot be built.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current binding can build a channel listener stack on the service that satisfies the collection of binding parameters specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified channel listener stack can be build on the service; otherwise, false.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel listener that is built.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel for which the listener is being tested.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="CloseTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan CloseTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan CloseTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is used by the channels and listeners produced by the factories of the binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time provided for a connection to close before the transport raises an exception.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBindingElements">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.BindingElementCollection CreateBindingElements ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.BindingElementCollection CreateBindingElements() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.BindingElementCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements should not reference any internal elements that the <see cref="T:System.ServiceModel.Channels.Binding" /> object uses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a collection that contains the binding elements that are part of the current binding. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Generic.ICollection`1" /> object of type <see cref="T:System.ServiceModel.Channels.BindingElement" /> that contains the binding elements from the current binding object in the correct order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProperty&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetProperty&lt;T&gt; (System.ServiceModel.Channels.BindingParameterCollection parameters) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetProperty&lt;class T&gt;(class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a layer supports returning the requested object, it returns it. If not, it delegates the call down to the next layer in the stack. If it gets to the bottom of the stack and no layer supported the requested object, then the method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a typed object requested, if present, from the appropriate layer in the binding stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T" /> requested if it is present or null if it is not.</para>
+        </returns>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> that specifies requirements for the channel listener that is built.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageVersion">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageVersion MessageVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageVersion MessageVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message version used by clients and services configured with the binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each instance of a <see cref="T:System.ServiceModel.Channels.Binding" /> has a <see cref="P:System.ServiceModel.Channels.Binding.Name" /> and <see cref="P:System.ServiceModel.Channels.Binding.Namespace" /> that together uniquely identify the user name for the binding in the metadata of the service.</para>
+          <para>This user name for the binding is distinct from the specification of the protocol name, which is specified by the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" /> property. If you want to add more HTTP bindings, for example, you can name them whatever you want and set all of their schemes to "http". There is no inherent application or machine dispatch based on the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" />. So you avoid the common problem of being unable to register additional handlers for well-known protocols. You can also easily work with multiple versions of a binding side-by-side by giving each version a different name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each instance of a <see cref="T:System.ServiceModel.Channels.Binding" /> has a <see cref="P:System.ServiceModel.Channels.Binding.Name" /> and <see cref="P:System.ServiceModel.Channels.Binding.Namespace" /> that together uniquely identify the user name for the binding in the metadata of the service.</para>
+          <para>This user name for the binding is distinct from the specification of the protocol name, which is specified by the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" /> property. If you want to add more HTTP bindings, for example, you can name them whatever you want and set all of their schemes to "http". There is no inherent application or machine dispatch based on the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" />. So you avoid the common problem of being unable to register additional handlers for well-known protocols. You can also easily work with multiple versions of a binding side-by-side by giving each version a different name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML namespace of the binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan OpenTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan OpenTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is used by the channels and listeners produced by the factories of the binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time provided for a connection to open before the transport raises an exception.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReceiveTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan ReceiveTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan ReceiveTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using a reliable session, there are two different inactivity timers that must be satisfied to keep the connection alive. If either of these inactivity timers goes off, then the connection is dropped.</para>
+          <list type="bullet">
+            <item>
+              <para>The first inactivity timer is on the reliable session and is called the <see cref="P:System.ServiceModel.ReliableSession.InactivityTimeout" />. This inactivity timer fires if no messages, either application or infrastructure, are received within the timeout period. An infrastructure message is a message that is generated for the purpose of one of the protocols in the channel stack, such as a keep alive or an acknowledgment, rather than containing application data. </para>
+            </item>
+            <item>
+              <para>The second inactivity timer is on the service and uses the <see cref="P:System.ServiceModel.Channels.Binding.ReceiveTimeout" /> setting of the binding. This inactivity timer fires if no application messages are received within the timeout period. This specifies, for example, the maximum time a client may take to send at least one message to the server before the server will close the channel used by a session. This behavior ensures that clients cannot hold on to server resources for arbitrary long periods.</para>
+            </item>
+          </list>
+          <para>Since the connection is dropped if either inactivity timer fires, increasing <see cref="P:System.ServiceModel.ReliableSession.InactivityTimeout" /> once it is greater than <see cref="P:System.ServiceModel.Channels.Binding.ReceiveTimeout" /> has no effect. The default for both of these timeouts is 10 minutes, so you always have to increase both of them to make a difference when using a reliable session. </para>
+          <para>If transaction flow is enabled on the binding or the channel, the operation may take longer to execute than the specified timeout. In these circumstances the operation fails due to the expired timeout and the transaction aborts appropriately.</para>
+          <para>When security is used with sessions, the <see cref="P:System.ServiceModel.Channels.Binding.ReceiveTimeout" /> value set on the binding is also used as the session timeout.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time that a connection can remain inactive, during which no application messages are received, before it is dropped.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Scheme">
+      <MemberSignature Language="C#" Value="public abstract string Scheme { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Scheme" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This user name for the binding is distinct from the specification of the protocol name, which is specified by the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" /> property. Each instance of a <see cref="T:System.ServiceModel.Channels.Binding" /> has a <see cref="P:System.ServiceModel.Channels.Binding.Name" /> and <see cref="P:System.ServiceModel.Channels.Binding.Namespace" /> that together uniquely identify the user name for the binding in the metadata of the service. If you want to add more HTTP bindings, for example, you can name them whatever you want and set all of their schemes to "http". There is no inherent application or machine dispatch based on the <see cref="P:System.ServiceModel.Channels.Binding.Scheme" />. So you avoid the common problem of being unable to register additional handlers for well-known protocols. You can also easily work with multiple versions of a binding side-by-side by giving each version a different name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented in a derived class, sets the URI scheme that specifies the transport used by the channel and listener factories that are built by the bindings.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SendTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan SendTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan SendTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If transaction flow is enabled on the binding or the channel, the operation may take longer to execute than the specified timeout. In these circumstances the operation fails due to the expired timeout and the transaction aborts appropriately.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time provided for a write operation to complete before the transport raises an exception.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -41,6 +41,24 @@ namespace Mono.Debugger.Soft
 				}
 				throw new ArgumentException ("Unknown struct field '" + field + "'.", "field");
 			}
+			set {
+				FieldInfoMirror[] field_info = Type.GetFields ();
+				int nf = 0;
+				for (int i = 0; i < field_info.Length; ++i) {
+					if (!field_info [i].IsStatic) {
+						if (field_info [i].Name == field) {
+							fields [nf] = value;
+							return;
+						}
+						nf++;
+					}
+				}
+				throw new ArgumentException ("Unknown struct field '" + field + "'.", "field");
+			}
+		}
+
+		internal void SetFields (Value[] fields) {
+			this.fields = fields;
 		}
 
 		internal void SetField (int index, Value value) {

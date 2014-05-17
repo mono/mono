@@ -41,6 +41,7 @@ using System.Reflection.Emit;
 using System.Threading;
 using System.Runtime.Serialization;
 using System.Security;
+using System.Linq;
 
 namespace MonoTests.System.Reflection
 {
@@ -1169,5 +1170,19 @@ namespace MonoTests.System.Reflection
 			} catch (ArgumentException) {}
 		}
 
+#if NET_4_5
+		[Test]
+		public void DefinedTypes_Equality ()
+		{
+			var x1 = Assembly.GetExecutingAssembly ().DefinedTypes.Where (l => l.FullName == "MonoTests.System.Reflection.TestDefinedTypes").Single ();
+			var x2 = Assembly.GetExecutingAssembly ().GetTypes ().Where (l => l.FullName == "MonoTests.System.Reflection.TestDefinedTypes").Single ();
+
+			Assert.AreSame (x1, x2, "#1");
+		}
+#endif
+	}
+
+	public class TestDefinedTypes
+	{
 	}
 }

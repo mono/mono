@@ -109,8 +109,12 @@ namespace System
 			switch (mode) {
 			case LazyThreadSafetyMode.None:
 				init_factory = factory;
-				if (init_factory == null) 
-					throw exception = new InvalidOperationException ("The initialization function tries to access Value on this instance");
+				if (init_factory == null) {
+					if (exception == null)
+						throw new InvalidOperationException ("The initialization function tries to access Value on this instance");
+					throw exception;
+				}
+
 				try {
 					factory = null;
 					v = init_factory ();
@@ -147,8 +151,12 @@ namespace System
 					if (inited)
 						return value;
 
-					if (factory == null)
-						throw exception = new InvalidOperationException ("The initialization function tries to access Value on this instance");
+					if (factory == null) {
+						if (exception == null)
+							throw new InvalidOperationException ("The initialization function tries to access Value on this instance");
+
+						throw exception;
+					}
 
 					init_factory = factory;
 					try {

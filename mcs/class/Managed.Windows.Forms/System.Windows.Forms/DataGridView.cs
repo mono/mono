@@ -3140,6 +3140,20 @@ namespace System.Windows.Forms {
 				InvalidateRow (i);
 		}
 
+		private void UpdateRowHeightInfo (DataGridViewRow row)
+		{
+			DataGridViewRowHeightInfoNeededEventArgs rowInfo =
+				new DataGridViewRowHeightInfoNeededEventArgs (row.Index, row.Height, row.MinimumHeight);
+			OnRowHeightInfoNeeded (rowInfo);
+
+			if (row.Height != rowInfo.Height || row.MinimumHeight != rowInfo.MinimumHeight) {
+				row.MinimumHeight = rowInfo.MinimumHeight;
+				row.Height = rowInfo.Height;
+				OnRowHeightInfoPushed (new DataGridViewRowHeightInfoPushedEventArgs (row.Index, rowInfo.Height,
+													rowInfo.MinimumHeight));
+			}
+		}
+
 		public void UpdateRowHeightInfo (int rowIndex, bool updateToEnd)
 		{
 			if (rowIndex < 0 && updateToEnd)
@@ -3159,33 +3173,12 @@ namespace System.Windows.Forms {
 
 			if (updateToEnd) {
 				for (int i = rowIndex; i < Rows.Count; i++) {
-					DataGridViewRow row = Rows[i];
-					if (!row.Visible)
-						continue;
-
-					DataGridViewRowHeightInfoNeededEventArgs rowInfo = 
-						new DataGridViewRowHeightInfoNeededEventArgs (row.Index, row.Height, row.MinimumHeight);
-					OnRowHeightInfoNeeded (rowInfo);
-
-					if (row.Height != rowInfo.Height || row.MinimumHeight != rowInfo.MinimumHeight) {
-						row.Height = rowInfo.Height;
-						row.MinimumHeight = rowInfo.MinimumHeight;
-						OnRowHeightInfoPushed (new DataGridViewRowHeightInfoPushedEventArgs (row.Index, rowInfo.Height, 
-														     rowInfo.MinimumHeight));
-					}
+					DataGridViewRow row = Rows [i];
+					if (row.Visible)
+						UpdateRowHeightInfo (row);
 				}
 			} else {
-				DataGridViewRow row = Rows[rowIndex];
-				DataGridViewRowHeightInfoNeededEventArgs rowInfo = 
-					new DataGridViewRowHeightInfoNeededEventArgs (row.Index, row.Height, row.MinimumHeight);
-				OnRowHeightInfoNeeded (rowInfo);
-
-				if (row.Height != rowInfo.Height || row.MinimumHeight != rowInfo.MinimumHeight) {
-					row.Height = rowInfo.Height;
-					row.MinimumHeight = rowInfo.MinimumHeight;
-					OnRowHeightInfoPushed (new DataGridViewRowHeightInfoPushedEventArgs (row.Index, rowInfo.Height, 
-													     rowInfo.MinimumHeight));
-				}
+				UpdateRowHeightInfo (Rows [rowIndex]);
 			}
 		}
 
@@ -3399,6 +3392,7 @@ namespace System.Windows.Forms {
 		protected override void Dispose (bool disposing) {
 			if (disposing) {
 				ClearSelection();
+				currentCell = null;
 				foreach (DataGridViewColumn column in Columns)
 					column.Dispose();
 				Columns.Clear();

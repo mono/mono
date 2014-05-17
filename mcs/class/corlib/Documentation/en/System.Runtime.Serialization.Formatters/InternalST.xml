@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InternalST" FullName="System.Runtime.Serialization.Formatters.InternalST">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class InternalST" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit InternalST extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,32 +14,26 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The trace message is printed during, serialization, remoting and when running <format type="text/html"><a href="40f6f8c8-b80c-4e9f-a920-31bcd0cf45c5">Soapsuds Tool (Soapsuds.exe)</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Logs tracing messages when the .NET Framework serialization infrastructure is compiled.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InfoSoap">
       <MemberSignature Language="C#" Value="public static void InfoSoap (object[] messages);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void InfoSoap(object[] messages) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="messages" Type="System.Object[]">
-          <Attributes>
-            <Attribute>
-              <AttributeName>System.ParamArray</AttributeName>
-            </Attribute>
-          </Attributes>
-        </Parameter>
-      </Parameters>
-      <Docs>
-        <param name="messages">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -47,55 +43,6 @@
           <AttributeName>System.Diagnostics.Conditional("_LOGGING")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="LoadAssemblyFromString">
-      <MemberSignature Language="C#" Value="public static System.Reflection.Assembly LoadAssemblyFromString (string assemblyString);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Assembly</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="assemblyString" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="assemblyString">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SerializationSetValue">
-      <MemberSignature Language="C#" Value="public static void SerializationSetValue (System.Reflection.FieldInfo fi, object target, object value);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="fi" Type="System.Reflection.FieldInfo" />
-        <Parameter Name="target" Type="System.Object" />
-        <Parameter Name="value" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="fi">To be added.</param>
-        <param name="target">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Soap">
-      <MemberSignature Language="C#" Value="public static void Soap (object[] messages);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -109,11 +56,80 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="messages">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prints SOAP trace messages.</para>
+        </summary>
+        <param name="messages">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of trace messages to print.</param>
       </Docs>
+    </Member>
+    <Member MemberName="LoadAssemblyFromString">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Assembly LoadAssemblyFromString (string assemblyString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Assembly LoadAssemblyFromString(string assemblyString) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a specified assembly to debug.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Reflection.Assembly" /> to debug.</para>
+        </returns>
+        <param name="assemblyString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly to load.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SerializationSetValue">
+      <MemberSignature Language="C#" Value="public static void SerializationSetValue (System.Reflection.FieldInfo fi, object target, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SerializationSetValue(class System.Reflection.FieldInfo fi, object target, object value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fi" Type="System.Reflection.FieldInfo" />
+        <Parameter Name="target" Type="System.Object" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of a field.</para>
+        </summary>
+        <param name="fi">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.FieldInfo" /> containing data about the target field.</param>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The field to change.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to set.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Soap">
+      <MemberSignature Language="C#" Value="public static void Soap (object[] messages);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Soap(object[] messages) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -123,24 +139,33 @@
           <AttributeName>System.Diagnostics.Conditional("SER_LOGGING")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SoapAssert">
-      <MemberSignature Language="C#" Value="public static void SoapAssert (bool condition, string message);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="condition" Type="System.Boolean" />
-        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="messages" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the specified array of messages.</para>
+        </summary>
+        <param name="messages">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of messages to process.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SoapAssert">
+      <MemberSignature Language="C#" Value="public static void SoapAssert (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SoapAssert(bool condition, string message) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -150,29 +175,50 @@
           <AttributeName>System.Diagnostics.Conditional("_DEBUG")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asserts the specified message.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value to use when asserting.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to use when asserting.</param>
+      </Docs>
     </Member>
     <Member MemberName="SoapCheckEnabled">
       <MemberSignature Language="C#" Value="public static bool SoapCheckEnabled ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SoapCheckEnabled() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks if SOAP tracing is enabled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if tracing is enabled; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

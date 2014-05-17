@@ -139,7 +139,7 @@ rm -rf %buildroot
 
 %files -f mcs.lang
 %defattr(-, root, root)
-%doc AUTHORS COPYING.LIB ChangeLog NEWS README
+%doc AUTHORS COPYING.LIB ChangeLog NEWS README.md
 %config %_sysconfdir/mono/2.0/machine.config
 %config %_sysconfdir/mono/2.0/settings.map
 %config %_sysconfdir/mono/4.0/machine.config
@@ -168,6 +168,7 @@ rm -rf %buildroot
 %_bindir/gacutil
 %_bindir/gacutil2
 %_bindir/gmcs
+%_bindir/ikdasm
 %_bindir/mcs
 %_bindir/mono
 %_bindir/mono-configuration-crypto
@@ -260,6 +261,7 @@ rm -rf %buildroot
 %_prefix/lib/mono/4.0/cscompmgd.dll
 %_prefix/lib/mono/4.5/csharp.exe*
 %_prefix/lib/mono/4.5/gacutil.exe*
+%_prefix/lib/mono/4.5/ikdasm.exe*
 %_prefix/lib/mono/4.5/mcs.exe*
 %_prefix/lib/mono/4.5/mozroots.exe*
 %_prefix/lib/mono/4.0/mscorlib.dll*
@@ -826,6 +828,7 @@ Mono implementation of WCF, Windows Communication Foundation
 %_prefix/lib/mono/4.0/System.IdentityModel.Selectors.dll
 %_prefix/lib/mono/4.0/System.IdentityModel.dll
 %_prefix/lib/mono/4.0/System.Runtime.DurableInstancing.dll
+%_prefix/lib/mono/4.0/System.ServiceModel.Activation.dll
 %_prefix/lib/mono/4.0/System.ServiceModel.Discovery.dll
 %_prefix/lib/mono/4.0/System.ServiceModel.Routing.dll
 %_prefix/lib/mono/4.0/System.ServiceModel.Web.dll
@@ -834,6 +837,7 @@ Mono implementation of WCF, Windows Communication Foundation
 %_prefix/lib/mono/4.5/System.IdentityModel.Selectors.dll
 %_prefix/lib/mono/4.5/System.IdentityModel.dll
 %_prefix/lib/mono/4.5/System.Runtime.DurableInstancing.dll
+%_prefix/lib/mono/4.5/System.ServiceModel.Activation.dll
 %_prefix/lib/mono/4.5/System.ServiceModel.Discovery.dll
 %_prefix/lib/mono/4.5/System.ServiceModel.Routing.dll
 %_prefix/lib/mono/4.5/System.ServiceModel.Web.dll
@@ -844,6 +848,7 @@ Mono implementation of WCF, Windows Communication Foundation
 %_prefix/lib/mono/gac/System.IdentityModel.Selectors
 %_prefix/lib/mono/gac/System.Runtime.DurableInstancing
 %_prefix/lib/mono/gac/System.ServiceModel
+%_prefix/lib/mono/gac/System.ServiceModel.Activation
 %_prefix/lib/mono/gac/System.ServiceModel.Discovery
 %_prefix/lib/mono/gac/System.ServiceModel.Routing
 %_prefix/lib/mono/gac/System.ServiceModel.Web
@@ -905,8 +910,10 @@ Mono implementation of ASP.NET, Remoting and Web Services.
 %config %_sysconfdir/mono/2.0/Browsers
 %config %_sysconfdir/mono/2.0/DefaultWsdlHelpGenerator.aspx
 %config %_sysconfdir/mono/2.0/web.config
+%config %_sysconfdir/mono/4.0/Browsers
 %config %_sysconfdir/mono/4.0/DefaultWsdlHelpGenerator.aspx
 %config %_sysconfdir/mono/4.0/web.config
+%config %_sysconfdir/mono/4.5/Browsers
 %config %_sysconfdir/mono/4.5/DefaultWsdlHelpGenerator.aspx
 %config %_sysconfdir/mono/4.5/web.config
 %config %_sysconfdir/mono/browscap.ini
@@ -1108,6 +1115,7 @@ desktop-specific features.
 %_prefix/lib/mono/4.5/System.Reactive.Experimental.dll
 %_prefix/lib/mono/4.5/System.Reactive.Interfaces.dll
 %_prefix/lib/mono/4.5/System.Reactive.Linq.dll
+%_prefix/lib/mono/4.5/System.Reactive.Observable.Aliases.dll
 %_prefix/lib/mono/4.5/System.Reactive.PlatformServices.dll
 %_prefix/lib/mono/4.5/System.Reactive.Providers.dll
 %_prefix/lib/mono/4.5/System.Reactive.Runtime.Remoting.dll
@@ -1116,6 +1124,7 @@ desktop-specific features.
 %_prefix/lib/mono/gac/System.Reactive.Experimental
 %_prefix/lib/mono/gac/System.Reactive.Interfaces
 %_prefix/lib/mono/gac/System.Reactive.Linq
+%_prefix/lib/mono/gac/System.Reactive.Observable.Aliases
 %_prefix/lib/mono/gac/System.Reactive.PlatformServices
 %_prefix/lib/mono/gac/System.Reactive.Providers
 %_prefix/lib/mono/gac/System.Reactive.Runtime.Remoting
@@ -1280,6 +1289,7 @@ Mono development tools.
 %_libdir/pkgconfig/mono-lineeditor.pc
 %_libdir/pkgconfig/mono-options.pc
 %_libdir/pkgconfig/mono.pc
+%_libdir/pkgconfig/xbuild12.pc
 %_mandir/man1/al.1%ext_man
 %_mandir/man1/ccrewrite.1%ext_man
 %_mandir/man1/cccheck.1%ext_man
@@ -1320,6 +1330,7 @@ Mono development tools.
 %_prefix/lib/mono/2.0/Microsoft.Common.tasks
 %_prefix/lib/mono/2.0/Microsoft.VisualBasic.targets
 %_prefix/lib/mono/2.0/Mono.Debugger.Soft.dll
+%_prefix/lib/mono/2.0/Mono.XBuild.Tasks.dll
 %_prefix/lib/mono/2.0/PEAPI.dll
 %_prefix/lib/mono/2.0/genxs.exe*
 %_prefix/lib/mono/2.0/ilasm.exe*
@@ -1339,29 +1350,31 @@ Mono development tools.
 %_prefix/lib/mono/3.5/Microsoft.Common.targets
 %_prefix/lib/mono/3.5/Microsoft.Common.tasks
 %_prefix/lib/mono/3.5/Microsoft.VisualBasic.targets
+%_prefix/lib/mono/3.5/Mono.XBuild.Tasks.dll
 %_prefix/lib/mono/3.5/xbuild.exe*
 %_prefix/lib/mono/3.5/xbuild.rsp
-%_prefix/lib/mono/4.0/MSBuild
 %_prefix/lib/mono/4.0/Microsoft.Build.dll
 %_prefix/lib/mono/4.0/Microsoft.Build.Engine.dll
 %_prefix/lib/mono/4.0/Microsoft.Build.Framework.dll
 %_prefix/lib/mono/4.0/Microsoft.Build.Tasks.v4.0.dll
 %_prefix/lib/mono/4.0/Microsoft.Build.Utilities.v4.0.dll
-%_prefix/lib/mono/4.0/Microsoft.Build.xsd
-%_prefix/lib/mono/4.0/Microsoft.CSharp.targets
-%_prefix/lib/mono/4.0/Microsoft.Common.targets
-%_prefix/lib/mono/4.0/Microsoft.Common.tasks
-%_prefix/lib/mono/4.0/Microsoft.VisualBasic.targets
-%_prefix/lib/mono/4.0/Microsoft.Portable.CSharp.targets
 %_prefix/lib/mono/4.0/Mono.Debugger.Soft.dll
+%_prefix/lib/mono/4.0/Mono.XBuild.Tasks.dll
 %_prefix/lib/mono/4.0/PEAPI.dll
+%_prefix/lib/mono/4.5/MSBuild
 %_prefix/lib/mono/4.5/Microsoft.Build.dll
 %_prefix/lib/mono/4.5/Microsoft.Build.Engine.dll
 %_prefix/lib/mono/4.5/Microsoft.Build.Framework.dll
 %_prefix/lib/mono/4.5/Microsoft.Build.Tasks.v4.0.dll
 %_prefix/lib/mono/4.5/Microsoft.Build.Utilities.v4.0.dll
+%_prefix/lib/mono/4.5/Microsoft.Build.xsd
+%_prefix/lib/mono/4.5/Microsoft.CSharp.targets
+%_prefix/lib/mono/4.5/Microsoft.Common.targets
+%_prefix/lib/mono/4.5/Microsoft.Common.tasks
+%_prefix/lib/mono/4.5/Microsoft.VisualBasic.targets
 %_prefix/lib/mono/4.5/Mono.Debugger.Soft.dll
 %_prefix/lib/mono/4.5/Mono.CodeContracts.dll
+%_prefix/lib/mono/4.5/Mono.XBuild.Tasks.dll
 %_prefix/lib/mono/4.5/PEAPI.dll
 %_prefix/lib/mono/4.5/caspol.exe*
 %_prefix/lib/mono/4.5/cccheck.exe*
@@ -1399,11 +1412,14 @@ Mono development tools.
 %_prefix/lib/mono/gac/Microsoft.Build.Tasks
 %_prefix/lib/mono/gac/Microsoft.Build.Tasks.v3.5
 %_prefix/lib/mono/gac/Microsoft.Build.Tasks.v4.0
+%_prefix/lib/mono/gac/Microsoft.Build.Tasks.v12.0
 %_prefix/lib/mono/gac/Microsoft.Build.Utilities
 %_prefix/lib/mono/gac/Microsoft.Build.Utilities.v3.5
 %_prefix/lib/mono/gac/Microsoft.Build.Utilities.v4.0
+%_prefix/lib/mono/gac/Microsoft.Build.Utilities.v12.0
 %_prefix/lib/mono/gac/Mono.CodeContracts
 %_prefix/lib/mono/gac/Mono.Debugger.Soft
+%_prefix/lib/mono/gac/Mono.XBuild.Tasks
 %_prefix/lib/mono/gac/PEAPI
 %_prefix/lib/mono/xbuild
 %_prefix/lib/mono/xbuild-frameworks

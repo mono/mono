@@ -1,6 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Data.SqlClient">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Data.SqlClient" /> namespace is the.NET Framework Data Provider for SQL Server.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The.NET Framework Data Provider for SQL Server describes a collection of classes used to access a SQL Server database in the managed space. Using the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />, you can fill a memory-resident <see cref="T:System.Data.DataSet" /> that you can use to query and update the database.</para>
+      <block subset="none" type="note">
+        <para>For conceptual information about using this namespace when programming with the .NET Framework, see <format type="text/html"><a href="c18b1fb1-2af1-4de7-80a4-95e56fd976cb">Using the .NET Framework Data Provider for SQL Server</a></format>.</para>
+      </block>
+    </remarks>
   </Docs>
 </Namespace>

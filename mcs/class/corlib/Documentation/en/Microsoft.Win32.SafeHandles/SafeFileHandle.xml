@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SafeFileHandle" FullName="Microsoft.Win32.SafeHandles.SafeFileHandle">
   <TypeSignature Language="C#" Value="public sealed class SafeFileHandle : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SafeFileHandle extends Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,41 +12,50 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>A SafeHandle for file descriptors.</summary>
-    <remarks>
-      <para>This is a type safe <see cref="T:System.Runtime.InteropServices.SafeHandle" /> that wraps file descriptors. </para>
-      <para>
-Application developers should use SafeFileHandles instead of <see cref="T:System.IntPtr" /> for storing file handles, as SafeFileHandles will ensure that file descriptors are properly closed (even in the presence of an AppDomain unload) and will prevent problems like handle reuse.
-</para>
-      <para>
-SafeHandles can be used in P/Invoke parameters, P/Invoke return values and structures passed to unmanaged code.
-</para>
-    </remarks>
     <since>.NET 2.0</since>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is derived from <see cref="T:Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid" />. A value of 0 or -1 is an invalid file handle.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a wrapper class for a file handle. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SafeFileHandle (IntPtr preexistingHandle, bool ownsHandle);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(native int preexistingHandle, bool ownsHandle) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="preexistingHandle" Type="System.IntPtr" />
         <Parameter Name="ownsHandle" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="preexistingHandle">The file descriptor to wrap.</param>
-        <param name="ownsHandle">Whether the SafeFileHandle owns the handle;  If it does, it will ensure that it gets properly closed on finalization.</param>
-        <summary>To be added.</summary>
         <remarks>Use the <paramref name="ownsHandle" /> parameter to control whether the SafeFileHandle will close the descriptor or not.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Win32.SafeHandles.SafeFileHandle" /> class. </para>
+        </summary>
+        <param name="preexistingHandle">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> object that represents the pre-existing handle to use.</param>
+        <param name="ownsHandle">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to reliably release the handle during the finalization phase; false to prevent reliable release (not recommended).</param>
       </Docs>
+    </Member>
+    <Member MemberName="ReleaseHandle">
+      <MemberSignature Language="C#" Value="protected override bool ReleaseHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool ReleaseHandle() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReleaseHandle">
-      <MemberSignature Language="C#" Value="protected override bool ReleaseHandle ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -55,10 +66,6 @@ SafeHandles can be used in P/Invoke parameters, P/Invoke return values and struc
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

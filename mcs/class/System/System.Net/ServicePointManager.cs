@@ -31,7 +31,7 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using Mono.Security.Protocol.Tls;
 using MSX = Mono.Security.X509;
 using Mono.Security.X509.Extensions;
@@ -46,7 +46,9 @@ using System.Text.RegularExpressions;
 #endif
 
 using System;
+using System.Threading;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Net.Configuration;
@@ -54,6 +56,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using System.Globalization;
 using System.Net.Security;
+using System.Diagnostics;
 
 //
 // notes:
@@ -75,7 +78,7 @@ using System.Net.Security;
 
 namespace System.Net 
 {
-	public class ServicePointManager {
+	public partial class ServicePointManager {
 		class SPKey {
 			Uri uri; // schema/host/port
 			Uri proxy;
@@ -129,7 +132,7 @@ namespace System.Net
 		
 		private static ICertificatePolicy policy = new DefaultCertificatePolicy ();
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
-		private static int maxServicePointIdleTime = 900000; // 15 minutes
+		private static int maxServicePointIdleTime = 100000; // 100 seconds
 		private static int maxServicePoints = 0;
 		private static bool _checkCRL = false;
 		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
@@ -326,7 +329,8 @@ namespace System.Net
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
-			RecycleServicePoints ();
+			if ((servicePoints.Count % 4) == 0)
+				RecycleServicePoints ();
 
 			var origAddress = new Uri (address.Scheme + "://" + address.Authority);
 			
@@ -346,8 +350,8 @@ namespace System.Net
 			address = new Uri (address.Scheme + "://" + address.Authority);
 			
 			ServicePoint sp = null;
+			SPKey key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
 			lock (servicePoints) {
-				SPKey key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
 				sp = servicePoints [key] as ServicePoint;
 				if (sp != null)
 					return sp;
@@ -376,16 +380,23 @@ namespace System.Net
 		
 		// Internal Methods
 
-		internal static void RecycleServicePoints ()
+		static void RecycleServicePoints ()
 		{
-			ArrayList toRemove = new ArrayList ();
 			lock (servicePoints) {
+				var toRemove = new ArrayList ();
+				var idleList = new SortedDictionary<DateTime, ServicePoint> ();
 				IDictionaryEnumerator e = servicePoints.GetEnumerator ();
 				while (e.MoveNext ()) {
 					ServicePoint sp = (ServicePoint) e.Value;
-					if (sp.AvailableForRecycling) {
+					DateTime idleSince;
+					if (sp.CheckAvailableForRecycling (out idleSince)) {
 						toRemove.Add (e.Key);
+						continue;
 					}
+
+					while (idleList.ContainsKey (idleSince))
+						idleSince = idleSince.AddMilliseconds (1);
+					idleList.Add (idleSince, sp);
 				}
 				
 				for (int i = 0; i < toRemove.Count; i++) 
@@ -395,19 +406,11 @@ namespace System.Net
 					return;
 
 				// get rid of the ones with the longest idle time
-				SortedList list = new SortedList (servicePoints.Count);
-				e = servicePoints.GetEnumerator ();
-				while (e.MoveNext ()) {
-					ServicePoint sp = (ServicePoint) e.Value;
-					if (sp.CurrentConnections == 0) {
-						while (list.ContainsKey (sp.IdleSince))
-							sp.IdleSince = sp.IdleSince.AddMilliseconds (1);
-						list.Add (sp.IdleSince, sp.Address);
-					}
+				foreach (var sp in idleList.Values) {
+					if (servicePoints.Count <= maxServicePoints)
+						break;
+					servicePoints.Remove (sp);
 				}
-				
-				for (int i = 0; i < list.Count && servicePoints.Count > maxServicePoints; i++)
-					servicePoints.Remove (list.GetByIndex (i));
 			}
 		}
 #if SECURITY_DEP

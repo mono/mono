@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TrustManagerContext" FullName="System.Security.Policy.TrustManagerContext">
   <TypeSignature Language="C#" Value="public class TrustManagerContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TrustManagerContext extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,143 +17,277 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Security.Policy.TrustManagerContext" /> class, see the <see cref="M:System.Security.Policy.TrustManagerContext.#ctor" /> constructor. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the context for the trust manager to consider when making the decision to run an application, and when setting up the security on a new <see cref="T:System.AppDomain" /> in which to run an application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TrustManagerContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property values for a new instance of the <see cref="T:System.Security.Policy.TrustManagerContext" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Security.Policy.TrustManagerContext.IgnorePersistedDecision" />
+                </para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Security.Policy.TrustManagerContext.KeepAlive" />
+                </para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Security.Policy.TrustManagerContext.NoPrompt" />
+                </para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Security.Policy.TrustManagerContext.Persist" />
+                </para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Security.Policy.TrustManagerContext.PreviousApplicationIdentity" />
+                </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Security.Policy.TrustManagerContext.UIContext" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Security.Policy.TrustManagerUIContext.Run" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.TrustManagerContext" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TrustManagerContext (System.Security.Policy.TrustManagerUIContext uiContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Policy.TrustManagerUIContext uiContext) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="uiContext" Type="System.Security.Policy.TrustManagerUIContext" />
       </Parameters>
       <Docs>
-        <param name="uiContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the properties to the same settings as the default constructor, with the exception of the <see cref="P:System.Security.Policy.TrustManagerContext.UIContext" /> property, which is set to the value that is passed in.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.TrustManagerContext" /> class using the specified <see cref="T:System.Security.Policy.TrustManagerUIContext" /> object. </para>
+        </summary>
+        <param name="uiContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Policy.TrustManagerUIContext" /> values that specifies the type of trust manager user interface to use. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IgnorePersistedDecision">
-      <MemberSignature Language="C#" Value="public virtual bool IgnorePersistedDecision { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool IgnorePersistedDecision { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnorePersistedDecision" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the <see cref="T:System.Security.Policy.ApplicationSecurityManager" /> ignores persisted decisions for the application and calls the trust manager. If false, the <see cref="T:System.Security.Policy.ApplicationSecurityManager" /> uses cached decisions, if available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the application security manager should ignore any persisted decisions and call the trust manager.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="KeepAlive">
-      <MemberSignature Language="C#" Value="public virtual bool KeepAlive { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool KeepAlive { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool KeepAlive" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This flag is set to true if the host might call the trust manager numerous times for trust decisions for this application. If true, the trust manager should cache any state that might improve the speed of future calls to the <see cref="M:System.Security.Policy.IApplicationTrustManager.DetermineApplicationTrust(System.ActivationContext,System.Security.Policy.TrustManagerContext)" /> method. This property is set to false if the host does not expect to call the trust manager again for the current <see cref="T:System.AppDomain" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the trust manager should cache state for this application, to facilitate future requests to determine application trust.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NoPrompt">
-      <MemberSignature Language="C#" Value="public virtual bool NoPrompt { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool NoPrompt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool NoPrompt" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If false, the trust manager determines the appropriate user dialog to obtain a trust decision.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the trust manager should prompt the user for trust decisions.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Persist">
-      <MemberSignature Language="C#" Value="public virtual bool Persist { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool Persist { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Persist" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is true if the user’s response to the consent dialog should be persisted to avoid further prompting the user with each new activation request. This property is false if the user’s response should not be persisted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user's response to the consent dialog should be persisted. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PreviousApplicationIdentity">
-      <MemberSignature Language="C#" Value="public virtual ApplicationIdentity PreviousApplicationIdentity { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual ApplicationIdentity PreviousApplicationIdentity { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ApplicationIdentity PreviousApplicationIdentity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ApplicationIdentity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the identity of the previous application identity.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="UIContext">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.TrustManagerUIContext UIContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Policy.TrustManagerUIContext UIContext" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UIContext">
-      <MemberSignature Language="C#" Value="public virtual System.Security.Policy.TrustManagerUIContext UIContext { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.TrustManagerUIContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Policy.TrustManagerContext.UIContext" /> property is intended to recommend the user interface the trust manager should provide for the trust decision. A trust manager can decide to use a different interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of user interface the trust manager should display.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

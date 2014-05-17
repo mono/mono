@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeInitializationException" FullName="System.TypeInitializationException" FullNameSP="System_TypeInitializationException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable TypeInitializationException extends System.SystemException" />
   <TypeSignature Language="C#" Value="public sealed class TypeInitializationException : SystemException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit TypeInitializationException extends System.SystemException" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,17 +16,12 @@
     <BaseTypeName>System.SystemException</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Represents the error that occurs when an exception is thrown inside the
-      static constructor of a type.</para>
-    </summary>
-    <remarks>
-      <para> When a static constructor fails to initialize a type, a
-   <see cref="T:System.TypeInitializationException" /> instance is created and passed a reference to the exception
-      thrown by the static constructor. The <see cref="!:System.TypeInitializationException.InnerException" /> property stores the exception that was thrown
-      by the static constructor.</para>
-    </remarks>
     <example>
       <para>The following example demonstrates an error that causes
       a <see cref="T:System.TypeInitializationException" /> exception.</para>
@@ -57,30 +54,96 @@ Error: System.TypeInitializationException: The type initializer for "TypeInit" t
    at TestTypeInit.Main()
  </code>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a class initializer fails to initialize a type, a <see cref="T:System.TypeInitializationException" /> is created and passed a reference to the exception thrown by the type's class initializer. The <see cref="P:System.Exception.InnerException" /> property of <see cref="T:System.TypeInitializationException" /> holds the underlying exception.</para>
+      <para>
+        <see cref="T:System.TypeInitializationException" /> uses the HRESULT COR_E_TYPEINITIALIZATION, that has the value 0x80131534.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.TypeInitializationException" />, see the <see cref="M:System.TypeInitializationException.#ctor(System.String,System.Exception)" /> constructors.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown as a wrapper around the exception thrown by the class initializer. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TypeInitializationException (string fullTypeName, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string fullTypeName, class System.Exception innerException) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="fullTypeName" Type="System.String" />
-        <Parameter Name="innerException" Type="System.Exception" />
-      </Parameters>
-      <Docs>
-        <param name="fullTypeName">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="fullTypeName" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception can include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or a null reference (Nothing in Visual Basic) if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.TypeInitializationException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The inner exception reference. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The localized error message string. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.TypeInitializationException.TypeName" /> </para>
+              </term>
+              <description>
+                <para>The name of the type. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.TypeInitializationException" /> class with the default error message, the specified type name, and a reference to the inner exception that is the root cause of this exception.</para>
+        </summary>
+        <param name="fullTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the type that fails to initialize. </param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not a null reference (Nothing in Visual Basic), the current exception is raised in a catch block that handles the inner exception. </param>
+      </Docs>
     </Member>
     <Member MemberName="GetObjectData">
       <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -89,30 +152,32 @@ Error: System.TypeInitializationException: The type initializer for "TypeInit" t
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the type name and additional exception information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
+    </Member>
+    <Member MemberName="TypeName">
+      <MemberSignature Language="ILASM" Value=".property string TypeName { public hidebysig specialname instance string get_TypeName() }" />
+      <MemberSignature Language="C#" Value="public string TypeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TypeName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TypeName">
-      <MemberSignature Language="ILASM" Value=".property string TypeName { public hidebysig specialname instance string get_TypeName() }" />
-      <MemberSignature Language="C#" Value="public string TypeName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the fully qualified name of the type that causes the
-      exception.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> that contains the fully qualified name of the type that caused the exception.</para>
         </value>
@@ -121,19 +186,13 @@ Error: System.TypeInitializationException: The type initializer for "TypeInit" t
           <para>The <see cref="P:System.TypeInitializationException.TypeName" /> property returns the same value as was
    passed into the constructor.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified name of the type that fails to initialize.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

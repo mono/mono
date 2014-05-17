@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GCLatencyMode" FullName="System.Runtime.GCLatencyMode">
   <TypeSignature Language="C#" Value="public enum GCLatencyMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed GCLatencyMode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,12 +11,20 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can adjust the intrusiveness of garbage collection in your application by setting the <see cref="P:System.Runtime.GCSettings.LatencyMode" /> property to one of the enumeration values. </para>
+      <para>See <format type="text/html"><a href="96278bb7-6eab-4612-8594-ceebfc887d81">Latency Modes</a></format> for a discussion of how the runtime configuration settings for garbage collection affect the default value for this enumeration. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Adjusts the time that the garbage collector intrudes in your application.   </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Batch">
       <MemberSignature Language="C#" Value="Batch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.GCLatencyMode Batch = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -24,11 +34,20 @@
         <ReturnType>System.Runtime.GCLatencyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This mode is designed for maximum throughput at the expense of responsiveness. </para>
+          <para>This mode overrides the <format type="text/html"><a href="503f55ba-26ed-45ac-a2ea-caf994da04cd">&lt;gcConcurrent&gt;</a></format> runtime configuration setting. If <format type="text/html"><a href="503f55ba-26ed-45ac-a2ea-caf994da04cd">&lt;gcConcurrent&gt;</a></format> is enabled, switching to <see cref="F:System.Runtime.GCLatencyMode.Batch" /> mode prevents any further concurrent collections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables garbage collection concurrency and reclaims objects in a batch call. This is the most intrusive mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Interactive">
       <MemberSignature Language="C#" Value="Interactive" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.GCLatencyMode Interactive = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,11 +57,19 @@
         <ReturnType>System.Runtime.GCLatencyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This mode is equivalent to garbage collection on a workstation that is concurrent. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables garbage collection concurrency and reclaims objects while the application is running. This is the default mode for garbage collection on a workstation and is less intrusive than <see cref="F:System.Runtime.GCLatencyMode.Batch" />. It balances responsiveness with throughput.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LowLatency">
       <MemberSignature Language="C#" Value="LowLatency" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.GCLatencyMode LowLatency = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -52,7 +79,31 @@
         <ReturnType>System.Runtime.GCLatencyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This mode is not available for the server garbage collector.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables garbage collection that is more conservative in reclaiming objects. Full collections occur only if the system is under memory pressure, whereas generation 0 and generation 1 collections might occur more frequently</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SustainedLowLatency">
+      <MemberSignature Language="C#" Value="SustainedLowLatency" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.GCLatencyMode SustainedLowLatency = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.GCLatencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables garbage collection that tries to minimize latency over an extended period. The collector tries to perform only generation 0, generation 1, and concurrent generation 2 collections. Full blocking collections may still occur if the system is under memory pressure.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

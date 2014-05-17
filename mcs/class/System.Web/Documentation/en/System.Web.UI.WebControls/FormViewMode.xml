@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormViewMode" FullName="System.Web.UI.WebControls.FormViewMode">
   <TypeSignature Language="C#" Value="public enum FormViewMode" />
   <AssemblyInfo>
@@ -8,9 +9,47 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.FormViewMode" /> enumeration is used to represent the data-entry modes of a <see cref="T:System.Web.UI.WebControls.FormView" /> control. To determine the current mode of the control, use the <see cref="P:System.Web.UI.WebControls.FormView.CurrentMode" /> property. After an insert or update operation, the <see cref="T:System.Web.UI.WebControls.FormView" /> control returns to the mode specified by the <see cref="P:System.Web.UI.WebControls.FormView.DefaultMode" /> property. By default, the control returns to read-only mode. You can specify an alternate mode to return to by setting the <see cref="P:System.Web.UI.WebControls.FormView.DefaultMode" /> property. To change modes programmatically, use the <see cref="M:System.Web.UI.WebControls.FormView.ChangeMode(System.Web.UI.WebControls.FormViewMode)" /> method. When the <see cref="T:System.Web.UI.WebControls.FormView" /> control changes modes, the events in the following table are raised.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.FormView.ModeChanging" />
+            </para>
+          </term>
+          <description>
+            <para>Occurs when a <see cref="T:System.Web.UI.WebControls.FormView" /> control attempts to change between edit, insert, and read-only mode, but before the mode actually changes. This event is often used to cancel a mode change.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.FormView.ModeChanged" />
+            </para>
+          </term>
+          <description>
+            <para>Occurs after a <see cref="T:System.Web.UI.WebControls.FormView" /> control has changed from edit, insert, or read-only mode to another mode. This event is often used to perform a task when the <see cref="T:System.Web.UI.WebControls.FormView" /> control changes modes.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the different data-entry modes of a <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Edit">
@@ -20,8 +59,11 @@
         <ReturnType>System.Web.UI.WebControls.FormViewMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An editing mode that allows the user to update the values of an existing record.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +76,11 @@
         <ReturnType>System.Web.UI.WebControls.FormViewMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An inserting mode that allows the user to enter the values for a new record.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +93,11 @@
         <ReturnType>System.Web.UI.WebControls.FormViewMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A display mode that prevents the user from modifying the values of a record.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

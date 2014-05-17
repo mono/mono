@@ -1,146 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsPropertyValue" FullName="System.Configuration.SettingsPropertyValue">
   <TypeSignature Language="C#" Value="public class SettingsPropertyValue" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SettingsPropertyValue extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class representation of the actual piece of profile data. A <see cref="T:System.Configuration.SettingsProperty" /> instance describes a value stored within an instance of a <see cref="T:System.Configuration.SettingsPropertyValue" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the value of a settings property that can be loaded and stored by an instance of <see cref="T:System.Configuration.SettingsBase" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SettingsPropertyValue (System.Configuration.SettingsProperty property);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Configuration.SettingsProperty property) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="property" Type="System.Configuration.SettingsProperty" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Calling this method with untrusted data is a security risk. Call this method only with trusted data. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+          </block>
+          <para>The <see cref="T:System.Configuration.SettingsProperty" /> object describes information about the value stored by the <see cref="T:System.Configuration.SettingsPropertyValue" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SettingsPropertyValue" /> class, based on supplied parameters.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies a <see cref="T:System.Configuration.SettingsProperty" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Deserialized">
-      <MemberSignature Language="C#" Value="public bool Deserialized { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Deserialized { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Deserialized" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserialization of property values is only performed on demand.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the value of a <see cref="T:System.Configuration.SettingsProperty" /> object has been deserialized. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsDirty">
-      <MemberSignature Language="C#" Value="public bool IsDirty { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IsDirty { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDirty" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.SettingsPropertyValue.IsDirty" /> property indicates that the value stored by this class has changed. The default is false. The <see cref="P:System.Configuration.SettingsPropertyValue.IsDirty" /> property is set to true under the following conditions:</para>
+          <list type="ordered">
+            <item>
+              <para>The value contained in the <see cref="T:System.Configuration.SettingsPropertyValue" /> object is changed.</para>
+            </item>
+            <item>
+              <para>The value contained in the <see cref="T:System.Configuration.SettingsPropertyValue" /> object is accessed, and the value is not a string or a primitive type such as int, float, real, or DateTime. When the value managed by a <see cref="T:System.Configuration.SettingsPropertyValue" /> object is a complex type (for example an <see cref="T:System.Collections.ArrayList" />), there is no way for a <see cref="T:System.Configuration.SettingsPropertyValue" /> object to detect when changes have been made. As a result, the <see cref="T:System.Configuration.SettingsPropertyValue" /> object pessimistically assumes that a complex type is dirty once it has been accessed from the <see cref="P:System.Configuration.SettingsPropertyValue.PropertyValue" /> property.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the value of a <see cref="T:System.Configuration.SettingsProperty" /> object has changed. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the property from the associated <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Property">
       <MemberSignature Language="C#" Value="public System.Configuration.SettingsProperty Property { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.SettingsProperty Property" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.SettingsProperty</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PropertyValue">
-      <MemberSignature Language="C#" Value="public object PropertyValue { set; get; }" />
+      <MemberSignature Language="C#" Value="public object PropertyValue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object PropertyValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SerializedValue">
-      <MemberSignature Language="C#" Value="public object SerializedValue { set; get; }" />
+      <MemberSignature Language="C#" Value="public object SerializedValue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SerializedValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Configuration.SettingsPropertyValue" /> instance detects that the <see cref="P:System.Configuration.SettingsPropertyValue.PropertyValue" /> property has changed since the last time the <see cref="P:System.Configuration.SettingsPropertyValue.SerializedValue" /> property was called, it will cause <see cref="P:System.Configuration.SettingsPropertyValue.PropertyValue" /> property to be converted to its serialized representation. The specific serialization mechanism to be used is defined by the <see cref="P:System.Configuration.SettingsProperty.SerializeAs" /> property on the <see cref="T:System.Configuration.SettingsProperty" /> instance associated with the <see cref="T:System.Configuration.SettingsPropertyValue" /> instance. The current supported serialization options are to convert the object to a string using a string type converter, serialize using the <see cref="T:System.Xml.Serialization.XmlSerializer" />, or perform binary serialization.</para>
+          <block subset="none" type="note">
+            <para>The underlying serializers may throw exceptions during the serialization process.</para>
+          </block>
+          <para>The immediate caller code requires the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.SerializationFormatter" /> permission (one of the permissions available as part of <see cref="T:System.Security.Permissions.SecurityPermission" />) to call either the getter or setter for this property.  This permission is enforced with a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> enumeration value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the serialized value of the <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UsingDefaultValue">
       <MemberSignature Language="C#" Value="public bool UsingDefaultValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UsingDefaultValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value specifying whether the value of the <see cref="T:System.Configuration.SettingsPropertyValue" /> object is the default value as defined by the <see cref="P:System.Configuration.SettingsProperty.DefaultValue" /> property value on the associated <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

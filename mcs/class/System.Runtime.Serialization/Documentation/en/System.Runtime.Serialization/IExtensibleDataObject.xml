@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IExtensibleDataObject" FullName="System.Runtime.Serialization.IExtensibleDataObject">
+  <TypeSignature Language="C#" Value="public interface IExtensibleDataObject" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IExtensibleDataObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface provides a single property that sets or returns a structure used to store data that is external to a data contract. The extra data is stored in an instance of the <see cref="T:System.Runtime.Serialization.ExtensionDataObject" /> class and accessed through the <see cref="P:System.Runtime.Serialization.IExtensibleDataObject.ExtensionData" /> property. In a roundtrip operation where data is received, processed, and sent back, the extra data is sent back to the original sender intact. This is useful to store data received from future versions of the contract. If you do not implement the interface, any extra data is ignored and discarded during a roundtrip operation. </para>
+      <procedure>
+        <format type="text/html">
+          <h2>To use this versioning feature</h2>
+        </format>
+        <steps>
+          <step>
+            <para>Implement the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface in a class.</para>
+          </step>
+          <step>
+            <para>Add the <see cref="P:System.Runtime.Serialization.IExtensibleDataObject.ExtensionData" /> property to your type.</para>
+          </step>
+          <step>
+            <para>Add a private member of type <see cref="T:System.Runtime.Serialization.ExtensionDataObject" /> to the class.</para>
+          </step>
+          <step>
+            <para>Implement get and set methods for the property using the new private member.</para>
+          </step>
+          <step>
+            <para>Apply the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute to the class. Set the <see cref="P:System.Runtime.Serialization.DataContractAttribute.Name" /> and <see cref="P:System.Runtime.Serialization.DataContractAttribute.Namespace" /> properties to appropriate values if necessary.</para>
+          </step>
+        </steps>
+      </procedure>
+      <para>For more information about versioning of types, see <format type="text/html"><a href="4a0700cb-5f5f-4137-8705-3a3ecf06461f">Data Contract Versioning</a></format>. For information about creating forward-compatible data contracts, see <format type="text/html"><a href="413c9044-26f8-4ecb-968c-18495ea52cd9">Forward Compatible Data Contracts</a></format>. For more information about data contracts, see <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Using Data Contracts</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a data structure to store extra data encountered by the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> during deserialization of a type marked with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ExtensionData">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.ExtensionDataObject ExtensionData { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.ExtensionDataObject ExtensionData" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.ExtensionDataObject</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the structure that contains extra data.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

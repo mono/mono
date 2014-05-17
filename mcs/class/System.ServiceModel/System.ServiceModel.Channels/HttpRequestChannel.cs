@@ -85,7 +85,7 @@ namespace System.ServiceModel.Channels
 				 	destination = Via ?? RemoteAddress.Uri;
 			}
 
-			var web_request = HttpWebRequest.Create (destination);
+			var web_request = (HttpWebRequest) HttpWebRequest.Create (destination);
 			web_requests.Add (web_request);
 			result.WebRequest = web_request;
 			web_request.Method = "POST";
@@ -145,9 +145,50 @@ namespace System.ServiceModel.Channels
 			string pname = HttpRequestMessageProperty.Name;
 			if (message.Properties.ContainsKey (pname)) {
 				HttpRequestMessageProperty hp = (HttpRequestMessageProperty) message.Properties [pname];
-				foreach (var key in hp.Headers.AllKeys)
-					if (!WebHeaderCollection.IsRestricted (key))
+				foreach (var key in hp.Headers.AllKeys) {
+					if (WebHeaderCollection.IsRestricted (key)) { // do not ignore this. WebHeaderCollection rejects restricted ones.
+						// FIXME: huh, there should be any better way to do such stupid conversion.
+						switch (key) {
+						case "Accept":
+							web_request.Accept = hp.Headers [key];
+							break;
+						case "Connection":
+							web_request.Connection = hp.Headers [key];
+							break;
+						//case "ContentLength":
+						//	web_request.ContentLength = hp.Headers [key];
+						//	break;
+						case "ContentType":
+							web_request.ContentType = hp.Headers [key];
+							break;
+						//case "Date":
+						//	web_request.Date = hp.Headers [key];
+						//	break;
+						case "Expect":
+							web_request.Expect = hp.Headers [key];
+							break;
+#if NET_4_0
+						case "Host":
+							web_request.Host = hp.Headers [key];
+							break;
+#endif
+						//case "If-Modified-Since":
+						//	web_request.IfModifiedSince = hp.Headers [key];
+						//	break;
+						case "Referer":
+							web_request.Referer = hp.Headers [key];
+							break;
+						case "Transfer-Encoding":
+							web_request.TransferEncoding = hp.Headers [key];
+							break;
+						case "User-Agent":
+							web_request.UserAgent = hp.Headers [key];
+							break;
+						}
+					}
+					else
 						web_request.Headers [key] = hp.Headers [key];
+				}
 				web_request.Method = hp.Method;
 				// FIXME: do we have to handle hp.QueryString ?
 				if (hp.SuppressEntityBody)

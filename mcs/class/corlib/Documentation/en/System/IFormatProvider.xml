@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IFormatProvider" FullName="System.IFormatProvider" FullNameSP="System_IFormatProvider" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IFormatProvider" />
   <TypeSignature Language="C#" Value="public interface IFormatProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFormatProvider" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -9,31 +11,49 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Implemented by classes that supply objects that provide formatting
-      services.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>When a <paramref name="format specifier" /> includes symbols that
-      vary by culture, such as the currency symbol included by the "C" and "c"
-      formats, a <paramref name="formatting object" />
-      supplies the actual characters used in a string representation of a numeric
-      value. For example, a formatting object might supply "$" for the currency symbol.
-      The formatting object for system-supplied numeric types is a <see cref="T:System.Globalization.NumberFormatInfo" />
-      instance. For <see cref="T:System.DateTime" /> instances, a <see cref="T:System.Globalization.DateTimeFormatInfo" /> is used.</para>
-        <para>
-          <see cref="T:System.IFormatProvider" /> contains the <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method. The consumer of an object
-   should call this method to obtain a formatting object.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IFormatProvider" /> interface supplies an object that provides formatting information for formatting and parsing operations. Formatting operations convert the value of a type to the string representation of that value. Typical formatting methods are the ToString methods of a type, as well as <see cref="M:System.String.Format(System.String,System.Object)" />. Parsing operations convert the string representation of a value to a type with that value. Typical parsing methods are Parse and TryParse. </para>
+      <para>The <see cref="T:System.IFormatProvider" /> interface consists of a single method, <see cref="M:System.IFormatProvider.GetFormat(System.Type)" />. <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> is a callback method: The parsing or formatting method calls it and passes it a <see cref="T:System.Type" /> object that represents the type of object that the formatting or parsing method expects will provide formatting information. The <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method is responsible for returning an object of that type. </para>
+      <para>
+        <see cref="T:System.IFormatProvider" /> implementations are often used implicitly by formatting and parsing methods. For example, the <see cref="M:System.DateTime.ToString(System.String)" /> method implicitly uses an <see cref="T:System.IFormatProvider" /> implementation that represents the system's current culture. <see cref="T:System.IFormatProvider" /> implementations can also be specified explicitly by methods that have a parameter of type <see cref="T:System.IFormatProvider" />, such as <see cref="M:System.Int32.Parse(System.String,System.IFormatProvider)" /> and <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" />.</para>
+      <para>The .NET Framework includes the following three predefined <see cref="T:System.IFormatProvider" /> implementations to provide culture-specific information that is used in formatting or parsing numeric and date and time values: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="T:System.Globalization.NumberFormatInfo" /> class, which provides information that is used to format numbers, such as the currency, thousands separator, and decimal separator symbols for a particular culture. For information about the predefined format strings recognized by a <see cref="T:System.Globalization.NumberFormatInfo" /> object and used in numeric formatting operations, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>. </para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Globalization.DateTimeFormatInfo" /> class, which provides information that is used to format dates and times, such as the date and time separator symbols for a particular culture or the order and format of a date's year, month, and day components. For information about the predefined format strings recognized by a <see cref="T:System.Globalization.DateTimeFormatInfo" /> object and used in numeric formatting operations, see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard Date and Time Format Strings</a></format> and <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom Date and Time Format Strings</a></format>.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Globalization.CultureInfo" /> class, which represents a particular culture. Its <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method returns a culture-specific <see cref="T:System.Globalization.NumberFormatInfo" /> or <see cref="T:System.Globalization.DateTimeFormatInfo" /> object, depending on whether the <see cref="T:System.Globalization.CultureInfo" /> object is used in a formatting or parsing operation that involves numbers or dates and times.</para>
+        </item>
+      </list>
+      <para>The .NET Framework also supports custom formatting. This typically involves the creation of a formatting class that implements both <see cref="T:System.IFormatProvider" /> and <see cref="T:System.ICustomFormatter" />. An instance of this class is then passed as a parameter to a method that performs a custom formatting operation, such as <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" /> The example provides an illustration of such a custom implementation that formats a number as a 12-digit account number.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a mechanism for retrieving an object to control formatting.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetFormat">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object GetFormat(class System.Type formatType)" />
       <MemberSignature Language="C#" Value="public object GetFormat (Type formatType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetFormat(class System.Type formatType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -41,38 +61,26 @@
         <Parameter Name="formatType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="formatType">The <see cref="T:System.Type" /> of the formatting object to be returned.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> is a callback method that formatting and parsing methods invoke to retrieve information about the format of the input string in parsing operations or the format of the output string in formatting operations. In the <paramref name="formatType" /> parameter, the formatting or parsing method passes the type of object it requires to perform its operation. If the <see cref="T:System.IFormatProvider" /> implementation can supply this formatting or parsing object, it returns that object. If not, it returns null.</para>
+          <para>For example, in the call to the <see cref="M:System.Int32.ToString(System.IFormatProvider)" /> method, the method argument is an <see cref="T:System.IFormatProvider" /> object that provides information about how the string representation of the current integer instance might be formatted. When the runtime executes the method, it calls the <see cref="T:System.IFormatProvider" /> object's <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method and passes it a <see cref="T:System.Type" /> object that represents the <see cref="T:System.Globalization.NumberFormatInfo" /> type. If the <see cref="T:System.IFormatProvider" /> object can supply a <see cref="T:System.Globalization.NumberFormatInfo" /> object, it returns that object. If it cannot supply an object of that type, it returns null.</para>
+          <para>You can implement the <see cref="T:System.IFormatProvider" /> interface and the <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method in classes that provide custom formatting or parsing services. The <see cref="T:System.IFormatProvider" /> implementation is then passed as an argument to any overload of a parsing or formatting method that has a parameter of type <see cref="T:System.IFormatProvider" />, such as <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" />, <see cref="M:System.Int32.ToString(System.String,System.IFormatProvider)" />, or <see cref="M:System.DateTime.Parse(System.String,System.IFormatProvider)" />.</para>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.Object" /> that provides formatting services.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that provides formatting services for the specified type.</para>
         </summary>
         <returns>
-          <para>The current instance, if <paramref name="formatType" /> is the same type as the current instance; otherwise, a <see langword="null" /> reference.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object specified by <paramref name="formatType" />, if the <see cref="T:System.IFormatProvider" /> implementation can supply that type of object; otherwise, null.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Implement in 
-      classes that provide formatting objects for use in methods that generate or
-      parse string representations of objects, such as <see langword="ToString" /> and
-   <see langword="Parse" />.</block>
-          </para>
-        </remarks>
+        <param name="formatType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies the type of format object to return. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Interfaces />
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

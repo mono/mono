@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilerParameters" FullName="System.CodeDom.Compiler.CompilerParameters">
   <TypeSignature Language="C#" Value="public class CompilerParameters" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CompilerParameters extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,63 +16,100 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object represents the settings and options for an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+      <para>If you are compiling an executable program, you must set the <see cref="P:System.CodeDom.Compiler.CompilerParameters.GenerateExecutable" /> property to true. When the <see cref="P:System.CodeDom.Compiler.CompilerParameters.GenerateExecutable" /> is set to false, the compiler will generate a class library. By default, a new <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> is initialized with its <see cref="P:System.CodeDom.Compiler.CompilerParameters.GenerateExecutable" /> property set to false. If you are compiling an executable from a CodeDOM graph, a <see cref="T:System.CodeDom.CodeEntryPointMethod" /> must be defined in the graph. If there are multiple code entry points, you can indicate the class that defines the entry point to use by setting the name of the class to the <see cref="P:System.CodeDom.Compiler.CompilerParameters.MainClass" /> property.</para>
+      <para>You can specify a file name for the output assembly in the <see cref="P:System.CodeDom.Compiler.CompilerParameters.OutputAssembly" /> property. Otherwise, a default output file name will be used. To include debug information in a generated assembly, set the <see cref="P:System.CodeDom.Compiler.CompilerParameters.IncludeDebugInformation" /> property to true. If your project references any assemblies, you must specify the assembly names as items in a <see cref="T:System.Collections.Specialized.StringCollection" /> set to the <see cref="P:System.CodeDom.Compiler.CompilerParameters.ReferencedAssemblies" /> property of the <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> used when invoking compilation.</para>
+      <para>You can compile an assembly that is written to memory rather than disk by setting the <see cref="P:System.CodeDom.Compiler.CompilerParameters.GenerateInMemory" /> property to true. When an assembly is generated in memory, your code can obtain a reference to the generated assembly from the <see cref="P:System.CodeDom.Compiler.CompilerResults.CompiledAssembly" /> property of a <see cref="T:System.CodeDom.Compiler.CompilerResults" />. If an assembly is written to disk, you can obtain the path to the generated assembly from the <see cref="P:System.CodeDom.Compiler.CompilerResults.PathToAssembly" /> property of a <see cref="T:System.CodeDom.Compiler.CompilerResults" />.</para>
+      <para>To specify a warning level at which to halt compilation, set the <see cref="P:System.CodeDom.Compiler.CompilerParameters.WarningLevel" /> property to an integer that represents the warning level at which to halt compilation. You can also configure the compiler to halt compilation if warnings are encountered by setting the <see cref="P:System.CodeDom.Compiler.CompilerParameters.TreatWarningsAsErrors" /> property to true.</para>
+      <para>To specify a custom command-line arguments string to use when invoking the compilation process, set the string in the <see cref="P:System.CodeDom.Compiler.CompilerParameters.CompilerOptions" /> property. If a Win32 security token is required to invoke the compiler process, specify the token in the <see cref="P:System.CodeDom.Compiler.CompilerParameters.UserToken" /> property. To include .NET Framework resource files in the compiled assembly, add the names of the resource files to the <see cref="P:System.CodeDom.Compiler.CompilerParameters.EmbeddedResources" /> property. To reference .NET Framework resources in another assembly, add the names of the resource files to the <see cref="P:System.CodeDom.Compiler.CompilerParameters.LinkedResources" /> property. To include a Win32 resource file in the compiled assembly, specify the name of the Win32 resource file in the <see cref="P:System.CodeDom.Compiler.CompilerParameters.Win32Resource" /> property.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the parameters used to invoke a compiler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CompilerParameters ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CompilerParameters (string[] assemblyNames);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string[] assemblyNames) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="assemblyNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="assemblyNames">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> class using the specified assembly names.</para>
+        </summary>
+        <param name="assemblyNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The names of the assemblies to reference. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CompilerParameters (string[] assemblyNames, string output);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string[] assemblyNames, string output) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="assemblyNames" Type="System.String[]" />
         <Parameter Name="output" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyNames">To be added: an object of type 'string []'</param>
         <param name="output">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> class using the specified assembly names and output file name.</para>
+        </summary>
+        <param name="assemblyNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The names of the assemblies to reference. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CompilerParameters (string[] assemblyNames, string output, bool includeDebugInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string[] assemblyNames, string output, bool includeDebugInfo) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="assemblyNames" Type="System.String[]" />
@@ -77,40 +117,50 @@
         <Parameter Name="includeDebugInfo" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="assemblyNames">To be added: an object of type 'string []'</param>
         <param name="output">To be added.</param>
         <param name="includeDebugInfo">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> class using the specified assembly names, output name, and a value indicating whether to include debug information.</para>
+        </summary>
+        <param name="assemblyNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The names of the assemblies to reference. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CompilerOptions">
+      <MemberSignature Language="C#" Value="public string CompilerOptions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CompilerOptions" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CompilerOptions">
-      <MemberSignature Language="C#" Value="public string CompilerOptions { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> typically includes this string on the command line when invoking a command-line compiler. By default, this property contains an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets optional command-line arguments to use when invoking the compiler.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EmbeddedResources">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringCollection EmbeddedResources { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringCollection EmbeddedResources" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -121,86 +171,125 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Embedded resources are built into the generated assembly output file. Including files through this property is similar to the /resource command-line argument supported by many of the .NET Framework compilers.</para>
+          <para>Not all compilers support .NET Framework resource files, so you should test for this support by calling the <see cref="M:System.CodeDom.Compiler.ICodeGenerator.Supports(System.CodeDom.Compiler.GeneratorSupport)" /> method with the flag <see cref="F:System.CodeDom.Compiler.GeneratorSupport.Resources" />.</para>
+          <para>Add one or more .NET Framework resource file paths to the returned <see cref="T:System.Collections.Specialized.StringCollection" /> to embed the file resources in the compiled assembly. Adding a duplicate or invalid file path results in compilation errors; ensure that each string specifies a unique path to a valid .NET Framework resource file.</para>
+          <para>Use <see cref="P:System.CodeDom.Compiler.CompilerParameters.EmbeddedResources" /> to include default or neutral culture .NET Framework resources for an assembly; use the <see cref="P:System.CodeDom.Compiler.CompilerParameters.LinkedResources" /> property to reference .NET Framework resources in satellite assemblies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the .NET Framework resource files to include when compiling the assembly output.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Evidence">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence Evidence { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence Evidence { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.Evidence Evidence" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an evidence object that represents the security policy permissions to grant the compiled assembly.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateExecutable">
-      <MemberSignature Language="C#" Value="public bool GenerateExecutable { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool GenerateExecutable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool GenerateExecutable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of this property is false, a DLL will be generated. By default, the value of this property is false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to generate an executable.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateInMemory">
-      <MemberSignature Language="C#" Value="public bool GenerateInMemory { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool GenerateInMemory { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool GenerateInMemory" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to generate the output in memory.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IncludeDebugInformation">
-      <MemberSignature Language="C#" Value="public bool IncludeDebugInformation { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IncludeDebugInformation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeDebugInformation" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to include debug information in the compiled executable.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LinkedResources">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringCollection LinkedResources { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringCollection LinkedResources" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -211,152 +300,218 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Linked resource files allow your assembly to reference .NET Framework resources without embedding the actual resources in the assembly. Referencing files through this property is similar to the /linkresource command-line argument supported by many of the .NET Framework compilers.</para>
+          <para>Not all compilers support .NET Framework resource files, so you should test for this support by calling the <see cref="M:System.CodeDom.Compiler.ICodeGenerator.Supports(System.CodeDom.Compiler.GeneratorSupport)" /> method with the flag <see cref="F:System.CodeDom.Compiler.GeneratorSupport.Resources" />.</para>
+          <para>Add one or more .NET Framework resource file paths to the returned <see cref="T:System.Collections.Specialized.StringCollection" /> to create links for the resources in the compiled assembly. Adding a duplicate or invalid file path results in compilation errors; ensure that each string specifies a unique path to a valid .NET Framework resource file.</para>
+          <para>Use <see cref="P:System.CodeDom.Compiler.CompilerParameters.LinkedResources" /> to reference .NET Framework resources in satellite assemblies, localized for a particular culture; use the <see cref="P:System.CodeDom.Compiler.CompilerParameters.EmbeddedResources" /> property to embed the resources into the compiled assembly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the .NET Framework resource files that are referenced in the current source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MainClass">
-      <MemberSignature Language="C#" Value="public string MainClass { set; get; }" />
+      <MemberSignature Language="C#" Value="public string MainClass { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MainClass" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The main class contains the entry point for the program.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the main class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputAssembly">
-      <MemberSignature Language="C#" Value="public string OutputAssembly { set; get; }" />
+      <MemberSignature Language="C#" Value="public string OutputAssembly { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string OutputAssembly" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the output assembly.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReferencedAssemblies">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringCollection ReferencedAssemblies { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringCollection ReferencedAssemblies" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.Specialized.StringCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string collection should consist of, or include, the assemblies referenced by the current project. Add assembly file names to the returned <see cref="T:System.Collections.Specialized.StringCollection" /> to import the assembly manifest and reference the assembly type information in the current project.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the assemblies referenced by the current project.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="TempFiles">
+      <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.TempFileCollection TempFiles { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.Compiler.TempFileCollection TempFiles" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TempFiles">
-      <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.TempFileCollection TempFiles { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.TempFileCollection</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TempFileCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The temporary files in the collection are retained or deleted upon the completion of compiler activity based on the value of the <see cref="P:System.CodeDom.Compiler.TempFileCollection.KeepFiles" /> property in the collection. The <see cref="P:System.CodeDom.Compiler.TempFileCollection.KeepFiles" /> property is set if the collection is created using the <see cref="M:System.CodeDom.Compiler.TempFileCollection.#ctor(System.String,System.Boolean)" /> constructor with the <paramref name="keepFiles" /> parameter set to true.</para>
+          <block subset="none" type="note">
+            <para>This class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the collection that contains the temporary files.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="TreatWarningsAsErrors">
+      <MemberSignature Language="C#" Value="public bool TreatWarningsAsErrors { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool TreatWarningsAsErrors" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TreatWarningsAsErrors">
-      <MemberSignature Language="C#" Value="public bool TreatWarningsAsErrors { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to treat warnings as errors.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="UserToken">
+      <MemberSignature Language="C#" Value="public IntPtr UserToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance native int UserToken" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UserToken">
-      <MemberSignature Language="C#" Value="public IntPtr UserToken { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IntPtr'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the user token to use when creating the compiler process.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="WarningLevel">
+      <MemberSignature Language="C#" Value="public int WarningLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WarningLevel" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WarningLevel">
-      <MemberSignature Language="C#" Value="public int WarningLevel { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the warning level at which the compiler aborts compilation.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Win32Resource">
+      <MemberSignature Language="C#" Value="public string Win32Resource { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Win32Resource" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Win32Resource">
-      <MemberSignature Language="C#" Value="public string Win32Resource { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Linking files through this property is similar to the /winres and /winresource command-line arguments supported by many of the .NET Framework compilers.</para>
+          <para>Use <see cref="P:System.CodeDom.Compiler.CompilerParameters.Win32Resource" /> to compile a Win32 resource file into the assembly. Use <see cref="P:System.CodeDom.Compiler.CompilerParameters.EmbeddedResources" /> or <see cref="P:System.CodeDom.Compiler.CompilerParameters.LinkedResources" /> to compile with .NET Framework resource files.</para>
+          <para>Not all compilers support Win32 resource files, so you should test a code generator for this support before linking a resource file by calling the <see cref="M:System.CodeDom.Compiler.ICodeGenerator.Supports(System.CodeDom.Compiler.GeneratorSupport)" /> method with the flag <see cref="F:System.CodeDom.Compiler.GeneratorSupport.Win32Resources" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the file name of a Win32 resource file to link into the compiled assembly.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

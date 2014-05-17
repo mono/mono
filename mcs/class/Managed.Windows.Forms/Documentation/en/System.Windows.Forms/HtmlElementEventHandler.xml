@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlElementEventHandler" FullName="System.Windows.Forms.HtmlElementEventHandler">
   <TypeSignature Language="C#" Value="public delegate void HtmlElementEventHandler(object sender, HtmlElementEventArgs e);" />
   <AssemblyInfo>
@@ -17,7 +18,14 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a <see cref="T:System.Windows.Forms.HtmlElementEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+      <para>You must wait until an HTML document has finished loading in order to attach an event handler to the document. If you attempt to attach a handler before loading has completed, the attach operation may fail. The best place to attach event handlers in a new document is in the <see cref="E:System.Windows.Forms.WebBrowser.DocumentCompleted" /> event handler for the <see cref="T:System.Windows.Forms.WebBrowser" /> control. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the Click, MouseDown and related events on <see cref="T:System.Windows.Forms.HtmlDocument" />, <see cref="T:System.Windows.Forms.HtmlElement" />, and <see cref="T:System.Windows.Forms.HtmlWindow" />.</para>
+    </summary>
   </Docs>
 </Type>

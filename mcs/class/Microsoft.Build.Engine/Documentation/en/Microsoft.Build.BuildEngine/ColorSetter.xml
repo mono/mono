@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ColorSetter" FullName="Microsoft.Build.BuildEngine.ColorSetter">
   <TypeSignature Language="C#" Value="public delegate void ColorSetter(ConsoleColor color);" />
   <AssemblyInfo>
@@ -15,8 +16,11 @@
   </ReturnValue>
   <Docs>
     <param name="color">To be added.</param>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the type of delegate used to set the console color. </para>
+    </summary>
   </Docs>
 </Type>

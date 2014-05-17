@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IOperationBehavior" FullName="System.ServiceModel.Description.IOperationBehavior">
+  <TypeSignature Language="C#" Value="public interface IOperationBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOperationBehavior" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> interface to modify, examine, or extend some aspect of operation-wide execution at the application level for either client or service applications.</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="M:System.ServiceModel.Description.IOperationBehavior.AddBindingParameters(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Channels.BindingParameterCollection)" /> method to pass custom data at runtime to enable bindings to support custom behavior.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyClientBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.ClientOperation)" /> method to modify, examine, or insert extensions to a client dispatcher in a client application.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.DispatchOperation)" /> method to modify, examine, or insert extensions to operation-wide execution in a service application.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.ServiceModel.Description.IOperationBehavior.Validate(System.ServiceModel.Description.OperationDescription)" /> method to confirm that a <see cref="T:System.ServiceModel.Description.OperationDescription" /> meets specific requirements. This can be used to ensure that an operation has a certain configuration setting enabled, supports a particular feature and other requirements.</para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> objects can make use of any of these methods, but often only one is important; in such cases, the unused methods can return, performing no action.</para>
+      <block subset="none" type="note">
+        <para>All of the <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> methods pass an <see cref="T:System.ServiceModel.Description.OperationDescription" /> object as a parameter. This parameter is for examination only; if you modify the <see cref="T:System.ServiceModel.Description.OperationDescription" /> object the execution behavior is undefined.</para>
+      </block>
+      <para>
+        <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> objects are typically used to access the various properties of the <see cref="T:System.ServiceModel.Dispatcher.DispatchOperation" /> object in a service application and the <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> object in a client application.</para>
+      <para>Typically, the developer first reviews the extensibility points to determine which customization option suits the application scenario and then implements the customization at the appropriate scope. For example, <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> objects can insert customizations for all messages in an entire service and <see cref="T:System.ServiceModel.Description.IContractBehavior" /> objects can insert customizations for all messages across a specific contract, and so on. For a description of the various properties and customizations available, see <format type="text/html"><a href="954c138a-1cd0-45a0-8abe-e4d2b8ff5400">Extending ServiceHost and the Dispatcher</a></format>.</para>
+      <para>Once a customization has been decided upon (and the customization interface implemented if necessary) and the <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> is the appropriate scope of customization, the customization must be inserted into the indigo1 runtime by implementing <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> and adding the operation behavior to the runtime.</para>
+      <para>There are two ways to add the <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> to the runtime:</para>
+      <list type="bullet">
+        <item>
+          <para>Programmatically add the custom operation behavior to the <see cref="P:System.ServiceModel.Description.OperationDescription.Behaviors" /> property prior to the opening of the service host (in a service application) or the channel factory (in a client application).</para>
+        </item>
+        <item>
+          <para>Add the behavior using a custom attribute. </para>
+        </item>
+      </list>
+      <para>To perform the service customization task for which it is intended, the <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> object must be added to the <see cref="P:System.ServiceModel.Description.OperationDescription.Behaviors" /> property prior to the construction of the service runtime, which occurs when <see cref="Overload:System.ServiceModel.ICommunicationObject.Open" /> method is called on <see cref="T:System.ServiceModel.ServiceHost" />. To perform a client customization task, the <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> object must be added to the <see cref="P:System.ServiceModel.Description.OperationDescription.Behaviors" /> property before calling the <see cref="Overload:System.ServiceModel.ChannelFactory`1.CreateChannel" /> method or the <see cref="Overload:System.ServiceModel.ICommunicationObject.Open" /> method on <see cref="T:System.ServiceModel.ChannelFactory`1" />. </para>
+      <para>Although the operation behavior is designed for easy access to the runtime at the scope of an individual operation, you can access the runtime at a larger scope by accessing the parent runtime object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements methods that can be used to extend run-time behavior for an operation in either a service or client application.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AddBindingParameters">
+      <MemberSignature Language="C#" Value="public void AddBindingParameters (System.ServiceModel.Description.OperationDescription description, System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddBindingParameters(class System.ServiceModel.Description.OperationDescription description, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.OperationDescription" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <param name="description">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Description.IOperationBehavior.AddBindingParameters(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Channels.BindingParameterCollection)" /> method to provide binding elements with the extra objects they require to support the operation behavior. When binding parameters are added here, the binding can locate and process these objects when the channel listener or channel factory is created. Typically, you implement the <see cref="M:System.ServiceModel.Description.IOperationBehavior.AddBindingParameters(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Channels.BindingParameterCollection)" /> method to pass information about the operation to a custom binding element so that it can build a supporting channel correctly. Return no value if no modifications are required. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement to pass data at runtime to bindings to support custom behavior.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyClientBehavior">
+      <MemberSignature Language="C#" Value="public void ApplyClientBehavior (System.ServiceModel.Description.OperationDescription description, System.ServiceModel.Dispatcher.ClientOperation proxy);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ApplyClientBehavior(class System.ServiceModel.Description.OperationDescription description, class System.ServiceModel.Dispatcher.ClientOperation proxy) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.OperationDescription" />
+        <Parameter Name="proxy" Type="System.ServiceModel.Dispatcher.ClientOperation" />
+      </Parameters>
+      <Docs>
+        <param name="description">To be added.</param>
+        <param name="proxy">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyClientBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.ClientOperation)" /> method to view, modify, or add a custom extension to the client runtime across all messages used with a specific operation. For details about what customizations you can do with a client run-time object, see <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> and <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" />. </para>
+          <para>It is recommended that the <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyClientBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.ClientOperation)" /> method throw a <see cref="T:System.NotImplementedException" /> if the behavior is only intended for use in a service application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements a modification or extension of the client across an operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="public void ApplyDispatchBehavior (System.ServiceModel.Description.OperationDescription description, System.ServiceModel.Dispatcher.DispatchOperation dispatch);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ApplyDispatchBehavior(class System.ServiceModel.Description.OperationDescription description, class System.ServiceModel.Dispatcher.DispatchOperation dispatch) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.OperationDescription" />
+        <Parameter Name="dispatch" Type="System.ServiceModel.Dispatcher.DispatchOperation" />
+      </Parameters>
+      <Docs>
+        <param name="description">To be added.</param>
+        <param name="dispatch">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.DispatchOperation)" /> method to view, modify, or extend the service runtime across all messages or for a specific operation. For details about what customizations you can do in a service application, see <see cref="T:System.ServiceModel.Dispatcher.DispatchRuntime" /> and <see cref="T:System.ServiceModel.Dispatcher.DispatchOperation" />.</para>
+          <para>It is recommended that the <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.DispatchOperation)" /> method throw a <see cref="T:System.NotImplementedException" /> exception if the behavior is only intended for use in a client application. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements a modification or extension of the service across an operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public void Validate (System.ServiceModel.Description.OperationDescription description);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Validate(class System.ServiceModel.Description.OperationDescription description) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.OperationDescription" />
+      </Parameters>
+      <Docs>
+        <param name="description">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Description.IOperationBehavior.Validate(System.ServiceModel.Description.OperationDescription)" /> method to examine the structure to confirm any set of criteria. It is not necessary to perform any customizations in <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyClientBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.ClientOperation)" /> or <see cref="M:System.ServiceModel.Description.IOperationBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.OperationDescription,System.ServiceModel.Dispatcher.DispatchOperation)" /> to make use of this method. If the operation passes validation, return; otherwise, throw an exception.</para>
+          <para>For example, the <see cref="M:System.ServiceModel.Description.IOperationBehavior.Validate(System.ServiceModel.Description.OperationDescription)" /> method can be use to ensure that an operation is authorized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement to confirm that the operation meets some intended criteria.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

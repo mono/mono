@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IStream" FullName="System.Runtime.InteropServices.ComTypes.IStream">
   <TypeSignature Language="C#" Value="public interface IStream" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IStream" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,14 +17,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, see the existing documentation for IStream and ISequentialStream in the the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IStream interface, with ISequentialStream functionality.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public void Clone (out System.Runtime.InteropServices.ComTypes.IStream ppstm);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clone(class System.Runtime.InteropServices.ComTypes.IStream ppstm) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -35,14 +49,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Commit">
+      <MemberSignature Language="C#" Value="public void Commit (int grfCommitFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Commit(int32 grfCommitFlags) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Commit">
-      <MemberSignature Language="C#" Value="public void Commit (int grfCommitFlags);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -50,19 +65,27 @@
         <Parameter Name="grfCommitFlags" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="grfCommitFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IStream::Commit in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ensures that any changes made to a stream object that is open in transacted mode are reflected in the parent storage.</para>
+        </summary>
+        <param name="grfCommitFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that controls how the changes for the stream object are committed. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (System.Runtime.InteropServices.ComTypes.IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(class System.Runtime.InteropServices.ComTypes.IStream pstm, int64 cb, native int pcbRead, native int pcbWritten) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (System.Runtime.InteropServices.ComTypes.IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -73,22 +96,33 @@
         <Parameter Name="pcbWritten" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pstm">To be added.</param>
-        <param name="cb">To be added.</param>
-        <param name="pcbRead">To be added.</param>
-        <param name="pcbWritten">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IStream::CopyTo in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies a specified number of bytes from the current seek pointer in the stream to the current seek pointer in another stream.</para>
+        </summary>
+        <param name="pstm">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to the destination stream. </param>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to copy from the source stream. </param>
+        <param name="pcbRead">
+          <attribution license="cc4" from="Microsoft" modified="false" />On successful return, contains the actual number of bytes read from the source. </param>
+        <param name="pcbWritten">
+          <attribution license="cc4" from="Microsoft" modified="false" />On successful return, contains the actual number of bytes written to the destination. </param>
       </Docs>
+    </Member>
+    <Member MemberName="LockRegion">
+      <MemberSignature Language="C#" Value="public void LockRegion (long libOffset, long cb, int dwLockType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void LockRegion(int64 libOffset, int64 cb, int32 dwLockType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LockRegion">
-      <MemberSignature Language="C#" Value="public void LockRegion (long libOffset, long cb, int dwLockType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -98,21 +132,31 @@
         <Parameter Name="dwLockType" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="libOffset">To be added.</param>
-        <param name="cb">To be added.</param>
-        <param name="dwLockType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IStream::LockRegion in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restricts access to a specified range of bytes in the stream.</para>
+        </summary>
+        <param name="libOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte offset for the beginning of the range. </param>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the range, in bytes, to restrict. </param>
+        <param name="dwLockType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The requested restrictions on accessing the range. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public void Read (byte[] pv, int cb, IntPtr pcbRead);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Read(unsigned int8[] pv, int32 cb, native int pcbRead) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Read">
-      <MemberSignature Language="C#" Value="public void Read (byte[] pv, int cb, IntPtr pcbRead);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -122,38 +166,55 @@
         <Parameter Name="pcbRead" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pv">To be added.</param>
-        <param name="cb">To be added.</param>
-        <param name="pcbRead">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for ISequentialStream::Read in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a specified number of bytes from the stream object into memory starting at the current seek pointer.</para>
+        </summary>
+        <param name="pv">
+          <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the data read from the stream. This parameter is passed uninitialized.</param>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read from the stream object. </param>
+        <param name="pcbRead">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to a ULONG variable that receives the actual number of bytes read from the stream object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Revert">
+      <MemberSignature Language="C#" Value="public void Revert ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Revert() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Revert">
-      <MemberSignature Language="C#" Value="public void Revert ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IStream::Revert in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards all changes that have been made to a transacted stream since the last <see cref="M:System.Runtime.InteropServices.ComTypes.IStream.Commit(System.Int32)" /> call.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Seek">
+      <MemberSignature Language="C#" Value="public void Seek (long dlibMove, int dwOrigin, IntPtr plibNewPosition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Seek(int64 dlibMove, int32 dwOrigin, native int plibNewPosition) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Seek">
-      <MemberSignature Language="C#" Value="public void Seek (long dlibMove, int dwOrigin, IntPtr plibNewPosition);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -163,21 +224,31 @@
         <Parameter Name="plibNewPosition" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="dlibMove">To be added.</param>
-        <param name="dwOrigin">To be added.</param>
-        <param name="plibNewPosition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IStream::Seek in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the seek pointer to a new location relative to the beginning of the stream, to the end of the stream, or to the current seek pointer.</para>
+        </summary>
+        <param name="dlibMove">
+          <attribution license="cc4" from="Microsoft" modified="false" />The displacement to add to <paramref name="dwOrigin" />. </param>
+        <param name="dwOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />The origin of the seek. The origin can be the beginning of the file, the current seek pointer, or the end of the file. </param>
+        <param name="plibNewPosition">
+          <attribution license="cc4" from="Microsoft" modified="false" />On successful return, contains the offset of the seek pointer from the beginning of the stream. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SetSize">
+      <MemberSignature Language="C#" Value="public void SetSize (long libNewSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetSize(int64 libNewSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetSize">
-      <MemberSignature Language="C#" Value="public void SetSize (long libNewSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -185,19 +256,27 @@
         <Parameter Name="libNewSize" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="libNewSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IStream::SetSize in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the size of the stream object.</para>
+        </summary>
+        <param name="libNewSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new size of the stream as a number of bytes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Stat">
+      <MemberSignature Language="C#" Value="public void Stat (out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, int grfStatFlag);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Stat(valuetype System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, int32 grfStatFlag) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Stat">
-      <MemberSignature Language="C#" Value="public void Stat (out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, int grfStatFlag);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -212,14 +291,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="UnlockRegion">
+      <MemberSignature Language="C#" Value="public void UnlockRegion (long libOffset, long cb, int dwLockType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void UnlockRegion(int64 libOffset, int64 cb, int32 dwLockType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UnlockRegion">
-      <MemberSignature Language="C#" Value="public void UnlockRegion (long libOffset, long cb, int dwLockType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -229,21 +309,31 @@
         <Parameter Name="dwLockType" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="libOffset">To be added.</param>
-        <param name="cb">To be added.</param>
-        <param name="dwLockType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IStream::UnlockRegion in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the access restriction on a range of bytes previously restricted with the <see cref="M:System.Runtime.InteropServices.ComTypes.IStream.LockRegion(System.Int64,System.Int64,System.Int32)" /> method.</para>
+        </summary>
+        <param name="libOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte offset for the beginning of the range. </param>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length, in bytes, of the range to restrict. </param>
+        <param name="dwLockType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access restrictions previously placed on the range. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public void Write (byte[] pv, int cb, IntPtr pcbWritten);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(unsigned int8[] pv, int32 cb, native int pcbWritten) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="C#" Value="public void Write (byte[] pv, int cb, IntPtr pcbWritten);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -253,17 +343,22 @@
         <Parameter Name="pcbWritten" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pv">To be added.</param>
-        <param name="cb">To be added.</param>
-        <param name="pcbWritten">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for ISequentialStream::Write in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a specified number of bytes into the stream object starting at the current seek pointer.</para>
+        </summary>
+        <param name="pv">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write this stream to. </param>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to write to the stream. </param>
+        <param name="pcbWritten">
+          <attribution license="cc4" from="Microsoft" modified="false" />On successful return, contains the actual number of bytes written to the stream object. If the caller sets this pointer to <see cref="F:System.IntPtr.Zero" />, this method does not provide the actual number of bytes written. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

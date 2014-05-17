@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildProviderResultFlags" FullName="System.Web.Compilation.BuildProviderResultFlags">
   <TypeSignature Language="C#" Value="public enum BuildProviderResultFlags" />
   <AssemblyInfo>
@@ -13,9 +14,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.BuildProviderResultFlags" /> values are used to indicate the results from the <see cref="M:System.Web.Compilation.BuildProvider.GetResultFlags(System.CodeDom.Compiler.CompilerResults)" /> method. The enumeration values indicate actions that are required after a virtual path is built within the ASP.NET build environment. The <see cref="T:System.Web.Compilation.BuildProviderResultFlags" /> values are used by the ASP.NET build environment when using instances of the <see cref="T:System.Web.Compilation.BuildProvider" /> class to build files and load the compiled assemblies.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the required behavior when a virtual path is built.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Default">
@@ -25,8 +32,11 @@
         <ReturnType>System.Web.Compilation.BuildProviderResultFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value; no special action is required after compilation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +49,11 @@
         <ReturnType>System.Web.Compilation.BuildProviderResultFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The compilation of the virtual path requires the containing <see cref="T:System.AppDomain" /> to be unloaded and restarted. This is only used in advanced compilation scenarios; typically, you should use the <see cref="F:System.Web.Compilation.BuildProviderResultFlags.Default" /> value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

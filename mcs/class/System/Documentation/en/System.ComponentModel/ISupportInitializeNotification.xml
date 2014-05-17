@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISupportInitializeNotification" FullName="System.ComponentModel.ISupportInitializeNotification">
   <TypeSignature Language="C#" Value="public interface ISupportInitializeNotification : System.ComponentModel.ISupportInitialize" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISupportInitializeNotification implements class System.ComponentModel.ISupportInitialize" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -10,41 +13,66 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You should implement this interface when your component has initialization dependencies on other components that also implement the <see cref="T:System.ComponentModel.ISupportInitializeNotification" /> interface. You can check to see if the dependent components have completed initialization by checking the <see cref="P:System.ComponentModel.ISupportInitializeNotification.IsInitialized" /> property. </para>
+      <para>
+        <see cref="T:System.ComponentModel.ISupportInitializeNotification" /> is implemented by the <see cref="T:System.Windows.Forms.BindingSource" /> and <see cref="T:System.Windows.Forms.ListControl" /> types.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows coordination of initialization for a component and its dependent properties.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Initialized">
       <MemberSignature Language="C#" Value="public event EventHandler Initialized;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Initialized" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event typically occurs during the call to the <see cref="M:System.ComponentModel.ISupportInitialize.EndInit" /> method for the component, but it may occur later if the component has dependent controls that implement the <see cref="T:System.ComponentModel.ISupportInitializeNotification" /> interface and the dependent controls have not completed initialization.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when initialization of the component is completed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsInitialized">
       <MemberSignature Language="C#" Value="public bool IsInitialized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInitialized" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.ISupportInitializeNotification.IsInitialized" /> property is automatically set to false when the <see cref="M:System.ComponentModel.ISupportInitialize.BeginInit" /> method is called, and true when the <see cref="M:System.ComponentModel.ISupportInitialize.EndInit" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the component is initialized.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

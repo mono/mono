@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataListItemEventArgs" FullName="System.Web.UI.WebControls.DataListItemEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DataListItemEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> event is raised when an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is created.</para>
+      <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemDataBound" /> event is raised when an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is data bound to a source.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.DataListItemEventArgs" />, see the <see cref="M:System.Web.UI.WebControls.DataListItemEventArgs.#ctor(System.Web.UI.WebControls.DataListItem)" /> constructor.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> and <see cref="E:System.Web.UI.WebControls.DataList.ItemDataBound" /> events of a <see cref="T:System.Web.UI.WebControls.DataList" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +35,37 @@
         <Parameter Name="item" Type="System.Web.UI.WebControls.DataListItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added: an object of type 'DataListItem'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DataListItemEventArgs" /> class.</para>
+          <para>When an instance of <see cref="T:System.Web.UI.WebControls.DataListItemEventArgs" /> is created by a call to this constructor, the following property is initialized to the specified value.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Item </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="item" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataListItemEventArgs" /> class.</para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.DataListItem" /> object that represents an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +79,15 @@
         <ReturnType>System.Web.UI.WebControls.DataListItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataListItem'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The items in the <see cref="T:System.Web.UI.WebControls.DataList" /> control are referenced as each item is created or bound to the control. Use this property to programmatically access the referenced item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control when the <see cref="E:System.Web.UI.WebControls.DataList.ItemCreated" /> or <see cref="E:System.Web.UI.WebControls.DataList.ItemDataBound" /> event is raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the referenced item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control when the event is raised.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

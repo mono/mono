@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebFormsReferenceManager" FullName="System.Web.UI.Design.WebFormsReferenceManager">
   <TypeSignature Language="C#" Value="public abstract class WebFormsReferenceManager" />
   <AssemblyInfo>
@@ -9,8 +10,27 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> base class is implemented by designer hosts to provide access to types, directives, and user controls defined in a Web project document. A control designer class can use the <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> to access the definitions in the current document, and to add a new tag prefix to the current document.</para>
+      <para>You access the <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> services supplied by the designer host through the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.ReferenceManager" /> property of a <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> implementation. The <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> implementation can be accessed in two ways:</para>
+      <list type="bullet">
+        <item>
+          <para>Classes deriving from <see cref="T:System.Web.UI.Design.ControlDesigner" /> can use the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> property to access a <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> implementation supplied by the designer host. The <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> implementation is supplied through the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.ReferenceManager" /> property of <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> property.</para>
+        </item>
+        <item>
+          <para>Other designer classes can access the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> implementation by first obtaining the <see cref="T:System.ComponentModel.Design.IDesignerHost" /> services implementation through the designer component's <see cref="P:System.ComponentModel.Component.Site" />, and then calling the <see cref="M:System.ComponentModel.Design.IDesignerHost.GetDesigner(System.ComponentModel.IComponent)" /> method using the designer host <see cref="P:System.ComponentModel.Design.IDesignerHost.RootComponent" /> property.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> replaces the obsolete interface <see cref="T:System.Web.UI.Design.IWebFormReferenceManager" />. Older designer hosts may only support the <see cref="T:System.Web.UI.Design.IWebFormReferenceManager" /> interface implementation. Check that the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> and <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> implementations supplied by the designer host are not null to ensure the designer host implements the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> and <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> classes. </para>
+          </block>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for accessing the types, directives, and controls in the current Web project document. This class must be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +41,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> class is abstract, you cannot create an instance of <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> directly using the constructor.</para>
+          <para>When deriving from the <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> class, override the constructor to implement custom initialization actions for your reference manager implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetRegisterDirectives">
@@ -36,9 +63,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the register directives for the current project document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of strings representing the register directives defined in the current document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTagPrefix">
@@ -54,10 +87,17 @@
         <Parameter Name="objectType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="objectType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the tag prefix for the specified object type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tag prefix for the specified object type, if found; otherwise, null.</para>
+        </returns>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object.</param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -74,11 +114,19 @@
         <Parameter Name="tagName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tagPrefix">To be added.</param>
-        <param name="tagName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object type with the specified tag prefix and tag name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the object with the specified tag prefix and name, if found; otherwise, null.</para>
+        </returns>
+        <param name="tagPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag prefix of the type to retrieve.</param>
+        <param name="tagName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the type to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetUserControlPath">
@@ -95,11 +143,23 @@
         <Parameter Name="tagName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tagPrefix">To be added.</param>
-        <param name="tagName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.UI.Design.WebFormsReferenceManager.GetUserControlPath(System.String,System.String)" /> uses the tag prefix and name to locate the user control register directive in the current document, and returns the src attribute value defined in the register directive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the relative URL path for the user control with the specified tag prefix and tag name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the relative URL path for the specified user control, if found; otherwise, null.</para>
+        </returns>
+        <param name="tagPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag prefix of the user control to retrieve.</param>
+        <param name="tagName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the user control to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="RegisterTagPrefix">
@@ -115,10 +175,20 @@
         <Parameter Name="objectType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="objectType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the tag prefix already exists, then a new register directive is not added.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a tag prefix for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tag prefix string.</para>
+        </returns>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to add a tag prefix for in the current document.</param>
       </Docs>
     </Member>
   </Members>

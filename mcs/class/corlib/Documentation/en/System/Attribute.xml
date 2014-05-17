@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Attribute" FullName="System.Attribute" FullNameSP="System_Attribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable Attribute extends System.Object" />
   <TypeSignature Language="C#" Value="public abstract class Attribute : System.Runtime.InteropServices._Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit Attribute extends System.Object implements class System.Runtime.InteropServices._Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -33,34 +35,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Serves as the base class for custom attributes. </para>
-    </summary>
-    <remarks>
-      <para>All attributes, whether built-in or user-defined, derive
-      directly or indirectly from <see cref="T:System.Attribute" />. Attributes inherit certain default behaviors: the
-      attribute might be associated with any target element (see <see cref="T:System.AttributeTargets" />); might
-      or might not be inherited by a derived element; and multiple instances might or might
-      not be allowed on the same target element. These behaviors are specified using
-      <see cref="T:System.AttributeUsageAttribute" />.</para>
-      <para>
-        <block subset="none" type="note">
-      An attribute is an annotation that can be placed on an element of source code
-      and used to store application-specific information at compile time. This
-      information is stored in the metadata and can be accessed either during
-      application execution, through a process known as reflection, or when another
-      tool reads the metadata. Attributes might change the behavior of the application
-      during execution, provide transaction information about an object, or convey
-      organizational information to a designer.
-      </block>
-      </para>
-      <para> The CLI predefines some attribute types and
-      uses them to control runtime behavior. Some languages predefine attribute types
-      to represent language features not directly represented in the Common Language
-      Specification (CLS). User-defined attribute classes, inheriting from <see cref="T:System.Attribute" />, can also be
-      created. The definition of such a class includes the name of the attribute, its
-      default behavior, and the information to be stored. </para>
-    </remarks>
     <example>
       <para> The following
       example creates and assigns multiple custom attributes to a class. The attribute contains the
@@ -143,32 +117,53 @@ class AuthorInfo
         <para> Some Other Author, version 1.10</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Attribute" /> class associates predefined system information or user-defined custom information with a target element. A target element can be an assembly, class, constructor, delegate, enum, event, field, interface, method, portable executable file module, parameter, property, return value, struct, or another attribute.</para>
+      <para>Information provided by an attribute is also known as metadata. Metadata can be examined at run time by your application to control how your program processes data, or before run time by external tools to control how your application itself is processed or maintained. For example, the .NET Framework predefines and uses attribute types to control run-time behavior, and some programming languages use attribute types to represent language features not directly supported by the .NET Framework common type system. </para>
+      <para>All attribute types derive directly or indirectly from the <see cref="T:System.Attribute" /> class. Attributes can be applied to any target element; multiple attributes can be applied to the same target element; and attributes can be inherited by an element derived from a target element. Use the <see cref="T:System.AttributeTargets" /> class to specify the target element to which the attribute is applied. </para>
+      <para>The <see cref="T:System.Attribute" /> class provides convenient methods to retrieve and test custom attributes. For more information about using attributes, see <format type="text/html"><a href="dd7604eb-9fa3-4b60-b2dd-b47739fa3148">Applying Attributes</a></format> and <format type="text/html"><a href="30386922-1E00-4602-9EBF-526B271A8B87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class for custom attributes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected Attribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.Attribute" />
-class.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is only called by classes that derive from <see cref="T:System.Attribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Attribute" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -176,35 +171,36 @@ class.</para>
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">The <see cref="T:System.Object" /> to compare to the current instance.</param>
-        <param name="obj">To be added.</param>
-        <summary>
-          <para>Determines whether the current instance and the
-      specified <see cref="T:System.Object" /> represent the same type and
-      value.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="obj" />
-represents the same type and value as the current instance. If <paramref name="obj" /> is a null reference or is not an instance of
-<see cref="T:System.Attribute" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <block subset="none" type="note">
             <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
           </block>
         </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to compare with this instance or null. </param>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to compare with this instance or null. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttribute">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute GetCustomAttribute(class System.Reflection.Assembly element, class System.Type attributeType)" />
       <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.Assembly element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -213,42 +209,45 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Assembly" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an instance of a specified custom attribute if a single instance of
-      the attribute is in the metadata for the specified assembly.</para>
-        </summary>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">If multiple instances of <paramref name="attributeType" /> can be
-   applied to <paramref name="element" />, use <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not a type derived from <see cref="T:System.Attribute" />.</exception>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one instance of the specified custom attribute was found.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" /> method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to a specified assembly. Parameters specify the assembly and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttribute">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute GetCustomAttribute(class System.Reflection.MemberInfo element, class System.Type attributeType)" />
       <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.MemberInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -257,23 +256,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">An instance of a type derived from <see cref="T:System.Reflection.MemberInfo" /> that describes a type member.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an instance of a specified custom attribute if a single instance of
-      the attribute is in the metadata for the specified member.</para>
-        </summary>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">If multiple instances of <paramref name="attributeType" /> can be
-   applied to <paramref name="element" />, use <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -281,19 +263,39 @@ represents the same type and value as the current instance. If <paramref name="o
         <exception cref="T:System.NotSupportedException">
           <paramref name="element" /> does not represent a constructor, method, property, event, type, or field member. </exception>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one instance of the specified custom attribute was found.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A match is determined in the same way described in the Return Value section of <see cref="M:System.Type.IsAssignableFrom(System.Type)" />.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes on types, methods, and constructors if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to a member of a type. Parameters specify the member, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttribute">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute GetCustomAttribute(class System.Reflection.Module element, class System.Type attributeType)" />
       <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.Module element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -302,17 +304,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Module" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an instance of a specified custom attribute if a single instance of
-      the attribute is in the metadata for the specified module.</para>
-        </summary>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">If multiple instances of <paramref name="attributeType" /> can be
@@ -324,19 +315,32 @@ represents the same type and value as the current instance. If <paramref name="o
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not a type derived from <see cref="T:System.Attribute" />.</exception>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one instance of the specified custom attribute was found.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to a module. Parameters specify the module, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttribute">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute GetCustomAttribute(class System.Reflection.ParameterInfo element, class System.Type attributeType)" />
       <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.ParameterInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -345,40 +349,40 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.ParameterInfo" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an instance of a specified custom attribute if a single instance of
-      the attribute is in the metadata for the specified parameter.</para>
-        </summary>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">If multiple instances of <paramref name="attributeType" /> can be
-   applied to <paramref name="element" />, use <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not a type derived from <see cref="T:System.Attribute" />.</exception>
         <exception cref="T:System.Reflection.AmbiguousMatchException">More than one instance of the specified custom attribute was found.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to a method parameter. Parameters specify the method parameter, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.Assembly element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Assembly element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttribute">
-      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.Assembly element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -388,22 +392,37 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to an assembly. Parameters specify the assembly, the type of the custom attribute to search for, and an ignored search option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttribute">
-      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -413,22 +432,37 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes on types, methods, and constructors if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.Module element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Module element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttribute">
-      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.Module element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -438,22 +472,32 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to a module. Parameters specify the module, the type of the custom attribute to search for, and an ignored search option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttribute">
-      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute</ReturnType>
       </ReturnValue>
@@ -463,23 +507,36 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute applied to a method parameter. Parameters specify the method parameter, the type of the custom attribute to search for, and whether to search ancestors of the method parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCustomAttributes">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.Assembly element)" />
       <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Assembly element) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -487,37 +544,39 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Assembly" /> instance.</param>
-        <summary>
-          <para> Returns an array of all
-      custom attributes in the metadata for the specified assembly.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." />
-   The
-   array includes any inherited custom attributes. Returns
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to an assembly. A parameter specifies the assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element)" />
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element)" />
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -525,37 +584,41 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <param name="element">An instance of a type derived from <see cref="T:System.Reflection.MemberInfo" /> that describes a type member.</param>
-        <summary>
-          <para> Returns an array of all
-      custom attributes in the metadata for the specified member.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." /> The array includes custom attributes that are inherited by
-<paramref name="element" />, if any. Returns 
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">
           <paramref name="element" /> does not represent a constructor, method, property, event, type, or field member. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value contains the custom attributes for ancestors of <paramref name="element" />.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes on methods, constructors, and types if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a member of a type. A parameter specifies the member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element)" />
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element)" />
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -563,35 +626,33 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Module" /> instance.</param>
-        <summary>
-          <para> Returns an array of all
-      custom attributes in the metadata for the specified module.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." />
-   The array includes any inherited custom attributes. Returns
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a module. A parameter specifies the module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element)" />
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element)" />
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -599,34 +660,35 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.ParameterInfo" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.ParameterInfo" /> instance.</param>
-        <summary>
-          <para> Returns an array of all
-      custom attributes in the metadata for the specified parameter.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." /> The array includes any inherited custom
-   attributes. Returns
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a method parameter. A parameter specifies the method parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Assembly element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -635,22 +697,36 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to an assembly. Parameters specify the assembly, and an ignored search option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.Assembly element, class System.Type attributeType)" />
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.Assembly element, class System.Type attributeType)" />
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element, Type attributeType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -659,36 +735,42 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Assembly" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an array of the instances of a specified custom attribute if the
-      attribute is in the metadata for the specified assembly.</para>
-        </summary>
-        <returns>
-          <para> An array of type <paramref name="attributeType" /> containing the instances that are applied to <paramref name="element." /> The array includes any inherited instances 
-   of <paramref name="attributeType" />. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="type" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not a type derived from <see cref="T:System.Attribute" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to an assembly. Parameters specify the assembly, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -697,22 +779,37 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes on methods, constructors, and types if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type type)" />
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type type)" />
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element, Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -721,38 +818,44 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">An instance of a type derived from <see cref="T:System.Reflection.MemberInfo" /> that describes a type member.</param>
-        <param name="type">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an array of the instances of a specified custom attribute if the
-      attribute is in the metadata for the specified member.</para>
-        </summary>
-        <returns>
-          <para> An array of type <paramref name="type" /> containing the instances that are applied to <paramref name="element." /> The array includes instances
-   of <paramref name="type" /> that are inherited by
-<paramref name="element" />, if any. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="type" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="type" /> is not a type derived from <see cref="T:System.Attribute" />.</exception>
         <exception cref="T:System.NotSupportedException">
           <paramref name="element" /> does not represent a constructor, method, property, event, type, or field member. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value contains the custom attributes for ancestors of <paramref name="element" />.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes on methods, constructors, and types if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a member of a type. Parameters specify the member, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="type" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -761,22 +864,34 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a module. Parameters specify the module, and an ignored search option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element, class System.Type attributeType)" />
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element, class System.Type attributeType)" />
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element, Type attributeType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -785,35 +900,36 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Module" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an array of the instances of a specified custom attribute if the
-      attribute is in the metadata for the specified module.</para>
-        </summary>
-        <returns>
-          <para> An array of type <paramref name="attributeType" /> containing the instances that are applied to <paramref name="element." /> The array includes any inherited instances
-   of <paramref name="attributeType" />. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="type" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not a type derived from <see cref="T:System.Attribute" />.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a module. Parameters specify the module, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -822,22 +938,34 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a method parameter. Parameters specify the method parameter, and whether to search ancestors of the method parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType)" />
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType)" />
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element, Type attributeType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -846,40 +974,39 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.ParameterInfo" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns an array of the instances of a specified custom attribute if the
-      attribute is in the metadata for the specified parameter.</para>
-        </summary>
-        <returns>
-          <para> An array of type <paramref name="attributeType" /> containing the instances that are applied to <paramref name="element." /> The array includes any inherited instances
-   of <paramref name="attributeType" />. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
-        <remarks>
-          <para>If <paramref name="element" /> represents a
-   method parameter, the array returned by <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" />
-   includes any <paramref name="attributeType" /> instances
-   for the parameter <paramref name="element" /> in the base methods.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not a type derived from <see cref="T:System.Attribute" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a method parameter. Parameters specify the method parameter, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Assembly element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Assembly element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -889,22 +1016,37 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to an assembly. Parameters specify the assembly, the type of the custom attribute to search for, and an ignored search option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element, Type type, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type type, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.MemberInfo element, Type type, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -914,22 +1056,38 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns security attributes on methods, constructors, and types if the attributes are stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="type" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.Module element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.Module element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -939,22 +1097,35 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a module. Parameters specify the module, the type of the custom attribute to search for, and an ignored search option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute[] GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public static Attribute[] GetCustomAttributes (System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
@@ -964,34 +1135,41 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the custom attributes applied to a method parameter. Parameters specify the method parameter, the type of the custom attribute to search for, and whether to search ancestors of the method parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Generates a hash code for the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>
       The algorithm used to generate the hash code is
@@ -1003,36 +1181,56 @@ represents the same type and value as the current instance. If <paramref name="o
    </block>
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsDefaultAttribute">
+      <MemberSignature Language="C#" Value="public virtual bool IsDefaultAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsDefaultAttribute() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefaultAttribute">
-      <MemberSignature Language="C#" Value="public virtual bool IsDefaultAttribute ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of this class returns false, and must be implemented in the derived class to be useful to that class.</para>
+          <para>The implementation of this method in a derived class compares the value of this instance to a standard default value, then returns a Boolean value that indicates whether the value of this instance is equal to the standard value. The standard value is typically coded as a constant in the implementation, or stored programmatically in a field used by the implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, indicates whether the value of this instance is the default value for the derived class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance is the default attribute for the class; otherwise, false.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.Assembly element, class System.Type attributeType)" />
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Assembly element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.Assembly element, class System.Type attributeType)" />
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Assembly element, Type attributeType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1041,37 +1239,43 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Assembly" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para>Returns a <see cref="T:System.Boolean" /> value indicating whether a specified custom attribute is present in the metadata for the
-   specified assembly.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type 
-<paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, 
-<see langword="false" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not derived from <see cref="T:System.Attribute" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns true if the assembly has security attributes stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes are applied to an assembly. Parameters specify the assembly, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType)" />
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.MemberInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType)" />
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.MemberInfo element, Type attributeType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1080,38 +1284,45 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">An instance of a type derived from <see cref="T:System.Reflection.MemberInfo" /> that describes a type member.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para>Returns a <see cref="T:System.Boolean" /> value indicating whether a specified custom
-   attribute is present in the metadata for the specified member.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type
-<paramref name="attributeType" /> is applied to <paramref name="element" /> either directly or through inheritance; otherwise, 
-<see langword="false" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not derived from <see cref="T:System.Attribute" />.</exception>
         <exception cref="T:System.NotSupportedException">
           <paramref name="element" /> is not a constructor, method, property, event, type, or field. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ancestors of <paramref name="element" /> are searched for custom attributes.</para>
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns true if a type, method, or constructor has security attributes stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes are applied to a member of a type. Parameters specify the member, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, type, or property member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.Module element, class System.Type attributeType)" />
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Module element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.Module element, class System.Type attributeType)" />
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Module element, Type attributeType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1120,36 +1331,40 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.Module" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para> Returns a <see cref="T:System.Boolean" /> value indicating whether a specified custom attribute is present in
-   the metadata for the specified module.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type
-<paramref name="attributeType" /> is applied to <paramref name="element" /> 
-; otherwise, <see langword="false" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not derived from <see cref="T:System.Attribute" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ancestors of <paramref name="element" /> are not searched for custom attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes of a specified type are applied to a module. Parameters specify the module, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType)" />
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.ParameterInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType)" />
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.ParameterInfo element, Type attributeType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1158,35 +1373,39 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="element">A <see cref="T:System.Reflection.ParameterInfo" /> instance.</param>
-        <param name="attributeType">The <see cref="T:System.Type" /> of the custom attribute for which to check.</param>
-        <summary>
-          <para>Returns a <see cref="T:System.Boolean" /> value indicating whether a specified custom attribute is present in the
-   metadata for the specified parameter.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type
-<paramref name="attributeType" /> is applied to <paramref name="element" /> either directly or through 
-   inheritance; otherwise, <see langword="false" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="attributeType" /> is not derived from <see cref="T:System.Attribute" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ancestors of <paramref name="element" /> are searched for custom attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes are applied to a method parameter. Parameters specify the method parameter, and the type of the custom attribute to search for.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>Reflection</ExcludedLibrary>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Assembly element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Assembly element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Assembly element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1196,22 +1415,37 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns true if the assembly has security attributes stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes are applied to an assembly. Parameters specify the assembly, the type of the custom attribute to search for, and an ignored search option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1221,22 +1455,37 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the .NET Framework version 2.0, this method returns true if a type, method, or constructor has security attributes stored in the new metadata format. Assemblies compiled with version 2.0 or later use the new format. Dynamic assemblies and assemblies compiled with earlier versions of the .NET Framework use the old XML format. See <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes are applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, type, or property member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Module element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Module element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.Module element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1246,22 +1495,35 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method ignores the <paramref name="inherit" /> parameter and does not search the ancestors of <paramref name="element" /> for custom attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes are applied to a module. Parameters specify the module, the type of the custom attribute to search for, and an ignored search option. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored, and does not affect the operation of this method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="C#" Value="public static bool IsDefined (System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1271,22 +1533,32 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether any custom attributes are applied to a method parameter. Parameters specify the method parameter, the type of the custom attribute to search for, and whether to search ancestors of the method parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type, or a base type, of the custom attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, specifies to also search the ancestors of <paramref name="element" /> for custom attributes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public virtual bool Match (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Match(object obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Match">
-      <MemberSignature Language="C#" Value="public virtual bool Match (object obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1294,20 +1566,32 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method determines if one <see cref="T:System.Attribute" /> equals another. Its default implementation is the same as <see cref="M:System.Attribute.Equals(System.Object)" />, which performs a value and reference comparison. Override this method to implement support for attribute values, such as flags or bit fields, that consist of components that are meaningful in themselves.</para>
+          <para>For example, consider an attribute whose value is a binary field divided into a bit field of flags. Two instances of this attribute have one flag in set in common while all the other flags differ. The <see cref="M:System.Attribute.Equals(System.Object)" /> method cannot determine that the two instances have the same flag set, but the <see cref="M:System.Attribute.Match(System.Object)" /> method can.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a value that indicates whether this instance equals a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance equals <paramref name="obj" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to compare with this instance of <see cref="T:System.Attribute" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Attribute.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _Attribute.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Attribute.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Attribute.GetIDsOfNames">
-      <MemberSignature Language="C#" Value="void _Attribute.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1327,15 +1611,16 @@ represents the same type and value as the current instance. If <paramref name="o
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Attribute.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _Attribute.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Attribute.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Attribute.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _Attribute.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1345,21 +1630,31 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Attribute.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _Attribute.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Attribute.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Attribute.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _Attribute.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1371,15 +1666,16 @@ represents the same type and value as the current instance. If <paramref name="o
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Attribute.Invoke">
+      <MemberSignature Language="C#" Value="void _Attribute.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Attribute.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Attribute.Invoke">
-      <MemberSignature Language="C#" Value="void _Attribute.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1405,28 +1701,30 @@ represents the same type and value as the current instance. If <paramref name="o
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="TypeId">
+      <MemberSignature Language="C#" Value="public virtual object TypeId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object TypeId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TypeId">
-      <MemberSignature Language="C#" Value="public virtual object TypeId { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As implemented, this identifier is merely the <see cref="T:System.Type" /> of the attribute. However, it is intended that the unique identifier be used to identify two attributes of the same type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented in a derived class, gets a unique identifier for this <see cref="T:System.Attribute" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

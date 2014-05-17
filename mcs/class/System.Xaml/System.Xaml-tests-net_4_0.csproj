@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{52A4F0F5-20DA-4EC3-BF50-23D92DE2C5AB}</ProjectGuid>
+    <ProjectGuid>{23CB397F-AE14-427D-87C9-D132378DF313}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Xaml-tests-net_4_0</OutputPath>
@@ -95,30 +95,33 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xaml\System.Xaml-net_4_0.csproj">
-      <Project>{98E9FB98-226C-4256-A22A-91819C4C33B6}</Project>
+      <Project>{B2254BB1-2510-41F0-AD51-AF36ACF797AE}</Project>
       <Name>System.Xaml\System.Xaml-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
+      <Project>{3391D58D-26E9-48D2-9A76-4BC1A2F06BE9}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
+      <Project>{3FFA80F7-ACB9-480C-828F-7C9BA7A17EE3}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
+      <Project>{8B53B0E9-E0CA-4378-8C57-F85D518871D3}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -126,3 +129,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

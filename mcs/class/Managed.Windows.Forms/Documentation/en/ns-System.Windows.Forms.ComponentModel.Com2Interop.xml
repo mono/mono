@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Windows.Forms.ComponentModel.Com2Interop">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Windows.Forms.ComponentModel.Com2Interop" /> namespace contains helper classes that Visual Studio uses to display property pages while in design mode.</para>
+    </summary>
   </Docs>
 </Namespace>

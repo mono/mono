@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AsyncCallback" FullName="System.AsyncCallback" FullNameSP="System_AsyncCallback" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable AsyncCallback extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void AsyncCallback(IAsyncResult ar);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AsyncCallback extends System.MulticastDelegate" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,24 +14,29 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="ar">A <see cref="T:System.IAsyncResult" /> object containing information about the asynchronous operation that has completed.</param>
-    <summary>
-      <para> References one or more methods called when an asynchronous operation completes.</para>
-    </summary>
-    <remarks>To be added.</remarks>
-  </Docs>
-  <Members />
-  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="ar" Type="System.IAsyncResult" />
   </Parameters>
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="ar">A <see cref="T:System.IAsyncResult" /> object containing information about the asynchronous operation that has completed.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use an <see cref="T:System.AsyncCallback" /> delegate to process the results of an asynchronous operation in a separate thread. The <see cref="T:System.AsyncCallback" /> delegate represents a callback method that is called when the asynchronous operation completes. The callback method takes an <see cref="T:System.IAsyncResult" /> parameter, which is subsequently used to obtain the results of the asynchronous operation.</para>
+      <para>For more information about asynchronous programming, see <format type="text/html"><a href="9d97206c-8917-406c-8961-7d0909d84eeb">Using an AsyncCallback Delegate to End an Asynchronous Operation</a></format> and <format type="text/html"><a href="e3e5475d-c5e9-43f0-928e-d18df8ca1f1d">Using an AsyncCallback Delegate and State Object</a></format> in <format type="text/html"><a href="c6baed9f-2a25-4728-9a9a-53b7b14840cf">Asynchronous Programming Design Patterns</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>References a method to be called when a corresponding asynchronous operation completes.</para>
+    </summary>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
 </Type>

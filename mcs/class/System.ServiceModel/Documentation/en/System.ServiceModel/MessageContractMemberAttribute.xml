@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageContractMemberAttribute" FullName="System.ServiceModel.MessageContractMemberAttribute">
+  <TypeSignature Language="C#" Value="public abstract class MessageContractMemberAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MessageContractMemberAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains properties common to all parts of a SOAP message. For example, all parts have a name and a namespace, and potentially a level of security applied.</para>
+      <para>For information on controlling the serialization of the contents of a SOAP body without modifying the default SOAP envelope itself, see <see cref="T:System.Runtime.Serialization.DataContractAttribute" />, <format type="text/html"><a href="7c5a26c8-89c9-4bcb-a4bc-7131e6d01f0c">Specifying Data Transfer in Service Contracts</a></format>, and <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Data Contracts Overview</a></format>.</para>
+      <para>For more information about creating message contracts, see <format type="text/html"><a href="1e19c64a-ae84-4c2f-9155-91c54a77c249">Using Message Contracts</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Declares the base members for <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" /> and <see cref="T:System.ServiceModel.MessageHeaderAttribute" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MessageContractMemberAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.MessageContractMemberAttribute" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasProtectionLevel">
+      <MemberSignature Language="C#" Value="public bool HasProtectionLevel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value that indicates whether the member has a protection level assigned. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the name of the element that corresponds to this member. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the namespace of the element that corresponds to this member. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionLevel">
+      <MemberSignature Language="C#" Value="public System.Net.Security.ProtectionLevel ProtectionLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.ProtectionLevel ProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To make use of the <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property in either the <see cref="T:System.ServiceModel.MessageHeaderAttribute" /> or <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" /> attributes you must properly configure the binding and behaviors. If these security features are used without a proper configuration (for example, using <see cref="F:System.Net.Security.ProtectionLevel.Sign" /> with a message part without supplying security credentials) an exception is thrown at run time.</para>
+          <para>In addition, the protection level is determined for each header individually. However, the SOAP body has only one protection level, regardless of the number of body parts. The protection level of the body is determined by the highest <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property value of all the body parts. For example, consider the following class:</para>
+          <code>[MessageContract]
+public class PatientRecord
+{
+   [MessageHeader(ProtectionLevel=None)] public int recordID;
+   [MessageHeader(ProtectionLevel=Sign)] public string patientName;
+   [MessageHeader(ProtectionLevel=EncryptAndSign)] public string SSN;
+   [MessageBody(ProtectionLevel=None)] public string comments;
+   [MessageBody(ProtectionLevel=Sign)] public string diagnosis;
+   [MessageBody(ProtectionLevel=EncryptAndSign)] public string medicalHistory;
+}</code>
+          <para>In this example, the recordID header is not protected, patientName is signed, and SSN is encrypted and signed. There is at least one body part, medicalHistory, with <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" /> and thus the entire message body is encrypted and signed, even though the comments and diagnosis body parts specify lower protection levels.</para>
+          <para>The protection behavior at runtime is the combination of the protection-level values set on the following properties. These properties have a hierarchical structure. Setting the outermost value establishes the default setting for all narrower scopes unless a different value for a narrower scope is explicitly set. In this case, the outer value remains the default for all narrower scopes with the exception of that specifically set.</para>
+          <para>For example, if <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> is set to <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" /> and no other narrower scopes have protection level settings, all messages in an operation contract are encrypted and signed. If, however, one of those operations has the <see cref="T:System.ServiceModel.OperationContractAttribute" /> set to <see cref="F:System.Net.Security.ProtectionLevel.Sign" />, then the messages for that operation are signed but all other messages in the contract are encrypted and signed.</para>
+          <para>For details about protection levels and their assumptions and scopes, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+          <para>The scopes at which these values are set are:</para>
+          <para>
+            <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" />
+          </para>
+          <para>    <see cref="P:System.ServiceModel.OperationContractAttribute.ProtectionLevel" /></para>
+          <para>        <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /></para>
+          <para>        <see cref="P:System.ServiceModel.MessageContractAttribute.ProtectionLevel" /></para>
+          <para>            The <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property on <see cref="T:System.ServiceModel.MessageHeaderAttribute" />.</para>
+          <para>            The <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property on <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" />.</para>
+          <para>When there is no protection level explicitly specified on the contract and the underlying binding supports security (whether at the transport or message level), the effective protection level for the whole contract is <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />. If the binding does not support security (such as <see cref="T:System.ServiceModel.BasicHttpBinding" />), the effective <see cref="T:System.Net.Security.ProtectionLevel" /> is <see cref="F:System.Net.Security.ProtectionLevel.None" /> for the whole contract. The result is that depending upon the endpoint binding, clients can require different message or transport level security protection even when the contract specifies <see cref="F:System.Net.Security.ProtectionLevel.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the member is to be transmitted as-is, signed, or signed and encrypted. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

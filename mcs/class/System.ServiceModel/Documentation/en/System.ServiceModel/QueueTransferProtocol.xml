@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="QueueTransferProtocol" FullName="System.ServiceModel.QueueTransferProtocol">
+  <TypeSignature Language="C#" Value="public enum QueueTransferProtocol" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed QueueTransferProtocol extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifying <see cref="F:System.ServiceModel.QueueTransferProtocol.Srmp" /> or <see cref="F:System.ServiceModel.QueueTransferProtocol.SrmpSecure" /> when the UseActiveDirectory attribute is set to true will cause an exception because Message Queuing (MSMQ) does not provide for Active Directory addressing when using SRMP. UseActiveDirectory is an attribute on the <format type="text/html"><a href="a68b44d7-7799-43a3-9e63-f07c782810a6">netMsmqBinding Element</a></format> and the <format type="text/html"><a href="edf277f3-e3bf-4ed8-9f55-83b5788430a7">msmqIntegrationBinding element</a></format>.</para>
+      <para>For more information about addressing queues, see <format type="text/html"><a href="7d2d59d7-f08b-44ed-bd31-913908b83d97">Service Endpoints and Queue Addressing</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the protocol to be used in transferring messages between queue managers.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Native">
+      <MemberSignature Language="C#" Value="Native" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.QueueTransferProtocol Native = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.QueueTransferProtocol</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the native MSMQ protocol.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Srmp">
+      <MemberSignature Language="C#" Value="Srmp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.QueueTransferProtocol Srmp = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.QueueTransferProtocol</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the Soap Reliable Messaging Protocol (SRMP).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SrmpSecure">
+      <MemberSignature Language="C#" Value="SrmpSecure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.QueueTransferProtocol SrmpSecure = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.QueueTransferProtocol</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the Soap Reliable Messaging Protocol Secure (SRMPS) transport.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyContainerPermissionAttribute" FullName="System.Security.Permissions.KeyContainerPermissionAttribute">
   <TypeSignature Language="C#" Value="public sealed class KeyContainerPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit KeyContainerPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,147 +20,272 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The scope of the declaration that is allowed depends on the <see cref="T:System.Security.Permissions.SecurityAction" /> value that is used.</para>
+      <para>The security information declared by a security attribute is stored in the metadata of the attribute target and is accessed by the system at run time. <see cref="T:System.Security.Permissions.KeyContainerPermissionAttribute" /> is used only for declarative security. For imperative security, use the <see cref="T:System.Security.Permissions.KeyContainerPermission" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows security actions for <see cref="T:System.Security.Permissions.KeyContainerPermission" /> to be applied to code using declarative security. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public KeyContainerPermissionAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
-      </Parameters>
-      <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.KeyContainerPermissionAttribute" /> class with the specified security action.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
+      </Docs>
     </Member>
     <Member MemberName="CreatePermission">
       <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission CreatePermission() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should only be called by the security system, never by application code.</para>
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. The metadata is created from the permission object that this method returns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Security.Permissions.KeyContainerPermission" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.KeyContainerPermission" /> that corresponds to the attribute.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Flags">
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.KeyContainerPermissionFlags Flags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Permissions.KeyContainerPermissionFlags Flags" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Flags">
-      <MemberSignature Language="C#" Value="public System.Security.Permissions.KeyContainerPermissionFlags Flags { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Many of these flags are powerful and permit access to key containers that should be granted only to highly trusted code.</para>
+          </block>
+          <para>The most powerful of the flags are <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Create" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Delete" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Import" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Export" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Decrypt" />, and <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.AllFlags" />. For specific threats posed by the use of these flags, see individual flag descriptions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key container permissions.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KeyContainerName">
-      <MemberSignature Language="C#" Value="public string KeyContainerName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string KeyContainerName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string KeyContainerName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a value of "*" to apply the access entry to all key containers within the specified provider name and provider type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="KeySpec">
-      <MemberSignature Language="C#" Value="public int KeySpec { set; get; }" />
+      <MemberSignature Language="C#" Value="public int KeySpec { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 KeySpec" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no value is specified, the AT_KEYEXCHANGE value (1) is used. Valid values for this property are AT_KEYEXCHANGE (1) and AT_SIGNATURE (2).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key specification.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="KeyStore">
-      <MemberSignature Language="C#" Value="public string KeyStore { set; get; }" />
+      <MemberSignature Language="C#" Value="public string KeyStore { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string KeyStore" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Valid values are "User", "Machine", and "*". If null is specified, the value is set to "*".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the key store.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ProviderName">
-      <MemberSignature Language="C#" Value="public string ProviderName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ProviderName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ProviderName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of a provider name is "Microsoft Enhanced Cryptographic Provider". If null is specified, the enhanced cryptographic provider name is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the provider name.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ProviderType">
-      <MemberSignature Language="C#" Value="public int ProviderType { set; get; }" />
+      <MemberSignature Language="C#" Value="public int ProviderType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ProviderType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no value is specified, PROV_RSA_FULL (1) is used.</para>
+          <para>The following values are defined in the Wincrypt.h header file: </para>
+          <list type="bullet">
+            <item>
+              <para>#define PROV_RSA_FULL 1 </para>
+            </item>
+            <item>
+              <para>#define PROV_RSA_SIG 2 </para>
+            </item>
+            <item>
+              <para>#define PROV_DSS 3</para>
+            </item>
+            <item>
+              <para>#define PROV_FORTEZZA 4 </para>
+            </item>
+            <item>
+              <para>#define PROV_MS_EXCHANGE 5 </para>
+            </item>
+            <item>
+              <para>#define PROV_SSL 6 </para>
+            </item>
+            <item>
+              <para>#define PROV_RSA_SCHANNEL 12 </para>
+            </item>
+            <item>
+              <para>#define PROV_DSS_DH 13 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECDSA_SIG 14 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECNRA_SIG 15 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECDSA_FULL 16 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECNRA_FULL 17 </para>
+            </item>
+            <item>
+              <para>#define PROV_DH_SCHANNEL 18 </para>
+            </item>
+            <item>
+              <para>#define PROV_SPYRUS_LYNKS 20 </para>
+            </item>
+            <item>
+              <para>#define PROV_RNG 21 </para>
+            </item>
+            <item>
+              <para>#define PROV_INTEL_SEC 22 </para>
+            </item>
+            <item>
+              <para>#define PROV_REPLACE_OWF 23 </para>
+            </item>
+            <item>
+              <para>#define PROV_RSA_AES 24 </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the provider type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

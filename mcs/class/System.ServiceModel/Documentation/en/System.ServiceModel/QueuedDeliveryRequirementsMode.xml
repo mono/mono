@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="QueuedDeliveryRequirementsMode" FullName="System.ServiceModel.QueuedDeliveryRequirementsMode">
+  <TypeSignature Language="C#" Value="public enum QueuedDeliveryRequirementsMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed QueuedDeliveryRequirementsMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used as a parameter to the <see cref="T:System.ServiceModel.DeliveryRequirementsAttribute" /> attribute. When applied to a class, it allows the developer to specify whether the class can be used with a message queuing binding.   </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.QueuedDeliveryRequirementsMode" /> enumeration specifies queued delivery requirements.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Allowed">
+      <MemberSignature Language="C#" Value="Allowed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.QueuedDeliveryRequirementsMode Allowed = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.QueuedDeliveryRequirementsMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued delivery is allowed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotAllowed">
+      <MemberSignature Language="C#" Value="NotAllowed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.QueuedDeliveryRequirementsMode NotAllowed = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.QueuedDeliveryRequirementsMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued delivery is not allowed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Required">
+      <MemberSignature Language="C#" Value="Required" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.QueuedDeliveryRequirementsMode Required = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.QueuedDeliveryRequirementsMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued delivery is required.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

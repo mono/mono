@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Switch" FullName="System.Diagnostics.Switch">
   <TypeSignature Language="C#" Value="public abstract class Switch" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Switch extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,34 +16,83 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A switch provides an efficient mechanism for controlling tracing and debugging output at run time using external settings. The <see cref="T:System.Diagnostics.Switch" /> class implements default behavior for switches, allowing you to change the switch level at run time.</para>
+      <para>This class is the base class for the <see cref="T:System.Diagnostics.BooleanSwitch" />, <see cref="T:System.Diagnostics.SourceSwitch" /> and the <see cref="T:System.Diagnostics.TraceSwitch" /> classes. These switches meet most debugging and tracing needs. For more information about trace switches, see <format type="text/html"><a href="8ab913aa-f400-4406-9436-f45bc6e54fbe">Trace Switches</a></format>.</para>
+      <para>You must enable tracing or debugging to use a switch. The following syntax is compiler specific. If you use compilers other than C# or Visual Basic, refer to the documentation for your compiler.</para>
+      <list type="bullet">
+        <item>
+          <para>To enable debugging in C#, add the /d:DEBUG flag to the compiler command line when you compile your code, or you can add #define DEBUG to the top of your file. In Visual Basic, add the /d:DEBUG=True flag to the compiler command line.</para>
+        </item>
+        <item>
+          <para>To enable tracing using in C#, add the /d:TRACE flag to the compiler command line when you compile your code, or add #define TRACE to the top of your file. In Visual Basic, add the /d:TRACE=True flag to the compiler command line.</para>
+        </item>
+      </list>
+      <para>To set the level of your switch, edit the configuration file that corresponds to the name of your application. Within this file, you can add a switch and set its value, remove a switch, or clear all the switches previously set by the application. The configuration file should be formatted like the following example: </para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;switches&gt;
+      &lt;add name="mySwitch" value="true" /&gt;
+    &lt;/switches&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+      <para> This example configuration section defines a <see cref="T:System.Diagnostics.BooleanSwitch" /> with the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property set to mySwitch and the <see cref="P:System.Diagnostics.BooleanSwitch.Enabled" /> value set to true. Within your application, you can use the configured switch value by creating a <see cref="T:System.Diagnostics.BooleanSwitch" /> with the same name, as shown in the following code example.</para>
+      <para>code reference: Classic Switch Example#4</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an abstract base class to create new debugging and tracing switches.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Switch (string displayName, string description);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string displayName, string description) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="displayName" Type="System.String" />
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="displayName">To be added: an object of type 'string'</param>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create a new <see cref="T:System.Diagnostics.Switch" /> object, the value of the <paramref name="displayName" /> parameter is used to find initial switch settings. The default value is an empty string ("").</para>
+          <para>Within the XML configuration file, you can add a switch and set its value, remove a switch, or clear all the switches previously set by the application. Dynamic changes to the configuration file are not detected while the application is executing. You must stop and restart an application before changes to the configuration file take effect. The configuration file should be formatted like the following example: </para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;switches&gt;
+      &lt;add name="mySwitch" value="10" /&gt;
+      &lt;add name="myNewSwitch" value="20" /&gt;
+      &lt;remove name="mySwitch" /&gt;
+      &lt;clear/&gt;
+    &lt;/switches&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Switch" /> class.</para>
+        </summary>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the switch. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description for the switch. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Switch (string displayName, string description, string defaultSwitchValue);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string displayName, string description, string defaultSwitchValue) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="displayName" Type="System.String" />
@@ -48,18 +100,29 @@
         <Parameter Name="defaultSwitchValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="displayName">To be added.</param>
-        <param name="description">To be added.</param>
-        <param name="defaultSwitchValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="displayName" /> parameter is used to set the value of the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property, and the <paramref name="description" /> parameter is use to set the value of the <see cref="P:System.Diagnostics.Switch.Description" /> property. The <paramref name="defaultSwitchValue" /> parameter is the value for the switch if the <see cref="P:System.Diagnostics.Switch.Value" /> property is not set by code or by the configuration file attribute. See the <see cref="M:System.Diagnostics.Switch.#ctor(System.String,System.String)" /> overload for additional information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Switch" /> class, specifying the display name, description, and default value for the switch. </para>
+        </summary>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the switch. </param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the switch. </param>
+        <param name="defaultSwitchValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default value for the switch.</param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringDictionary Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringDictionary Attributes" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -70,119 +133,182 @@
         <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.Switch.Attributes" /> property identifies the custom attributes referenced in the application's configuration file. Unreferenced custom attributes are not enumerated. Classes that inherit from the <see cref="T:System.Diagnostics.Switch" /> class can add custom attributes by overriding the <see cref="M:System.Diagnostics.Switch.GetSupportedAttributes" /> method and returning a string array of custom attribute names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom switch attributes defined in the application configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Description">
       <MemberSignature Language="C#" Value="public string Description { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Description" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property should indicate the function of the switch; for example, "Enables tracing for a directory watcher component." The value is set by the <paramref name="descriptor" /> parameter in the <see cref="M:System.Diagnostics.Switch.#ctor(System.String,System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a description of the switch.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisplayName">
       <MemberSignature Language="C#" Value="public string DisplayName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DisplayName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create a new <see cref="T:System.Diagnostics.Switch" /> object, the <see cref="P:System.Diagnostics.Switch.DisplayName" /> finds initial switch settings. For more information, see the <see cref="Overload:System.Diagnostics.Switch.#ctor" /> constructor and <format type="text/html"><a href="5a0e41bf-f99c-4692-8799-f89617f5bcf9">How to: Configure Trace Switches</a></format> in the Visual Studio documentation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a name used to identify the switch.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetSupportedAttributes">
       <MemberSignature Language="C#" Value="protected virtual string[] GetSupportedAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance string[] GetSupportedAttributes() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation for the <see cref="M:System.Diagnostics.Switch.GetSupportedAttributes" /> method returns null. If a switch is added in a configuration file and custom attributes are specified that are not included in the string array returned by <see cref="M:System.Diagnostics.Switch.GetSupportedAttributes" />, a <see cref="T:System.Configuration.ConfigurationException" /> is thrown when the switch is loaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom attributes supported by the switch.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array that contains the names of the custom attributes supported by the switch, or null if there no custom attributes are supported.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnSwitchSettingChanged">
       <MemberSignature Language="C#" Value="protected virtual void OnSwitchSettingChanged ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSwitchSettingChanged() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="OnValueChanged">
-      <MemberSignature Language="C#" Value="protected virtual void OnValueChanged ();" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.Switch.OnSwitchSettingChanged" /> is invoked the first time a switch reads the <see cref="P:System.Diagnostics.Switch.SwitchSetting" /> value from the configuration file and is invoked again each time the switch's value is changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked when the <see cref="P:System.Diagnostics.Switch.SwitchSetting" /> property is changed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnValueChanged">
+      <MemberSignature Language="C#" Value="protected virtual void OnValueChanged ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnValueChanged() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation parses the new value of the <see cref="P:System.Diagnostics.Switch.Value" /> property to an integer value which it uses to set the <see cref="P:System.Diagnostics.Switch.SwitchSetting" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked when the <see cref="P:System.Diagnostics.Switch.Value" /> property is changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SwitchSetting">
-      <MemberSignature Language="C#" Value="protected int SwitchSetting { set; get; }" />
+      <MemberSignature Language="C#" Value="protected int SwitchSetting { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SwitchSetting" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current setting for this switch.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="protected string Value { set; get; }" />
+      <MemberSignature Language="C#" Value="protected string Value { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.Switch.OnValueChanged" /> method is called when the value of the <see cref="P:System.Diagnostics.Switch.Value" /> property is changed. The <see cref="M:System.Diagnostics.Switch.OnValueChanged" /> method parses the value of this property and converts it to an integer value, which is then used to set the <see cref="P:System.Diagnostics.Switch.SwitchSetting" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the switch.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

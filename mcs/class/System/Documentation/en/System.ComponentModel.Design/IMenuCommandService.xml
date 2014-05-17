@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMenuCommandService" FullName="System.ComponentModel.Design.IMenuCommandService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IMenuCommandService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMenuCommandService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
@@ -15,13 +18,50 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface provides methods to: </para>
+      <list type="bullet">
+        <item>
+          <para>Find, invoke, add and remove global designer verb commands.</para>
+        </item>
+        <item>
+          <para>Find, invoke, add and remove standard menu commands.</para>
+        </item>
+        <item>
+          <para>Alter the event handlers associated with standard menu commands.</para>
+        </item>
+        <item>
+          <para>Display a shortcut menu of standard commands that is associated with a menu <see cref="T:System.ComponentModel.Design.CommandID" />.</para>
+        </item>
+      </list>
+      <para>Designer verbs represent custom-defined commands that are listed on the shortcut menu in design mode. A designer verb can provide a specified text label. Each designer verb is automatically assigned a unique <see cref="T:System.ComponentModel.Design.CommandID" />. A designer can provide designer verbs through its <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" /> property, but these are only available when the designer's component is currently selected. Global designer verbs are designer verb commands that can be accessed from a design-mode shortcut menu regardless of the selected component. This interface allows you to manage the set of global designer verbs that are available in design mode.</para>
+      <para>You can add a global designer verb using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.AddVerb(System.ComponentModel.Design.DesignerVerb)" /> method, and you can remove a global designer verb using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.RemoveVerb(System.ComponentModel.Design.DesignerVerb)" /> method. You can invoke a designer verb using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.GlobalInvoke(System.ComponentModel.Design.CommandID)" /> method if you know the <see cref="T:System.ComponentModel.Design.CommandID" /> of the verb. The <see cref="P:System.ComponentModel.Design.IMenuCommandService.Verbs" /> property of this interface contains the current set of designer verb commands to display in a shortcut menu. This set of designer verb commands consists of all global designer verbs and any designer verbs offered by the designer of any currently selected component. This set of verbs is updated each time a component with a designer offering designer verb commands is selected or deselected.</para>
+      <para>Menu commands are limited to the set of predefined standard commands. Most of the predefined standard commands are defined in the <see cref="T:System.ComponentModel.Design.StandardCommands" /> and <see cref="T:System.Windows.Forms.Design.MenuCommands" /> enumerations. You can add, remove, and invoke menu commands, and search for menu commands that have been added to a menu using methods of this interface.</para>
+      <para>You can add a standard menu command using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.AddCommand(System.ComponentModel.Design.MenuCommand)" /> method, and remove a standard menu command using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.RemoveCommand(System.ComponentModel.Design.MenuCommand)" /> method. You can attach an event handler to a predefined standard menu command by following the procedure detailed in the documentation for the <see cref="M:System.ComponentModel.Design.IMenuCommandService.AddCommand(System.ComponentModel.Design.MenuCommand)" /> method. You can retrieve a menu command by <see cref="T:System.ComponentModel.Design.CommandID" /> if it has been added to a menu using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.FindCommand(System.ComponentModel.Design.CommandID)" /> method. You can invoke a menu command or designer verb command by <see cref="T:System.ComponentModel.Design.CommandID" /> using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.GlobalInvoke(System.ComponentModel.Design.CommandID)" /> method.</para>
+      <block subset="none" type="note">
+        <para>An attempt to add a menu command with an already existing <see cref="T:System.ComponentModel.Design.CommandID" /> will throw an <see cref="T:System.InvalidOperationException" />. When adding a menu command, be sure to check that it is not already on a menu using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.FindCommand(System.ComponentModel.Design.CommandID)" /> method, or use exception handling wisely.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>A menu command can be added to a menu, and have its <see cref="P:System.ComponentModel.Design.MenuCommand.Visible" /> or <see cref="P:System.ComponentModel.Design.MenuCommand.Enabled" /> properties set to false. If you cannot visually locate a menu command that has been added on a menu, one of these properties may have been set to false.</para>
+      </block>
+      <para>You can show certain standard shortcut menus containing menu commands at a specified location using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.ShowContextMenu(System.ComponentModel.Design.CommandID,System.Int32,System.Int32)" /> method. The documentation for this method contains a table listing the command IDs that specify the valid menus to show.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods to manage the global designer verbs and menu commands available in design mode, and to show some types of shortcut menus.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddCommand">
       <MemberSignature Language="C#" Value="public void AddCommand (System.ComponentModel.Design.MenuCommand command);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddCommand(class System.ComponentModel.Design.MenuCommand command) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -29,18 +69,48 @@
         <Parameter Name="command" Type="System.ComponentModel.Design.MenuCommand" />
       </Parameters>
       <Docs>
-        <param name="command">To be added: an object of type 'MenuCommand'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Design.MenuCommands" /> and <see cref="T:System.ComponentModel.Design.StandardCommands" /> enumerations contain <see cref="T:System.ComponentModel.Design.CommandID" /> identifiers for predefined standard commands and menu commands that are already associated with a location on a particular menu.</para>
+          <block subset="none" type="note">
+            <para>An attempt to add a menu command with an already existing <see cref="T:System.ComponentModel.Design.CommandID" /> will throw an <see cref="T:System.InvalidOperationException" />. When adding a menu command, be sure to check that it is not already on a menu using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.FindCommand(System.ComponentModel.Design.CommandID)" /> method, or use exception handling wisely.</para>
+          </block>
+          <para>You can attach an event handler to a predefined menu command with the following procedure: </para>
+          <list type="ordered">
+            <item>
+              <para>If the menu command to link with an event handler has been added to a menu, or is located with the <see cref="M:System.ComponentModel.Design.IMenuCommandService.FindCommand(System.ComponentModel.Design.CommandID)" /> method, consider whether you wish to restore this menu command later, and whether you want to invoke the current event handler from your new event handler. If your code might restore the menu command or chain the invocation of event handlers, be sure to store a reference to the menu command somewhere.</para>
+            </item>
+            <item>
+              <para>Ensure that any previously existing menu command with the same <see cref="T:System.ComponentModel.Design.CommandID" /> has been removed from the menu using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.RemoveCommand(System.ComponentModel.Design.MenuCommand)" /> method.</para>
+            </item>
+            <item>
+              <para>Create a new <see cref="T:System.ComponentModel.Design.MenuCommand" /> and specify your event handler in the constructor, along with a <see cref="T:System.ComponentModel.Design.CommandID" /> representing the command to add. Each standard menu command is associated with a predefined menu location where it is added to. The supported command IDs are defined in the <see cref="T:System.ComponentModel.Design.StandardCommands" /> and <see cref="T:System.Windows.Forms.Design.MenuCommands" /> enumerations.</para>
+            </item>
+            <item>
+              <para>If you want to invoke any preexisting event handler for the menu command, call the <see cref="M:System.ComponentModel.Design.MenuCommand.Invoke" /> method of the menu command you have replaced on the menu from the event handler that handles the invoke event of your menu command.</para>
+            </item>
+            <item>
+              <para>If you are interested in restoring the event handler of a preexisting menu command that you have replaced, add the stored, preexisting menu command after you remove the replacement menu command you created. You may want to add this behavior to the Dispose method for your type.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified standard menu command to the menu.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.MenuCommand" /> to add. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddVerb">
       <MemberSignature Language="C#" Value="public void AddVerb (System.ComponentModel.Design.DesignerVerb verb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddVerb(class System.ComponentModel.Design.DesignerVerb verb) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -48,18 +118,27 @@
         <Parameter Name="verb" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="verb">To be added: an object of type 'DesignerVerb'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Designers of components that provide designer verbs should use the <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" /> property of their designer rather than calling this method. This method adds a global designer verb that can be accessed from the right-click shortcut menu in design mode regardless of the currently selected component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified designer verb to the set of global designer verbs.</para>
+        </summary>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to add. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FindCommand">
       <MemberSignature Language="C#" Value="public System.ComponentModel.Design.MenuCommand FindCommand (System.ComponentModel.Design.CommandID commandID);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.Design.MenuCommand FindCommand(class System.ComponentModel.Design.CommandID commandID) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.MenuCommand</ReturnType>
       </ReturnValue>
@@ -67,19 +146,28 @@
         <Parameter Name="commandID" Type="System.ComponentModel.Design.CommandID" />
       </Parameters>
       <Docs>
-        <param name="commandID">To be added: an object of type 'CommandID'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MenuCommand'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified command ID and returns the menu command associated with it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.MenuCommand" /> associated with the command ID, or null if no command is found.</para>
+        </returns>
+        <param name="commandID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.CommandID" /> to search for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GlobalInvoke">
       <MemberSignature Language="C#" Value="public bool GlobalInvoke (System.ComponentModel.Design.CommandID commandID);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool GlobalInvoke(class System.ComponentModel.Design.CommandID commandID) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -87,19 +175,31 @@
         <Parameter Name="commandID" Type="System.ComponentModel.Design.CommandID" />
       </Parameters>
       <Docs>
-        <param name="commandID">To be added: an object of type 'CommandID'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method searches for a menu command or designer verb with a <see cref="T:System.ComponentModel.Design.CommandID" /> matching the specified <see cref="T:System.ComponentModel.Design.CommandID" />. This method first searches within the designer verbs collection consisting of global and active designer-provided verbs before continuing the search, if necessary, through the global environment command service. If a matching menu command or designer verb is located, the command is invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes a menu or designer verb command matching the specified command ID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the command was found and invoked successfully; otherwise, false.</para>
+        </returns>
+        <param name="commandID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.CommandID" /> of the command to search for and execute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveCommand">
       <MemberSignature Language="C#" Value="public void RemoveCommand (System.ComponentModel.Design.MenuCommand command);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveCommand(class System.ComponentModel.Design.MenuCommand command) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -107,18 +207,27 @@
         <Parameter Name="command" Type="System.ComponentModel.Design.MenuCommand" />
       </Parameters>
       <Docs>
-        <param name="command">To be added: an object of type 'MenuCommand'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes the specified <see cref="T:System.ComponentModel.Design.MenuCommand" /> if it is found. This method does not raise an exception or return a value if the specified <see cref="T:System.ComponentModel.Design.MenuCommand" /> is not found. Use the <see cref="M:System.ComponentModel.Design.IMenuCommandService.FindCommand(System.ComponentModel.Design.CommandID)" /> method to determine whether a <see cref="T:System.ComponentModel.Design.MenuCommand" /> matching a specified <see cref="T:System.ComponentModel.Design.CommandID" /> is located on a menu.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified standard menu command from the menu.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.MenuCommand" /> to remove. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveVerb">
       <MemberSignature Language="C#" Value="public void RemoveVerb (System.ComponentModel.Design.DesignerVerb verb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveVerb(class System.ComponentModel.Design.DesignerVerb verb) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -126,18 +235,27 @@
         <Parameter Name="verb" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <param name="verb">To be added: an object of type 'DesignerVerb'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes the specified global designer verb if it is within the global designer verbs collection. You can add a designer verb to the global designer verbs collection using the <see cref="M:System.ComponentModel.Design.IMenuCommandService.AddVerb(System.ComponentModel.Design.DesignerVerb)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified designer verb from the collection of global designer verbs.</para>
+        </summary>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to remove. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShowContextMenu">
       <MemberSignature Language="C#" Value="public void ShowContextMenu (System.ComponentModel.Design.CommandID menuID, int x, int y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ShowContextMenu(class System.ComponentModel.Design.CommandID menuID, int32 x, int32 y) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -147,32 +265,94 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="menuID">To be added: an object of type 'CommandID'</param>
-        <param name="x">To be added: an object of type 'int'</param>
-        <param name="y">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.IMenuCommandService.ShowContextMenu(System.ComponentModel.Design.CommandID,System.Int32,System.Int32)" /> method can display any of the following Visual Studio shortcut menus containing menu commands at a specified point: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Menu </para>
+                </term>
+                <description>
+                  <para>CommandID </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>The shortcut menu displayed for a container </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.Design.MenuCommands.ContainerMenu" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The shortcut menu displayed for the component tray </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.Design.MenuCommands.ComponentTrayMenu" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The shortcut menu displayed for a selection </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.Design.MenuCommands.SelectionMenu" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The shortcut menu displayed for a tray selection </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Windows.Forms.Design.MenuCommands.TraySelectionMenu" /> </para>
+              </description>
+            </item>
+          </list>
+          <para>This method can also display other registered shortcut menus.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the specified shortcut menu at the specified location.</para>
+        </summary>
+        <param name="menuID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.CommandID" /> for the shortcut menu to show. </param>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate at which to display the menu, in screen coordinates. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate at which to display the menu, in screen coordinates. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Verbs">
       <MemberSignature Language="C#" Value="public System.ComponentModel.Design.DesignerVerbCollection Verbs { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.Design.DesignerVerbCollection Verbs" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.DesignerVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DesignerVerbCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of currently available designer verbs consists of all global designer verbs, which are added by the <see cref="M:System.ComponentModel.Design.IMenuCommandService.AddVerb(System.ComponentModel.Design.DesignerVerb)" /> method on this interface, and individual designer verbs, which are offered by the <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" /> property of individual designers. If the name of a global verb conflicts with the name of a designer verb, the designer-provided designer verb takes precedence.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the designer verbs that are currently available.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

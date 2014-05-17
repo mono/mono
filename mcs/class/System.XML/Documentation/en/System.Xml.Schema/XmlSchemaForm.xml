@@ -1,82 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaForm" FullName="System.Xml.Schema.XmlSchemaForm">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlSchemaForm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlSchemaForm extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used by <see cref="P:System.Xml.Schema.XmlSchema.AttributeFormDefault" /> and <see cref="P:System.Xml.Schema.XmlSchema.ElementFormDefault" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates if attributes or elements need to be qualified with a namespace prefix.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaForm None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Xml.Schema.XmlSchemaForm</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Qualified">
-      <MemberSignature Language="C#" Value="Qualified" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaForm</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Element and attribute form is not specified in the schema.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Qualified">
+      <MemberSignature Language="C#" Value="Qualified" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaForm Qualified = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlEnum("qualified")</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unqualified">
-      <MemberSignature Language="C#" Value="Unqualified" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaForm</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Elements and attributes must be qualified with a namespace prefix.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Unqualified">
+      <MemberSignature Language="C#" Value="Unqualified" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaForm Unqualified = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlEnum("unqualified")</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaForm</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Elements and attributes are not required to be qualified with a namespace prefix.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

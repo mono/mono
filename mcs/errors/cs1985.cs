@@ -1,4 +1,4 @@
-// CS1985: The `await' operator cannot be used in the body of a catch clause
+// CS1985: The `await' operator cannot be used in a catch clause
 // Line: 13
 
 using System;

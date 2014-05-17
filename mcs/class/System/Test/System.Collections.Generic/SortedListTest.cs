@@ -516,6 +516,14 @@ namespace MonoTests.System.Collections.Generic
 				Assert.That (ex.InnerException, Is.TypeOf (typeof (DivideByZeroException)), "UC #8");
 			}
 		}
+
+		[Test]
+		public void IDictionaryNullOnNonExistingKey ()
+		{
+			IDictionary list = new SortedList<long, string> ();
+			object val = list [1234L];
+			Assert.IsNull (val);
+		}
 	}
 }
 

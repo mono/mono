@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IClientOperationSelector" FullName="System.ServiceModel.Dispatcher.IClientOperationSelector">
+  <TypeSignature Language="C#" Value="public interface IClientOperationSelector" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IClientOperationSelector" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IClientOperationSelector" /> interface to create a custom operation selector that can be attached to the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.OperationSelector" /> property to choose contract operations to invoke based upon the proxy method called.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract for an operation selector.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AreParametersRequiredForSelection">
+      <MemberSignature Language="C#" Value="public bool AreParametersRequiredForSelection { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AreParametersRequiredForSelection" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned is false unless the user has overloaded methods. If false is returned then the array of objects passed to <see cref="M:System.ServiceModel.Dispatcher.IClientOperationSelector.SelectOperation(System.Reflection.MethodBase,System.Object[])" /> is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether parameters are required to determine the selection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SelectOperation">
+      <MemberSignature Language="C#" Value="public string SelectOperation (System.Reflection.MethodBase method, object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string SelectOperation(class System.Reflection.MethodBase method, object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.MethodBase" />
+        <Parameter Name="parameters" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the selected operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operation selected by the custom operation selector.</para>
+        </returns>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method invoked.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters passed to the method.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

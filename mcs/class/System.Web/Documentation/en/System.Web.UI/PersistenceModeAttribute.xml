@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PersistenceModeAttribute" FullName="System.Web.UI.PersistenceModeAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class PersistenceModeAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1E00-4602-9EBF-526B271A8B87">Extending Metadata Using Attributes</a></format>.</para>
+      <block subset="none" type="note">
+        <para>The Web page designer in Visual Studio does not support the ResetPropertyName method that is optionally exposed by Windows Forms controls for property persistence. Server controls are serialized using methods provided by the <see cref="T:System.Web.UI.Design.ControlPersister" /> class. The implementation of these methods is driven by metadata attributes such as <see cref="T:System.ComponentModel.DefaultValueAttribute" />, <see cref="T:System.Web.UI.PersistenceModeAttribute" />, and <see cref="T:System.ComponentModel.DesignerSerializationVisibilityAttribute" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the metadata attribute that specifies how an ASP.NET server control property or event is persisted to an ASP.NET page at design time. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +40,13 @@
         <Parameter Name="mode" Type="System.Web.UI.PersistenceMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added: an object of type 'PersistenceMode'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PersistenceModeAttribute" /> class. </para>
+        </summary>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.PersistenceMode" /> value to assign to <see cref="P:System.Web.UI.PersistenceModeAttribute.Mode" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the property or event persists in the opening tag of the server control as an attribute. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,8 +80,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default type for the <see cref="T:System.Web.UI.PersistenceModeAttribute" /> class. The default is PersistenceMode.Attribute. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,8 +99,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a property is HTML-encoded and persists as the only inner content of the ASP.NET server control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,10 +120,20 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PersistenceModeAttribute.Equals(System.Object)" /> method first compares the current object with the given object and returns true if they are equal.  Otherwise, if the given object is also a <see cref="T:System.Web.UI.PersistenceModeAttribute" /> object and is not null, the <see cref="P:System.Web.UI.PersistenceModeAttribute.Mode" /> properties of each object are compared for equality and the result returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the <see cref="T:System.Web.UI.PersistenceModeAttribute" /> object against another object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are considered equal; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +148,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Int32" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a hash value for a <see cref="T:System.Web.UI.PersistenceModeAttribute" /> attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash value to be assigned to the <see cref="T:System.Web.UI.PersistenceModeAttribute" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,8 +171,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a property persists as the only inner content of the ASP.NET server control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,8 +190,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the property persists as a nested tag within the opening and closing tags of the server control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -164,9 +209,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method performs calls the <see cref="M:System.Web.UI.PersistenceModeAttribute.Equals(System.Object)" /> method while passing in the object referenced by the <see cref="F:System.Web.UI.PersistenceModeAttribute.Default" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="T:System.Web.UI.PersistenceModeAttribute" /> object is of the default type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.PersistenceModeAttribute" /> is of the default type; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,9 +234,12 @@
         <ReturnType>System.Web.UI.PersistenceMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PersistenceMode'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current value of the <see cref="T:System.Web.UI.PersistenceMode" /> enumeration.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

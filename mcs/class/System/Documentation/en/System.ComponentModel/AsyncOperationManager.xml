@@ -1,22 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AsyncOperationManager" FullName="System.ComponentModel.AsyncOperationManager">
   <TypeSignature Language="C#" Value="public static class AsyncOperationManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed AsyncOperationManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If your class needs to provide asynchronous behavior according to the <format type="text/html"><a href="792aa8da-918b-458e-b154-9836b97735f3">Event-based Asynchronous Pattern</a></format>, you will encounter a number of concurrency management issues. Among these is the requirement to ensure that event handlers are called on a thread or context that is appropriate for the application model (for example, Windows Forms applications, vstecasp applications, console applications, and so on). The <see cref="T:System.ComponentModel.AsyncOperationManager" /> provides a convenient way to create a class that runs properly under all application models supported by the dnprdnshort.</para>
+      <para>The <see cref="T:System.ComponentModel.AsyncOperationManager" /> class has one method, <see cref="M:System.ComponentModel.AsyncOperationManager.CreateOperation(System.Object)" />, which returns an <see cref="T:System.ComponentModel.AsyncOperation" /> that can be used to track the duration of a particular asynchronous task. The <see cref="T:System.ComponentModel.AsyncOperation" /> for a task can be used to alert clients when a task completes. It can also be used to post progress updates and incremental results without terminating the operation.</para>
+      <para>For more information about implementing asynchronous classes, see <format type="text/html"><a href="43402d19-8d30-426d-8785-1a4478233bfa">Implementing the Event-based Asynchronous Pattern</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides concurrency management for classes that support asynchronous method calls. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateOperation">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.AsyncOperation CreateOperation (object userSuppliedState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.AsyncOperation CreateOperation(object userSuppliedState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.AsyncOperation</ReturnType>
       </ReturnValue>
@@ -24,36 +40,58 @@
         <Parameter Name="userSuppliedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="userSuppliedState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.AsyncOperationManager.CreateOperation(System.Object)" /> method returns an <see cref="T:System.ComponentModel.AsyncOperation" /> that you can use to track the duration of a particular asynchronous operation and to alert the application model when the operation completes. You can also use it to post progress updates and incremental results without terminating the operation. The <see cref="T:System.ComponentModel.AsyncOperation" /> will correctly marshal these calls to the appropriate thread or context for the application model.</para>
+          <para>If you implement a class that supports the Event-based Asynchronous Pattern, your class should call <see cref="M:System.ComponentModel.AsyncOperationManager.CreateOperation(System.Object)" /> each time your MethodNameAsync method is called. The client application that makes calls to the method can use the <paramref name="userSuppliedState" /> parameter to uniquely identify each invocation, so as to distinguish events raised during the execution of the asynchronous operation.</para>
+          <block subset="none" type="note">
+            <para>Client code must provide a unique value for the <paramref name="userSuppliedState" /> parameter. Non-unique task IDs may cause your implementation to report progress and other events incorrectly. Your code should check for a non-unique task ID and throw an <see cref="T:System.ArgumentException" /> if one is detected.</para>
+          </block>
+          <para>Your code should track every <see cref="T:System.ComponentModel.AsyncOperation" /> returned by <see cref="M:System.ComponentModel.AsyncOperationManager.CreateOperation(System.Object)" /> and use the object in the corresponding underlying asynchronous operation to post updates and terminate the operation. This tracking can be as simple as passing the <see cref="T:System.ComponentModel.AsyncOperation" /> as a parameter among delegates. In more sophisticated designs, your class can maintain a collection of <see cref="T:System.ComponentModel.AsyncOperation" /> objects, adding objects when tasks are started and removing them when tasks are completed or canceled. This approach allows you to check for unique <paramref name="userSuppliedState" /> parameter values, and is the method you should use when working with classes that support multiple concurrent invocations.</para>
+          <para>For more information about implementing asynchronous classes, see <format type="text/html"><a href="43402d19-8d30-426d-8785-1a4478233bfa">Implementing the Event-based Asynchronous Pattern</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.ComponentModel.AsyncOperation" /> for tracking the duration of a particular asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AsyncOperation" /> that you can use to track the duration of an asynchronous method invocation.</para>
+        </returns>
+        <param name="userSuppliedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object used to associate a piece of client state, such as a task ID, with a particular asynchronous operation. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SynchronizationContext">
-      <MemberSignature Language="C#" Value="public static System.Threading.SynchronizationContext SynchronizationContext { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Threading.SynchronizationContext SynchronizationContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Threading.SynchronizationContext SynchronizationContext" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.SynchronizationContext</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.SynchronizationContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation is the free-threaded implementation.</para>
+          <para>A thread should set the <see cref="P:System.ComponentModel.AsyncOperationManager.SynchronizationContext" /> property to null to release the free-threaded factory when it is done, or else its factory will never be disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the synchronization context for the asynchronous operation.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

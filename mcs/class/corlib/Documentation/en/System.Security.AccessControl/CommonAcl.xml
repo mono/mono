@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CommonAcl" FullName="System.Security.AccessControl.CommonAcl">
   <TypeSignature Language="C#" Value="public abstract class CommonAcl : System.Security.AccessControl.GenericAcl" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CommonAcl extends System.Security.AccessControl.GenericAcl" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,48 +12,121 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <list type="bullet">
+        <item>
+          <para>Certain combinations of inheritance and access mask flags are meaningless:</para>
+        </item>
+        <item>
+          <para>Any access control entry (ACE) with a zero-access mask is removed.</para>
+        </item>
+        <item>
+          <para>Inherit-only ACEs inside object ACLs are removed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" />, <see cref="F:System.Security.AccessControl.PropagationFlags.NoPropagateInherit" />, <see cref="F:System.Security.AccessControl.InheritanceFlags.ContainerInherit," /> and <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flags on all ACEs in leaf object ACLs are cleared.</para>
+        </item>
+        <item>
+          <para>ACEs that have an <see cref="F:System.Security.AccessControl.PropagationFlags.InheritOnly" /> flag in the absence of the <see cref="F:System.Security.AccessControl.InheritanceFlags.ContainerInherit" /> or <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag are meaningless; they are removed.</para>
+        </item>
+        <item>
+          <para>The <see cref="F:System.Security.AccessControl.PropagationFlags.NoPropagateInherit" /> flag in the absence of the <see cref="F:System.Security.AccessControl.InheritanceFlags.ContainerInherit" /> or <see cref="F:System.Security.AccessControl.InheritanceFlags.ObjectInherit" /> flag can be removed.</para>
+        </item>
+        <item>
+          <para>ACEs that have an <see cref="T:System.Security.AccessControl.AuditFlags" /> value of <see cref="F: System.Security.AccessControl.AuditFlags.Success" /> or <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> in discretionary access control lists (DACLs) are removed.</para>
+        </item>
+        <item>
+          <para>Any audit ACE that does not specify either <see cref="F: System.Security.AccessControl.AuditFlags.Success" /> or <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> is removed.</para>
+        </item>
+        <item>
+          <para>On DACLs, SystemAudit and SystemAlarm ACEs are removed.</para>
+        </item>
+        <item>
+          <para>On system access control lists (SACLs), AccessAllowed and AccessDenied ACEs are removed.</para>
+        </item>
+      </list>
+      <para>Canonical order is maintained according to the following algorithm:</para>
+      <list type="bullet">
+        <item>
+          <para>Explicit ACEs take precedence over inherited ACEs; this rule applies to both DACLs and SACLs.</para>
+        </item>
+        <item>
+          <para>In DACLs, among the explicit ACEs, ACEs that deny access take precedence over ACEs that allow access. For directory object ACLs, the nonobject ACEs come before object ACEs.</para>
+        </item>
+        <item>
+          <para>All common ACEs take precedence over noncommon ACEs.</para>
+        </item>
+        <item>
+          <para>Inherited ACEs maintain their relative order after canonicity.</para>
+        </item>
+        <item>
+          <para>Unrecognized and custom ACEs are disallowed in both DACLs and SACLs.</para>
+        </item>
+        <item>
+          <para>Within contiguous ranges (explicit AccessDenied and AccessAllowed ACEs on DACLs, all explicit ACEs on SACLs), the ACEs are sorted by using the <see cref="M:System.Security.Principal.SecurityIdentifier.CompareTo" /> methods of the <see cref="T:System.Security.Principal.SecurityIdentifier" /> objects associated with the ACEs.</para>
+        </item>
+      </list>
+      <para>Adjacent ACEs are combined, if appropriate.  This reduces the size of the ACL without affecting the access control semantics it grants.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an access control list (ACL) and is the base class for the <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> and <see cref="T:System.Security.AccessControl.SystemAcl" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BinaryLength">
       <MemberSignature Language="C#" Value="public override sealed int BinaryLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BinaryLength" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length, in bytes, of the binary representation of the current <see cref="T:System.Security.AccessControl.CommonAcl" /> object. This length should be used before marshaling the access control list (ACL) into a binary array by using the <see cref="M:System.Security.AccessControl.CommonAcl.GetBinaryForm" /> method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public override sealed int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of access control entries (ACEs) in the current <see cref="T:System.Security.AccessControl.CommonAcl" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetBinaryForm">
       <MemberSignature Language="C#" Value="public override sealed void GetBinaryForm (byte[] binaryForm, int offset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetBinaryForm(unsigned int8[] binaryForm, int32 offset) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -60,71 +135,89 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="binaryForm">To be added.</param>
-        <param name="offset">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marshals the contents of the <see cref="T:System.Security.AccessControl.CommonAcl" /> object into the specified byte array beginning at the specified offset.</para>
+        </summary>
+        <param name="binaryForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array into which the contents of the <see cref="T:System.Security.AccessControl.CommonAcl" /> is marshaled.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset at which to start marshaling.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCanonical">
       <MemberSignature Language="C#" Value="public bool IsCanonical { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCanonical" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value that specifies whether the access control entries (ACEs) in the current <see cref="T:System.Security.AccessControl.CommonAcl" /> object are in canonical order.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsContainer">
       <MemberSignature Language="C#" Value="public bool IsContainer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsContainer" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets whether the <see cref="T:System.Security.AccessControl.CommonAcl" /> object is a container. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsDS">
       <MemberSignature Language="C#" Value="public bool IsDS { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDS" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets whether the current <see cref="T:System.Security.AccessControl.CommonAcl" /> object is a directory object access control list (ACL).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public override sealed System.Security.AccessControl.GenericAce this[int index] { set; get; }" />
+      <MemberSignature Language="C#" Value="public override sealed System.Security.AccessControl.GenericAce this[int index] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.AccessControl.GenericAce Item(int32)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.GenericAce</ReturnType>
       </ReturnValue>
@@ -138,14 +231,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Purge">
+      <MemberSignature Language="C#" Value="public void Purge (System.Security.Principal.SecurityIdentifier sid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Purge(class System.Security.Principal.SecurityIdentifier sid) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Purge">
-      <MemberSignature Language="C#" Value="public void Purge (System.Security.Principal.SecurityIdentifier sid);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -153,49 +247,57 @@
         <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
       </Parameters>
       <Docs>
-        <param name="sid">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access control entries (ACEs) contained by this <see cref="T:System.Security.AccessControl.CommonAcl" /> object that are associated with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </summary>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> object to check for.</param>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveInheritedAces">
+      <MemberSignature Language="C#" Value="public void RemoveInheritedAces ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveInheritedAces() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveInheritedAces">
-      <MemberSignature Language="C#" Value="public void RemoveInheritedAces ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all inherited access control entries (ACEs) from this <see cref="T:System.Security.AccessControl.CommonAcl" /> object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Revision">
+      <MemberSignature Language="C#" Value="public override sealed byte Revision { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8 Revision" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Revision">
-      <MemberSignature Language="C#" Value="public override sealed byte Revision { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the revision level of the <see cref="T:System.Security.AccessControl.CommonAcl" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

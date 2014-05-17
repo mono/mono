@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ExportProvider" FullName="System.ComponentModel.Composition.Hosting.ExportProvider">
+  <TypeSignature Language="C#" Value="public abstract class ExportProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ExportProvider extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retrieves exports which match a specified <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" /> object.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ExportProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.ExportProvider" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportsChanged">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt; ExportsChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt; ExportsChanged" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the exports in the <see cref="T:System.ComponentModel.Composition.Hosting.ExportProvider" /> change.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportsChanging">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt; ExportsChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt; ExportsChanging" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the provided exports are changing.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExport&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public Lazy&lt;T&gt; GetExport&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Lazy`1&lt;!!T&gt; GetExport&lt;T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Lazy&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the contract name derived from the specified type parameter. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The export with the contract name derived from the specified type parameter.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`1" /> object to return. The contract name is also derived from this type parameter.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExport&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public Lazy&lt;T&gt; GetExport&lt;T&gt; (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Lazy`1&lt;!!T&gt; GetExport&lt;T&gt;(string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Lazy&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the specified contract name. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The export with the specified contract name.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`1" /> object to return, or null or an empty string ("") to use the default contract name.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`1" /> object to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExport&lt;T,TMetadataView&gt;">
+      <MemberSignature Language="C#" Value="public Lazy&lt;T,TMetadataView&gt; GetExport&lt;T,TMetadataView&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Lazy`2&lt;!!T, !!TMetadataView&gt; GetExport&lt;T, TMetadataView&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Lazy&lt;T,TMetadataView&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+        <TypeParameter Name="TMetadataView" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the contract name derived from the specified type parameter. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>System.Lazy`2</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`2" /> object to return. The contract name is also derived from this type parameter.</typeparam>
+        <typeparam name="TMetadataView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view of the <see cref="T:System.Lazy`2" /> object to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExport&lt;T,TMetadataView&gt;">
+      <MemberSignature Language="C#" Value="public Lazy&lt;T,TMetadataView&gt; GetExport&lt;T,TMetadataView&gt; (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Lazy`2&lt;!!T, !!TMetadataView&gt; GetExport&lt;T, TMetadataView&gt;(string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Lazy&lt;T,TMetadataView&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+        <TypeParameter Name="TMetadataView" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the specified contract name. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The export with the specified contract name.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`2" /> object to return, or null or an empty string ("") to use the default contract name.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`2" /> object to return.</typeparam>
+        <typeparam name="TMetadataView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view of the <see cref="T:System.Lazy`2" /> object to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExportedValue&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetExportedValue&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetExportedValue&lt;T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the exported object with the contract name derived from the specified type parameter. If there is not exactly one matching exported object, an exception is thrown.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exported object with the contract name derived from the specified type parameter.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the exported object to return. The contract name is also derived from this type parameter.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExportedValue&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetExportedValue&lt;T&gt; (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetExportedValue&lt;T&gt;(string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the exported object with the specified contract name. If there is not exactly one matching exported object, an exception is thrown.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exported object with the specified contract name.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the exported object to return, or null or an empty string ("") to use the default contract name.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the exported object to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExportedValueOrDefault&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetExportedValueOrDefault&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetExportedValueOrDefault&lt;T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the exported object is not found, this method returns the appropriate default value for <paramref name="T" />; for example, zero for integer types, false for Boolean types, and null for reference types.</para>
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exported object with the contract name derived from the specified type parameter or the default value for the specified type, or throws an exception if there is more than one matching exported object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exported object with the contract name derived from <paramref name="T" />, if found; otherwise, the default value for <paramref name="T" />.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the exported object to return. The contract name is also derived from this type parameter.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExportedValueOrDefault&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetExportedValueOrDefault&lt;T&gt; (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetExportedValueOrDefault&lt;T&gt;(string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the exported object is not found, this method returns the appropriate default value for <paramref name="T" />; for example, zero for integer types, false for Boolean types, and null for reference types.</para>
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exported object with the specified contract name or the default value for the specified type, or throws an exception if there is more than one matching exported object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exported object with the specified contract name, if found; otherwise, the default value for <paramref name="T" />.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the exported object to return, or null or an empty string ("") to use the default contract name.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the exported object to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExportedValues&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;T&gt; GetExportedValues&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetExportedValues&lt;T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exported objects with the contract name derived from the specified type parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exported objects with the contract name derived from the specified type parameter, if found; otherwise, an empty <see cref="T:System.Collections.ObjectModel.Collection`1" /> object.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the exported object to return. The contract name is also derived from this type parameter.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExportedValues&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;T&gt; GetExportedValues&lt;T&gt; (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetExportedValues&lt;T&gt;(string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exported objects with the specified contract name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exported objects with the specified contract name, if found; otherwise, an empty <see cref="T:System.Collections.ObjectModel.Collection`1" /> object.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the exported objects to return; or null or an empty string ("") to use the default contract name.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the exported object to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExports">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt; GetExports (System.ComponentModel.Composition.Primitives.ImportDefinition definition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.ComponentModel.Composition.Primitives.Export&gt; GetExports(class System.ComponentModel.Composition.Primitives.ImportDefinition definition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all exports that match the conditions of the specified import definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects matching the condition specified by <paramref name="definition" />.</para>
+        </returns>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that defines the conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to get.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExports">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt; GetExports (System.ComponentModel.Composition.Primitives.ImportDefinition definition, System.ComponentModel.Composition.Hosting.AtomicComposition atomicComposition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.ComponentModel.Composition.Primitives.Export&gt; GetExports(class System.ComponentModel.Composition.Primitives.ImportDefinition definition, class System.ComponentModel.Composition.Hosting.AtomicComposition atomicComposition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
+        <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all exports that match the conditions of the specified import definition and composition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects matching the condition specified by <paramref name="definition" /> and <paramref name="atomicComposition" />.</para>
+        </returns>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that defines the conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to get.</param>
+        <param name="atomicComposition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The transactional container for the composition.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExports">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;Lazy&lt;object,object&gt;&gt; GetExports (Type type, Type metadataViewType, string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Lazy`2&lt;object, object&gt;&gt; GetExports(class System.Type type, class System.Type metadataViewType, string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Lazy&lt;System.Object,System.Object&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="metadataViewType" Type="System.Type" />
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="type" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the specified contract name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all the <see cref="T:System.Lazy`2" /> objects for the contract matching <paramref name="contractName" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`2" /> objects to return.</param>
+        <param name="metadataViewType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view of the <see cref="T:System.Lazy`2" /> objects to return.</param>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`2" /> object to return, or null or an empty string ("") to use the default contract name.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExports&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;Lazy&lt;T&gt;&gt; GetExports&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Lazy`1&lt;!!T&gt;&gt; GetExports&lt;T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Lazy&lt;T&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the contract name derived from the specified type parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Lazy`1" /> objects with the contract name derived from <paramref name="T" />, if found; otherwise, an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> object.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`1" /> objects to return. The contract name is also derived from this type parameter.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExports&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;Lazy&lt;T&gt;&gt; GetExports&lt;T&gt; (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Lazy`1&lt;!!T&gt;&gt; GetExports&lt;T&gt;(string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Lazy&lt;T&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the specified contract name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Lazy`1" /> objects with the specified contract name, if found; otherwise, an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> object.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`1" /> objects to return, or null or an empty string ("") to use the default contract name.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`1" /> objects to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExports&lt;T,TMetadataView&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;Lazy&lt;T,TMetadataView&gt;&gt; GetExports&lt;T,TMetadataView&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Lazy`2&lt;!!T, !!TMetadataView&gt;&gt; GetExports&lt;T, TMetadataView&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Lazy&lt;T,TMetadataView&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+        <TypeParameter Name="TMetadataView" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the contract name derived from the specified type parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Lazy`2" /> objects with the contract name derived from <paramref name="T" />, if found; otherwise, an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> object.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`2" /> objects to return. The contract name is also derived from this type parameter.</typeparam>
+        <typeparam name="TMetadataView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view of the <see cref="T:System.Lazy`2" /> objects to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExports&lt;T,TMetadataView&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;Lazy&lt;T,TMetadataView&gt;&gt; GetExports&lt;T,TMetadataView&gt; (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Lazy`2&lt;!!T, !!TMetadataView&gt;&gt; GetExports&lt;T, TMetadataView&gt;(string contractName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Lazy&lt;T,TMetadataView&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+        <TypeParameter Name="TMetadataView" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the specified contract name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Lazy`2" /> objects with the specified contract name if found; otherwise, an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> object.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`2" /> objects to return, or null or an empty string ("") to use the default contract name.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`2" /> objects to return. The contract name is also derived from this type parameter.</typeparam>
+        <typeparam name="TMetadataView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view of the <see cref="T:System.Lazy`2" /> objects to return.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExportsCore">
+      <MemberSignature Language="C#" Value="protected abstract System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt; GetExportsCore (System.ComponentModel.Composition.Primitives.ImportDefinition definition, System.ComponentModel.Composition.Hosting.AtomicComposition atomicComposition);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class System.ComponentModel.Composition.Primitives.Export&gt; GetExportsCore(class System.ComponentModel.Composition.Primitives.ImportDefinition definition, class System.ComponentModel.Composition.Hosting.AtomicComposition atomicComposition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
+        <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides of this method should not treat cardinality-related mismatches as errors, and should not throw exceptions in those cases. For example, if <see cref="P:System.ComponentModel.Composition.Primitives.ImportDefinition.Cardinality" /> is <see cref="F:System.ComponentModel.Composition.Primitives.ImportCardinality.ExactlyOne" /> and there are zero <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects that match the conditions of the specified <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" />, an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection should be returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports that match the constraint defined by the specified definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains all the exports that match the specified condition.</para>
+        </returns>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that defines the conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to return.</param>
+        <param name="atomicComposition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The transactional container for the composition.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnExportsChanged">
+      <MemberSignature Language="C#" Value="protected virtual void OnExportsChanged (System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnExportsChanged(class System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs e) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Composition.Hosting.ExportProvider.ExportsChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" /> that contains the event data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnExportsChanging">
+      <MemberSignature Language="C#" Value="protected virtual void OnExportsChanging (System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnExportsChanging(class System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs e) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Composition.Hosting.ExportProvider.ExportsChanging" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" /> that contains the event data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryGetExports">
+      <MemberSignature Language="C#" Value="public bool TryGetExports (System.ComponentModel.Composition.Primitives.ImportDefinition definition, System.ComponentModel.Composition.Hosting.AtomicComposition atomicComposition, out System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt; exports);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryGetExports(class System.ComponentModel.Composition.Primitives.ImportDefinition definition, class System.ComponentModel.Composition.Hosting.AtomicComposition atomicComposition, class System.Collections.Generic.IEnumerable`1&lt;class System.ComponentModel.Composition.Primitives.Export&gt; exports) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
+        <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
+        <Parameter Name="exports" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt;&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="definition">To be added.</param>
+        <param name="atomicComposition">To be added.</param>
+        <param name="exports">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

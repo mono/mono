@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionsCollectionEditor" FullName="System.Web.UI.Design.ExpressionsCollectionEditor">
   <TypeSignature Language="C#" Value="public class ExpressionsCollectionEditor : System.Drawing.Design.UITypeEditor" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An instance of the <see cref="T:System.Web.UI.Design.ExpressionsCollectionEditor" /> class is a <see cref="T:System.Drawing.Design.UITypeEditor" /> object that can be used at design time to select and edit a collection of expression bindings, and assign the expressions to a control property.</para>
+      <para>A designer host, such as vsprvslong, uses the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class implementations with the <see cref="T:System.Web.UI.Design.ExpressionsCollectionEditor" /> and <see cref="T:System.Web.UI.Design.ExpressionsCollectionConverter" /> classes to set the expression bindings for control properties at design time, and the <see cref="T:System.Web.UI.Design.ControlPersister" /> class to persist the expressions for run time. Expression strings reference a localizable resource, an application setting, a connection string, or a custom expression type. The expression string is bound to the control property at design time, and then used at run time to determine the value for the property. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a user interface for selecting and editing an expressions binding collection at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +29,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ExpressionsCollectionEditor" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EditValue">
@@ -40,12 +51,26 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="provider">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.UI.Design.ExpressionsCollectionEditor.EditValue" /> method launches the user interface for editing the <paramref name="value" /> object. The designer host calls the <see cref="Overload:System.Web.UI.Design.ExpressionsCollectionEditor.EditValue" /> method when you attempt to edit the value of a property that this editor is associated with. The input service provider is used to obtain any editing services that are required within the <see cref="Overload:System.Web.UI.Design.ExpressionsCollectionEditor.EditValue" />.</para>
+          <para>A designer host, such as vsprvslong, uses the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class implementations with the <see cref="T:System.Web.UI.Design.ExpressionsCollectionEditor" /> and <see cref="T:System.Web.UI.Design.ExpressionsCollectionConverter" /> classes to set the expression bindings for control properties at design time, and the <see cref="T:System.Web.UI.Design.ControlPersister" /> class to persist the expressions for run time. Expression strings reference a localizable resource, an application setting, a connection string, or a custom expression type. The expression string is bound to the control property at design time, and then used at run time to determine the value for the property. </para>
+          <para>If users cancel the user interface without modifying the expression binding collection, the <see cref="Overload:System.Web.UI.Design.ExpressionsCollectionEditor.EditValue" /> method returns the input <paramref name="value" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Edits the value of the specified object with the specified service provider and context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.ExpressionBindingCollection" /> object containing the selected expressions; otherwise, if no expressions are selected, the <paramref name="value" /> object.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that can be used to gain additional context information such as the associated control.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider object through which editing services can be obtained.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the object being edited.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEditStyle">
@@ -61,10 +86,21 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.UI.Design.ExpressionsCollectionEditor.GetEditStyle" /> method returns the <see cref="F:System.Drawing.Design.UITypeEditorEditStyle.Modal" /> value by default. </para>
+          <para>If <see cref="Overload:System.Web.UI.Design.ExpressionsCollectionEditor.GetEditStyle" /> is not supported in the specified context, the <see cref="Overload:System.Web.UI.Design.ExpressionsCollectionEditor.GetEditStyle" /> returns <see cref="F:System.Drawing.Design.UITypeEditorEditStyle.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the editing style that is associated with this editor for the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Design.UITypeEditorEditStyle" /> enumeration value indicating the editing style for the provided user interface.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that can be used to gain additional context information.</param>
       </Docs>
     </Member>
   </Members>

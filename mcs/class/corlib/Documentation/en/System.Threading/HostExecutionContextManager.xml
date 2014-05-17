@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HostExecutionContextManager" FullName="System.Threading.HostExecutionContextManager">
   <TypeSignature Language="C#" Value="public class HostExecutionContextManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HostExecutionContextManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,58 +12,67 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If the current <see cref="T:System.AppDomainManager" /> has a reference to a <see cref="T:System.Threading.HostExecutionContextManager" /> in its <see cref="P:System.AppDomainManager.HostExecutionContextManager" /> property, then the common language runtime calls the manager every time a call to the <see cref="M:System.Threading.ExecutionContext.Run(System.Threading.ExecutionContext,System.Threading.ContextCallback,System.Object)" /> method occurs, to allow the host to participate in the flow of the execution context.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the functionality that allows a common language runtime host to participate in the flow, or migration, of the execution context.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HostExecutionContextManager ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.HostExecutionContextManager" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Capture">
       <MemberSignature Language="C#" Value="public virtual System.Threading.HostExecutionContext Capture ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.HostExecutionContext Capture() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.HostExecutionContext</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.HostExecutionContext" /> is created using a safe handle containing the IUnknown pointer for the host executing the current thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Captures the host execution context from the current thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.HostExecutionContext" /> object representing the host execution context of the current thread.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Revert">
       <MemberSignature Language="C#" Value="public virtual void Revert (object previousState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Revert(object previousState) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="previousState" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="previousState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -71,10 +82,35 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="previousState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="previousState" /> must be the object returned by the <see cref="M:System.Threading.HostExecutionContextManager.SetHostExecutionContext(System.Threading.HostExecutionContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the host execution context to its prior state.</para>
+        </summary>
+        <param name="previousState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The previous context state to revert to.</param>
+      </Docs>
     </Member>
     <Member MemberName="SetHostExecutionContext">
       <MemberSignature Language="C#" Value="public virtual object SetHostExecutionContext (System.Threading.HostExecutionContext hostExecutionContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object SetHostExecutionContext(class System.Threading.HostExecutionContext hostExecutionContext) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -82,16 +118,23 @@
         <Parameter Name="hostExecutionContext" Type="System.Threading.HostExecutionContext" />
       </Parameters>
       <Docs>
-        <param name="hostExecutionContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.HostExecutionContextManager.SetHostExecutionContext(System.Threading.HostExecutionContext)" /> method sets the host execution context for the current <see cref="T:System.Threading.HostExecutionContext" />.  A <see cref="T:System.Threading.HostExecutionContext" /> that has been used as the argument to another <see cref="M:System.Threading.HostExecutionContextManager.SetHostExecutionContext(System.Threading.HostExecutionContext)" /> method call cannot be passed in as the parameter for this method. Instead, use the <see cref="M:System.Threading.HostExecutionContext.CreateCopy" /> method to create a copy of a <see cref="T:System.Threading.HostExecutionContext" /> object and then use the copy to set the host execution context.</para>
+          <para>Call the <see cref="M:System.Threading.HostExecutionContextManager.Revert(System.Object)" /> method using the object returned by this method to restore the <see cref="T:System.Threading.HostExecutionContext" /> to its previous state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current host execution context to the specified host execution context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object for restoring the <see cref="T:System.Threading.HostExecutionContext" /> to its previous state.</para>
+        </returns>
+        <param name="hostExecutionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.HostExecutionContext" /> to be set.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

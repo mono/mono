@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerCommandSet" FullName="System.ComponentModel.Design.DesignerCommandSet">
   <TypeSignature Language="C#" Value="public class DesignerCommandSet" />
   <AssemblyInfo>
@@ -9,8 +10,58 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> class provides the <see cref="P:System.ComponentModel.Design.ComponentDesigner.ActionLists" /> and <see cref="P:System.ComponentModel.Design.ComponentDesigner.Verbs" /> properties to query for the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> and <see cref="T:System.ComponentModel.Design.DesignerVerb" /> collections, respectively. However, if a design-time tool author decides not to derive from this class, the <see cref="T:System.ComponentModel.Design.DesignerCommandSet" /> class represents an alternative base class to provide this functionality.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.DesignerCommandSet" /> class contains only three members, described in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Public member</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.ComponentModel.Design.DesignerCommandSet.GetCommands(System.String)" />
+            </para>
+          </term>
+          <description>
+            <para>Returns the collection of either the smart tags or designer verbs associated with the designed component. The base implementation returns null.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ComponentModel.Design.DesignerCommandSet.ActionLists" />
+            </para>
+          </term>
+          <description>
+            <para>Gets the collection of all the smart tags associated with the designed component. The base implementation simply calls <see cref="M:System.ComponentModel.Design.DesignerCommandSet.GetCommands(System.String)" />.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.ComponentModel.Design.DesignerCommandSet.Verbs" />
+            </para>
+          </term>
+          <description>
+            <para>Gets the collection of all the designer verbs associated with the designed component. The base implementation simply calls <see cref="M:System.ComponentModel.Design.DesignerCommandSet.GetCommands(System.String)" />.</para>
+          </description>
+        </item>
+      </list>
+      <para>A <see cref="T:System.ComponentModel.Design.DesignerCommandSet" /> should be added as a site-specific service. Externally, a service of this type should first be queried to discover smart tag and designer verb functionality. If this service is not found, then the <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" /> property should be used instead. This procedure provides a path for backwards compatibility.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a base class for design-time tools, not derived from <see cref="T:System.ComponentModel.Design.ComponentDesigner" />, that provide smart tag or designer verb capabilities.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +72,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because this base class contains no state, the default constructor does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.ComponentModel.Design.DesignerCommandSet" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActionLists">
@@ -35,9 +92,15 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionListCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base implementation simply calls <see cref="M:System.ComponentModel.Design.DesignerCommandSet.GetCommands(System.String)" /> with the string parameter "ActionLists".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of all the smart tags associated with the designed component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetCommands">
@@ -53,10 +116,48 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the base implementation always returns null, the overridden version supplied by the programmer should return a collection of command objects of the type described by <paramref name="name" />. The base implementation of the <see cref="P:System.ComponentModel.Design.DesignerCommandSet.Verbs" /> and <see cref="P:System.ComponentModel.Design.DesignerCommandSet.ActionLists" /> properties specify the following values and meanings for this parameter.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>String </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>"ActionLists"</para>
+              </term>
+              <description>
+                <para>Return a collection of all the smart tags associated with the component.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"Verbs"</para>
+              </term>
+              <description>
+                <para>Return a collection of all the designer verbs associated with the component.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of command objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains the specified type—either <see cref="T:System.ComponentModel.Design.DesignerActionList" /> or <see cref="T:System.ComponentModel.Design.DesignerVerb" />—of command objects. The base implementation always returns null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of collection to return, indicating either a <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> or a <see cref="T:System.ComponentModel.Design.DesignerVerbCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Verbs">
@@ -69,9 +170,15 @@
         <ReturnType>System.ComponentModel.Design.DesignerVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base implementation simply calls <see cref="M:System.ComponentModel.Design.DesignerCommandSet.GetCommands(System.String)" /> with the string parameter "Verbs".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of all the designer verbs associated with the designed component.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

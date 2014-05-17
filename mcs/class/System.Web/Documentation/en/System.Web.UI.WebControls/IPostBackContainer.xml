@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPostBackContainer" FullName="System.Web.UI.WebControls.IPostBackContainer">
   <TypeSignature Language="C#" Value="public interface IPostBackContainer" />
   <AssemblyInfo>
@@ -6,9 +7,17 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Classes that implement the <see cref="T:System.Web.UI.WebControls.IPostBackContainer" /> interface enable buttons to get a <see cref="T:System.Web.UI.PostBackOptions" /> object that is used to create the correct postback event reference.</para>
+      <para>For more information about postback processing, see <format type="text/html"><a href="6304bff7-1b0e-4641-8acb-6d3b0badc4a3">ASP.NET Web Server Control Event Model</a></format>.</para>
+      <para>Controls that implement the <see cref="T:System.Web.UI.WebControls.IPostBackContainer" /> interface should also implement the <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface to handle events raised by contained buttons.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a method that enables controls to obtain client-side script options.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetPostBackOptions">
@@ -22,10 +31,19 @@
       </Parameters>
       <Docs>
         <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementations of the <see cref="M:System.Web.UI.WebControls.IPostBackContainer.GetPostBackOptions(System.Web.UI.WebControls.IButtonControl)" /> method should configure a new <see cref="T:System.Web.UI.PostBackOptions" /> instance with the information required for the <see cref="M:System.Web.UI.ClientScriptManager.GetPostBackEventReference(System.Web.UI.PostBackOptions)" /> method to construct a valid postback event reference, which, when executed on the client, initiates a postback. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the options required for a postback script for a specified button control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.PostBackOptions" /> object containing the options required to generate a postback script for <paramref name="buttonControl" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

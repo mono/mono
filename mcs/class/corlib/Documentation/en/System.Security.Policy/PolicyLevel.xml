@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PolicyLevel" FullName="System.Security.Policy.PolicyLevel">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class PolicyLevel" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit PolicyLevel extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,14 +14,55 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>Starting with the net_v40_long, the common language runtime (CLR) is moving away from providing security policy for computers. We recommend that you use <see cref="http://go.microsoft.com/fwlink/?LinkId=178101">Windows Software Restriction Policies (SRP)</see> or <see cref="http://go.microsoft.com/fwlink/?LinkId=178102">AppLocker</see> as a replacement for CLR security policy. The information in this topic applies to the .NET Framework version 3.5 and earlier; it does not apply to the net_v40_short and later. For more information about this and other changes, see <format type="text/html"><a href="5e87881c-9c13-4b52-8ad1-e34bb46e8aaa">Security Changes in the .NET Framework Version 4.0</a></format>.</para>
+      </block>
+      <para>The highest level of security policy is enterprise-wide. Successive lower levels of hierarchy represent further policy restrictions, but can never grant more permissions than allowed by higher levels. The following policy levels are implemented: </para>
+      <list type="ordered">
+        <item>
+          <para>Enterprise: Security policy for all managed code in an enterprise.</para>
+        </item>
+        <item>
+          <para>Machine: Security policy for all managed code run on the computer.</para>
+        </item>
+        <item>
+          <para>User: Security policy for all managed code run by the user.</para>
+        </item>
+        <item>
+          <para>Application domain: Security policy for all managed code in an application.</para>
+        </item>
+      </list>
+      <para>A policy level consists of a set of code groups organized into a single rooted tree (see <see cref="T:System.Security.Policy.CodeGroup" />), a set of named permission sets that are referenced by the code groups to specify permissions to be granted to code belonging to the code group, and a list of fully-trusted assemblies.</para>
+      <para>Use <see cref="M:System.Security.SecurityManager.PolicyHierarchy" /> to enumerate the policy levels.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the security policy levels for the common language runtime. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddFullTrustAssembly">
       <MemberSignature Language="C#" Value="public void AddFullTrustAssembly (System.Security.Policy.StrongName sn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddFullTrustAssembly(class System.Security.Policy.StrongName sn) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -27,10 +70,22 @@
         <Parameter Name="sn" Type="System.Security.Policy.StrongName" />
       </Parameters>
       <Docs>
-        <param name="sn">To be added: an object of type 'StrongName'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Policy.PolicyLevel.AddFullTrustAssembly(System.Security.Policy.StrongName)" /> method is not supported in version 2.0 or later of the .NET Framework because the list of full trust assemblies is not used in those versions. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> corresponding to the specified <see cref="T:System.Security.Policy.StrongName" /> to the list of <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> objects used to determine whether an assembly is a member of the group of assemblies that should not be evaluated.</para>
+        </summary>
+        <param name="sn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.StrongName" /> used to create the <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> to add to the list of <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> objects used to determine whether an assembly is a member of the group of assemblies that should not be evaluated. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddFullTrustAssembly">
+      <MemberSignature Language="C#" Value="public void AddFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddFullTrustAssembly(class System.Security.Policy.StrongNameMembershipCondition snMC) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +96,6 @@
           <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="AddFullTrustAssembly">
-      <MemberSignature Language="C#" Value="public void AddFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -52,24 +103,27 @@
         <Parameter Name="snMC" Type="System.Security.Policy.StrongNameMembershipCondition" />
       </Parameters>
       <Docs>
-        <param name="snMC">To be added: an object of type 'StrongNameMembershipCondition'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Policy.PolicyLevel.AddFullTrustAssembly(System.Security.Policy.StrongNameMembershipCondition)" /> method is not supported in version 2.0 or later of the .NET Framework because the list of full trust assemblies is not used in those versions. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> to the list of <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> objects used to determine whether an assembly is a member of the group of assemblies that should not be evaluated.</para>
+        </summary>
+        <param name="snMC">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> to add to the list of <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> objects used to determine whether an assembly is a member of the group of assemblies that should not be evaluated. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public void AddNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddNamedPermissionSet(class System.Security.NamedPermissionSet permSet) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="AddNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public void AddNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -77,19 +131,27 @@
         <Parameter Name="permSet" Type="System.Security.NamedPermissionSet" />
       </Parameters>
       <Docs>
-        <param name="permSet">To be added: an object of type 'Security.NamedPermissionSet'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Named permission sets are scoped by policy level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Security.NamedPermissionSet" /> to the current policy level.</para>
+        </summary>
+        <param name="permSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.NamedPermissionSet" /> to add to the current policy level. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ChangeNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet ChangeNamedPermissionSet (string name, System.Security.PermissionSet pSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet ChangeNamedPermissionSet(string name, class System.Security.PermissionSet pSet) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ChangeNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet ChangeNamedPermissionSet (string name, System.Security.PermissionSet pSet);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -98,39 +160,58 @@
         <Parameter Name="pSet" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="pSet">To be added: an object of type 'Security.PermissionSet'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces a <see cref="T:System.Security.NamedPermissionSet" /> in the current policy level with the specified <see cref="T:System.Security.PermissionSet" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the <see cref="T:System.Security.NamedPermissionSet" /> that was replaced.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Security.NamedPermissionSet" /> to replace. </param>
+        <param name="pSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.PermissionSet" /> that replaces the <see cref="T:System.Security.NamedPermissionSet" /> specified by the <paramref name="name" /> parameter. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateAppDomainLevel">
+      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel CreateAppDomainLevel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Policy.PolicyLevel CreateAppDomainLevel() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateAppDomainLevel">
-      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel CreateAppDomainLevel ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyLevel</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PolicyLevel'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a new <see cref="T:System.Security.Policy.PolicyLevel" /> with the <see cref="P:System.Security.Policy.PolicyLevel.Label" /> "AppDomain". The new <see cref="T:System.Security.Policy.PolicyLevel" /> will initially contain the same <see cref="T:System.Security.NamedPermissionSet" /> objects as in the default computer policy, and will have a single root code group that grants FullTrust to all code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new policy level for use at the application domain policy level.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.Security.Policy.PolicyLevel" />.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="FromXml">
+      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement e);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void FromXml(class System.Security.SecurityElement e) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromXml">
-      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement e);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -138,27 +219,19 @@
         <Parameter Name="e" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'Security.SecurityElement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a security object with a given state from an XML encoding.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the security object. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FullTrustAssemblies">
       <MemberSignature Language="C#" Value="public System.Collections.IList FullTrustAssemblies { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IList FullTrustAssemblies" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IList</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'Collections.IList'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -169,10 +242,32 @@
           <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.IList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'Collections.IList'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Security.Policy.PolicyLevel.FullTrustAssemblies" /> are granted full trust during security policy evaluation of assemblies not in the list, but are not automatically granted full trust when directly evaluated by the security policy system.</para>
+          <para>The <see cref="P:System.Security.Policy.PolicyLevel.FullTrustAssemblies" /> property is not supported in version 2.0 or later of the .NET Framework because the list of full trust assemblies is not used in those versions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> objects used to determine whether an assembly is a member of the group of assemblies used to evaluate security policy.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetNamedPermissionSet">
       <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet GetNamedPermissionSet (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet GetNamedPermissionSet(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -180,71 +275,103 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Security.NamedPermissionSet" /> in the current policy level with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.NamedPermissionSet" /> in the current policy level with the specified name, if found; otherwise, null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Security.NamedPermissionSet" /> to find. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Label">
+      <MemberSignature Language="C#" Value="public string Label { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Label" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Label">
-      <MemberSignature Language="C#" Value="public string Label { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The label is used to help the administrator identify the policy level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a descriptive label for the policy level.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="NamedPermissionSets">
+      <MemberSignature Language="C#" Value="public System.Collections.IList NamedPermissionSets { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IList NamedPermissionSets" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NamedPermissionSets">
-      <MemberSignature Language="C#" Value="public System.Collections.IList NamedPermissionSets { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IList'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of named permission sets defined for the policy level.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Recover">
+      <MemberSignature Language="C#" Value="public void Recover ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Recover() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Recover">
-      <MemberSignature Language="C#" Value="public void Recover ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not make modifications to the current <see cref="T:System.Security.Policy.PolicyLevel" />. Instead, it updates the <see cref="T:System.Security.Policy.PolicyLevel" /> object's file and the <see cref="T:System.Security.Policy.PolicyLevel" /> that the security system uses to evaluate policy.</para>
+          <para>This method is used by the caspol -recover option (see <format type="text/html"><a href="D2BF6123-7B0C-4E60-87AD-A39A1C3EB2E0">[&lt;topic://cpgrfcodeaccesssecuritypolicyutilitycaspolexe&gt;]</a></format>).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the configuration file for this <see cref="T:System.Security.Policy.PolicyLevel" /> with the last backup (reflecting the state of policy prior to the last time it was saved) and returns it to the state of the last save.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveFullTrustAssembly">
+      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongName sn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveFullTrustAssembly(class System.Security.Policy.StrongName sn) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveFullTrustAssembly">
-      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongName sn);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -252,10 +379,22 @@
         <Parameter Name="sn" Type="System.Security.Policy.StrongName" />
       </Parameters>
       <Docs>
-        <param name="sn">To be added: an object of type 'StrongName'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Policy.PolicyLevel.RemoveFullTrustAssembly(System.Security.Policy.StrongName)" /> method is not supported in version 2.0 or later of the .NET Framework because the list of full trust assemblies is not used in those versions. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an assembly with the specified <see cref="T:System.Security.Policy.StrongName" /> from the list of assemblies the policy level uses to evaluate policy.</para>
+        </summary>
+        <param name="sn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.StrongName" /> of the assembly to remove from the list of assemblies used to evaluate policy. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveFullTrustAssembly">
+      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveFullTrustAssembly(class System.Security.Policy.StrongNameMembershipCondition snMC) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -266,10 +405,6 @@
           <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="RemoveFullTrustAssembly">
-      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -277,24 +412,27 @@
         <Parameter Name="snMC" Type="System.Security.Policy.StrongNameMembershipCondition" />
       </Parameters>
       <Docs>
-        <param name="snMC">To be added: an object of type 'StrongNameMembershipCondition'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Policy.PolicyLevel.RemoveFullTrustAssembly(System.Security.Policy.StrongNameMembershipCondition)" /> method is not supported in version 2.0 or later of the .NET Framework because the list of full trust assemblies is not used in those versions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an assembly with the specified <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> from the list of assemblies the policy level uses to evaluate policy.</para>
+        </summary>
+        <param name="snMC">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.StrongNameMembershipCondition" /> of the assembly to remove from the list of assemblies used to evaluate policy. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet RemoveNamedPermissionSet(class System.Security.NamedPermissionSet permSet) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="RemoveNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -302,20 +440,28 @@
         <Parameter Name="permSet" Type="System.Security.NamedPermissionSet" />
       </Parameters>
       <Docs>
-        <param name="permSet">To be added: an object of type 'Security.NamedPermissionSet'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Security.NamedPermissionSet" /> from the current policy level.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.NamedPermissionSet" /> that was removed.</para>
+        </returns>
+        <param name="permSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.NamedPermissionSet" /> to remove from the current policy level. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet RemoveNamedPermissionSet(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -323,37 +469,52 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Security.NamedPermissionSet" /> with the specified name from the current policy level.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.NamedPermissionSet" /> that was removed.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Security.NamedPermissionSet" /> to remove. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default state is different for each policy level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the current policy level to the default state.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement Resolve (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Policy.PolicyStatement Resolve(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Resolve">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement Resolve (System.Security.Policy.Evidence evidence);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyStatement</ReturnType>
       </ReturnValue>
@@ -361,20 +522,33 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PolicyStatement'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Security.Policy.PolicyLevel.Resolve(System.Security.Policy.Evidence)" /> is the basic policy evaluation operation for policy levels. Given a set of evidence as input, this method tests membership conditions of code groups starting at the root and working down as matched. The combination of permissions resulting from the matching code groups produces a <see cref="T:System.Security.Policy.PolicyStatement" /> that is returned.</para>
+          <para>In granting permissions to code, security policy uses the resolved policy statements for all applicable policy levels, together with the code request for permissions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves policy based on evidence for the policy level, and returns the resulting <see cref="T:System.Security.Policy.PolicyStatement" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting <see cref="T:System.Security.Policy.PolicyStatement" />.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Evidence" /> used to resolve the <see cref="T:System.Security.Policy.PolicyLevel" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ResolveMatchingCodeGroups">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup ResolveMatchingCodeGroups (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Policy.CodeGroup ResolveMatchingCodeGroups(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ResolveMatchingCodeGroups">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup ResolveMatchingCodeGroups (System.Security.Policy.Evidence evidence);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.CodeGroup</ReturnType>
       </ReturnValue>
@@ -382,72 +556,101 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CodeGroup'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to analyze the effect of the code groups in a policy level with respect to a certain set of evidence. For example, if the security policy is not granting an assembly the minimum code request permissions it needs, it can be difficult to tell by examination of the code groups exactly where the problem is.</para>
+          <para>Since this method returns a code group that can have child code groups, it is possible for an administrator to examine the code group and its child code groups and determine which code groups match.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves policy at the policy level and returns the root of a code group tree that matches the evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Policy.CodeGroup" /> representing the root of a tree of code groups matching the specified evidence.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Evidence" /> used to resolve policy. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RootCodeGroup">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup RootCodeGroup { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.CodeGroup RootCodeGroup" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RootCodeGroup">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup RootCodeGroup { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.CodeGroup</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every policy level has one root <see cref="T:System.Security.Policy.CodeGroup" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the root code group for the policy level.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="StoreLocation">
+      <MemberSignature Language="C#" Value="public string StoreLocation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StoreLocation" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="StoreLocation">
-      <MemberSignature Language="C#" Value="public string StoreLocation { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path where the policy file is stored.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ToXml">
+      <MemberSignature Language="C#" Value="public System.Security.SecurityElement ToXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.SecurityElement ToXml() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToXml">
-      <MemberSignature Language="C#" Value="public System.Security.SecurityElement ToXml ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the security object and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Type">
       <MemberSignature Language="C#" Value="public System.Security.PolicyLevelType Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.PolicyLevelType Type" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -457,20 +660,32 @@
         <ReturnType>System.Security.PolicyLevelType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The highest level of security policy is enterprise-wide. Successive lower levels of hierarchy represent further policy restrictions, but can never grant more permissions than allowed by higher levels. The policy levels in order are the following.</para>
+          <list type="ordered">
+            <item>
+              <para>Enterprise </para>
+            </item>
+            <item>
+              <para>Machine </para>
+            </item>
+            <item>
+              <para>User </para>
+            </item>
+            <item>
+              <para>Application domain </para>
+            </item>
+          </list>
+          <para>For more information, see <see cref="T:System.Security.PolicyLevelType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the policy level.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

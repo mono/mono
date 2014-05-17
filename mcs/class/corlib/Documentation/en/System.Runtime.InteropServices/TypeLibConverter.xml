@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeLibConverter" FullName="System.Runtime.InteropServices.TypeLibConverter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class TypeLibConverter : System.Runtime.InteropServices.ITypeLibConverter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TypeLibConverter extends System.Object implements class System.Runtime.InteropServices.ITypeLibConverter" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -28,28 +30,41 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of services that convert a managed assembly to a COM type library and vice versa.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TypeLibConverter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.TypeLibConverter" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ConvertAssemblyToTypeLib">
       <MemberSignature Language="C#" Value="public object ConvertAssemblyToTypeLib (System.Reflection.Assembly assembly, string strTypeLibName, System.Runtime.InteropServices.TypeLibExporterFlags flags, System.Runtime.InteropServices.ITypeLibExporterNotifySink notifySink);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object ConvertAssemblyToTypeLib(class System.Reflection.Assembly assembly, string strTypeLibName, valuetype System.Runtime.InteropServices.TypeLibExporterFlags flags, class System.Runtime.InteropServices.ITypeLibExporterNotifySink notifySink) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -60,23 +75,37 @@
         <Parameter Name="notifySink" Type="System.Runtime.InteropServices.ITypeLibExporterNotifySink" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <param name="strTypeLibName">To be added: an object of type 'string'</param>
-        <param name="flags">To be added: an object of type 'TypeLibExporterFlags'</param>
-        <param name="notifySink">To be added: an object of type 'ITypeLibExporterNotifySink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an assembly to a COM type library.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the ITypeLib interface.</para>
+        </returns>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to convert. </param>
+        <param name="strTypeLibName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the resulting type library. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.TypeLibExporterFlags" /> value indicating any special settings. </param>
+        <param name="notifySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.InteropServices.ITypeLibExporterNotifySink" /> interface implemented by the caller. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ConvertTypeLibToAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder ConvertTypeLibToAssembly (object typeLib, string asmFileName, int flags, System.Runtime.InteropServices.ITypeLibImporterNotifySink notifySink, byte[] publicKey, System.Reflection.StrongNameKeyPair keyPair, bool unsafeInterfaces);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Emit.AssemblyBuilder ConvertTypeLibToAssembly(object typeLib, string asmFileName, int32 flags, class System.Runtime.InteropServices.ITypeLibImporterNotifySink notifySink, unsigned int8[] publicKey, class System.Reflection.StrongNameKeyPair keyPair, bool unsafeInterfaces) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ConvertTypeLibToAssembly">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder ConvertTypeLibToAssembly (object typeLib, string asmFileName, int flags, System.Runtime.InteropServices.ITypeLibImporterNotifySink notifySink, byte[] publicKey, System.Reflection.StrongNameKeyPair keyPair, bool unsafeInterfaces);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
       </ReturnValue>
@@ -90,26 +119,45 @@
         <Parameter Name="unsafeInterfaces" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeLib">To be added: an object of type 'object'</param>
-        <param name="asmFileName">To be added: an object of type 'string'</param>
-        <param name="flags">To be added: an object of type 'int'</param>
-        <param name="notifySink">To be added: an object of type 'ITypeLibImporterNotifySink'</param>
-        <param name="publicKey">To be added: an object of type 'byte []'</param>
-        <param name="keyPair">To be added: an object of type 'Reflection.StrongNameKeyPair'</param>
-        <param name="unsafeInterfaces">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not want to generate a strong name for your assembly, it is valid for <paramref name="publicKey" /> and <paramref name="keyPair" /> to be null, as long as <paramref name="flags" /> does not equal <see cref="F:System.Runtime.InteropServices.TypeLibImporterFlags.PrimaryInteropAssembly" />. Otherwise, at least one of these parameters must be specified. If <paramref name="publicKey" /> is null, the public key in <paramref name="keyPair" /> will be set in the target assembly's manifest metadata and a signature will be generated based on the contents of the assembly. If <paramref name="keyPair" /> is null, <paramref name="publicKey" /> will be set in the target assembly's manifest metadata and no signature will be generated. Specifying both parameters is not generally useful, and can result in an invalid signature.</para>
+          <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a COM type library to an assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> object containing the converted type library.</para>
+        </returns>
+        <param name="typeLib">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the ITypeLib interface. </param>
+        <param name="asmFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the resulting assembly. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.TypeLibImporterFlags" /> value indicating any special settings. </param>
+        <param name="notifySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Runtime.InteropServices.ITypeLibImporterNotifySink" /> interface implemented by the caller. </param>
+        <param name="publicKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array containing the public key. </param>
+        <param name="keyPair">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.StrongNameKeyPair" /> object containing the public and private cryptographic key pair. </param>
+        <param name="unsafeInterfaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, the interfaces require link time checks for <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> permission. If false, the interfaces require run time checks that require a stack walk and are more expensive, but help provide greater protection. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ConvertTypeLibToAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder ConvertTypeLibToAssembly (object typeLib, string asmFileName, System.Runtime.InteropServices.TypeLibImporterFlags flags, System.Runtime.InteropServices.ITypeLibImporterNotifySink notifySink, byte[] publicKey, System.Reflection.StrongNameKeyPair keyPair, string asmNamespace, Version asmVersion);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Emit.AssemblyBuilder ConvertTypeLibToAssembly(object typeLib, string asmFileName, valuetype System.Runtime.InteropServices.TypeLibImporterFlags flags, class System.Runtime.InteropServices.ITypeLibImporterNotifySink notifySink, unsigned int8[] publicKey, class System.Reflection.StrongNameKeyPair keyPair, string asmNamespace, class System.Version asmVersion) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ConvertTypeLibToAssembly">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.AssemblyBuilder ConvertTypeLibToAssembly (object typeLib, string asmFileName, System.Runtime.InteropServices.TypeLibImporterFlags flags, System.Runtime.InteropServices.ITypeLibImporterNotifySink notifySink, byte[] publicKey, System.Reflection.StrongNameKeyPair keyPair, string asmNamespace, Version asmVersion);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.AssemblyBuilder</ReturnType>
       </ReturnValue>
@@ -124,27 +172,47 @@
         <Parameter Name="asmVersion" Type="System.Version" />
       </Parameters>
       <Docs>
-        <param name="typeLib">To be added: an object of type 'object'</param>
-        <param name="asmFileName">To be added: an object of type 'string'</param>
-        <param name="flags">To be added: an object of type 'TypeLibImporterFlags'</param>
-        <param name="notifySink">To be added: an object of type 'ITypeLibImporterNotifySink'</param>
-        <param name="publicKey">To be added: an object of type 'byte []'</param>
-        <param name="keyPair">To be added: an object of type 'Reflection.StrongNameKeyPair'</param>
-        <param name="asmNamespace">To be added: an object of type 'string'</param>
-        <param name="asmVersion">To be added: an object of type 'Version'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not want to generate a strong name for your assembly, it is valid for <paramref name="publicKey" /> and <paramref name="keyPair" /> to be null, as long as <paramref name="flags" /> does not equal <see cref="F:System.Runtime.InteropServices.TypeLibImporterFlags.PrimaryInteropAssembly" />. Otherwise, atleast one of these parameters must be specified. If <paramref name="publicKey" /> is null, the public key in <paramref name="keyPair" /> will be set in the target assembly's manifest metadata and a signature will be generated based on the contents of the assembly. If <paramref name="keyPair" /> is null, <paramref name="publicKey" /> will be set in the target assembly's manifest metadata and no signature will be generated. Specifying both parameters is not generally useful, and can result in an invalid signature.</para>
+          <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a COM type library to an assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> object containing the converted type library.</para>
+        </returns>
+        <param name="typeLib">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the ITypeLib interface. </param>
+        <param name="asmFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the resulting assembly. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.TypeLibImporterFlags" /> value indicating any special settings. </param>
+        <param name="notifySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Runtime.InteropServices.ITypeLibImporterNotifySink" /> interface implemented by the caller. </param>
+        <param name="publicKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array containing the public key. </param>
+        <param name="keyPair">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.StrongNameKeyPair" /> object containing the public and private cryptographic key pair. </param>
+        <param name="asmNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace for the resulting assembly. </param>
+        <param name="asmVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the resulting assembly. If null, the version of the type library is used. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetPrimaryInteropAssembly">
+      <MemberSignature Language="C#" Value="public bool GetPrimaryInteropAssembly (Guid g, int major, int minor, int lcid, out string asmName, out string asmCodeBase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool GetPrimaryInteropAssembly(valuetype System.Guid g, int32 major, int32 minor, int32 lcid, string asmName, string asmCodeBase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetPrimaryInteropAssembly">
-      <MemberSignature Language="C#" Value="public bool GetPrimaryInteropAssembly (Guid g, int major, int minor, int lcid, out string asmName, out string asmCodeBase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -167,11 +235,6 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1619,11 +1619,23 @@ namespace System.Windows.Forms {
 				if (hwnd.zombie)
 					return;
 
-				if ((windows & WindowType.Whole) != 0) {
-					XMapWindow(DisplayHandle, hwnd.whole_window);
-				}
-				if ((windows & WindowType.Client) != 0) {
-					XMapWindow(DisplayHandle, hwnd.client_window);
+				if (hwnd.topmost) {
+					// Most window managers will respect the _NET_WM_STATE property.
+					// If not, use XMapRaised to map the window at the top level as
+					// a last ditch effort.
+					if ((windows & WindowType.Whole) != 0) {
+						XMapRaised(DisplayHandle, hwnd.whole_window);
+					}
+					if ((windows & WindowType.Client) != 0) {
+						XMapRaised(DisplayHandle, hwnd.client_window);
+					}
+				} else {
+					if ((windows & WindowType.Whole) != 0) {
+						XMapWindow(DisplayHandle, hwnd.whole_window);
+					}
+					if ((windows & WindowType.Client) != 0) {
+						XMapWindow(DisplayHandle, hwnd.client_window);
+					}
 				}
 
 				hwnd.mapped = true;
@@ -2582,6 +2594,28 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override Screen[] AllScreens {
+			get {
+				if (!XineramaIsActive (DisplayHandle))
+					return null;
+				int nScreens;
+				IntPtr xineramaScreens = XineramaQueryScreens (DisplayHandle, out nScreens);
+				var screens = new Screen [nScreens];
+				IntPtr current = xineramaScreens;
+				for (int i = 0; i < nScreens; i++) {
+					var screen = (XineramaScreenInfo)Marshal.PtrToStructure (current,
+						typeof (XineramaScreenInfo));
+					var screenRect = new Rectangle (screen.x_org, screen.y_org, screen.width,
+						screen.height);
+					var name = string.Format ("Display {0}", screen.screen_number);
+					screens [i] = new Screen (i == 0, name, screenRect, screenRect);
+					current = (IntPtr)( (ulong)current + (ulong)Marshal.SizeOf(typeof (XineramaScreenInfo)));
+				}
+				XFree (xineramaScreens);
+				return screens;
+			}
+		}
+
 		internal override bool ThemesEnabled {
 			get {
 				return XplatUIX11.themes_enabled;
@@ -2715,9 +2749,14 @@ namespace System.Windows.Forms {
 			while (f != null) {
 				XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
 
+				var timeToWaitForSelectionFormats = TimeSpan.FromSeconds(4);
+				var startTime = DateTime.Now;
 				Clipboard.Enumerating = true;
 				while (Clipboard.Enumerating) {
 					UpdateMessageQueue(null, false);
+
+					if (DateTime.Now - startTime > timeToWaitForSelectionFormats)
+						break;
 				}
 				f = f.Next;
 			}
@@ -2972,13 +3011,8 @@ namespace System.Windows.Forms {
 					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | Keyboard.KeyEventMask)));
 			}
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST)) {
-				atoms = new int[2];
-				atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
-				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
-
-				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
-			}
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST))
+				SetTopmost(hwnd.whole_window, true);
 
 			SetWMStyles(hwnd, cp);
 			
@@ -5787,6 +5821,7 @@ namespace System.Windows.Forms {
 		{
 
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd.topmost = enabled;
 
 			if (enabled) {
 				lock (XlibLock) {
@@ -6404,6 +6439,13 @@ namespace System.Windows.Forms {
 		{
 			DebugHelper.TraceWriteLine ("XMapWindow");
 			return _XMapWindow(display, window);
+		}
+		[DllImport ("libX11", EntryPoint="XMapRaised")]
+		internal extern static int _XMapRaised(IntPtr display, IntPtr window);
+		internal static int XMapRaised(IntPtr display, IntPtr window)
+		{
+			DebugHelper.TraceWriteLine ("XMapRaised");
+			return _XMapRaised(display, window);
 		}
 		[DllImport ("libX11", EntryPoint="XUnmapWindow")]
 		internal extern static int _XUnmapWindow(IntPtr display, IntPtr window);
@@ -7216,6 +7258,34 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+#region Xinerama imports
+		[DllImport ("libXinerama", EntryPoint="XineramaQueryScreens")]
+		extern static IntPtr _XineramaQueryScreens (IntPtr display, out int number);
+		internal static IntPtr XineramaQueryScreens (IntPtr display, out int number)
+		{
+			DebugHelper.TraceWriteLine ("XineramaQueryScreens");
+			return _XineramaQueryScreens (display, out number);
+		}
+
+		[DllImport ("libXinerama", EntryPoint="XineramaIsActive")]
+		extern static bool _XineramaIsActive (IntPtr display);
+		static bool XineramaNotInstalled;
+
+		internal static bool XineramaIsActive (IntPtr display)
+		{
+			DebugHelper.TraceWriteLine ("XineramaIsActive");
+
+			if (XineramaNotInstalled)
+				return false;
+			try {
+				return _XineramaIsActive (display);
+			} catch (DllNotFoundException) {
+				// Xinerama isn't installed
+				XineramaNotInstalled = true;
+				return false;
+			}
+		}
+#endregion
 
 #else //no TRACE defined
 
@@ -7254,6 +7324,9 @@ namespace System.Windows.Forms {
 		
 		[DllImport ("libX11", EntryPoint="XMapWindow")]
 		internal extern static int XMapWindow(IntPtr display, IntPtr window);
+		
+		[DllImport ("libX11", EntryPoint="XMapRaised")]
+		internal extern static int XMapRaised(IntPtr display, IntPtr window);
 		
 		[DllImport ("libX11", EntryPoint="XUnmapWindow")]
 		internal extern static int XUnmapWindow(IntPtr display, IntPtr window);
@@ -7581,6 +7654,29 @@ namespace System.Windows.Forms {
 
 		[DllImport("libgtk-x11-2.0")]
 		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
+#endregion
+
+
+#region Xinerama imports
+		[DllImport ("libXinerama")]
+		internal extern static IntPtr XineramaQueryScreens (IntPtr display, out int number);
+
+		[DllImport ("libXinerama", EntryPoint = "XineramaIsActive")]
+		extern static bool _XineramaIsActive (IntPtr display);
+		static bool XineramaNotInstalled;
+
+		internal static bool XineramaIsActive (IntPtr display)
+		{
+			if (XineramaNotInstalled)
+				return false;
+			try {
+				return _XineramaIsActive (display);
+			} catch (DllNotFoundException) {
+				// Xinerama isn't installed
+				XineramaNotInstalled = true;
+				return false;
+			}
+		}
 #endregion
 
 #endif

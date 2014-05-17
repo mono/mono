@@ -339,7 +339,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void Error_TypeArgumentsCannotBeUsed (IMemberContext context, string exprType, string name, Location loc)
+		public static void Error_TypeArgumentsCannotBeUsed (IMemberContext context, string exprType, string name, Location loc)
 		{
 			context.Module.Compiler.Report.Error (307, loc, "The {0} `{1}' cannot be used with type arguments",
 				exprType, name);
@@ -371,6 +371,11 @@ namespace Mono.CSharp {
 		protected void Error_VoidPointerOperation (ResolveContext rc)
 		{
 			rc.Report.Error (242, loc, "The operation in question is undefined on void pointers");
+		}
+
+		public static void Warning_UnreachableExpression (ResolveContext rc, Location loc)
+		{
+			rc.Report.Warning (429, 4, loc, "Unreachable expression code detected");
 		}
 
 		public ResolveFlags ExprClassToResolveFlags {
@@ -461,7 +466,7 @@ namespace Mono.CSharp {
 
 				return e;
 			} catch (Exception ex) {
-				if (loc.IsNull || ec.Module.Compiler.Settings.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException ||
+				if (loc.IsNull || ec.Module.Compiler.Settings.BreakOnInternalError || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException ||
 					ec.Report.Printer is NullReportPrinter)
 					throw;
 
@@ -707,13 +712,20 @@ namespace Mono.CSharp {
 		{
 			var ctors = MemberCache.FindMembers (type, Constructor.ConstructorName, true);
 			if (ctors == null) {
-				rc.Report.SymbolRelatedToPreviousError (type);
-				if (type.IsStruct) {
+				switch (type.Kind) {
+				case MemberKind.Struct:
+					rc.Report.SymbolRelatedToPreviousError (type);
 					// Report meaningful error for struct as they always have default ctor in C# context
 					OverloadResolver.Error_ConstructorMismatch (rc, type, args == null ? 0 : args.Count, loc);
-				} else {
+					break;
+				case MemberKind.MissingType:
+				case MemberKind.InternalCompilerType:
+					break;
+				default:
+					rc.Report.SymbolRelatedToPreviousError (type);
 					rc.Report.Error (143, loc, "The class `{0}' has no constructors defined",
 						type.GetSignatureForError ());
+					break;
 				}
 
 				return null;
@@ -918,6 +930,10 @@ namespace Mono.CSharp {
 			ec.Report.Error (1944, loc, "An expression tree cannot contain an unsafe pointer operation");
 		}
 
+		public virtual void FlowAnalysis (FlowAnalysisContext fc)
+		{
+		}
+
 		/// <summary>
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
@@ -989,7 +1005,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public void Error_UnexpectedKind (IMemberContext ctx, Expression memberExpr, string expected, string was, Location loc)
+		public static void Error_UnexpectedKind (IMemberContext ctx, Expression memberExpr, string expected, string was, Location loc)
 		{
 			var name = memberExpr.GetSignatureForError ();
 
@@ -1042,7 +1058,7 @@ namespace Mono.CSharp {
 		//
 		// Converts `source' to an int, uint, long or ulong.
 		//
-		protected Expression ConvertExpressionToArrayIndex (ResolveContext ec, Expression source)
+		protected Expression ConvertExpressionToArrayIndex (ResolveContext ec, Expression source, bool pointerArray = false)
 		{
 			var btypes = ec.BuiltinTypes;
 
@@ -1068,6 +1084,9 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
+
+			if (pointerArray)
+				return converted;
 
 			//
 			// Only positive constants are allowed at compile time
@@ -1170,6 +1189,10 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class ExpressionStatement : Expression
 	{
+		public virtual void MarkReachable (Reachability rc)
+		{
+		}
+
 		public ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
@@ -1177,7 +1200,7 @@ namespace Mono.CSharp {
 				return null;
 
 			ExpressionStatement es = e as ExpressionStatement;
-			if (es == null)
+			if (es == null || e is AnonymousMethodBody)
 				Error_InvalidExpressionStatement (ec);
 
 			//
@@ -1303,6 +1326,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			child.FlowAnalysis (fc);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -2057,6 +2085,12 @@ namespace Mono.CSharp {
 				this.orig_expr = orig_expr;
 			}
 
+			public Expression OriginalExpression {
+				get {
+					return orig_expr;
+				}
+			}
+
 			public override Constant ConvertImplicitly (TypeSpec target_type)
 			{
 				Constant c = base.ConvertImplicitly (target_type);
@@ -2129,6 +2163,11 @@ namespace Mono.CSharp {
 			public override void EmitStatement (EmitContext ec)
 			{
 				stm.EmitStatement (ec);
+			}
+
+			public override void FlowAnalysis (FlowAnalysisContext fc)
+			{
+				stm.FlowAnalysis (fc);
 			}
 		}
 
@@ -2233,6 +2272,11 @@ namespace Mono.CSharp {
 			expr.EmitBranchable (ec, target, on_true);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+		}
+
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return orig_expr.MakeExpression (ctx);
@@ -2269,11 +2313,11 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.Resolve (rc);
-			if (expr != null) {
-				type = expr.Type;
-				eclass = expr.eclass;
-			}
+			if (expr == null)
+				return null;
 
+			type = expr.Type;
+			eclass = expr.eclass;
 			return this;
 		}
 
@@ -2328,7 +2372,38 @@ namespace Mono.CSharp {
 		{
 			throw new InternalErrorException ("Missing Resolve call");
 		}
+	}
 
+	public class UnreachableExpression : Expression
+	{
+		public UnreachableExpression (Expression expr)
+		{
+			this.loc = expr.Location;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			// TODO: is it ok
+			throw new NotImplementedException ();
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			fc.Report.Warning (429, 4, loc, "Unreachable expression code detected");
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
+		{
+		}
 	}
 
 	//
@@ -2459,14 +2534,7 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			var e = SimpleNameResolve (rc, null);
-
-			var fe = e as FieldExpr;
-			if (fe != null) {
-				fe.VerifyAssignedStructField (rc, null);
-			}
-
-			return e;
+			return SimpleNameResolve (rc, null);
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -2479,7 +2547,7 @@ namespace Mono.CSharp {
 			if (ctx.CurrentType != null) {
 				var member = MemberLookup (ctx, false, ctx.CurrentType, Name, 0, MemberLookupRestrictions.ExactArity, loc) as MemberExpr;
 				if (member != null) {
-					member.Error_UnexpectedKind (ctx, member, "type", member.KindName, loc);
+					Error_UnexpectedKind (ctx, member, "type", member.KindName, loc);
 					return;
 				}
 			}
@@ -2538,7 +2606,7 @@ namespace Mono.CSharp {
 				//
 				// dynamic namespace is ignored when dynamic is allowed (does not apply to types)
 				//
-				if (!(fne is Namespace))
+				if (!(fne is NamespaceExpression))
 					return fne;
 			}
 
@@ -2712,6 +2780,17 @@ namespace Mono.CSharp {
 
 								ct = ct.DeclaringType;
 							} while (ct != null);
+						} else {
+							var cos = rc.CurrentMemberDefinition.Parent as ClassOrStruct;
+							if (cos != null && cos.PrimaryConstructorParameters != null) {
+								foreach (var p in cos.PrimaryConstructorParameters.FixedParameters) {
+									if (p.Name == Name) {
+										rc.Report.Error (9007, loc, "Primary constructor parameter `{0}' is not available in this context when using ref or out modifier",
+											Name);
+										return null;
+									}
+								}
+							}
 						}
 
 						if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {
@@ -2724,7 +2803,7 @@ namespace Mono.CSharp {
 						} else {
 							var me = MemberLookup (rc, false, rc.CurrentType, Name, Arity, restrictions & ~MemberLookupRestrictions.InvocableOnly, loc) as MemberExpr;
 							if (me != null) {
-								me.Error_UnexpectedKind (rc, me, "method group", me.KindName, loc);
+								Error_UnexpectedKind (rc, me, "method group", me.KindName, loc);
 								return ErrorExpression.Instance;
 							}
 						}
@@ -2770,7 +2849,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (e is FullNamedExpression && e.eclass != ExprClass.Unresolved) {
-				e.Error_UnexpectedKind (ec, e, "variable", e.ExprClassName, loc);
+				Error_UnexpectedKind (ec, e, "variable", e.ExprClassName, loc);
 				return e;
 			}
 
@@ -2827,7 +2906,7 @@ namespace Mono.CSharp {
 
 			TypeExpr te = fne as TypeExpr;
 			if (te == null) {
-				fne.Error_UnexpectedKind (mc, fne, "type", fne.ExprClassName, loc);
+				Error_UnexpectedKind (mc, fne, "type", fne.ExprClassName, loc);
 				return null;
 			}
 
@@ -2916,6 +2995,114 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class NamespaceExpression : FullNamedExpression
+	{
+		readonly Namespace ns;
+
+		public NamespaceExpression (Namespace ns, Location loc)
+		{
+			this.ns = ns;
+			this.Type = InternalType.Namespace;
+			this.eclass = ExprClass.Namespace;
+			this.loc = loc;
+		}
+
+		public Namespace Namespace {
+			get {
+				return ns;
+			}
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
+		{
+			return this;
+		}
+
+		public void Error_NamespaceDoesNotExist (IMemberContext ctx, string name, int arity)
+		{
+			var retval = Namespace.LookupType (ctx, name, arity, LookupMode.IgnoreAccessibility, loc);
+			if (retval != null) {
+//				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (retval.MemberDefinition);
+				ErrorIsInaccesible (ctx, retval.GetSignatureForError (), loc);
+				return;
+			}
+
+			retval = Namespace.LookupType (ctx, name, -System.Math.Max (1, arity), LookupMode.Probing, loc);
+			if (retval != null) {
+				Error_TypeArgumentsCannotBeUsed (ctx, retval, loc);
+				return;
+			}
+
+			Namespace ns;
+			if (arity > 0 && Namespace.TryGetNamespace (name, out ns)) {
+				Error_TypeArgumentsCannotBeUsed (ctx, ExprClassName, ns.GetSignatureForError (), loc);
+				return;
+			}
+
+			string assembly = null;
+			string possible_name = Namespace.GetSignatureForError () + "." + name;
+
+			// Only assembly unique name should be added
+			switch (possible_name) {
+			case "System.Drawing":
+			case "System.Web.Services":
+			case "System.Web":
+			case "System.Data":
+			case "System.Configuration":
+			case "System.Data.Services":
+			case "System.DirectoryServices":
+			case "System.Json":
+			case "System.Net.Http":
+			case "System.Numerics":
+			case "System.Runtime.Caching":
+			case "System.ServiceModel":
+			case "System.Transactions":
+			case "System.Web.Routing":
+			case "System.Xml.Linq":
+			case "System.Xml":
+				assembly = possible_name;
+				break;
+
+			case "System.Linq":
+			case "System.Linq.Expressions":
+				assembly = "System.Core";
+				break;
+
+			case "System.Windows.Forms":
+			case "System.Windows.Forms.Layout":
+				assembly = "System.Windows.Forms";
+				break;
+			}
+
+			assembly = assembly == null ? "an" : "`" + assembly + "'";
+
+			if (Namespace is GlobalRootNamespace) {
+				ctx.Module.Compiler.Report.Error (400, loc,
+					"The type or namespace name `{0}' could not be found in the global namespace. Are you missing {1} assembly reference?",
+					name, assembly);
+			} else {
+				ctx.Module.Compiler.Report.Error (234, loc,
+					"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing {2} assembly reference?",
+					name, GetSignatureForError (), assembly);
+			}
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return ns.GetSignatureForError ();
+		}
+
+		public FullNamedExpression LookupTypeOrNamespace (IMemberContext ctx, string name, int arity, LookupMode mode, Location loc)
+		{
+			return ns.LookupTypeOrNamespace (ctx, name, arity, mode, loc);
+		}
+    }
+
 	/// <summary>
 	///   This class denotes an expression which evaluates to a member
 	///   of a struct or a class.
@@ -2991,7 +3178,21 @@ namespace Mono.CSharp {
 				//
 				TypeSpec[] targs = null;
 				if (method.DeclaringType != InstanceExpression.Type) {
-					var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as MethodSpec;
+					//
+					// Candidate can have inflated MVAR parameters and we need to find
+					// base match for original definition not inflated parameter types
+					//
+					var parameters = method.Parameters;
+					if (method.Arity > 0) {
+						parameters = ((IParametersMember) method.MemberDefinition).Parameters;
+						var inflated = method.DeclaringType as InflatedTypeSpec;
+						if (inflated != null) {
+							parameters = parameters.Inflate (inflated.CreateLocalInflator (rc));
+						}
+					}
+
+					var filter = new MemberFilter (method.Name, method.Arity, MemberKind.Method, parameters, null);
+					var base_override = MemberCache.FindMember (InstanceExpression.Type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as MethodSpec;
 					if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
 						if (base_override.IsGeneric)
 							targs = method.TypeArguments;
@@ -3035,6 +3236,7 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (method.IsAbstract) {
+				rc.Report.SymbolRelatedToPreviousError (method);
 				Error_CannotCallAbstractBase (rc, method.GetSignatureForError ());
 			}
 
@@ -3136,6 +3338,12 @@ namespace Mono.CSharp {
 				member.GetSignatureForError (), qualifier.GetSignatureForError (), rc.CurrentType.GetSignatureForError ());
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (InstanceExpression != null)
+				InstanceExpression.FlowAnalysis (fc);
+		}
+
 		public bool ResolveInstanceExpression (ResolveContext rc, Expression rhs)
 		{
 			if (!ResolveInstanceExpressionCore (rc, rhs))
@@ -3144,16 +3352,44 @@ namespace Mono.CSharp {
 			//
 			// Check intermediate value modification which won't have any effect
 			//
-			if (rhs != null && InstanceExpression.Type.IsStruct &&
-				(InstanceExpression is PropertyExpr || InstanceExpression is IndexerExpr || InstanceExpression is Invocation)) {
+			if (rhs != null && InstanceExpression.Type.IsStruct) {
+				var fexpr = InstanceExpression as FieldExpr;
+				if (fexpr != null) {
+					if (!fexpr.Spec.IsReadOnly || rc.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.ConstructorScope))
+						return true;
 
-				if (rc.CurrentInitializerVariable != null) {
-					rc.Report.Error (1918, loc, "Members of value type `{0}' cannot be assigned using a property `{1}' object initializer",
-						InstanceExpression.Type.GetSignatureForError (), InstanceExpression.GetSignatureForError ());
-				} else {
-					rc.Report.Error (1612, loc,
-						"Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
-						InstanceExpression.GetSignatureForError ());
+					if (fexpr.IsStatic) {
+						rc.Report.Error (1650, loc, "Fields of static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)",
+							fexpr.GetSignatureForError ());
+					} else {
+						rc.Report.Error (1648, loc, "Members of readonly field `{0}' cannot be modified (except in a constructor or a variable initializer)",
+							fexpr.GetSignatureForError ());
+					}
+
+					return true;
+				}
+
+				if (InstanceExpression is PropertyExpr || InstanceExpression is IndexerExpr || InstanceExpression is Invocation) {
+					if (rc.CurrentInitializerVariable != null) {
+						rc.Report.Error (1918, loc, "Members of value type `{0}' cannot be assigned using a property `{1}' object initializer",
+							InstanceExpression.Type.GetSignatureForError (), InstanceExpression.GetSignatureForError ());
+					} else {
+						rc.Report.Error (1612, loc,
+							"Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
+							InstanceExpression.GetSignatureForError ());
+					}
+
+					return true;
+				}
+
+				var lvr = InstanceExpression as LocalVariableReference;
+				if (lvr != null) {
+
+					if (!lvr.local_info.IsReadonly)
+						return true;
+
+					rc.Report.Error (1654, loc, "Cannot assign to members of `{0}' because it is a `{1}'",
+						InstanceExpression.GetSignatureForError (), lvr.local_info.GetReadOnlyContext ());
 				}
 			}
 
@@ -3191,14 +3427,25 @@ namespace Mono.CSharp {
 
 			if (InstanceExpression == null || InstanceExpression is TypeExpr) {
 				if (InstanceExpression != null || !This.IsThisAvailable (rc, true)) {
-					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope))
+					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope)) {
 						rc.Report.Error (236, loc,
 							"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 							GetSignatureForError ());
-					else
-						rc.Report.Error (120, loc,
-							"An object reference is required to access non-static member `{0}'",
-							GetSignatureForError ());
+					} else {
+						var fe = this as FieldExpr;
+						if (fe != null && fe.Spec.MemberDefinition is PrimaryConstructorField) {
+							if (rc.HasSet (ResolveContext.Options.BaseInitializer)) {
+								rc.Report.Error (9005, loc, "Constructor initializer cannot access primary constructor parameters");
+							} else  {
+								rc.Report.Error (9006, loc, "An object reference is required to access primary constructor parameter `{0}'",
+									fe.Name);
+							}
+						} else {
+							rc.Report.Error (120, loc,
+								"An object reference is required to access non-static member `{0}'",
+								GetSignatureForError ());
+						}
+					}
 
 					InstanceExpression = new CompilerGeneratedThis (rc.CurrentType, loc).Resolve (rc);
 					return false;
@@ -3210,15 +3457,7 @@ namespace Mono.CSharp {
 						DeclaringType.GetSignatureForError (), rc.CurrentType.GetSignatureForError ());
 				}
 
-				InstanceExpression = new This (loc);
-				if (this is FieldExpr && rc.CurrentBlock.ParametersBlock.TopBlock.ThisVariable != null) {
-					using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
-						InstanceExpression = InstanceExpression.Resolve (rc);
-					}
-				} else {
-					InstanceExpression = InstanceExpression.Resolve (rc);
-				}
-
+				InstanceExpression = new This (loc).Resolve (rc);
 				return false;
 			}
 
@@ -3226,27 +3465,15 @@ namespace Mono.CSharp {
 			if (me != null) {
 				me.ResolveInstanceExpressionCore (rc, rhs);
 
-				// Using this check to detect probing instance expression resolve
-				if (!rc.OmitStructFlowAnalysis) {
-					var fe = me as FieldExpr;
-					if (fe != null && fe.IsMarshalByRefAccess (rc)) {
-						rc.Report.SymbolRelatedToPreviousError (me.DeclaringType);
-						rc.Report.Warning (1690, 1, loc,
-							"Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
-							me.GetSignatureForError ());
-					}
+				var fe = me as FieldExpr;
+				if (fe != null && fe.IsMarshalByRefAccess (rc)) {
+					rc.Report.SymbolRelatedToPreviousError (me.DeclaringType);
+					rc.Report.Warning (1690, 1, loc,
+						"Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
+						me.GetSignatureForError ());
 				}
 
 				return true;
-			}
-
-			//
-			// Run member-access postponed check once we know that
-			// the expression is not field expression which is the only
-			// expression which can use uninitialized this
-			//
-			if (InstanceExpression is This && !(this is FieldExpr) && rc.CurrentBlock.ParametersBlock.TopBlock.ThisVariable != null) {
-				((This)InstanceExpression).CheckStructThisDefiniteAssignment (rc);
 			}
 
 			//
@@ -3463,6 +3690,8 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MethodGroupExpr : MemberExpr, OverloadResolver.IBaseMembersProvider
 	{
+		static readonly MemberSpec[] Excluded = new MemberSpec[0];
+
 		protected IList<MemberSpec> Methods;
 		MethodSpec best_candidate;
 		TypeSpec best_candidate_return;
@@ -3512,6 +3741,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsConditionallyExcluded {
+			get {
+				return Methods == Excluded;
+			}
+		}
+
 		public override bool IsInstance {
 			get {
 				if (best_candidate != null)
@@ -3523,8 +3758,7 @@ namespace Mono.CSharp {
 
 		public override bool IsSideEffectFree {
 			get {
-				return InstanceExpression != null ?
-					InstanceExpression.IsSideEffectFree : true;
+				return InstanceExpression == null || InstanceExpression.IsSideEffectFree;
 			}
 		}
 
@@ -3582,7 +3816,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (best_candidate.IsConditionallyExcluded (ec))
+			if (IsConditionallyExcluded)
 				ec.Report.Error (765, loc,
 					"Partial methods with only a defining declaration or removed conditional methods cannot be used in an expression tree");
 			
@@ -3707,6 +3941,10 @@ namespace Mono.CSharp {
 				ErrorIsInaccesible (ec, best_candidate.GetSignatureForError (), loc);
 			}
 
+			// Speed up the check by not doing it on disallowed targets
+			if (best_candidate_return.Kind == MemberKind.Void && best_candidate.IsConditionallyExcluded (ec))
+				Methods = Excluded;
+
 			return this;
 		}
 
@@ -3754,7 +3992,6 @@ namespace Mono.CSharp {
 			if (InstanceExpression == null || InstanceExpression.eclass == ExprClass.Type)
 				return null;
 
-			InstanceExpression = InstanceExpression.Resolve (rc);
 			if (!IsExtensionMethodArgument (InstanceExpression))
 				return null;
 
@@ -4162,7 +4399,7 @@ namespace Mono.CSharp {
 			AParametersCollection best_pd = ((IParametersMember) best).Parameters;
 
 			bool better_at_least_one = false;
-			bool same = true;
+			bool are_equivalent = true;
 			int args_count = args == null ? 0 : args.Count;
 			int j = 0;
 			Argument a = null;
@@ -4207,7 +4444,7 @@ namespace Mono.CSharp {
 				if (TypeSpecComparer.IsEqual (ct, bt))
 					continue;
 
-				same = false;
+				are_equivalent = false;
 				int result = BetterExpressionConversion (ec, a, ct, bt);
 
 				// for each argument, the conversion to 'ct' should be no worse than 
@@ -4225,67 +4462,62 @@ namespace Mono.CSharp {
 				return true;
 
 			//
-			// This handles the case
+			// Tie-breaking rules are applied only for equivalent parameter types
 			//
-			//   Add (float f1, float f2, float f3);
-			//   Add (params decimal [] foo);
-			//
-			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
-			// first candidate would've chosen as better.
-			//
-			if (!same && !a.IsDefaultArgument)
+			if (!are_equivalent)
 				return false;
 
 			//
-			// The two methods have equal non-optional parameter types, apply tie-breaking rules
+			// If candidate is applicable in its normal form and best has a params array and is applicable
+			// only in its expanded form, then candidate is better
 			//
+			if (candidate_params != best_params)
+				return !candidate_params;
 
 			//
-			// This handles the following cases:
+			// We have not reached end of parameters list due to params or used default parameters
 			//
-			//  Foo (int i) is better than Foo (int i, long l = 0)
-			//  Foo (params int[] args) is better than Foo (int i = 0, params int[] args)
-			//  Foo (string s, params string[] args) is better than Foo (params string[] args)
-			//
-			// Prefer non-optional version
-			//
-			// LAMESPEC: Specification claims this should be done at last but the opposite is true
-			//
-			if (candidate_params == best_params && candidate_pd.Count != best_pd.Count) {
-				if (j < candidate_pd.Count && candidate_pd.FixedParameters[j].HasDefaultValue)
-					return false;
+			while (j < candidate_pd.Count && j < best_pd.Count) {
+				var cand_param = candidate_pd.FixedParameters [j];
+				var best_param = best_pd.FixedParameters [j];
 
-				if (j < best_pd.Count && best_pd.FixedParameters[j].HasDefaultValue)
-					return true;
+				if (candidate_pd.Count == best_pd.Count) {
+					//
+					// LAMESPEC:
+					//
+					// void Foo (params int[]) is better than void Foo (int i = 0) for Foo ()
+					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null) or Foo ()
+					//
+					if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
+						return !candidate_params;
 
-				return candidate_pd.Count >= best_pd.Count;
+					if (cand_param.HasDefaultValue) {
+						++j;
+						continue;
+					}
+				} else {
+					//
+					// Neither is better when not all arguments are provided
+					//
+					// void Foo (string s, int i = 0) <-> Foo (string s, int i = 0, int i2 = 0)
+					// void Foo (string s, int i = 0) <-> Foo (string s, byte i = 0)
+					// void Foo (string s, params int[]) <-> Foo (string s, params byte[])
+					//
+					if (cand_param.HasDefaultValue && best_param.HasDefaultValue)
+						return false;
+				}
+
+				break;
 			}
+
+			if (candidate_pd.Count != best_pd.Count)
+				return candidate_pd.Count < best_pd.Count;
 
 			//
 			// One is a non-generic method and second is a generic method, then non-generic is better
 			//
 			if (best.IsGeneric != candidate.IsGeneric)
 				return best.IsGeneric;
-
-			//
-			// This handles the following cases:
-			//
-			//   Trim () is better than Trim (params char[] chars)
-			//   Concat (string s1, string s2, string s3) is better than
-			//     Concat (string s1, params string [] srest)
-			//   Foo (int, params int [] rest) is better than Foo (params int [] rest)
-			//
-			// Prefer non-expanded version
-			//
-			if (candidate_params != best_params)
-				return best_params;
-
-			int candidate_param_count = candidate_pd.Count;
-			int best_param_count = best_pd.Count;
-
-			if (candidate_param_count != best_param_count)
-				// can only happen if (candidate_params && best_params)
-				return candidate_param_count > best_param_count && best_pd.HasParams;
 
 			//
 			// Both methods have the same number of parameters, and the parameters have equal types
@@ -4514,7 +4746,8 @@ namespace Mono.CSharp {
 					if (g_args_count != type_arguments.Count)
 						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
 
-					ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
+					if (type_arguments.Arguments != null)
+						ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
 				} else {
 					//
 					// Deploy custom error reporting for infered anonymous expression or lambda methods. When
@@ -4695,12 +4928,6 @@ namespace Mono.CSharp {
 					return (arg_count - i) * 2 + score;
 				}
 			}
-
-			//
-			// When params parameter has no argument it will be provided later if the method is the best candidate
-			//
-			if (arg_count + 1 == pd.Count && (cpd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
-				params_expanded_form = true;
 
 			//
 			// Restore original arguments for dynamic binder to keep the intention of original source code
@@ -4992,8 +5219,7 @@ namespace Mono.CSharp {
 						}
 
 						// Restore expanded arguments
-						if (candidate_args != args)
-							candidate_args = args;
+						candidate_args = args;
 					}
 				} while (best_candidate_rate != 0 && (type_members = base_provider.GetBaseMembers (type_members[0].DeclaringType.BaseType)) != null);
 
@@ -5231,7 +5457,7 @@ namespace Mono.CSharp {
 						if (ms.TypeArguments != null)
 							constr_ok = new ConstraintChecker (rc.MemberContext).CheckAll (ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc);
 
-						if (ta_count == 0) {
+						if (ta_count == 0 && ms.TypeArguments == null) {
 							if (custom_errors != null && custom_errors.TypeInferenceFailed (rc, best_candidate))
 								return;
 
@@ -5286,6 +5512,9 @@ namespace Mono.CSharp {
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = args[a_idx];
+				if (a == null)
+					continue;
+
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters[a_idx].ModFlags;
 					pt = ptypes[a_idx];
@@ -5327,7 +5556,7 @@ namespace Mono.CSharp {
 								"The best overloaded method match for `{0}' does not contain a parameter named `{1}'",
 								TypeManager.CSharpSignature (member), na.Name);
 						}
-					} else if (args[name_index] != a) {
+					} else if (args[name_index] != a && args[name_index] != null) {
 						if (IsDelegateInvoke)
 							ec.Report.SymbolRelatedToPreviousError (DelegateType);
 						else
@@ -5592,6 +5821,14 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			var t = (FieldExpr) target;
+
+			if (InstanceExpression != null)
+				t.InstanceExpression = InstanceExpression.Clone (clonectx);
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return CreateExpressionTree (ec, true);
@@ -5642,18 +5879,14 @@ namespace Mono.CSharp {
 					// "a.b" is initialized, not whether the whole struct "a" is initialized.
 
 					if (lvalue_instance) {
-						using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-							bool out_access = rhs == EmptyExpression.OutAccess || rhs == EmptyExpression.LValueMemberOutAccess;
+						bool out_access = rhs == EmptyExpression.OutAccess || rhs == EmptyExpression.LValueMemberOutAccess;
 
-							Expression right_side =
-								out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
+						Expression right_side =
+							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
 
-							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
-						}
+						InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
 					} else {
-						using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-							InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue);
-						}
+						InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue);
 					}
 
 					if (InstanceExpression == null)
@@ -5665,10 +5898,6 @@ namespace Mono.CSharp {
 
 			var fb = spec as FixedFieldSpec;
 			IVariableReference var = InstanceExpression as IVariableReference;
-
-			if (lvalue_instance && var != null && var.VariableInfo != null) {
-				var.VariableInfo.SetStructFieldAssigned (ec, Name);
-			}
 
 			if (fb != null) {
 				IFixedExpression fe = InstanceExpression as IFixedExpression;
@@ -5693,76 +5922,102 @@ namespace Mono.CSharp {
 			//
 			if (var != null && var.VariableInfo != null && InstanceExpression.Type.IsStruct) {
 				variable_info = var.VariableInfo.GetStructFieldInfo (Name);
-				if (rhs != null && variable_info != null)
-					variable_info.SetStructFieldAssigned (ec, Name);
 			}
 
 			eclass = ExprClass.Variable;
 			return this;
 		}
 
-		public void VerifyAssignedStructField (ResolveContext rc, Expression rhs)
+		public void SetFieldAssigned (FlowAnalysisContext fc)
 		{
-			var fe = this;
+			if (!IsInstance)
+				return;
 
-			do {
-				var var = fe.InstanceExpression as IVariableReference;
-				if (var != null) {
-					var vi = var.VariableInfo;
+			bool lvalue_instance = spec.DeclaringType.IsStruct;
+			if (lvalue_instance) {
+				var var = InstanceExpression as IVariableReference;
+				if (var != null && var.VariableInfo != null) {
+					fc.SetStructFieldAssigned (var.VariableInfo, Name);
+				}
+			}
 
-					if (vi != null && !vi.IsStructFieldAssigned (rc, fe.Name) && (rhs == null || !fe.type.IsStruct)) {
-						if (rhs != null) {
-							rc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
-						} else {
-							rc.Report.Error (170, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
+			var fe = InstanceExpression as FieldExpr;
+			if (fe != null) {
+				Expression instance;
+
+				do {
+					instance = fe.InstanceExpression;
+					var fe_instance = instance as FieldExpr;
+					if ((fe_instance != null && !fe_instance.IsStatic) || instance is LocalVariableReference) {
+						if (TypeSpec.IsReferenceType (fe.Type) && instance.Type.IsStruct) {
+							var var = InstanceExpression as IVariableReference;
+							if (var != null && var.VariableInfo == null) {
+								var var_inst = instance as IVariableReference;
+								if (var_inst == null || (var_inst.VariableInfo != null && !fc.IsDefinitelyAssigned (var_inst.VariableInfo)))
+									fc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
+							}
 						}
 
-						return;
+						if (fe_instance != null) {
+							fe = fe_instance;
+							continue;
+						}
 					}
-				}
 
-				fe = fe.InstanceExpression as FieldExpr;
+					break;
+				} while (true);
 
-			} while (fe != null);
+				if (instance != null && TypeSpec.IsReferenceType (instance.Type))
+					instance.FlowAnalysis (fc);
+			} else {
+				if (TypeSpec.IsReferenceType (InstanceExpression.Type))
+					InstanceExpression.FlowAnalysis (fc);
+			}
 		}
 
-		static readonly int [] codes = {
-			191,	// instance, write access
-			192,	// instance, out access
-			198,	// static, write access
-			199,	// static, out access
-			1648,	// member of value instance, write access
-			1649,	// member of value instance, out access
-			1650,	// member of value static, write access
-			1651	// member of value static, out access
-		};
-
-		static readonly string [] msgs = {
-			/*0191*/ "A readonly field `{0}' cannot be assigned to (except in a constructor or a variable initializer)",
-			/*0192*/ "A readonly field `{0}' cannot be passed ref or out (except in a constructor)",
-			/*0198*/ "A static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)",
-			/*0199*/ "A static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
-			/*1648*/ "Members of readonly field `{0}' cannot be modified (except in a constructor or a variable initializer)",
-			/*1649*/ "Members of readonly field `{0}' cannot be passed ref or out (except in a constructor)",
-			/*1650*/ "Fields of static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)",
-			/*1651*/ "Fields of static readonly field `{0}' cannot be passed ref or out (except in a static constructor)"
-		};
-
-		// The return value is always null.  Returning a value simplifies calling code.
-		Expression Report_AssignToReadonly (ResolveContext ec, Expression right_side)
+		Expression Error_AssignToReadonly (ResolveContext rc, Expression right_side)
 		{
-			int i = 0;
-			if (right_side == EmptyExpression.OutAccess || right_side == EmptyExpression.LValueMemberOutAccess)
-				i += 1;
-			if (IsStatic)
-				i += 2;
-			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess)
-				i += 4;
-			ec.Report.Error (codes [i], loc, msgs [i], GetSignatureForError ());
+			// The return value is always null.  Returning a value simplifies calling code.
+	
+			if (right_side == EmptyExpression.OutAccess) {
+				if (IsStatic) {
+					rc.Report.Error (199, loc, "A static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
+						GetSignatureForError ());
+				} else {
+					rc.Report.Error (192, loc, "A readonly field `{0}' cannot be passed ref or out (except in a constructor)",
+						GetSignatureForError ());
+				}
+
+				return null;
+			}
+
+			if (right_side == EmptyExpression.LValueMemberAccess) {
+				// Already reported as CS1648/CS1650
+				return null;
+			}
+
+			if (right_side == EmptyExpression.LValueMemberOutAccess) {
+				if (IsStatic) {
+					rc.Report.Error (1651, loc, "Fields of static readonly field `{0}' cannot be passed ref or out (except in a static constructor)",
+						GetSignatureForError ());
+				} else {
+					rc.Report.Error (1649, loc, "Members of readonly field `{0}' cannot be passed ref or out (except in a constructor)",
+						GetSignatureForError ());
+				}
+				return null;
+			}
+
+			if (IsStatic) {
+				rc.Report.Error (198, loc, "A static readonly field `{0}' cannot be assigned to (except in a static constructor or a variable initializer)",
+					GetSignatureForError ());
+			} else {
+				rc.Report.Error (191, loc, "A readonly field `{0}' cannot be assigned to (except in a constructor or a variable initializer)",
+					GetSignatureForError ());
+			}
 
 			return null;
 		}
-		
+
 		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			if (spec is FixedFieldSpec) {
@@ -5787,19 +6042,19 @@ namespace Mono.CSharp {
 			if (spec.IsReadOnly) {
 				// InitOnly fields can only be assigned in constructors or initializers
 				if (!ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.ConstructorScope))
-					return Report_AssignToReadonly (ec, right_side);
+					return Error_AssignToReadonly (ec, right_side);
 
 				if (ec.HasSet (ResolveContext.Options.ConstructorScope)) {
 
 					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
 					if (ec.CurrentMemberDefinition.Parent.PartialContainer.Definition != spec.DeclaringType.GetDefinition ())
-						return Report_AssignToReadonly (ec, right_side);
+						return Error_AssignToReadonly (ec, right_side);
 					// static InitOnly fields cannot be assigned-to in an instance constructor
 					if (IsStatic && !ec.IsStatic)
-						return Report_AssignToReadonly (ec, right_side);
+						return Error_AssignToReadonly (ec, right_side);
 					// instance constructors can't modify InitOnly fields of other instances of the same type
 					if (!IsStatic && !(InstanceExpression is This))
-						return Report_AssignToReadonly (ec, right_side);
+						return Error_AssignToReadonly (ec, right_side);
 				}
 			}
 
@@ -5812,6 +6067,23 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Variable;
 			return this;
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			var var = InstanceExpression as IVariableReference;
+			if (var != null) {
+				var vi = var.VariableInfo;
+				if (vi != null && !fc.IsStructFieldDefinitelyAssigned (vi, Name)) {
+					fc.Report.Error (170, loc, "Use of possibly unassigned field `{0}'", Name);
+					return;
+				}
+
+				if (TypeSpec.IsValueType (InstanceExpression.Type))
+					return;
+			}
+
+			base.FlowAnalysis (fc);
 		}
 
 		public override int GetHashCode ()
@@ -6372,6 +6644,8 @@ namespace Mono.CSharp {
 
 				if (expr != this)
 					return expr.ResolveLValue (ec, right_side);
+			} else {
+				ResolveInstanceExpression (ec, right_side);
 			}
 
 			if (!ResolveSetter (ec))
@@ -6434,7 +6708,7 @@ namespace Mono.CSharp {
 						best_candidate.GetSignatureForError ());
 					return false;
 				}
-			} else if (!best_candidate.Get.IsAccessible (rc)) {
+			} else if (!best_candidate.Get.IsAccessible (rc) || !best_candidate.Get.DeclaringType.IsAccessible (rc)) {
 				if (best_candidate.HasDifferentAccessibility) {
 					rc.Report.SymbolRelatedToPreviousError (best_candidate.Get);
 					rc.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
@@ -6461,7 +6735,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!best_candidate.Set.IsAccessible (rc)) {
+			if (!best_candidate.Set.IsAccessible (rc) || !best_candidate.Set.DeclaringType.IsAccessible (rc)) {
 				if (best_candidate.HasDifferentAccessibility) {
 					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
 					rc.Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",
@@ -6681,6 +6955,11 @@ namespace Mono.CSharp {
 				DoEmit (ec);
 			}
 
+			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+			{
+				return false;
+			}
+
 			protected override void CloneTo (CloneContext clonectx, Statement target)
 			{
 				// Nothing
@@ -6724,7 +7003,7 @@ namespace Mono.CSharp {
 			// Don't capture temporary variables except when using
 			// state machine redirection and block yields
 			//
-			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod is StateMachineInitializer &&
+			if (ec.CurrentAnonymousMethod is StateMachineInitializer &&
 				(ec.CurrentBlock.Explicit.HasYield || ec.CurrentBlock.Explicit.HasAwait) &&
 				ec.IsVariableCapturingRequired) {
 				AnonymousMethodStorey storey = li.Block.Explicit.CreateAnonymousMethodStorey (ec);
@@ -6781,10 +7060,6 @@ namespace Mono.CSharp {
 
 		public override VariableInfo VariableInfo {
 			get { return null; }
-		}
-
-		public override void VerifyAssigned (ResolveContext rc)
-		{
 		}
 	}
 

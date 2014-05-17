@@ -1810,7 +1810,7 @@ namespace MonoTests.System.Net.Sockets
 			// Need at least two addresses.
 			var ips = Dns.GetHostAddresses (string.Empty);
 			if (ips.Length < 1)
-				return;
+				Assert.Ignore ("This test needs at least two IP addresses.");
 
 			var allIps = new IPAddress [ips.Length + 1];
 			allIps [0] = IPAddress.Loopback;
@@ -2304,7 +2304,7 @@ namespace MonoTests.System.Net.Sockets
 			// Need at least two addresses.
 			var ips = Dns.GetHostAddresses (string.Empty);
 			if (ips.Length < 1)
-				return;
+				Assert.Ignore ("This test needs at least two IP addresses.");
 
 			var allIps = new IPAddress [ips.Length + 1];
 			allIps [0] = IPAddress.Loopback;
@@ -4140,6 +4140,54 @@ namespace MonoTests.System.Net.Sockets
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test]
+		public void SetSocketOption_MulticastInterfaceIndex_Any ()
+		{
+			IPAddress ip = IPAddress.Parse ("239.255.255.250");
+			int index = 0;
+			using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+			{
+				s.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, IPAddress.HostToNetworkOrder(index));
+				s.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(ip, index));
+			}
+		}
+
+		[Test]
+		public void SetSocketOption_MulticastInterfaceIndex_Loopback ()
+		{
+			IPAddress ip = IPAddress.Parse ("239.255.255.250");
+			int index = 1;
+			using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+			{
+				s.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, IPAddress.HostToNetworkOrder(index));
+				s.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(ip, index));
+			}
+		}
+
+		[Test]
+		public void SetSocketOption_MulticastInterfaceIndex_Invalid ()
+		{
+			IPAddress ip = IPAddress.Parse ("239.255.255.250");
+			int index = 31415;
+			using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+			{
+				try
+				{
+					s.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, IPAddress.HostToNetworkOrder(index));
+					Assert.Fail ("#1");
+				}
+				catch
+				{}
+				try
+				{
+					s.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(ip, index));
+					Assert.Fail ("#2");
+				}
+				catch
+				{}
 			}
 		}
 

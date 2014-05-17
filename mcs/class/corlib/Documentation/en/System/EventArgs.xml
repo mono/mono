@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventArgs" FullName="System.EventArgs" FullNameSP="System_EventArgs" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable EventArgs extends System.Object" />
   <TypeSignature Language="C#" Value="public class EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit EventArgs extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,76 +16,74 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>
-      <para>
-        <see langword="EventArgs" /> is the
-   base class
-   for classes containing event data.</para>
-    </summary>
-    <remarks>
-      <block subset="none" type="note">
-        <para>This class contains no event data; it is used by events
-         that do not pass state information to an event handler when an event is raised.
-         If the event handler requires state information, the application must create a
-         subclass of this class to hold the data. For example, the <see cref="T:System.AssemblyLoadEventArgs" />
-         class is used to hold the data for assembly load events, and contains a <see cref="T:System.Reflection.Assembly" qualify="true" />
-         object that describes the loaded assembly.</para>
-        <para>For details on events, see <see cref="T:System.EventHandler" />.</para>
-      </block>
-    </remarks>
-  </Docs>
-  <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
-      <MemberSignature Language="C#" Value="public EventArgs ();" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs a new instance of the
- <see langword="EventArgs" /> class.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Empty">
-      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.EventArgs Empty" />
-      <MemberSignature Language="C#" Value="public static readonly EventArgs Empty;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.EventArgs</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Returns a new <see cref="T:System.EventArgs" /> instance for use with events that have no state information.
-   </para>
-        </summary>
-        <remarks>
-          <para>This field is read-only.</para>
-          <para>Accessing this field is equivalent to calling the <see cref="T:System.EventArgs" /> constructor.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
-  <TypeExcluded>0</TypeExcluded>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class serves as the base class for all classes that represent event data. For example, the <see cref="T:System.AssemblyLoadEventArgs" /> class derives from <see cref="T:System.EventArgs" /> and is used to hold the data for assembly load events. To create a custom event data class, create a class that derives from the <see cref="T:System.EventArgs" /> class and provide the properties to store the necessary data. The name of your custom event data class should end with EventArgs.</para>
+      <para>To pass an object that does not contain any data, use the <see cref="F:System.EventArgs.Empty" /> field.</para>
+      <para>For more information about events, see the <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format> article.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class for classes that contain event data, and provides a value to use for events that do not include event data. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public EventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To pass an object that does not contain any data, use the <see cref="F:System.EventArgs.Empty" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.EventArgs" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Empty">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.EventArgs Empty" />
+      <MemberSignature Language="C#" Value="public static readonly EventArgs Empty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.EventArgs Empty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventArgs</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pass this value to event handlers that are associated with events that do not have data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a value to use with events that do not have event data.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
 </Type>

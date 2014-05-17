@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XPathMessageContext" FullName="System.ServiceModel.Dispatcher.XPathMessageContext">
+  <TypeSignature Language="C#" Value="public class XPathMessageContext : System.Xml.Xsl.XsltContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XPathMessageContext extends System.Xml.Xsl.XsltContext" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Xml.Xsl.XsltContext</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The XPath engine has full XPath context support and uses the .NET Framework's <see cref="T:System.Xml.Xsl.XsltContext" /> class in the same way that <see cref="T:System.Xml.XPath.XPathNavigator" /> does to implement this support. <see cref="T:System.Xml.Xsl.XsltContext" /> is an abstract class that allows developers to implement custom XPath function libraries and declare XPath variables. <see cref="T:System.Xml.Xsl.XsltContext" /> is an <see cref="T:System.Xml.XmlNamespaceManager" /> and thus also contains the namespace prefix mappings. </para>
+      <para>The filter engine implements an <see cref="T:System.Xml.Xsl.XsltContext" /> named <see cref="T:System.ServiceModel.Dispatcher.XPathMessageContext" />. <see cref="T:System.ServiceModel.Dispatcher.XPathMessageContext" /> defines custom functions that can be used in XPath expressions and it declares several common namespace prefix mappings. The following table lists the custom functions defined by <see cref="T:System.ServiceModel.Dispatcher.XPathMessageContext" /> that can be used in XPath expressions.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>XPath Function</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>body</para>
+          </term>
+          <description>
+            <para>Returns the SOAP Body node, regardless of SOAP version (1.1. or 1.2).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>header</para>
+          </term>
+          <description>
+            <para>Returns the SOAP Header node, regardless of SOAP version (1.1 or 1.2).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>correlation-data</para>
+          </term>
+          <description>
+            <para>Takes an input string and returns the value of the associated correlation message property.  'wsc-instanceId' is a reserved string used for context-based correlation.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>messageId</para>
+          </term>
+          <description>
+            <para>Returns the value of the WS-Addressing MessageID header.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>relatesTo</para>
+          </term>
+          <description>
+            <para>Returns the value of the WS-Addressing RelatesTo header, regardless of version (August2004 or WSA 1.0).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>replyTo</para>
+          </term>
+          <description>
+            <para>Returns the value of the WS-Addressing ReplyTo header, regardless of version (August2004 or WSA 1.0).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>from</para>
+          </term>
+          <description>
+            <para>Returns the value of the WS-Addressing From header, regardless of version (August2004 or WSA 1.0).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>faultTo</para>
+          </term>
+          <description>
+            <para>Returns the value of the WS-Addressing FaultTo header, regardless of version (August2004 or WSA 1.0).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>to</para>
+          </term>
+          <description>
+            <para>Returns the value of the WS-Addressing To header if present, else it returns Anonymous.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>action</para>
+          </term>
+          <description>
+            <para>Returns the value of the WS-Addressing Action header.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>soap-uri</para>
+          </term>
+          <description>
+            <para>Returns the SOAP namespace uri.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>headers-with-actor</para>
+          </term>
+          <description>
+            <para>Takes a SOAP Actor uri and returns all headers that contain that actor, regardless of SOAP version (1.1 or 1.2).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>actor</para>
+          </term>
+          <description>
+            <para>Returns the SOAP Actor uri of the first child node, regardless of SOAP version (1.1 or 1.2).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>is-mandatory</para>
+          </term>
+          <description>
+            <para>Returns whether or not the first child node is mandatory, regardless of SOAP version (1.1 or 1.2).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>is-actor-next</para>
+          </term>
+          <description>
+            <para>Returns whether or not the SOAP Actor uri of the first child node assumes the Next role, regardless of SOAP version (1.1 or 1.2).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>is-actor-ultimate-receiver</para>
+          </term>
+          <description>
+            <para>Returns whether or not the SOAP Actor uri of the first child node assumes the UltimateReceiver role, regardless of SOAP version (1.1 or 1.2).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>date-time</para>
+          </term>
+          <description>
+            <para>Takes an input date string and returns the value converted to a double.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>duration</para>
+          </term>
+          <description>
+            <para>Takes an input timespan string and returns the value as a total number of days.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>utc-now</para>
+          </term>
+          <description>
+            <para>Returns the value of <see cref="P:System.DateTime.UtcNow" />.</para>
+          </description>
+        </item>
+      </list>
+      <para>The following table lists the default namespaces and namespace prefixes that are declared by <see cref="T:System.ServiceModel.Dispatcher.XPathMessageContext" />.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Prefix</para>
+            </term>
+            <description>
+              <para>Namespace</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>s11</para>
+          </term>
+          <description>
+            <para>http://schemas.xmlsoap.org/soap/envelope</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>s12</para>
+          </term>
+          <description>
+            <para>http://www.w3.org/2003/05/soap-envelope</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>wsaAugust2004</para>
+          </term>
+          <description>
+            <para>http://schemas.xmlsoap.org/ws/2004/08/addressing</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>wsa10</para>
+          </term>
+          <description>
+            <para>http://www.w3.org/2005/08/addressing</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>sm</para>
+          </term>
+          <description>
+            <para>http://schemas.microsoft.com/serviceModel/2004/05/xpathfunctions</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>tempuri</para>
+          </term>
+          <description>
+            <para>http://tempuri.org</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ser</para>
+          </term>
+          <description>
+            <para>http://schemas.microsoft.com/2003/10/Serialization</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines several XPath functions and namespace mappings commonly used when evaluating XPath expressions against SOAP documents.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathMessageContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.ServiceModel.Dispatcher.XPathMessageContext" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XPathMessageContext (System.Xml.NameTable nameTable);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.NameTable nameTable) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="nameTable" Type="System.Xml.NameTable" />
+      </Parameters>
+      <Docs>
+        <param name="nameTable">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Several classes including this one, <see cref="T:System.Xml.XmlDocument" />, and <see cref="T:System.Xml.XmlReader" /> use the <see cref="T:System.Xml.NameTable" /> class internally to store attribute and element names. When an element or attribute name occurs multiple times in an XML document, it is stored only once in the <see cref="T:System.Xml.NameTable" />. The names are stored as common language runtime (CLR) object types. This enables you to do object comparisons on these strings rather than a more expensive string comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.XPathMessageContext" /> class with the specified <see cref="T:System.Xml.NameTable" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CompareDocument">
+      <MemberSignature Language="C#" Value="public override int CompareDocument (string uri1, string uri2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 CompareDocument(string uri1, string uri2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri1" Type="System.String" />
+        <Parameter Name="uri2" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="uri1">To be added.</param>
+        <param name="uri2">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property should be overridden in a derived class in order to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the base Uniform Resource Identifiers (URIs) of two documents based upon the order the documents were loaded by the XSLT processor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns 0.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="PreserveWhitespace">
+      <MemberSignature Language="C#" Value="public override bool PreserveWhitespace (System.Xml.XPath.XPathNavigator node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool PreserveWhitespace(class System.Xml.XPath.XPathNavigator node) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Xml.XPath.XPathNavigator" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property should be overridden in a derived class in order to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates whether to preserve white space nodes or strip them for the given context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns false.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The white space node that is to be preserved or stripped in the current context.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ResolveFunction">
+      <MemberSignature Language="C#" Value="public override System.Xml.Xsl.IXsltContextFunction ResolveFunction (string prefix, string name, System.Xml.XPath.XPathResultType[] argTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Xml.Xsl.IXsltContextFunction ResolveFunction(string prefix, string name, valuetype System.Xml.XPath.XPathResultType[] argTypes) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Xsl.IXsltContextFunction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="argTypes" Type="System.Xml.XPath.XPathResultType[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="ms-help://MS.MSSDK.1033/MS.WinFXSDK.1033/cpref37/html/T_System_Xml_Xsl_IXsltContextFunction.htm">T:System.Xml.Xsl.IXsltContextFunction</see> is used at execution time to evaluate the function.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a function reference and returns an <see cref="ms-help://MS.MSSDK.1033/MS.WinFXSDK.1033/cpref37/html/T_System_Xml_Xsl_IXsltContextFunction.htm">T:System.Xml.Xsl.IXsltContextFunction</see> that represents the function.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="ms-help://MS.MSSDK.1033/MS.WinFXSDK.1033/cpref37/html/T_System_Xml_Xsl_IXsltContextFunction.htm">T:System.Xml.Xsl.IXsltContextFunction</see> that represents the function.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the function as it appears in the XPath expression.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the function.</param>
+        <param name="argTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of argument types for the function being resolved. This allows you to select between methods with the same name (for example, overloaded methods).</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ResolveVariable">
+      <MemberSignature Language="C#" Value="public override System.Xml.Xsl.IXsltContextVariable ResolveVariable (string prefix, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Xml.Xsl.IXsltContextVariable ResolveVariable(string prefix, string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Xsl.IXsltContextVariable</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> is used at execution time to get the value of the variable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a variable reference and returns an <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> that represents the variable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> that represents the variable at runtime.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the variable as it appears in the XPath expression.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Whitespace">
+      <MemberSignature Language="C#" Value="public override bool Whitespace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Whitespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property should be overridden in a derived class in order to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether to include white space nodes in the output.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

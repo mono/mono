@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F9DBE056-BDF6-45CB-987D-4941274A5E32}</ProjectGuid>
+    <ProjectGuid>{E1915F81-F06D-4A4F-AA38-BB1BA8200B91}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.Options-tests-net_2_0</OutputPath>
@@ -62,30 +62,33 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Options\Mono.Options-net_2_0.csproj">
-      <Project>{B9B516C1-9723-4DCC-91E8-6904B3B350AB}</Project>
+      <Project>{91B954C8-077B-49DD-BA35-AD8BAE7A79CD}</Project>
       <Name>Mono.Options\Mono.Options-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_2_0.csproj">
-      <Project>{F83F663F-89F7-481C-941E-E4FE67867254}</Project>
+      <Project>{2F9C802E-F1DA-4779-80B2-5AACE033D398}</Project>
       <Name>Mono.Posix\Mono.Posix-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
+      <Project>{FBEC45AD-4493-41EA-9BCC-F3F29A08EB9E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -93,3 +96,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

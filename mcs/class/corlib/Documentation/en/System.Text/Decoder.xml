@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Decoder" FullName="System.Text.Decoder" FullNameSP="System_Text_Decoder" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable Decoder extends System.Object" />
   <TypeSignature Language="C#" Value="public abstract class Decoder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit Decoder extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,25 +16,12 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Converts blocks of bytes into blocks of characters,
-      maintaining state across successive calls for reading from a <see cref="T:System.IO.Stream" />.
-      </para>
-    </summary>
-    <remarks>
-      <para>
-        <block subset="none" type="note">Following instantiation of a decoder,
-      sequential blocks of bytes are converted into blocks of characters through calls
-      to the <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> method. The decoder maintains state between the
-      conversions, allowing it to correctly decode a character whose bytes span
-      multiple blocks. This greatly assists decoding streams of bytes into
-      characters. An instance of a specific implementation of the
-   <see cref="T:System.Text.Decoder" />
-   class is typically obtained through a call to the <see cref="M:System.Text.Encoding.GetDecoder" />
-   method of a <see cref="T:System.Text.Encoding" /> object.</block>
-      </para>
-    </remarks>
     <example>
       <para> The following example demonstrates using the <see cref="T:System.Text.UTF8Encoding" />
 implementation of the <see cref="T:System.Text.Decoder" /> class to convert two byte arrays to a character
@@ -78,33 +67,64 @@ public class DecoderExample
         <para>U+41 U+23 U+2623</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To obtain an instance of an implementation of the <see cref="T:System.Text.Decoder" /> class, the application should use the <see cref="M:System.Text.Encoding.GetDecoder" /> method of an <see cref="T:System.Text.Encoding" /> implementation. </para>
+      <para>The <see cref="M:System.Text.Decoder.GetCharCount(System.Byte*,System.Int32,System.Boolean)" /> method determines how many characters result in decoding a sequence of bytes, and the <see cref="M:System.Text.Decoder.GetChars(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean)" /> method performs the actual decoding. There are several versions of both of these methods available in the <see cref="T:System.Text.Decoder" /> class. For more information, see <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" />. A <see cref="T:System.Text.Decoder" /> object maintains state information between successive calls to GetChars or <see cref="M:System.Text.Decoder.Convert(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> methods so it can correctly decode byte sequences that span blocks. The <see cref="T:System.Text.Decoder" /> also preserves trailing bytes at the end of data blocks and uses the trailing bytes in the next decoding operation. Therefore, <see cref="M:System.Text.Encoding.GetDecoder" /> and <see cref="M:System.Text.Encoding.GetEncoder" /> are useful for network transmission and file operations because those operations often deal with blocks of data instead of a complete data stream.</para>
+      <block subset="none" type="note">
+        <para>When the application is done with a stream of data, it should make sure that the state information is flushed by setting the <paramref name="flush" /> parameter to true in the appropriate method call. If an exception occurs or if the application switches streams, it should call <see cref="M:System.Text.Decoder.Reset" /> to clear the internal state of the Decoder object.</para>
+      </block>
+      <format type="text/html">
+        <h2>Version Considerations</h2>
+      </format>
+      <para>A <see cref="T:System.Text.Decoder" /> or <see cref="T:System.Text.Encoder" /> object can be serialized during a conversion operation. The state of the object is retained if it is deserialized in the same version of the .NET Framework, but lost if it is deserialized in another version. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts a sequence of encoded bytes into a set of characters.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected Decoder ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.Text.Decoder" /> class.
-   </para>
-        </summary>
-        <remarks>
-          <para>This constructor is called only by classes that inherit from the <see cref="T:System.Text.Decoder" /> class.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain an instance of an implementation of this class, the application should use the <see cref="M:System.Text.Encoding.GetDecoder" /> method of a <see cref="T:System.Text.Encoding" /> implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.Decoder" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Convert">
       <MemberSignature Language="C#" Value="public virtual void Convert (byte* bytes, int byteCount, char* chars, int charCount, bool flush, out int bytesUsed, out int charsUsed, out bool completed);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Convert(unsigned int8* bytes, int32 byteCount, char* chars, int32 charCount, bool flush, int32 bytesUsed, int32 charsUsed, bool completed) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -131,22 +151,20 @@ public class DecoderExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="C#" Value="public virtual void Convert (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex, int charCount, bool flush, out int bytesUsed, out int charsUsed, out bool completed);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Convert(unsigned int8[] bytes, int32 byteIndex, int32 byteCount, char[] chars, int32 charIndex, int32 charCount, bool flush, int32 bytesUsed, int32 charsUsed, bool completed) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Convert">
-      <MemberSignature Language="C#" Value="public virtual void Convert (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex, int charCount, bool flush, out int bytesUsed, out int charsUsed, out bool completed);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -177,19 +195,15 @@ public class DecoderExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Fallback">
+      <MemberSignature Language="C#" Value="public System.Text.DecoderFallback Fallback { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.DecoderFallback Fallback" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Fallback">
-      <MemberSignature Language="C#" Value="public System.Text.DecoderFallback Fallback { set; get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -199,19 +213,26 @@ public class DecoderExample
         <ReturnType>System.Text.DecoderFallback</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Text.DecoderFallback" /> object represents an error handler that is invoked when an encoded byte sequence cannot be converted to a character. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Text.DecoderFallback" /> object for the current <see cref="T:System.Text.Decoder" /> object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="FallbackBuffer">
+      <MemberSignature Language="C#" Value="public System.Text.DecoderFallbackBuffer FallbackBuffer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.DecoderFallbackBuffer FallbackBuffer" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FallbackBuffer">
-      <MemberSignature Language="C#" Value="public System.Text.DecoderFallbackBuffer FallbackBuffer { get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -221,36 +242,22 @@ public class DecoderExample
         <ReturnType>System.Text.DecoderFallbackBuffer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Text.DecoderFallbackBuffer" /> object represents data used by the <see cref="T:System.Text.DecoderFallback" /> object. The <see cref="T:System.Text.DecoderFallback" /> object represents an error handler that is invoked when an encoded byte sequence cannot be converted to a character. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Text.DecoderFallbackBuffer" /> object associated with the current <see cref="T:System.Text.Decoder" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCharCount">
       <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte* bytes, int count, bool flush);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetCharCount(unsigned int8* bytes, int32 count, bool flush) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="bytes" Type="System.Byte*" />
-        <Parameter Name="count" Type="System.Int32" />
-        <Parameter Name="flush" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="bytes">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="flush">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -263,11 +270,48 @@ public class DecoderExample
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not affect the state of the decoder.</para>
+          <para>To calculate the exact array size that <see cref="M:System.Text.Decoder.GetChars(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean)" /> requires to store the resulting characters, the application should use <see cref="M:System.Text.Decoder.GetCharCount(System.Byte*,System.Int32,System.Boolean)" />. </para>
+          <para>If GetChars is called with <paramref name="flush" /> set to false, the decoder stores trailing bytes at the end of the data block in an internal buffer and uses them in the next decoding operation. The application should call GetCharCount on a block of data immediately before calling GetChars on the same block, so that any trailing bytes from the previous block are included in the calculation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, calculates the number of characters produced by decoding a sequence of bytes starting at the specified byte pointer. A parameter indicates whether to clear the internal state of the decoder after the calculation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes and any bytes in the internal buffer.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
+        <param name="flush">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to simulate clearing the internal state of the encoder after the calculation; otherwise, false. </param>
+      </Docs>
     </Member>
     <Member MemberName="GetCharCount">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetCharCount(class System.Byte[] bytes, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public abstract int GetCharCount (byte[] bytes, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetCharCount(unsigned int8[] bytes, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -277,45 +321,6 @@ public class DecoderExample
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytes">A <see cref="T:System.Byte" /> array to decode. </param>
-        <param name="index">A <see cref="T:System.Int32" /> that specifies the first index in <paramref name="bytes" /> to decode. </param>
-        <param name="count">A <see cref="T:System.Int32" /> that specifies the number elements in <paramref name="bytes" /> to decode. </param>
-        <summary>
-          <para> Determines the exact number of characters that will be produced by
-      decoding the specified range of the specified array of
-      bytes.
-      </para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing 
-   the number of characters the next call to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> will produce if presented with the
-   specified range of <paramref name="bytes" />
-   .</para>
-          <para>
-            <block subset="none" type="note">This value takes into account the state in which the current instance was
-   left following the last call to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" qualify="true" />. This
-   contrasts with <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" qualify="true" />, which does not maintain state information
-   across subsequent calls.</block>
-          </para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override this
-      method
-      
-      to return the appropriate value for a
-      particular encoding.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to
-      determine the appropriate size of a buffer to contain the
-      decoded values.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="bytes" /> is <see langword="null" /> . </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -328,17 +333,42 @@ public class DecoderExample
           <para>
             <paramref name="index " />and <paramref name="count " />do not specify a valid range in <paramref name="bytes" /> (i.e. (<paramref name="index" /> + <paramref name="count" />) &gt; <paramref name="bytes" />.Length).</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not affect the state of the decoder.</para>
+          <para>To calculate the exact array size that <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> requires to store the resulting characters, the application should use <see cref="M:System.Text.Decoder.GetCharCount(System.Byte[],System.Int32,System.Int32)" />. </para>
+          <para>If GetChars is called with <paramref name="flush" /> set to false, the decoder stores trailing bytes at the end of the data block in an internal buffer and uses them in the next decoding operation. The application should call GetCharCount on a block of data immediately before calling GetChars on the same block, so that any trailing bytes from the previous block are included in the calculation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, calculates the number of characters produced by decoding a sequence of bytes from the specified byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes and any bytes in the internal buffer.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first byte to decode. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCharCount">
       <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte[] bytes, int index, int count, bool flush);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetCharCount(unsigned int8[] bytes, int32 index, int32 count, bool flush) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -349,49 +379,35 @@ public class DecoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="flush">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not affect the state of the decoder.</para>
+          <para>To calculate the exact array size that <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Boolean)" /> requires to store the resulting characters, the application should use <see cref="M:System.Text.Decoder.GetCharCount(System.Byte[],System.Int32,System.Int32,System.Boolean)" />. </para>
+          <para>If GetChars is called with <paramref name="flush" /> set to false, the decoder stores trailing bytes at the end of the data block in an internal buffer and uses them in the next decoding operation. The application should call GetCharCount on a block of data immediately before calling GetChars on the same block, so that any trailing bytes from the previous block are included in the calculation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, calculates the number of characters produced by decoding a sequence of bytes from the specified byte array. A parameter indicates whether to clear the internal state of the decoder after the calculation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes and any bytes in the internal buffer.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first byte to decode. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
+        <param name="flush">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to simulate clearing the internal state of the encoder after the calculation; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetChars">
       <MemberSignature Language="C#" Value="public virtual int GetChars (byte* bytes, int byteCount, char* chars, int charCount, bool flush);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetChars(unsigned int8* bytes, int32 byteCount, char* chars, int32 charCount, bool flush) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="bytes" Type="System.Byte*" />
-        <Parameter Name="byteCount" Type="System.Int32" />
-        <Parameter Name="chars" Type="System.Char*" />
-        <Parameter Name="charCount" Type="System.Int32" />
-        <Parameter Name="flush" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="bytes">To be added.</param>
-        <param name="byteCount">To be added.</param>
-        <param name="chars">To be added.</param>
-        <param name="charCount">To be added.</param>
-        <param name="flush">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -404,11 +420,55 @@ public class DecoderExample
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bytes" Type="System.Byte*" />
+        <Parameter Name="byteCount" Type="System.Int32" />
+        <Parameter Name="chars" Type="System.Char*" />
+        <Parameter Name="charCount" Type="System.Int32" />
+        <Parameter Name="flush" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Remember that the <see cref="T:System.Text.Decoder" /> object saves state between calls to <see cref="M:System.Text.Decoder.GetChars(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean)" />. When the application is done with a stream of data, it should set the <paramref name="flush" /> parameter to true to make sure that the state information is flushed. With this setting, the decoder ignores invalid bytes at the end of the data block and clears the internal buffer.</para>
+          <para>To calculate the exact buffer size that GetChars requires to store the resulting characters, the application should use <see cref="M:System.Text.Decoder.GetCharCount(System.Byte*,System.Int32,System.Boolean)" />. </para>
+          <para>If GetChars is called with <paramref name="flush" /> set to false, the decoder stores trailing bytes at the end of the data block in an internal buffer and uses them in the next decoding operation. The application should call GetCharCount on a block of data immediately before calling GetChars on the same block, so that any trailing bytes from the previous block are included in the calculation.</para>
+          <para>If your application is to convert many segments of an input stream, consider using the <see cref="M:System.Text.Decoder.Convert(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> method. <see cref="M:System.Text.Decoder.GetChars(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean)" /> will throw an exception if the output buffer isn't large enough, but <see cref="M:System.Text.Decoder.Convert(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> will fill as much space as possible and return the bytes read and chars written. Also see the <see cref="M:System.Text.Encoding.GetChars(System.Byte*,System.Int32,System.Char*,System.Int32)" /> topic for more comments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, decodes a sequence of bytes starting at the specified byte pointer and any bytes in the internal buffer into a set of characters that are stored starting at the specified character pointer. A parameter indicates whether to clear the internal state of the decoder after the conversion.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written at the location indicated by the <paramref name="chars" /> parameter.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
+        <param name="byteCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
+        <param name="chars">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the location at which to start writing the resulting set of characters. </param>
+        <param name="charCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to write. </param>
+        <param name="flush">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to clear the internal state of the decoder after the conversion; otherwise, false. </param>
+      </Docs>
     </Member>
     <Member MemberName="GetChars">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetChars(class System.Byte[] bytes, int32 byteIndex, int32 byteCount, class System.Char[] chars, int32 charIndex)" />
       <MemberSignature Language="C#" Value="public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetChars(unsigned int8[] bytes, int32 byteIndex, int32 byteCount, char[] chars, int32 charIndex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -420,43 +480,6 @@ public class DecoderExample
         <Parameter Name="charIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytes">A <see cref="T:System.Byte" /> array to decode. </param>
-        <param name="byteIndex">A <see cref="T:System.Int32" /> that specifies the first index of <paramref name="bytes" /> from which to decode. </param>
-        <param name="byteCount">A <see cref="T:System.Int32" /> that specifies the number elements in <paramref name="bytes" /> to decode. </param>
-        <param name="chars">A <see cref="T:System.Char" /> array of characters to decode into. </param>
-        <param name="charIndex">A <see cref="T:System.Int32" /> that specifies the first index of <paramref name="chars" /> to store the decoded bytes. </param>
-        <summary>
-          <para> Decodes the specified range of the specified array of bytes into the specified range
-      of the specified array of characters for a particular encoding.
-      </para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing
-   the number of characters decoded into <paramref name="chars" /> for a
-   particular encoding.
-   </para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">
-              <see cref="M:System.Text.Decoder.GetCharCount(System.Byte[],System.Int32,System.Int32)" /> can be used to determine the exact number of
-   characters that will be produced for a specified range of bytes.
-   Alternatively, <see cref="M:System.Text.Encoding.GetMaxCharCount(System.Int32)" /> of the <see cref="T:System.Text.Encoding" /> object that produced the current instance can be used to
-   determine the maximum number of characters that might be produced for a specified
-   number of bytes, regardless of the actual byte values.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override this method to decode the values of a <see cref="T:System.Byte" /> array for a
-particular encoding.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to
-   decode the elements of a byte array for a particular encoding.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="chars" /> does not contain sufficient space to store the decoded characters.</para>
@@ -484,17 +507,42 @@ particular encoding.</block>
           <para>
             <paramref name="charIndex" /> &gt; <paramref name="chars" />.Length.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Remember that the <see cref="T:System.Text.Decoder" /> object saves state between calls to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" />. When the application is done with a stream of data, it should set the <paramref name="flush" /> parameter to true to make sure that the state information is flushed. With this setting, the decoder ignores invalid bytes at the end of the data block and clears the internal buffer.</para>
+          <para>To calculate the exact array size that GetChars requires to store the resulting characters, the application should use <see cref="M:System.Text.Decoder.GetCharCount(System.Byte[],System.Int32,System.Int32)" />. </para>
+          <para>If GetChars is called with <paramref name="flush" /> set to false, the decoder stores trailing bytes at the end of the data block in an internal buffer and uses them in the next decoding operation. The application should call GetCharCount on a block of data immediately before calling GetChars on the same block, so that any trailing bytes from the previous block are included in the calculation.</para>
+          <para>If your application is to convert many segments of an input stream, consider using the <see cref="M:System.Text.Decoder.Convert(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> method. <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> will throw an exception if the output buffer isn't large enough, but <see cref="M:System.Text.Decoder.Convert(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> will fill as much space as possible and return the bytes read and chars written. Also see the <see cref="M:System.Text.Encoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> topic for more comments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, decodes a sequence of bytes from the specified byte array and any bytes in the internal buffer into the specified character array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written into <paramref name="chars" />.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
+        <param name="byteIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first byte to decode. </param>
+        <param name="byteCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
+        <param name="chars">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to contain the resulting set of characters. </param>
+        <param name="charIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to start writing the resulting set of characters. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetChars">
       <MemberSignature Language="C#" Value="public virtual int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex, bool flush);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetChars(unsigned int8[] bytes, int32 byteIndex, int32 byteCount, char[] chars, int32 charIndex, bool flush) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -507,34 +555,40 @@ particular encoding.</block>
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added.</param>
-        <param name="byteIndex">To be added.</param>
-        <param name="byteCount">To be added.</param>
-        <param name="chars">To be added.</param>
-        <param name="charIndex">To be added.</param>
-        <param name="flush">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Remember that the <see cref="T:System.Text.Decoder" /> object saves state between calls to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Boolean)" />. When the application is done with a stream of data, it should set the <paramref name="flush" /> parameter to true to make sure that the state information is flushed. With this setting, the decoder ignores invalid bytes at the end of the data block and clears the internal buffer.</para>
+          <para>To calculate the exact array size that GetChars requires to store the resulting characters, the application should use <see cref="M:System.Text.Decoder.GetCharCount(System.Byte[],System.Int32,System.Int32,System.Boolean)" />. </para>
+          <para>If GetChars is called with <paramref name="flush" /> set to false, the decoder stores trailing bytes at the end of the data block in an internal buffer and uses them in the next decoding operation. The application should call GetCharCount on a block of data immediately before calling GetChars on the same block, so that any trailing bytes from the previous block are included in the calculation.</para>
+          <para>If your application is to convert many segments of an input stream, consider using the <see cref="M:System.Text.Decoder.Convert(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> method. <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Boolean)" /> will throw an exception if the output buffer isn't large enough, but <see cref="M:System.Text.Decoder.Convert(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> will fill as much space as possible and return the bytes read and chars written. Also see the <see cref="M:System.Text.Encoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> topic for more comments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, decodes a sequence of bytes from the specified byte array and any bytes in the internal buffer into the specified character array. A parameter indicates whether to clear the internal state of the decoder after the conversion.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written into the <paramref name="chars" /> parameter.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
+        <param name="byteIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first byte to decode. </param>
+        <param name="byteCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
+        <param name="chars">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to contain the resulting set of characters. </param>
+        <param name="charIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to start writing the resulting set of characters. </param>
+        <param name="flush">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to clear the internal state of the decoder after the conversion; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public virtual void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -544,12 +598,23 @@ particular encoding.</block>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method clears the internal state of the <see cref="T:System.Text.Decoder" /> object. The method clears any state information preserved from a previous call to <see cref="M:System.Text.Decoder.GetChars(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean)" /> or <see cref="M:System.Text.Decoder.Convert(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" />, including trailing bytes at the end of the previous data block.</para>
+          <para>Your application should call the <see cref="M:System.Text.Decoder.Reset" /> method if it wants to reuse the same decoder even after an exception is thrown by <see cref="M:System.Text.Decoder.GetChars(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean)" />, <see cref="M:System.Text.Decoder.Convert(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" />, or <see cref="M:System.Text.Decoder.GetCharCount(System.Byte*,System.Int32,System.Boolean)" />, or if the decoder switches streams and begins to decode another stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, sets the decoder back to its initial state.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

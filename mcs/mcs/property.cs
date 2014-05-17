@@ -82,6 +82,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public abstract void PrepareEmit ();
+
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -197,7 +199,7 @@ namespace Mono.CSharp
 			{
 			}
 
-			public override MethodBuilder Define (TypeContainer parent)
+			public override void Define (TypeContainer parent)
 			{
 				base.Define (parent);
 
@@ -205,12 +207,7 @@ namespace Mono.CSharp
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
-					return null;
-
-				method_data.DefineMethodBuilder (parent.PartialContainer, ParameterInfo);
-
-				return method_data.MethodBuilder;
+				method_data.Define (parent.PartialContainer, method.GetFullName (MemberName));
 			}
 
 			public override TypeSpec ReturnType {
@@ -262,7 +259,7 @@ namespace Mono.CSharp
 			    }
 			}
 
-			public override MethodBuilder Define (TypeContainer parent)
+			public override void Define (TypeContainer parent)
 			{
 				parameters.Resolve (this);
 				
@@ -272,12 +269,7 @@ namespace Mono.CSharp
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
-					return null;
-
-				method_data.DefineMethodBuilder (parent.PartialContainer, ParameterInfo);
-
-				return method_data.MethodBuilder;
+				method_data.Define (parent.PartialContainer, method.GetFullName (MemberName));
 			}
 
 			public override TypeSpec ReturnType {
@@ -334,7 +326,7 @@ namespace Mono.CSharp
 				return method.IsClsComplianceRequired ();
 			}
 
-			public virtual MethodBuilder Define (TypeContainer parent)
+			public virtual void Define (TypeContainer parent)
 			{
 				var container = parent.PartialContainer;
 
@@ -369,8 +361,6 @@ namespace Mono.CSharp
 					if (Compiler.Settings.WriteMetadataOnly)
 						block = null;
 				}
-
-				return null;
 			}
 
 			public bool HasCustomAccessModifier {
@@ -408,7 +398,7 @@ namespace Mono.CSharp
 		PropertyMethod get, set, first;
 		PropertyBuilder PropertyBuilder;
 
-		public PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		protected PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, allowed_mod, name, attrs)
 		{
 		}
@@ -624,24 +614,14 @@ namespace Mono.CSharp
 
 			if (Get != null) {
 				spec.Get = Get.Spec;
-
-				var method = Get.Spec.GetMetaInfo () as MethodBuilder;
-				if (method != null) {
-					PropertyBuilder.SetGetMethod (method);
-					Parent.MemberCache.AddMember (this, method.Name, Get.Spec);
-				}
+				Parent.MemberCache.AddMember (this, Get.Spec.Name, Get.Spec);
 			} else {
 				CheckMissingAccessor (kind, parameters, true);
 			}
 
 			if (Set != null) {
 				spec.Set = Set.Spec;
-
-				var method = Set.Spec.GetMetaInfo () as MethodBuilder;
-				if (method != null) {
-					PropertyBuilder.SetSetMethod (method);
-					Parent.MemberCache.AddMember (this, method.Name, Set.Spec);
-				}
+				Parent.MemberCache.AddMember (this, Set.Spec.Name, Set.Spec);
 			} else {
 				CheckMissingAccessor (kind, parameters, false);
 			}
@@ -678,6 +658,25 @@ namespace Mono.CSharp
 					return true;
 
 				return Get.IsUsed | Set.IsUsed;
+			}
+		}
+
+		public override void PrepareEmit ()
+		{
+			AccessorFirst.PrepareEmit ();
+			if (AccessorSecond != null)
+				AccessorSecond.PrepareEmit ();
+
+			if (get != null) {
+				var method = Get.Spec.GetMetaInfo () as MethodBuilder;
+				if (method != null)
+					PropertyBuilder.SetGetMethod (method);
+			}
+
+			if (set != null) {
+				var method = Set.Spec.GetMetaInfo () as MethodBuilder;
+				if (method != null)
+					PropertyBuilder.SetSetMethod (method);
 			}
 		}
 
@@ -859,10 +858,10 @@ namespace Mono.CSharp
 			{
 			}
 
-			public override MethodBuilder Define (TypeContainer ds)
+			public override void Define (TypeContainer ds)
 			{
 				CheckAbstractAndExtern (block != null);
-				return base.Define (ds);
+				base.Define (ds);
 			}
 			
 			public override string GetSignatureForError ()
@@ -1109,8 +1108,8 @@ namespace Mono.CSharp
 				return false;
 
 			if (declarators != null) {
-				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFER) != 0)
-					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFER);
+				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFIER) != 0)
+					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFIER);
 
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				foreach (var d in declarators) {
@@ -1128,9 +1127,6 @@ namespace Mono.CSharp
 				SetIsUsed ();
 				return true;
 			}
-
-			if (Add.IsInterfaceImplementation)
-				SetIsUsed ();
 
 			backing_field = new Field (Parent,
 				new TypeExpression (MemberType, Location),
@@ -1205,7 +1201,7 @@ namespace Mono.CSharp
 				return method.IsClsComplianceRequired ();
 			}
 
-			public virtual MethodBuilder Define (TypeContainer parent)
+			public virtual void Define (TypeContainer parent)
 			{
 				// Fill in already resolved event type to speed things up and
 				// avoid confusing duplicate errors
@@ -1216,17 +1212,13 @@ namespace Mono.CSharp
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
 
 				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
-					return null;
-
-				method_data.DefineMethodBuilder (parent.PartialContainer, ParameterInfo);
+					return;
 
 				if (Compiler.Settings.WriteMetadataOnly)
 					block = null;
 
 				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, ParameterInfo, method.ModFlags);
 				Spec.IsAccessor = true;
-
-				return method_data.MethodBuilder;
 			}
 
 			public override TypeSpec ReturnType {
@@ -1238,6 +1230,12 @@ namespace Mono.CSharp
 			public override ObsoleteAttribute GetAttributeObsolete ()
 			{
 				return method.GetAttributeObsolete ();
+			}
+
+			public MethodData MethodData {
+				get {
+					return method_data;
+				}
 			}
 
 			public override string[] ValidAttributeTargets {
@@ -1338,23 +1336,16 @@ namespace Mono.CSharp
 			//
 			// Now define the accessors
 			//
-			var AddBuilder = Add.Define (Parent);
-			if (AddBuilder == null)
-				return false;
-
-			var RemoveBuilder = remove.Define (Parent);
-			if (RemoveBuilder == null)
-				return false;
+			add.Define (Parent);
+			remove.Define (Parent);
 
 			EventBuilder = Parent.TypeBuilder.DefineEvent (GetFullName (MemberName), EventAttributes.None, MemberType.GetMetaInfo ());
-			EventBuilder.SetAddOnMethod (AddBuilder);
-			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
 			spec = new EventSpec (Parent.Definition, this, MemberType, ModFlags, Add.Spec, remove.Spec);
 
 			Parent.MemberCache.AddMember (this, GetFullName (MemberName), spec);
-			Parent.MemberCache.AddMember (this, AddBuilder.Name, Add.Spec);
-			Parent.MemberCache.AddMember (this, RemoveBuilder.Name, remove.Spec);
+			Parent.MemberCache.AddMember (this, Add.Spec.Name, Add.Spec);
+			Parent.MemberCache.AddMember (this, Remove.Spec.Name, remove.Spec);
 
 			return true;
 		}
@@ -1374,6 +1365,15 @@ namespace Mono.CSharp
 			Remove.Emit (Parent);
 
 			base.Emit ();
+		}
+
+		public override void PrepareEmit ()
+		{
+			add.PrepareEmit ();
+			remove.PrepareEmit ();
+
+			EventBuilder.SetAddOnMethod (add.MethodData.MethodBuilder);
+			EventBuilder.SetRemoveOnMethod (remove.MethodData.MethodBuilder);
 		}
 
 		public override void WriteDebugSymbol (MonoSymbolFile file)
@@ -1465,7 +1465,7 @@ namespace Mono.CSharp
 				this.parameters = parameters;
 			}
 
-			public override MethodBuilder Define (TypeContainer parent)
+			public override void Define (TypeContainer parent)
 			{
 				// Disable reporting, parameters are resolved twice
 				Report.DisableReporting ();
@@ -1475,7 +1475,7 @@ namespace Mono.CSharp
 					Report.EnableReporting ();
 				}
 
-				return base.Define (parent);
+				base.Define (parent);
 			}
 
 			public override ParametersCompiled ParameterInfo {

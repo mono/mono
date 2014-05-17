@@ -1,18 +1,13 @@
 // 
 // System.Runtime.Remoting.Messaging.CallContext.cs
 //
-// Author: Jaime Anguiano Olarra (jaime@gnome.org)
+// Authors: Jaime Anguiano Olarra (jaime@gnome.org)
 //         Lluis Sanchez Gual (lluis@ximian.com)
+//          Marek Safar (marek.safar@gmail.com)
 //
 // (c) 2002, Jaime Anguiano Olarra
-//
-///<summary>
-///Provides several properties that come with the execution code path.
-///This class is sealed.
-///</summary>
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,16 +32,15 @@
 using System;
 using System.Threading;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Runtime.Remoting.Messaging 
-{
-	
+{	
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public sealed class CallContext 
 	{
 		[ThreadStatic] static Header [] Headers;
-		[ThreadStatic] static Hashtable datastore;
 		[ThreadStatic] static object hostContext;
 		
 		private CallContext ()
@@ -58,32 +52,39 @@ namespace System.Runtime.Remoting.Messaging
 			set { hostContext = value; }
 		}
 
-		// public methods
-		public static void FreeNamedDataSlot (string name) 
+		public static void FreeNamedDataSlot (string name)
 		{
-			Datastore.Remove (name);
+			ExecutionContext.FreeNamedDataSlot (name);
 		}
 
 		public static object GetData (string name) 
 		{
-			return Datastore [name];
+			var value = LogicalGetData (name);
+			if (value == null)
+				Datastore.TryGetValue (name, out value);
+
+			return value;
 		}
 		
 		public static void SetData (string name, object data) 
 		{
-			Datastore [name] = data;
-		}
-
-		[MonoTODO]
-		public static object LogicalGetData (string name) 
-		{
-			throw new NotImplementedException ();
+			if (data is ILogicalThreadAffinative) {
+				LogicalSetData (name, data);
+			} else {
+				LogicalContext.FreeNamedDataSlot (name);
+				Datastore [name] = data;
+			}
 		}
 		
-		[MonoTODO]
+		public static object LogicalGetData (string name) 
+		{
+			return LogicalContext.GetData (name);
+		}
+
 		public static void LogicalSetData (string name, object data) 
 		{
-			throw new NotImplementedException ();
+			Datastore.Remove (name);
+			LogicalContext.SetData (name, data);
 		}
 
 		public static Header[] GetHeaders () 
@@ -96,54 +97,52 @@ namespace System.Runtime.Remoting.Messaging
 			Headers = headers;
 		}
 
-		internal static LogicalCallContext CreateLogicalCallContext (bool createEmpty)
-		{
-			LogicalCallContext ctx = null;
-			if (datastore != null) {
-				foreach (DictionaryEntry entry in datastore)
-					if (entry.Value is ILogicalThreadAffinative) {
-						if (ctx == null) ctx = new LogicalCallContext ();
-						ctx.SetData ((string)entry.Key, entry.Value);
-					}
-			}
-
-			if (ctx == null && createEmpty)
-				return new LogicalCallContext ();
-			else
-				return ctx;
-		}
-
 		internal static object SetCurrentCallContext (LogicalCallContext ctx)
 		{
-			object oldData = datastore;
+			object oldData = new object[] { Datastore, LogicalContext.Datastore };
 
+			Hashtable logicalDatastore;
 			if (ctx != null && ctx.HasInfo)
-				datastore = (Hashtable) ctx.Datastore.Clone ();
+				logicalDatastore = (Hashtable) ctx.Datastore.Clone ();
 			else
-				datastore = null;
+				logicalDatastore = null;
 				
+			LogicalContext.Datastore = logicalDatastore;
 			return oldData;
 		}
-		
-		internal static void UpdateCurrentCallContext (LogicalCallContext ctx)
+
+		internal static void UpdateCurrentLogicalCallContext (LogicalCallContext ctx)
 		{
 			Hashtable data = ctx.Datastore;
+			if (data == null)
+				return;
+
 			foreach (DictionaryEntry entry in data)
-				SetData ((string)entry.Key, entry.Value);
+				LogicalSetData ((string)entry.Key, entry.Value);
 		}
 		
 		internal static void RestoreCallContext (object oldContext)
 		{
-			datastore = (Hashtable) oldContext;
+			object[] contextArray = (object[])oldContext;
+			ExecutionContext.DataStore = (Dictionary<string, object>)contextArray [0];
+			LogicalContext.Datastore = (Hashtable)contextArray [1];
 		}
 
-		private static Hashtable Datastore
-		{
+		static Dictionary<string, object> Datastore {
 			get {
-				Hashtable r = datastore;
-				if (r == null)
-					return datastore = new Hashtable ();
-				return r;
+				return ExecutionContext.DataStore;
+			}
+		}
+
+		static LogicalCallContext LogicalContext {
+			get {
+				return ExecutionContext.LogicalCallContext;
+			}
+		}
+
+		static ExecutionContext ExecutionContext {
+			get {
+				return ExecutionContext.Current;
 			}
 		}
 	}

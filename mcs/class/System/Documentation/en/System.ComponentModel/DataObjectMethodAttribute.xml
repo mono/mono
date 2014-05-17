@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataObjectMethodAttribute" FullName="System.ComponentModel.DataObjectMethodAttribute">
   <TypeSignature Language="C#" Value="public sealed class DataObjectMethodAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DataObjectMethodAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -14,47 +17,71 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> to identify data operation methods on a type marked with the <see cref="T:System.ComponentModel.DataObjectAttribute" /> attribute so that they are more easily identified by callers using reflection. When the <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> attribute is applied to a method, it describes the type of operation the method performs and indicates whether the method is the default data operation method of a type. Components such as the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control and the <see cref="T:System.Web.UI.Design.WebControls.ObjectDataSourceDesigner" /> class examine the values of this attribute, if present, to help determine which data method to call at run time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a data operation method exposed by a type, what type of operation the method performs, and whether the method is the default data method. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataObjectMethodAttribute (System.ComponentModel.DataObjectMethodType methodType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.ComponentModel.DataObjectMethodType methodType) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="methodType" Type="System.ComponentModel.DataObjectMethodType" />
       </Parameters>
       <Docs>
-        <param name="methodType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.DataObjectMethodAttribute.IsDefault" /> property is set to false when you create a <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> object using this <see cref="M:System.ComponentModel.DataObjectMethodAttribute.#ctor(System.ComponentModel.DataObjectMethodType)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> class and identifies the type of data operation the method performs.</para>
+        </summary>
+        <param name="methodType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.DataObjectMethodType" /> values that describes the data operation the method performs.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataObjectMethodAttribute (System.ComponentModel.DataObjectMethodType methodType, bool isDefault);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.ComponentModel.DataObjectMethodType methodType, bool isDefault) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="methodType" Type="System.ComponentModel.DataObjectMethodType" />
         <Parameter Name="isDefault" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="methodType">To be added.</param>
-        <param name="isDefault">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> class, identifies the type of data operation the method performs, and identifies whether the method is the default data method that the data object exposes.</para>
+        </summary>
+        <param name="methodType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.DataObjectMethodType" /> values that describes the data operation the method performs.</param>
+        <param name="isDefault">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the method that the attribute is applied to is the default method of the data object for the specified <paramref name="methodType" />; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -63,48 +90,80 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method determines whether this <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> fits the pattern of another object.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance is the same as the instance specified by the <paramref name="obj" /> parameter; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance of <see cref="T:System.ComponentModel.DataObjectMethodAttribute" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+          <para />
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDefault">
       <MemberSignature Language="C#" Value="public bool IsDefault { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDefault" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control uses the <see cref="P:System.ComponentModel.DataObjectMethodAttribute.IsDefault" /> property to distinguish between multiple methods that match the signature requirements for a specific method type. If two methods match the signature requirements, the method with the <see cref="P:System.ComponentModel.DataObjectMethodAttribute.IsDefault" /> property set to true is selected.</para>
+          <para>At design-time the <see cref="P:System.ComponentModel.DataObjectMethodAttribute.IsDefault" /> property is used to automatically set the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectMethod" />, <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateMethod" />, <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteMethod" />, and <see cref="P:System.Web.UI.WebControls.ObjectDataSource.InsertMethod" /> properties on an <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> instance.</para>
+          <para>If the <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> is created using the <see cref="M:System.ComponentModel.DataObjectMethodAttribute.#ctor(System.ComponentModel.DataObjectMethodType)" /> constructor that only takes a <see cref="T:System.ComponentModel.DataObjectMethodType" /> parameter, the <see cref="P:System.ComponentModel.DataObjectMethodAttribute.IsDefault" /> property is set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the method that the <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> is applied to is the default data method exposed by the data object for a specific method type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Match">
       <MemberSignature Language="C#" Value="public override bool Match (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Match(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -113,25 +172,40 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method determines whether one <see cref="T:System.ComponentModel.DataObjectMethodAttribute" /> fits the pattern of another. Its implementation is not the same as that of <see cref="M:System.ComponentModel.DataObjectMethodAttribute.Equals(System.Object)" />, however, because it does not test for true equality. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this instance shares a common pattern with a specified attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance is the same as the instance specified by the <paramref name="obj" /> parameter; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance of <see cref="T:System.ComponentModel.DataObjectMethodAttribute" />.</param>
       </Docs>
     </Member>
     <Member MemberName="MethodType">
       <MemberSignature Language="C#" Value="public System.ComponentModel.DataObjectMethodType MethodType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ComponentModel.DataObjectMethodType MethodType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.DataObjectMethodType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.ComponentModel.DataObjectMethodType" /> value indicating the type of data operation the method performs.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

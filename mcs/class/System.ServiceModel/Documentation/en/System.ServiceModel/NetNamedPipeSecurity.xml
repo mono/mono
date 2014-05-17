@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="NetNamedPipeSecurity" FullName="System.ServiceModel.NetNamedPipeSecurity">
+  <TypeSignature Language="C#" Value="public sealed class NetNamedPipeSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NetNamedPipeSecurity extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the security settings for endpoints configured with the named pipe binding.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Mode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.NetNamedPipeSecurityMode Mode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.NetNamedPipeSecurityMode Mode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.NetNamedPipeSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Valid values for this property are:</para>
+          <list type="bullet">
+            <item>
+              <para>Transport - Use transport-based security. The default setting uses NTLM which does not provide server authentication.</para>
+            </item>
+            <item>
+              <para>None - Use no security.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the security mode for the named pipe binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Transport">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.NamedPipeTransportSecurity Transport { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.NamedPipeTransportSecurity Transport" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.NamedPipeTransportSecurity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method gives access to the <see cref="T:System.Net.Security.ProtectionLevel" /> for the named pipe transport through <see cref="P:System.ServiceModel.NamedPipeTransportSecurity.ProtectionLevel" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the transport security for the named pipe binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,54 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PerformanceCounterCategoryType" FullName="System.Diagnostics.PerformanceCounterCategoryType">
   <TypeSignature Language="C#" Value="public enum PerformanceCounterCategoryType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PerformanceCounterCategoryType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>There are two types of performance counter categories: single-instance and multi-instance. By default, a category is single-instance when it is created and becomes multi-instance when another instance is added. Categories are created when an application is set up, and instances are added at run time. In the .NET Framework version 1.0 and version 1.1, it is not necessary to know whether a performance counter category is multi-instance or single-instance. In the .NET Framework version 2.0, the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" /> enumeration is used to indicate whether a performance counter can have multiple instances.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether the performance counter category can have multiple instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MultiInstance">
       <MemberSignature Language="C#" Value="MultiInstance" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.PerformanceCounterCategoryType MultiInstance = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategoryType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The performance counter category can have multiple instances.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SingleInstance">
       <MemberSignature Language="C#" Value="SingleInstance" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.PerformanceCounterCategoryType SingleInstance = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategoryType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The performance counter category can have only a single instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.PerformanceCounterCategoryType Unknown = int32(-1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategoryType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The instance functionality for the performance counter category is unknown. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

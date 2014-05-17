@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Dynamic">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Dynamic" /> namespace provides classes and interfaces that support Dynamic Language Runtime.</para>
+    </summary>
+  </Docs>
+</Namespace>

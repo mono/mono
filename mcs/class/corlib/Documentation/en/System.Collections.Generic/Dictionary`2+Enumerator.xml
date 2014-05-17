@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Dictionary&lt;TKey,TValue&gt;+Enumerator" FullName="System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;+Enumerator">
   <TypeSignature Language="C#" Value="public struct Dictionary&lt;TKey,TValue&gt;.Enumerator : System.Collections.Generic.IEnumerator&lt;System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;&gt;, System.Collections.IDictionaryEnumerator" />
+  <TypeSignature Language="ILAsm" Value=".class nested public sequential ansi serializable sealed beforefieldinit Dictionary`2/Enumerator&lt;TKey, TValue&gt; extends System.ValueType implements class System.Collections.Generic.IEnumerator`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;!TKey, !TValue&gt;&gt;, class System.Collections.IDictionaryEnumerator, class System.Collections.IEnumerator, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,14 +23,43 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Collections.Generic.Dictionary`2" /> generic class provides a mapping from a set of keys to a set of values. Each addition to the dictionary consists of a value and its associated key. Retrieving a value by using its key is very fast, close to O(1), because the <see cref="T:System.Collections.Generic.Dictionary`2" /> class is implemented as a hash table.</para>
+      <block subset="none" type="note">
+        <para>The speed of retrieval depends on the quality of the hashing algorithm of the type specified for <paramref name="TKey" />. </para>
+      </block>
+      <para>As long as an object is used as a key in the <see cref="T:System.Collections.Generic.Dictionary`2" />, it must not change in any way that affects its hash value. Every key in a <see cref="T:System.Collections.Generic.Dictionary`2" /> must be unique according to the dictionary's equality comparer. A key cannot be null, but a value can be, if the value type <paramref name="TValue" /> is a reference type.</para>
+      <para>
+        <see cref="T:System.Collections.Generic.Dictionary`2" /> requires an equality implementation to determine whether keys are equal. You can specify an implementation of the <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> generic interface by using a constructor that accepts a <paramref name="comparer" /> parameter; if you do not specify an implementation, the default generic equality comparer <see cref="P:System.Collections.Generic.EqualityComparer`1.Default" /> is used. If type <paramref name="TKey" /> implements the <see cref="T:System.IEquatable`1" /> generic interface, the default equality comparer uses that implementation.</para>
+      <block subset="none" type="note">
+        <para>For example, you can use the case-insensitive string comparers provided by the <see cref="T:System.StringComparer" /> class to create dictionaries with case-insensitive string keys.</para>
+      </block>
+      <para>The capacity of a <see cref="T:System.Collections.Generic.Dictionary`2" /> is the number of elements the <see cref="T:System.Collections.Generic.Dictionary`2" /> can hold. As elements are added to a <see cref="T:System.Collections.Generic.Dictionary`2" />, the capacity is automatically increased as required by reallocating the internal array.</para>
+      <para>For very large <see cref="T:System.Collections.Generic.Dictionary`2" /> objects, you can increase the maximum capacity to 2 billion elements on a 64-bit system by setting the enabled attribute of the <format type="text/html"><a href="5c7ea24a-39ac-4e5f-83b7-b9f9a1b556ab">gcAllowVeryLargeObjects</a></format> configuration element to true in the run-time environment.</para>
+      <para>For purposes of enumeration, each item in the dictionary is treated as a <see cref="T:System.Collections.Generic.KeyValuePair`2" /> structure representing a value and its key. The order in which the items are returned is undefined.</para>
+      <para>The foreach statement of the C# language (for each in C++, For Each in Visual Basic) requires the type of each element in the collection. Since the <see cref="T:System.Collections.Generic.Dictionary`2" /> is a collection of keys and values, the element type is not the type of the key or the type of the value. Instead, the element type is a <see cref="T:System.Collections.Generic.KeyValuePair`2" /> of the key type and the value type. For example:</para>
+      <para>code reference: Generic.Dictionary#11</para>
+      <para>The foreach statement is a wrapper around the enumerator, which allows only reading from the collection, not writing to it.</para>
+      <block subset="none" type="note">
+        <para>Because keys can be inherited and their behavior changed, their absolute uniqueness cannot be guaranteed by comparisons using the <see cref="M:System.Type.Equals(System.Object)" /> method. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of keys and values.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt; Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Collections.Generic.KeyValuePair`2&lt;!TKey, !TValue&gt; Current" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;</ReturnType>
       </ReturnValue>
@@ -38,14 +69,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -55,14 +87,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="MoveNext">
+      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MoveNext() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveNext">
-      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -73,14 +106,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IDictionaryEnumerator.Entry">
+      <MemberSignature Language="C#" Value="System.Collections.DictionaryEntry System.Collections.IDictionaryEnumerator.Entry { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Collections.DictionaryEntry System.Collections.IDictionaryEnumerator.Entry" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IDictionaryEnumerator.Entry">
-      <MemberSignature Language="C#" Value="System.Collections.DictionaryEntry System.Collections.IDictionaryEnumerator.Entry { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.DictionaryEntry</ReturnType>
       </ReturnValue>
@@ -90,14 +124,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IDictionaryEnumerator.Key">
       <MemberSignature Language="C#" Value="object System.Collections.IDictionaryEnumerator.Key { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IDictionaryEnumerator.Key" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -107,14 +142,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IDictionaryEnumerator.Value">
       <MemberSignature Language="C#" Value="object System.Collections.IDictionaryEnumerator.Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IDictionaryEnumerator.Value" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -124,14 +160,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Current">
       <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IEnumerator.Current" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -141,14 +178,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerator.Reset">
+      <MemberSignature Language="C#" Value="void IEnumerator.Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IEnumerator.Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEnumerator.Reset">
-      <MemberSignature Language="C#" Value="void IEnumerator.Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -158,10 +196,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

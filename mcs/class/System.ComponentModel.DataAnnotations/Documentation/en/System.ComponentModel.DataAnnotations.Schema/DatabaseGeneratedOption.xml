@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DatabaseGeneratedOption" FullName="System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption">
+  <TypeSignature Language="C#" Value="public enum DatabaseGeneratedOption" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DatabaseGeneratedOption extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enumerates a database generated options.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Computed">
+      <MemberSignature Language="C#" Value="Computed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption Computed = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Computed option.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Identity">
+      <MemberSignature Language="C#" Value="Identity" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption Identity = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Identity option.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No option.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XContainer" FullName="System.Xml.Linq.XContainer">
+  <TypeSignature Language="C#" Value="public abstract class XContainer : System.Xml.Linq.XNode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XContainer extends System.Xml.Linq.XNode" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Xml.Linq.XNode</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides functionality such as finding the next or previous sibling node, or enumerating the direct children of a node.</para>
+      <para>The two classes that derive from <see cref="T:System.Xml.Linq.XContainer" /> are <see cref="T:System.Xml.Linq.XDocument" /> and <see cref="T:System.Xml.Linq.XElement" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a node that can contain other nodes.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the new content after the existing content of the <see cref="T:System.Xml.Linq.XContainer" />.</para>
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content as children of this <see cref="T:System.Xml.Linq.XContainer" />.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A content object containing simple content or a collection of content objects to be added.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object[] content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the new content after the existing content of the <see cref="T:System.Xml.Linq.XContainer" />.</para>
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content as children of this <see cref="T:System.Xml.Linq.XContainer" />.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter list of content objects.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddFirst">
+      <MemberSignature Language="C#" Value="public void AddFirst (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddFirst(object content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the new content before the existing content of the <see cref="T:System.Xml.Linq.XContainer" />.</para>
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content as the first children of this document or element.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A content object containing simple content or a collection of content objects to be added.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddFirst">
+      <MemberSignature Language="C#" Value="public void AddFirst (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddFirst(object[] content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds the new content before the existing content of the <see cref="T:System.Xml.Linq.XContainer" />.</para>
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified content as the first children of this document or element.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter list of content objects.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateWriter">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlWriter CreateWriter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlWriter CreateWriter() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlWriter</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>While serializing, namespace prefixes are inferred from the namespace attributes in the XML tree.</para>
+          <para>For more information, see <format type="text/html"><a href="e3003209-3234-45be-a832-47feb7927430">Working with Namespaces</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.XmlWriter" /> that can be used to add nodes to the <see cref="T:System.Xml.Linq.XContainer" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> that is ready to have content written to it.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="DescendantNodes">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt; DescendantNodes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XNode&gt; DescendantNodes() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that attributes are not considered to be nodes in sqltecxlinq, so they will not be part of the collection that is returned by this method.</para>
+          <para>This method uses deferred execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the descendant nodes for this document or element, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> containing the descendant nodes of the <see cref="T:System.Xml.Linq.XContainer" />, in document order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Descendants">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; Descendants ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; Descendants() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that this method will not return itself in the resulting <see cref="T:System.Collections.Generic.IEnumerable`1" />. See <see cref="M:System.Xml.Linq.XElement.DescendantsAndSelf" /> if you need to include the current <see cref="T:System.Xml.Linq.XElement" /> in the results.</para>
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the descendant elements for this document or element, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the descendant elements of the <see cref="T:System.Xml.Linq.XContainer" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Descendants">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; Descendants (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; Descendants(class System.Xml.Linq.XName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a filtered collection of the descendant elements for this document or element, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the descendant elements of the <see cref="T:System.Xml.Linq.XContainer" /> that match the specified <see cref="T:System.Xml.Linq.XName" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Element">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XElement Element (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Linq.XElement Element(class System.Xml.Linq.XName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XElement</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null if there is no element with the specified name.</para>
+          <para>Some axis methods return collections of elements or attributes. This method returns only a single element.</para>
+          <para>This method returns null if the element with the specified name is not found. All of the methods that allow you to construct elements (the constructor of <see cref="T:System.Xml.Linq.XElement" />, <see cref="Overload:System.Xml.Linq.XContainer.Add" />, and so on) accept null as a valid argument. This allows you to use a convenient idiom: you can call this method as part of functional construction, and the element is added to the XML tree being constructed if and only if the element exists in the source tree. The following example shows this idiom.</para>
+          <para>In contrast to <see cref="Overload:System.Xml.Linq.XContainer.Elements" />, this method is not an axis method. It does not use deferred execution; it simply returns an element when called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first (in document order) child element with the specified <see cref="T:System.Xml.Linq.XName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Linq.XElement" /> that matches the specified <see cref="T:System.Xml.Linq.XName" />, or null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Elements">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; Elements ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; Elements() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the child elements of this element or document, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the child elements of this <see cref="T:System.Xml.Linq.XContainer" />, in document order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Elements">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt; Elements (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XElement&gt; Elements(class System.Xml.Linq.XName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XElement&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses deferred execution. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a filtered collection of the child elements of this element or document, in document order. Only elements that have a matching <see cref="T:System.Xml.Linq.XName" /> are included in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> containing the children of the <see cref="T:System.Xml.Linq.XContainer" /> that have a matching <see cref="T:System.Xml.Linq.XName" />, in document order.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to match.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FirstNode">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XNode FirstNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XNode FirstNode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get the first child node of this node.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LastNode">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XNode LastNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XNode LastNode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get the last child node of this node.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Nodes">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt; Nodes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.Xml.Linq.XNode&gt; Nodes() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XNode&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that the content does not include attributes. In sqltecxlinq, attributes are not considered to be nodes of the tree. They are name/value pairs associated with an element.</para>
+          <para>This method uses deferred execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of the child nodes of this element or document, in document order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XNode" /> containing the contents of this <see cref="T:System.Xml.Linq.XContainer" />, in document order.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveNodes">
+      <MemberSignature Language="C#" Value="public void RemoveNodes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveNodes() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you call this method on an element that contains attributes, this method will not remove the attributes. To remove the attributes of an element, use <see cref="M:System.Xml.Linq.XElement.RemoveAttributes" />.</para>
+          <para>The <see cref="Overload:System.Xml.Linq.Extensions.Remove" /> method has related functionality. It removes the child nodes of every node in a collection.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the child nodes from this document or element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplaceNodes">
+      <MemberSignature Language="C#" Value="public void ReplaceNodes (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReplaceNodes(object content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+          <para>This method has snapshot semantics. It first creates a copy of the new content. It then removes all children nodes of this node. Finally, it adds the new content as children nodes. This means that you can replace children nodes using a query on the children nodes themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the children nodes of this document or element with the specified content.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A content object containing simple content or a collection of content objects that replace the children nodes.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplaceNodes">
+      <MemberSignature Language="C#" Value="public void ReplaceNodes (object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReplaceNodes(object[] content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about the valid content that can be passed to this function, see <format type="text/html"><a href="aee2d319-5c5f-4b99-9bb4-2f58232577ae">Valid Content of XElement and XDocument Objects</a></format>.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+          <para>This method has snapshot semantics. It first creates a copy of the new content. It then removes all children nodes of this node. Finally, it adds the new content as children nodes. This means that you can replace children nodes using a query on the children nodes themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the children nodes of this document or element with the specified content.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parameter list of content objects.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

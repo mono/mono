@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlValidatingReader" FullName="System.Xml.XmlValidatingReader">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlValidatingReader : System.Xml.XmlReader, Mono.Xml.IHasXmlParserContext, System.Xml.IXmlLineInfo, System.Xml.IXmlNamespaceResolver" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlValidatingReader extends System.Xml.XmlReader implements class Mono.Xml.IHasXmlParserContext, class System.Xml.IXmlLineInfo, class System.Xml.IXmlNamespaceResolver" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -27,30 +30,60 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XmlValidatingReader implements the <see cref="T:System.Xml.XmlReader" /> class and provides support for data validation. Use the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property to have the reader validate by using schema files that are cached in an <see cref="T:System.Xml.Schema.XmlSchemaCollection" />. The <see cref="P:System.Xml.XmlValidatingReader.ValidationType" /> property specifies what type of validation the reader should perform. Setting the property to ValidationType.None creates a non-validating reader.</para>
+      <para>
+        <see cref="T:System.Xml.XmlValidatingReader" /> throws an <see cref="T:System.Xml.XmlException" /> on XML parse errors. After an exception is thrown the state of the reader is not predictable. For example, the reported node type may be different than the actual node type of the current node. Use the <see cref="P:System.Xml.XmlValidatingReader.ReadState" /> property to check whether a reader is in error state.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reader that provides document type definition (DTD), XML-Data Reduced (XDR) schema, and XML Schema definition language (XSD) validation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlValidatingReader (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlReader reader) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added: an object of type 'XmlReader'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>All nodes returned from the given XmlReader are also returned from this validating reader, so there is no information loss in the process. New nodes not returned from the underlying reader may be added by this reader (for example, default attributes and the children of an entity reference). Any properties set on the given XmlTextReader also apply to this validating reader. For example, if the supplied reader had WhitespaceHandling.None set, this validating reader also ignores white space.</para>
+          <para>When external document type definitions (DTDs) or schemas are needed for validation, the <see cref="P:System.Xml.XmlValidatingReader.XmlResolver" /> property sets the <see cref="T:System.Xml.XmlResolver" /> object to use for resolving external resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlValidatingReader class that validates the content returned from the given <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlReader to read from while validating. The current implementation supports only <see cref="T:System.Xml.XmlTextReader" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlValidatingReader (System.IO.Stream xmlFragment, System.Xml.XmlNodeType fragType, System.Xml.XmlParserContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream xmlFragment, valuetype System.Xml.XmlNodeType fragType, class System.Xml.XmlParserContext context) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="xmlFragment" Type="System.IO.Stream" />
@@ -58,20 +91,88 @@
         <Parameter Name="context" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <param name="xmlFragment">To be added: an object of type 'System.IO.Stream'</param>
-        <param name="fragType">To be added: an object of type 'XmlNodeType'</param>
-        <param name="context">To be added: an object of type 'XmlParserContext'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This constructor parses the given string as a fragment of XML. If the XML fragment is an element or attribute, you can bypass the root level rules for well-formed XML documents.</para>
+          <para>The following table lists valid values for <paramref name="fragType" /> and how the reader parses each of the different node types.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>XmlNodeType </para>
+                </term>
+                <description>
+                  <para>Fragment May Contain </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Element </para>
+              </term>
+              <description>
+                <para>Any valid element content (for example, any combination of elements, comments, processing instructions, cdata, text, and entity references). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>The value of an attribute (the part inside the quotes). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Document </para>
+              </term>
+              <description>
+                <para>The contents of an entire XML document; this enforces document level rules. </para>
+              </description>
+            </item>
+          </list>
+          <para>The reader uses the following steps to determine the encoding of the stream:</para>
+          <list type="ordered">
+            <item>
+              <para>Checks the <see cref="P:System.Xml.XmlParserContext.Encoding" /> property to determine the encoding.</para>
+            </item>
+            <item>
+              <para>If the Encoding property is null, the reader checks for a byte-order mark at the beginning of the stream.</para>
+            </item>
+            <item>
+              <para>If the Encoding property is null, and no byte-order mark is found, the reader assumes the stream is encoded in UTF-8.</para>
+            </item>
+          </list>
+          <para>If this reader will be validating using document type definition (DTD) (that is, <see cref="P:System.Xml.XmlValidatingReader.ValidationType" /> is set to ValidationType.DTD or ValidationType.Auto), the XmlParserContext specified in the constructor must supply all the necessary DocumentType information.</para>
+          <block subset="none" type="note">
+            <para>It is not possible to validate a fragment by using a DTD. By definition a DTD requires an entire document to be loaded for validation.</para>
+          </block>
+          <para>If this reader will be validating by using XML-Data Reduced (XDR) or XML Schema definition language (XSD) schemas, use the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property to specify the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> that contains the schemas (that is, the XmlParserContext does not need to supply the DocumentType information).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlValidatingReader class with the specified values.</para>
+        </summary>
+        <param name="xmlFragment">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML fragment to parse. </param>
+        <param name="fragType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNodeType" /> of the XML fragment. This determines what the fragment can contain (see table below). </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlParserContext" /> in which the XML fragment is to be parsed. This includes the <see cref="T:System.Xml.XmlNameTable" /> to use, encoding, namespace scope, current xml:lang, and xml:space scope. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlValidatingReader (string xmlFragment, System.Xml.XmlNodeType fragType, System.Xml.XmlParserContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string xmlFragment, valuetype System.Xml.XmlNodeType fragType, class System.Xml.XmlParserContext context) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="xmlFragment" Type="System.String" />
@@ -79,165 +180,417 @@
         <Parameter Name="context" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <param name="xmlFragment">To be added: an object of type 'string'</param>
-        <param name="fragType">To be added: an object of type 'XmlNodeType'</param>
-        <param name="context">To be added: an object of type 'XmlParserContext'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This constructor parses the given string as a fragment of XML. If the XML fragment is an element or attribute, you can bypass the root level rules for well-formed XML documents. This constructor can handle strings returned from <see cref="M:System.Xml.XmlReader.ReadInnerXml" />.</para>
+          <para>The following table lists valid values for <paramref name="fragType" /> and how the reader parses each of the different node types.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>XmlNodeType </para>
+                </term>
+                <description>
+                  <para>Fragment May Contain </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Element </para>
+              </term>
+              <description>
+                <para>Any valid element content (for example, any combination of elements, comments, processing instructions, cdata, text, and entity references). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>The value of an attribute (the part inside the quotes). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Document </para>
+              </term>
+              <description>
+                <para>The contents of an entire XML document; this enforces document level rules. </para>
+              </description>
+            </item>
+          </list>
+          <para>If this reader will be validating by using document type definition (DTD) (that is, <see cref="P:System.Xml.XmlValidatingReader.ValidationType" /> is set to ValidationType.DTD or ValidationType.Auto), the XmlParserContext specified in the constructor must supply all the necessary DocumentType information.</para>
+          <block subset="none" type="note">
+            <para>It is not possible to validate a fragment by using DTD. By definition DTD requires an entire document to be loaded for validation.</para>
+          </block>
+          <para>If this reader will be validating by using XML-Data Reduced (XDR) or XML Schema definition language (XSD) schemas, use the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property to specify the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> that contains the schemas (the XmlParserContext does not need to supply the DocumentType information).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlValidatingReader class with the specified values.</para>
+        </summary>
+        <param name="xmlFragment">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string containing the XML fragment to parse. </param>
+        <param name="fragType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNodeType" /> of the XML fragment. This also determines what the fragment string can contain (see table below). </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlParserContext" /> in which the XML fragment is to be parsed. This includes the <see cref="T:System.Xml.NameTable" /> to use, encoding, namespace scope, current xml:lang, and xml:space scope. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AttributeCount">
       <MemberSignature Language="C#" Value="public override int AttributeCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 AttributeCount" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property is relevant to Element, DocumentType, and XmlDeclaration nodes only. (Other node types do not have attributes.) </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of attributes on the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BaseURI">
       <MemberSignature Language="C#" Value="public override string BaseURI { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BaseURI" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>A networked XML document is comprised of chunks of data aggregated by using various World Wide Web Consortium (W3C) standard inclusion mechanisms and therefore contains nodes that come from different places. document type definition (DTD) entities are an example of this, but this is not limited to DTDs. The base URI tells you where these nodes came from. If there is no base URI for the nodes being returned (for example, they were parsed from an in-memory string), String.Empty is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base URI of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanReadBinaryContent">
       <MemberSignature Language="C#" Value="public override bool CanReadBinaryContent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanReadBinaryContent" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>The binary content read methods include the <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" />, <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" />, <see cref="M:System.Xml.XmlValidatingReader.ReadElementContentAsBase64(System.Byte[],System.Int32,System.Int32)" />, and <see cref="M:System.Xml.XmlValidatingReader.ReadElementContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Xml.XmlValidatingReader" /> implements the binary content read methods.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanResolveEntity">
       <MemberSignature Language="C#" Value="public override bool CanResolveEntity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanResolveEntity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this reader can parse and resolve entities.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This method also releases any resources held while reading. If this reader was constructed by using an <see cref="T:System.Xml.XmlTextReader" />, this method also calls Close on the underlying reader. If this reader was constructed by using a stream, this method also calls Close on the underlying stream.</para>
+          <para>If Close has already been called, no action is performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the <see cref="P:System.Xml.XmlReader.ReadState" /> to Closed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Depth">
       <MemberSignature Language="C#" Value="public override int Depth { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Depth" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the depth of the current node in the XML document.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encoding">
       <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding Encoding" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Text.Encoding'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>When any external reference is read (such as expanding an entity in a document type definition (DTD) file or reading a schema file) the encoding property is set to the encoding value of the external reference. If encoding is not specified in the external reference, and there is no byte-order mark, this defaults to UTF-8.</para>
+          <para>All the encoding standards that the underlying operating system supports are supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the encoding attribute for the document.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="EntityHandling">
+      <MemberSignature Language="C#" Value="public System.Xml.EntityHandling EntityHandling { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.EntityHandling EntityHandling" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EntityHandling">
-      <MemberSignature Language="C#" Value="public System.Xml.EntityHandling EntityHandling { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.EntityHandling</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'EntityHandling'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property can be changed and takes effect after the next <see cref="M:System.Xml.XmlValidatingReader.Read" /> call.</para>
+          <para>When EntityHandling is set to ExpandCharEntities, attribute values are only partially normalized. The reader normalizes each individual text node independently from the content of adjacent entity reference nodes.</para>
+          <para>To illustrate the difference between the entity handling modes consider the following XML: </para>
+          <code> &lt;!DOCTYPE doc [&lt;!ENTITY num "123"&gt;]&gt;
+  &lt;doc&gt; &amp;#65; &amp;num; &lt;/doc&gt;</code>
+          <para>When EntityHandling is set to ExpandEntities the "doc" element node contains one text node with the expanded entity text: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Depth </para>
+                </term>
+                <description>
+                  <para>NodeType </para>
+                </description>
+                <description>
+                  <para>Name </para>
+                </description>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>Text </para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para>A 123 </para>
+              </description>
+            </item>
+          </list>
+          <para>When EntityHandling is set to ExpandCharEntites, and <see cref="P:System.Xml.XmlTextReader.WhitespaceHandling" /> is set to Significant or All, the "doc" element expands the character entity and returns the general entity as a node: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Depth </para>
+                </term>
+                <description>
+                  <para>NodeType </para>
+                </description>
+                <description>
+                  <para>Name </para>
+                </description>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>Text </para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para>A </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>EntityReference </para>
+              </description>
+              <description>
+                <para>num </para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>SignificantWhitespace </para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+              <description>
+                <para> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how the reader handles entities.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EOF">
       <MemberSignature Language="C#" Value="public override bool EOF { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EOF" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the reader is positioned at the end of the stream.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttribute">
       <MemberSignature Language="C#" Value="public override string GetAttribute (int i);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetAttribute(int32 i) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -245,19 +598,34 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not move the reader.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the attribute with the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the attribute. The index is zero-based. (The first attribute has index 0.) </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttribute">
       <MemberSignature Language="C#" Value="public override string GetAttribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetAttribute(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -265,102 +633,270 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This method does not move the reader.</para>
+          <para>If the reader is positioned on a DocumentType node, this method can be used to get the PUBLIC and SYSTEM literals, for example, reader.GetAttribute("PUBLIC") </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the attribute with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found, null is returned.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetAttribute">
+      <MemberSignature Language="C#" Value="public override string GetAttribute (string localName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetAttribute(string localName, string namespaceURI) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAttribute">
-      <MemberSignature Language="C#" Value="public override string GetAttribute (string localName, string namespaceName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="localName" Type="System.String" />
-        <Parameter Name="namespaceName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>The following XML contains an attribute in a specific namespace: </para>
+          <code>&lt;test xmlns:dt="urn:datatypes" dt:type="int"/&gt;</code>
+          <para>You can look up the dt:type attribute by using one argument (prefix and local name) or two arguments (local name and namespace URI):  </para>
+          <code>String dt = reader.GetAttribute("dt:type");
+String dt2 = reader.GetAttribute("type","urn:datatypes");</code>
+          <para>To look up the xmlns:dt attribute, use one of the following arguments: </para>
+          <code>String dt3 = reader.GetAttribute("xmlns:dt");
+String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
+          <para>You can also get this information by using the <see cref="P:System.Xml.XmlValidatingReader.Prefix" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the attribute with the specified local name and namespace Uniform Resource Identifier (URI).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found, null is returned. This method does not move the reader.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasLineInfo">
       <MemberSignature Language="C#" Value="public bool HasLineInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool HasLineInfo() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the class can return line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the class can return line information; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasValue">
       <MemberSignature Language="C#" Value="public override bool HasValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>The following table lists node types that have a value to return.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Node Type </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>The value of the attribute. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CDATA </para>
+              </term>
+              <description>
+                <para>The content of the CDATA section. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Comment </para>
+              </term>
+              <description>
+                <para>The content of the comment. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentType </para>
+              </term>
+              <description>
+                <para>The internal subset. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProcessingInstruction </para>
+              </term>
+              <description>
+                <para>The entire content, excluding the target. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SignificantWhitespace </para>
+              </term>
+              <description>
+                <para>The white space between markup in a mixed content model. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text </para>
+              </term>
+              <description>
+                <para>The content of the text node. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Whitespace </para>
+              </term>
+              <description>
+                <para>The white space between markup. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XmlDeclaration </para>
+              </term>
+              <description>
+                <para>The content of the declaration. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current node can have a <see cref="P:System.Xml.XmlValidatingReader.Value" /> other than String.Empty.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsDefault">
       <MemberSignature Language="C#" Value="public override bool IsDefault { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDefault" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property applies only to an attribute node.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current node is an attribute that was generated from the default value defined in the document type definition (DTD) or schema.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsEmptyElement">
       <MemberSignature Language="C#" Value="public override bool IsEmptyElement { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsEmptyElement" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property enables you to determine the difference between the following: </para>
+          <para>&lt;item num="123"/&gt; (IsEmptyElement is true).</para>
+          <para>&lt;item num="123"&gt; (IsEmptyElement is false, although element content is empty).</para>
+          <para>A corresponding EndElement node is not generated for empty elements.</para>
+          <para>If default content has been added to an element due to schema validation, IsEmptyElement still returns true. It has no bearing on whether or not the element has a default value. In other words, IsEmptyElement simply reports whether or not the element in the source document had an end element tag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current node is an empty element (for example, &lt;MyElement/&gt;).</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public virtual string this[int i] { get; }" />
@@ -426,55 +962,99 @@
     </Member>
     <Member MemberName="LineNumber">
       <MemberSignature Language="C#" Value="public int LineNumber { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LineNumber" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property is most commonly used for error reporting, but can be called at any time. The starting value for this property is 1. Combined with <see cref="P:System.Xml.XmlValidatingReader.LinePosition" />, a value of 1,1 indicates the start of the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current line number.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LinePosition">
       <MemberSignature Language="C#" Value="public int LinePosition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LinePosition" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property is most commonly used for error reporting, but can be called at any time. The starting value for this property is 1.</para>
+          <para>The position indicated is the first character of text in the markup.</para>
+          <code>&lt;root&gt;
+ abc&lt;tag/&gt;
+&lt;/root&gt;</code>
+          <para>On the first line of the preceding XML text, a LinePosition of 2 corresponds to the character r; on the second line, a LinePosition of 5 corresponds to the character t; and on the third line, a LinePosition of 3 corresponds to the character r.</para>
+          <para>Combined with <see cref="P:System.Xml.XmlValidatingReader.LineNumber" />, a value of 1,1 indicates the start of the document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current line position.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LocalName">
       <MemberSignature Language="C#" Value="public override string LocalName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LocalName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local name of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LookupNamespace">
       <MemberSignature Language="C#" Value="public override string LookupNamespace (string prefix);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string LookupNamespace(string prefix) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -482,19 +1062,39 @@
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>In the following XML string, if the reader is positioned on the href attribute, the prefix a is resolved by calling reader.LookupNamespace("a", true). The returned string is urn:456.</para>
+          <code> &lt;root xmlns:a="urn:456"&gt;
+  &lt;item&gt;
+  &lt;ref href="a:b"/&gt;
+  &lt;/item&gt;
+ &lt;/root&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a namespace prefix in the current element's scope.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI to which the prefix maps or null if no matching prefix is found.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace Uniform Resource Identifier (URI) you want to resolve. To match the default namespace, pass an empty string. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Mono.Xml.IHasXmlParserContext.ParserContext">
       <MemberSignature Language="C#" Value="System.Xml.XmlParserContext Mono.Xml.IHasXmlParserContext.ParserContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlParserContext Mono.Xml.IHasXmlParserContext.ParserContext" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlParserContext</ReturnType>
       </ReturnValue>
@@ -503,14 +1103,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToAttribute">
       <MemberSignature Language="C#" Value="public override void MoveToAttribute (int i);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void MoveToAttribute(int32 i) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -518,18 +1120,29 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the attribute with the specified index.</para>
+        </summary>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToAttribute">
       <MemberSignature Language="C#" Value="public override bool MoveToAttribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToAttribute(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -537,461 +1150,926 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>After calling this method, the <see cref="P:System.Xml.XmlValidatingReader.Name" />, <see cref="P:System.Xml.XmlValidatingReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlValidatingReader.Prefix" /> properties reflect the properties of that attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the attribute with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the position of the reader does not change.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MoveToAttribute">
+      <MemberSignature Language="C#" Value="public override bool MoveToAttribute (string localName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToAttribute(string localName, string namespaceURI) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveToAttribute">
-      <MemberSignature Language="C#" Value="public override bool MoveToAttribute (string localName, string namespaceName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="localName" Type="System.String" />
-        <Parameter Name="namespaceName" Type="System.String" />
+        <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="namespaceName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>After calling this method, the <see cref="P:System.Xml.XmlValidatingReader.Name" />, <see cref="P:System.Xml.XmlValidatingReader.NamespaceURI" />, and <see cref="P:System.Xml.XmlValidatingReader.Prefix" /> properties reflect the properties of that attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the attribute with the specified local name and namespace Uniform Resource Identifier (URI).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the position of the reader does not change.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToElement">
       <MemberSignature Language="C#" Value="public override bool MoveToElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToElement() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>Use this method to return to an element after navigating through its attributes. This method moves the reader to one of the following node types: Element, DocumentType, or XmlDeclaration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the element that contains the current attribute node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reader is positioned on an attribute (the reader moves to the element that owns the attribute); false if the reader is not positioned on an attribute (the position of the reader does not change).</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToFirstAttribute">
       <MemberSignature Language="C#" Value="public override bool MoveToFirstAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToFirstAttribute() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the first attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute exists (the reader moves to the first attribute); otherwise, false (the position of the reader does not change).</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveToNextAttribute">
       <MemberSignature Language="C#" Value="public override bool MoveToNextAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MoveToNextAttribute() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>If the current node is an element node, this method is equivalent to <see cref="M:System.Xml.XmlValidatingReader.MoveToFirstAttribute" />. If MoveToNextAttribute returns true, the reader moves to the next attribute; otherwise, the position of the reader does not change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the next attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a next attribute; false if there are no more attributes.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the qualified name of the current node.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Namespaces">
+      <MemberSignature Language="C#" Value="public bool Namespaces { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Namespaces" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Namespaces">
-      <MemberSignature Language="C#" Value="public bool Namespaces { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to do namespace support.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NamespaceURI">
       <MemberSignature Language="C#" Value="public override string NamespaceURI { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NamespaceURI" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is relevant to Element and Attribute nodes only.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace Uniform Resource Identifier (URI) (as defined in the World Wide Web Consortium (W3C) Namespace specification) of the node on which the reader is positioned.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NameTable">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNameTable NameTable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNameTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>All node and attribute names returned from <see cref="T:System.Xml.XmlValidatingReader" /> are atomized by using the NameTable. When the same name is returned multiple times (for example, Customer), the same String object will be returned for that name. This makes it possible for you to write efficient code that does object comparisons on these strings instead of expensive string comparisons.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlNameTable" /> associated with this implementation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeType">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlNodeType NodeType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property never returns the following XmlNodeType types: Document, DocumentFragment, Entity, or Notation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Prefix">
       <MemberSignature Language="C#" Value="public override string Prefix { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Prefix" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace prefix associated with the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="QuoteChar">
       <MemberSignature Language="C#" Value="public override char QuoteChar { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char QuoteChar" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property applies only to an attribute node.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the quotation mark character used to enclose the value of an attribute node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public override bool Read ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Read() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>When a reader is first created and initialized, there is no information available. You must call Read to read the first node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the next node from the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the next node was read successfully; false if there are no more nodes to read.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadAttributeValue">
       <MemberSignature Language="C#" Value="public override bool ReadAttributeValue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool ReadAttributeValue() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>Use this method after calling <see cref="M:System.Xml.XmlValidatingReader.MoveToAttribute(System.String)" /> to read through the text or entity reference nodes that make up the attribute value. The <see cref="P:System.Xml.XmlReader.Depth" /> of the attribute value nodes is one plus the depth of the attribute node. The Depth increments and decrements by one when you step into and out of general entity references.</para>
+          <para>For example, suppose you have the following XML: &lt;test name="a &amp;b; c"/&gt; </para>
+          <para>where the entity b is defined in the document type definition (DTD) as follows: &lt;!ENTITY b "123"&gt; </para>
+          <para>If <see cref="P:System.Xml.XmlValidatingReader.EntityHandling" /> is set to ExpandCharEntities, the following C# code returns the attribute value as two text nodes and one entity reference node: </para>
+          <code>reader.MoveToAttribute("name");
+  while (reader.ReadAttributeValue())
+  {
+  if (reader.NodeType == XmlNodeType.Text)
+  {
+  // at this point reader.Value == "a " or " c"
+  }
+  else if (reader.NodeType == XmlNodeType.EntityReference)
+  {
+  // at this point reader.Name == "b"
+  reader.ResolveEntity();
+  while (reader.ReadAttributeValue() &amp;&amp;
+  reader.NodeType != XmlNodeType.EndEntity)
+  {
+  // reader.Value == "123"
+  }
+  }
+    }</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the attribute value into one or more Text, EntityReference, or EndEntity nodes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are nodes to return.</para>
+          <para>false if the reader is not positioned on an attribute node when the initial call is made or if all the attribute values have been read.</para>
+          <para>An empty attribute, such as, misc="", returns true with a single node with a value of String.Empty.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadContentAsBase64">
-      <MemberSignature Language="C#" Value="public override int ReadContentAsBase64 (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadContentAsBase64 (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadContentAsBase64(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This method streams the content, decodes the Base64 content, and returns the decoded binary bytes (for example, an inline Base64 encoded GIF image) into the buffer. This method can be called successively to read large streams of embedded text. For more information, see RFC 1521, "MIME (Multipurpose Internet Mail Extensions) Part One: Mechanisms for Specifying and Describing the Format of Internet Message Bodies". You can obtain RFCs from the Request for Comments Web site at http://www.rfc-editor.org.</para>
+          <block subset="none" type="note">
+            <para>You should not access any of the reader properties between calls to the <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> method until the method returns the value 0.</para>
+          </block>
+          <para>This method has the following behavior:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> returns the value 0 when it has reached the end of the byte stream it was operating on. The reader is positioned on the first non-content node.</para>
+            </item>
+            <item>
+              <para>If you ask for fewer, or the exact number, of bytes than are left in the stream, the reader remains in its current position.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> is not supported on the following XML node types:  Element, XmlDeclaration, None, Document, DocumentType, Notation, Entity, and DocumentFragment.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content and returns the Base64 decoded binary bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadContentAsBinHex">
-      <MemberSignature Language="C#" Value="public override int ReadContentAsBinHex (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadContentAsBinHex (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadContentAsBinHex(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This method streams the content, decodes the BinHex content, and returns the decoded binary bytes (for example, an inline BinHex encoded GIF image) into the buffer. This method can be called successively to read large streams of embedded text.</para>
+          <block subset="none" type="note">
+            <para>You should not access any of the reader properties between calls to the <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> method until the method returns the value 0.</para>
+          </block>
+          <para>This method has the following behavior:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> returns the value 0 when it has reached the end of the byte stream it was operating on. The reader is positioned on the first non-content node.</para>
+            </item>
+            <item>
+              <para>If you ask for fewer, or the exact number, of bytes than are left in the stream, the reader remains in its current position.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> is not supported on the following XML node types:  Element, XmlDeclaration, None, Document, DocumentType, Notation, Entity, and DocumentFragment.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content and returns the BinHex decoded binary bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadElementContentAsBase64">
-      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBase64 (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBase64 (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadElementContentAsBase64(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This method reads the element content, decodes it using Base64 encoding, and returns the decoded binary bytes (for example, an inline Base64 encoded GIF image) into the buffer. For more information, see RFC 1521, "MIME (Multipurpose Internet Mail Extensions) Part One: Mechanisms for Specifying and Describing the Format of Internet Message Bodies". You can obtain RFCs from the Request for Comments Web site at http://www.rfc-editor.org.</para>
+          <para>This method can read only simple-content elements. The element can contain text, white space, significant white space, CDATA sections, comments, and processing instructions. It can also contain entity references, which are automatically expanded. The element cannot have child elements.</para>
+          <para>This method is very similar to the <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBase64(System.Byte[],System.Int32,System.Int32)" /> method except that it can be called only on element node types.</para>
+          <para>If the <paramref name="count" /> value is higher than the number of bytes in the document, or if it is equal to the number of bytes in the document, the <see cref="T:System.Xml.XmlValidatingReader" /> reads all the remaining bytes in the document and returns the number of bytes read. The next <see cref="T:System.Xml.XmlValidatingReader" /> method call returns a zero and moves the reader to the node following the <see cref="F:System.Xml.XmlNodeType.EndElement" />.</para>
+          <para>If you call <see cref="M:System.Xml.XmlValidatingReader.Read" /> before all of the element content is consumed, the reader may behave as if the first content was consumed and then the <see cref="M:System.Xml.XmlValidatingReader.Read" /> method was called. This means that the reader will read all the text until the end element is encountered. It will then read the end tag node, read the next node, and then position itself on the next subsequent node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the element and decodes the Base64 content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadElementContentAsBinHex">
-      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBinHex (byte[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public override int ReadElementContentAsBinHex (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 ReadElementContentAsBinHex(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="length" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This method reads the element content, decodes it using BinHex encoding, and returns the decoded binary bytes (for example, an inline BinHex encoded GIF image) into the buffer.</para>
+          <para>This method can read only simple-content elements. The element can contain text, white space, significant white space, CDATA sections, comments, and processing instructions. It can also contain entity references, which are automatically expanded. The element cannot have child elements.</para>
+          <para>This method is very similar to the <see cref="M:System.Xml.XmlValidatingReader.ReadContentAsBinHex(System.Byte[],System.Int32,System.Int32)" /> method except that it can be called only on element node types.</para>
+          <para>If the <paramref name="count" /> value is higher than the number of bytes in the document, or if it is equal to the number of bytes in the document, the <see cref="T:System.Xml.XmlValidatingReader" /> reads all the remaining bytes in the document and returns the number of bytes read. The next <see cref="T:System.Xml.XmlValidatingReader" /> method call returns a zero and moves the reader to the node following the <see cref="F:System.Xml.XmlNodeType.EndElement" />.</para>
+          <para>If you call <see cref="M:System.Xml.XmlValidatingReader.Read" /> before all of the element content is consumed, the reader may behave as if the first content was consumed and then the <see cref="M:System.Xml.XmlValidatingReader.Read" /> method was called. This means that the reader will read all the text until the end element is encountered. It will then read the end tag node, read the next node, and then position itself on the next subsequent node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the element and decodes the BinHex content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the buffer where to start copying the result.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to copy into the buffer. The actual number of bytes copied is returned from this method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reader">
       <MemberSignature Language="C#" Value="public System.Xml.XmlReader Reader { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlReader Reader" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlReader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlReader'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property allows the user to access properties specific to the supplied reader. It returns a typed XmlReader. The user should query for the type before casting.</para>
+          <para>Changing the state of the returned reader (for example, calling one of the read methods) can lead to unpredictable results.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlReader" /> used to construct this XmlValidatingReader.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadState">
       <MemberSignature Language="C#" Value="public override System.Xml.ReadState ReadState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.ReadState ReadState" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.ReadState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the reader.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadString">
       <MemberSignature Language="C#" Value="public override string ReadString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ReadString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>If positioned on an element, ReadString concatenates all text, significant white space, white space, and CDATA section node types together and returns the concatenated data as the element content. The reader stops when any markup is encountered, including comments and processing instructions. This could occur in a mixed content model, or when an element end tag is read.</para>
+          <para>If positioned on a text node, ReadString performs the same concatenation from the text node to the element end tag. If the reader is positioned on an attribute text node, ReadString has the same functionality as if the reader were position on the element start tag. It returns all the concatenated element text nodes.</para>
+          <para>The <see cref="P:System.Xml.XmlValidatingReader.EntityHandling" /> property determines how ReadString works as follows: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ExpandEntities </para>
+              </term>
+              <description>
+                <para>Returns expanded character and general entities. This is the default. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ExpandCharEntities </para>
+              </term>
+              <description>
+                <para>Returns the text content up to but not including a general entity reference. This means a general entity causes ReadString to stop. You must call Read to step over the entity reference. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the contents of an element or text node as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the element or text node. This can be an empty string if the reader is positioned on something other than an element or text node, or if there is no more text content to return in the current context.</para>
+          <block subset="none" type="note">
+            <para>The text node can be either an element or an attribute text node.</para>
+          </block>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadTypedValue">
       <MemberSignature Language="C#" Value="public object ReadTypedValue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object ReadTypedValue() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>For example, if the schema type is defined as xsd:int, the runtime type int32 is returned for the object. This can be tested using the <see cref="M:System.Object.GetType" /> method and cast accordingly. The <see cref="M:System.Xml.XmlValidatingReader.ReadTypedValue" /> method always returns a type that is derived from the <see cref="T:System.Object" /> class. It never returns the <see cref="T:System.Object" /> type.</para>
+          <para>If the reader is positioned on an attribute, this method returns the runtime typed object, but does not change the position of the reader. If the reader is positioned on an element, ReadTypedValue reads any CDATA, text, white space, significant white space, and comment nodes, returns the runtime typed object and positions the reader on the end tag. Any types that do not have a direct mapping, for example NMTOKENS, are returned as strings.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Xml.XmlValidatingReader.ValidationType" /> has been set to ValidationType.None, data type information is not provided from either schemas or document type definitions (DTDs).</para>
+          </block>
+          <block subset="none" type="note">
+            <para>After calling <see cref="M:System.Xml.XmlValidatingReader.Close" />, ReadTypedValue will return null.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the common language runtime type for the specified XML Schema definition language (XSD) type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The common language runtime type for the specified XML Schema type.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveEntity">
       <MemberSignature Language="C#" Value="public override void ResolveEntity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void ResolveEntity() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>If the reader is positioned on an EntityReference node (XmlNodeType.EntityReference), if <see cref="M:System.Xml.XmlValidatingReader.Read" /> is called after calling this method, the entity replacement text is parsed. After the entity replacement text is finished, an EndEntity node is returned to close the entity reference scope.</para>
+          <block subset="none" type="note">
+            <para>After calling this method, if the entity is part of an attribute value, you must call <see cref="M:System.Xml.XmlValidatingReader.ReadAttributeValue" /> to step into the entity.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves the entity reference for EntityReference nodes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Schemas">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaCollection Schemas { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaCollection Schemas" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Schema.XmlSchemaCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>The XmlSchemaCollection holds pre-loaded XML-Data Reduced (XDR) and XML Schema definition language (XSD) schemas. This property gives the reader access to the cache of schemas and allows it to validate without having to re-load schemas every time. The reader does not add anything to the XmlSchemaCollection.</para>
+          <para>If the XmlSchemaCollection includes an XML schema (XSD) which contains include or import elements that reference other namespaces, the schemas for these other namespaces are loaded for validation purposes only. Unless these schemas were explicitly added to the schema collection, they will not be accessible using any of the collection methods or properties. For example, if the collection contains the schema file a.xsd, which contains a reference to the schema file b.xsd, you must add b.xsd to the schema collection before you can access it using any of the collection methods or properties.</para>
+          <para>When the XmlSchemaCollection is accessed using the Schemas property, the <see cref="M:System.Xml.Schema.XmlSchemaCollection.Add(System.String,System.String)" /> method uses the <see cref="T:System.Xml.XmlResolver" /> specified by the <see cref="P:System.Xml.XmlValidatingReader.XmlResolver" /> property.</para>
+          <block subset="none" type="note">
+            <para>The schemas must be added to the XmlSchemaCollection before the first Read call.</para>
+          </block>
+          <para>For more information, refer to <format type="text/html"><a href="ac73e04a-9b40-4dea-aed8-7b956475ffe4">Validation of XML with XmlValidatingReader</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> to use for validation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SchemaType">
       <MemberSignature Language="C#" Value="public object SchemaType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SchemaType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>The user needs to test for the returned type. For example, </para>
+          <code>object obj = vreader.SchemaType;
+ if (obj is XmlSchemaType)
+ {
+   XmlSchemaType st = (XmlSchemaType)obj;
+   // use XmlSchemaType object
+ }
+ if (obj is XmlSchemaDatatype)
+ {
+   XmlSchemaDatatype sd = (XmlSchemaDatatype)obj;
+   Type vt = sd.ValueType;
+   // use XmlSchemaDatatype object
+       }</code>
+          <para>If XML Schema validation is being performed, the XmlSchemaType or XmlSchemaDatatype corresponds to the current element being read. If document type definition (DTD validation) is being performed, this property returns null.</para>
+          <para>XmlSchemaDatatype is returned if the current element, or attribute, is a simple type that can specify special validation constraints on the simple types, like min and max.</para>
+          <para>XmlSchemaSimpleType is returned if the current element, or attribute, is a user defined simpleType.</para>
+          <para>XmlSchemaComplexType is returned if the current element is a user defined complexType. This type cannot be returned by attributes.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Xml.XmlValidatingReader.ValidationType" /> has been set to ValidationType.None, no data type information is provided from either schemas or DTDs.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>After calling <see cref="M:System.Xml.XmlValidatingReader.Close" />, SchemaType will return Null.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a schema type object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Settings">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlReaderSettings Settings { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlReaderSettings Settings" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlReaderSettings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlReaderSettings" /> object that was used to create this <see cref="T:System.Xml.XmlValidatingReader" /> instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Xml.IXmlLineInfo.HasLineInfo">
       <MemberSignature Language="C#" Value="bool IXmlLineInfo.HasLineInfo ();" />
@@ -1001,9 +2079,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the class can return line information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="P:System.Xml.IXmlLineInfo.LineNumber" /> and <see cref="P:System.Xml.IXmlLineInfo.LinePosition" /> can be provided; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1041,7 +2125,12 @@
     </Member>
     <Member MemberName="System.Xml.IXmlNamespaceResolver.GetNamespacesInScope">
       <MemberSignature Language="C#" Value="System.Collections.Generic.IDictionary&lt;string,string&gt; IXmlNamespaceResolver.GetNamespacesInScope (System.Xml.XmlNamespaceScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.Generic.IDictionary`2&lt;string, string&gt; System.Xml.IXmlNamespaceResolver.GetNamespacesInScope(valuetype System.Xml.XmlNamespaceScope scope) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;</ReturnType>
       </ReturnValue>
@@ -1049,19 +2138,31 @@
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlValidatingReader" /> instance is cast to an <see cref="T:System.Xml.IXmlNamespaceResolver" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.IXmlNamespaceResolver.GetNamespacesInScope(System.Xml.XmlNamespaceScope)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An T:System.Collections.IDictionary object that identifies the namespaces in scope.</para>
+        </returns>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceScope" /> object that identifies the scope of the reader.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Xml.IXmlNamespaceResolver.LookupPrefix">
       <MemberSignature Language="C#" Value="string IXmlNamespaceResolver.LookupPrefix (string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance string System.Xml.IXmlNamespaceResolver.LookupPrefix(string ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1070,112 +2171,198 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlValidatingReader" /> instance is cast to an <see cref="T:System.Xml.IXmlNamespaceResolver" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.IXmlNamespaceResolver.LookupPrefix(System.String)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string value that contains the namespace prefix that is associated with the <paramref name="namespaceName" />.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ValidationEventHandler">
       <MemberSignature Language="C#" Value="public event System.Xml.Schema.ValidationEventHandler ValidationEventHandler;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.Schema.ValidationEventHandler ValidationEventHandler" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.ValidationEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>These events occur during <see cref="M:System.Xml.XmlValidatingReader.Read" /> and only if a <see cref="P:System.Xml.XmlValidatingReader.ValidationType" /> of DTD, XDR, Schema, or Auto is specified.</para>
+          <para>If no event handler is provided, an <see cref="T:System.Xml.XmlException" /> is thrown on the first validation error (Severity is equal to XmlSeverityType.Error).</para>
+          <block subset="none" type="note">
+            <para>If an element reports a validation error, the rest of the content model for that element is not validated, however, its children are validated. The reader only reports the first error for a given element.</para>
+          </block>
+          <para>The callback handler can use the <see cref="P:System.Xml.Schema.ValidationEventArgs.Severity" /> property to guarantee that an XML instance document is validated against a schema. The Severity property allows you to distinguish between validation errors (Severity is equal to XmlSeverityType.Error) that indicate a fatal error, and validation warnings (Severity is equal to XmlSeverityType.Warning) that indicate that no schema information is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an event handler for receiving information about document type definition (DTD), XML-Data Reduced (XDR) schema, and XML Schema definition language (XSD) schema validation errors.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ValidationType">
+      <MemberSignature Language="C#" Value="public System.Xml.ValidationType ValidationType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.ValidationType ValidationType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ValidationType">
-      <MemberSignature Language="C#" Value="public System.Xml.ValidationType ValidationType { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.ValidationType</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ValidationType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property must be set before the first call to <see cref="M:System.Xml.XmlValidatingReader.Read" />. Setting this property to ValidationType.None creates a non-validating reader.</para>
+          <para>If external document type definitions (DTDs) or schemas are needed for validation, the <see cref="T:System.Xml.XmlResolver" /> is used.</para>
+          <para>For more information, see <format type="text/html"><a href="ac73e04a-9b40-4dea-aed8-7b956475ffe4">Validation of XML with XmlValidatingReader</a></format> and <format type="text/html"><a href="1543fc6b-1ec7-4273-98a9-c2173b9ed2a1">Validation Types of the XmlValidatingReader</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the type of validation to perform.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="C#" Value="public override string Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text value of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlLang">
       <MemberSignature Language="C#" Value="public override string XmlLang { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string XmlLang" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>This property represents the xml:lang scope within which the current node resides. For example, here is an XML fragment with xml:lang set to U.S. English in the root element: </para>
+          <code>&lt;root xml:lang="en-us"&gt; 
+&lt;name&gt;Fred&lt;/name&gt; 
+&lt;/root&gt; </code>
+          <para>When the reader is positioned on the name element, you can use this property to find that it is in the scope of a U.S. English xml:lang attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current xml:lang scope.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlResolver">
       <MemberSignature Language="C#" Value="public System.Xml.XmlResolver XmlResolver { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlResolver XmlResolver" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlResolver</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlResolver'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+          <para>The XmlResolver is used to load any DTDs, entities, or schemas needed to complete the validation process.</para>
+          <para>This property can be set at any time and takes affect after the next <see cref="M:System.Xml.XmlValidatingReader.Read" /> call. If this property is set to null, the reader assumes the user is not interested in resolving external references. In this case, the reader only validates against internal resources, if the resource is present.</para>
+          <para>In version 1.1 of dnprdnshort , if this property is not set, the trust level of the application determines the default behavior.</para>
+          <para>Fully trusted code: The reader uses a default <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If authentication is required to access a network resource, use the XmlResolver property to specify an XmlResolver with the necessary credentials.</para>
+          <para>Semi-trusted code: The XmlResolver property is set to null. External resources are not resolved.</para>
+          <para>When validating using schemas, you can avoid the expensive load process by providing an <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> using the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Xml.XmlResolver" /> used for resolving external document type definition (DTD) and schema location references. The XmlResolver is also used to handle any import or include elements found in XML Schema definition language (XSD) schemas.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlSpace">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlSpace XmlSpace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlSpace XmlSpace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlSpace</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlValidatingReader" /> class is obsolete in dnprdnext. You can create a validating <see cref="T:System.Xml.XmlReader" /> instance by using the <see cref="T:System.Xml.XmlReaderSettings" /> class and the <see cref="Overload:System.Xml.XmlReader.Create" /> method. For more information, see <format type="text/html"><a href="2958dbbd-60ca-4447-9b16-72f41d223486">Validating XML Data with XmlReader</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current xml:space scope.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

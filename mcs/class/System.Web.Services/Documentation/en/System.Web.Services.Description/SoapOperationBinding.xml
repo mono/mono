@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapOperationBinding" FullName="System.Web.Services.Description.SoapOperationBinding">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class SoapOperationBinding : System.Web.Services.Description.ServiceDescriptionFormatExtension" />
   <AssemblyInfo>
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class specifies that the message transmission will use SOAP and provides details about how the SOAP message will be formatted.</para>
+      <para>For more information about specifying protocols for XML Web services, see <format type="text/html"><a href="01DFC27C-C68E-4910-A0AA-5E4C2A766B0C">[&lt;topic://cpconbuildingaspnetwebservices&gt;]</a></format>. For more information about Web Services Description Language (WSDL), see the specification at http://www.w3.org/TR/wsdl/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an extension added to an <see cref="T:System.Web.Services.Description.OperationBinding" /> within an XML Web service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +36,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapOperationBinding" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +55,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is required for HTTP protocol binding of SOAP. The default value is an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI for the SOAP header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +83,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapBindingStyle'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of SOAP binding used by the <see cref="T:System.Web.Services.Description.SoapOperationBinding" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

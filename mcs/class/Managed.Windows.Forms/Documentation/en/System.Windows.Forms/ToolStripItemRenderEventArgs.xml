@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripItemRenderEventArgs" FullName="System.Windows.Forms.ToolStripItemRenderEventArgs">
   <TypeSignature Language="C#" Value="public class ToolStripItemRenderEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,90 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.ToolStripItemRenderEventArgs" /> class provides data for the following events:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderButtonBackground" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderDropDownButtonBackground" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderItemBackground" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderLabelBackground" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderMenuItemBackground" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderOverflowButtonBackground" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderSplitButtonBackground" />
+          </para>
+        </item>
+      </list>
+      <para>In addition, it provides data for the following methods:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawDropDownButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawItemBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawLabelBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawMenuItemBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawOverflowButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawSplitButton(System.Windows.Forms.ToolStripItemRenderEventArgs)" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the events that render the background of objects derived from <see cref="T:System.Windows.Forms.ToolStripItem" /> in the <see cref="T:System.Windows.Forms.ToolStripRenderer" /> class. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +104,16 @@
         <Parameter Name="item" Type="System.Windows.Forms.ToolStripItem" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripItemRenderEventArgs" /> class for the specified <see cref="T:System.Windows.Forms.ToolStripItem" /> and using the specified <see cref="T:System.Drawing.Graphics" />. </para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> object used to draw the item.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripItem" /> to be drawn.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +126,13 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the graphics used to paint the <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +145,13 @@
         <ReturnType>System.Windows.Forms.ToolStripItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ToolStripItem" /> to paint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,10 +164,16 @@
         <ReturnType>System.Windows.Forms.ToolStrip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Windows.Forms.ToolStripItem" /> is in the overflow area of the <see cref="T:System.Windows.Forms.Form" />, the <see cref="P:System.Windows.Forms.ToolStripItemRenderEventArgs.ToolStrip" /> property returns an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the <see cref="P:System.Windows.Forms.ToolStripItem.Owner" /> property for the <see cref="T:System.Windows.Forms.ToolStripItem" /> to paint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

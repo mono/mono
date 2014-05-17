@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscoveryRequestHandler" FullName="System.Web.Services.Discovery.DiscoveryRequestHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DiscoveryRequestHandler : System.Web.IHttpHandler" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Discovery.DiscoveryRequestHandler" />  class, via its <see cref="M:System.Web.Services.Discovery.DiscoveryRequestHandler.ProcessRequest(System.Web.HttpContext)" /> method, processes an HTTP request for a discovery document. A discovery document is represented by the <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> class and is usually serialized as a file using a .disco extension. Web services discovery provides a mechanism for determining the Web services that are available at a given location.</para>
+      <para>The <see cref="T:System.Web.Services.Discovery.DiscoveryRequestHandler" />  class normally does not need to be used directly by a developer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An ASP.NET HTTP handler that processes a request for a Web services discovery document.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoveryRequestHandler" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +53,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value of true, indicates whether the instance of <see cref="T:System.Web.Services.Discovery.DiscoveryRequestHandler" /> (or a derived class) is reusable. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +75,17 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">a <see cref="T:System.Web.HttpContext" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Discovery.DiscoveryRequestHandler.ProcessRequest(System.Web.HttpContext)" />  method searches for applicable files within the file system path corresponding to the HTTP request's Uniform Resource Locator (URL). The search may extend to subdirectories and switch target file extensions depending on what it finds in the root search directory.</para>
+          <para>The search process populates the <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> object's <see cref="P:System.Web.Services.Discovery.DiscoveryDocument.References" /> property with files that are found.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handles an HTTP request for a discovery document, which is serialized to the HTTP response.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties of the <see cref="T:System.Web.HttpContext" /> class are used for input and output, respectively.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

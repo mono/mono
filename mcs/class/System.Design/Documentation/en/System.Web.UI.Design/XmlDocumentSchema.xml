@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDocumentSchema" FullName="System.Web.UI.Design.XmlDocumentSchema">
   <TypeSignature Language="C#" Value="public sealed class XmlDocumentSchema : System.Web.UI.Design.IDataSourceSchema" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.XmlDocumentSchema" /> class is used by custom control designer components to list the structural elements of an XML document at design time. Use the XmlDocumentSchema class to populate lists of document elements to allow users to select document elements in UI features at design time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the structure, or schema, of an <see cref="T:System.Xml.XmlDocument" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +35,18 @@
         <Parameter Name="xPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xmlDocument">To be added.</param>
-        <param name="xPath">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <paramref name="xPath" /> parameter to specify either a specific node within the XML document to examine, or specify the empty string ("") to examine the complete document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.UI.Design.XmlDocumentSchema" /> class using a specified <see cref="T:System.Xml.XmlDocument" /> and an XPath string.</para>
+        </summary>
+        <param name="xmlDocument">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of an <see cref="T:System.Xml.XmlDocument" /> object.</param>
+        <param name="xPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />An XPath string identifying the child nodes of the document root.</param>
       </Docs>
     </Member>
     <Member MemberName="GetViews">
@@ -45,9 +60,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array containing information about each child node starting at the node identified by the <paramref name="xPath" /> parameter in the constructor, or each child node starting at the document root if the <paramref name="xPath" /> parameter is empty.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

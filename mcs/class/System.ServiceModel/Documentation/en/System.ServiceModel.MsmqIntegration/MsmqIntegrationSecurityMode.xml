@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MsmqIntegrationSecurityMode" FullName="System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode">
+  <TypeSignature Language="C#" Value="public enum MsmqIntegrationSecurityMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MsmqIntegrationSecurityMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration can be set within a configuration file in the <format type="text/html"><a href="ae5c68a8-14a2-4c6e-b9e0-3e94e3e9135e">security element for msmqIntegrationBinding</a></format> section. It can also be set in code by passing the appropriate value into the constructor of the <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationBinding" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode" /> is an enumeration that specifies the security modes supported by the MSMQ integration channel.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No security.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Transport">
+      <MemberSignature Language="C#" Value="Transport" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode Transport = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the MSMQ transport security.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

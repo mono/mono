@@ -1,5 +1,6 @@
 <Type Name="Environment+SpecialFolder" FullName="System.Environment+SpecialFolder">
   <TypeSignature Language="C#" Value="public enum Environment.SpecialFolder" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Environment/SpecialFolder extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -9,6 +10,11 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>An enumeration of common directories on the file system.</summary>
     <remarks>
@@ -19,6 +25,7 @@
   <Members>
     <Member MemberName="AdminTools">
       <MemberSignature Language="C#" Value="AdminTools" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder AdminTools = int32(48)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -32,7 +39,13 @@
     </Member>
     <Member MemberName="ApplicationData">
       <MemberSignature Language="C#" Value="ApplicationData" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder ApplicationData = int32(26)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -41,14 +54,10 @@
         <summary>The directory for application data specific to the user executing the program.  On non-Windows operating systems, this path is the value of the environment variable XDG_CONFIG_HOME if it is set, otherwise the ".config" directory in the current user's home directory.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CDBurning">
       <MemberSignature Language="C#" Value="CDBurning" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CDBurning = int32(59)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -62,6 +71,7 @@
     </Member>
     <Member MemberName="CommonAdminTools">
       <MemberSignature Language="C#" Value="CommonAdminTools" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonAdminTools = int32(47)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -75,7 +85,13 @@
     </Member>
     <Member MemberName="CommonApplicationData">
       <MemberSignature Language="C#" Value="CommonApplicationData" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonApplicationData = int32(35)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -84,14 +100,10 @@
         <summary>The directory for data shared by applications.  On non-Windows operating systems, the "/usr/share" directory.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CommonDesktopDirectory">
       <MemberSignature Language="C#" Value="CommonDesktopDirectory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonDesktopDirectory = int32(25)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -105,6 +117,7 @@
     </Member>
     <Member MemberName="CommonDocuments">
       <MemberSignature Language="C#" Value="CommonDocuments" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonDocuments = int32(46)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -118,6 +131,7 @@
     </Member>
     <Member MemberName="CommonMusic">
       <MemberSignature Language="C#" Value="CommonMusic" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonMusic = int32(53)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -131,6 +145,7 @@
     </Member>
     <Member MemberName="CommonOemLinks">
       <MemberSignature Language="C#" Value="CommonOemLinks" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonOemLinks = int32(58)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -144,6 +159,7 @@
     </Member>
     <Member MemberName="CommonPictures">
       <MemberSignature Language="C#" Value="CommonPictures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonPictures = int32(54)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -157,7 +173,13 @@
     </Member>
     <Member MemberName="CommonProgramFiles">
       <MemberSignature Language="C#" Value="CommonProgramFiles" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonProgramFiles = int32(43)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -166,14 +188,10 @@
         <summary>The CommonProgramFiles directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CommonProgramFilesX86">
       <MemberSignature Language="C#" Value="CommonProgramFilesX86" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonProgramFilesX86 = int32(44)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -187,6 +205,7 @@
     </Member>
     <Member MemberName="CommonPrograms">
       <MemberSignature Language="C#" Value="CommonPrograms" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonPrograms = int32(23)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -200,6 +219,7 @@
     </Member>
     <Member MemberName="CommonStartMenu">
       <MemberSignature Language="C#" Value="CommonStartMenu" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonStartMenu = int32(22)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -213,6 +233,7 @@
     </Member>
     <Member MemberName="CommonStartup">
       <MemberSignature Language="C#" Value="CommonStartup" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonStartup = int32(24)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -226,6 +247,7 @@
     </Member>
     <Member MemberName="CommonTemplates">
       <MemberSignature Language="C#" Value="CommonTemplates" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonTemplates = int32(45)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -239,6 +261,7 @@
     </Member>
     <Member MemberName="CommonVideos">
       <MemberSignature Language="C#" Value="CommonVideos" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder CommonVideos = int32(55)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -252,7 +275,13 @@
     </Member>
     <Member MemberName="Cookies">
       <MemberSignature Language="C#" Value="Cookies" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Cookies = int32(33)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -261,15 +290,16 @@
         <summary>The cookies directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Desktop">
+      <MemberSignature Language="C#" Value="Desktop" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Desktop = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Desktop">
-      <MemberSignature Language="C#" Value="Desktop" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -278,15 +308,16 @@
         <summary>The desktop directory.  On Unix operating systems, this is either XDG_DESKTOP_DIR from the environment, XDG_DESKTOP_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Desktop" within the SpecialFolder.Personal directory (usually the home directory).</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DesktopDirectory">
+      <MemberSignature Language="C#" Value="DesktopDirectory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder DesktopDirectory = int32(16)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DesktopDirectory">
-      <MemberSignature Language="C#" Value="DesktopDirectory" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -295,31 +326,28 @@
         <summary>The same as the Desktop enumeration value.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Favorites">
+      <MemberSignature Language="C#" Value="Favorites" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Favorites = int32(6)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Favorites">
-      <MemberSignature Language="C#" Value="Favorites" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <MemberValue>Favorites</MemberValue>
       <Docs>
         <summary>The Favorites directory.  </summary>
-        <remarks>On Windows, the system favorite directory.   On MacOS X this is ~/Library/Favorites, and is empty for other operating systems.</remarks>
+        <remarks preserve-mono="true">On Windows, the system favorite directory.   On MacOS X this is ~/Library/Favorites, and is empty for other operating systems.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fonts">
       <MemberSignature Language="C#" Value="Fonts" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Fonts = int32(20)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -328,12 +356,18 @@
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The fonts directory, on MacOS X this is ~/Library/Fonts, on other Unix operating systems it is ~/.fonts/</summary>
+        <summary preserve-mono="true">The fonts directory, on MacOS X this is ~/Library/Fonts, on other Unix operating systems it is ~/.fonts/</summary>
       </Docs>
     </Member>
     <Member MemberName="History">
       <MemberSignature Language="C#" Value="History" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder History = int32(34)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -342,32 +376,34 @@
         <summary>The History directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="InternetCache">
+      <MemberSignature Language="C#" Value="InternetCache" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder InternetCache = int32(32)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InternetCache">
-      <MemberSignature Language="C#" Value="InternetCache" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <MemberValue>InternetCache</MemberValue>
       <Docs>
         <summary>The Internet cache directory.</summary>
-        <remarks>The Internet cache directory on Windows.   On MacOS X this is the ~/Library/Caches directory, and not available on other operating systems.</remarks>
+        <remarks preserve-mono="true">The Internet cache directory on Windows.   On MacOS X this is the ~/Library/Caches directory, and not available on other operating systems.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="LocalApplicationData">
+      <MemberSignature Language="C#" Value="LocalApplicationData" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder LocalApplicationData = int32(28)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LocalApplicationData">
-      <MemberSignature Language="C#" Value="LocalApplicationData" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -376,14 +412,10 @@
         <summary>The directory for application data shared by users of the computer.  On non-Windows operating systems, this path is the value of the environment variable XDG_DATA_HOME if it is set, otherwise the ".local/share" directory in the current user's home directory.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LocalizedResources">
       <MemberSignature Language="C#" Value="LocalizedResources" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder LocalizedResources = int32(57)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -397,7 +429,13 @@
     </Member>
     <Member MemberName="MyComputer">
       <MemberSignature Language="C#" Value="MyComputer" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder MyComputer = int32(17)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -406,15 +444,15 @@
         <summary>The My Computer directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MyDocuments">
       <MemberSignature Language="C#" Value="MyDocuments" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder MyDocuments = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -422,47 +460,46 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MyMusic">
       <MemberSignature Language="C#" Value="MyMusic" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder MyMusic = int32(13)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <MemberValue>MyMusic</MemberValue>
       <Docs>
-        <summary>The music directory.  On MacOS X this is ~/Music.  On other Unix operating systems, this is either XDG_MUSIC_DIR from the environment, XDG_MUSIC_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Music" within the SpecialFolder.Personal directory (usually the home directory).</summary>
+        <summary preserve-mono="true">The music directory.  On MacOS X this is ~/Music.  On other Unix operating systems, this is either XDG_MUSIC_DIR from the environment, XDG_MUSIC_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Music" within the SpecialFolder.Personal directory (usually the home directory).</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="MyPictures">
+      <MemberSignature Language="C#" Value="MyPictures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder MyPictures = int32(39)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MyPictures">
-      <MemberSignature Language="C#" Value="MyPictures" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <MemberValue>MyPictures</MemberValue>
       <Docs>
-        <summary>The pictures directory.  On MacOS X this is ~/Pictures.   On other Unix operating systems, this is either XDG_PICTURES_DIR from the environment, XDG_PICTURES_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Pictures" within the SpecialFolder.Personal directory (usually the home directory).</summary>
+        <summary preserve-mono="true">The pictures directory.  On MacOS X this is ~/Pictures.   On other Unix operating systems, this is either XDG_PICTURES_DIR from the environment, XDG_PICTURES_DIR as read from the "user-dirs.dirs" within the SpecialFolder.ApplicationData directory, or as a last resort, the directory named "Pictures" within the SpecialFolder.Personal directory (usually the home directory).</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MyVideos">
       <MemberSignature Language="C#" Value="MyVideos" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder MyVideos = int32(14)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -476,6 +513,7 @@
     </Member>
     <Member MemberName="NetworkShortcuts">
       <MemberSignature Language="C#" Value="NetworkShortcuts" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder NetworkShortcuts = int32(19)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -489,7 +527,13 @@
     </Member>
     <Member MemberName="Personal">
       <MemberSignature Language="C#" Value="Personal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Personal = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -498,14 +542,10 @@
         <summary>The personal or home directory for the current user.  On non-Windows operating systems, this is the user's home directory.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PrinterShortcuts">
       <MemberSignature Language="C#" Value="PrinterShortcuts" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder PrinterShortcuts = int32(27)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -519,23 +559,25 @@
     </Member>
     <Member MemberName="ProgramFiles">
       <MemberSignature Language="C#" Value="ProgramFiles" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder ProgramFiles = int32(38)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <MemberValue>ProgramFiles</MemberValue>
       <Docs>
         <summary>Where program files are located.  </summary>
-        <remarks>The ProgramFiles directory on Windows, /Application on MacOS X and the empty string for other operating systems.</remarks>
+        <remarks preserve-mono="true">The ProgramFiles directory on Windows, /Application on MacOS X and the empty string for other operating systems.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProgramFilesX86">
       <MemberSignature Language="C#" Value="ProgramFilesX86" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder ProgramFilesX86 = int32(42)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -549,7 +591,13 @@
     </Member>
     <Member MemberName="Programs">
       <MemberSignature Language="C#" Value="Programs" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Programs = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -558,15 +606,16 @@
         <summary>The Programs directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Recent">
+      <MemberSignature Language="C#" Value="Recent" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Recent = int32(8)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Recent">
-      <MemberSignature Language="C#" Value="Recent" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -575,14 +624,10 @@
         <summary>The Recent files directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Resources">
       <MemberSignature Language="C#" Value="Resources" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Resources = int32(56)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -596,7 +641,13 @@
     </Member>
     <Member MemberName="SendTo">
       <MemberSignature Language="C#" Value="SendTo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder SendTo = int32(9)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -605,15 +656,16 @@
         <summary>The SendTo directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="StartMenu">
+      <MemberSignature Language="C#" Value="StartMenu" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder StartMenu = int32(11)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="StartMenu">
-      <MemberSignature Language="C#" Value="StartMenu" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -622,15 +674,16 @@
         <summary>The directory displayed by the start menu.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Startup">
+      <MemberSignature Language="C#" Value="Startup" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Startup = int32(7)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Startup">
-      <MemberSignature Language="C#" Value="Startup" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -639,15 +692,16 @@
         <summary>The Startup directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System">
+      <MemberSignature Language="C#" Value="System" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder System = int32(37)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System">
-      <MemberSignature Language="C#" Value="System" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -656,14 +710,10 @@
         <summary>The system directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SystemX86">
       <MemberSignature Language="C#" Value="SystemX86" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder SystemX86 = int32(41)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -677,7 +727,13 @@
     </Member>
     <Member MemberName="Templates">
       <MemberSignature Language="C#" Value="Templates" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Templates = int32(21)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
@@ -686,14 +742,10 @@
         <summary>The Templates directory.  Not available non-Windows operating systems.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserProfile">
       <MemberSignature Language="C#" Value="UserProfile" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder UserProfile = int32(40)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -707,6 +759,7 @@
     </Member>
     <Member MemberName="Windows">
       <MemberSignature Language="C#" Value="Windows" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolder Windows = int32(36)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -719,9 +772,4 @@
       </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

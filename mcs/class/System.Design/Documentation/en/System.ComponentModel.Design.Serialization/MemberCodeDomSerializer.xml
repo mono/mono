@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemberCodeDomSerializer" FullName="System.ComponentModel.Design.Serialization.MemberCodeDomSerializer">
   <TypeSignature Language="C#" Value="public abstract class MemberCodeDomSerializer : System.ComponentModel.Design.Serialization.CodeDomSerializerBase" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> class is a "meta" serializer; that is, is a serializer that does not serialize part of the object graph, but instead serializes a reflection primitive within the object graph. For example, a <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> would be associated with a <see cref="T:System.ComponentModel.PropertyDescriptor" /> in order for it to serialize a property. <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> objects enable constructs, such as properties and events, to be logical, rather than requiring them to have a physical backing in code.</para>
+      <para>Unlike <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> classes, <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> objects must be able to deserialize.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for serializing a reflection primitive within the object graph.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +29,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
@@ -41,12 +52,22 @@
         <Parameter Name="statements" Type="System.CodeDom.CodeStatementCollection" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="descriptor">To be added.</param>
-        <param name="statements">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method actually performs the serialization. When the member is serialized the necessary statements will be added to the statements collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given member descriptor on the given value to a statement collection.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to which the member is bound.</param>
+        <param name="descriptor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The descriptor of the member to serialize.</param>
+        <param name="statements">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatementCollection" /> into which <paramref name="descriptor" /> is serialized.</param>
       </Docs>
     </Member>
     <Member MemberName="ShouldSerialize">
@@ -64,12 +85,24 @@
         <Parameter Name="descriptor" Type="System.ComponentModel.MemberDescriptor" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="descriptor">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the given member descriptor should be serialized, or false if there is no need to serialize the member.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the given member should be serialized.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the member described by <paramref name="descriptor" /> should be serialized; otherwise, false.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to which the member is bound.</param>
+        <param name="descriptor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The descriptor of the member to serialize.</param>
       </Docs>
     </Member>
   </Members>

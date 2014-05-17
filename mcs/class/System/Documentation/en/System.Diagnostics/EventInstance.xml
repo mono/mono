@@ -1,104 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventInstance" FullName="System.Diagnostics.EventInstance">
   <TypeSignature Language="C#" Value="public class EventInstance" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventInstance extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Diagnostics.EventInstance" /> to write an event log entry with a resource identifier rather than a string value. To write an event log entry, initialize the <see cref="P:System.Diagnostics.EventInstance.InstanceId" /> property and pass the instance to the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method. The Event Viewer uses the instance identifier to find and display the corresponding string from the localized resource file based on current language settings. You must register the event source with the corresponding resource file before you write events using resource identifiers.</para>
+      <para>When writing events, you can set the <see cref="P:System.Diagnostics.EventInstance.EntryType" /> property to specify the icon that the Event Viewer displays for the entry. You can also specify a <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> property to specify the category that the Event Viewer displays for the entry.</para>
+      <para>The Event Viewer uses the category to filter events written by an event source. The Event Viewer can display the category as a numeric value, or it can use the category as a resource identifier to display a localized category string.</para>
+      <para>To display localized category strings in the Event Viewer, you must use an event source configured with a category resource file, and set the <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> to a resource identifier in the category resource file. If the event source does not have a configured category resource file, or the specified <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> does not index a string in the category resource file, and then the Event Viewer displays the numeric category value for that entry. Configure the category resource file, along with the number of category strings in the resource file, using the <see cref="T:System.Diagnostics.EventLogInstaller" /> or the <see cref="T:System.Diagnostics.EventSourceCreationData" /> class.</para>
+      <para>You must register a source for an event log before using <see cref="T:System.Diagnostics.EventInstance" /> to write an event with the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method. The source must be configured for writing localized entries to the log and the source must define at least a message resource file. </para>
+      <para>Create the new event source during the installation of your application. This allows time for the operating system to refresh its list of registered event sources and their configurations. If the operating system has not refreshed its list of event sources, and you attempt to write an event with the new source, the write operation will fail. You can configure a new source using an <see cref="T:System.Diagnostics.EventLogInstaller" />, or using the <see cref="Overload:System.Diagnostics.EventLog.CreateEventSource" /> method. You must have administrative rights on the computer to create a new event source.</para>
+      <para>For details about defining event messages and building event log resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com">http://msdn.microsoft.com</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents language-neutral information for an event log entry.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventInstance (long instanceId, int categoryId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 instanceId, int32 categoryId) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="instanceId" Type="System.Int64" />
         <Parameter Name="categoryId" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="instanceId">To be added.</param>
-        <param name="categoryId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To write an informational entry to an event log, initialize an <see cref="T:System.Diagnostics.EventInstance" /> and pass it to the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method. Set the <paramref name="instanceId" /> to the resource identifier of the event message in the corresponding <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" /> property for the source. Set the <paramref name="categoryId" /> to a numeric category value, or the resource identifier of the event category in the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" /> property for the source; set the <paramref name="categoryId" /> to zero for no event category. The <see cref="P:System.Diagnostics.EventInstance.EntryType" /> property for the new instance is set to <see cref="F:System.Diagnostics.EventLogEntryType.Information" /> by default.</para>
+          <para>The Event Viewer uses the resource identifiers to display the corresponding strings from the localized resource files for the source. You must register the source with the corresponding resource files before you can write events using resource identifiers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.EventInstance" /> class using the specified resource identifiers for the localized message and category text of the event entry.</para>
+        </summary>
+        <param name="instanceId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A resource identifier that corresponds to a string defined in the message resource file of the event source.</param>
+        <param name="categoryId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A resource identifier that corresponds to a string defined in the category resource file of the event source, or zero to specify no category for the event. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventInstance (long instanceId, int categoryId, System.Diagnostics.EventLogEntryType entryType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 instanceId, int32 categoryId, valuetype System.Diagnostics.EventLogEntryType entryType) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="instanceId" Type="System.Int64" />
         <Parameter Name="categoryId" Type="System.Int32" />
         <Parameter Name="entryType" Type="System.Diagnostics.EventLogEntryType" />
       </Parameters>
       <Docs>
-        <param name="instanceId">To be added.</param>
-        <param name="categoryId">To be added.</param>
-        <param name="entryType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To write an entry to an event log, initialize an <see cref="T:System.Diagnostics.EventInstance" /> and pass it to the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method. Set the <paramref name="instanceId" /> to the resource identifier of the event message in the corresponding <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" /> property for the source. Set the <paramref name="categoryId" /> to a numeric category value, or the resource identifier of the event category in the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" /> property for the source; set the <paramref name="categoryId" /> to zero for no event category.</para>
+          <para>The Event Viewer uses the resource identifiers to display the corresponding strings from the localized resource files for the source. You must register the source with the corresponding resource files before you can write events using resource identifiers.</para>
+          <para>Set the <paramref name="entryType" /> to one of the pre-defined entry types. The Event Viewer uses the event type to determine which icon to display in the list view of the event log.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.EventInstance" /> class using the specified resource identifiers for the localized message and category text of the event entry and the specified event log entry type.</para>
+        </summary>
+        <param name="instanceId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A resource identifier that corresponds to a string defined in the message resource file of the event source. </param>
+        <param name="categoryId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A resource identifier that corresponds to a string defined in the category resource file of the event source, or zero to specify no category for the event. </param>
+        <param name="entryType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Diagnostics.EventLogEntryType" /> value that indicates the event type. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CategoryId">
-      <MemberSignature Language="C#" Value="public int CategoryId { set; get; }" />
+      <MemberSignature Language="C#" Value="public int CategoryId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CategoryId" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Event log categories are application-defined values that help filter events, or provide further information about the event. For example, your application can define separate categories for different components or different operations.</para>
+          <para>Set the <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> property to specify the category that the Event Viewer displays for the entry. The Event Viewer can display the category as a numeric value, or it can use the <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> as a resource identifier to display a localized category string based on the current language settings.</para>
+          <para>To display localized category strings in the Event Viewer, you must use an event source configured with a category resource file, and set the <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> to a resource identifier in the category resource file. If the event source does not have a configured category resource file, or the specified <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> does not index a string in the category resource file, and then the Event Viewer displays the numeric category value for that entry.</para>
+          <para>You must register the source with the corresponding resource file before you write event categories using resource identifiers. Configure the category resource file, along with the number of category strings in the resource file, using the <see cref="T:System.Diagnostics.EventLogInstaller" /> or the <see cref="T:System.Diagnostics.EventSourceCreationData" /> class. When defining category strings in a resource file, the category resource identifiers must be numbered consecutively starting at 1, up to the configured <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" /> property value.</para>
+          <para>Event categories are optional. If your application does not use categories, do not set the <see cref="P:System.Diagnostics.EventInstance.CategoryId" /> for the event log entry.</para>
+          <para>For details about defining event messages and building event resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>. For details about defining event categories in resource files, see the "Event Categories" topic in the Platform SDK</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the resource identifier that specifies the application-defined category of the event entry.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EntryType">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.EventLogEntryType EntryType { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.EventLogEntryType EntryType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.EventLogEntryType EntryType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.EventLogEntryType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each event is of a single type, which the application indicates when it reports the event. The Event Viewer uses the event type to determine which icon to display in the list view of the event log.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the event type of the event log entry.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InstanceId">
-      <MemberSignature Language="C#" Value="public long InstanceId { set; get; }" />
+      <MemberSignature Language="C#" Value="public long InstanceId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 InstanceId" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.EventInstance.InstanceId" /> property uniquely identifies an event entry for a configured event source. For events defined in message resource files, the <see cref="P:System.Diagnostics.EventInstance.InstanceId" /> corresponds to the resource identifier compiled from the message definition fields in the message text file. Your application can write localized event log entries by setting the <see cref="P:System.Diagnostics.EventInstance.InstanceId" /> to a resource identifier. The Event Viewer uses the <see cref="P:System.Diagnostics.EventInstance.InstanceId" /> resource identifier to find and display the corresponding string from the localized resource file based on current language settings. You must register the source with the corresponding resource file before you write events using resource identifiers.</para>
+          <para>For details about defining event messages and building event log resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>. For details about event log identifiers, see the "Event Identifiers" topic in the Platform SDK.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the resource identifier that designates the message text of the event entry.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

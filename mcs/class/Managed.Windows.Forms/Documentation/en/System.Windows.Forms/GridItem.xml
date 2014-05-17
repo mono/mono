@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridItem" FullName="System.Windows.Forms.GridItem">
   <TypeSignature Language="C#" Value="public abstract class GridItem" />
   <AssemblyInfo>
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Grid items represent the hierarchy of the view into a <see cref="T:System.Windows.Forms.PropertyGrid" />. You can use a <see cref="T:System.Windows.Forms.GridItem" /> to obtain information about the grid's state and contents.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.GridItem" /> objects should not be cached because they represent a snapshot of the state of the <see cref="T:System.Windows.Forms.PropertyGrid" /> at the time they are accessed, and grid activity might dispose them. The <see cref="T:System.Windows.Forms.PropertyGrid" /> often recreates <see cref="T:System.Windows.Forms.GridItem" /> objects internally without changing the view to the user.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements one row in a <see cref="T:System.Windows.Forms.PropertyGrid" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +28,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.GridItem" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +46,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a property is expandable, a plus (+) sign is displayed by the property name in the <see cref="T:System.Windows.Forms.PropertyGrid" />. If the plus sign is clicked and no nested properties are available, the plus sign is then removed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether the specified property is expandable to show nested properties.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,9 +68,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.GridItem" /> is in an expanded state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +87,12 @@
         <ReturnType>System.Windows.Forms.GridItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the collection of <see cref="T:System.Windows.Forms.GridItem" /> objects, if any, associated as a child of this <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +106,15 @@
         <ReturnType>System.Windows.Forms.GridItemType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a <see cref="T:System.Windows.Forms.GridItem" /> of type <see cref="F:System.Windows.Forms.GridItemType.Property" />, you must also ensure that the <see cref="P:System.Windows.Forms.GridItem.PropertyDescriptor" /> has a valid value. For a <see cref="T:System.Windows.Forms.GridItem" /> of type <see cref="F:System.Windows.Forms.GridItemType.Root" /> the <see cref="P:System.Windows.Forms.GridItem.Parent" /> property must be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the type of this <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +128,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class gets the text that displays in the left column of the grid. The text retrieved can be different from the actual property name of the property represented by this <see cref="T:System.Windows.Forms.GridItem" />. You can get the name for a <see cref="T:System.Windows.Forms.GridItem" /> of type <see cref="F:System.Windows.Forms.GridItemType.Property" /> by retrieving the <see cref="P:System.Windows.Forms.GridItem.PropertyDescriptor" /> and checking its <see cref="P:System.ComponentModel.MemberDescriptor.Name" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the text of this <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,9 +150,15 @@
         <ReturnType>System.Windows.Forms.GridItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.GridItem.GridItemType" /> for the <see cref="T:System.Windows.Forms.GridItem" /> is <see cref="F:System.Windows.Forms.GridItemType.Root" />, this value will be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the parent <see cref="T:System.Windows.Forms.GridItem" /> of this <see cref="T:System.Windows.Forms.GridItem" />, if any.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,9 +172,16 @@
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is only valid for a <see cref="T:System.Windows.Forms.GridItem" /> of type <see cref="F:System.Windows.Forms.GridItemType.Property" />.</para>
+          <para>You can use this property to retrieve information such as the property type of the grid item, the name of the grid item, or the type converter for the grid item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the <see cref="T:System.ComponentModel.PropertyDescriptor" /> that is associated with this <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -147,9 +196,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, selects this <see cref="T:System.Windows.Forms.GridItem" /> in the <see cref="T:System.Windows.Forms.PropertyGrid" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the selection is successful; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,9 +235,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets user-defined data about the <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -192,9 +250,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the current value of this <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

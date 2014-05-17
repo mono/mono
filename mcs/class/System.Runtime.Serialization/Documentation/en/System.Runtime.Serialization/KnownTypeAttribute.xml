@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="KnownTypeAttribute" FullName="System.Runtime.Serialization.KnownTypeAttribute">
+  <TypeSignature Language="C#" Value="public sealed class KnownTypeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit KnownTypeAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.All, AllowMultiple=true, Inherited=true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Apply the <see cref="T:System.Runtime.Serialization.KnownTypeAttribute" /> attribute to a type to indicate to the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> types that should be recognized when serializing or deserializing an instance of the type to which the attribute is applied. This attribute could also be recognized by other serializers that understand data contracts.</para>
+      <block subset="none" type="note">
+        <para>In your code, you can use the word KnownType instead of the longer KnownTypeAttribute. </para>
+      </block>
+      <para>You can either apply exactly one <see cref="T:System.Runtime.Serialization.KnownTypeAttribute" /> instance with the <see cref="P:System.Runtime.Serialization.KnownTypeAttribute.MethodName" /> property set, or one or more <see cref="T:System.Runtime.Serialization.KnownTypeAttribute" /> instances with the <see cref="P:System.Runtime.Serialization.KnownTypeAttribute.Type" /> property set.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies types that should be recognized by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> when serializing or deserializing a given type. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public KnownTypeAttribute (string methodName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string methodName) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="methodName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses a method name that matches a method of the class.  The method returns a <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> objects. During serialization or deserialization, the types found in the collection can be used within the root type to which the attribute is applied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.KnownTypeAttribute" /> class with the name of a method that returns an <see cref="T:System.Collections.IEnumerable" /> of known types. </para>
+        </summary>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method that returns an <see cref="T:System.Collections.IEnumerable" /> of types used when serializing or deserializing data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public KnownTypeAttribute (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.KnownTypeAttribute" /> class with the specified type. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that is included as a known type when serializing or deserializing data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="MethodName">
+      <MemberSignature Language="C#" Value="public string MethodName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MethodName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method must exist on the class or structure that the <see cref="T:System.Runtime.Serialization.KnownTypeAttribute" /> is applied to, must be static, must accept no parameters, and must return an instance of any type that implements the generic <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface, such as the <see cref="T:System.Collections.ObjectModel.Collection`1" /> class, or an array of <see cref="T:System.Type" /> objects.</para>
+          <para>The method is called once per application domain when the data contract is loaded for the type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of a method that will return a list of types that should be recognized during serialization or deserialization. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public Type Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type that should be recognized during serialization or deserialization by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

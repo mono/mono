@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpRemotingHandlerFactory" FullName="System.Runtime.Remoting.Channels.Http.HttpRemotingHandlerFactory">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HttpRemotingHandlerFactory : System.Web.IHttpHandlerFactory" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The current class dynamically manufactures new instances of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Initializes new instances of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandlerFactory" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,13 +58,26 @@
         <Parameter Name="filePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'Web.HttpContext'</param>
-        <param name="verb">To be added: an object of type 'string'</param>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="filePath">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Web.IHttpHandler'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the current method, see <see cref="M:System.Web.IHttpHandlerFactory.GetHandler(System.Web.HttpContext,System.String,System.String,System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an instance of the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" /> that processes the request.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Web.HttpContext" /> class that provides references to intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests. </param>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP data transfer method (GET or POST) that the client uses. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.HttpRequest.RawUrl" /> of the requested resource. </param>
+        <param name="filePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.HttpRequest.PhysicalApplicationPath" /> to the requested resource. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -71,9 +94,13 @@
         <Parameter Name="handler" Type="System.Web.IHttpHandler" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added: an object of type 'Web.IHttpHandler'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables a factory to reuse the specified <see cref="T:System.Runtime.Remoting.Channels.Http.HttpRemotingHandler" />.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.IHttpHandler" /> to release. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

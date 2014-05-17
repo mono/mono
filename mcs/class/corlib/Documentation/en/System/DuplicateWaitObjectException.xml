@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DuplicateWaitObjectException" FullName="System.DuplicateWaitObjectException" FullNameSP="System_DuplicateWaitObjectException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable DuplicateWaitObjectException extends System.ArgumentException" />
   <TypeSignature Language="C#" Value="public class DuplicateWaitObjectException : ArgumentException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit DuplicateWaitObjectException extends System.ArgumentException" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,154 +16,310 @@
     <BaseTypeName>System.ArgumentException</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>
-      <para>Represents the error that occurs when an object appears
-      more than once in an array of <see cref="T:System.Threading.WaitHandle" />
-      instances.</para>
-    </summary>
-    <remarks>
-      <para>
-        <block subset="none" type="note">It is generally
-      unnecessary for applications to throw <see cref="T:System.DuplicateWaitObjectException" />
-      . This exception is thrown by
-      thread synchronization methods, such as <see cref="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.Int32,System.Boolean)" /> and
-   <see cref="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.Int32,System.Boolean)" />.</block>
-      </para>
-    </remarks>
-  </Docs>
-  <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
-      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException ();" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="!:System.DuplicateWaitObjectException.Message" /> property of the new
-   instance to a system-supplied message that describes the error, such as
-   "Duplicate objects in argument." This message takes into account the current
-   system culture. The <see cref="!:System.DuplicateWaitObjectException.InnerException" /> and <see cref="!:System.DuplicateWaitObjectException.ParamName" /> properties are initialized
-   to <see langword="null" /> .</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string parameterName)" />
-      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException (string parameterName);" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="parameterName" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="parameterName">A <see cref="T:System.String" /> that contains the name of the parameter that caused the exception. The content of <paramref name="parameterName" /> is intended to be understood by humans.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="!:System.DuplicateWaitObjectException.Message" /> property of the new instance to a system-supplied
-   message that describes the error. This message takes into account the current
-   system culture. The <see cref="!:System.DuplicateWaitObjectException.InnerException" /> property is initialized to
-<see langword="null" /> .</para>
-          <para>This constructor initializes the <see cref="!:System.DuplicateWaitObjectException.ParamName" /> property of the new instance using
-<paramref name="parameterName" />.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected DuplicateWaitObjectException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
-        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
-      </Parameters>
-      <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException (string message, Exception innerException);" />
-      <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="message" Type="System.String" />
-        <Parameter Name="innerException" Type="System.Exception" />
-      </Parameters>
-      <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string parameterName, string message)" />
-      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException (string parameterName, string message);" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="parameterName" Type="System.String" />
-        <Parameter Name="message" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="parameterName">A <see cref="T:System.String" /> that contains the name of the parameter that caused the exception. The content of <paramref name="parameterName" /> is intended to be understood by humans.</param>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="!:System.DuplicateWaitObjectException.ParamName" /> property of the new
-   instance using <paramref name="parameterName" />, and the <see cref="!:System.DuplicateWaitObjectException.Message" /> property using <paramref name="message" /> . If <paramref name="message" /> is
-<see langword="null" />, the <see cref="!:System.DuplicateWaitObjectException.Message" /> property is initialized to the system-supplied message 
-   provided by the constructor that takes no arguments.</para>
-          <para> The <see cref="!:System.DuplicateWaitObjectException.InnerException" /> property is initialized to 
-<see langword="null" /> .</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
-  <TypeExcluded>0</TypeExcluded>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The common language runtime provides a thread synchronization mechanism based on synchronization objects waiting for execution in an array of <see cref="T:System.Threading.WaitHandle" /> objects. If the array of <see cref="T:System.Threading.WaitHandle" /> objects passed to <see cref="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.Int32,System.Boolean)" /> or <see cref="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.Int32,System.Boolean)" /> contains any duplicate operating system handles, <see cref="T:System.DuplicateWaitObjectException" /> is thrown. For more information, see <see cref="T:System.Threading.WaitHandle" />.</para>
+      <para>
+        <see cref="T:System.DuplicateWaitObjectException" /> uses the HRESULT COR_E_DUPLICATEWAITOBJECT, which has the value 0x80131529.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.DuplicateWaitObjectException" />, see the <see cref="M:System.DuplicateWaitObjectException.#ctor" /> constructors.</para>
+      <block subset="none" type="note">
+        <para>This exception is not included in the <see cref="http://go.microsoft.com/fwlink/?LinkID=247912">.NET for Windows Store apps</see> or the <format type="text/html"><a href="c31e1663-c164-4e65-b66d-d3aa8750a154">Portable Class Library</a></format>, but it is thrown by some members that are. To catch the exception in that case, write a catch statement for <see cref="T:System.ArgumentException" /> instead.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when an object appears more than once in an array of synchronization objects.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
+      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Exception.Message" /> property of the new instance to a system-supplied message that describes the error, such as "Duplicate objects in argument." This message takes into account the current system culture.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.DuplicateWaitObjectException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>A null reference (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ArgumentException.Message" /> </para>
+              </term>
+              <description>
+                <para>The localized error message string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string parameterName)" />
+      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException (string parameterName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string parameterName) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="parameterName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content of <paramref name="parameterName" /> is intended to be understood by humans.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.DuplicateWaitObjectException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>A null reference (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ArgumentException.Message" /> </para>
+              </term>
+              <description>
+                <para>The localized error message string. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ArgumentException.ParamName" /> </para>
+              </term>
+              <description>
+                <para>The parameter name string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" /> class with the name of the parameter that causes this exception.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter that caused the exception. </param>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected DuplicateWaitObjectException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called during deserialization to reconstitute the exception object transmitted over a stream. For more information, see <format type="text/html"><a href="832AC524-21BC-419A-A27B-CA8BFC45840F">[&lt;topic://cpconSerialization&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" /> class with serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that holds the serialized object data. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contextual information about the source or destination. </param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException (string message, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception innerException) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed to this constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.DuplicateWaitObjectException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The exception specified by <paramref name="innerException" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ArgumentException.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string specified by <paramref name="message" />. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string parameterName, string message)" />
+      <MemberSignature Language="C#" Value="public DuplicateWaitObjectException (string parameterName, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string parameterName, string message) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="parameterName" Type="System.String" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content of the <paramref name="parameterName" /> and <paramref name="message" /> parameters is intended to be understood by humans. The caller of this constructor is required to ensure that these strings have been localized for the current system culture.</para>
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or a null reference (Nothing in Visual Basic) if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.DuplicateWaitObjectException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>A null reference (Nothing in Visual Basic) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ArgumentException.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ArgumentException.ParamName" /> </para>
+              </term>
+              <description>
+                <para>The parameter name string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DuplicateWaitObjectException" /> class with a specified error message and the name of the parameter that causes this exception.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter that caused the exception. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message that describes the error. </param>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
 </Type>

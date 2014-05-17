@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpContinueDelegate" FullName="System.Net.HttpContinueDelegate" FullNameSP="System_Net_HttpContinueDelegate" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable HttpContinueDelegate extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void HttpContinueDelegate(int StatusCode, WebHeaderCollection httpHeaders);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpContinueDelegate extends System.MulticastDelegate" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,28 +10,11 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="StatusCode">A <see cref="T:System.Int32" /> containing the numeric value of the HTTP status from the server. </param>
-    <param name="httpHeaders">A <see cref="T:System.Net.WebHeaderCollection" /> containing the headers returned with the response.</param>
-    <summary>
-      <para> Defines the shape of methods that are invoked when
-      a <see cref="F:System.Net.HttpStatusCode.Continue" qualify="true" /> response is received
-      by a web client.
-      </para>
-    </summary>
-    <remarks>
-      <para> Use a <see cref="T:System.Net.HttpContinueDelegate" />
-instance to specify the methods that are automatically invoked
-whenever HTTP 100 ( <see cref="F:System.Net.HttpStatusCode.Continue" qualify="true" />) responses are received from
-a web server.</para>
-    </remarks>
-  </Docs>
-  <Members />
-  <TypeExcluded>0</TypeExcluded>
   <Parameters>
     <Parameter Name="StatusCode" Type="System.Int32" />
     <Parameter Name="httpHeaders" Type="System.Net.WebHeaderCollection" />
@@ -37,4 +22,24 @@ a web server.</para>
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
+  <Docs>
+    <param name="StatusCode">A <see cref="T:System.Int32" /> containing the numeric value of the HTTP status from the server. </param>
+    <param name="httpHeaders">A <see cref="T:System.Net.WebHeaderCollection" /> containing the headers returned with the response.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Net.HttpContinueDelegate" /> to specify the callback method to be called when an HTTP 100-continue response is received from the server. When set, the delegate is called whenever the first protocol response of type <see cref="F:System.Net.HttpStatusCode.Continue" /> is received. This is a change from the behavior of the version 1.1 Framework. </para>
+      <para>Your event handler must declare the same parameters as the <see cref="T:System.Net.HttpContinueDelegate" />.</para>
+      <block subset="none" type="note">
+        <para>
+          <paramref name="StatusCode" /> is always <see cref="F:System.Net.HttpStatusCode.Continue" />.</para>
+      </block>
+      <para>This is useful when the client wants to display the status of data being received from the server.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that notifies callers when a continue response is received by the client.</para>
+    </summary>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
 </Type>

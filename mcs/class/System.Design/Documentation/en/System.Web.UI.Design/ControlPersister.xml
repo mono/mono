@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlPersister" FullName="System.Web.UI.Design.ControlPersister">
   <TypeSignature Language="C#" Value="public sealed class ControlPersister" />
   <AssemblyInfo>
@@ -10,8 +11,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.ControlPersister" />  class provides methods that can persist a <see cref="T:System.Web.UI.Control" /> control or an <see cref="T:System.Web.UI.ITemplate" /> interface implementation as a string of aspx code. The implementation of these methods is driven by metadata attributes, such as the <see cref="T:System.ComponentModel.DefaultValueAttribute" />, <see cref="T:System.Web.UI.PersistenceModeAttribute" />, and <see cref="T:System.ComponentModel.DesignerSerializationVisibilityAttribute" />.</para>
+      <block subset="none" type="note">
+        <para>The Web Forms page designer does not support the Reset<paramref name="PropertyName" /> method that is optionally exposed by Microsoft Windows Forms-based controls for property persistence. </para>
+      </block>
+      <para>To create a <see cref="T:System.Web.UI.Control" /> object or an <see cref="T:System.Web.UI.ITemplate" /> interface by parsing a string of control- or template-persistence data, use the <see cref="T:System.Web.UI.Design.ControlParser" /> class methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for persisting Web server controls at design-time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="PersistControl">
@@ -24,10 +35,20 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly. This method uses the <see cref="P:System.Web.UI.Control.Site" /> of the specified control to retrieve the designer host.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string of data that represents the persisted form of the specified control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the persisted form of the control.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to persist. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,10 +66,18 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="sw">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly. This method uses the <see cref="P:System.Web.UI.Control.Site" /> of the specified control to retrieve the designer host.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs a string of data that represents the persisted form of the specified control to the specified <see cref="T:System.IO.TextWriter" />.</para>
+        </summary>
+        <param name="sw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to output the persisted control data to. </param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to persist. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,11 +95,22 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string of data that represents the persisted form of the specified control, using the specified designer host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the persisted form of the control.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to persist. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is the designer host for the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -89,11 +129,20 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="sw">To be added.</param>
-        <param name="control">To be added.</param>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs a string of data that represents the persisted form of the specified control to the specified <see cref="T:System.IO.TextWriter" />, using the specified designer host.</para>
+        </summary>
+        <param name="sw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to output the persisted control data to. </param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to persist. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is the designer host for the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -111,11 +160,22 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string of data that can persist the inner properties of the specified control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the information to persist about the inner properties of the control.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to persist the inner properties of. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is the designer host for the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,11 +194,20 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="sw">To be added.</param>
-        <param name="component">To be added.</param>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs a string of data that can persist the inner properties of the specified control to the specified <see cref="T:System.IO.TextWriter" />, using the specified designer host.</para>
+        </summary>
+        <param name="sw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to use. </param>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to persist. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is the designer host for the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,11 +228,22 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="template">To be added.</param>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ControlPersister.PersistTemplate(System.Web.UI.ITemplate,System.ComponentModel.Design.IDesignerHost)" /> method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> interface implementation in order to work correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string of data that represents the persisted form of the specified template.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the persisted form of the template.</para>
+        </returns>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template to persist.</param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is the designer host for the control.</param>
       </Docs>
     </Member>
     <Member MemberName="PersistTemplate">
@@ -181,11 +261,20 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="template">To be added.</param>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ControlPersister.PersistTemplate(System.IO.TextWriter,System.Web.UI.ITemplate,System.ComponentModel.Design.IDesignerHost)" /> method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> interface implementation in order to work correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a string of data that represents the persisted form of the specified template to the specified <see cref="T:System.IO.TextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to write the persisted template data to.</param>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template to persist.</param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is the designer host for the control.</param>
       </Docs>
     </Member>
   </Members>

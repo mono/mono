@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SemaphoreAuditRule" FullName="System.Security.AccessControl.SemaphoreAuditRule">
   <TypeSignature Language="C#" Value="public sealed class SemaphoreAuditRule : System.Security.AccessControl.AuditRule" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SemaphoreAuditRule extends System.Security.AccessControl.AuditRule" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Security.AccessControl.AuditRule</BaseTypeName>
@@ -14,46 +17,89 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> class is one of a set of classes that the .NET Framework provides for managing Windows access control security on named system semaphores. For an overview of these classes and their relationship to the underlying Windows access control structures, see <see cref="T:System.Security.AccessControl.SemaphoreSecurity" />.</para>
+      <block subset="none" type="note">
+        <para>Windows access control security is meaningful only for named system semaphores. If a <see cref="T:System.Threading.Semaphore" /> object represents a local semaphore, access control is irrelevant.</para>
+      </block>
+      <para>To get a list of the audit rules currently applied to a named semaphore, use the <see cref="M:System.Threading.Semaphore.GetAccessControl" /> method to get a <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> object, and then use its <see cref="M:System.Security.AccessControl.CommonObjectSecurity.GetAuditRules(System.Boolean,System.Boolean,System.Type)" /> method to obtain a collection of <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> objects.</para>
+      <para>
+        <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> objects do not map one-to-one with access control entries in the underlying discretionary access control list (DACL). When you get the set of all audit rules for a semaphore, the set contains the minimum number of rules currently required to express all the access control entries. </para>
+      <block subset="none" type="note">
+        <para>The underlying access control entries change as you apply and remove rules. The information in rules is merged if possible, to maintain the smallest number of access control entries. Thus, when you read the current list of rules, it might not look exactly like the list of all the rules you have added.</para>
+      </block>
+      <para>Use <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> objects to specify access rights to be audited for a user or group. To apply a rule to a named system semaphore, use the <see cref="M:System.Threading.Semaphore.GetAccessControl" /> method to get the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> object. Modify the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> object by using its methods to add the rule, and then use the <see cref="M:System.Threading.Semaphore.SetAccessControl(System.Security.AccessControl.SemaphoreSecurity)" /> method to reattach the security object.</para>
+      <block subset="none" type="note">
+        <para>Changes you make to a <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> object do not affect the access levels of the named semaphore until you call the <see cref="M:System.Threading.Semaphore.SetAccessControl(System.Security.AccessControl.SemaphoreSecurity)" /> method to assign the altered security object to the named semaphore.</para>
+      </block>
+      <para>
+        <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> objects are immutable. Security for a semaphore is modified using the methods of the <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> class to add or remove rules; as you do this, the underlying access control entries are modified. </para>
+      <block subset="none" type="note">
+        <para>Security on synchronization objects is not supported for Windows 98 or Windows Millennium Edition.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of access rights to be audited for a user or group. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SemaphoreAuditRule (System.Security.Principal.IdentityReference identity, System.Security.AccessControl.SemaphoreRights semaphoreRights, System.Security.AccessControl.AuditFlags flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.IdentityReference identity, valuetype System.Security.AccessControl.SemaphoreRights semaphoreRights, valuetype System.Security.AccessControl.AuditFlags flags) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
         <Parameter Name="semaphoreRights" Type="System.Security.AccessControl.SemaphoreRights" />
         <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
         <param name="semaphoreRights">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create an <see cref="T:System.Security.Principal.NTAccount" /> object from a string representing a user or group name, use the <see cref="M:System.Security.Principal.NTAccount.#ctor(System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> class, specifying the user or group to audit, the rights to audit, and whether to audit success, failure, or both.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values specifying whether to audit success, failure, or both.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SemaphoreRights">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.SemaphoreRights SemaphoreRights { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.AccessControl.SemaphoreRights SemaphoreRights" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.SemaphoreRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> objects are immutable. You can create a new audit rule representing a different user, different rights, or a different combination of <see cref="T:System.Security.AccessControl.AuditFlags" /> values, but you cannot modify an existing audit rule.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the access rights affected by the audit rule.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

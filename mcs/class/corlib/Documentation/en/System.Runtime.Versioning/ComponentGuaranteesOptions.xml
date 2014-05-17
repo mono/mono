@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ComponentGuaranteesOptions" FullName="System.Runtime.Versioning.ComponentGuaranteesOptions">
+  <TypeSignature Language="C#" Value="public enum ComponentGuaranteesOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ComponentGuaranteesOptions extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Versioning.ComponentGuaranteesOptions" /> enumeration is used by the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> class to indicate the level of compatibility that is guaranteed for a component or class library that spans multiple versions. <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Exchange" /> provides the strongest compatibility guarantee, followed by <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.Stable" /> and <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.SideBySide" />. <see cref="F:System.Runtime.Versioning.ComponentGuaranteesOptions.None" /> does not promise compatibility across versions.</para>
+      <para>For a detailed discussion of the meaning of each guarantee, see the <see cref="T:System.Runtime.Versioning.ComponentGuaranteesAttribute" /> topic. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the compatibility guarantee of a component, type, or type member that may span multiple versions.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Exchange">
+      <MemberSignature Language="C#" Value="Exchange" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ComponentGuaranteesOptions Exchange = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ComponentGuaranteesOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The developer promises multi-version exchange compatibility for the type. Consumers of the type can expect compatibility across future versions and can use the type in all their interfaces. Versioning problems cannot be fixed by side-by-side execution. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ComponentGuaranteesOptions None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ComponentGuaranteesOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The developer does not guarantee compatibility across versions. Consumers of the component, type, or member can expect future versions to break the existing client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SideBySide">
+      <MemberSignature Language="C#" Value="SideBySide" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ComponentGuaranteesOptions SideBySide = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ComponentGuaranteesOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The component has been tested to work when more than one version of the assembly is loaded into the same application domain. Future versions can break compatibility. However, when such breaking changes are made, the old version is not modified but continues to exist alongside the new version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Stable">
+      <MemberSignature Language="C#" Value="Stable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Versioning.ComponentGuaranteesOptions Stable = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Versioning.ComponentGuaranteesOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The developer promises stable compatibility across versions. Consumers of the type can expect that future versions will not break the existing client. However, if they do and if the client has not used the type in its interfaces, side-by-side execution may fix the problem.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

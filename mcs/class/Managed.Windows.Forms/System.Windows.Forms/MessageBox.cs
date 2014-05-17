@@ -212,14 +212,25 @@ namespace System.Windows.Forms
 
 				// Max width of messagebox must be 60% of screen width
 				int max_width = (int) (Screen.GetWorkingArea (this).Width * 0.6);
-
+				if (max_width > 500) {
+					float dx;
+					using (Graphics g = this.CreateGraphics ()) {
+						dx = g.DpiX;
+					}
+					int new_max_width = (int) (dx * 5.0);	// aim for text no wider than 5.0 inches
+					if (new_max_width < max_width)
+						max_width = new_max_width;
+				}
 				// First we have to know the size of text + image
-				Drawing.SizeF tsize = TextRenderer.MeasureString (msgbox_text, this.Font, max_width);
+				int iconImageWidth = 0;
+				if (icon_image != null)
+					iconImageWidth = icon_image.Width + 10;
+				Drawing.SizeF tsize = TextRenderer.MeasureText (msgbox_text, this.Font, new Size (max_width - iconImageWidth, int.MaxValue), TextFormatFlags.WordBreak);
 				text_rect = new RectangleF ();
-				text_rect.Size = tsize;
-				
+				text_rect.Height = tsize.Height;
+
 				if (icon_image != null) {
-					tsize.Width += icon_image.Width + 10;
+					tsize.Width += iconImageWidth;
 					if(icon_image.Height > tsize.Height) {
 						// Place text middle-right
 						text_rect.Location = new Point (icon_image.Width + space_image_text + space_border, (int)((icon_image.Height/2)-(tsize.Height/2)) + space_border);
@@ -232,6 +243,7 @@ namespace System.Windows.Forms
 					text_rect.Location = new Point (space_border + button_space, space_border);
 				}
 				tsize.Height += space_border * 2;
+				text_rect.Height += space_border;
 
 				// Now we want to know the amount of buttons
 				int buttoncount;
@@ -283,6 +295,8 @@ namespace System.Windows.Forms
 					this.ClientSize = new Size (new_size.Width + (space_border * 2), Height = new_size.Height + (space_border * 4));
 				else
 					this.ClientSize = new Size (tb_width + (space_border * 2), Height = new_size.Height + (space_border * 4));
+
+				text_rect.Width = new_size.Width - iconImageWidth;
 
 				// Now we set the left of the buttons
 				button_left = (this.ClientSize.Width / 2) - (tb_width / 2) + 5;

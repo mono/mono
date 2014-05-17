@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StringFreezingAttribute" FullName="System.Runtime.CompilerServices.StringFreezingAttribute">
   <TypeSignature Language="C#" Value="public sealed class StringFreezingAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit StringFreezingAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,24 +17,39 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Runtime.CompilerServices.StringFreezingAttribute" /> class has been deprecated in the .NET Framework version 3.5 Service Pack 1 (SP1) and later versions.</para>
+      </block>
+      <para>A frozen string is a string literal object that is compatible with the managed heap and has been serialized into a native image by the <format type="text/html"><a href="44bf97aa-a9a4-4eba-9a0d-cfaa6fc53a66">Native Image Generator (Ngen.exe)</a></format>.  The <see cref="T:System.Runtime.CompilerServices.StringFreezingAttribute" /> attribute allows you to optimize your code by pre-allocating string literals during native image generation rather than at run time.  After a string literal has been frozen, code can simply refer to the string using the address in the native image.</para>
+      <para>The <see cref="T:System.Runtime.CompilerServices.StringFreezingAttribute" /> must be applied on the assembly level.</para>
+      <para>Note that the common language runtime (CLR) cannot unload any native image that has a frozen string because any object in the heap might refer to the frozen string.  Therefore, you should use the <see cref="T:System.Runtime.CompilerServices.StringFreezingAttribute" /> class only in cases where the native image that contains the frozen string is shared heavily.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Deprecated. Freezes a string literal when creating native images using the <format type="text/html"><a href="44bf97aa-a9a4-4eba-9a0d-cfaa6fc53a66">Native Image Generator (Ngen.exe)</a></format>. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public StringFreezingAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.StringFreezingAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

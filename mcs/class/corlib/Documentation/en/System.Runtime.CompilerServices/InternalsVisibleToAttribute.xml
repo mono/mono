@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InternalsVisibleToAttribute" FullName="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
   <TypeSignature Language="C#" Value="public sealed class InternalsVisibleToAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit InternalsVisibleToAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,63 +17,103 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>This attribute is used to expose internal methods to another assembly.</summary>
-    <remarks>
-      <para>This is an assembly-level attribute that is used to expose the internal types and members to another assembly.   This makes everything that might have been flagged as "internal" visible as a public member to the assembly referenced.</para>
-      <para>
-If you have a public key (the .pub file used to sign an assembly): use the following command to extract the Public Key):
-</para>
-      <example>
-        <code lang="Shell Inovcation">
-mono$ sn -tp /cvs/moon/class/silverlight.pub 
-Mono StrongName - version 1.9.0.0
-StrongName utility for signing assemblies
-Copyright 2002, 2003 Motus Technologies. Copyright 2004-2008 Novell. BSD licensed.
-
-Public Key:
-00240000048000009400000006020000002400005253413100040000010001008d56c76f9e8649
-383049f383c44be0ec204181822a6c31cf5eb7ef486944d032188ea1d3920763712ccb12d75fb7
-7e9811149e6148e5d32fbaab37611c1878ddc19e20ef135d0cb2cff2bfec3d115810c3d9069638
-fe4be215dbf795861920e5ab6f7db2e2ceef136ac23d5dd2bf031700aec232f6c6b1c785b4305c
-123b37ab
-
-Public Key Token: 7cec85d7bea7798e
-  </code>
-      </example>
-      <para>
-Use this key then as the PublicKey value inside the string:
-</para>
-      <example>
-        <code lang="C#">
-// This attribute makes the internal methods available to the Mono.Moonlight assembly.
-[assembly: InternalsVisibleTo ("Mono.Moonlight, PublicKey=002400000480000094000000060200000024000052534131000400000100010079159977d2d03a8e6bea7a2e74e8d1afcc93e8851974952bb480a12c913
-4474d04062447c37e0e68c080536fcf3c3fbe2ff9c979ce998475e506e8ce82dd5b0f350dc10e93bf2eeecf874b24770c5081dbea7447fddafa277b22de47d6ffea449674a4f9fccf84d15069089380284dbdd35f46cdff12a1bd78e4ef00
-65d016df")]
-  </code>
-      </example>
-    </remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Ordinarily, types and members with internal scope (in C#) and friend scope (in Visual Basic) are visible only in the assembly in which they are defined. The <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" /> attribute makes them also visible to the types in a specified assembly, which is known as a friend assembly.</para>
+      <para>The attribute is applied at the assembly level. This means that it can be included at the beginning of a source code file, or it can be included in the AssemblyInfo file in a Visual Studio project. You can use the attribute to specify a single friend assembly that can access the internal types and members of the current assembly. You can define multiple friend assemblies in two ways. They can appear as individual assembly-level attributes, as the following example illustrates.</para>
+      <para>code reference: System.Runtime.CompilerServices.InternalsVisibleToAttribute#3</para>
+      <para>They can also appear with separate <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" /> tags but a single assembly keyword, as the following example illustrates.</para>
+      <para>code reference: System.Runtime.CompilerServices.InternalsVisibleToAttribute#4</para>
+      <para>The friend assembly is identified by the <see cref="M:System.Runtime.CompilerServices.InternalsVisibleToAttribute.#ctor(System.String)" /> constructor. Both the current assembly and the friend assembly must be unsigned, or both assemblies must be signed with a strong name. If they are signed with a strong name, the argument to the <see cref="M:System.Runtime.CompilerServices.InternalsVisibleToAttribute.#ctor(System.String)" /> constructor must include the full public key as well as the name of the assembly. For more information about using <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" /> with strong-named assemblies, see the <see cref="M:System.Runtime.CompilerServices.InternalsVisibleToAttribute.#ctor(System.String)" /> constructor.</para>
+      <para>Do not include values for the <see cref="P:System.Reflection.AssemblyName.CultureInfo" />, <see cref="P:System.Reflection.AssemblyName.Version" />, or <see cref="P:System.Reflection.AssemblyName.ProcessorArchitecture" /> field in the argument; the Visual Basic, C#, and C++ compilers treat this as a compiler error. If you use a compiler that does not treat it as an error (such as the <format type="text/html"><a href="4ca3a4f0-4400-47ce-8936-8e219961c76f">MSIL Assembler (ILAsm.exe)</a></format>) and the assemblies are strong-named, a <see cref="T:System.MethodAccessException" /> exception is thrown the first time the specified friend assembly accesses the assembly that contains the <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" /> attribute.</para>
+      <para>If you use the C# compiler to compile the friend assembly, you must explicitly specify the name of the output file (.exe or .dll) by using the /out compiler option. This is required because the compiler has not yet generated the name for the assembly it is building at the time it is binding to external references. The /out compiler option is optional for the Visual Basic compiler, and the corresponding --out or –o compiler option should not be used when compiling friend assemblies with the F# compiler.</para>
+      <para>For more information about how to use this attribute, see the following topics:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="8d55fee0-b7c2-4fbe-a23b-dfe424dc71cd">Friend Assemblies (C++)</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="df0c70ea-2c2a-4bdc-9526-df951ad2d055">Friend Assemblies (C# and Visual Basic)</a>
+            </format>
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that types that are ordinarily visible only within the current assembly are visible to a specified assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public InternalsVisibleToAttribute (string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string assemblyName) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="assemblyName" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="assemblyName">The assembly name, this must include the Public Key.   See the class documentation for an example.</param>
-        <summary>To be added.</summary>
-        <remarks>Allows the specified assembly to have access to the internal classes and members  of this assembly.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.CompilerServices.InternalsVisibleToAttribute.#ctor(System.String)" /> constructor defines a friend assembly, which is an assembly that has access to the internal types and members of the current assembly. </para>
+          <para>Both the current assembly and the friend assembly must be unsigned, or both must be signed with a strong name. (For more information about strong-named assemblies, see <format type="text/html"><a href="ffbf6d9e-4a88-4a8a-9645-4ce0ee1ee5f9">Creating and Using Strong-Named Assemblies</a></format>.) If both are unsigned, the <paramref name="assemblyName" /> parameter consists of the name of the friend assembly, specified without a directory path or file extension. If both are signed, <paramref name="assemblyName" /> consists of the name of the friend assembly along with its full public key (but not its public key token). The other components of a strong name, such as those that provide culture, version, or processor architecture information, cannot be specified in the <paramref name="assemblyName" /> parameter.</para>
+          <para>You can use <format type="text/html"><a href="c1d2b532-1b8e-4c7a-8ac5-53b801135ec6">Sn.exe (Strong Name Tool)</a></format> to retrieve the full public key from a strong-named key (.snk) file. To do this, you perform the following steps:</para>
+          <list type="ordered">
+            <item>
+              <para>Extract the public key from the strong-named key file to a separate file:</para>
+              <para>
+                <system>Sn -p</system> snk_file outfile</para>
+            </item>
+            <item>
+              <para>Display the full public key to the console:</para>
+              <para>
+                <system>Sn -tp</system> outfile</para>
+            </item>
+            <item>
+              <para>Copy and paste the full public key value into your source code.</para>
+            </item>
+          </list>
+          <para>For more information about how to use the <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" /> attribute, see the following topics:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="8d55fee0-b7c2-4fbe-a23b-dfe424dc71cd">Friend Assemblies (C++)</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="df0c70ea-2c2a-4bdc-9526-df951ad2d055">Friend Assemblies (C# Programmer's Reference)</a>
+                </format>
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" /> class with the name of the specified friend assembly. </para>
+        </summary>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a friend assembly.</param>
+      </Docs>
     </Member>
     <Member MemberName="AllInternalsVisible">
-      <MemberSignature Language="C#" Value="public bool AllInternalsVisible { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AllInternalsVisible { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllInternalsVisible" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,27 +123,53 @@ Use this key then as the PublicKey value inside the string:
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not implemented.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssemblyName">
       <MemberSignature Language="C#" Value="public string AssemblyName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AssemblyName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to use the <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" /> attribute, see the following topics:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="8d55fee0-b7c2-4fbe-a23b-dfe424dc71cd">Friend Assemblies (C++)</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="df0c70ea-2c2a-4bdc-9526-df951ad2d055">Friend Assemblies (C# Programmer's Reference)</a>
+                </format>
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the friend assembly to which all types and type members that are marked with the internal keyword are to be made visible. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

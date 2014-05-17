@@ -201,6 +201,11 @@ namespace Mono.CSharp.Nullable
 			return uw != null && expr.Equals (uw.expr);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+		}
+
 		public Expression Original {
 			get {
 				return expr;
@@ -480,6 +485,11 @@ namespace Mono.CSharp.Nullable
 			ec.MarkLabel (end_label);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+		}
+
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			unwrap.AddressOf (ec, mode);
@@ -519,6 +529,11 @@ namespace Mono.CSharp.Nullable
 				return null;
 
 			Expression res = base.ResolveOperator (ec, unwrap);
+			if (res == null) {
+				Error_OperatorCannotBeApplied (ec, loc, OperName (Oper), Expr.Type);
+				return null;
+			}
+
 			if (res != this) {
 				if (user_operator == null)
 					return res;
@@ -649,10 +664,10 @@ namespace Mono.CSharp.Nullable
 		{
 			if (rc.IsRuntimeBinder) {
 				if (UnwrapLeft == null && !Left.Type.IsNullableType)
-					Left = Wrap.Create (Left, rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { Left.Type }));
+					Left = LiftOperand (rc, Left);
 
 				if (UnwrapRight == null && !Right.Type.IsNullableType)
-					Right = Wrap.Create (Right, rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { Right.Type }));
+					Right = LiftOperand (rc, Right);
 			} else {
 				if (UnwrapLeft == null && Left != null && Left.Type.IsNullableType) {
 					Left = Unwrap.CreateUnwrapped (Left);
@@ -669,6 +684,21 @@ namespace Mono.CSharp.Nullable
 			eclass = Binary.eclass;	
 
 			return this;
+		}
+
+		Expression LiftOperand (ResolveContext rc, Expression expr)
+		{
+			TypeSpec type;
+			if (expr.IsNull) {
+				type = Left.IsNull ? Right.Type : Left.Type;
+			} else {
+				type = expr.Type;
+			}
+
+			if (!type.IsNullableType)
+				type = rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { type });
+
+			return Wrap.Create (expr, type);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -752,6 +782,9 @@ namespace Mono.CSharp.Nullable
 				if (ec.HasSet (BuilderContext.Options.AsyncBody) && Binary.Right.ContainsEmitWithAwait ()) {
 					Left = Left.EmitToField (ec);
 					Right = Right.EmitToField (ec);
+				} else {
+					UnwrapLeft.Store (ec);
+					UnwrapRight.Store (ec);
 				}
 
 				Left.Emit (ec);
@@ -1008,10 +1041,13 @@ namespace Mono.CSharp.Nullable
 			ec.MarkLabel (end_label);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			Binary.FlowAnalysis (fc);
+		}
+
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			Console.WriteLine (":{0} x {1}", Left.GetType (), Right.GetType ());
-
 			return Binary.MakeExpression (ctx, Left, Right);
 		}
 	}
@@ -1147,7 +1183,7 @@ namespace Mono.CSharp.Nullable
 			}
 
 			TypeSpec rtype = right.Type;
-			if (!Convert.ImplicitConversionExists (ec, unwrap != null ? unwrap : left, rtype) || right.eclass == ExprClass.MethodGroup)
+			if (!Convert.ImplicitConversionExists (ec, unwrap ?? left, rtype) || right.eclass == ExprClass.MethodGroup)
 				return null;
 
 			//
@@ -1156,7 +1192,7 @@ namespace Mono.CSharp.Nullable
 			if (left.IsNull)
 				return ReducedExpression.Create (right, this).Resolve (ec);
 
-			left = Convert.ImplicitConversion (ec, unwrap != null ? unwrap : left, rtype, loc);
+			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
 			type = rtype;
 			return this;
 		}
@@ -1221,6 +1257,14 @@ namespace Mono.CSharp.Nullable
 			right.Emit (ec);
 
 			ec.MarkLabel (end_label);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			left.FlowAnalysis (fc);
+			var left_da = fc.BranchDefiniteAssignment ();
+			right.FlowAnalysis (fc);
+			fc.DefiniteAssignment = left_da;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

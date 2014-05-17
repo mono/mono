@@ -3,8 +3,10 @@
 //
 // Authors:
 //  Jb Evain  <jbevain@novell.com>
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -319,6 +321,11 @@ namespace System.Collections.Generic {
 		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
 		public void ExceptWith (IEnumerable<T> other)
 		{
+			if (other == this) {
+				Clear ();
+				return;
+			}
+
 			CheckArgumentNotNull (other, "other");
 			foreach (T item in other)
 				Remove (item);
@@ -513,6 +520,11 @@ namespace System.Collections.Generic {
 		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
 		public void SymmetricExceptWith (IEnumerable<T> other)
 		{
+			if (other == this) {
+				Clear ();
+				return;
+			}
+
 			SortedSet<T> that_minus_this = new SortedSet<T> (Comparer);
 
 			// compute this - that and that - this in parallel

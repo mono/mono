@@ -280,7 +280,8 @@ namespace System {
 		internal static bool FindExponent (ref int pos, string s, ref int exponent, bool tryParse, ref Exception exc)
 		{
 				exponent = 0;
-
+				bool neg;
+				
 				if (pos >= s.Length || (s [pos] != 'e' && s[pos] != 'E')) {
 					exc = null;
 					return false;
@@ -292,11 +293,9 @@ namespace System {
 					return true;
 				}
 
-				// negative exponent not valid for Int32
-				if (s [i] == '-') {
-					exc = tryParse ? null : new OverflowException ("Value too large or too small.");
-					return true;
-				}
+				neg = (s [i] == '-');
+				if (neg)
+					i++;
 
 				if (s [i] == '+' && ++i == s.Length) {
 					exc = tryParse ? null : GetFormatException ();
@@ -318,8 +317,9 @@ namespace System {
 					}
 				}
 
-				// exp value saved as negative
-				exp = -exp;
+				// exp value saved as negative, and neg tracks whether we had a negative
+				if (!neg)
+					exp = -exp;
 
 				exc = null;
 				exponent = (int)exp;
@@ -342,10 +342,7 @@ namespace System {
 
 		internal static bool ValidDigit (char e, bool allowHex)
 		{
-			if (allowHex)
-				return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
-
-			return Char.IsDigit (e);
+			return (e >= '0' && e <= '9') || (allowHex &&  ((e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f')));
 		}
 		
 		internal static Exception GetFormatException ()
@@ -373,7 +370,7 @@ namespace System {
 			NumberFormatInfo nfi = null;
 			if (fp != null) {
 				Type typeNFI = typeof (System.Globalization.NumberFormatInfo);
-				nfi = (NumberFormatInfo) fp.GetFormat (typeNFI);
+				nfi = fp.GetFormat (typeNFI) as NumberFormatInfo;
 			}
 			if (nfi == null)
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;

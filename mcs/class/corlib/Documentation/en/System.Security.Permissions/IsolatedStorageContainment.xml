@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsolatedStorageContainment" FullName="System.Security.Permissions.IsolatedStorageContainment">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum IsolatedStorageContainment" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed IsolatedStorageContainment extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,209 +13,284 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="AdministerIsolatedStorageByUser">
-      <MemberSignature Language="C#" Value="AdministerIsolatedStorageByUser" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ApplicationIsolationByMachine">
-      <MemberSignature Language="C#" Value="ApplicationIsolationByMachine" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ApplicationIsolationByRoamingUser">
-      <MemberSignature Language="C#" Value="ApplicationIsolationByRoamingUser" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ApplicationIsolationByUser">
-      <MemberSignature Language="C#" Value="ApplicationIsolationByUser" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="AssemblyIsolationByMachine">
-      <MemberSignature Language="C#" Value="AssemblyIsolationByMachine" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="AssemblyIsolationByRoamingUser">
-      <MemberSignature Language="C#" Value="AssemblyIsolationByRoamingUser" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="AssemblyIsolationByUser">
-      <MemberSignature Language="C#" Value="AssemblyIsolationByUser" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DomainIsolationByMachine">
-      <MemberSignature Language="C#" Value="DomainIsolationByMachine" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DomainIsolationByRoamingUser">
-      <MemberSignature Language="C#" Value="DomainIsolationByRoamingUser" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DomainIsolationByUser">
-      <MemberSignature Language="C#" Value="DomainIsolationByUser" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="None">
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="UnrestrictedIsolatedStorage">
-      <MemberSignature Language="C#" Value="UnrestrictedIsolatedStorage" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Isolated storage uses evidence to determine a unique storage area for use by an application or component. The identity of an assembly uniquely determines the root of a virtual file system for use by that assembly. Thus, rather than many applications and components sharing a common resource such as the file system or registry, each has its own file area inherently assigned to it.</para>
+      <para>Four basic isolation scopes are used when assigning isolated storage: </para>
+      <list type="bullet">
+        <item>
+          <para>User - Code is always scoped according to the current user. The same assembly will receive different stores when being run by different users.</para>
+        </item>
+        <item>
+          <para>Machine - Code is always scoped according to the machine. The same assembly will receive the same stores when being run by different users on the same machine.</para>
+        </item>
+        <item>
+          <para>Assembly - Code is identified cryptographically by strong name (for example, Microsoft.Office.* or Microsoft.Office.Word), by publisher (based on public key), by URL (for example, http://www.fourthcoffee.com/process/grind.htm), by site, or by zone.</para>
+        </item>
+        <item>
+          <para>Domain - Code is identified based on evidence associated with the application domain. Web application identity is derived from the site's URL, or by the Web page's URL, site, or zone. Local code identity is based on the application directory path.</para>
+        </item>
+      </list>
+      <para>For definitions of URL, site, and zone, see <see cref="T:System.Security.Permissions.UrlIdentityPermission" />, <see cref="T:System.Security.Permissions.SiteIdentityPermission" />, and <see cref="T:System.Security.Permissions.ZoneIdentityPermission" />.</para>
+      <para>These identities are grouped together, in which case the identities are applied one after another until the desired isolated storage is created. The valid groupings are User+Assembly and User+Assembly+Domain. This grouping of identities is useful in many different applications.</para>
+      <para>If data is stored by domain, user, and assembly, the data is private in that only code in that assembly can access the data. The data store is also isolated by the application in which it runs, so that the assembly does not represent a potential leak by exposing data to other applications.</para>
+      <para>Isolation by assembly and user could be used for user data that applies across multiple applications; for example, license information, or a user's personal information (name, authentication credentials, and so on) that is independent of an application.</para>
+      <para>
+        <see cref="T:System.Security.Permissions.IsolatedStorageContainment" /> exposes flags that determine whether an application is allowed to use isolated storage and, if so, which identity combinations are allowed to use it. It also determines whether an application is allowed to store information in a location that can roam with a user (Windows Roaming User Profiles or Folder Redirection must be configured).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the permitted use of isolated storage.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AdministerIsolatedStorageByUser">
+      <MemberSignature Language="C#" Value="AdministerIsolatedStorageByUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment AdministerIsolatedStorageByUser = int32(112)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlimited administration ability for the user store. Allows browsing and deletion of the entire user store, but not read access other than the user's own domain/assembly identity.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplicationIsolationByMachine">
+      <MemberSignature Language="C#" Value="ApplicationIsolationByMachine" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment ApplicationIsolationByMachine = int32(69)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by computer and then by application. This provides a data store for the application that is accessible in any domain context. The per-application data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplicationIsolationByRoamingUser">
+      <MemberSignature Language="C#" Value="ApplicationIsolationByRoamingUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment ApplicationIsolationByRoamingUser = int32(101)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by application evidence. Storage will roam if Windows user data roaming is enabled. This provides a data store for the application that is accessible in any domain context. The per-application data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplicationIsolationByUser">
+      <MemberSignature Language="C#" Value="ApplicationIsolationByUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment ApplicationIsolationByUser = int32(21)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by application. Storage is also isolated by computer. This provides a data store for the application that is accessible in any domain context. The per-application data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AssemblyIsolationByMachine">
+      <MemberSignature Language="C#" Value="AssemblyIsolationByMachine" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment AssemblyIsolationByMachine = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by computer and then by code assembly. This provides a data store for the assembly that is accessible in any domain context. The per-assembly data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AssemblyIsolationByRoamingUser">
+      <MemberSignature Language="C#" Value="AssemblyIsolationByRoamingUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment AssemblyIsolationByRoamingUser = int32(96)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by assembly evidence. Storage will roam if Windows user data roaming is enabled. This provides a data store for the assembly that is accessible in any domain context. The per-assembly data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AssemblyIsolationByUser">
+      <MemberSignature Language="C#" Value="AssemblyIsolationByUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment AssemblyIsolationByUser = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by code assembly. Storage is also isolated by computer. This provides a data store for the assembly that is accessible in any domain context. The per-assembly data compartment requires additional trust because it potentially provides a "tunnel" between applications that could compromise the data isolation of applications in particular Web sites.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DomainIsolationByMachine">
+      <MemberSignature Language="C#" Value="DomainIsolationByMachine" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment DomainIsolationByMachine = int32(48)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by computer and then by domain and assembly. Data can only be accessed within the context of the same application and only when run on the same computer. This is helpful when a third-party assembly wants to keep a private data store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DomainIsolationByRoamingUser">
+      <MemberSignature Language="C#" Value="DomainIsolationByRoamingUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment DomainIsolationByRoamingUser = int32(80)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by domain and assembly. Storage will roam if Windows user data roaming is enabled. Data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DomainIsolationByUser">
+      <MemberSignature Language="C#" Value="DomainIsolationByUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment DomainIsolationByUser = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Storage is isolated first by user and then by domain and assembly. Storage is also isolated by computer. Data can only be accessed within the context of the same application and only when run by the same user. This is helpful when a third-party assembly wants to keep a private data store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use of isolated storage is not allowed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UnrestrictedIsolatedStorage">
+      <MemberSignature Language="C#" Value="UnrestrictedIsolatedStorage" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.IsolatedStorageContainment UnrestrictedIsolatedStorage = int32(240)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.IsolatedStorageContainment</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use of isolated storage is allowed without restriction. Code has full access to any part of the user store, regardless of the identity of the domain or assembly. This use of isolated storage includes the ability to enumerate the contents of the isolated storage data store.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

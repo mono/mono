@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaType" FullName="System.Xml.Schema.XmlSchemaType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaType : System.Xml.Schema.XmlSchemaAnnotated" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaType extends System.Xml.Schema.XmlSchemaAnnotated" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,35 +15,41 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The base class for all simple types and complex types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaType" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BaseSchemaType">
       <MemberSignature Language="C#" Value="public object BaseSchemaType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object BaseSchemaType" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("This property is going away. Use BaseXmlSchemaType instead")</AttributeName>
@@ -49,14 +58,32 @@
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'object'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complexType is derived from the type specified by the base value. The base value must be a QName.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Xml.Schema.XmlSchemaType.BaseSchemaType" /> property is obsolete and has been replaced by the <see cref="P:System.Xml.Schema.XmlSchemaType.BaseXmlSchemaType" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post-compilation object type or the built-in XML Schema Definition Language (XSD) data type, simpleType element, or complexType element. This is a post-schema-compilation infoset property.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BaseXmlSchemaType">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaType BaseXmlSchemaType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaType BaseXmlSchemaType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
@@ -66,126 +93,392 @@
         <ReturnType>System.Xml.Schema.XmlSchemaType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlSchemaType.BaseXmlSchemaType" /> property always has a value, because all schema types have a base type. This value is set upon schema compilation, making it a part of the post-schema-compilation infoset.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post-compilation value for the base type of this schema type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Datatype">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaDatatype Datatype { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaDatatype Datatype" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaDatatype</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaDatatype'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post-compilation value for the data type of the complex type.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="DerivedBy">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaDerivationMethod DerivedBy { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlSchemaDerivationMethod DerivedBy" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DerivedBy">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaDerivationMethod DerivedBy { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaDerivationMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaDerivationMethod'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the values that this property can contain.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <see cref="T:System.Xml.Schema.XmlSchemaDerivationMethod" /> value</para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.None" />
+                </para>
+              </term>
+              <description>
+                <para>No derivation method specified. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Substitution" />
+                </para>
+              </term>
+              <description>
+                <para>Derived by Substitution. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Extension" />
+                </para>
+              </term>
+              <description>
+                <para>Derived by Extension. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Restriction" />
+                </para>
+              </term>
+              <description>
+                <para>Derived by Restriction. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.List" />
+                </para>
+              </term>
+              <description>
+                <para>Derived by List. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Union" />
+                </para>
+              </term>
+              <description>
+                <para>Derived by Union. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post-compilation information on how this element was derived from its base type.</para>
+        </summary>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
-        </Attribute>
-      </Attributes>
+    </Member>
+    <Member MemberName="Final">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaDerivationMethod Final { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlSchemaDerivationMethod Final" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Final">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaDerivationMethod Final { set; get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlAttribute("final")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaDerivationMethod</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaDerivationMethod'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the values that this property can contain for simple type.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <see cref="T:System.Xml.Schema.XmlSchemaDerivationMethod" /> value</para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Empty" />
+                </para>
+              </term>
+              <description>
+                <para>Overrides the schema blockDefault setting allowing any derivations by restriction, extension, or substitution to take place. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.None" />
+                </para>
+              </term>
+              <description>
+                <para>No derivation method is specified. This is the default. Derivation rules are taken from the schema blockDefault setting. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Substitution" />
+                </para>
+              </term>
+              <description>
+                <para>Cannot be replaced by a type derived by Substitution. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Extension" />
+                </para>
+              </term>
+              <description>
+                <para>Cannot be replaced by a type derived by Extension. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Restriction" />
+                </para>
+              </term>
+              <description>
+                <para>Cannot be replaced by a type derived by Restriction. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.All" />
+                </para>
+              </term>
+              <description>
+                <para>#all. Cannot be replaced by a type derived by any derivation method. </para>
+              </description>
+            </item>
+          </list>
+          <para>The following table shows the values that this property can contain for complex type.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <see cref="T:System.Xml.Schema.XmlSchemaDerivationMethod" /> value</para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Empty" />
+                </para>
+              </term>
+              <description>
+                <para>Overrides the schema blockDefault setting allowing any derivations by restriction, extension, or substitution to take place. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.None" />
+                </para>
+              </term>
+              <description>
+                <para>No derivation method is specified. This is the default. Derivation rules are taken from the schema blockDefault setting. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Substitution" />
+                </para>
+              </term>
+              <description>
+                <para>Cannot be replaced by a type derived by Substitution. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Extension" />
+                </para>
+              </term>
+              <description>
+                <para>Cannot be replaced by a type derived by Extension. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.Restriction" />
+                </para>
+              </term>
+              <description>
+                <para>Cannot be replaced by a type derived by Restriction. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaDerivationMethod.All" />
+                </para>
+              </term>
+              <description>
+                <para>#all. Cannot be replaced by a type derived by any derivation method. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the final attribute of the type derivation that indicates if further derivations are allowed.</para>
+        </summary>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlAttribute("final")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(System.Xml.Schema.XmlSchemaDerivationMethod.None)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FinalResolved">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaDerivationMethod FinalResolved { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlSchemaDerivationMethod FinalResolved" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Xml.Schema.XmlSchemaDerivationMethod</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'XmlSchemaDerivationMethod'</value>
-        <remarks>To be added</remarks>
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaDerivationMethod</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'XmlSchemaDerivationMethod'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value indicates how the type is restricted when the type is extended through restriction. If the type is marked as final, this type cannot be extended.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post-compilation value of the <see cref="P:System.Xml.Schema.XmlSchemaType.Final" /> property.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetBuiltInComplexType">
-      <MemberSignature Language="C#" Value="public static System.Xml.Schema.XmlSchemaComplexType GetBuiltInComplexType (System.Xml.Schema.XmlTypeCode type);" />
+      <MemberSignature Language="C#" Value="public static System.Xml.Schema.XmlSchemaComplexType GetBuiltInComplexType (System.Xml.Schema.XmlTypeCode typeCode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Schema.XmlSchemaComplexType GetBuiltInComplexType(valuetype System.Xml.Schema.XmlTypeCode typeCode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaComplexType</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="type" Type="System.Xml.Schema.XmlTypeCode" />
+        <Parameter Name="typeCode" Type="System.Xml.Schema.XmlTypeCode" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type of the complex type specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type.</para>
+        </returns>
+        <param name="typeCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Xml.Schema.XmlTypeCode" /> values representing the complex type.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetBuiltInComplexType">
       <MemberSignature Language="C#" Value="public static System.Xml.Schema.XmlSchemaComplexType GetBuiltInComplexType (System.Xml.XmlQualifiedName qualifiedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Schema.XmlSchemaComplexType GetBuiltInComplexType(class System.Xml.XmlQualifiedName qualifiedName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaComplexType</ReturnType>
       </ReturnValue>
@@ -193,39 +486,60 @@
         <Parameter Name="qualifiedName" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <param name="qualifiedName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type of the complex type specified by qualified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaComplexType" /> that represents the built-in complex type.</para>
+        </returns>
+        <param name="qualifiedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> of the complex type.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetBuiltInSimpleType">
-      <MemberSignature Language="C#" Value="public static System.Xml.Schema.XmlSchemaSimpleType GetBuiltInSimpleType (System.Xml.Schema.XmlTypeCode type);" />
+      <MemberSignature Language="C#" Value="public static System.Xml.Schema.XmlSchemaSimpleType GetBuiltInSimpleType (System.Xml.Schema.XmlTypeCode typeCode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Schema.XmlSchemaSimpleType GetBuiltInSimpleType(valuetype System.Xml.Schema.XmlTypeCode typeCode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaSimpleType</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="type" Type="System.Xml.Schema.XmlTypeCode" />
+        <Parameter Name="typeCode" Type="System.Xml.Schema.XmlTypeCode" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot directly serialize the built-in type. If you need to serialize the type, create a new simple type which derives from the built-in type and serialize the simple type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type of the specified simple type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type.</para>
+        </returns>
+        <param name="typeCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Xml.Schema.XmlTypeCode" /> values representing the simple type.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetBuiltInSimpleType">
       <MemberSignature Language="C#" Value="public static System.Xml.Schema.XmlSchemaSimpleType GetBuiltInSimpleType (System.Xml.XmlQualifiedName qualifiedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Schema.XmlSchemaSimpleType GetBuiltInSimpleType(class System.Xml.XmlQualifiedName qualifiedName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaSimpleType</ReturnType>
       </ReturnValue>
@@ -233,19 +547,31 @@
         <Parameter Name="qualifiedName" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <param name="qualifiedName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot directly serialize the built-in type. If you need to serialize the type, create a new simple type which derives from the built-in type and serialize the simple type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type of the simple type that is specified by the qualified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> that represents the built-in simple type.</para>
+        </returns>
+        <param name="qualifiedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> of the simple type.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsDerivedFrom">
       <MemberSignature Language="C#" Value="public static bool IsDerivedFrom (System.Xml.Schema.XmlSchemaType derivedType, System.Xml.Schema.XmlSchemaType baseType, System.Xml.Schema.XmlSchemaDerivationMethod except);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDerivedFrom(class System.Xml.Schema.XmlSchemaType derivedType, class System.Xml.Schema.XmlSchemaType baseType, valuetype System.Xml.Schema.XmlSchemaDerivationMethod except) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -255,86 +581,118 @@
         <Parameter Name="except" Type="System.Xml.Schema.XmlSchemaDerivationMethod" />
       </Parameters>
       <Docs>
-        <param name="derivedType">To be added.</param>
-        <param name="baseType">To be added.</param>
-        <param name="except">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating if the derived schema type specified is derived from the base schema type specified</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the derived type is derived from the base type; otherwise, false.</para>
+        </returns>
+        <param name="derivedType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The derived <see cref="T:System.Xml.Schema.XmlSchemaType" /> to test.</param>
+        <param name="baseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base <see cref="T:System.Xml.Schema.XmlSchemaType" /> to test the derived <see cref="T:System.Xml.Schema.XmlSchemaType" /> against.</param>
+        <param name="except">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Xml.Schema.XmlSchemaDerivationMethod" /> values representing a type derivation method to exclude from testing.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsMixed">
-      <MemberSignature Language="C#" Value="public virtual bool IsMixed { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsMixed { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsMixed" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This virtual method is overridden in derived classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating if this type has a mixed content model. This property is only valid in a complex type.</para>
+        </summary>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
-        </Attribute>
-      </Attributes>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlAttribute("name")</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name must be an no-colon name (NCName) as defined in the World Wide Web Consortium (W3C) XML Namespaces specification. If specified, the name must be unique among all simpleType and complexType elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the type.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="QualifiedName">
       <MemberSignature Language="C#" Value="public System.Xml.XmlQualifiedName QualifiedName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlQualifiedName QualifiedName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'System.Xml.XmlQualifiedName'</value>
-        <remarks>To be added</remarks>
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'System.Xml.XmlQualifiedName'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the qualified name for the type built from the Name attribute of this type. This is a post-schema-compilation property.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="TypeCode">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlTypeCode TypeCode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlTypeCode TypeCode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
@@ -344,14 +702,14 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Schema.XmlTypeCode" /> of the type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

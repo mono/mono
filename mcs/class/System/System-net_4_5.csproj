@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C86FCD4E-6A52-4595-8F9E-5270607D5EA9}</ProjectGuid>
+    <ProjectGuid>{FFAC0B73-D997-493B-9C62-27656CD858BB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>bin\Debug\System-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -922,6 +922,7 @@
     <Compile Include="System.Net\IPEndPoint.cs" />
     <Compile Include="System.Net\IPHostEntry.cs" />
     <Compile Include="System.Net\IPv6Address.cs" />
+    <Compile Include="System.Net\IWebConnectionState.cs" />
     <Compile Include="System.Net\IWebProxy.cs" />
     <Compile Include="System.Net\IWebProxyScript.cs" />
     <Compile Include="System.Net\IWebRequestCreate.cs" />
@@ -943,6 +944,7 @@
     <Compile Include="System.Net\SecurityProtocolType.cs" />
     <Compile Include="System.Net\ServicePoint.cs" />
     <Compile Include="System.Net\ServicePointManager.cs" />
+    <Compile Include="System.Net\ServicePointManager.extra.cs" />
     <Compile Include="System.Net\SocketAddress.cs" />
     <Compile Include="System.Net\SocketPermission.cs" />
     <Compile Include="System.Net\SocketPermissionAttribute.cs" />
@@ -1138,29 +1140,32 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
+      <Project>{3FFA80F7-ACB9-480C-828F-7C9BA7A17EE3}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
-      <Project>{CA49630B-FD24-411F-9651-B15CA72CE5B8}</Project>
+      <Project>{BC3505BA-1086-45B4-92AC-EB589CC1292F}</Project>
       <Name>System.Configuration\System.Configuration-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
+      <Project>{3391D58D-26E9-48D2-9A76-4BC1A2F06BE9}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
-      <Project>{5E680987-7C43-48A0-9BF1-86124ACA78BD}</Project>
+      <Project>{73940AF7-7302-4B79-8EAF-DF03BDD9E3F4}</Project>
       <Name>Mono.Security\Mono.Security-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -1185,3 +1190,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

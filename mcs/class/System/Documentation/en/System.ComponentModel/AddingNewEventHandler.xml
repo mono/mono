@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AddingNewEventHandler" FullName="System.ComponentModel.AddingNewEventHandler">
   <TypeSignature Language="C#" Value="public delegate void AddingNewEventHandler(object sender, AddingNewEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AddingNewEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -17,8 +20,16 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event occurs prior to adding a new item to a collection, typically in data-binding scenarios. The handler of this event can supply the new item to be added, overriding the standard action of the collection class. This is accomplished by setting the <see cref="P:System.ComponentModel.AddingNewEventArgs.NewObject" /> property of the <see cref="T:System.ComponentModel.AddingNewEventArgs" /> parameter <paramref name="e" /> to this new item. Typically this item must be of a type expected by the recipient collection, or the collection will throw an exception of type <see cref="T:System.InvalidCastException" />.</para>
+      <para>This event is commonly used in data-binding scenarios, within classes such as <see cref="T:System.Windows.Forms.BindingSource" /> and <see cref="T:System.ComponentModel.BindingList`1" />.</para>
+      <para>When you create an <see cref="T:System.ComponentModel.AddingNewEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event.</para>
+    </summary>
   </Docs>
 </Type>

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Enum" FullName="System.Enum" FullNameSP="System_Enum" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable Enum extends System.ValueType implements System.IComparable, System.IFormattable" />
   <TypeSignature Language="C#" Value="public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit Enum extends System.ValueType implements class System.IComparable, class System.IConvertible, class System.IFormattable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,62 +25,204 @@
       <InterfaceName>System.IFormattable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Provides support for all enumeration types. Serves as
-      the base
-      class for all enumeration types.</para>
-    </summary>
     <remarks>
-      <para> A <see cref="T:System.Enum" /> is a distinct type
-   with named constant members. Each enumeration type has a corresponding integral
-   type called the <paramref name="underlying type" /> of the enumeration
-   type.
-   
-   This underlying type is required
-   to be a system-supplied integer type that is large enough to represent all values
-   defined in the enumeration; the field that holds the underlying type must be called <see langword="value__" />. A <see cref="T:System.Enum" /> declaration is allowed to
-   explicitly declare any integral type other
-   than <see cref="T:System.Char" />
-   as an underlying type. This includes <see cref="T:System.Byte" />, <see cref="T:System.SByte" />, <see cref="T:System.Int16" />, <see cref="T:System.Int32" />, <see cref="T:System.Int64" />, <see cref="T:System.UInt16" />, <see cref="T:System.UInt32" />, and <see cref="T:System.UInt64" />. A <see cref="T:System.Enum" /> declaration that does not explicitly declare an
-   underlying type has an underlying type of <see cref="T:System.Int32" />
-   
-   .</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An enumeration is a set of named constants whose underlying type is any integral type. If no underlying type is explicitly declared, <see cref="T:System.Int32" /> is used. <see cref="T:System.Enum" /> is the base class for all enumerations in the .NET Framework.</para>
       <para>
-        <see cref="T:System.Enum" /> derives from <see cref="T:System.ValueType" /> but is not a value type.
-Programming languages typically provide syntax to declare sets of a specified
-enumeration type consisting of named constants and their values.</para>
-      <para>It is possible to treat instances of a <see cref="T:System.Enum" /> as bit fields containing multiple values. For more information, see <see cref="T:System.FlagsAttribute" /> 
-.</para>
-      <para>
-        <block subset="none" type="note">
-          <see cref="T:System.Enum" /> provides
-methods to compare instances of enumeration types, convert the value of an
-instance to its <see cref="T:System.String" /> representation, convert the <see cref="T:System.String" /> representation of
-a number to an instance of the enumeration type, and create an instance of a
-specified enumeration and value.</block>
-      </para>
+        <see cref="T:System.Enum" /> provides methods for comparing instances of this class, converting the value of an instance to its string representation, converting the string representation of a number to an instance of this class, and creating an instance of a specified enumeration and value.</para>
+      <para>You can also treat an enumeration as a bit field. For more information, see the <format type="text/html"><a href="#Flags">Non-Exclusive Members and the Flags Attribute</a></format> section and the <see cref="T:System.FlagsAttribute" /> topic.</para>
+      <format type="text/html">
+        <a href="#Creating" />
+      </format>
+      <format type="text/html">
+        <h2>Creating an Enumeration Type</h2>
+      </format>
+      <para>Programming languages typically provide syntax to declare an enumeration that consists of a set of named constants and their values. The following example illustrates the syntax used by C# and Visual Basic to define an enumeration. It creates an enumeration named ArrivalStatus that has three members: ArrivalStatus.Early, ArrivalStatus.OnTime, and ArrivalStatus.Late. Note that in both cases, the enumeration does not explicitly inherit from <see cref="T:System.Enum" />; the inheritance relationship is handled implicitly by the compiler.</para>
+      <para>code reference: System.Enum.Class#1</para>
+      <block subset="none" type="note">
+        <para>You should never create an enumeration type whose underlying type is non-integral or <see cref="T:System.Char" />. Although you can create such an enumeration type by using reflection, method calls that use the resulting type are unreliable and may also throw additional exceptions. </para>
+      </block>
+      <format type="text/html">
+        <a href="#Instantiating" />
+      </format>
+      <format type="text/html">
+        <h2>Instantiating an Enumeration Type</h2>
+      </format>
+      <para>You can instantiate an enumeration type just as you instantiate any other value type: by declaring a variable and assigning one of the enumeration's constants to it. The following example instantiates an ArrivalStatus whose value is ArrivalStatus.OnTime.</para>
+      <para>code reference: System.Enum.Class#2</para>
+      <para>You can also instantiate an enumeration value in the following ways:</para>
+      <list type="bullet">
+        <item>
+          <para>By using a particular programming language's features to cast (as in C#) or convert (as in Visual Basic) an integer value to an enumeration value. The following example creates an ArrivalStatus object whose value is ArrivalStatus.Early in this way.</para>
+          <para>code reference: System.Enum.Class#4</para>
+        </item>
+        <item>
+          <para>By calling its implicit default constructor. As the following example shows, in this case the underlying value of the enumeration instance is 0. However, this is not necessarily the value of a valid constant in the enumeration.</para>
+          <para>code reference: System.Enum.Class#3</para>
+        </item>
+        <item>
+          <para>By calling the <see cref="M:System.Enum.Parse(System.Type,System.String)" /> or <see cref="M:System.Enum.TryParse``1(System.String,``0@)" /> method to parse a string that contains the name of a constant in the enumeration. For more information, see the <format type="text/html"><a href="#parsing">Parsing Enumeration Values</a></format> section.</para>
+        </item>
+        <item>
+          <para>By calling the <see cref="M:System.Enum.ToObject(System.Type,System.Byte)" /> method to convert an integral value to an enumeration type. For more information, see the <format type="text/html"><a href="#conversions">Performing Conversions</a></format> section.</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#BestPractices" />
+      </format>
+      <format type="text/html">
+        <h2>Enumeration Best Practices</h2>
+      </format>
+      <para>We recommend that you use the following best practices when you define enumeration types:</para>
+      <list type="bullet">
+        <item>
+          <para>If you have not defined an enumeration member whose value is 0, consider creating a None enumerated constant. By default, the memory used for the enumeration is initialized to zero by the common language runtime. Consequently, if you do not define a constant whose value is zero, the enumeration will contain an illegal value when it is created. </para>
+        </item>
+        <item>
+          <para>If there is an obvious default case that your application has to represent, consider using an enumerated constant whose value is zero to represent it. If there is no default case, consider using an enumerated constant whose value is zero to specify the case that is not represented by any of the other enumerated constants. </para>
+        </item>
+        <item>
+          <para>Do not specify enumerated constants that are reserved for future use.</para>
+        </item>
+        <item>
+          <para>When you define a method or property that takes an enumerated constant as a value, consider validating the value. The reason is that you can cast a numeric value to the enumeration type even if that numeric value is not defined in the enumeration.</para>
+        </item>
+      </list>
+      <para>Additional best practices for enumeration types whose constants are bit fields are listed in the <format type="text/html"><a href="#Flags">Non-Exclusive Members and the Flags Attribute</a></format> section.</para>
+      <format type="text/html">
+        <a href="#Operations" />
+      </format>
+      <format type="text/html">
+        <h2>Performing Operations with Enumerations</h2>
+      </format>
+      <para>You cannot define new methods when you are creating an enumeration. However, an enumeration type inherits a complete set of static and instance methods from the <see cref="T:System.Enum" /> class. The following sections survey most of these methods, in addition to several other methods that are commonly used when working with enumeration values.</para>
+      <format type="text/html">
+        <a href="#conversions" />
+      </format>
+      <format type="text/html">
+        <h2>Performing Conversions</h2>
+      </format>
+      <para>You can convert between an enumeration member and its underlying type by using a casting (in C#) or conversion (in Visual Basic) operator. The following example uses casting or conversion operators to perform conversions both from an integer to an enumeration value and from an enumeration value to an integer.</para>
+      <para>code reference: System.Enum.Class#5</para>
+      <para>The <see cref="T:System.Enum" /> class also includes a <see cref="M:System.Enum.ToObject(System.Type,System.Byte)" /> method that converts a value of any integral type to an enumeration value. The following example uses the <see cref="M:System.Enum.ToObject(System.Type,System.Int32)" /> method to convert an <see cref="T:System.Int32" /> to an ArrivalStatus value. Note that, because the <see cref="M:System.Enum.ToObject(System.Type,System.Byte)" /> returns a value of type <see cref="T:System.Object" />, the use of a casting or conversion operator may still be necessary to cast the object to the enumeration type.</para>
+      <para>code reference: System.Enum.Class#6</para>
+      <para>When converting an integer to an enumeration value, it is possible to assign a value that is not actually a member of the enumeration. To prevent this, you can pass the integer to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method before performing the conversion. The following example uses this method to determine whether the elements in an array of integer values can be converted to ArrivalStatus values.</para>
+      <para>code reference: System.Enum.Class#7</para>
+      <para>Although the <see cref="T:System.Enum" /> class provides explicit interface implementations of the <see cref="T:System.IConvertible" /> interface for converting from an enumeration value to an integral type, you should use the methods of the <see cref="T:System.Convert" /> class, such as <see cref="M:System.Convert.ToInt32(System.Object)" />, to perform these conversions. The following example illustrates how you can use the <see cref="M:System.Enum.GetUnderlyingType(System.Type)" /> method along with the <see cref="M:System.Convert.ChangeType(System.Object,System.Type)" /> method to convert an enumeration value to its underlying type. Note that this example does not require the underlying type of the enumeration to be known at compile time.</para>
+      <para>code reference: System.Enum.Class#8</para>
+      <format type="text/html">
+        <a href="#parsing" />
+      </format>
+      <format type="text/html">
+        <h2>Parsing Enumeration Values</h2>
+      </format>
+      <para>The <see cref="M:System.Enum.Parse(System.Type,System.String)" /> and <see cref="M:System.Enum.TryParse``1(System.String,``0@)" /> methods allow you to convert the string representation of an enumeration value to that value. The string representation can be either the name or the underlying value of an enumeration constant. Note that the parsing methods will successfully convert string representations of numbers that are not members of a particular enumeration if the strings can be converted to a value of the enumeration's underlying type. To prevent this, the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method can be called to ensure that the result of the parsing method is a valid enumeration value. The example illustrates this approach and demonstrates calls to both the <see cref="M:System.Enum.Parse(System.Type,System.String)" /> and <see cref="M:System.Enum.TryParse``1(System.String,``0@)" /> methods. Note that the non-generic parsing method returns an object that you may have to cast (in C#) or convert (in Visual Basic) to the appropriate enumeration type.</para>
+      <para>code reference: System.Enum.Class#9</para>
+      <format type="text/html">
+        <a href="#formatting" />
+      </format>
+      <format type="text/html">
+        <h2>Formatting Enumeration Values</h2>
+      </format>
+      <para>You can convert enumeration values to their string representations by calling the static <see cref="M:System.Enum.Format(System.Type,System.Object,System.String)" /> method, as well as the overloads of the instance <see cref="M:System.Enum.ToString" /> method. You can use a format string to control the precise way in which an enumeration value is represented as a string. For more information, see <format type="text/html"><a href="dd1ff672-1052-42cf-8666-4924fb6cd1a1">Enumeration Format Strings</a></format>. The following example uses each of the supported enumeration format strings to convert a member of the ArrivalStatus enumeration to its string representations. </para>
+      <para>code reference: System.Enum.Class#10</para>
+      <format type="text/html">
+        <a href="#iterating" />
+      </format>
+      <format type="text/html">
+        <h2>Iterating Enumeration Members</h2>
+      </format>
+      <para>The <see cref="T:System.Enum" /> type does not implement the <see cref="T:System.Collections.IEnumerable" /> or <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface, which would enable you to iterate members of a collection by using a foreach (in C#) or For Each (in Visual Basic) construct. However, you can enumerate members in either of two ways. </para>
+      <list type="bullet">
+        <item>
+          <para>You can call the <see cref="M:System.Enum.GetNames(System.Type)" /> method to retrieve a string array containing the names of the enumeration members. Next, for each element of the string array, you can call the <see cref="M:System.Enum.Parse(System.Type,System.String)" /> method to convert the string to its equivalent enumeration value. The following example illustrates this approach.</para>
+          <para>code reference: System.Enum.Class#11</para>
+        </item>
+        <item>
+          <para>You can call the <see cref="M:System.Enum.GetValues(System.Type)" /> method to retrieve an array that contains the underlying values in the enumeration. Next, for each element of the array, you can call the <see cref="M:System.Enum.ToObject(System.Type,System.Int32)" /> method to convert the integer to its equivalent enumeration value. The following example illustrates this approach.</para>
+          <para>code reference: System.Enum.Class#12</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#Flags" />
+      </format>
+      <format type="text/html">
+        <h2>Non-Exclusive Members and the Flags Attribute</h2>
+      </format>
+      <para>One common use of an enumeration is to represent a set of mutually exclusive values. For example, an ArrivalStatus instance can have a value of Early, OnTime, or Late. It makes no sense for the value of an ArrivalStatus instance to reflect more than one enumeration constant. </para>
+      <para>In other cases, however, the value of an enumeration object can include multiple enumeration members, and each member represents a bit field in the enumeration value. The <see cref="T:System.FlagsAttribute" /> attribute can be used to indicate that the enumeration consists of bit fields. For example, an enumeration named Pets might be used to indicate the kinds of pets in a household. It can be defined as follows. </para>
+      <para>code reference: System.Enum.Class#13</para>
+      <para>The Pets enumeration can then be used as shown in the following example.</para>
+      <para>code reference: System.Enum.Class#14</para>
+      <para>The following best practices should be used when defining a bitwise enumeration and applying the <see cref="T:System.FlagsAttribute" /> attribute.</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="T:System.FlagsAttribute" /> custom attribute for an enumeration only if a bitwise operation (AND, OR, EXCLUSIVE OR) is to be performed on a numeric value. </para>
+        </item>
+        <item>
+          <para>Define enumeration constants in powers of two, that is, 1, 2, 4, 8, and so on. This means the individual flags in combined enumeration constants do not overlap. </para>
+        </item>
+        <item>
+          <para>Consider creating an enumerated constant for commonly used flag combinations. For example, if you have an enumeration used for file I/O operations that contains the enumerated constants Read = 1 and Write = 2, consider creating the enumerated constant ReadWrite = Read OR Write, which combines the Read and Write flags. In addition, the bitwise OR operation used to combine the flags might be considered an advanced concept in some circumstances that should not be required for simple tasks.</para>
+        </item>
+        <item>
+          <para>Use caution if you define a negative number as a flag enumerated constant because many flag positions might be set to 1, which might make your code confusing and encourage coding errors.</para>
+        </item>
+        <item>
+          <para>A convenient way to test whether a flag is set in a numeric value is to call the instance <see cref="M:System.Enum.HasFlag(System.Enum)" /> method, as shown in the following example.</para>
+          <para>code reference: System.Enum.Class#15</para>
+          <para>It is equivalent to performing a bitwise AND operation between the numeric value and the flag enumerated constant, which sets all bits in the numeric value to zero that do not correspond to the flag, and then testing whether the result of that operation is equal to the flag enumerated constant. This is illustrated in the following example.</para>
+          <para>code reference: System.Enum.Class#16</para>
+        </item>
+        <item>
+          <para>Use None as the name of the flag enumerated constant whose value is zero. You cannot use the None enumerated constant in a bitwise AND operation to test for a flag because the result is always zero. However, you can perform a logical, not a bitwise, comparison between the numeric value and the None enumerated constant to determine whether any bits in the numeric value are set. This is illustrated in the following example.</para>
+          <para>code reference: System.Enum.Class#17</para>
+        </item>
+        <item>
+          <para>Do not define an enumeration value solely to mirror the state of the enumeration itself. For example, do not define an enumerated constant that merely marks the end of the enumeration. If you need to determine the last value of the enumeration, check for that value explicitly. In addition, you can perform a range check for the first and last enumerated constant if all values within the range are valid. </para>
+        </item>
+      </list>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for enumerations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Enum ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Enum" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CompareTo">
       <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object target)" />
       <MemberSignature Language="C#" Value="public int CompareTo (object target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(object target) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -86,39 +230,6 @@ specified enumeration and value.</block>
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="target">An object to compare the current instance to.</param>
-        <summary>
-          <para> Returns the sort order of the current instance compared
-      to the specified <see cref="T:System.Object" />.</para>
-        </summary>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="target" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> 
-         A negative
-         integer</term>
-              <description>The value of the current instance is less than
-         the value of <paramref name="target" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>The value of the current instance is equal to the
-         value of <paramref name="target" />.</description>
-            </item>
-            <item>
-              <term> Any
-         positive integer</term>
-              <description>The value of the current instance is greater than the
-         value of <paramref name="target" />, or <paramref name="target" /> is
-      <see langword="null" />.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note"> This method is
@@ -128,18 +239,68 @@ specified enumeration and value.</block>
         </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="target" /> and the current instance are not of the same enumeration type.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this instance to a specified object and returns an indication of their relative values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number that indicates the relative values of this instance and <paramref name="target" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>The value of this instance is less than the value of <paramref name="target" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>The value of this instance is equal to the value of <paramref name="target" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>The value of this instance is greater than the value of <paramref name="target" />.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="target" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
-      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -147,37 +308,40 @@ specified enumeration and value.</block>
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">An object to compare the current instance to.</param>
-        <param name="obj">To be added.</param>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.Equals(System.Object)" /> method overrides <see cref="M:System.ValueType.Equals(System.Object)" /> to define how enumeration members are evaluated for equality. </para>
+        </remarks>
         <summary>
-          <para>Determines whether the current instance and the specified
-   <see cref="T:System.Object" /> represent the same type and
-      value.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
         <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is of the same
-   enumeration type and represents the same value as the current instance;
-   otherwise, <see langword="false" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an enumeration value of the same type and with the same underlying value as this instance; otherwise, false.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note"> This method
-      overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
-          </para>
-        </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(class System.Type enumType, object value, string format)" />
+      <MemberSignature Language="C#" Value="public static string Format (Type enumType, object value, string format);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Format(class System.Type enumType, object value, string format) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Format">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(class System.Type enumType, object value, string format)" />
-      <MemberSignature Language="C#" Value="public static string Format (Type enumType, object value, string format);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -187,65 +351,6 @@ specified enumeration and value.</block>
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="enumType">A <see cref="T:System.Type" /> that specifies the type of the enumeration of which <paramref name="value" /> is a member. </param>
-        <param name="value">The enumeration element to be converted. </param>
-        <param name="format">A <see cref="T:System.String" /> that specifies the output format to use. </param>
-        <param name="value">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>
-          <para> Converts the specified element of the specified
-      enumeration type to its <see cref="T:System.String" />
-      representation using the specified format. </para>
-        </summary>
-        <returns>
-          <para> The <see cref="T:System.String" /> representation of the value of the enumeration
-   element. </para>
-        </returns>
-        <remarks>
-          <para> For cross-platform portability, the only valid values for
-   <paramref name="format" /> are:
-      </para>
-          <list type="table">
-            <listheader>
-              <term> Format</term>
-              <description> Description</description>
-            </listheader>
-            <item>
-              <term> "G" or "g"</term>
-              <description>
-                <para> If value is equal to a defined value of
-            <paramref name="enumType" />
-            , returns the element name defined for value. If the <see cref="T:System.FlagsAttribute" />
-            attribute is set on the <see cref="T:System.Enum" /> declaration and <paramref name="value" /> is
-            a built-in integer type and is equal to a summation of
-            enumeration elements, the return value contains the element names in an
-            unspecified order, separated by commas (e.g. "Red, Yellow").
-            Otherwise, <paramref name="value" /> is returned in
-            
-            decimal format.</para>
-              </description>
-            </item>
-            <item>
-              <term> "X" or "x"</term>
-              <description> Returns <paramref name="value" />
-      in hexadecimal format, without a leading 0x. The value is padded
-      with leading zeroes to ensure the returned value is
-      at least eight digits in length.</description>
-            </item>
-            <item>
-              <term> "F" or "f"</term>
-              <description>Behaves identically to "G", except the
-   <see langword="FlagsAttribute" /> is not required to be present
-      on the <see cref="T:System.Enum" />
-      declaration.</description>
-            </item>
-            <item>
-              <term> "D" or "d"</term>
-              <description> Returns <paramref name="value" /> in decimal
-   format with no leading zeroes.</description>
-            </item>
-          </list>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" />, <paramref name="value" /> or <paramref name="format" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -288,8 +393,119 @@ public class EnumCompTo {
             <para>Red, Yellow, Green</para>
           </c>
         </example>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output format to use. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the valid values for the <paramref name="format" /> parameter. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Format </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>"G" or "g" </para>
+              </term>
+              <description>
+                <para>If <paramref name="value" /> is equal to a named enumerated constant, the name of that constant is returned; otherwise, the decimal equivalent of <paramref name="value" /> is returned.</para>
+                <para>For example, suppose the only enumerated constant is named Red, and its value is 1. If <paramref name="value" /> is specified as 1, this format returns "Red". However, if <paramref name="value" /> is specified as 2, this format returns "2".</para>
+                <para>-or- </para>
+                <para>If the <see cref="T:System.FlagsAttribute" /> custom attribute is applied to the enumeration, <paramref name="value" /> is treated as a bit field that contains one or more flags that consist of one or more bits.</para>
+                <para>If <paramref name="value" /> is equal to a combination of named enumerated constants, a delimiter-separated list of the names of those constants is returned. <paramref name="value" /> is searched for flags, going from the flag with the largest value to the smallest value. For each flag that corresponds to a bit field in <paramref name="value" />, the name of the constant is concatenated to the delimiter-separated list. The value of that flag is then excluded from further consideration, and the search continues for the next flag.</para>
+                <para>If <paramref name="value" /> is not equal to a combination of named enumerated constants, the decimal equivalent of <paramref name="value" /> is returned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"X" or "x" </para>
+              </term>
+              <description>
+                <para>Represents <paramref name="value" /> in hexadecimal format without a leading "0x". </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"D" or "d" </para>
+              </term>
+              <description>
+                <para>Represents <paramref name="value" /> in decimal form. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"F" or "f" </para>
+              </term>
+              <description>
+                <para>Behaves identically to "G" or "g", except that the <see cref="T:System.FlagsAttribute" /> is not required to be present on the <see cref="T:System.Enum" /> declaration. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified value of a specified enumerated type to its equivalent string representation according to the specified format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type of the value to convert. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output format to use. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <para> The algorithm used to
+      generate the hash code is unspecified.</para>
+          <para>
+            <block subset="none" type="note"> This method
+      overrides <see cref="M:System.Object.GetHashCode" />.</block>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the value of this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetName(class System.Type enumType, object value)" />
+      <MemberSignature Language="C#" Value="public static string GetName (Type enumType, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetName(class System.Type enumType, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -300,42 +516,6 @@ public class EnumCompTo {
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Generates a hash code for the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing a hash code for the current instance.</para>
-        </returns>
-        <remarks>
-          <para> The algorithm used to
-      generate the hash code is unspecified.</para>
-          <para>
-            <block subset="none" type="note"> This method
-      overrides <see cref="M:System.Object.GetHashCode" />.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetName">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetName(class System.Type enumType, object value)" />
-      <MemberSignature Language="C#" Value="public static string GetName (Type enumType, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -344,20 +524,6 @@ public class EnumCompTo {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="enumType">A <see cref="T:System.Type" /> that specifies the type of the enumeration. </param>
-        <param name="value">A <see cref="T:System.Object" /> that contains the integral value or the name of an enumeration constant. </param>
-        <summary>
-          <para> Retrieves the name of the constant of the
-      specified enumeration type that has the
-      specified value.
-      </para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the name of the enumerated constant
-   in <paramref name="enumType" /> whose value is <paramref name="value" />, or a null reference
-   if no such constant is found. If multiple constants have the same value, as to which name is returned for that value, is unspecified.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> or <paramref name="value" /> is a null reference.</exception>
         <exception cref="T:System.ArgumentException">
@@ -390,8 +556,30 @@ public class EnumCompTo {
             <para>The name of the constant with the value Stop is: Stop.</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If multiple enumeration members have the same underlying value, the <see cref="M:System.Enum.GetName(System.Type,System.Object)" /> method guarantees that it will return the name of one of those enumeration members. However, it does not guarantee that it will always return the name of the same enumeration member. As a result, when multiple enumeration members have the same value, your application code should never depend on the method returning a particular member's name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the name of the constant in the specified enumeration that has the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the name of the enumerated constant in <paramref name="enumType" /> whose value is <paramref name="value" />; or null if no such constant is found.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of a particular enumerated constant in terms of its underlying type. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetNames">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.String[] GetNames(class System.Type enumType)" />
+      <MemberSignature Language="C#" Value="public static string[] GetNames (Type enumType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] GetNames(class System.Type enumType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -402,11 +590,6 @@ public class EnumCompTo {
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetNames">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.String[] GetNames(class System.Type enumType)" />
-      <MemberSignature Language="C#" Value="public static string[] GetNames (Type enumType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -414,16 +597,6 @@ public class EnumCompTo {
         <Parameter Name="enumType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="enumType">A <see cref="T:System.Type" /> that specifies the type of an enumeration. </param>
-        <summary>
-          <para>Returns a zero-based, one-dimensional <see cref="T:System.String" /> array that contains the names of the constants of the specified enumeration type. </para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" /> vector of the names of the constants in
-<paramref name="enumType" />. The elements of the vector
-   are sorted by the values of the enumerated constants.  If multiple constants have the same value, the order in which their names appear in the vector, relative to each other, is unspecified.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -459,8 +632,55 @@ public class enumGetNames {
             <para>The value indexed '2' is Blue.</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements of the return value array are sorted by the binary values of the enumerated constants (that is, by their unsigned magnitude). The following example provides displays information about the array returned by the <see cref="M:System.Enum.GetNames(System.Type)" /> method for an enumeration that includes a negative, zero, and positive value. </para>
+          <para>code reference: System.Enum.GetNames#1</para>
+          <para>If there are enumerated constants with same value, the order of their corresponding names is unspecified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the names of the constants in a specified enumeration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array of the names of the constants in <paramref name="enumType" />. </para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetTypeCode">
+      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.TypeCode GetTypeCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TypeCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the underlying <see cref="T:System.TypeCode" /> for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type for this instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetUnderlyingType">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Type GetUnderlyingType(class System.Type enumType)" />
+      <MemberSignature Language="C#" Value="public static Type GetUnderlyingType (Type enumType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetUnderlyingType(class System.Type enumType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -471,29 +691,6 @@ public class enumGetNames {
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetTypeCode">
-      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.TypeCode</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetUnderlyingType">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Type GetUnderlyingType(class System.Type enumType)" />
-      <MemberSignature Language="C#" Value="public static Type GetUnderlyingType (Type enumType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -501,15 +698,6 @@ public class enumGetNames {
         <Parameter Name="enumType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <summary>
-          <para> Returns the underlying type of the specified enumeration type.
-      </para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Type" /> instance that describes the underlying type of <paramref name="enumType" />. </para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -537,8 +725,28 @@ public class EnumUnderlyingTypeTest {
             <para>The underlying type of Colors is System.Int32.</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Enum" /> structure enables values to be represented as named constants. The data type of the enumeration's values is known as its underlying type. For example, the underlying type of the <see cref="T:System.DayOfWeek" /> enumeration, which consists of constants that represent each day of the week (<see cref="F:System.DayOfWeek.Monday" />, <see cref="F:System.DayOfWeek.Tuesday" />, and so on), is <see cref="T:System.Int32" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the underlying type of the specified enumeration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The underlying type of <paramref name="enumType" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration whose underlying type will be retrieved.</param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetValues">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array GetValues(class System.Type enumType)" />
+      <MemberSignature Language="C#" Value="public static Array GetValues (Type enumType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Array GetValues(class System.Type enumType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -549,11 +757,6 @@ public class EnumUnderlyingTypeTest {
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetValues">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array GetValues(class System.Type enumType)" />
-      <MemberSignature Language="C#" Value="public static Array GetValues (Type enumType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Array</ReturnType>
       </ReturnValue>
@@ -561,19 +764,6 @@ public class EnumUnderlyingTypeTest {
         <Parameter Name="enumType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <summary>
-          <para> Returns a zero-based, one-dimensional array of the values of the constants of the
-      specified enumeration type.</para>
-        </summary>
-        <returns>
-          <para> A vector of the enumeration type specified by
-   <paramref name="enumType" /> containing the values of the
-      constants in <paramref name="enumType" />. The elements of the array
-      are sorted by the values of the enumeration constants. If multiple constants have the same value, the value of each is included in the array.
-      </para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -605,21 +795,32 @@ public class enumGetValues {
             <para>The value of element Blue is 4.</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements of the array are sorted by the binary values of the enumeration constants (that is, by their unsigned magnitude). The following example displays information about the array returned by the <see cref="M:System.Enum.GetValues(System.Type)" /> method for an enumeration that includes a negative value, zero, and a positive value.</para>
+          <para>code reference: System.Enum.GetValues#1</para>
+          <para>The <see cref="M:System.Enum.GetValues(System.Type)" /> method returns an array that contains a value for each member of the <paramref name="enumType" /> enumeration. If multiple members have the same value, the returned array includes duplicate values. In this case, calling the <see cref="M:System.Enum.GetName(System.Type,System.Object)" /> method with each value in the returned array does not restore the unique names assigned to members that have duplicate values. To retrieve all the names of enumeration members successfully, call the <see cref="M:System.Enum.GetNames(System.Type)" /> method. </para>
+          <para>The <see cref="M:System.Enum.GetValues(System.Type)" /> method cannot be invoked by using reflection in a reflection-only context. Instead, you can retrieve the value of all enumeration members by using the <see cref="M:System.Type.GetFields" /> method to get an array of <see cref="T:System.Reflection.FieldInfo" /> objects that represent enumeration members and then call the <see cref="M:System.Reflection.FieldInfo.GetRawConstantValue" /> method on each element of the array. The following example illustrates this technique. It requires that you define the following enumeration in an assembly named Enumerations.dll:</para>
+          <para>code reference: System.Enum.GetValues#2</para>
+          <para>The assembly is loaded in a reflection-only context, a <see cref="T:System.Type" /> object that represents the Pets enumeration is instantiated, an array of <see cref="T:System.Reflection.FieldInfo" /> objects is retrieved, and the field values are displayed to the console.</para>
+          <para>code reference: System.Enum.GetValues#3</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of the values of the constants in a specified enumeration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the values of the constants in <paramref name="enumType" />. </para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="HasFlag">
       <MemberSignature Language="C#" Value="public bool HasFlag (Enum flag);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool HasFlag(class System.Enum flag) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -631,16 +832,41 @@ public class enumGetValues {
         <Parameter Name="flag" Type="System.Enum" />
       </Parameters>
       <Docs>
-        <param name="flag">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.HasFlag(System.Enum)" /> method returns the result of the following Boolean expression.</para>
+          <code>thisInstance And flag = flag </code>
+          <para>If the underlying value of <paramref name="flag" /> is zero, the method returns true. If this behavior is not desirable, you can use the <see cref="M:System.Enum.Equals(System.Object)" /> method to test for equality with zero and call <see cref="M:System.Enum.HasFlag(System.Enum)" /> only if the underlying value of <paramref name="flag" /> is non-zero, as the following example illustrates.</para>
+          <para>code reference: System.Enum.HasFlag#1</para>
+          <para>The <see cref="M:System.Enum.HasFlag(System.Enum)" /> method is designed to be used with enumeration types that are marked with the <see cref="T:System.FlagsAttribute" /> attribute and can be used to determine whether multiple bit fields are set. For enumeration types that are not marked with the <see cref="T:System.FlagsAttribute" /> attribute, call either the <see cref="M:System.Enum.Equals(System.Object)" /> method or the <see cref="M:System.Enum.CompareTo(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether one or more bit fields are set in the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the bit field or bit fields that are set in <paramref name="flag" /> are also set in the current instance; otherwise, false.</para>
+        </returns>
+        <param name="flag">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration value.</param>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsDefined(class System.Type enumType, object value)" />
       <MemberSignature Language="C#" Value="public static bool IsDefined (Type enumType, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Type enumType, object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -649,21 +875,6 @@ public class enumGetValues {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="enumType">A <see cref="T:System.Type" /> that describes an enumeration. </param>
-        <param name="value">The constant or value being searched for in <paramref name="enumType" />. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns a <see cref="T:System.Boolean" /> indicating whether a constant with the specified value exists
-   in the specified enumeration type.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if a constant
-   in the enumeration described by <paramref name="enumType" />
-   has a value equal to <paramref name="value" />; otherwise,
-<see langword="false" />. </para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType " />or <paramref name="value" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -695,8 +906,47 @@ public class enumIsDefined {
             <para>It is False that '3' is defined in 'Colors'.</para>
           </c>
         </example>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value or name of a constant in <paramref name="enumType" />. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="value" /> parameter can be any of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Any member of type <paramref name="enumType" />.</para>
+            </item>
+            <item>
+              <para>A variable whose value is an enumeration member of type <paramref name="enumType" />.</para>
+            </item>
+            <item>
+              <para>The string representation of the name of an enumeration member. The characters in the string must have the same case as the enumeration member name.</para>
+            </item>
+            <item>
+              <para>A value of the underlying type of <paramref name="enumType" />.</para>
+            </item>
+          </list>
+          <para>If the constants in <paramref name="enumType" /> define a set of bit fields and <paramref name="value" /> contains the values, names, or underlying values of multiple bit fields, the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method returns false. In other words, for enumerations that define a set of bit fields, the method determines only whether a single bit field belongs to the enumeration. To determine whether multiple bit fields are set in an enumeration type that is tagged with the <see cref="T:System.FlagsAttribute" /> attribute, you can call the <see cref="M:System.Enum.HasFlag(System.Enum)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an indication whether a constant with a specified value exists in a specified enumeration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a constant in <paramref name="enumType" /> has a value equal to <paramref name="value" />; otherwise, false.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value or name of a constant in <paramref name="enumType" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object Parse(class System.Type enumType, string value)" />
+      <MemberSignature Language="C#" Value="public static object Parse (Type enumType, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Parse(class System.Type enumType, string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -707,11 +957,6 @@ public class enumIsDefined {
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Parse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object Parse(class System.Type enumType, string value)" />
-      <MemberSignature Language="C#" Value="public static object Parse (Type enumType, string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -720,23 +965,6 @@ public class enumIsDefined {
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">A <see cref="T:System.String" /> containing one or more names or a single numeric value to convert. If the string contains more than one name, each name is required to be separated by a comma (','). The names are parsed in a case-sensitive manner. The names or number can be surrounded by any amount of white space.</param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para>Converts the specified <see cref="T:System.String" /> representation of one or more
-   enumerated constants of a specified enumeration type to an equivalent enumerated
-   object.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Object" /> of type
-<paramref name="enumType" /> whose values are
-   represented by <paramref name="value" />. </para>
-        </returns>
-        <remarks>
-          <para> This version of <see cref="M:System.Enum.Parse(System.Type,System.String)" /> is equivalent to <see cref="M:System.Enum.Parse(System.Type,System.String)" />
-(<paramref name="enumType" />, <paramref name="value" />, <see langword="false" />).</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> or <paramref name="value" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -775,8 +1003,35 @@ public class enumTest {
             <para>2</para>
           </c>
         </example>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name or value to convert. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="value" /> parameter contains the string representation of an enumeration member's underlying value or named constant, or a list of named constants delimited by commas (,). One or more blank spaces can precede or follow each value, name, or comma in <paramref name="value" />. If <paramref name="value" /> is a list, the return value is the value of the specified names combined with a bitwise OR operation.</para>
+          <para>If <paramref name="value" /> is a name that does not correspond to a named constant of <paramref name="enumType" />, the method throws an <see cref="T:System.ArgumentException" />. If <paramref name="value" /> is the string representation of an integer that does not represent an underlying value of the <paramref name="enumType" /> enumeration, the method returns an enumeration member whose underlying value is <paramref name="value" /> converted to an integral type. If this behavior is undesirable, call the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method to ensure that a particular string representation of an integer is actually a member of <paramref name="enumType" />. The following example defines a Colors enumeration, calls the <see cref="M:System.Enum.Parse(System.Type,System.String)" /> method to convert strings to their corresponding enumeration values, and calls the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method to ensure that particular integral values are underlying values in the Colors enumeration.</para>
+          <para>code reference: System.Enum.Parse#1</para>
+          <para>This operation is case-sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the string representation of the name or numeric value of one or more enumerated constants to an equivalent enumerated object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <paramref name="enumType" /> whose value is represented by <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name or value to convert. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object Parse(class System.Type enumType, string value, bool ignoreCase)" />
+      <MemberSignature Language="C#" Value="public static object Parse (Type enumType, string value, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Parse(class System.Type enumType, string value, bool ignoreCase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -787,11 +1042,6 @@ public class enumTest {
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Parse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object Parse(class System.Type enumType, string value, bool ignoreCase)" />
-      <MemberSignature Language="C#" Value="public static object Parse (Type enumType, string value, bool ignoreCase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -801,24 +1051,6 @@ public class enumTest {
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">
-          <para>A <see cref="T:System.String" /> containing one or more names or a single numeric value to convert. If the string contains more than one name, each name is required to be separated by a comma (','). The names or number can be surrounded by any amount of white space.</para>
-        </param>
-        <param name="ignoreCase">A <see cref="T:System.Boolean" /> value. Specify <see langword="true" /> to have names in <paramref name="value" /> parsed in a case-insensitive manner. Specify <see langword="false" /> to have names parsed in a case-sensitive manner.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>
-          <para>Converts the specified <see cref="T:System.String" />
-representation of one or more enumerated constants of a specified enumeration type to an
-equivalent enumerated object. This method behaves in a case-sensitive or
-insensitive manner according to the specified <see cref="T:System.Boolean" />.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Object" /> of type
-<paramref name="enumType" />
-whose values are represented by <paramref name="value" />. </para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> or <paramref name="value" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -835,22 +1067,41 @@ whose values are represented by <paramref name="value" />. </para>
           <para>For an example that demonstrates parsing strings
       containing enumeration values, see <see cref="M:System.Enum.Parse(System.Type,System.String)" />(<see cref="T:System.Type" />, <see cref="T:System.String" />).</para>
         </example>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore case; false to regard case. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="value" /> parameter contains the string representation of an enumeration member's underlying value or named constant, or a list of named constants delimited by commas (,). One or more blank spaces can precede or follow each value, name, or comma in <paramref name="value" />. If <paramref name="value" /> is a list, the return value is the value of the specified names combined with a bitwise OR operation.</para>
+          <para>If <paramref name="value" /> is a name that does not correspond to a named constant of <paramref name="enumType" />, the method throws an <see cref="T:System.ArgumentException" />. If <paramref name="value" /> is the string representation of an integer that does not represent an underlying value of the <paramref name="enumType" /> enumeration, the method returns an enumeration member whose underlying value is <paramref name="value" /> converted to an integral type. If this behavior is undesirable, call the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method to ensure that a particular string representation of an integer is actually a member of <paramref name="enumType" />. The following example defines a Colors enumeration, calls the <see cref="M:System.Enum.Parse(System.Type,System.String,System.Boolean)" /> method to convert strings to their corresponding enumeration values, and calls the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method to ensure that particular integral values are underlying values in the Colors enumeration.</para>
+          <para>code reference: System.Enum.Parse#2</para>
+          <para>The <paramref name="ignoreCase" /> parameter specifies whether this operation is case-sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the string representation of the name or numeric value of one or more enumerated constants to an equivalent enumerated object. A parameter specifies whether the operation is case-insensitive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <paramref name="enumType" /> whose value is represented by <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name or value to convert. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore case; false to regard case. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="System.IConvertible.ToBoolean">
+      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.IConvertible.ToBoolean(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="System.IConvertible.ToBoolean">
-      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -858,20 +1109,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently not implemented. Always throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a Boolean value based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToByte">
+      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int8 System.IConvertible.ToByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToByte">
-      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -879,20 +1141,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to an 8-bit unsigned integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToChar">
+      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance char System.IConvertible.ToChar(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToChar">
-      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -900,20 +1173,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently not implemented. Always throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a Unicode character based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDateTime">
+      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance valuetype System.DateTime System.IConvertible.ToDateTime(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDateTime">
-      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -921,20 +1205,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently not implemented. Always throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a <see cref="T:System.DateTime" /> based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDecimal">
+      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance valuetype System.Decimal System.IConvertible.ToDecimal(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDecimal">
-      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -942,20 +1237,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently not implemented. Always throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a <see cref="T:System.Decimal" /> based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDouble">
+      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance float64 System.IConvertible.ToDouble(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDouble">
-      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -963,20 +1269,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently not implemented. Always throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a double-precision floating point number based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt16">
+      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int16 System.IConvertible.ToInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt16">
-      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -984,20 +1301,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a 16-bit signed integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt32">
+      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.IConvertible.ToInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt32">
-      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1005,20 +1333,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a 32-bit signed integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt64">
+      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int64 System.IConvertible.ToInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt64">
-      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1026,20 +1365,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a 64-bit signed integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSByte">
+      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int8 System.IConvertible.ToSByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToSByte">
-      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -1047,20 +1397,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to an 8-bit signed integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSingle">
+      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance float32 System.IConvertible.ToSingle(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToSingle">
-      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -1068,20 +1429,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently not implemented. Always throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a single-precision floating-point number based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToType">
+      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type targetType, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.IConvertible.ToType(class System.Type targetType, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToType">
-      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type targetType, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1091,20 +1463,31 @@ whose values are represented by <paramref name="value" />. </para>
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a specified type based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt16">
+      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int16 System.IConvertible.ToUInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt16">
-      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -1112,20 +1495,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a 16-bit unsigned integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt32">
+      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int32 System.IConvertible.ToUInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt32">
-      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -1133,20 +1527,31 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a 32-bit unsigned integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt64">
+      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int64 System.IConvertible.ToUInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt64">
-      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1154,21 +1559,37 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current value to a 64-bit unsigned integer based on the underlying type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, byte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, unsigned int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int8 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, byte value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1177,27 +1598,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.Byte" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.Byte" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose 
-   value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Byte)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 8-bit unsigned integer to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int16 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1208,11 +1641,6 @@ whose values are represented by <paramref name="value" />. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int16 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1221,27 +1649,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.Int16" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.Int16" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para> An enumeration object of type <paramref name="enumType" /> whose 
-   value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Int16)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 16-bit signed integer to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int32 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1252,11 +1692,6 @@ whose values are represented by <paramref name="value" />. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int32 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1265,26 +1700,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.Int32" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.Int32" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Int32)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 32-bit signed integer to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int64 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1295,11 +1743,6 @@ whose values are represented by <paramref name="value" />. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int64 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1308,27 +1751,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.Int64" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.Int64" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose 
-   value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Int64)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 64-bit signed integer to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, object value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1339,11 +1794,6 @@ whose values are represented by <paramref name="value" />. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, object value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1352,27 +1802,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of the enumeration. </param>
-        <param name="value">The value to set.</param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set to the specified value.
-      </para>
-        </summary>
-        <returns>
-          <para> An enumeration object of type <paramref name="enumType" /> whose value is
-<paramref name="value" />.
-   </para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Object)" /> method converts the integral value <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified object with an integer value to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumeration object whose value is <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int8 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1380,14 +1842,12 @@ whose values are represented by <paramref name="value" />. </para>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, int8 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, sbyte value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1396,29 +1856,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.SByte" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.SByte" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>
-          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
-   <see cref="M:System.Enum.ToObject(System.Type,System.Object)" />(<see cref="T:System.Type" />, <see cref="T:System.Int16" />).</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.SByte)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 8-bit signed integer value to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int16 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, ushort value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, unsigned int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1432,11 +1902,6 @@ whose values are represented by <paramref name="value" />. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int16 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, ushort value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1445,29 +1910,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.UInt16" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.UInt16" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>
-          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
-   <see cref="M:System.Enum.ToObject(System.Type,System.Object)" />(<see cref="T:System.Type" />, <see cref="T:System.Int32" />).</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.UInt16)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 16-bit unsigned integer value to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1481,11 +1956,6 @@ whose values are represented by <paramref name="value" />. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int32 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, uint value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1494,30 +1964,39 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.UInt32" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.UInt32" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose
-   value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>
-          <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
-   <see cref="M:System.Enum.ToObject(System.Type,System.Object)" />(<see cref="T:System.Type" />, <see cref="T:System.Int64" />).</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.UInt32)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 32-bit unsigned integer value to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(class System.Type enumType, unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1531,11 +2010,6 @@ whose values are represented by <paramref name="value" />. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object ToObject(class System.Type enumType, unsigned int64 value)" />
-      <MemberSignature Language="C#" Value="public static object ToObject (Type enumType, ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1544,81 +2018,79 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <param name="enumType">The <see cref="T:System.Type" /> of an enumeration. </param>
-        <param name="value">The <see cref="T:System.UInt64" /> value to set. </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Returns an instance of the specified enumeration type set
-      to the specified <see cref="T:System.UInt64" /> value.
-      </para>
-        </summary>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose
-   value is <paramref name="value" />.</para>
-        </returns>
-        <remarks>
-          <para>This member is not CLS-compliant. For a CLS-compliant 
-      alternative, use <see cref="M:System.Enum.ToObject(System.Type,System.Object)" />(<see cref="T:System.Type" />, <see cref="T:System.Int64" /> ).</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Enum.ToObject(System.Type,System.UInt64)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
+          <para>This conversion method returns a value of type <see cref="T:System.Object" />. You can then cast it or convert it to an object of type <paramref name="enumType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 64-bit unsigned integer value to an enumeration member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
+        <param name="enumType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is formatted with the general format specifier ("G"). That is, if the <see cref="T:System.FlagsAttribute" /> is not applied to this enumerated type and there is a named constant equal to the value of this instance, then the return value is a string containing the name of the constant. If the <see cref="T:System.FlagsAttribute" /> is applied and there is a combination of one or more named constants equal to the value of this instance, then the return value is a string containing a delimiter-separated list of the names of the constants. Otherwise, the return value is the string representation of the numeric value of this instance. For more information about formatting enumeration values, see <format type="text/html"><a href="dd1ff672-1052-42cf-8666-4924fb6cd1a1">Enumeration Format Strings</a></format>. For more information about formatting in general, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>.</para>
+        </remarks>
         <summary>
-          <para> Converts the name of the value of the current instance to
-      its equivalent <see cref="T:System.String" /> representation. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to its equivalent string representation.</para>
         </summary>
         <returns>
-          <para>The <see cref="T:System.String" /> representation of the named constant specified by the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
         </returns>
-        <remarks>
-          <para> This version of <see cref="M:System.Enum.ToString(System.String)" /> is equivalent to <see cref="M:System.Enum.ToString(System.String)" /> ("G", <see langword="null" />
-). </para>
-          <para>This method returns the same value as <see cref="M:System.Enum.Format(System.Type,System.Object,System.String)" />
-with the "g" or "G" format option. </para>
-          <para> An instance of an enumeration is set to
-   a named constant value. This method returns the name of the constant an instance
-   is set to, not the value itself. </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
       <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(class System.IFormatProvider provider) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Provider is ignored, just use ToString")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1626,23 +2098,64 @@ with the "g" or "G" format option. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">An object that implements the <see cref="T:System.IFormatProvider" /> interface or a null reference. The <see cref="T:System.IFormatProvider" /> is not used in the implementation of this method. <block subset="none" type="note"> There is no <see cref="T:System.IFormatProvider" /> that corresponds to a <see cref="T:System.Enum" /> object; therefore, <paramref name="provider" /> is not utilized by this method, and any <see cref="T:System.IFormatProvider" /> may be passed as a parameter.</block></param>
-        <summary>
-          <para> Converts the name of the value of the current instance to
-      its equivalent <see cref="T:System.String" />
-      representation. </para>
-        </summary>
-        <returns>
-          <para>  The <see cref="T:System.String" /> representation of
-   the name of the value of the current instance.
-</para>
-        </returns>
         <remarks>
           <para>This method is equivalent to the version of <see cref="M:System.Enum.ToString(System.String)" />
 that takes no arguments.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overload is obsolete; use <see cref="M:System.Enum.ToString" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />(obsolete) </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(string format)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(string format) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <exception cref="T:System.FormatException">
+          <paramref name="format" /> contains an invalid value. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="format" /> parameter can contain the "G" or "g", "D" or "d", "X" or "x", and "F" or "f" format strings. If <paramref name="format" /> is null or an empty string (""), the general format specifier ("G") is used. For more information about formatting enumeration values, see <format type="text/html"><a href="dd1ff672-1052-42cf-8666-4924fb6cd1a1">Enumeration Format Strings</a></format>. For more information about formatting in general, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to its equivalent string representation using the specified format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A format string. </param>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(string format, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(string format, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1653,51 +2166,6 @@ that takes no arguments.</para>
           <AttributeName>System.Obsolete("Provider is ignored, just use ToString")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(string format)" />
-      <MemberSignature Language="C#" Value="public string ToString (string format);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="format" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="format">A <see cref="T:System.String" /> that specifies the format to use when converting the current instance to a <see cref="T:System.String" />. Specify one of the following values in upper or lowercase: "G", "D", "X", or "F" .</param>
-        <summary>
-          <para> Converts the value of the current instance to its
-      equivalent <see cref="T:System.String" /> representation using the specified format. </para>
-        </summary>
-        <returns>
-          <para>The <see cref="T:System.String" /> representation of the value of the current
-   instance as specified by <paramref name="format" />.</para>
-        </returns>
-        <remarks>
-          <para> If
-   <paramref name="format" /> is a null 
-      reference or an empty string, the return value is formatted using the general
-      format specifier ("G").</para>
-          <para>
-            <block subset="none" type="note">For details on the format specifiers 
-      used with an enumeration object, see <see cref="M:System.Enum.Format(System.Type,System.Object,System.String)" /> .</block>
-          </para>
-        </remarks>
-        <exception cref="T:System.FormatException">
-          <paramref name="format" /> contains an invalid value. </exception>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(string format, class System.IFormatProvider provider)" />
-      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1706,46 +2174,34 @@ that takes no arguments.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="format">A <see cref="T:System.String" /> that specifies the format to use when converting the current instance to a <see cref="T:System.String" /> . Specify one of the following values in upper or lower case: "G", "D", "X", or "F" .</param>
-        <param name="provider">An object that implements the <see cref="T:System.IFormatProvider" /> interface or a null reference. The <see cref="T:System.IFormatProvider" /> is not used in the implementation of this method. <block subset="none" type="note"> There is no <see cref="T:System.IFormatProvider" /> that corresponds to a <see cref="T:System.Enum" /> object; therefore, <paramref name="provider" /> is not utilized by this method, and any <see cref="T:System.IFormatProvider" /> may be passed as a parameter.</block></param>
-        <param name="format">To be added.</param>
-        <param name="provider">To be added.</param>
-        <summary>
-          <para> Converts the numeric value of the current instance to
-      its equivalent <see cref="T:System.String" /> representation using the specified format. </para>
-        </summary>
-        <returns>
-          <para>The <see cref="T:System.String" /> representation of the value of the current instance as specified by <paramref name="format" />.</para>
-        </returns>
-        <remarks>
-          <para> If
-   <paramref name="format" /> is a null
-      reference or an empty string, the return value is formatted using the general
-      format specifier ("G").</para>
-          <block subset="none" type="note">
-            <para>For details on the
-         format specifiers used with an enumeration object, see <see cref="M:System.Enum.Format(System.Type,System.Object,System.String)" />
-         .</para>
-            <para>This method is implemented to support the <see cref="T:System.IFormattable" /> interface. </para>
-          </block>
-        </remarks>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> does not contain a valid format specifier.</exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A format specification. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />(Obsolete.)</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify only <paramref name="format" />; the <paramref name="provider" /> parameter is obsolete.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overload is obsolete; use <see cref="M:System.Enum.ToString(System.String)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A format specification. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />(Obsolete.)</param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Provider is ignored, just use ToString")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="TryParse&lt;TEnum&gt;">
       <MemberSignature Language="C#" Value="public static bool TryParse&lt;TEnum&gt; (string value, out TEnum result) where TEnum : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse&lt;struct .ctor (class System.ValueType) TEnum&gt;(string value, !!TEnum result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1777,6 +2233,7 @@ that takes no arguments.</para>
     </Member>
     <Member MemberName="TryParse&lt;TEnum&gt;">
       <MemberSignature Language="C#" Value="public static bool TryParse&lt;TEnum&gt; (string value, bool ignoreCase, out TEnum result) where TEnum : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse&lt;struct .ctor (class System.ValueType) TEnum&gt;(string value, bool ignoreCase, !!TEnum result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1810,9 +2267,4 @@ that takes no arguments.</para>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

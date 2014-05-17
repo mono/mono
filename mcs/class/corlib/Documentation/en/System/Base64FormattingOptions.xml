@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Base64FormattingOptions" FullName="System.Base64FormattingOptions">
   <TypeSignature Language="C#" Value="public enum Base64FormattingOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Base64FormattingOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,40 +16,55 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="Overload:System.Convert.ToBase64CharArray" /> and <see cref="Overload:System.Convert.ToBase64String" /> methods convert the value of an array of 8-bit unsigned integers to an equivalent string representation that consists of base 64 digits. The string representation can contain one or more line breaks, where a line break is defined as a carriage return character (U+000D) followed by a line feed character (U+000A).</para>
+      <para>The <see cref="F:System.Base64FormattingOptions.None" /> and <see cref="F:System.Base64FormattingOptions.InsertLineBreaks" /> values are mutually exclusive. Therefore, although the <see cref="T:System.Base64FormattingOptions" /> enumeration is marked with the <see cref="T:System.FlagsAttribute" /> attribute, it makes no sense to perform a bitwise combination of these two values. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether relevant <see cref="Overload:System.Convert.ToBase64CharArray" /> and <see cref="Overload:System.Convert.ToBase64String" /> methods insert line breaks in their output. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InsertLineBreaks">
       <MemberSignature Language="C#" Value="InsertLineBreaks" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Base64FormattingOptions InsertLineBreaks = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Base64FormattingOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Base64FormattingOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts line breaks after every 76 characters in the string representation.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Base64FormattingOptions None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Base64FormattingOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Base64FormattingOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Does not insert line breaks after every 76 characters in the string representation.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IOutputChannel" FullName="System.ServiceModel.Channels.IOutputChannel">
+  <TypeSignature Language="C#" Value="public interface IOutputChannel : System.ServiceModel.Channels.IChannel" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOutputChannel implements class System.ServiceModel.Channels.IChannel, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.IOutputChannel" /> interface defines synchronous and asynchronous variants of the <see cref="M:System.ServiceModel.Channels.IOutputChannel.Send(System.ServiceModel.Message)" /> operation. It provides a <see cref="P:System.ServiceModel.Channels.IOutputChannel.RemoteAddress" /> for the destination of the messages sent out on the channel. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface that a channel must implement to send a message. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="BeginSend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginSend (System.ServiceModel.Channels.Message message, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginSend(class System.ServiceModel.Channels.Message message, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination for messages sent out on an output channel is specified at channel creation time. </para>
+          <para>The <see cref="M:System.ServiceModel.Channels.IOutputChannel.BeginSend" /> method does not guarantee the delivery of message to the remote endpoint. If delivery guarantees are required, use the <see cref="T:System.ServiceModel.Channels.IOutputSessionChannel" />. </para>
+          <para>If the message sent is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to transmit a message to the destination of the output channel. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous message transmission. </para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> being sent on the output channel. </param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous send operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginSend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginSend (System.ServiceModel.Channels.Message message, TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginSend(class System.ServiceModel.Channels.Message message, valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination for messages sent out on an output channel is specified at channel creation time. </para>
+          <para>The <see cref="M:System.ServiceModel.Channels.IOutputChannel.BeginSend" /> method does not guarantee the delivery of message to the remote endpoint. If delivery guarantees are required, use <see cref="T:System.ServiceModel.Channels.IOutputSessionChannel" />. </para>
+          <para>If the message sent is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to transmit a message to the destination of the output channel within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous send operation.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> being sent on the output channel.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous operation send completion.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous send operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndSend">
+      <MemberSignature Language="C#" Value="public void EndSend (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndSend(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the message sent is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to transmit a message to the destination of the output channel. </para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="Overload:System.ServiceModel.Channels.IOutputChannel.BeginSend" />  method. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoteAddress">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointAddress RemoteAddress { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointAddress RemoteAddress" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> serves as both the ultimate destination and the physical address if a <see cref="P:System.ServiceModel.Channels.IOutputChannel.Via" /> is not specified. If the <see cref="P:System.ServiceModel.Channels.IOutputChannel.Via" /> is specified, then that is the actual physical address to which the message is sent and through which the message must go to arrive at its destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the destination of the service to which messages are sent out on the output channel. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public void Send (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination for messages sent out on an output channel is specified at channel creation time. </para>
+          <para>The <see cref="M:System.ServiceModel.Channels.IOutputChannel.Send" /> method does not guarantee the delivery of message to the remote endpoint. An implementation of <see cref="T:System.ServiceModel.Channels.IOutputChannel" /> can silently drop messages for a variety of reasons. There may be no more buffer room, for example. If delivery guarantees are required, use <see cref="T:System.ServiceModel.Channels.IOutputSessionChannel" />. </para>
+          <para>Passing the message into the output channel causes the message to be consumed. After you call <see cref="M:System.ServiceModel.Channels.IOutputChannel.Send" />, you can no longer inspect the message or call <see cref="M:System.ServiceModel.Channels.Message.Close" /> on the message. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transmits a message to the destination of the output channel. </para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> being sent on the output channel.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public void Send (System.ServiceModel.Channels.Message message, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class System.ServiceModel.Channels.Message message, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination for messages sent out on an output channel is specified at channel creation time. </para>
+          <para>The <see cref="M:System.ServiceModel.Channels.IOutputChannel.Send" /> method does not guarantee the delivery of message to the remote endpoint. An implementation of <see cref="T:System.ServiceModel.Channels.IOutputChannel" /> can silently drop messages for a variety of reasons. There may be no more buffer room, for example. If delivery guarantees are required, use <see cref="T:System.ServiceModel.Channels.IOutputSessionChannel" />. </para>
+          <para>Passing the message into the output channel causes the message to be consumed. After you call <see cref="M:System.ServiceModel.Channels.IOutputChannel.Send" />, you can no longer inspect the message or call <see cref="M:System.ServiceModel.Channels.Message.Close" /> on the message. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a message on the current output channel within a specified interval of time.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> being sent on the output channel.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Via">
+      <MemberSignature Language="C#" Value="public Uri Via { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Via" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> serves as both the ultimate destination and the physical address if a <see cref="P:System.ServiceModel.Channels.IOutputChannel.Via" /> is not specified. If the <see cref="P:System.ServiceModel.Channels.IOutputChannel.Via" /> is specified, then that is the actual physical address to which the message is sent and through which the message must go to arrive at its destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI that contains the transport address to which messages are sent on the output channel.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

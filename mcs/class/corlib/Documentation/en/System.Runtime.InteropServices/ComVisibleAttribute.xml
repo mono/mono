@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComVisibleAttribute" FullName="System.Runtime.InteropServices.ComVisibleAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ComVisibleAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ComVisibleAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,44 +23,66 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to assemblies, interfaces, classes, structures, delegates, enumerations, fields, methods, or properties.</para>
+      <para>The default is true, which indicates that the managed type is visible to COM. This attribute is not needed to make public managed assemblies and types visible; they are visible to COM by default. Only public types can be made visible. The attribute cannot be used to make an otherwise internal or protected type visible to COM or to make members of a nonvisible type visible.</para>
+      <para>Setting the attribute to false on the assembly hides all public types within the assembly. You can selectively make types within the assembly visible by setting the individual types to true. Setting the attribute to false on a specific type hides that type and its members. However, you cannot make members of a type visible if the type is invisible. Setting the attribute to false on a type prevents that type from being exported to a type library; classes are not registered; interfaces are never responsive to unmanaged QueryInterface calls.</para>
+      <para>Unless you explicitly set a class and its members to false, inherited classes can expose to COM base class members that are invisible in the original class. For example, if you set ClassA to false and do not apply the attribute to its members, the class and its members are invisible to COM. However, if you derive ClassB from ClassA and export ClassB to COM, ClassA members become visible base class members of ClassB.</para>
+      <para>For a detailed description of the export process, see <format type="text/html"><a href="3A37EEFB-A76C-4000-9080-7DBBF66A4896">[&lt;topic://cpconassemblytotypelibraryconversionsummary&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls accessibility of an individual managed type or member, or of all types within an assembly, to COM.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ComVisibleAttribute (bool visibility);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool visibility) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="visibility" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="visibility">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To make types visible to COM, set the attribute to true. To hide types from COM, set the attribute to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the ComVisibleAttribute class.</para>
+        </summary>
+        <param name="visibility">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the type is visible to COM; otherwise, false. The default is true. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public bool Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public bool Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the COM type is visible.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

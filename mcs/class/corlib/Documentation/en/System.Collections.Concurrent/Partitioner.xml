@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Partitioner" FullName="System.Collections.Concurrent.Partitioner">
   <TypeSignature Language="C#" Value="public static class Partitioner" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Partitioner extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides common partitioning strategies for arrays, lists, and enumerables.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;int,int&gt;&gt; Create (int fromInclusive, int toExclusive);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int32, int32&gt;&gt; Create(int32 fromInclusive, int32 toExclusive) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,15 +36,27 @@
         <Parameter Name="toExclusive" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">To be added.</param>
-        <param name="toExclusive">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a partitioner that chunks the user-specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A partitioner.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lower, inclusive bound of the range.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The upper, exclusive bound of the range.</param>
       </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;long,long&gt;&gt; Create (long fromInclusive, long toExclusive);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int64, int64&gt;&gt; Create(int64 fromInclusive, int64 toExclusive) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -48,15 +69,27 @@
         <Parameter Name="toExclusive" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">To be added.</param>
-        <param name="toExclusive">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a partitioner that chunks the user-specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A partitioner.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lower, inclusive bound of the range.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The upper, exclusive bound of the range.</param>
       </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;int,int&gt;&gt; Create (int fromInclusive, int toExclusive, int rangeSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int32, int32&gt;&gt; Create(int32 fromInclusive, int32 toExclusive, int32 rangeSize) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -70,16 +103,29 @@
         <Parameter Name="rangeSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">To be added.</param>
-        <param name="toExclusive">To be added.</param>
-        <param name="rangeSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a partitioner that chunks the user-specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A partitioner.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lower, inclusive bound of the range.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The upper, exclusive bound of the range.</param>
+        <param name="rangeSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of each subrange.</param>
       </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;long,long&gt;&gt; Create (long fromInclusive, long toExclusive, long rangeSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int64, int64&gt;&gt; Create(int64 fromInclusive, int64 toExclusive, int64 rangeSize) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -93,16 +139,29 @@
         <Parameter Name="rangeSize" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">To be added.</param>
-        <param name="toExclusive">To be added.</param>
-        <param name="rangeSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a partitioner that chunks the user-specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A partitioner.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lower, inclusive bound of the range.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The upper, exclusive bound of the range.</param>
+        <param name="rangeSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of each subrange.</param>
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -117,15 +176,27 @@
         <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ordering used in the created partitioner is determined by the natural order of the elements as retrieved from the source enumerable. For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an orderable partitioner from a <see cref="T:System.Collections.Generic.IEnumerable`1" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An orderable partitioner based on the input array.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumerable to be partitioned.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of the elements in source enumerable.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
-      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IList&lt;TSource&gt; source, bool loadBalance);" />
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Collections.Concurrent.EnumerablePartitionerOptions partitionerOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, valuetype System.Collections.Concurrent.EnumerablePartitionerOptions partitionerOptions) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -137,20 +208,33 @@
         <TypeParameter Name="TSource" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="source" Type="System.Collections.Generic.IList&lt;TSource&gt;" />
-        <Parameter Name="loadBalance" Type="System.Boolean" />
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="partitionerOptions" Type="System.Collections.Concurrent.EnumerablePartitionerOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="loadBalance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ordering used in the created partitioner is determined by the natural order of the elements as retrieved from the source enumerable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an orderable partitioner from a <see cref="T:System.Collections.Generic.IEnumerable`1" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An orderable partitioner based on the input array.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumerable to be partitioned.</param>
+        <param name="partitionerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options to control the buffering behavior of the partitioner.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of the elements in source enumerable.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
-      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (TSource[] source, bool loadBalance);" />
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IList&lt;TSource&gt; list, bool loadBalance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(class System.Collections.Generic.IList`1&lt;!!TSource&gt; list, bool loadBalance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -162,12 +246,50 @@
         <TypeParameter Name="TSource" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="source" Type="TSource[]" />
+        <Parameter Name="list" Type="System.Collections.Generic.IList&lt;TSource&gt;" />
+        <Parameter Name="loadBalance" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an orderable partitioner from an <see cref="T:System.Collections.Generic.IList`1" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An orderable partitioner based on the input list.</para>
+        </returns>
+        <param name="list">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list to be partitioned.</param>
+        <param name="loadBalance">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether the created partitioner should dynamically load balance between partitions rather than statically partition.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of the elements in source list.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (TSource[] array, bool loadBalance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(!!TSource[] array, bool loadBalance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="array" Type="TSource[]" />
         <Parameter Name="loadBalance" Type="System.Boolean" />
       </Parameters>
       <Docs>
         <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
+        <param name="array">To be added.</param>
         <param name="loadBalance">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>

@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Semaphore" FullName="System.Threading.Semaphore">
   <TypeSignature Language="C#" Value="public sealed class Semaphore : System.Threading.WaitHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Semaphore extends System.Threading.WaitHandle" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Threading.WaitHandle</BaseTypeName>
@@ -14,52 +17,98 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Threading.Semaphore" /> class to control access to a pool of resources. Threads enter the semaphore by calling the <see cref="Overload:System.Threading.WaitHandle.WaitOne" /> method, which is inherited from the <see cref="T:System.Threading.WaitHandle" /> class, and release the semaphore by calling the <see cref="Overload:System.Threading.Semaphore.Release" /> method.</para>
+      <para>The count on a semaphore is decremented each time a thread enters the semaphore, and incremented when a thread releases the semaphore. When the count is zero, subsequent requests block until other threads release the semaphore. When all threads have released the semaphore, the count is at the maximum value specified when the semaphore was created.</para>
+      <para>There is no guaranteed order, such as FIFO or LIFO, in which blocked threads enter the semaphore.</para>
+      <para>A thread can enter the semaphore multiple times, by calling the <see cref="Overload:System.Threading.WaitHandle.WaitOne" /> method repeatedly. To release some or all of these entries, the thread can call the parameterless <see cref="M:System.Threading.Semaphore.Release" /> method overload multiple times, or it can call the <see cref="M:System.Threading.Semaphore.Release(System.Int32)" /> method overload that specifies the number of entries to be released.</para>
+      <para>The <see cref="T:System.Threading.Semaphore" /> class does not enforce thread identity on calls to <see cref="Overload:System.Threading.WaitHandle.WaitOne" /> or <see cref="Overload:System.Threading.Semaphore.Release" />. It is the programmer's responsibility to ensure that threads do not release the semaphore too many times. For example, suppose a semaphore has a maximum count of two, and that thread A and thread B both enter the semaphore. If a programming error in thread B causes it to call <see cref="Overload:System.Threading.Semaphore.Release" /> twice, both calls succeed. The count on the semaphore is full, and when thread A eventually calls <see cref="Overload:System.Threading.Semaphore.Release" />, a <see cref="T:System.Threading.SemaphoreFullException" /> is thrown.</para>
+      <para>Semaphores are of two types: local semaphores and named system semaphores. If you create a <see cref="T:System.Threading.Semaphore" /> object using a constructor that accepts a name, it is associated with an operating-system semaphore of that name. Named system semaphores are visible throughout the operating system, and can be used to synchronize the activities of processes. You can create multiple <see cref="T:System.Threading.Semaphore" /> objects that represent the same named system semaphore, and you can use the <see cref="Overload:System.Threading.Semaphore.OpenExisting" /> method to open an existing named system semaphore.</para>
+      <para>A local semaphore exists only within your process. It can be used by any thread in your process that has a reference to the local <see cref="T:System.Threading.Semaphore" /> object. Each <see cref="T:System.Threading.Semaphore" /> object is a separate local semaphore.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Limits the number of threads that can access a resource or pool of resources concurrently. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="initialCount" Type="System.Int32" />
         <Parameter Name="maximumCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="initialCount">To be added.</param>
-        <param name="maximumCount">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes an unnamed semaphore. All threads that use an instance of such a semaphore must have references to the instance.</para>
+          <para>If <paramref name="initialCount" /> is less than <paramref name="maximumCount" />, the effect is the same as if the current thread had called <see cref="Overload:System.Threading.WaitHandle.WaitOne" /> (<paramref name="maximumCount" /> minus <paramref name="initialCount" />) times. If you do not want to reserve any entries for the thread that creates the semaphore, use the same number for <paramref name="maximumCount" /> and <paramref name="initialCount" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Semaphore" /> class, specifying the maximum number of concurrent entries and optionally reserving some entries.</para>
+        </summary>
+        <param name="initialCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial number of requests for the semaphore that can be granted concurrently.</param>
+        <param name="maximumCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of requests for the semaphore that can be granted concurrently.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount, string name) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="initialCount" Type="System.Int32" />
         <Parameter Name="maximumCount" Type="System.Int32" />
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="initialCount">To be added.</param>
-        <param name="maximumCount">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a <see cref="T:System.Threading.Semaphore" /> object that represents a named system semaphore. You can create multiple <see cref="T:System.Threading.Semaphore" /> objects that represent the same named system semaphore.</para>
+          <para>If the named system semaphore does not exist, it is created with the initial count and maximum count specified by <paramref name="initialCount" /> and <paramref name="maximumCount" />. If the named system semaphore already exists, <paramref name="initialCount" /> and <paramref name="maximumCount" /> are not used, although invalid values still cause exceptions. If you need to determine whether or not a named system semaphore was created, use the <see cref="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32,System.String,System.Boolean@)" /> constructor overload instead. </para>
+          <block subset="none" type="note">
+            <para>When you use this constructor overload, the recommended practice is to specify the same number for <paramref name="initialCount" /> and <paramref name="maximumCount" />. If <paramref name="initialCount" /> is less than <paramref name="maximumCount" />, and a named system semaphore is created, the effect is the same as if the current thread had called <see cref="Overload:System.Threading.WaitHandle.WaitOne" /> (<paramref name="maximumCount" /> minus <paramref name="initialCount" />) times. However, with this constructor overload there is no way to determine whether a named system semaphore was created. </para>
+          </block>
+          <para>If you specify null or an empty string for <paramref name="name" />, a local semaphore is created, as if you had called the <see cref="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32)" /> constructor overload.</para>
+          <para>Because named semaphores are visible throughout the operating system, they can be used to coordinate resource use across process boundaries.</para>
+          <para>If you want to find out whether a named system semaphore exists, use the <see cref="Overload:System.Threading.Semaphore.OpenExisting" /> method. The <see cref="Overload:System.Threading.Semaphore.OpenExisting" /> method attempts to open an existing named semaphore, and throws an exception if the system semaphore does not exist.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Semaphore" /> class, specifying the maximum number of concurrent entries, optionally reserving some entries for the calling thread, and optionally specifying the name of a system semaphore object.</para>
+        </summary>
+        <param name="initialCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial number of requests for the semaphore that can be granted concurrently. </param>
+        <param name="maximumCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of requests for the semaphore that can be granted concurrently.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a named system semaphore object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount, string name, bool createdNew) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="initialCount" Type="System.Int32" />
         <Parameter Name="maximumCount" Type="System.Int32" />
@@ -75,13 +124,20 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew, System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount, string name, bool createdNew, class System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("CreateSemaphore_internal does not support access control, semaphoreSecurity is ignored")</AttributeName>
+        </Attribute>
+      </Attributes>
       <Parameters>
         <Parameter Name="initialCount" Type="System.Int32" />
         <Parameter Name="maximumCount" Type="System.Int32" />
@@ -99,30 +155,45 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAccessControl">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.SemaphoreSecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.SemaphoreSecurity GetAccessControl() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.SemaphoreSecurity</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Semaphore.GetAccessControl" /> method uses the following combination of flags (combined using the bitwise OR operation) to search for permissions: <see cref="F:System.Security.AccessControl.AccessControlSections.Access" />, <see cref="F:System.Security.AccessControl.AccessControlSections.Owner" />, and <see cref="F:System.Security.AccessControl.AccessControlSections.Group" />.</para>
+          <para>The user must have <see cref="F:System.Security.AccessControl.SemaphoreRights.ReadPermissions" /> rights to call this method, and the semaphore must have been opened with <see cref="F:System.Security.AccessControl.SemaphoreRights.ReadPermissions" /> rights.</para>
+          <para>On a local semaphore, access control security is irrelevant. If the <see cref="T:System.Threading.Semaphore" /> object does not represent a named system semaphore, this method returns a <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> object that grants all rights to any user. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the access control security for a named system semaphore.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> object that represents the access control security for the named system semaphore.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OpenExisting">
       <MemberSignature Language="C#" Value="public static System.Threading.Semaphore OpenExisting (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Semaphore OpenExisting(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Semaphore</ReturnType>
       </ReturnValue>
@@ -130,19 +201,34 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Threading.Semaphore.OpenExisting" /> method tries to open the specified named semaphore. If the system semaphore does not exist, this method throws an exception instead of creating the system semaphore. To create the system semaphore when it does not already exist, use one of the <see cref="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32,System.String)" /> constructors that has a <paramref name="name" /> parameter.</para>
+          <para>Multiple calls to this method that use the same value for <paramref name="name" /> do not necessarily return the same <see cref="T:System.Threading.Semaphore" /> object, even though the objects that are returned represent the same named system semaphore. </para>
+          <para>This method overload is equivalent to calling the <see cref="M:System.Threading.Semaphore.OpenExisting(System.String,System.Security.AccessControl.SemaphoreRights)" /> method overload and specifying <see cref="F:System.Security.AccessControl.SemaphoreRights.Synchronize" /> and <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> rights, combined by using the bitwise OR operation.</para>
+          <para>Specifying the <see cref="F:System.Security.AccessControl.SemaphoreRights.Synchronize" /> flag allows a thread to enter the semaphore, and specifying the <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> flag allows a thread to call the <see cref="Overload:System.Threading.Semaphore.Release" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified named semaphore, if it already exists.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the named system semaphore.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the system semaphore to open.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OpenExisting">
       <MemberSignature Language="C#" Value="public static System.Threading.Semaphore OpenExisting (string name, System.Security.AccessControl.SemaphoreRights rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Semaphore OpenExisting(string name, valuetype System.Security.AccessControl.SemaphoreRights rights) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Semaphore</ReturnType>
       </ReturnValue>
@@ -151,45 +237,78 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.SemaphoreRights" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="rights">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="rights" /> parameter must include the <see cref="F:System.Security.AccessControl.SemaphoreRights.Synchronize" /> flag to allow threads to enter the semaphore, and the <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> flag to allow threads to call the <see cref="Overload:System.Threading.Semaphore.Release" /> method. </para>
+          <para>The <see cref="Overload:System.Threading.Semaphore.OpenExisting" /> method tries to open an existing named semaphore. If the system semaphore does not exist, this method throws an exception instead of creating the system semaphore. To create the system semaphore when it does not already exist, use one of the <see cref="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32,System.String)" /> constructors that has a <paramref name="name" /> parameter.</para>
+          <para>Multiple calls to this method that use the same value for <paramref name="name" /> do not necessarily return the same <see cref="T:System.Threading.Semaphore" /> object, even though the objects that are returned represent the same named system semaphore. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified named semaphore, if it already exists, with the desired security access.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the named system semaphore.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the system semaphore to open. </param>
+        <param name="rights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that represent the desired security access.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Release">
       <MemberSignature Language="C#" Value="public int Release ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Release() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.PrePrepareMethod</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Threads typically use the <see cref="Overload:System.Threading.WaitHandle.WaitOne" /> method to enter the semaphore, and they typically use this method overload to exit.</para>
+          <para>If a <see cref="T:System.Threading.SemaphoreFullException" /> is thrown by the <see cref="Overload:System.Threading.Semaphore.Release" /> method, it does not necessarily indicate a problem with the calling thread. A programming error in another thread might have caused that thread to exit the semaphore more times than it entered.</para>
+          <para>If the current <see cref="T:System.Threading.Semaphore" /> object represents a named system semaphore, the user must have <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> rights and the semaphore must have been opened with <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> rights.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exits the semaphore and returns the previous count.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The count on the semaphore before the <see cref="Overload:System.Threading.Semaphore.Release" /> method was called. </para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Release">
+      <MemberSignature Language="C#" Value="public int Release (int releaseCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Release(int32 releaseCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.PrePrepareMethod</AttributeName>
-        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Release">
-      <MemberSignature Language="C#" Value="public int Release (int releaseCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -197,24 +316,33 @@
         <Parameter Name="releaseCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="releaseCount">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a thread has entered the semaphore multiple times, this method overload allows the entire semaphore count to be restored with one call.</para>
+          <para>If a <see cref="T:System.Threading.SemaphoreFullException" /> is thrown by the <see cref="Overload:System.Threading.Semaphore.Release" /> method, it does not necessarily indicate a problem with the calling thread. A programming error in another thread might have caused that thread to exit the semaphore more times than it entered.</para>
+          <para>If the current <see cref="T:System.Threading.Semaphore" /> object represents a named system semaphore, the user must have <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> rights and the semaphore must have been opened with <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> rights.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exits the semaphore a specified number of times and returns the previous count.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The count on the semaphore before the <see cref="Overload:System.Threading.Semaphore.Release" /> method was called. </para>
+        </returns>
+        <param name="releaseCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of times to exit the semaphore.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="SetAccessControl">
       <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -222,14 +350,65 @@
         <Parameter Name="semaphoreSecurity" Type="System.Security.AccessControl.SemaphoreSecurity" />
       </Parameters>
       <Docs>
-        <param name="semaphoreSecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can set access control security only on <see cref="T:System.Threading.Semaphore" /> objects that represent named system semaphores.</para>
+          <para>The user must have <see cref="F:System.Security.AccessControl.SemaphoreRights.ChangePermissions" /> rights to call this method, and the semaphore must have been opened with <see cref="F:System.Security.AccessControl.SemaphoreRights.ChangePermissions" /> rights.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the access control security for a named system semaphore.</para>
+        </summary>
+        <param name="semaphoreSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.AccessControl.SemaphoreSecurity" />  object that represents the access control security to be applied to the named system semaphore.</param>
       </Docs>
+    </Member>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, out System.Threading.Semaphore result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, class System.Threading.Semaphore result) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="result" Type="System.Threading.Semaphore&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, System.Security.AccessControl.SemaphoreRights rights, out System.Threading.Semaphore result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, valuetype System.Security.AccessControl.SemaphoreRights rights, class System.Threading.Semaphore result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="rights" Type="System.Security.AccessControl.SemaphoreRights" />
+        <Parameter Name="result" Type="System.Threading.Semaphore&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="rights">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
 </Type>

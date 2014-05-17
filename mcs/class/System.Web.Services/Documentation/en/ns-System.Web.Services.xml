@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Services" FullName="System.Web.Services" FullNameSP="System.Web.Services" Maintainer="Mono">
   <Docs>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Services" /> namespace consists of the classes that enable you to create XML Web services using ASP.NET and XML Web service clients. XML Web services are applications that provide the ability to exchange messages in a loosely coupled environment using standard protocols such as HTTP, XML, XSD, SOAP, and WSDL. XML Web services enable the building of modular applications within and across companies in heterogeneous environments making them interoperable with a broad variety of implementations, platforms and devices. The SOAP-based XML messages of these applications can have well-defined (structured and typed), or loosely defined parts (using arbitrary XML). The ability of the messages to evolve over time without breaking the protocol is fundamental to the flexibility and robustness of XML Web services as a building block for the future of the Web.</para>
     </summary>
     <remarks>
-      <para>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To get started creating XML Web services using ASP.NET, look at the <see cref="T:System.Web.Services.WebService" /> class, which XML Web services can derive from to get access to the ASP.NET intrinsics and the <see cref="T:System.Web.Services.WebMethodAttribute" /> class, which must be placed on any method that you want to programmatically expose over the Web.</para>
     </remarks>
   </Docs>
 </Namespace>

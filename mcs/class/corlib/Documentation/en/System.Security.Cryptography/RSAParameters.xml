@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RSAParameters" FullName="System.Security.Cryptography.RSAParameters">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct RSAParameters" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit RSAParameters extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,151 +14,341 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>Parameters of the RSA key pairs.</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="D">
-      <MemberSignature Language="C#" Value="public byte[] D;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DP">
-      <MemberSignature Language="C#" Value="public byte[] DP;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DQ">
-      <MemberSignature Language="C#" Value="public byte[] DQ;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Exponent">
-      <MemberSignature Language="C#" Value="public byte[] Exponent;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="InverseQ">
-      <MemberSignature Language="C#" Value="public byte[] InverseQ;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Modulus">
-      <MemberSignature Language="C#" Value="public byte[] Modulus;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="P">
-      <MemberSignature Language="C#" Value="public byte[] P;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Q">
-      <MemberSignature Language="C#" Value="public byte[] Q;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.RSA" /> class exposes an <see cref="M:System.Security.Cryptography.RSA.ExportParameters(System.Boolean)" /> method that enables you to retrieve the raw RSA key in the form of an <see cref="T:System.Security.Cryptography.RSAParameters" /> structure. Understanding the contents of this structure requires familiarity with how the <see cref="T:System.Security.Cryptography.RSA" /> algorithm works. The next section discusses the algorithm briefly.</para>
+      <format type="text/html">
+        <h2>RSA Algorithm</h2>
+      </format>
+      <para>To generate a key pair, you start by creating two large prime numbers named <math>p</math> and <math>q</math>. These numbers are multiplied and the result is called <math>n</math>. Because <math>p</math> and <math>q</math> are both prime numbers, the only factors of <math>n</math> are 1, <math>p</math>, <math>q</math>, and <math>n</math>. </para>
+      <para>If we consider only numbers that are less than <math>n</math>, the count of numbers that are relatively prime to <math>n</math>, that is, have no factors in common with <math>n</math>, equals <math>(p - 1)(q - 1)</math>.</para>
+      <para>Now you choose a number <math>e</math>, which is relatively prime to the value you calculated. The public key is now represented as <math>{e, n}</math>.</para>
+      <para>To create the private key, you must calculate <math>d</math>, which is a number such that <math>(d)(e) mod (p - 1)(q - 1) = 1</math>. In accordance with the Euclidean algorithm, the private key is now <math>{d, n}</math>.</para>
+      <para>Encryption of plaintext <math>m</math> to ciphertext <math>c</math> is defined as <math>c = (m ^ e) mod n</math>. Decryption would then be defined as <math>m = (c ^ d) mod n</math>.</para>
+      <format type="text/html">
+        <h2>Summary of Fields</h2>
+      </format>
+      <para>Section A.1.2 of the <see cref="http://go.microsoft.com/fwlink/?LinkId=113155">PKCS #1: RSA Cryptography Standard</see> on the RSA Laboratories Web site defines a format for RSA private keys.</para>
+      <para>The following table summarizes the fields of the <see cref="T:System.Security.Cryptography.RSAParameters" /> structure. The third column provides the corresponding field in section A.1.2 of <see cref="http://go.microsoft.com/fwlink/?LinkId=113155">PKCS #1: RSA Cryptography Standard</see>. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>
+                <see cref="T:System.Security.Cryptography.RSAParameters" /> field</para>
+            </term>
+            <description>
+              <para>Contains</para>
+            </description>
+            <description>
+              <para>Corresponding PKCS #1 field</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.D" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>d</math>, the private exponent</para>
+          </description>
+          <description>
+            <para>privateExponent</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.DP" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>d mod (p - 1)</math>
+            </para>
+          </description>
+          <description>
+            <para>exponent1</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.DQ" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>d mod (q - 1)</math>
+            </para>
+          </description>
+          <description>
+            <para>exponent2</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.Exponent" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>e</math>, the public exponent</para>
+          </description>
+          <description>
+            <para>publicExponent</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.InverseQ" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>(InverseQ)(q) = 1 mod p</math>
+            </para>
+          </description>
+          <description>
+            <para>coefficient</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.Modulus" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>n</math>
+            </para>
+          </description>
+          <description>
+            <para>modulus</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.P" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>p</math>
+            </para>
+          </description>
+          <description>
+            <para>prime1</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Security.Cryptography.RSAParameters.Q" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <math>q</math>
+            </para>
+          </description>
+          <description>
+            <para>prime2</para>
+          </description>
+        </item>
+      </list>
+      <para>The security of RSA derives from the fact that, given the public key <math>{ e, n }</math>, it is computationally infeasible to calculate <math>d</math>, either directly or by factoring <math>n</math> into <math>p</math> and <math>q</math>. Therefore, any part of the key related to <math>d</math>, <math>p</math>, or <math>q</math> must be kept secret. If you call </para>
+      <para>
+        <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.ExportParameters(System.Boolean)" /> and ask for only the public key information, this is why you will receive only <see cref="F:System.Security.Cryptography.RSAParameters.Exponent" /> and <see cref="F:System.Security.Cryptography.RSAParameters.Modulus" />. The other fields are available only if you have access to the private key, and you request it.</para>
+      <para>
+        <see cref="T:System.Security.Cryptography.RSAParameters" /> is not encrypted in any way, so you must be careful when you use it with the private key information. In fact, none of the fields that contain private key information can be serialized. If you try to serialize an <see cref="T:System.Security.Cryptography.RSAParameters" /> structure with a remoting call or by using one of the serializers, you will receive only public key information. If you want to pass private key information, you will have to manually send that data. In all cases, if anyone can derive the parameters, the key that you transmit becomes useless. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the standard parameters for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="D">
+      <MemberSignature Language="C#" Value="public byte[] D;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] D" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the D parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DP">
+      <MemberSignature Language="C#" Value="public byte[] DP;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] DP" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the DP parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DQ">
+      <MemberSignature Language="C#" Value="public byte[] DQ;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] DQ" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the DQ parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Exponent">
+      <MemberSignature Language="C#" Value="public byte[] Exponent;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Exponent" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Exponent parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InverseQ">
+      <MemberSignature Language="C#" Value="public byte[] InverseQ;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] InverseQ" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the InverseQ parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Modulus">
+      <MemberSignature Language="C#" Value="public byte[] Modulus;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Modulus" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Modulus parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="P">
+      <MemberSignature Language="C#" Value="public byte[] P;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] P" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the P parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Q">
+      <MemberSignature Language="C#" Value="public byte[] Q;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Q" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Q parameter for the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

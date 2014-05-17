@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripTextBox" FullName="System.Windows.Forms.ToolStripTextBox">
   <TypeSignature Language="C#" Value="public class ToolStripTextBox : System.Windows.Forms.ToolStripControlHost" />
   <AssemblyInfo>
@@ -9,9 +10,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ToolStripTextBox" /> is the <see cref="T:System.Windows.Forms.TextBox" /> optimized for hosting in a <see cref="T:System.Windows.Forms.ToolStrip" />. A subset of the hosted control's properties and events are exposed at the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> level, but the underlying <see cref="T:System.Windows.Forms.TextBox" /> control is fully accessible through the <see cref="P:System.Windows.Forms.ToolStripTextBox.TextBox" /> property.</para>
+      <para>The <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control allows the user to enter text in an application. This control has additional functionality that is not found in the standard Windows text box control, including multiline editing.</para>
+      <para>Typically, a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control is used to display a single line of text or accept it as input. You can use the <see cref="P:System.Windows.Forms.ToolStripTextBox.Multiline" /> to enable multiple lines of text to be displayed or entered. Set the <see cref="P:System.Windows.Forms.ToolStripTextBox.AcceptsTab" /> and <see cref="P:System.Windows.Forms.ToolStripTextBox.AcceptsReturn" /> properties to true to allow greater text manipulation in a multiline <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control.</para>
+      <para>You can limit the amount of text entered into a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control by setting the <see cref="P:System.Windows.Forms.ToolStripTextBox.MaxLength" /> property to a specific number of characters. Use the <see cref="P:System.Windows.Forms.ToolStripTextBox.CharacterCasing" /> property to allow the user to type only uppercase, only lowercase, or a combination of uppercase and lowercase characters into the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control.</para>
+      <para>To restrict text from being entered in a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control, you can create an event handler for the <see cref="E:System.Windows.Forms.Control.KeyDown" /> event in order to validate each character entered in the control. You can also restrict all entry of data in a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control by setting the <see cref="P:System.Windows.Forms.ToolStripTextBox.ReadOnly" /> property to true.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a text box in a <see cref="T:System.Windows.Forms.ToolStrip" /> that allows the user to enter text.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +31,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +49,14 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> class with the specified name. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Windows.Forms.ToolStripTextBox" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +69,14 @@
         <Parameter Name="c" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="c">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> class derived from a base control.</para>
+        </summary>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control from which to derive the <see cref="T:System.Windows.Forms.ToolStripTextBox" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,10 +99,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of this property is false, the user must press CTRL+ENTER to create a new line in a multiline <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control. If there is no default button for the form, then the ENTER key will always create a new line of text in the control, no matter what the value of this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether pressing ENTER in a multiline <see cref="T:System.Windows.Forms.TextBox" /> control creates a new line of text in the control or activates the default button for the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,10 +126,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ToolStripTextBox.AcceptsTab" /> property is set to true, the user must press CTRL+TAB to move the focus to the next control in the tab order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether pressing the TAB key in a multiline text box control types a TAB character in the control instead of moving the focus to the next control in the tab order.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,9 +148,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.AcceptsTab" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -131,10 +172,14 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends text to the current text of the <see cref="T:System.Windows.Forms.ToolStripTextBox" />.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to append to the current contents of the <see cref="T:System.Windows.Forms.ToolStripTextBox" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -167,9 +212,17 @@
         <ReturnType>System.Windows.Forms.AutoCompleteStringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" />, <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteMode" />, and <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> properties to create a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> that automatically completes input strings by comparing the prefix being entered to the prefixes of all strings in a maintained source. This is useful for <see cref="T:System.Windows.Forms.ToolStripTextBox" /> controls in which URLs, addresses, file names, or commands will be frequently entered.</para>
+          <para>The use of the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" /> property is optional, but you must set the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> property to CustomSource in order to use <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" />.</para>
+          <para>You must use the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteMode" /> and <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> properties together.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom string collection to use when the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> property is set to CustomSource.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoCompleteMode">
@@ -193,9 +246,17 @@
         <ReturnType>System.Windows.Forms.AutoCompleteMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" />, <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteMode" />, and <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> properties to create a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> that automatically completes input strings by comparing the prefix being entered to the prefixes of all strings in a maintained source. This is useful for <see cref="T:System.Windows.Forms.ToolStripTextBox" /> controls in which URLs, addresses, file names, or commands will be frequently entered.</para>
+          <para>The use of the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" /> property is optional, but you must set the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> property to CustomSource in order to use <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" />.</para>
+          <para>You must use the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteMode" /> and <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> properties together.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an option that controls how automatic completion works for the <see cref="T:System.Windows.Forms.ToolStripTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoCompleteSource">
@@ -219,9 +280,17 @@
         <ReturnType>System.Windows.Forms.AutoCompleteSource</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" />, <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteMode" />, and <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> properties to create a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> that automatically completes input strings by comparing the prefix being entered to the prefixes of all strings in a maintained source. This is useful for <see cref="T:System.Windows.Forms.ToolStripTextBox" /> controls in which URLs, addresses, file names, or commands will be frequently entered.</para>
+          <para>The use of the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" /> property is optional, but you must set the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> property to CustomSource in order to use <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteCustomSource" />.</para>
+          <para>You must use the <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteMode" /> and <see cref="P:System.Windows.Forms.ToolStripTextBox.AutoCompleteSource" /> properties together.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying the source of complete strings used for automatic completion.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImage">
@@ -245,9 +314,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayout">
@@ -271,9 +346,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BorderStyle">
@@ -291,10 +372,16 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.ToolStripTextBox.BorderStyle" /> property to create borderless and flat style controls, in addition to the default three-dimensional control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border type of the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -307,9 +394,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.BorderStyle" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -330,10 +423,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this method returns true, you can call the <see cref="M:System.Windows.Forms.ToolStripTextBox.Undo" /> method to undo the last operation in a <see cref="T:System.Windows.Forms.ToolStripTextBox" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user can undo the previous operation in a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -351,10 +450,16 @@
         <ReturnType>System.Windows.Forms.CharacterCasing</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.TextBox.CharacterCasing" /> property to change the case of characters as required by your application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control modifies the case of characters as they are typed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -368,9 +473,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears all text from the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -384,9 +492,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to prevent an undo operation from repeating, based on the state of your application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears information about the most recent operation from the undo buffer of the <see cref="T:System.Windows.Forms.ToolStripTextBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -400,9 +514,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method, instead of using the <see cref="T:System.Windows.Forms.Clipboard" /> class, to copy text in the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> and place it in the Clipboard.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the current selection in the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> to the Clipboard.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -416,9 +536,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will only cut text from the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> if text is selected in the control. You can use this method, instead of using the <see cref="T:System.Windows.Forms.Clipboard" /> class, to copy text in the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> and move it to the Clipboard.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves the current selection in the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> to the Clipboard.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -434,9 +560,12 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the spacing, in pixels, between the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> and adjacent items.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultSize">
@@ -446,10 +575,18 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In order to maintain better performance, you should not set the <see cref="T:System.Drawing.Size" /> of a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> in its constructor. The preferred method is to override the <see cref="P:System.Windows.Forms.ToolStripTextBox.DefaultSize" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the <see cref="T:System.Windows.Forms.ToolStripTextBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -466,8 +603,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property is zero so that no characters are selected in the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetCharFromPosition">
@@ -483,10 +623,23 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the location specified in the <paramref name="pt" /> parameter is outside the client area of the control, the first character of the string closest to the point specified in <paramref name="pt" /> is returned. You can use this method to determine which characters are located near a specific point within the control. You can then use this value to perform operations on the text at that location.</para>
+          <block subset="none" type="note">
+            <para>If the specified location in the <paramref name="pt" /> parameter is located on the right side of the client area of the control, the last character of the string closest to the point specified in <paramref name="pt" /> is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the character that is closest to the specified location within the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character at the specified location.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location from which to seek the nearest character.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCharIndexFromPosition">
@@ -502,10 +655,20 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the character index that is closest to the position specified in the <paramref name="pt" /> parameter. The character index is a zero-based index of text in the control, including spaces. You can use this method to determine where in the text the user has the mouse over by passing the mouse coordinates to this method. This can be useful if you want to perform tasks when the mouse pointer hovers over a word in the text of the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the character nearest to the specified location.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index at the specified location.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location to search.</param>
       </Docs>
     </Member>
     <Member MemberName="GetFirstCharIndexFromLine">
@@ -521,10 +684,22 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="lineNumber">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="lineNum" /> parameter is negative, <see cref="M:System.Windows.Forms.ToolStripTextBox.GetFirstCharIndexFromLine(System.Int32)" /> returns 0. If the <paramref name="lineNum" /> parameter exceeds the number of lines in the control, <see cref="M:System.Windows.Forms.ToolStripTextBox.GetFirstCharIndexFromLine(System.Int32)" /> returns the first character index for the last line in the control.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.ToolStripTextBox.GetFirstCharIndexFromLine(System.Int32)" /> returns the first character index of a physical line. The physical line is the displayed line, not the assigned line. The number of displayed lines can be greater than the number of assigned lines due to word wrap. For example, if you assign two long lines to a <see cref="T:System.Windows.Forms.RichTextBox" /> control and set <see cref="P:System.Windows.Forms.ToolStripTextBox.Multiline" /> and <see cref="P:System.Windows.Forms.ToolStripTextBox.WordWrap" /> to true, the two long assigned lines result in four physical (or displayed lines).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the first character of a given line.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index in the specified line.</para>
+        </returns>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line for which to get the index of its first character.</param>
       </Docs>
     </Member>
     <Member MemberName="GetFirstCharIndexOfCurrentLine">
@@ -538,9 +713,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the first character of the current line.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index in the current line.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLineFromCharIndex">
@@ -556,10 +737,23 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to determine the line number based on the character index specified in the <paramref name="index" /> parameter of the method. The first line of text in the control returns the value zero. The <see cref="M:System.Windows.Forms.ToolStripTextBox.GetLineFromCharIndex(System.Int32)" /> method returns the physical line number where the indexed character is located within the control. For example, if a portion of the first logical line of text in the control wraps to the next line, the <see cref="M:System.Windows.Forms.ToolStripTextBox.GetLineFromCharIndex(System.Int32)" /> method returns 1 if the character at the specified character index has wrapped to the second physical line. If <see cref="P:System.Windows.Forms.ToolStripTextBox.WordWrap" /> is set to false, no portion of the line wraps to the next, and the method returns 0 for the specified character index. You can use this method to determine which line a specific character index is located within. For example, after calling the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for text, you can obtain the character index to where the search results are found. You can call this method with the character index returned by the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to determine which line the word was found.</para>
+          <block subset="none" type="note">
+            <para>If the character index specified in the <paramref name="index" /> parameter is beyond the available number of lines contained within the control, the last line number is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the line number from the specified character position within the text of the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based line number in which the character index is located.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character index position to search.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPositionFromCharIndex">
@@ -575,10 +769,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to determine where in the control a specific character index is located. You can use this method for such tasks as displaying shortcut menu items or help information for a word in the control. For example, if you wanted to display a menu of options to the user when the user right clicks on a word in the control, you can use this method to determine the position of the word to properly display a <see cref="T:System.Windows.Forms.ContextMenuStrip" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the location within the control at the specified character index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location of the specified character.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the character for which to retrieve the location.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPreferredSize">
@@ -613,10 +817,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to keep text highlighted in a text box control while another form or a dialog box has focus, such as a spelling checker dialog box.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the selected text in the text box control remains highlighted when the control loses focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -629,9 +839,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.HideSelection" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -655,10 +871,16 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each element in the array becomes a line of text in the text box control. If the <see cref="P:System.Windows.Forms.ToolStripTextBox.Multiline" /> property of the text box control is set to true and a newline character appears in the text, the text following the newline character is added to a new element in the array and displayed on a separate line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lines of text in a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -679,10 +901,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to restrict the length of text entered in the control for values such as postal codes and telephone numbers, or to restrict the length of text entered when the data is to be entered in a database. You can limit the text entered into the control to the maximum length of the corresponding field in the database.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of characters the user can type or paste into the text box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -703,10 +931,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine if the user has modified the contents of the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control. You can also set this property in code to indicate that changes were made to the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control by the application. This property can be used by validation and data-saving methods to determine if changes were made in a <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control so the changed contents can be validated or saved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates that the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> control has been modified by the user since the control was created or its contents were last set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -719,9 +953,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.Modified" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -751,10 +991,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -775,9 +1021,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -793,10 +1045,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripTextBox.OnAcceptsTabChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolStripTextBox.AcceptsTabChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -812,10 +1072,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripTextBox.OnBorderStyleChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolStripTextBox.BorderStyleChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -831,10 +1099,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripTextBox.OnHideSelectionChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolStripTextBox.HideSelectionChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -850,10 +1126,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripTextBox.OnModifiedChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolStripTextBox.ModifiedChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -869,10 +1153,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripTextBox.OnMultilineChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolStripTextBox.MultilineChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -888,10 +1180,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripTextBox.OnReadOnlyChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ToolStripTextBox.ReadOnlyChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -943,9 +1243,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ToolStripTextBox.Paste" /> method will only paste text into the control if text is currently stored in the Clipboard. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the current selection in the text box with the contents of the Clipboard.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -963,10 +1269,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, the contents of the control cannot be changed by the user at runtime, but you can still change the contents in code. You can use this feature instead of disabling the control with the <see cref="P:System.Windows.Forms.Control.Enabled" /> property to allow the contents to be copied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether text in the <see cref="T:System.Windows.Forms.ToolStripTextBox" /> is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -979,9 +1291,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.ReadOnly" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -995,9 +1313,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to scroll the contents of the control until the caret is within the visible region of the control. If the caret is positioned below the visible region of the control, the <see cref="M:System.Windows.Forms.ToolStripTextBox.ScrollToCaret" /> method will scroll the contents of the control until the caret is visible at the bottom of the control. If the caret is positioned above the visible region of the control, this method scrolls the contents of the control until the caret is visible at the top of the control. You can use this method in a multiline text box to ensure that the current text entry point is within the visible region of the control.</para>
+          <block subset="none" type="note">
+            <para>This method has no effect if the control does not have focus or if the caret is already positioned in the visible region of the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scrolls the contents of the control to the current caret position.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1014,11 +1341,22 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to set the start position to the first character in the control's text, set the <paramref name="start" /> parameter to 0. You can use this method to select a substring of text, such as when searching through the text of the control and replacing information.</para>
+          <block subset="none" type="note">
+            <para>You can programmatically move the caret within the text box by setting the <paramref name="start" /> parameter to the position within the text box where you want the caret to move to and set the <paramref name="length" /> parameter to a value of zero (0). The text box must have focus in order for the caret to be moved.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects a range of text in the text box.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the first character in the current text selection within the text box.</param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to select.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1032,9 +1370,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to select all text within the control. You can use this method with the <see cref="M:System.Windows.Forms.TextBoxBase.Cut" /> method, which requires text to be selected in the control, to cut the entire contents of the control and paste them into the Clipboard.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects all text in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1055,10 +1399,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can assign text to this property to change the text currently selected in the<see cref="T:System.Windows.Forms.ToolStripTextBox" />. If no text is currently selected in the<see cref="T:System.Windows.Forms.ToolStripTextBox" />, this property returns a zero-length string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the currently selected text in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1079,10 +1429,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine if any characters are currently selected in the text box control before performing operations on the selected text. When the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property is set to a value that is larger than the number of characters within the text of the control, the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property is set to the entire length of text within the control minus the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionStart" /> property (if any value is specified for the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionStart" /> property).</para>
+          <block subset="none" type="note">
+            <para>You can programmatically move the caret within the text box by setting the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionStart" /> to the position within the text box where you want the caret to move to and set the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property to a value of zero (0). The text box must have focus in order for the caret to be moved.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of characters selected in the<see cref="T:System.Windows.Forms.ToolStripTextBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1103,10 +1462,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no text is selected in the control, this property indicates the insertion point for new text. If you set this property to a location beyond the length of the text in the control, the selection start position will be placed after the last character. When text is selected in the text box control, changing this property might decrease the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property. If the remaining text in the control after the position indicated by the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionStart" /> property is less than the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property, the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property is automatically decreased. The value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionStart" /> property never causes an increase in the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property.</para>
+          <block subset="none" type="note">
+            <para>You can programmatically move the caret within the text box by setting the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionStart" /> to the position within the text box where you want the caret to move to and set the <see cref="P:System.Windows.Forms.ToolStripTextBox.SelectionLength" /> property to a value of zero (0). The text box must have focus in order for the caret to be moved.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the starting point of text selected in the<see cref="T:System.Windows.Forms.ToolStripTextBox" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1127,9 +1495,84 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ToolStripTextBox.ShortcutsEnabled" /> property to enable or disable the following shortcut key combinations: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Shortcut keys </para>
+                </term>
+                <description>
+                  <para>Shortcut keys </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CTRL+Z </para>
+              </term>
+              <description>
+                <para>CTRL+E </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CTRL+C </para>
+              </term>
+              <description>
+                <para>CTRL+I </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CTRL+X </para>
+              </term>
+              <description>
+                <para>CTRL+Y </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CTRL+V </para>
+              </term>
+              <description>
+                <para>CTRL+BACKSPACE </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CTRL+A </para>
+              </term>
+              <description>
+                <para>CTRL+DELETE </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CTRL+L </para>
+              </term>
+              <description>
+                <para>SHIFT+DELETE </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CTRL+R </para>
+              </term>
+              <description>
+                <para>SHIFT+INSERT </para>
+              </description>
+            </item>
+          </list>
+          <para>You can override this property to specify other shortcut keys.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the defined shortcuts are enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextBox">
@@ -1147,10 +1590,13 @@
         <ReturnType>System.Windows.Forms.TextBox</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hosted <see cref="T:System.Windows.Forms.TextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1171,10 +1617,16 @@
         <ReturnType>System.Windows.Forms.HorizontalAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to align the text within a <see cref="T:System.Windows.Forms.TextBox" /> to match the layout of text on your form. For example, if your controls are all located on the right side of the form, you can set the <see cref="P:System.Windows.Forms.ToolStripTextBox.TextBoxTextAlign" /> property to <see cref="F:System.Windows.Forms.HorizontalAlignment.Right" />, and the text will be aligned with the right side of the control instead of the default left alignment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets how text is aligned in a <see cref="T:System.Windows.Forms.TextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1187,9 +1639,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolStripTextBox.TextBoxTextAlign" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1207,10 +1665,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.ToolStripTextBox.TextLength" /> property to determine the number of characters in a string for tasks such as searching for specific strings of text within the text of the control, where knowledge of the total number of characters is needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of text in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1224,9 +1688,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will undo the last clipboard or text change operation performed in the text box control if the <see cref="P:System.Windows.Forms.TextBoxBase.CanUndo" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Undoes the last edit operation in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1253,10 +1723,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

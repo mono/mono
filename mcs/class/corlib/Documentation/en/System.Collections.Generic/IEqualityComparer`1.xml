@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IEqualityComparer&lt;T&gt;" FullName="System.Collections.Generic.IEqualityComparer&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IEqualityComparer&lt;in T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEqualityComparer`1&lt;- T&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,16 +17,28 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>
-      <para>Provides a mechanism to customize equality in sort ordering of a generic collection.</para>
-    </summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface allows the implementation of customized equality comparison for collections. That is, you can create your own definition of equality for type <paramref name="T" />, and specify that this definition be used with a collection type that accepts the <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> generic interface. In the .NET Framework, constructors of the <see cref="T:System.Collections.Generic.Dictionary`2" /> generic collection type accept this interface.</para>
+      <para>A default implementation of this interface is provided by the <see cref="P:System.Collections.Generic.EqualityComparer`1.Default" /> property of the <see cref="T:System.Collections.Generic.EqualityComparer`1" /> generic class. The <see cref="T:System.StringComparer" /> class implements <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> of type <see cref="T:System.String" />. </para>
+      <para>This interface supports only equality comparisons. Customization of comparisons for sorting and ordering is provided by the <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface. </para>
+      <para>We recommend that you derive from the <see cref="T:System.Collections.Generic.EqualityComparer`1" /> class instead of implementing the <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> interface, because the <see cref="T:System.Collections.Generic.EqualityComparer`1" /> class tests for equality using the <see cref="M:System.IEquatable`1.Equals(`0)" /> method instead of the <see cref="M:System.Object.Equals(System.Object)" /> method. This is consistent with the Contains, IndexOf, LastIndexOf, and Remove methods of the <see cref="T:System.Collections.Generic.Dictionary`2" /> class and other generic collections.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods to support the comparison of objects for equality.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (T x, T y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(!T x, !T y) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -48,14 +62,15 @@ y.Equals(z) implies x.Equals(z); for any values x, y and z for  which these expr
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public int GetHashCode (T obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode(!T obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public int GetHashCode (T obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -85,10 +100,6 @@ y.Equals(z) implies x.Equals(z); for any values x, y and z for  which these expr
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">The type of <paramref name="obj" /> is a reference type and <paramref name="obj" /> is <see langword="null" />.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

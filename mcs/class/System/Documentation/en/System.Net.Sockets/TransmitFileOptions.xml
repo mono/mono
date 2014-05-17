@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TransmitFileOptions" FullName="System.Net.Sockets.TransmitFileOptions">
   <TypeSignature Language="C#" Value="public enum TransmitFileOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TransmitFileOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -13,86 +16,122 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Note   The flags <see cref="F:System.Net.Sockets.TransmitFileOptions.Disconnect" /> and <see cref="F:System.Net.Sockets.TransmitFileOptions.ReuseSocket" /> return the socket to a disconnected, reusable state after the file has been transmitted. These flags should not be used on a socket where quality of service (QOS) has been requested, because the service provider might immediately delete any quality of service associated with the socket before the file transfer has completed. The best approach for a QOS-enabled socket is to call <see cref="M:System.Net.Sockets.Socket.Close" /> when the file transfer has completed, rather than relying on these flags.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.TransmitFileOptions" /> enumeration defines values used in file transfer requests.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Disconnect">
       <MemberSignature Language="C#" Value="Disconnect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.TransmitFileOptions Disconnect = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Start a transport-level disconnect after all the file data has been queued for transmission. When used with <see cref="F:System.Net.Sockets.TransmitFileOptions.ReuseSocket" />, these flags return the socket to a disconnected, reusable state after the file has been transmitted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReuseSocket">
       <MemberSignature Language="C#" Value="ReuseSocket" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.TransmitFileOptions ReuseSocket = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The socket handle may be reused when the request completes. This flag is valid only if <see cref="F:System.Net.Sockets.TransmitFileOptions.Disconnect" /> is also specified. When used with <see cref="F:System.Net.Sockets.TransmitFileOptions.Disconnect" />, these flags return the socket to a disconnected, reusable state after the file has been transmitted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseDefaultWorkerThread">
       <MemberSignature Language="C#" Value="UseDefaultWorkerThread" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.TransmitFileOptions UseDefaultWorkerThread = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the default thread to process long file transfer requests.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseKernelApc">
       <MemberSignature Language="C#" Value="UseKernelApc" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.TransmitFileOptions UseKernelApc = int32(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use kernel asynchronous procedure calls (APCs) instead of worker threads to process long file transfer requests. Long requests are defined as requests that require more than a single read from the file or a cache; the request therefore depends on the size of the file and the specified length of the send packet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseSystemThread">
       <MemberSignature Language="C#" Value="UseSystemThread" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.TransmitFileOptions UseSystemThread = int32(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use system threads to process long file transfer requests.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteBehind">
       <MemberSignature Language="C#" Value="WriteBehind" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.TransmitFileOptions WriteBehind = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Complete the file transfer request immediately, without pending. If this flag is specified and the file transfer succeeds, the data has been accepted by the system but not necessarily acknowledged by the remote end. Do not use this flag with the <see cref="F:System.Net.Sockets.TransmitFileOptions.Disconnect" /> and <see cref="F:System.Net.Sockets.TransmitFileOptions.ReuseSocket" /> flags.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

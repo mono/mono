@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CustomBinding" FullName="System.ServiceModel.Channels.CustomBinding">
+  <TypeSignature Language="C#" Value="public class CustomBinding : System.ServiceModel.Channels.Binding" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CustomBinding extends System.ServiceModel.Channels.Binding" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.Binding</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use a custom binding when one of the system-provided bindings does not meet the requirements of your service. A custom binding could be used, for example, to enable the use of a new transport or a new encoder at a service endpoint. </para>
+      <para>A custom binding is constructed using one of the <see cref="Overload:System.ServiceModel.Channels.CustomBinding.#ctor" /> from a collection of binding elements that are "stacked" in a specific order:</para>
+      <list type="bullet">
+        <item>
+          <para>At the top is an optional <see cref="T:System.ServiceModel.Channels.TransactionFlowBindingElement" /> that allows flowing transactions.</para>
+        </item>
+        <item>
+          <para>Next is an optional <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" /> that provides a session and ordering mechanism as defined in the WS-ReliableMessaging specification. This notion of a session can cross SOAP and transport intermediaries.</para>
+        </item>
+        <item>
+          <para>Next is an optional security binding element that provides security features like authorization, authentication, protection, and confidentiality. The following security binding elements are provided by indigo1:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.AsymmetricSecurityBindingElement" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> </para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>Next are the optional message-patterns specified by binding elements:</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.CompositeDuplexBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>Next are the optional transport upgrades/helpers binding elements: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.PnrpPeerResolverBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement" />
+              </para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>Next is a required message encoding binding element. You can use your own transport or use one of the following message encoding bindings: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.TextMessageEncodingBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.BinaryMessageEncodingBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.MtomMessageEncodingBindingElement" />
+              </para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>At the bottom is a required transport element. You can use your own transport or use one of transport binding elements provided by indigo1: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.TcpTransportBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.NamedPipeTransportBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.HttpTransportBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.HttpsTransportBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.MsmqTransportBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationBindingElement" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ServiceModel.Channels.PeerTransportBindingElement" />
+              </para>
+            </item>
+          </list>
+        </item>
+      </list>
+      <para>The following table summarizes the options for each layer.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Layer</para>
+            </term>
+            <description>
+              <para>Options</para>
+            </description>
+            <description>
+              <para>Required</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Transaction Flow</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.ServiceModel.Channels.TransactionFlowBindingElement" />
+            </para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Reliability</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" />
+            </para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Security</para>
+          </term>
+          <description>
+            <para>Symmetric, Asymmetric, Transport-Level</para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Shape Change</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.ServiceModel.Channels.CompositeDuplexBindingElement" />
+            </para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Transport Upgrades</para>
+          </term>
+          <description>
+            <para>SSL stream, Windows stream, Peer Resolver</para>
+          </description>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Encoding</para>
+          </term>
+          <description>
+            <para>Text, Binary, MTOM, Custom</para>
+          </description>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Transport</para>
+          </term>
+          <description>
+            <para>TCP, Named Pipes, HTTP, HTTPS, flavors of MSMQ, Custom</para>
+          </description>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+      </list>
+      <para>In addition, you can define your own binding elements and insert them between any of the preceding defined layers.</para>
+      <para>For a discussion on how to use a custom binding to modify a system-provided binding, see <format type="text/html"><a href="f8b97862-e8bb-470d-8b96-07733c21fe26">How To: Customize a System-Provided Binding</a></format>.</para>
+      <block subset="none" type="note">
+        <para>When calling a indigo2 service built with.Net Framework 4.0 from a WCF client application built with netfx35_short or earlier, the configuration file generated by svcutil.exe or adding a service reference from vsprvs will contain the validity attribute in the binding configuration. This attribute is not recognized by the netfx35_short runtime and the application will thrown an <see cref="T:System.Configuration.ConfigurationErrorsException" /> with the message "Unrecognized attribute validity". To workaround this problem, remove the validity attribute from the binding configuration.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a binding from a list of binding elements. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomBinding ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomBinding (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Channels.BindingElement&gt; bindingElements);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Channels.BindingElement&gt; bindingElements) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="bindingElements" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Channels.BindingElement&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="bindingElements">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class with the binding elements from a complete channel stack.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomBinding (System.ServiceModel.Channels.Binding binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.Binding binding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class from the values of a specified binding.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> that is used to initialize the custom binding.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomBinding (System.ServiceModel.Channels.BindingElement[] binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.BindingElement[] binding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.BindingElement[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="binding">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class from an array of binding elements.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomBinding (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The binding element named by </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomBinding (string name, string ns, System.ServiceModel.Channels.BindingElement[] binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, string ns, class System.ServiceModel.Channels.BindingElement[] binding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.BindingElement[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="binding">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CustomBinding" /> class from an array of binding elements with a specified name and namespace.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the binding.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the binding.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBindingElements">
+      <MemberSignature Language="C#" Value="public override System.ServiceModel.Channels.BindingElementCollection CreateBindingElements ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ServiceModel.Channels.BindingElementCollection CreateBindingElements() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.BindingElementCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a generic collection of the binding elements from the custom binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.ICollection`1" /> object of type <see cref="T:System.ServiceModel.Channels.BindingElement" /> that contains the binding elements from the custom binding.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Elements">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.BindingElementCollection Elements { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.BindingElementCollection Elements" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.BindingElementCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the binding elements from the custom binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Scheme">
+      <MemberSignature Language="C#" Value="public override string Scheme { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Scheme" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is provided to enable binding validation against base addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI scheme for transport used by the custom binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

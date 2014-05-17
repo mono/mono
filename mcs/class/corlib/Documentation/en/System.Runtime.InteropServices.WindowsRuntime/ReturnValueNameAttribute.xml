@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ReturnValueNameAttribute" FullName="System.Runtime.InteropServices.WindowsRuntime.ReturnValueNameAttribute">
+  <TypeSignature Language="C#" Value="public sealed class ReturnValueNameAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ReturnValueNameAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Delegate | System.AttributeTargets.ReturnValue | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a wrt component, all the parameters of a method and the return value must have names. By default, <format type="text/html"><a href="d2ce0683-343d-403e-bb8d-209186f7a19d">Winmdexp.exe (Windows Runtime Metadata Export Tool)</a></format> gives the return value the name "value". When you use a component in a win8_appname_long app written in JavaScript, you can use this name to retrieve the return value. For example, suppose a component defines a method that has a return value and two out parameters (ByRef parameters with the <see cref="T:System.Runtime.InteropServices.OutAttribute" /> attribute in Visual Basic):</para>
+      <code>public static int ComputeAverage([ReadOnlyArray()] int[] input,
+    out int minValue, out int maxValue)
+{
+    …
+}
+</code>
+      <code>Public Shared Function ComputeAverage( _
+        &lt;ReadOnlyArray()&gt; ByVal input As Integer, _
+        &lt;Out()&gt; ByRef minValue As Integer, _
+        &lt;Out()&gt; ByRef maxValue As Integer) As Integer
+    …
+End Function
+</code>
+      <para>When you call the function from JavaScript, you can access the return value by its default name (value): </para>
+      <code>    var data = [5, 13, 23, 37];
+    var results = SampleComponent.TestStuff.computeAverage(data);
+    var formattedResults = "Min=" + results.minValue + ", Avg=" + 
+        results.value + ", Max=" + results.maxValue;
+</code>
+      <para>You must give the return value a different name if you already have a parameter named "value". Or you might simply want to use a more meaningful name (such as "average" in this example). Apply the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.ReturnValueNameAttribute" /> attribute to your method and specify a new name. </para>
+      <code>[return: ReturnValueName("average")]
+public static int ComputeAverage([ReadOnlyArray()] int[] input,
+    out int minValue, out int maxValue)
+{
+    …
+}
+</code>
+      <code>Public Shared Function ComputeAverage( _
+        &lt;ReadOnlyArray()&gt; ByVal input As Integer, _
+        &lt;Out()&gt; ByRef minValue As Integer, _
+        &lt;Out()&gt; ByRef maxValue As Integer) _
+            As &lt;ReturnValueName("average")&gt; Integer
+    …
+End Function
+</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the name of the return value of a method in a wrt component.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ReturnValueNameAttribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.ReturnValueNameAttribute" /> class, and specifies the name of the return value.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the return value. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name that was specified for the return value of a method in a wrt component.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

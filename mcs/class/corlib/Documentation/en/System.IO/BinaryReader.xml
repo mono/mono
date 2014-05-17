@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BinaryReader" FullName="System.IO.BinaryReader">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class BinaryReader : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BinaryReader extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,91 +18,159 @@
       <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>A simple class to do some limited binary I/O.</summary>
-    <remarks>This class can be used to do some limited binary reading operations on a stream.  
-
-<para>
-   This class is not a general purpose binary file format reader.  Instead it is a class that allows data that was written with the <see cref="T:System.IO.BinaryWriter" /> class to be read.  The actual encoding of the data is little-endian.
-</para></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.BinaryReader" /> class provides methods that simplify reading primitive data types from a stream. For example, you can use the <see cref="M:System.IO.BinaryReader.ReadBoolean" /> method to read the next byte as a Boolean value and advance the current position in the stream by one byte. The class includes read methods that support different data types. </para>
+      <para>When you create a new instance of the <see cref="T:System.IO.BinaryReader" /> class, you provide the stream to read from, and optionally specify the type of encoding and whether to leave the stream open after disposing the <see cref="T:System.IO.BinaryReader" /> object. If you do not specify an encoding type, UTF-8 is used.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Reads primitive data types as binary values in a specific encoding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BinaryReader (System.IO.Stream input);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream input) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="input" Type="System.IO.Stream" />
-      </Parameters>
-      <Docs>
-        <param name="input">To be added: an object of type 'Stream'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="input" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.BinaryReader" /> class based on the specified stream and using UTF-8 encoding.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input stream. </param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BinaryReader (System.IO.Stream input, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream input, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="input" Type="System.IO.Stream" />
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="input">To be added: an object of type 'Stream'</param>
-        <param name="encoding">To be added: an object of type 'Text.Encoding'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.BinaryReader" /> class based on the specified stream and character encoding.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input stream. </param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BinaryReader (System.IO.Stream input, System.Text.Encoding encoding, bool leaveOpen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream input, class System.Text.Encoding encoding, bool leaveOpen) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="input" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="leaveOpen" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.BinaryReader" /> class based on the specified stream and character encoding, and optionally leaves the stream open.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input stream.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use.</param>
+        <param name="leaveOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to leave the stream open after the <see cref="T:System.IO.BinaryReader" /> object is disposed; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BaseStream">
+      <MemberSignature Language="C#" Value="public virtual System.IO.Stream BaseStream { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Stream BaseStream" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BaseStream">
-      <MemberSignature Language="C#" Value="public virtual System.IO.Stream BaseStream { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Stream'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Using the underlying stream while reading or while using the BinaryReader can cause data loss and corruption. For example, the same bytes might be read more than once, bytes might be skipped, or character reading might become unpredictable.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exposes access to the underlying stream of the <see cref="T:System.IO.BinaryReader" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Closes the current instance of <see cref="T:System.IO.BinaryReader" />, releasing any system resources associated with it.</para>
-        </summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of Close calls the <see cref="M:System.IO.BinaryReader.Dispose(System.Boolean)" /> method passing a true value.</para>
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call <see cref="M:System.IO.Stream.Flush" /> or Close. Setting <see cref="P:System.IO.StreamWriter.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the current reader and the underlying stream.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -110,13 +180,29 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.IO.BinaryReader" />. The Dispose method leaves the <see cref="T:System.IO.BinaryReader" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.IO.BinaryReader" /> so the garbage collector can reclaim the memory that the <see cref="T:System.IO.BinaryReader" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.IO.BinaryReader" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.IO.BinaryReader" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.IO.BinaryReader" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -124,19 +210,28 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by Dispose and <see cref="M:System.Object.Finalize" />. By default, this method specifies the <paramref name="disposing" /> parameter as true. <see cref="M:System.Object.Finalize" /> specifies the <paramref name="disposing" /> parameter as false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.IO.BinaryReader" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.BinaryReader" /> class and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
+    </Member>
+    <Member MemberName="FillBuffer">
+      <MemberSignature Language="C#" Value="protected virtual void FillBuffer (int numBytes);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void FillBuffer(int32 numBytes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FillBuffer">
-      <MemberSignature Language="C#" Value="protected virtual void FillBuffer (int numBytes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -144,55 +239,87 @@
         <Parameter Name="numBytes" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="numBytes">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The internal buffer size is the larger value between 16 and the value returned by <see cref="M:System.Text.Encoding.GetMaxByteCount(System.Int32)" /> for the specified encoding.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills the internal buffer with the specified number of bytes read from the stream.</para>
+        </summary>
+        <param name="numBytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to be read. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PeekChar">
       <MemberSignature Language="C#" Value="public virtual int PeekChar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 PeekChar() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If surrogate characters can be expected in the stream use the <see cref="M:System.IO.BinaryReader.ReadChars(System.Int32)" /> method, then set the stream back to the original position.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the next available character and does not advance the byte or character position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next available character, or -1 if no more characters are available or the stream does not support seeking.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public virtual int Read ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Read() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads characters from the underlying stream and advances the current position of the stream in accordance with the Encoding used and the specific character being read from the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character from the input stream, or -1 if no characters are currently available.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public virtual int Read (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Read(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -202,22 +329,37 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added: an object of type 'byte []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read operation.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the specified number of bytes from the stream, starting from a specified point in the byte array. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read into <paramref name="buffer" />. This might be less than the number of bytes requested if that many bytes are not available, or it might be zero if the end of the stream is reached.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read data into. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting point in the buffer at which to begin reading into the buffer. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public virtual int Read (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Read(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Read">
-      <MemberSignature Language="C#" Value="public virtual int Read (char[] buffer, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -227,80 +369,140 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added: an object of type 'char []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read operation.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the specified number of characters from the stream, starting from a specified point in the character array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of characters read into the buffer. This might be less than the number of characters requested if that many characters are not currently available, or it might be zero if the end of the stream is reached.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read data into. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting point in the buffer at which to begin reading into the buffer. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Read7BitEncodedInt">
+      <MemberSignature Language="C#" Value="protected int Read7BitEncodedInt ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance int32 Read7BitEncodedInt() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Read7BitEncodedInt">
-      <MemberSignature Language="C#" Value="protected int Read7BitEncodedInt ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Decodes a compressed integer (similar but not ASN.1 BER, nor Perl BER format). The bytes represent an integer in base 128, least significant digits first with as few digits as possible. The high bit (8) is set on each byte except the last.</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>If the integer will fit in seven bits, the integer takes only one byte of space. The integer is expected to have been written through <see cref="M:System.IO.BinaryWriter.Write7BitEncodedInt(System.Int32)" />.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads in a 32-bit integer in compressed format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit integer in compressed format.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadBoolean">
+      <MemberSignature Language="C#" Value="public virtual bool ReadBoolean ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ReadBoolean() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadBoolean">
-      <MemberSignature Language="C#" Value="public virtual bool ReadBoolean ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
         <summary>
-          <para>Reads the next byte from the stream as boolean and advances the current position by one byte.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a Boolean value from the current stream and advances the current position of the stream by one byte.</para>
         </summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the byte is nonzero; otherwise, false.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadByte">
+      <MemberSignature Language="C#" Value="public virtual byte ReadByte ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8 ReadByte() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadByte">
-      <MemberSignature Language="C#" Value="public virtual byte ReadByte ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>Because of data formatting conflicts, using this method with the following encodings is not recommended:</para>
+          <list type="bullet">
+            <item>
+              <para>UTF-7</para>
+            </item>
+            <item>
+              <para>ISO-2022-JP</para>
+            </item>
+            <item>
+              <para>ISCII</para>
+            </item>
+          </list>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
         <summary>
-          <para>Reads the next byte from the stream and advances the current position by one byte.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the next byte from the current stream and advances the current position of the stream by one byte.</para>
         </summary>
-        <returns>To be added: an object of type 'byte'</returns>
-        <remarks>To be added</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next byte read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadBytes">
+      <MemberSignature Language="C#" Value="public virtual byte[] ReadBytes (int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] ReadBytes(int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadBytes">
-      <MemberSignature Language="C#" Value="public virtual byte[] ReadBytes (int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -308,42 +510,74 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="count">The amount of bytes to read.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read operation.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
         <summary>
-          <para>Reads a maximum of <paramref name="count " />bytes from the stream and advances the current position by the number of bytes read.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the specified number of bytes from the current stream into a byte array and advances the current position by that number of bytes.</para>
         </summary>
-        <returns>An array of bytes of the length of count.</returns>
-        <remarks>To be added</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing data read from the underlying stream. This might be less than the number of bytes requested if the end of the stream is reached.</para>
+        </returns>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. This value must be 0 or a non-negative number or an exception will occur.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ReadChar">
+      <MemberSignature Language="C#" Value="public virtual char ReadChar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance char ReadChar() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadChar">
-      <MemberSignature Language="C#" Value="public virtual char ReadChar ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="M:System.IO.BinaryReader.ReadChar" /> method attempts to read a surrogate character in the stream an exception will be raised and the position in the stream will advance. The position is restored to the original location before <see cref="M:System.IO.BinaryReader.ReadChar" /> was called if the stream is seekable; however, if the stream is unseekable, the position will not be corrected. If surrogate characters can be expected in the stream, use the <see cref="M:System.IO.BinaryReader.ReadChars(System.Int32)" /> method instead.</para>
+          <para>Because of data formatting conflicts, using this method with the following encodings is not recommended:</para>
+          <list type="bullet">
+            <item>
+              <para>UTF-7</para>
+            </item>
+            <item>
+              <para>ISO-2022-JP</para>
+            </item>
+            <item>
+              <para>ISCII</para>
+            </item>
+          </list>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
         <summary>
-          <para>Reads the next character from the stream and advances the current position by one character. Current character encoding rules apply.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the next character from the current stream and advances the current position of the stream in accordance with the Encoding used and the specific character being read from the stream.</para>
         </summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadChars">
+      <MemberSignature Language="C#" Value="public virtual char[] ReadChars (int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance char[] ReadChars(int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadChars">
-      <MemberSignature Language="C#" Value="public virtual char[] ReadChars (int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char[]</ReturnType>
       </ReturnValue>
@@ -351,182 +585,315 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
-Reads a maximum of <paramref name="count " />characters from the stream and advances the current position by the number of characters read. Current character encoding rules apply.
-</para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read operation.</para>
+          <para>When reading from network streams, in some rare cases, the <see cref="M:System.IO.BinaryReader.ReadChars(System.Int32)" /> method might read an extra character from the stream if the <see cref="T:System.IO.BinaryReader" /> was constructed with Unicode encoding. If this occurs, you can use the <see cref="M:System.IO.BinaryReader.ReadBytes(System.Int32)" /> method to read a fixed-length byte array, and then pass that array to the <see cref="M:System.IO.BinaryReader.ReadChars(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the specified number of characters from the current stream, returns the data in a character array, and advances the current position in accordance with the Encoding used and the specific character being read from the stream.</para>
         </summary>
-        <returns>To be added: an object of type 'char []'</returns>
-        <remarks>To be added</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character array containing data read from the underlying stream. This might be less than the number of characters requested if the end of the stream is reached.</para>
+        </returns>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to read. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ReadDecimal">
+      <MemberSignature Language="C#" Value="public virtual decimal ReadDecimal ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Decimal ReadDecimal() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadDecimal">
-      <MemberSignature Language="C#" Value="public virtual decimal ReadDecimal ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'decimal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a decimal value from the current stream and advances the current position of the stream by sixteen bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decimal value read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadDouble">
+      <MemberSignature Language="C#" Value="public virtual double ReadDouble ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance float64 ReadDouble() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadDouble">
-      <MemberSignature Language="C#" Value="public virtual double ReadDouble ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>BinaryReader reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an 8-byte floating point value from the current stream and advances the current position of the stream by eight bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte floating point value read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadInt16">
+      <MemberSignature Language="C#" Value="public virtual short ReadInt16 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int16 ReadInt16() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadInt16">
-      <MemberSignature Language="C#" Value="public virtual short ReadInt16 ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>BinaryReader reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 2-byte signed integer from the current stream and advances the current position of the stream by two bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte signed integer read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadInt32">
+      <MemberSignature Language="C#" Value="public virtual int ReadInt32 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 ReadInt32() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadInt32">
-      <MemberSignature Language="C#" Value="public virtual int ReadInt32 ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 4-byte signed integer from the current stream and advances the current position of the stream by four bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte signed integer read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadInt64">
+      <MemberSignature Language="C#" Value="public virtual long ReadInt64 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int64 ReadInt64() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadInt64">
-      <MemberSignature Language="C#" Value="public virtual long ReadInt64 ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>BinaryReader reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an 8-byte signed integer from the current stream and advances the current position of the stream by eight bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte signed integer read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadSByte">
+      <MemberSignature Language="C#" Value="public virtual sbyte ReadSByte ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int8 ReadSByte() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadSByte">
-      <MemberSignature Language="C#" Value="public virtual sbyte ReadSByte ();" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'sbyte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a signed byte from this stream and advances the current position of the stream by one byte.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed byte read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadSingle">
+      <MemberSignature Language="C#" Value="public virtual float ReadSingle ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance float32 ReadSingle() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="ReadSingle">
-      <MemberSignature Language="C#" Value="public virtual float ReadSingle ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>BinaryReader reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 4-byte floating point value from the current stream and advances the current position of the stream by four bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte floating point value read from the current stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadString">
+      <MemberSignature Language="C#" Value="public virtual string ReadString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ReadString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadString">
-      <MemberSignature Language="C#" Value="public virtual string ReadString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a string from the current stream. The string is prefixed with the length, encoded as an integer seven bits at a time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string being read.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadUInt16">
+      <MemberSignature Language="C#" Value="public virtual ushort ReadUInt16 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int16 ReadUInt16() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadUInt16">
-      <MemberSignature Language="C#" Value="public virtual ushort ReadUInt16 ();" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ushort'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>BinaryReader reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 2-byte unsigned integer from the current stream using little-endian encoding and advances the position of the stream by two bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte unsigned integer read from this stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadUInt32">
+      <MemberSignature Language="C#" Value="public virtual uint ReadUInt32 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int32 ReadUInt32() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -537,19 +904,32 @@ Reads a maximum of <paramref name="count " />characters from the stream and adva
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ReadUInt32">
-      <MemberSignature Language="C#" Value="public virtual uint ReadUInt32 ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'uint'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>BinaryReader reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a 4-byte unsigned integer from the current stream and advances the position of the stream by four bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte unsigned integer read from this stream.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ReadUInt64">
+      <MemberSignature Language="C#" Value="public virtual ulong ReadUInt64 ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int64 ReadUInt64() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -560,29 +940,27 @@ Reads a maximum of <paramref name="count " />characters from the stream and adva
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ReadUInt64">
-      <MemberSignature Language="C#" Value="public virtual ulong ReadUInt64 ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ulong'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.IO.BinaryReader" /> does not restore the file position after an unsuccessful read.</para>
+          <para>BinaryReader reads this data type in little-endian format.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads an 8-byte unsigned integer from the current stream and advances the position of the stream by eight bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte unsigned integer read from this stream.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
@@ -592,8 +970,14 @@ Reads a maximum of <paramref name="count " />characters from the stream and adva
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.IO.BinaryReader" /> instance is cast to an <see cref="T:System.IDisposable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.IO.BinaryReader" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -601,9 +985,4 @@ Reads a maximum of <paramref name="count " />characters from the stream and adva
       </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

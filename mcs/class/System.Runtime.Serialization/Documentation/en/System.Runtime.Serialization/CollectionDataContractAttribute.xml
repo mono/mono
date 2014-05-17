@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CollectionDataContractAttribute" FullName="System.Runtime.Serialization.CollectionDataContractAttribute">
+  <TypeSignature Language="C#" Value="public sealed class CollectionDataContractAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CollectionDataContractAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Serialization.CollectionDataContractAttribute" /> is intended to ease interoperability when working with data from non-indigo2 providers and to control the exact shape of serialized instances. To this end, the <see cref="P:System.Runtime.Serialization.CollectionDataContractAttribute.ItemName" /> property enables you to control the names of the repeating items inside a collection. This is especially useful when the provider does not use the XML element type name as the array item name, for example, if a provider uses "String" as an element type name instead of the XSD type name "string". </para>
+      <para>The <see cref="T:System.Runtime.Serialization.CollectionDataContractAttribute" /> is also intended to be used with dictionary types to handle keyed collections. Dictionary types are classes that implement either the <see cref="T:System.Collections.IDictionary" /> or the <see cref="T:System.Collections.Generic.IDictionary`2" /> interface, for example, the <see cref="T:System.Collections.Generic.Dictionary`2" />. Use the <see cref="P:System.Runtime.Serialization.CollectionDataContractAttribute.KeyName" /> and <see cref="P:System.Runtime.Serialization.CollectionDataContractAttribute.ValueName" /> properties to set custom names when using the <see cref="T:System.Collections.Generic.Dictionary`2" /> class.</para>
+      <para>crabout using the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />, see <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Data Contracts Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When applied to a collection type, enables custom specification of the collection item elements. This attribute can be applied only to types that are recognized by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> as valid, serializable collections. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CollectionDataContractAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.CollectionDataContractAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReference">
+      <MemberSignature Language="C#" Value="public bool IsReference { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReference" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The IsReference setting does not apply to the elements of the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to preserve object reference data.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ItemName">
+      <MemberSignature Language="C#" Value="public string ItemName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ItemName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom name for a collection element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KeyName">
+      <MemberSignature Language="C#" Value="public string KeyName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string KeyName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom name for a dictionary key name.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data contract name for the collection type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace for the data contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ValueName">
+      <MemberSignature Language="C#" Value="public string ValueName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ValueName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom name for a dictionary value name.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="GotoExpressionKind" FullName="System.Linq.Expressions.GotoExpressionKind">
+  <TypeSignature Language="C#" Value="public enum GotoExpressionKind" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed GotoExpressionKind extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies what kind of jump this <see cref="T:System.Linq.Expressions.GotoExpression" /> represents.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Break">
+      <MemberSignature Language="C#" Value="Break" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.GotoExpressionKind Break = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.GotoExpressionKind</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Linq.Expressions.GotoExpression" /> that represents a break statement.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Continue">
+      <MemberSignature Language="C#" Value="Continue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.GotoExpressionKind Continue = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.GotoExpressionKind</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Linq.Expressions.GotoExpression" /> that represents a continue statement.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Goto">
+      <MemberSignature Language="C#" Value="Goto" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.GotoExpressionKind Goto = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.GotoExpressionKind</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Linq.Expressions.GotoExpression" /> that represents a jump to some location.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Return">
+      <MemberSignature Language="C#" Value="Return" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.GotoExpressionKind Return = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.GotoExpressionKind</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Linq.Expressions.GotoExpression" /> that represents a return statement.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

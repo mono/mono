@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MarshalByRefObject" FullName="System.MarshalByRefObject" FullNameSP="System_MarshalByRefObject" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable MarshalByRefObject extends System.Object" />
   <TypeSignature Language="C#" Value="public abstract class MarshalByRefObject" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi abstract serializable beforefieldinit MarshalByRefObject extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,47 +16,54 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Enables access to objects across application
-      domain boundaries
-      in implementations that
-      support remoting.</para>
-    </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An application domain is a partition in an operating system process where one or more applications reside. Objects in the same application domain communicate directly. Objects in different application domains communicate either by transporting copies of objects across application domain boundaries, or by using a proxy to exchange messages.</para>
       <para>
-        <block subset="none" type="note">An application
-      domain is a partition in an OS process where one or more applications reside.
-      Objects in the same application domain communicate directly. Objects that reside
-      in different application domains communicate either by transporting copies of
-      objects across application domain boundaries, or by exchanging messages via proxy.</block>
-      </para>
+        <see cref="T:System.MarshalByRefObject" /> is the base class for objects that communicate across application domain boundaries by exchanging messages using a proxy. Objects that do not inherit from <see cref="T:System.MarshalByRefObject" /> are implicitly marshal by value. When a remote application references a marshal by value object, a copy of the object is passed across application domain boundaries.</para>
       <para>
-        <see cref="T:System.MarshalByRefObject" /> is the base class for objects that
-   communicate across application domain boundaries by exchanging messages via a
-   proxy. Objects that do not inherit from <see cref="T:System.MarshalByRefObject" /> are
-   implicitly <paramref name="marshal by value" />. When a remote application references a
-<paramref name="marshal by value" /> object, a copy of the object is passed across application domain boundaries.</para>
+        <see cref="T:System.MarshalByRefObject" /> objects are accessed directly within the boundaries of the local application domain. The first time an application in a remote application domain accesses a <see cref="T:System.MarshalByRefObject" />, a proxy is passed to the remote application. Subsequent calls on the proxy are marshaled back to the object residing in the local application domain.</para>
+      <para>Types must inherit from <see cref="T:System.MarshalByRefObject" /> when the type is used across application domain boundaries, and the state of the object must not be copied because the members of the object are not usable outside the application domain where they were created.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables access to objects across application domain boundaries in applications that support remoting.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected MarshalByRefObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.MarshalByRefObject" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreateObjRef">
       <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.ObjRef CreateObjRef (Type requestedType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.ObjRef CreateObjRef(class System.Type requestedType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjRef</ReturnType>
       </ReturnValue>
@@ -62,55 +71,81 @@
         <Parameter Name="requestedType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="requestedType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.MarshalByRefObject.CreateObjRef(System.Type)" /> method is called by remote object creation methods such as <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> and <see cref="M:System.AppDomain.CreateInstanceAndUnwrap(System.String,System.String)" />. In most cases, there is no need to override this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object that contains all the relevant information required to generate a proxy used to communicate with a remote object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Information required to generate a proxy.</para>
+        </returns>
+        <param name="requestedType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the object that the new <see cref="T:System.Runtime.Remoting.ObjRef" /> will reference. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLifetimeService">
       <MemberSignature Language="C#" Value="public object GetLifetimeService ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetLifetimeService() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about lifetime services, see the <see cref="T:System.Runtime.Remoting.Lifetime.LifetimeServices" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the current lifetime service object that controls the lifetime policy for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> used to control the lifetime policy for this instance.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="InitializeLifetimeService">
       <MemberSignature Language="C#" Value="public virtual object InitializeLifetimeService ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object InitializeLifetimeService() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about lifetime services, see the <see cref="T:System.Runtime.Remoting.Lifetime.LifetimeServices" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Obtains a lifetime service object to control the lifetime policy for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> used to control the lifetime policy for this instance. This is the current lifetime service object for this instance if one exists; otherwise, a new lifetime service object initialized to the value of the <see cref="P:System.Runtime.Remoting.Lifetime.LifetimeServices.LeaseManagerPollTime" /> property.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="MemberwiseClone">
       <MemberSignature Language="C#" Value="protected MarshalByRefObject MemberwiseClone (bool cloneIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance class System.MarshalByRefObject MemberwiseClone(bool cloneIdentity) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,17 +158,24 @@
         <Parameter Name="cloneIdentity" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="cloneIdentity">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.MarshalByRefObject.MemberwiseClone(System.Boolean)" /> method creates a shallow copy by creating a new <see cref="T:System.MarshalByRefObject" /> object, and then copying the nonstatic fields of the current <see cref="T:System.MarshalByRefObject" /> object to the new object. If a field is a value type, a bit-by-bit copy of the field is performed. If a field is a reference type, the reference is copied but the referred object is not; therefore, the original object and its clone refer to the same object. </para>
+          <para>For example, consider a <see cref="T:System.MarshalByRefObject" /> object called X that references objects A and B. Object B, in turn, references object C. A shallow copy of X creates new object X2 that also references objects A and B. In contrast, a deep copy of X creates a new object X2 that references the new objects A2 and B2, which are copies of A and B. B2, in turn, references the new object C2, which is a copy C. Use a class that implements the <see cref="T:System.ICloneable" /> interface to perform a deep or shallow copy of an object. </para>
+          <para>The identity of a <see cref="T:System.MarshalByRefObject" /> object is defined as the remote server object that is the target of a remoting client call. By default, the memberwise clone of a <see cref="T:System.MarshalByRefObject" /> object has the same identity as the original object, which is typically not the correct behavior for clones of server-side objects that are marshaled across a remoting boundary to the client side. Specify false, which is usually appropriate, to delete the identity of the clone and cause a new identity to be assigned when the clone is marshaled across a remoting boundary, or true to cause the clone to retain the identity of the original <see cref="T:System.MarshalByRefObject" /> object. The <see cref="M:System.MarshalByRefObject.MemberwiseClone(System.Boolean)" /> method is intended to be used by developers implementing remote server objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a shallow copy of the current <see cref="T:System.MarshalByRefObject" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the current <see cref="T:System.MarshalByRefObject" /> object.</para>
+        </returns>
+        <param name="cloneIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />false to delete the current <see cref="T:System.MarshalByRefObject" /> object's identity, which will cause the object to be assigned a new identity when it is marshaled across a remoting boundary. A value of false is usually appropriate. true to copy the current <see cref="T:System.MarshalByRefObject" /> object's identity to its clone, which will cause remoting client calls to be routed to the remote server object. </param>
       </Docs>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MissingManifestResourceException" FullName="System.Resources.MissingManifestResourceException">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class MissingManifestResourceException : SystemException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit MissingManifestResourceException extends System.SystemException" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,88 +15,258 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <format type="text/html">
+        <h2>Desktop Apps</h2>
+      </format>
+      <para>In desktop apps, <see cref="T:System.Resources.MissingManifestResourceException" /> is thrown when the attempt to retrieve a resource fails because the resource set for the neutral culture could not be loaded from a particular assembly. Although the exception is thrown when you try to retrieve a particular resource, it is caused by the failure to load the resource set rather than the failure to find the resource. </para>
+      <block subset="none" type="note">
+        <para>For additional information, see the "Handling a MissingManifestResourceException Exception" section in the <see cref="T:System.Resources.ResourceManager" /> class topic.</para>
+      </block>
+      <para>The main causes of the exception include the following:</para>
+      <list type="bullet">
+        <item>
+          <para>The resource set is not identified by its fully qualified name. For example, if the <paramref name="baseName" /> parameter in the call to the <see cref="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly)" /> method specifies the root name of the resource set without a namespace, but the resource set is assigned a namespace when it is stored in its assembly, the call to the <see cref="M:System.Resources.ResourceManager.GetString(System.String)" /> method throws this exception. </para>
+          <para>If you have embedded the .resources file that contains the default culture's resources in your executable and your app is throwing a <see cref="T:System.Resources.MissingManifestResourceException" />, you can use a reflection tool such as <format type="text/html"><a href="db27f6b2-f1ec-499e-be3a-7eecf95ca42b">ILDasm.exe</a></format> to determine the fully qualified name of the resource. In ILDasm, double click the executable's <ui>MANIFEST</ui> label to open the <ui>MANIFEST</ui> window. Resources appear as .mresource items and are listed after external assembly references and custom assembly-level attributes. You can also compile the following simple utility, which lists the fully qualified names of embedded resources in the assembly whose name is passed to it as a command-line parameter. </para>
+          <para>code reference: System.Resources.ResourceManager.Class#4</para>
+        </item>
+        <item>
+          <para>You identify the resource set by its resource file name (along with its optional namespace) and its file extension rather than by its namespace and root file name alone. For example, this exception is thrown if the neutral culture's resource set is named GlobalResources and you supply a value of <userInput>GlobalResources.resources</userInput> (instead of <userInput>GlobalResources</userInput>) to the <paramref name="baseName" /> parameter of the <see cref="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly)" /> constructor.</para>
+        </item>
+        <item>
+          <para>The culture-specific resource set that is identified in a method call cannot be found, and the fallback resource set cannot be loaded. For example, if you create satellite assemblies for the English (United States) and Russia (Russian) cultures but you fail to provide a resource set for the neutral culture, this exception is thrown if your app's current culture is English (Great Britain).</para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.Resources.MissingManifestResourceException" /> uses the HRESULT COR_E_MISSINGMANIFESTRESOURCE, which has the value 0x80131532.</para>
+      <para>
+        <see cref="T:System.Resources.MissingManifestResourceException" /> uses the default <see cref="M:System.Object.Equals(System.Object)" /> implementation, which supports reference equality.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Resources.MissingManifestResourceException" />, see the <see cref="M:System.Resources.MissingManifestResourceException.#ctor" /> constructors.</para>
+      <block subset="none" type="note">
+        <para>We recommend that you include a neutral set of resources in your main assembly, so your app won't fail if a satellite assembly is unavailable.</para>
+      </block>
+      <format type="text/html">
+        <h2>win8_appname_long Apps</h2>
+      </format>
+      <para>Unlike desktop apps, which deploy localized resources in satellite assemblies and typically store the resources of the neutral culture in the main assembly, win8_appname_long apps deploy resources for multiple cultures, including the neutral culture, in a single package resource index (.pri) file. As a result, in a win8_appname_long app, if resources for the preferred culture cannot be found, the <see cref="T:System.Resources.MissingManifestResourceException" /> is thrown under either of the following conditions:</para>
+      <list type="bullet">
+        <item>
+          <para>The app does not include a .pri file or the .pri file could not be opened.</para>
+        </item>
+        <item>
+          <para>The app's .pri file does not contain a resource set for the given root name. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown if the main assembly does not contain the resources for the neutral culture, and an appropriate satellite assembly is missing.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MissingManifestResourceException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Resources.MissingManifestResourceException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>null. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The localized error message for <see cref="T:System.Resources.MissingManifestResourceException" />. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.MissingManifestResourceException" /> class with default properties.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MissingManifestResourceException (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Resources.MissingManifestResourceException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>null. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The <paramref name="message" /> string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.MissingManifestResourceException" /> class with the specified error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MissingManifestResourceException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected MissingManifestResourceException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called during deserialization to reconstitute the exception object transmitted over a stream. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.MissingManifestResourceException" /> class from serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that holds the serialized object data. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contextual information about the source or destination of the exception. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MissingManifestResourceException (string message, Exception inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception inner) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public MissingManifestResourceException (string message, Exception inner);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="inner">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Resources.MissingManifestResourceException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The inner exception reference. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.MissingManifestResourceException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="inner" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

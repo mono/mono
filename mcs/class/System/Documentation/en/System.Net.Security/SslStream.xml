@@ -1,98 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SslStream" FullName="System.Net.Security.SslStream">
   <TypeSignature Language="C#" Value="public class SslStream : System.Net.Security.AuthenticatedStream" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SslStream extends System.Net.Security.AuthenticatedStream" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Net.Security.AuthenticatedStream</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.MonoTODO("Non-X509Certificate2 certificate is not supported")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>SSL protocols help to provide confidentiality and integrity checking for messages transmitted using an <see cref="T:System.Net.Security.SslStream" />. An SSL connection, such as that provided by <see cref="T:System.Net.Security.SslStream" />, should be used when communicating sensitive information between a client and a server. Using an <see cref="T:System.Net.Security.SslStream" /> helps to prevent anyone from reading and tampering with information while it is in transit on the network. </para>
+      <para>An <see cref="T:System.Net.Security.SslStream" /> instance transmits data using a stream that you supply when creating the <see cref="T:System.Net.Security.SslStream" />. When you supply this underlying stream, you have the option to specify whether closing the <see cref="T:System.Net.Security.SslStream" /> also closes the underlying stream. Typically, the <see cref="T:System.Net.Security.SslStream" /> class is used with the <see cref="T:System.Net.Sockets.TcpClient" /> and <see cref="T:System.Net.Sockets.TcpListener" /> classes. The <see cref="M:System.Net.Sockets.TcpClient.GetStream" /> method provides a <see cref="T:System.Net.Sockets.NetworkStream" /> suitable for use with the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+      <para>After creating an <see cref="T:System.Net.Security.SslStream" />, the server and optionally, the client must be authenticated. The server must provide an X509 certificate that establishes proof of its identity and can request that the client also do so. Authentication must be performed before transmitting information using an <see cref="T:System.Net.Security.SslStream" />. Clients initiate authentication using the synchronous <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" /> methods, which block until the authentication completes, or the asynchronous <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" /> methods, which do not block waiting for the authentication to complete. Servers initiate authentication using the synchronous <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" /> or asynchronous <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods. Both client and server must initiate the authentication. </para>
+      <para>The authentication is handled by the Security Support Provider (SSPI) channel provider. The client is given an opportunity to control validation of the server's certificate by specifying a <see cref="T:System.Net.Security.RemoteCertificateValidationCallback" /> delegate when creating an <see cref="T:System.Net.Security.SslStream" />. The server can also control validation by supplying a <see cref="T:System.Net.Security.RemoteCertificateValidationCallback" /> delegate. The method referenced by the delegate includes the remote party's certificate and any errors SSPI encountered while validating the certificate. Note that if the server specifies a delegate, the delegate's method is invoked regardless of whether the server requested client authentication. If the server did not request client authentication, the server's delegate method receives a null certificate and an empty array of certificate errors. </para>
+      <para>If the server requires client authentication, the client must specify one or more certificates for authentication. If the client has more than one certificate, the client can provide a <see cref="T:System.Net.Security.LocalCertificateSelectionCallback" /> delegate to select the correct certificate for the server. The client's certificates must be located in the current user's "My" certificate store. Client authentication via certificates is not supported for the <see cref="F:System.Security.Authentication.SslProtocols.Ssl2" /> (SSL version 2) protocol.</para>
+      <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and the <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+      <para>When the authentication process, also known as the SSL handshake, succeeds, the identity of the server (and optionally, the client) is established and the <see cref="T:System.Net.Security.SslStream" /> can be used by the client and server to exchange messages. Before sending or receiving information, the client and server should check the security services and levels provided by the <see cref="T:System.Net.Security.SslStream" /> to determine whether the protocol, algorithms, and strengths selected meet their requirements for integrity and confidentiality. If the current settings are not sufficient, the stream should be closed. You can check the security services provided by the <see cref="T:System.Net.Security.SslStream" /> using the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties. The following table shows the elements that report the cryptographic settings used for authentication, encryption and data signing.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Element </para>
+            </term>
+            <description>
+              <para>Members </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>The security protocol used to authenticate the server and, optionally, the client. </para>
+          </term>
+          <description>
+            <para>The <see cref="P:System.Net.Security.SslStream.SslProtocol" /> property and the associated <see cref="T:System.Security.Authentication.SslProtocols" /> enumeration. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>The key exchange algorithm. </para>
+          </term>
+          <description>
+            <para>The <see cref="P:System.Net.Security.SslStream.KeyExchangeAlgorithm" /> property and the associated <see cref="T:System.Security.Authentication.ExchangeAlgorithmType" />  enumeration. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>The message integrity algorithm. </para>
+          </term>
+          <description>
+            <para>The <see cref="P:System.Net.Security.SslStream.HashAlgorithm" /> property and the associated <see cref="T:System.Security.Authentication.HashAlgorithmType" /> enumeration. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>The message confidentiality algorithm. </para>
+          </term>
+          <description>
+            <para>The <see cref="P:System.Net.Security.SslStream.CipherAlgorithm" /> property and the associated <see cref="T:System.Security.Authentication.CipherAlgorithmType" />  enumeration. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>The strengths of the selected algorithms. </para>
+          </term>
+          <description>
+            <para>The <see cref="P:System.Net.Security.SslStream.KeyExchangeStrength" />, <see cref="P:System.Net.Security.SslStream.HashStrength" />, and <see cref="P:System.Net.Security.SslStream.CipherStrength" /> properties. </para>
+          </description>
+        </item>
+      </list>
+      <para>After a successful authentication, you can send data using the synchronous <see cref="Overload:System.Net.Security.SslStream.Write" /> or asynchronous <see cref="M:System.Net.Security.SslStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> methods. You can receive data using the synchronous <see cref="M:System.Net.Security.SslStream.Read(System.Byte[],System.Int32,System.Int32)" /> or asynchronous <see cref="M:System.Net.Security.SslStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> methods. </para>
+      <para>If you specified to the <see cref="Overload:System.Net.Security.SslStream.#ctor" /> that the underlying stream should be left open, you are responsible for closing that stream when you are done using it.</para>
+      <block subset="none" type="note">
+        <para>If the application that creates the <see cref="T:System.Net.Security.SslStream" /> object runs with the credentials of a Normal user, the application will not be able to access certificates installed in the local machine store unless permission has been explicitly given to the user to do so.</para>
+      </block>
+      <para>
+        <see cref="T:System.Net.Security.SslStream" /> assumes that a timeout along with any other <see cref="T:System.IO.IOException" /> when one is thrown from the inner stream will be treated as fatal by its caller. Reusing a <see cref="T:System.Net.Security.SslStream" /> instance after a timeout will return garbage. An application should <see cref="M:System.IO.Stream.Close" /> the <see cref="T:System.Net.Security.SslStream" /> and throw an exception in these cases.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a stream used for client-server communication that uses the Secure Socket Layer (SSL) security protocol to authenticate the server and optionally the client.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SslStream (System.IO.Stream innerStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream innerStream) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="innerStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="innerStream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a value is not specified in the configuration file for encryptionpolicy, the <see cref="T:System.Net.Security.EncryptionPolicy" /> defaults to <see cref="F:System.Net.Security.EncryptionPolicy.RequireEncryption" /> for the <see cref="T:System.Net.Security.SslStream" /> instance that is constructed.</para>
+          <para>The use of the Null cipher is required when the encryption policy is set to <see cref="F:System.Net.Security.EncryptionPolicy.NoEncryption" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Security.SslStream" /> class using the specified <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="innerStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> object used by the <see cref="T:System.Net.Security.SslStream" /> for sending and receiving data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SslStream (System.IO.Stream innerStream, bool leaveStreamOpen);" />
+      <MemberSignature Language="C#" Value="public SslStream (System.IO.Stream innerStream, bool leaveInnerStreamOpen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream innerStream, bool leaveInnerStreamOpen) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="innerStream" Type="System.IO.Stream" />
-        <Parameter Name="leaveStreamOpen" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="innerStream">To be added.</param>
-        <param name="leaveStreamOpen">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="innerStream" Type="System.IO.Stream" />
+        <Parameter Name="leaveInnerStreamOpen" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you specify true for the <paramref name="leaveStreamOpen" /> parameter, closing the <see cref="T:System.Net.Security.SslStream" /> has no effect on the <paramref name="innerStream" /> stream; you must explicitly close <paramref name="innerStream" /> when you no longer need it.</para>
+          <para>If a value is not specified in the configuration file for encryptionpolicy, the <see cref="T:System.Net.Security.EncryptionPolicy" /> defaults to <see cref="F:System.Net.Security.EncryptionPolicy.RequireEncryption" /> for the <see cref="T:System.Net.Security.SslStream" /> instance that is constructed.</para>
+          <para>The use of the Null cipher is required when the encryption policy is set to <see cref="F:System.Net.Security.EncryptionPolicy.NoEncryption" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Security.SslStream" /> class using the specified <see cref="T:System.IO.Stream" /> and stream closure behavior.</para>
+        </summary>
+        <param name="innerStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> object used by the <see cref="T:System.Net.Security.SslStream" /> for sending and receiving data.</param>
+        <param name="leaveInnerStreamOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates the closure behavior of the <see cref="T:System.IO.Stream" /> object used by the <see cref="T:System.Net.Security.SslStream" /> for sending and receiving data. This parameter indicates if the inner stream is left open.</param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SslStream (System.IO.Stream innerStream, bool leaveStreamOpen, System.Net.Security.RemoteCertificateValidationCallback certValidationCallback);" />
+      <MemberSignature Language="C#" Value="public SslStream (System.IO.Stream innerStream, bool leaveInnerStreamOpen, System.Net.Security.RemoteCertificateValidationCallback userCertificateValidationCallback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream innerStream, bool leaveInnerStreamOpen, class System.Net.Security.RemoteCertificateValidationCallback userCertificateValidationCallback) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="innerStream" Type="System.IO.Stream" />
-        <Parameter Name="leaveStreamOpen" Type="System.Boolean" />
-        <Parameter Name="certValidationCallback" Type="System.Net.Security.RemoteCertificateValidationCallback" />
-      </Parameters>
-      <Docs>
-        <param name="innerStream">To be added.</param>
-        <param name="leaveStreamOpen">To be added.</param>
-        <param name="certValidationCallback">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="innerStream" Type="System.IO.Stream" />
+        <Parameter Name="leaveInnerStreamOpen" Type="System.Boolean" />
+        <Parameter Name="userCertificateValidationCallback" Type="System.Net.Security.RemoteCertificateValidationCallback" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you specify true for the <paramref name="leaveStreamOpen" /> parameter, closing the <see cref="T:System.Net.Security.SslStream" /> has no effect on the <paramref name="innerStream" /> stream; you must explicitly close <paramref name="innerStream" /> when you no longer need it.</para>
+          <para>The <paramref name="userCertificateValidationCallback" /> delegate's <paramref name="certificateErrors" /> argument contains any Windows error codes returned by the channel Security Support Provider Interface (SSPI). The return value of the method invoked by the <paramref name="userCertificateValidationCallback" /> delegate determines whether authentication succeeds.</para>
+          <para>The security protocol and cryptographic algorithms are already selected when the <paramref name="userCertificateValidationCallback" /> delegate's method is invoked. You can use the method to determine whether the selected cryptographic algorithms and strengths are sufficient for your application. If not, the method should return false to prevent the <see cref="T:System.Net.Security.SslStream" /> from being created.</para>
+          <para>If a value is not specified in the configuration file for encryptionpolicy, the <see cref="T:System.Net.Security.EncryptionPolicy" /> defaults to <see cref="F:System.Net.Security.EncryptionPolicy.RequireEncryption" /> for the <see cref="T:System.Net.Security.SslStream" /> instance that is constructed.</para>
+          <para>The use of the Null cipher is required when the encryption policy is set to <see cref="F:System.Net.Security.EncryptionPolicy.NoEncryption" />.</para>
+          <block subset="none" type="note">
+            <para>The Framework caches SSL sessions as they are created and attempts to reuse a cached session for a new request, if possible. When attempting to reuse an SSL session, the Framework uses the first element of <see cref="P:System.Net.HttpWebRequest.ClientCertificates" /> (if there is one), or tries to reuse an anonymous sessions if <see cref="P:System.Net.HttpWebRequest.ClientCertificates" /> is empty.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Client certificates are not supported in the SSL version 2 protocol.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Security.SslStream" /> class using the specified <see cref="T:System.IO.Stream" />, stream closure behavior and certificate validation delegate.</para>
+        </summary>
+        <param name="innerStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> object used by the <see cref="T:System.Net.Security.SslStream" /> for sending and receiving data.</param>
+        <param name="leaveInnerStreamOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates the closure behavior of the <see cref="T:System.IO.Stream" /> object used by the <see cref="T:System.Net.Security.SslStream" /> for sending and receiving data. This parameter indicates if the inner stream is left open.</param>
+        <param name="userCertificateValidationCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Security.RemoteCertificateValidationCallback" /> delegate responsible for validating the certificate supplied by the remote party.</param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SslStream (System.IO.Stream innerStream, bool leaveStreamOpen, System.Net.Security.RemoteCertificateValidationCallback certValidationCallback, System.Net.Security.LocalCertificateSelectionCallback certSelectionCallback);" />
+      <MemberSignature Language="C#" Value="public SslStream (System.IO.Stream innerStream, bool leaveInnerStreamOpen, System.Net.Security.RemoteCertificateValidationCallback userCertificateValidationCallback, System.Net.Security.LocalCertificateSelectionCallback userCertificateSelectionCallback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream innerStream, bool leaveInnerStreamOpen, class System.Net.Security.RemoteCertificateValidationCallback userCertificateValidationCallback, class System.Net.Security.LocalCertificateSelectionCallback userCertificateSelectionCallback) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="innerStream" Type="System.IO.Stream" />
-        <Parameter Name="leaveStreamOpen" Type="System.Boolean" />
-        <Parameter Name="certValidationCallback" Type="System.Net.Security.RemoteCertificateValidationCallback" />
-        <Parameter Name="certSelectionCallback" Type="System.Net.Security.LocalCertificateSelectionCallback" />
-      </Parameters>
-      <Docs>
-        <param name="innerStream">To be added.</param>
-        <param name="leaveStreamOpen">To be added.</param>
-        <param name="certValidationCallback">To be added.</param>
-        <param name="certSelectionCallback">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="innerStream" Type="System.IO.Stream" />
+        <Parameter Name="leaveInnerStreamOpen" Type="System.Boolean" />
+        <Parameter Name="userCertificateValidationCallback" Type="System.Net.Security.RemoteCertificateValidationCallback" />
+        <Parameter Name="userCertificateSelectionCallback" Type="System.Net.Security.LocalCertificateSelectionCallback" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you specify true for the <paramref name="leaveStreamOpen" /> parameter, closing the <see cref="T:System.Net.Security.SslStream" /> has no effect on the <paramref name="innerStream" /> stream; you must explicitly close <paramref name="innerStream" /> when you no longer need it.</para>
+          <para>The <paramref name="userCertificateValidationCallback" /> delegate's <paramref name="certificateErrors" /> argument contains any Windows error codes returned by the channel Security Support Provider Interface (SSPI). The return value of the method invoked by the <paramref name="userCertificateValidationCallback" /> delegate determines whether authentication succeeds.</para>
+          <para>The security protocol and cryptographic algorithms are already selected when the <paramref name="userCertificateValidationCallback" /> delegate's method is invoked. You can use the method to determine whether the selected cryptographic algorithms and strengths are sufficient for your application. If not, the method should return false to prevent the <see cref="T:System.Net.Security.SslStream" /> from being created.</para>
+          <para>The <paramref name="userCertificateSelectionCallback" /> delegate is useful when your application has multiple certificates and must dynamically choose a certificate. Certificates in the "MY" store are passed to the method invoked by the delegate. </para>
+          <para>If a value is not specified in the configuration file for encryptionpolicy, the <see cref="T:System.Net.Security.EncryptionPolicy" /> defaults to <see cref="F:System.Net.Security.EncryptionPolicy.RequireEncryption" /> for the <see cref="T:System.Net.Security.SslStream" /> instance that is constructed.</para>
+          <para>The use of the Null cipher is required when the encryption policy is set to <see cref="F:System.Net.Security.EncryptionPolicy.NoEncryption" />.</para>
+          <block subset="none" type="note">
+            <para>The Framework caches SSL sessions as they are created and attempts to reuse a cached session for a new request, if possible. When attempting to reuse an SSL session, the Framework uses the first element of P:System.Net.HttpWebRequest.ClientCertificates (if there is one), or tries to reuse an anonymous sessions if P:System.Net.HttpWebRequest.ClientCertificates is empty.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Security.SslStream" /> class using the specified <see cref="T:System.IO.Stream" />, stream closure behavior, certificate validation delegate and certificate selection delegate.</para>
+        </summary>
+        <param name="innerStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> object used by the <see cref="T:System.Net.Security.SslStream" /> for sending and receiving data.</param>
+        <param name="leaveInnerStreamOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates the closure behavior of the <see cref="T:System.IO.Stream" /> object used by the <see cref="T:System.Net.Security.SslStream" /> for sending and receiving data. This parameter indicates if the inner stream is left open.</param>
+        <param name="userCertificateValidationCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Security.RemoteCertificateValidationCallback" /> delegate responsible for validating the certificate supplied by the remote party.</param>
+        <param name="userCertificateSelectionCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Security.LocalCertificateSelectionCallback" /> delegate responsible for selecting the certificate used for authentication.</param>
+      </Docs>
     </Member>
     <Member MemberName="AuthenticateAsClient">
       <MemberSignature Language="C#" Value="public virtual void AuthenticateAsClient (string targetHost);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AuthenticateAsClient(string targetHost) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -100,43 +257,147 @@
         <Parameter Name="targetHost" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="targetHost">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. No client certificates are used in the authentication. The certificate revocation list is not checked during authentication. The value specified for <paramref name="targetHost" /> must match the name on the server's certificate. </para>
+          <para>When authentication succeeds, you must check the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties to determine what security services are used by the <see cref="T:System.Net.Security.SslStream" />. Check the <see cref="P:System.Net.Security.SslStream.IsMutuallyAuthenticated" /> property to determine whether mutual authentication occurred.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by clients to authenticate the server and optionally the client in a client-server connection.</para>
+        </summary>
+        <param name="targetHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that shares this <see cref="T:System.Net.Security.SslStream" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AuthenticateAsClient">
-      <MemberSignature Language="C#" Value="public virtual void AuthenticateAsClient (string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols sslProtocolType, bool checkCertificateRevocation);" />
+      <MemberSignature Language="C#" Value="public virtual void AuthenticateAsClient (string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AuthenticateAsClient(string targetHost, class System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, valuetype System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="targetHost" Type="System.String" />
         <Parameter Name="clientCertificates" Type="System.Security.Cryptography.X509Certificates.X509CertificateCollection" />
-        <Parameter Name="sslProtocolType" Type="System.Security.Authentication.SslProtocols" />
+        <Parameter Name="enabledSslProtocols" Type="System.Security.Authentication.SslProtocols" />
         <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="targetHost">To be added.</param>
-        <param name="clientCertificates">To be added.</param>
-        <param name="sslProtocolType">To be added.</param>
-        <param name="checkCertificateRevocation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When authentication succeeds, you must check the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties to determine what security services are used by the <see cref="T:System.Net.Security.SslStream" />. Check the <see cref="P:System.Net.Security.SslStream.IsMutuallyAuthenticated" /> property to determine whether mutual authentication occurred.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector.</para>
+          <block subset="none" type="note">
+            <para>Client certificates are not supported in the SSL version 2 protocol.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by clients to authenticate the server and optionally the client in a client-server connection. The authentication process uses the specified certificate collection and SSL protocol.</para>
+        </summary>
+        <param name="targetHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that will share this <see cref="T:System.Net.Security.SslStream" />.</param>
+        <param name="clientCertificates">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509CertificateCollection" /> that contains client certificates.</param>
+        <param name="enabledSslProtocols">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Authentication.SslProtocols" /> value that represents the protocol used for authentication.</param>
+        <param name="checkCertificateRevocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the certificate revocation list is checked during authentication.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AuthenticateAsClientAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task AuthenticateAsClientAsync (string targetHost);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task AuthenticateAsClientAsync(string targetHost) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="targetHost" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. No client certificates are used in the authentication. The certificate revocation list is not checked during authentication. The value specified for <paramref name="targetHost" /> must match the name on the server's certificate. </para>
+          <para>When authentication succeeds, you must check the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties to determine what security services are used by the <see cref="T:System.Net.Security.SslStream" />. Check the <see cref="P:System.Net.Security.SslStream.IsMutuallyAuthenticated" /> property to determine whether mutual authentication occurred.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by clients to authenticate the server and optionally the client in a client-server connection as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="targetHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that shares this <see cref="T:System.Net.Security.SslStream" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticateAsClientAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task AuthenticateAsClientAsync (string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task AuthenticateAsClientAsync(string targetHost, class System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, valuetype System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="targetHost" Type="System.String" />
+        <Parameter Name="clientCertificates" Type="System.Security.Cryptography.X509Certificates.X509CertificateCollection" />
+        <Parameter Name="enabledSslProtocols" Type="System.Security.Authentication.SslProtocols" />
+        <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When authentication succeeds, you must check the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties to determine what security services are used by the <see cref="T:System.Net.Security.SslStream" />. Check the <see cref="P:System.Net.Security.SslStream.IsMutuallyAuthenticated" /> property to determine whether mutual authentication occurred.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector.</para>
+          <block subset="none" type="note">
+            <para>Client certificates are not supported in the SSL version 2 protocol.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by clients to authenticate the server and optionally the client in a client-server connection as an asynchronous operation. The authentication process uses the specified certificate collection and SSL protocol.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="targetHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that will share this <see cref="T:System.Net.Security.SslStream" />.</param>
+        <param name="clientCertificates">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509CertificateCollection" /> that contains client certificates.</param>
+        <param name="enabledSslProtocols">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Authentication.SslProtocols" /> value that represents the protocol used for authentication.</param>
+        <param name="checkCertificateRevocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the certificate revocation list is checked during authentication.</param>
+      </Docs>
     </Member>
     <Member MemberName="AuthenticateAsServer">
       <MemberSignature Language="C#" Value="public virtual void AuthenticateAsServer (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AuthenticateAsServer(class System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -144,43 +405,139 @@
         <Parameter Name="serverCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
       </Parameters>
       <Docs>
-        <param name="serverCertificate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. The certificate revocation list is not checked during authentication. The client is not required to provide a certificate for authentication.</para>
+          <para>This method blocks until the operation completes. To prevent blocking until the operation completes, use one of the <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> method overloads.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by servers to authenticate the server and optionally the client in a client-server connection using the specified certificate.</para>
+        </summary>
+        <param name="serverCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The certificate used to authenticate the server.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AuthenticateAsServer">
-      <MemberSignature Language="C#" Value="public virtual void AuthenticateAsServer (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols sslProtocolType, bool checkCertificateRevocation);" />
+      <MemberSignature Language="C#" Value="public virtual void AuthenticateAsServer (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AuthenticateAsServer(class System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, valuetype System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="serverCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
         <Parameter Name="clientCertificateRequired" Type="System.Boolean" />
-        <Parameter Name="sslProtocolType" Type="System.Security.Authentication.SslProtocols" />
+        <Parameter Name="enabledSslProtocols" Type="System.Security.Authentication.SslProtocols" />
         <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="serverCertificate">To be added.</param>
-        <param name="clientCertificateRequired">To be added.</param>
-        <param name="sslProtocolType">To be added.</param>
-        <param name="checkCertificateRevocation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks until the operation completes. To prevent blocking until the operation completes, use one of the <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> method overloads.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by servers to authenticate the server and optionally the client in a client-server connection using the specified certificates, requirements and security protocol.</para>
+        </summary>
+        <param name="serverCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X509Certificate used to authenticate the server.</param>
+        <param name="clientCertificateRequired">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the client must supply a certificate for authentication.</param>
+        <param name="enabledSslProtocols">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Authentication.SslProtocols" />  value that represents the protocol used for authentication.</param>
+        <param name="checkCertificateRevocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the certificate revocation list is checked during authentication.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AuthenticateAsServerAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task AuthenticateAsServerAsync (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task AuthenticateAsServerAsync(class System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serverCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. The certificate revocation list is not checked during authentication. The client is not required to provide a certificate for authentication.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by servers to authenticate the server and optionally the client in a client-server connection using the specified certificate as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="serverCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The certificate used to authenticate the server.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticateAsServerAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task AuthenticateAsServerAsync (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task AuthenticateAsServerAsync(class System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, valuetype System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serverCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
+        <Parameter Name="clientCertificateRequired" Type="System.Boolean" />
+        <Parameter Name="enabledSslProtocols" Type="System.Security.Authentication.SslProtocols" />
+        <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by servers to authenticate the server and optionally the client in a client-server connection using the specified certificates, requirements and security protocol as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" /></para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="serverCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X509Certificate used to authenticate the server.</param>
+        <param name="clientCertificateRequired">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the client must supply a certificate for authentication.</param>
+        <param name="enabledSslProtocols">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Authentication.SslProtocols" />  value that represents the protocol used for authentication.</param>
+        <param name="checkCertificateRevocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the certificate revocation list is checked during authentication.</param>
+      </Docs>
     </Member>
     <Member MemberName="BeginAuthenticateAsClient">
       <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAuthenticateAsClient(string targetHost, class System.AsyncCallback asyncCallback, object asyncState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -190,105 +547,186 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="targetHost">To be added.</param>
-        <param name="asyncCallback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. No client certificates are used in the authentication. The certificate revocation list is not checked during authentication.</para>
+          <para>The value specified for <paramref name="targetHost" /> must match the name on the server's certificate. </para>
+          <para>The asynchronous authentication operation must be completed by calling the <see cref="M:System.Net.Security.SslStream.EndAuthenticateAsClient(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
+          <para>This method does not block while the operation completes. To block until the operation completes, use one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" /> method overloads.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format></para>
+          <para>If you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by clients to begin an asynchronous operation to authenticate the server and optionally the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
+        <param name="targetHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that shares this <see cref="T:System.Net.Security.SslStream" />.</param>
+        <param name="asyncCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the authentication is complete. </param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the operation. This object is passed to the <paramref name="asyncCallback" /> delegate when the operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginAuthenticateAsClient">
-      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);" />
+      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAuthenticateAsClient(string targetHost, class System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, valuetype System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, class System.AsyncCallback asyncCallback, object asyncState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="targetHost" Type="System.String" />
         <Parameter Name="clientCertificates" Type="System.Security.Cryptography.X509Certificates.X509CertificateCollection" />
-        <Parameter Name="sslProtocolType" Type="System.Security.Authentication.SslProtocols" />
+        <Parameter Name="enabledSslProtocols" Type="System.Security.Authentication.SslProtocols" />
         <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
         <Parameter Name="asyncCallback" Type="System.AsyncCallback" />
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="targetHost">To be added.</param>
-        <param name="clientCertificates">To be added.</param>
-        <param name="sslProtocolType">To be added.</param>
-        <param name="checkCertificateRevocation">To be added.</param>
-        <param name="asyncCallback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value specified for <paramref name="targetHost" /> must match the name on the server's certificate. </para>
+          <para>The asynchronous authentication operation must be completed by calling the <see cref="M:System.Net.Security.SslStream.EndAuthenticateAsClient(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
+          <para>This method does not block while the operation completes. To block until the operation completes, use one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" /> method overloads.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format></para>
+          <para>If you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector.</para>
+          <block subset="none" type="note">
+            <para>Client certificates are not supported in the SSL version 2 protocol.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by clients to begin an asynchronous operation to authenticate the server and optionally the client using the specified certificates and security protocol.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
+        <param name="targetHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the server that shares this <see cref="T:System.Net.Security.SslStream" />.</param>
+        <param name="clientCertificates">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509CertificateCollection" /> containing client certificates.</param>
+        <param name="enabledSslProtocols">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Authentication.SslProtocols" /> value that represents the protocol used for authentication.</param>
+        <param name="checkCertificateRevocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the certificate revocation list is checked during authentication.</param>
+        <param name="asyncCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the authentication is complete. </param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the operation. This object is passed to the <paramref name="asyncCallback" /> delegate when the operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginAuthenticateAsServer">
-      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginAuthenticateAsServer (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginAuthenticateAsServer (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAuthenticateAsServer(class System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, class System.AsyncCallback asyncCallback, object asyncState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="serverCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
-        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncCallback" Type="System.AsyncCallback" />
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serverCertificate">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method authenticates using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. The certificate revocation list is not checked during authentication. The client is not required to provide a certificate for authentication.</para>
+          <para>The asynchronous authentication operation must be completed by calling the <see cref="M:System.Net.Security.SslStream.EndAuthenticateAsClient(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
+          <para>This method does not block while the operation completes. To block until the operation completes, use one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" /> method overloads.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format></para>
+          <para>If you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by servers to begin an asynchronous operation to authenticate the client and optionally the server in a client-server connection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
+        <param name="serverCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X509Certificate used to authenticate the server.</param>
+        <param name="asyncCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the authentication is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the operation. This object is passed to the <paramref name="asyncCallback" /> delegate when the operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginAuthenticateAsServer">
-      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginAuthenticateAsServer (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginAuthenticateAsServer (System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAuthenticateAsServer(class System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, valuetype System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, class System.AsyncCallback asyncCallback, object asyncState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="serverCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
         <Parameter Name="clientCertificateRequired" Type="System.Boolean" />
-        <Parameter Name="sslProtocolType" Type="System.Security.Authentication.SslProtocols" />
+        <Parameter Name="enabledSslProtocols" Type="System.Security.Authentication.SslProtocols" />
         <Parameter Name="checkCertificateRevocation" Type="System.Boolean" />
-        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncCallback" Type="System.AsyncCallback" />
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serverCertificate">To be added.</param>
-        <param name="clientCertificateRequired">To be added.</param>
-        <param name="sslProtocolType">To be added.</param>
-        <param name="checkCertificateRevocation">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asynchronous authentication operation must be completed by calling the <see cref="M:System.Net.Security.SslStream.EndAuthenticateAsServer(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
+          <para>This method does not block while the operation completes. To block until the operation completes, use one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" /> method overloads.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format></para>
+          <para>If you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by servers to begin an asynchronous operation to authenticate the server and optionally the client using the specified certificates, requirements and security protocol.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
+        <param name="serverCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X509Certificate used to authenticate the server.</param>
+        <param name="clientCertificateRequired">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the client must supply a certificate for authentication.</param>
+        <param name="enabledSslProtocols">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Authentication.SslProtocols" />  value that represents the protocol used for authentication.</param>
+        <param name="checkCertificateRevocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value that specifies whether the certificate revocation list is checked during authentication.</param>
+        <param name="asyncCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the authentication is complete. </param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the operation. This object is passed to the <paramref name="asyncCallback" /> delegate when the operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginRead">
       <MemberSignature Language="C#" Value="public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IAsyncResult BeginRead(unsigned int8[] buffer, int32 offset, int32 count, class System.AsyncCallback asyncCallback, object asyncState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -300,23 +738,43 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="asyncCallback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If encryption and or signing are enabled, the read operation reads the data from the underlying stream, checks the integrity of the data, and/or decrypts it. The asynchronous read operation must be completed by calling the <see cref="M:System.Net.Security.SslStream.EndRead(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="asyncCallback" /> delegate.</para>
+          <para>This method does not block while the operation completes. To block until the operation completes, use the <see cref="M:System.Net.Security.SslStream.Read(System.Byte[],System.Int32,System.Int32)" /> method.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format></para>
+          <para>The <see cref="T:System.Net.Security.SslStream" /> class does not support multiple simultaneous read operations.</para>
+          <para>You cannot call this method until you have successfully authenticated. To authenticate call one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" />, or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />, <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" />, <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous read operation that reads data from the stream and stores it in the specified array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation. </para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that receives the bytes read from the stream.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based location in <paramref name="buffer" /> at which to begin storing the data read from this stream.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes to read from the stream.</param>
+        <param name="asyncCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the read operation is complete. </param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the read operation. This object is passed to the <paramref name="asyncCallback" /> delegate when the operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginWrite">
       <MemberSignature Language="C#" Value="public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IAsyncResult BeginWrite(unsigned int8[] buffer, int32 offset, int32 count, class System.AsyncCallback asyncCallback, object asyncState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -328,135 +786,236 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="asyncCallback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous write operation that writes <see cref="T:System.Byte" />s from the specified buffer to the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object indicating the status of the asynchronous operation. </para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that supplies the bytes to be written to the stream.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based location in <paramref name="buffer" /> at which to begin reading bytes to be written to the stream.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the number of bytes to read from <paramref name="buffer" />.</param>
+        <param name="asyncCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the write operation is complete. </param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the write operation. This object is passed to the <paramref name="asyncCallback" /> delegate when the operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanRead">
       <MemberSignature Language="C#" Value="public override bool CanRead { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanRead" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful authentication has occurred, this property returns the value returned by invoking <see cref="P:System.IO.Stream.CanRead" /> on the underlying stream.</para>
+          <para>The underlying stream is specified when you create an instance of the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the underlying stream is readable.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanSeek">
       <MemberSignature Language="C#" Value="public override bool CanSeek { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanSeek" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not attempt to set the position of the <see cref="T:System.Net.Security.SslStream" /> object or its underlying stream.</para>
+          <para>The underlying stream is specified when you create an instance of the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the underlying stream is seekable.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanTimeout">
       <MemberSignature Language="C#" Value="public override bool CanTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanTimeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the value returned by invoking <see cref="P:System.IO.Stream.CanTimeout" /> on the underlying stream.</para>
+          <para>The underlying stream is specified when you create an instance of the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the underlying stream supports time-outs.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanWrite">
       <MemberSignature Language="C#" Value="public override bool CanWrite { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanWrite" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful authentication has occurred, this property returns the value returned by invoking <see cref="P:System.IO.Stream.CanWrite" /> on the underlying stream.</para>
+          <para>The underlying stream is specified when you create an instance of the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the underlying stream is writable.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CheckCertRevocationStatus">
       <MemberSignature Language="C#" Value="public virtual bool CheckCertRevocationStatus { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CheckCertRevocationStatus" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The certificate revocation list contains certificates that have been revoked by the issuer. Checking the list negatively impacts performance but improves application security.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the certificate revocation list is checked during the certificate validation process.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CipherAlgorithm">
       <MemberSignature Language="C#" Value="public virtual System.Security.Authentication.CipherAlgorithmType CipherAlgorithm { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Authentication.CipherAlgorithmType CipherAlgorithm" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value of <see cref="F:System.Security.Authentication.CipherAlgorithmType.Null" /> is required for the <see cref="P:System.Net.Security.SslStream.CipherAlgorithm" /> property when the <see cref="F:System.Net.Security.EncryptionPolicy.NoEncryption" /> enumeration value is used to construct a <see cref="T:System.Net.Security.SslStream" /> instance. </para>
+          <para>winxpsvr and winxp do not support the <see cref="F:System.Security.Authentication.CipherAlgorithmType.Null" /> value. So even if the <see cref="F:System.Security.Authentication.CipherAlgorithmType.Null" /> value is used to construct the <see cref="T:System.Net.Security.SslStream" /> instance, the <see cref="T:System.Net.Security.EncryptionPolicy" /> property will be <see cref="F:System.Security.Authentication.CipherAlgorithmType.None" />. The <see cref="F:System.Security.Authentication.CipherAlgorithmType.Null" /> value is only returned on Windows Vista and later.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that identifies the bulk encryption algorithm used by this <see cref="T:System.Net.Security.SslStream" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CipherStrength">
       <MemberSignature Language="C#" Value="public virtual int CipherStrength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CipherStrength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is zero until the authentication occurs.</para>
+          <para>This property returns one of the following values: </para>
+          <list type="bullet">
+            <item>
+              <para>0 </para>
+            </item>
+            <item>
+              <para>40 </para>
+            </item>
+            <item>
+              <para>56 </para>
+            </item>
+            <item>
+              <para>80 </para>
+            </item>
+            <item>
+              <para>128 </para>
+            </item>
+            <item>
+              <para>168 </para>
+            </item>
+            <item>
+              <para>192 </para>
+            </item>
+            <item>
+              <para>256 </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that identifies the strength of the cipher algorithm used by this <see cref="T:System.Net.Security.SslStream" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -464,18 +1023,28 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Net.Security.SslStream" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Net.Security.SslStream" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndAuthenticateAsClient">
       <MemberSignature Language="C#" Value="public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndAuthenticateAsClient(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -483,18 +1052,29 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the operation has not completed, this method blocks until it does. When the authentication succeeds, you must check the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties to determine what security services are used by the <see cref="T:System.Net.Security.SslStream" />. Check the <see cref="P:System.Net.Security.SslStream.IsMutuallyAuthenticated" /> property to determine whether mutual authentication occurred.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+          <para>To perform this operation synchronously, use one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" /> methods. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends a pending asynchronous server authentication operation started with a previous call to <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" />.</para>
+        </summary>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndAuthenticateAsServer">
       <MemberSignature Language="C#" Value="public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndAuthenticateAsServer(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -502,18 +1082,29 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the operation has not completed, this method blocks until it does. When the authentication succeeds, you must check the <see cref="P:System.Net.Security.SslStream.IsEncrypted" /> and <see cref="P:System.Net.Security.SslStream.IsSigned" /> properties to determine what security services are used by the <see cref="T:System.Net.Security.SslStream" />. Check the <see cref="P:System.Net.Security.SslStream.IsMutuallyAuthenticated" /> property to determine whether mutual authentication occurred.</para>
+          <para>If the authentication fails, you receive a <see cref="T:System.Security.Authentication.AuthenticationException" />, and this <see cref="T:System.Net.Security.SslStream" /> is no longer useable. You should close this object and remove all references to it so that it can be collected by the garbage collector. </para>
+          <para>To perform this operation synchronously, use one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends a pending asynchronous client authentication operation started with a previous call to <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />.</para>
+        </summary>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndRead">
       <MemberSignature Language="C#" Value="public override int EndRead (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 EndRead(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -521,19 +1112,33 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the operation has not completed, this method blocks until it does. </para>
+          <para>To perform this operation synchronously, use the <see cref="M:System.Net.Security.SslStream.Read(System.Byte[],System.Int32,System.Int32)" /> method. </para>
+          <para>You cannot call this method until you have successfully authenticated. To authenticate call one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" />, or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />, <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" />, <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends an asynchronous read operation started with a previous call to <see cref="M:System.Net.Security.SslStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> value that specifies the number of bytes read from the underlying stream.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to <see cref="M:System.Net.Security.SslStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /></param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndWrite">
       <MemberSignature Language="C#" Value="public override void EndWrite (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void EndWrite(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -541,226 +1146,355 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the operation has not completed, this method blocks until it does. </para>
+          <para>An application cannot call this method until you have successfully authenticated. To authenticate, call one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" />, or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />, <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" />, <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+          <para>To perform this operation synchronously, use the <see cref="Overload:System.Net.Security.SslStream.Write" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends an asynchronous write operation started with a previous call to <see cref="M:System.Net.Security.SslStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />.</para>
+        </summary>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to <see cref="M:System.Net.Security.SslStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /></param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Flush">
       <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Flush() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method invokes <see cref="M:System.IO.Stream.Flush" /> on the underlying stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes any buffered data to be written to the underlying device.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HashAlgorithm">
       <MemberSignature Language="C#" Value="public virtual System.Security.Authentication.HashAlgorithmType HashAlgorithm { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Authentication.HashAlgorithmType HashAlgorithm" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Authentication.HashAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Message authentication algorithms generate message hashes and signatures used to detect tampering and forgery.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the algorithm used for generating message authentication codes (MACs).</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HashStrength">
       <MemberSignature Language="C#" Value="public virtual int HashStrength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 HashStrength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is zero until the authentication occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that identifies the strength of the hash algorithm used by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsAuthenticated">
       <MemberSignature Language="C#" Value="public override bool IsAuthenticated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAuthenticated" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clients authenticate by calling the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" /> or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" /> methods. Servers authenticate by calling the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" /> or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether authentication was successful.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsEncrypted">
       <MemberSignature Language="C#" Value="public override bool IsEncrypted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsEncrypted" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encryption helps to protect the privacy of the data, namely it helps to ensure that while data is in transit, it cannot be deciphered by third parties. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether this <see cref="T:System.Net.Security.SslStream" /> uses data encryption.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsMutuallyAuthenticated">
       <MemberSignature Language="C#" Value="public override bool IsMutuallyAuthenticated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsMutuallyAuthenticated" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Mutual authentication is specified by the server when the server wants the client to provide a certificate for authentication. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether both server and client have been authenticated.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsServer">
       <MemberSignature Language="C#" Value="public override bool IsServer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsServer" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If authentication failed or did not occur, this property returns false.</para>
+          <para>To authenticate as the server, call the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" /> or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the local side of the connection used by this <see cref="T:System.Net.Security.SslStream" /> was authenticated as the server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSigned">
       <MemberSignature Language="C#" Value="public override bool IsSigned { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSigned" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data signing helps to protect the integrity of the data, namely it helps the recipient determine whether the data has been tampered with while in transit. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the data sent using this stream is signed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KeyExchangeAlgorithm">
       <MemberSignature Language="C#" Value="public virtual System.Security.Authentication.ExchangeAlgorithmType KeyExchangeAlgorithm { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Authentication.ExchangeAlgorithmType KeyExchangeAlgorithm" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Authentication.ExchangeAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is <see cref="F:System.Security.Authentication.ExchangeAlgorithmType.None" /> until the authentication occurs.</para>
+          <para>The key exchange algorithm protects information used to generate shared keys.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key exchange algorithm used by this <see cref="T:System.Net.Security.SslStream" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KeyExchangeStrength">
       <MemberSignature Language="C#" Value="public virtual int KeyExchangeStrength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 KeyExchangeStrength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is zero until the authentication occurs.</para>
+          <para>In common scenarios, the value of this property is one of the following: </para>
+          <list type="bullet">
+            <item>
+              <para>512 </para>
+            </item>
+            <item>
+              <para>768 </para>
+            </item>
+            <item>
+              <para>1024 </para>
+            </item>
+            <item>
+              <para>2048 </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that identifies the strength of the key exchange algorithm used by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Length">
       <MemberSignature Language="C#" Value="public override long Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Length" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the value returned by invoking <see cref="P:System.IO.Stream.Length" /> on the underlying stream. If the underlying stream is not seekable, this method typically throws an exception. The run-time type of the underlying stream determines the run-time type of the exception that is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the underlying stream.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LocalCertificate">
       <MemberSignature Language="C#" Value="public virtual System.Security.Cryptography.X509Certificates.X509Certificate LocalCertificate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509Certificate LocalCertificate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the certificate used to authenticate the local endpoint.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Position">
-      <MemberSignature Language="C#" Value="public override long Position { set; get; }" />
+      <MemberSignature Language="C#" Value="public override long Position { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Position" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the value returned by invoking <see cref="P:System.IO.Stream.Position" /> on the underlying stream. If the underlying stream is not seekable, this method typically throws an exception. The run-time type of the underlying stream determines the run-time type of the exception that is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current position in the underlying stream.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public override int Read (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 Read(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -770,53 +1504,83 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method reads a maximum of <paramref name="count" /> bytes from the stream and stores them in <paramref name="buffer" /> beginning at <paramref name="offset" />. You cannot perform multiple simultaneous read operations.</para>
+          <para>You cannot call this method until you have successfully authenticated. To authenticate call one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" />, or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />, <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" />, <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+          <para>To perform this operation asynchronously, use the <see cref="M:System.Net.Security.SslStream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads data from this stream and stores it in the specified array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> value that specifies the number of bytes read. When there is no more data to be read, returns 0.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that receives the bytes read from this stream.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Int32" /> that contains the zero-based location in <paramref name="buffer" /> at which to begin storing the data read from this stream.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Int32" /> that contains the maximum number of bytes to read from this stream.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadTimeout">
-      <MemberSignature Language="C#" Value="public override int ReadTimeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public override int ReadTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ReadTimeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the value returned by invoking <see cref="P:System.IO.Stream.ReadTimeout" /> on the underlying stream. When you set this property, the <see cref="P:System.IO.Stream.ReadTimeout" /> value on the underlying stream is set to the specified value.</para>
+          <para>If the underlying stream is a <see cref="T:System.Net.Sockets.NetworkStream" />, <see cref="P:System.Net.Security.SslStream.ReadTimeout" /> is in milliseconds and is set to <see cref="F:System.Threading.Timeout.Infinite" /> by default so that read operations do not timeout.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time a read operation blocks waiting for data.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoteCertificate">
       <MemberSignature Language="C#" Value="public virtual System.Security.Cryptography.X509Certificates.X509Certificate RemoteCertificate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509Certificate RemoteCertificate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the certificate used to authenticate the remote endpoint.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Seek">
       <MemberSignature Language="C#" Value="public override long Seek (long offset, System.IO.SeekOrigin origin);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int64 Seek(int64 offset, valuetype System.IO.SeekOrigin origin) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -825,20 +1589,33 @@
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
-        <param name="origin">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not call this method. It is inherited, but is not supported by the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />This value is ignored.</param>
+        <param name="origin">
+          <attribution license="cc4" from="Microsoft" modified="false" />This value is ignored.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetLength">
       <MemberSignature Language="C#" Value="public override void SetLength (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetLength(int64 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -846,34 +1623,51 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method invokes <see cref="M:System.IO.Stream.SetLength(System.Int64)" /> on the underlying stream specified when this <see cref="T:System.Net.Security.SslStream" /> was created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the length of the underlying stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int64" /> value that specifies the length of the stream.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SslProtocol">
       <MemberSignature Language="C#" Value="public virtual System.Security.Authentication.SslProtocols SslProtocol { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Authentication.SslProtocols SslProtocol" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Authentication.SslProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The supported security protocols are specified when the <see cref="T:System.Net.Security.SslStream" /> is created. If no security protocol was passed to the constructor, the instance is created using <see cref="F:System.Security.Authentication.SslProtocols.Default" />. The actual protocol used for authentication is selected based on the protocols supported by the client and server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the security protocol used to authenticate this connection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public void Write (byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Write(unsigned int8[] buffer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -881,18 +1675,29 @@
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks while the operation completes. To prevent blocking while the operation completes, use the <see cref="M:System.Net.Security.SslStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method.</para>
+          <para>You cannot call this method until you have successfully authenticated. To authenticate call one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" />, or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />, <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" />, <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+          <para>The <see cref="T:System.Net.Security.SslStream" /> class does not support multiple simultaneous write operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified data to this stream.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that supplies the bytes written to the stream.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public override void Write (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -902,32 +1707,49 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks while the operation completes. To prevent blocking while the operation completes the operation completes, use the <see cref="M:System.Net.Security.SslStream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method.</para>
+          <para>You cannot call this method until you have successfully authenticated. To authenticate call one of the <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsClient" />, or <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsClient" />, <see cref="Overload:System.Net.Security.SslStream.AuthenticateAsServer" />, <see cref="Overload:System.Net.Security.SslStream.BeginAuthenticateAsServer" /> methods.</para>
+          <para>The <see cref="T:System.Net.Security.SslStream" /> class does not support multiple simultaneous write operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the specified number of <see cref="T:System.Byte" />s to the underlying stream using the specified buffer and offset.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that supplies the bytes written to the stream.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Int32" /> that contains the zero-based location in <paramref name="buffer" /> at which to begin reading bytes to be written to the stream.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Int32" /> that contains the number of bytes to read from <paramref name="buffer" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteTimeout">
-      <MemberSignature Language="C#" Value="public override int WriteTimeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public override int WriteTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WriteTimeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the value returned by invoking <see cref="P:System.IO.Stream.WriteTimeout" /> on the underlying stream. For set operations, the specified value sets the <see cref="P:System.IO.Stream.WriteTimeout" /> value on the underlying stream.</para>
+          <para>If the underlying stream is a <see cref="T:System.Net.Sockets.NetworkStream" />, <see cref="P:System.Net.Security.SslStream.WriteTimeout" /> is in milliseconds and is set to <see cref="F:System.Threading.Timeout.Infinite" /> by default so that write operations do not timeout.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time a write operation blocks waiting for data.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

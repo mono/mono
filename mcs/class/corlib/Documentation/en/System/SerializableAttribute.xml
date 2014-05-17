@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerializableAttribute" FullName="System.SerializableAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SerializableAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SerializableAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -14,65 +16,45 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Delegate | System.AttributeTargets.All, AllowMultiple=false, Inherited=false)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Delegate | System.AttributeTargets.All, Inherited=false)</AttributeName>
     </Attribute>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Marks a type as being serializable.</summary>
-    <remarks>This attribute indicates that the class it's being applied to is serializable. This is a requirement for all classes in an object's graph that is being serialized. A <see cref="T:System.Runtime.Serialization.SerializationException" /> is thrown if  a class without the <see cref="T:System.SerializableAttribute" /> is serialized.
-
-
-<example><code lang="C#">
-using System;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Soap;
-
-public class SerializationDemo {
-	public static void Main()  {
-		Point pt = new Point();
-		pt.x=1;
-		pt.y=2;
-
-		Console.WriteLine(pt);
-		
-		SoapFormatter formatter = new SoapFormatter();
-		// Serialize out to STDOUT.
-		formatter.Serialize(System.Console.OpenStandardOutput(), pt);
-	}
-}
-
-[Serializable()]
-public class Point {
-	public int x,y;		// Serialize This
-	
-	[NonSerialized()]	// Don't serialize Visible attribute
-	public bool Visible=false;
-	
-	public override string ToString(){	// Methods aren't serialized
-		return String.Format("({0},{1})",x,y);
-	}
-}
-  </code></example></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Apply the <see cref="T:System.SerializableAttribute" /> attribute to a type to indicate that instances of this type can be serialized. The common language runtime throws <see cref="T:System.Runtime.Serialization.SerializationException" /> if any type in the graph of objects being serialized does not have the <see cref="T:System.SerializableAttribute" /> attribute applied.</para>
+      <para>Apply the <see cref="T:System.SerializableAttribute" /> attribute even if the class also implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface to control the serialization process.</para>
+      <para>When you apply the <see cref="T:System.SerializableAttribute" /> attribute to a type, all private and public fields are serialized by default. You can control serialization more granularly by implementing the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface to override the serialization process. </para>
+      <para>Or you can exclude fields from serialization by applying the <see cref="T:System.NonSerializedAttribute" /> attribute to the field. If a field of a serializable type contains a pointer, a handle, or some other data structure that is specific to a particular environment, and cannot be meaningfully reconstituted in a different environment, then you might want to apply the <see cref="T:System.NonSerializedAttribute" /> attribute to that field.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1E00-4602-9EBF-526B271A8B87">[&lt;topic://cpconExtendingMetadataUsingAttributes&gt;]</a></format>. For more information about serialization, see <see cref="N:System.Runtime.Serialization" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a class can be serialized. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerializableAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>Creates a new copy of the <see cref="T:System.SerializableAttribute" /> class.</summary>
-        <remarks />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.SerializableAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegisteredWaitHandle" FullName="System.Threading.RegisteredWaitHandle">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class RegisteredWaitHandle : MarshalByRefObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RegisteredWaitHandle extends System.MarshalByRefObject" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,9 +14,17 @@
     <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a handle that has been registered when calling <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Finalize">
@@ -34,19 +44,8 @@
     </Member>
     <Member MemberName="Unregister">
       <MemberSignature Language="C#" Value="public bool Unregister (System.Threading.WaitHandle waitObject);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Unregister(class System.Threading.WaitHandle waitObject) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
-      </Parameters>
-      <Docs>
-        <param name="waitObject">To be added: an object of type 'WaitHandle'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,11 +56,28 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitObject" Type="System.Threading.WaitHandle" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="waitObject" /> is specified, it is signaled only if the <see cref="T:System.Threading.RegisteredWaitHandle" /> is successfully unregistered. If a callback method is in progress when <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> executes, <paramref name="waitObject" /> is not signaled until the callback method completes. In particular, if a callback method executes <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" />, <paramref name="waitObject" /> is not signaled until that callback method completes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels a registered wait operation issued by the <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the function succeeds; otherwise, false.</para>
+        </returns>
+        <param name="waitObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to be signaled. </param>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

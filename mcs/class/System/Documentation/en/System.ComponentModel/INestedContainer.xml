@@ -1,32 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INestedContainer" FullName="System.ComponentModel.INestedContainer">
-  <TypeSignature Language="C#" Value="public interface INestedContainer : System.ComponentModel.IContainer" />
+  <TypeSignature Language="C#" Value="public interface INestedContainer : IDisposable, System.ComponentModel.IContainer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INestedContainer implements class System.ComponentModel.IContainer, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
       <InterfaceName>System.ComponentModel.IContainer</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.INestedContainer" /> interface adds the concept of an owning component to the <see cref="T:System.ComponentModel.IContainer" /> interface. A nested container is an object that logically, but not necessarily visually, contains zero or more child components and is owned by some parent component. For visual containment, the owning component is often another container.</para>
+      <para>Nested containers allow sections of a control to be designable, without requiring an explicit serialized member variable or a custom serializer for each subcontrol. Instead, the form designer maintains one master container of components. Each component’s site may have a nested container that provides a place to put extra components. When a component is sited in a nested container, the name it receives is a combination of its given name and its owning component’s name. Additionally, components added to a nested container have full access to the services of the parent container, and the nested container provides the same behavior of the parent with respect to adding new components. The nested container will create the designer for each component it contains, thereby enabling design-time support. Because standard code serializers do not look at nested containers, these components are only serialized if a path to them can be obtained by walking the components in the primary container.</para>
+      <para>Nested containers can be found by querying a component's site for services of type <see cref="T:System.ComponentModel.INestedContainer" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality for nested containers, which logically contain zero or more other components and are owned by a parent component.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Owner">
       <MemberSignature Language="C#" Value="public System.ComponentModel.IComponent Owner { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.IComponent Owner" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The owning component is the characteristic that differentiates nested containers from ordinary containers. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the owning component for the nested container.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

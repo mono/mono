@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapAttributeOverrides" FullName="System.Xml.Serialization.SoapAttributeOverrides">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapAttributeOverrides" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SoapAttributeOverrides extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,27 +15,72 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" /> class enables an <see cref="T:System.Xml.Serialization.XmlSerializer" /> to override the default way of serializing a set of objects. Overriding serialization in this way has two uses: first, you can control and augment the serialization of objects found in a DLL, even if you do not have access to the source; second, you can create one set of serializable classes, but serialize the objects in multiple ways. For example, instead of serializing members of a class instance as XML elements, you can serialize them as XML attributes, resulting in a more efficient document to transport.</para>
+      <para>After you create a <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" />, you create an <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> using the <see cref="M:System.Xml.Serialization.SoapReflectionImporter.ImportTypeMapping(System.Type)" /> method of the <see cref="T:System.Xml.Serialization.SoapReflectionImporter" /> class. Pass the resulting object as an argument to the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor" /> constructor. The resulting <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses the data contained by the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" /> to override attributes that control how objects are serialized. To accomplish this, the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" /> contains a collection of the object types that are overridden, as well as a <see cref="T:System.Xml.Serialization.SoapAttributes" /> associated with each overridden object type. Each <see cref="T:System.Xml.Serialization.SoapAttributes" /> contains an appropriate set of attribute objects that control how each field, property, or class is serialized.</para>
+      <para>The process for creating and using a <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" /> is as follows: </para>
+      <list type="ordered">
+        <item>
+          <para>Create a <see cref="T:System.Xml.Serialization.SoapAttributes" />.</para>
+        </item>
+        <item>
+          <para>Create an attribute object that is appropriate to the object being overridden. For example, to override a field or property, create a <see cref="T:System.Xml.Serialization.SoapElementAttribute" />, using the new, derived type. You can optionally assign a new <see cref="P:System.Xml.Serialization.SoapElementAttribute.ElementName" /> that overrides the base class's attribute name or namespace.</para>
+        </item>
+        <item>
+          <para>Add the attribute object to the appropriate <see cref="T:System.Xml.Serialization.SoapAttributes" /> property or collection. For example, you would set the <see cref="P:System.Xml.Serialization.SoapAttributes.SoapElement" /> property of the <see cref="T:System.Xml.Serialization.SoapAttributes" /> object to the <see cref="T:System.Xml.Serialization.SoapElementAttribute" /> and specify the member name that is being overridden.</para>
+        </item>
+        <item>
+          <para>Create a <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" />.</para>
+        </item>
+        <item>
+          <para>Add the <see cref="T:System.Xml.Serialization.SoapAttributes" /> to the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" /> using the <see cref="M:System.Xml.Serialization.XmlAttributeOverrides.Add(System.Type,System.Xml.Serialization.XmlAttributes)" /> method. If the object being overridden is a <see cref="T:System.Xml.Serialization.SoapTypeAttribute" />, you need only specify the type of the overridden object. But if you are overriding a field or property, you must also specify the name of the overridden member.</para>
+        </item>
+        <item>
+          <para>Create an <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> using the <see cref="M:System.Xml.Serialization.SoapReflectionImporter.ImportTypeMapping(System.Type)" /> method of the <see cref="T:System.Xml.Serialization.SoapReflectionImporter" /> class.</para>
+        </item>
+        <item>
+          <para>When constructing the <see cref="T:System.Xml.Serialization.XmlSerializer" />, pass the <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> to the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor" /> constructor.</para>
+        </item>
+        <item>
+          <para>Use the resulting <see cref="T:System.Xml.Serialization.XmlSerializer" /> to serialize or deserialize the class objects.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows you to override attributes applied to properties, fields, and classes when you use an <see cref="T:System.Xml.Serialization.XmlSerializer" /> to serialize or deserialize an object as encoded SOAP.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoapAttributeOverrides ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (Type type, System.Xml.Serialization.SoapAttributes attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Type type, class System.Xml.Serialization.SoapAttributes attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -41,19 +89,30 @@
         <Parameter Name="attributes" Type="System.Xml.Serialization.SoapAttributes" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'System.Type'</param>
-        <param name="attributes">To be added: an object of type 'SoapAttributes'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Serialization.SoapAttributes" /> contains a union of attribute objects that cause the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to override its default serialization behavior for a set of objects. You choose the attribute objects to place in the <see cref="T:System.Xml.Serialization.SoapAttributes" />, depending on the particular behaviors you want to override. For example, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a class member as an XML element by default. If you want the member to be serialized as an XML attribute instead, you would create a <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" />, assign it to the <see cref="P:System.Xml.Serialization.SoapAttributes.SoapAttribute" /> property of a <see cref="T:System.Xml.Serialization.SoapAttributes" />, and add the <see cref="T:System.Xml.Serialization.XmlAttributes" /> to the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" />. Use the <see cref="M:System.Xml.Serialization.SoapAttributeOverrides.Add(System.Type,System.Xml.Serialization.SoapAttributes)" /> method to add the <see cref="T:System.Xml.Serialization.SoapAttributes" /> to the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" />.</para>
+          <para>Use this overload to add a <see cref="T:System.Xml.Serialization.SoapAttributes" /> that contains a <see cref="T:System.Xml.Serialization.SoapTypeAttribute" />. Because the <see cref="T:System.Xml.Serialization.SoapTypeAttribute" /> overrides the serialization of a class, you need not specify a member of the class to override, only the type of the class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Xml.Serialization.SoapAttributes" /> to a collection of <see cref="T:System.Xml.Serialization.SoapAttributes" /> objects. The <paramref name="type" /> parameter specifies an object to be overridden by the <see cref="T:System.Xml.Serialization.SoapAttributes" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the object that is overridden. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Serialization.SoapAttributes" /> that represents the overriding attributes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (Type type, string member, System.Xml.Serialization.SoapAttributes attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Type type, string member, class System.Xml.Serialization.SoapAttributes attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -63,20 +122,32 @@
         <Parameter Name="attributes" Type="System.Xml.Serialization.SoapAttributes" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'System.Type'</param>
-        <param name="member">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'SoapAttributes'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Serialization.SoapAttributes" /> contains a union of attribute objects that cause the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to override its default serialization behavior for a set of objects. You choose the attribute objects to place in the <see cref="T:System.Xml.Serialization.SoapAttributes" />, depending on the particular behaviors you want to override. For example, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a class member as an XML element by default. If you want the member to be serialized as a SOAP attribute instead, you would create a <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" />, assign it to the <see cref="P:System.Xml.Serialization.SoapAttributes.SoapAttribute" /> property of a <see cref="T:System.Xml.Serialization.SoapAttributes" />, and add the <see cref="T:System.Xml.Serialization.XmlAttributes" /> to the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" />. Use the <see cref="M:System.Xml.Serialization.SoapAttributeOverrides.Add(System.Type,System.Xml.Serialization.SoapAttributes)" /> method to add the <see cref="T:System.Xml.Serialization.SoapAttributes" /> to the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" />.</para>
+          <para>Use this method when the <see cref="T:System.Xml.Serialization.SoapAttributes" /> contains either a <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" />, <see cref="T:System.ComponentModel.DefaultValueAttribute" /> <see cref="T:System.Xml.Serialization.SoapElementAttribute" />, <see cref="T:System.Xml.Serialization.SoapEnumAttribute" />, or <see cref="T:System.Xml.Serialization.SoapIgnoreAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Xml.Serialization.SoapAttributes" /> to the collection of <see cref="T:System.Xml.Serialization.SoapAttributes" /> objects contained by the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" />. The <paramref name="type" /> parameter specifies the object to be overridden by the <see cref="T:System.Xml.Serialization.SoapAttributes" />. The <paramref name="member" /> parameter specifies the name of a member that is overridden.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the object to override. </param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to override. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Serialization.SoapAttributes" /> that represents the overriding attributes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapAttributes this[Type type] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.SoapAttributes Item(class System.Type)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.SoapAttributes</ReturnType>
       </ReturnValue>
@@ -89,14 +160,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapAttributes this[Type type, string member] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.SoapAttributes Item(class System.Type, string)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.SoapAttributes</ReturnType>
       </ReturnValue>
@@ -111,10 +184,6 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

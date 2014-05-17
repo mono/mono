@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IOrderedDictionary" FullName="System.Collections.Specialized.IOrderedDictionary">
   <TypeSignature Language="C#" Value="public interface IOrderedDictionary : System.Collections.IDictionary" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOrderedDictionary implements class System.Collections.ICollection, class System.Collections.IDictionary, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -10,89 +13,145 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> elements can be accessed either with the key or with the index.</para>
+      <para>Each element is a key/value pair stored in a <see cref="T:System.Collections.DictionaryEntry" /> structure.</para>
+      <para>Each pair must have a unique key that is not null, but the value can be null and does not have to be unique. The <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface allows the contained keys and values to be enumerated, but it does not imply any particular sort order.</para>
+      <para>The foreach statement of the C# language (For Each in Visual Basic) requires the type of each element in the collection. Because each element of the <see cref="T:System.Collections.IDictionary" /> is a key/value pair, the element type is not the type of the key or the type of the value. Instead, the element type is <see cref="T:System.Collections.DictionaryEntry" />, as the following example shows. </para>
+      <para>code reference: System.Collections.Specialized.IOrderedDictionary_Implementation#03</para>
+      <para>The foreach statement is a wrapper around the enumerator, which allows only reading from, not writing to, the collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an indexed collection of key/value pairs.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.IDictionaryEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IDictionaryEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IDictionaryEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>[Visual Basic, C#]</para>
+          <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended instead of directly manipulating the enumerator.</para>
+          <para>Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.</para>
+          <para>Initially, the enumerator is positioned before the first element in the collection. <see cref="M:System.Collections.IEnumerator.Reset" /> also brings the enumerator back to this position.  At this position, the <see cref="P:System.Collections.IEnumerator.Current" /> property is undefined. Therefore, you must call <see cref="M:System.Collections.IEnumerator.MoveNext" /> to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.IEnumerator.Current" />.</para>
+          <para>
+            <see cref="P:System.Collections.IEnumerator.Current" /> returns the same object until either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.IEnumerator.Current" /> to the next element.</para>
+          <para>If <see cref="M:System.Collections.IEnumerator.MoveNext" /> passes the end of the collection, the enumerator is positioned after the last element in the collection and <see cref="M:System.Collections.IEnumerator.MoveNext" /> returns false. When the enumerator is at this position, subsequent calls to <see cref="M:System.Collections.IEnumerator.MoveNext" /> also return false. If the last call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> returned false, <see cref="P:System.Collections.IEnumerator.Current" /> is undefined. To set <see cref="P:System.Collections.IEnumerator.Current" /> to the first element of the collection again, you can call <see cref="M:System.Collections.IEnumerator.Reset" /> followed by <see cref="M:System.Collections.IEnumerator.MoveNext" />.</para>
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and its behavior is undefined.</para>
+          <para>The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread-safe procedure.  To guarantee thread safety during enumeration, you can lock the collection during the entire enumeration.  To allow the collection to be accessed by multiple threads for reading and writing, you must implement your own synchronization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> for the entire <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> collection.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Insert">
-      <MemberSignature Language="C#" Value="public void Insert (int idx, object key, object value);" />
+      <MemberSignature Language="C#" Value="public void Insert (int index, object key, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Insert(int32 index, object key, object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="idx" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
         <Parameter Name="key" Type="System.Object" />
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="idx">To be added.</param>
-        <param name="key">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> accepts null as a valid value and allows duplicate elements.</para>
+          <para>If the <paramref name="index" /> parameter is equal to <see cref="P:System.Collections.ICollection.Count" />, the <paramref name="value" /> parameter is added to the end of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> collection.</para>
+          <para>In collections of contiguous elements, such as lists, the elements that follow the insertion point move down to accommodate the new element. If the collection is indexed, the indexes of the elements that are moved are also updated. This behavior does not apply to collections where elements are conceptually grouped together, such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a key/value pair into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which the key/value pair should be inserted.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to use as the key of the element to add.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to use as the value of the element to add.  The value can be null.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public object this[int idx] { set; get; }" />
+      <MemberSignature Language="C#" Value="public object this[int index] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Item(int32)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="idx" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="idx">To be added.</param>
+        <param name="index">To be added.</param>
         <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAt">
-      <MemberSignature Language="C#" Value="public void RemoveAt (int idx);" />
+      <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveAt(int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="idx" Type="System.Int32" />
+        <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="idx">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In collections of contiguous elements, such as lists, the elements that follow the removed element move up to occupy the vacated spot. If the collection is indexed, the indexes of the elements that are moved are also updated. This behavior does not apply to collections where elements are conceptually grouped together, such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the element at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the element to remove.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

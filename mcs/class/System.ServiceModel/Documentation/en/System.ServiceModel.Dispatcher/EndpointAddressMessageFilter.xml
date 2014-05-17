@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="EndpointAddressMessageFilter" FullName="System.ServiceModel.Dispatcher.EndpointAddressMessageFilter">
+  <TypeSignature Language="C#" Value="public class EndpointAddressMessageFilter : System.ServiceModel.Dispatcher.MessageFilter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EndpointAddressMessageFilter extends System.ServiceModel.Dispatcher.MessageFilter" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Dispatcher.MessageFilter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This filter tests whether a message satisfies a particular endpoint address. An <see cref="T:System.ServiceModel.EndpointAddress" /> object includes a URI and an optional collection of addressing headers. The addressing and message headers are canonicalized in order to be compared for equality. If a parameter appears more than once in an <see cref="T:System.ServiceModel.EndpointAddress" />, the corresponding header must appear in the message at least that many times.</para>
+      <para>IIS and the underlying file system (NTFS or FAT) are case-insensitive. URI comparisons done by this class are also case-insensitive. So, for example, http://www.microsoft.com is evaluated as equal to http://WWW.microsoft.com.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a query that tests whether a message satisfies the requirements of a specified endpoint address.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EndpointAddressMessageFilter (System.ServiceModel.EndpointAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.EndpointAddress address) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.EndpointAddressMessageFilter" /> class with a specified address against which to test a message.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> against which messages are tested.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EndpointAddressMessageFilter (System.ServiceModel.EndpointAddress address, bool includeHostNameInComparison);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.EndpointAddress address, bool includeHostNameInComparison) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="includeHostNameInComparison" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you have a web service installed on your local machine, there are many equivalent ways to reference it, including the following: </para>
+          <list type="bullet">
+            <item>
+              <para>http://localhost/foo.svc</para>
+            </item>
+            <item>
+              <para>http://192.168.1.100/foo.svc</para>
+            </item>
+            <item>
+              <para>http://[my-machine-name]/foo.svc</para>
+            </item>
+            <item>
+              <para>http://[my-machine-name].[my-company].com/foo.svc. </para>
+            </item>
+          </list>
+          <para>If the value of the <paramref name="includeHostNameInComparison" /> parameter is false, the above URIs all resolve to the same endpoint. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.EndpointAddressMessageFilter" /> class. </para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> against which messages are tested.</param>
+        <param name="includeHostNameInComparison">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the host name is included in the endpoint address comparison; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Address">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointAddress Address { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointAddress Address" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the address that the <see cref="T:System.ServiceModel.Dispatcher.EndpointAddressMessageFilter" /> tests messages against.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFilterTable&lt;FilterData&gt;">
+      <MemberSignature Language="C#" Value="protected override System.ServiceModel.Dispatcher.IMessageFilterTable&lt;FilterData&gt; CreateFilterTable&lt;FilterData&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.ServiceModel.Dispatcher.IMessageFilterTable`1&lt;!!FilterData&gt; CreateFilterTable&lt;FilterData&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IMessageFilterTable&lt;FilterData&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="FilterData" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method returns an instance of <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> that is optimized to test for specific message endpoints.</para>
+          <para>This method is intended to be used by <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" />. Use <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> constructors to create filter table instances.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new filter table that tests a message against multiple endpoint addresses simultaneously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> interface that can contain <see cref="T:System.ServiceModel.Dispatcher.EndpointAddressMessageFilter" />s with associated <paramref name="FilterData" />. </para>
+        </returns>
+        <typeparam name="FilterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data associated with the filters in the table.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeHostNameInComparison">
+      <MemberSignature Language="C#" Value="public bool IncludeHostNameInComparison { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeHostNameInComparison" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you have a web service installed on your local machine, there are many equivalent ways to reference it, including the following: </para>
+          <list type="bullet">
+            <item>
+              <para>http://localhost/foo.svc</para>
+            </item>
+            <item>
+              <para>http://192.168.1.100/foo.svc</para>
+            </item>
+            <item>
+              <para>http://[my-machine-name]/foo.svc</para>
+            </item>
+            <item>
+              <para>http://[my-machine-name].[my-company].com/foo.svc. </para>
+            </item>
+          </list>
+          <para>The default value of this property is false, so the above URIs all resolve to the same endpoint, unless you change this property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the host name is included in the endpoint address comparison.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public override bool Match (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Match(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The two overloads of this method are equivalent because they both examine only message headers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether a message satisfies the specified endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.Message" /> object satisfies the endpoint address specified in the filter; otherwise, false. </para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> object to test.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Match">
+      <MemberSignature Language="C#" Value="public override bool Match (System.ServiceModel.Channels.MessageBuffer messageBuffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Match(class System.ServiceModel.Channels.MessageBuffer messageBuffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageBuffer" Type="System.ServiceModel.Channels.MessageBuffer" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The two overloads of this method are equivalent because they both examine only message headers. The only reason to use this overload is if you already had a <paramref name="messageBuffer" /> available and not a message, because this method converts the <paramref name="messageBuffer" /> into a message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether a buffered message satisfies the specified endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object satisfies the endpoint address; otherwise, false. </para>
+        </returns>
+        <param name="messageBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object to test.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

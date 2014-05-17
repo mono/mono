@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TaskExtensions" FullName="System.Threading.Tasks.TaskExtensions">
+  <TypeSignature Language="C#" Value="public static class TaskExtensions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit TaskExtensions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of static (Shared in Visual Basic) methods for working with specific kinds of <see cref="T:System.Threading.Tasks.Task" /> instances.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Unwrap">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task Unwrap (this System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&gt; task);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task Unwrap(class System.Threading.Tasks.Task`1&lt;class System.Threading.Tasks.Task&gt; task) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="task" Type="System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&gt;" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is often useful to be able to return a Task from a <see cref="T:System.Threading.Tasks.Task`1" />, where the inner Task represents work done as part of the outer <see cref="T:System.Threading.Tasks.Task`1" />. However, doing so results in a Task&lt;Task&gt; (C#) or Task (Of Task) (Visual Basic), which, if not dealt with carefully, could produce unexpected behavior. Unwrap solves this problem by creating a proxy Task that represents the entire asynchronous operation of such a task.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation of a <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTaskInline(System.Threading.Tasks.Task,System.Boolean)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Task that represents the asynchronous operation of the provided System.Threading.Tasks.Task(Of Task).</para>
+        </returns>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Task&lt;Task&gt; (C#) or Task (Of Task) (Visual Basic) to unwrap.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Unwrap&lt;TResult&gt;">
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task&lt;TResult&gt; Unwrap&lt;TResult&gt; (this System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt; task);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task`1&lt;!!TResult&gt; Unwrap&lt;TResult&gt;(class System.Threading.Tasks.Task`1&lt;class System.Threading.Tasks.Task`1&lt;!!TResult&gt;&gt; task) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="task" Type="System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is often useful to be able to return a <see cref="T:System.Threading.Tasks.Task" /> from a <see cref="T:System.Threading.Tasks.Task" />, where the inner <see cref="T:System.Threading.Tasks.Task" /> represents work done as part of the outer <see cref="T:System.Threading.Tasks.Task" />. However, doing so results in a Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic), which, if not dealt with carefully, could produce unexpected behavior. Unwrap solves this problem by creating a proxy <see cref="T:System.Threading.Tasks.Task`1" /> that represents the entire asynchronous operation of such a Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation of a Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation of the provided Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic).</para>
+        </returns>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Task&lt;Task&lt;T&gt;&gt; (C#) or Task (Of Task(Of T)) (Visual Basic) to unwrap.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the task's result.</typeparam>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

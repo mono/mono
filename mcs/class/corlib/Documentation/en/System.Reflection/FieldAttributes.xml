@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FieldAttributes" FullName="System.Reflection.FieldAttributes" FullNameSP="System_Reflection_FieldAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable FieldAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum FieldAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FieldAttributes extends System.Enum" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,440 +14,6 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>
-      <para>Specifies flags that describe the attributes of a field.</para>
-    </summary>
-    <remarks>
-      <para>This enumeration is used by the <see cref="P:System.Reflection.FieldInfo.Attributes" /> property.</para>
-    </remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="Assembly">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Assembly = 3" />
-      <MemberSignature Language="C#" Value="Assembly" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>Assembly</MemberValue>
-      <Docs>
-        <summary>
-          <para>
-       Specifies that the field is accessible throughout the assembly.
-    </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="FamANDAssem">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamANDAssem = 2" />
-      <MemberSignature Language="C#" Value="FamANDAssem" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>FamANDAssem</MemberValue>
-      <Docs>
-        <summary>
-   Specifies that the field is accessible only to the
-   members of the type that defines the field and its subclasses in the assembly.
-</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Family">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Family = 4" />
-      <MemberSignature Language="C#" Value="Family" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>Family</MemberValue>
-      <Docs>
-        <summary>
-          <para> Specifies that the field is accessible only to the type that defines the field and its subclasses.
-      </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="FamORAssem">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamORAssem = 5" />
-      <MemberSignature Language="C#" Value="FamORAssem" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>FamORAssem</MemberValue>
-      <Docs>
-        <summary>
-          <para> Specifies
-      that the field is accessible only to the members of the type that defines the field and its subclasses as well as
-      throughout the assembly.
-      </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="FieldAccessMask">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FieldAccessMask = 7" />
-      <MemberSignature Language="C#" Value="FieldAccessMask" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>FieldAccessMask</MemberValue>
-      <Docs>
-        <summary>
-          <para> Specifies a bit-mask that, when combined with the
-   <see cref="P:System.Reflection.FieldInfo.Attributes" /> of
-      a field using the logical AND operator, yields
-      the bits that specify the accessibility of a field.
-      </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasDefault">
-      <MemberSignature Language="C#" Value="HasDefault" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>HasDefault</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasFieldMarshal">
-      <MemberSignature Language="C#" Value="HasFieldMarshal" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>HasFieldMarshal</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasFieldRVA">
-      <MemberSignature Language="C#" Value="HasFieldRVA" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>HasFieldRVA</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="InitOnly">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes InitOnly = 32" />
-      <MemberSignature Language="C#" Value="InitOnly" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>InitOnly</MemberValue>
-      <Docs>
-        <summary>
-          <para>
-       Specifies that the field is initialized only, and cannot be written after
-       initialization.
-    </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Literal">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Literal = 64" />
-      <MemberSignature Language="C#" Value="Literal" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>Literal</MemberValue>
-      <Docs>
-        <summary>
-   Specifies that the field's value is a compile-time
-   (static or early bound) constant.
-</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="NotSerialized">
-      <MemberSignature Language="C#" Value="NotSerialized" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>NotSerialized</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="PinvokeImpl">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PinvokeImpl = 8192" />
-      <MemberSignature Language="C#" Value="PinvokeImpl" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>PinvokeImpl</MemberValue>
-      <Docs>
-        <summary>
-          <para>
-            <SPAN>Specifies 
-      that the implementation of a field is forwarded through Platform Invocation
-      Services (PInvoke).</SPAN>
-          </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Private">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Private = 1" />
-      <MemberSignature Language="C#" Value="Private" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>Private</MemberValue>
-      <Docs>
-        <summary>
-          <para> Specifies that the field is accessible only to members in the type in which it is defined.
-      </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="PrivateScope">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PrivateScope = 0" />
-      <MemberSignature Language="C#" Value="PrivateScope" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>PrivateScope</MemberValue>
-      <Docs>
-        <summary>
-          <para>
-       Specifies that the field cannot be referenced.
-    </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Public">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Public = 6" />
-      <MemberSignature Language="C#" Value="Public" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>Public</MemberValue>
-      <Docs>
-        <summary>
-          <para> Specifies that the field is accessible to
-      any member.
-      </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReservedMask">
-      <MemberSignature Language="C#" Value="ReservedMask" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>ReservedMask</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="RTSpecialName">
-      <MemberSignature Language="C#" Value="RTSpecialName" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>RTSpecialName</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpecialName">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes SpecialName = 512" />
-      <MemberSignature Language="C#" Value="SpecialName" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>SpecialName</MemberValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the field is treated in a special way by some tools.
-      </para>
-          <block subset="none" type="note">
-            <para> For more
-         information on special names, see Partition I of the CLI
-         Specification.</para>
-            <para>For more information on <see langword="SpecialName " /> in metadata, see Partition II of the CLI
-      Specification.</para>
-          </block>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Static">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Static = 16" />
-      <MemberSignature Language="C#" Value="Static" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>Static</MemberValue>
-      <Docs>
-        <summary>
-          <para> Specifies that the field associated with the defining 
-      type and is shared by all instances of the type in which it is
-      defined.
-      </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
-  <TypeExcluded>0</TypeExcluded>
   <Attributes>
     <Attribute>
       <AttributeName>System.Flags</AttributeName>
@@ -454,4 +22,458 @@
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>FieldAttributes uses the value from FieldAccessMask to mask off only the parts of the attribute value that pertain to the accessibility. For example, the following code determines if Attributes has the public bit set. </para>
+      <para>code reference: System.Reflection.FieldAttributes#1</para>
+      <para>To get the FieldAttributes, first get the class Type. From the Type, get the FieldInfo. From the FieldInfo, get the Attributes.</para>
+      <para>The enumerated value is a number representing the bitwise OR of the attributes implemented on the field.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies flags that describe the attributes of a field.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Assembly">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Assembly = 3" />
+      <MemberSignature Language="C#" Value="Assembly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Assembly = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Assembly</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field is accessible throughout the assembly.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FamANDAssem">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamANDAssem = 2" />
+      <MemberSignature Language="C#" Value="FamANDAssem" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamANDAssem = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FamANDAssem</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field is accessible only by subtypes in this assembly.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Family">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Family = 4" />
+      <MemberSignature Language="C#" Value="Family" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Family = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Family</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field is accessible only by type and subtypes.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FamORAssem">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamORAssem = 5" />
+      <MemberSignature Language="C#" Value="FamORAssem" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamORAssem = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FamORAssem</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field is accessible by subtypes anywhere, as well as throughout this assembly.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FieldAccessMask">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FieldAccessMask = 7" />
+      <MemberSignature Language="C#" Value="FieldAccessMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes FieldAccessMask = int32(7)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>FieldAccessMask</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the access level of a given field.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="HasDefault">
+      <MemberSignature Language="C#" Value="HasDefault" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes HasDefault = int32(32768)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>HasDefault</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field has a default value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasFieldMarshal">
+      <MemberSignature Language="C#" Value="HasFieldMarshal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes HasFieldMarshal = int32(4096)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>HasFieldMarshal</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field has marshaling information.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasFieldRVA">
+      <MemberSignature Language="C#" Value="HasFieldRVA" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes HasFieldRVA = int32(256)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>HasFieldRVA</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field has a relative virtual address (RVA). The RVA is the location of the method body in the current image, as an address relative to the start of the image file in which it is located.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InitOnly">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes InitOnly = 32" />
+      <MemberSignature Language="C#" Value="InitOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes InitOnly = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>InitOnly</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field is initialized only, and can be set only in the body of a constructor. </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Literal">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Literal = 64" />
+      <MemberSignature Language="C#" Value="Literal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Literal = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Literal</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field's value is a compile-time (static or early bound) constant. Any attempt to set it throws a <see cref="T:System.FieldAccessException" />.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NotSerialized">
+      <MemberSignature Language="C#" Value="NotSerialized" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes NotSerialized = int32(128)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>NotSerialized</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field does not have to be serialized when the type is remoted.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PinvokeImpl">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PinvokeImpl = 8192" />
+      <MemberSignature Language="C#" Value="PinvokeImpl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes PinvokeImpl = int32(8192)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PinvokeImpl</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved for future use.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Private">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Private = 1" />
+      <MemberSignature Language="C#" Value="Private" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Private = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Private</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field is accessible only by the parent type.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PrivateScope">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PrivateScope = 0" />
+      <MemberSignature Language="C#" Value="PrivateScope" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes PrivateScope = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>PrivateScope</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field cannot be referenced.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Public">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Public = 6" />
+      <MemberSignature Language="C#" Value="Public" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Public = int32(6)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Public</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field is accessible by any member for whom this scope is visible.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReservedMask">
+      <MemberSignature Language="C#" Value="ReservedMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes ReservedMask = int32(38144)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReservedMask</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RTSpecialName">
+      <MemberSignature Language="C#" Value="RTSpecialName" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes RTSpecialName = int32(1024)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>RTSpecialName</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the common language runtime (metadata internal APIs) should check the name encoding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SpecialName">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes SpecialName = 512" />
+      <MemberSignature Language="C#" Value="SpecialName" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes SpecialName = int32(512)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SpecialName</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a special method, with the name describing how the method is special.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Static">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Static = 16" />
+      <MemberSignature Language="C#" Value="Static" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Static = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>Static</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the field represents the defined type, or else it is per-instance.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
 </Type>

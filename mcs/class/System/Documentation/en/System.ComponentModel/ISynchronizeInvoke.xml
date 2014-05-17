@@ -1,22 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISynchronizeInvoke" FullName="System.ComponentModel.ISynchronizeInvoke">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ISynchronizeInvoke" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISynchronizeInvoke" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.ISynchronizeInvoke" /> interface provides synchronous and asynchronous communication between objects about the occurrence of an event. Objects that implement this interface can receive notification that an event has occurred, and they can respond to queries about the event. In this way, clients can ensure that one request has been processed before they submit a subsequent request that depends on completion of the first.</para>
+      <para>The <see cref="T:System.ComponentModel.ISynchronizeInvoke" /> class provides two ways to invoke a process: </para>
+      <list type="ordered">
+        <item>
+          <para>Asynchronously, by using the <see cref="M:System.ComponentModel.ISynchronizeInvoke.BeginInvoke(System.Delegate,System.Object[])" /> method. <see cref="M:System.ComponentModel.ISynchronizeInvoke.BeginInvoke(System.Delegate,System.Object[])" /> starts a process and then returns immediately. Use <see cref="M:System.ComponentModel.ISynchronizeInvoke.EndInvoke(System.IAsyncResult)" /> to wait until the process started by <see cref="M:System.ComponentModel.ISynchronizeInvoke.BeginInvoke(System.Delegate,System.Object[])" /> completes.</para>
+        </item>
+        <item>
+          <para>Synchronously, by using the <see cref="M:System.ComponentModel.ISynchronizeInvoke.Invoke(System.Delegate,System.Object[])" /> method. <see cref="M:System.ComponentModel.ISynchronizeInvoke.Invoke(System.Delegate,System.Object[])" /> starts a process, waits until it completes, and then returns. Use <see cref="M:System.ComponentModel.ISynchronizeInvoke.Invoke(System.Delegate,System.Object[])" /> when the control's main thread is different from the calling thread to marshal the call to the proper thread.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" /> | <see cref="F:System.Security.Permissions.HostProtectionResource.ExternalThreading" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way to synchronously or asynchronously execute a delegate.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BeginInvoke">
       <MemberSignature Language="C#" Value="public IAsyncResult BeginInvoke (Delegate method, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginInvoke(class System.Delegate method, object[] args) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -25,20 +52,35 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="method">To be added: an object of type 'Delegate'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IAsyncResult'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="method" /> delegate is executed on the thread that created the object, instead of the thread on which <see cref="M:System.ComponentModel.ISynchronizeInvoke.BeginInvoke(System.Delegate,System.Object[])" /> was called.</para>
+          <para>The delegate is called asynchronously, and this method returns immediately. You can call this method from any thread. If you need the return value from a process started with this method, call <see cref="M:System.ComponentModel.ISynchronizeInvoke.EndInvoke(System.IAsyncResult)" /> to get the value.</para>
+          <para>If you need to call the delegate synchronously, use the <see cref="M:System.ComponentModel.ISynchronizeInvoke.Invoke(System.Delegate,System.Object[])" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously executes the delegate on the thread that created this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> interface that represents the asynchronous operation started by calling this method.</para>
+        </returns>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Delegate" /> to a method that takes parameters of the same number and type that are contained in <paramref name="args" />. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Object" /> to pass as arguments to the given method. This can be null if no arguments are needed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndInvoke">
       <MemberSignature Language="C#" Value="public object EndInvoke (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object EndInvoke(class System.IAsyncResult result) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -46,19 +88,31 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added: an object of type 'IAsyncResult'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method gets the return value of the asynchronous operation represented by the <see cref="T:System.IAsyncResult" /> passed by this interface. If the asynchronous operation has not completed, this method will wait until the result is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits until the process started by calling <see cref="M:System.ComponentModel.ISynchronizeInvoke.BeginInvoke(System.Delegate,System.Object[])" /> completes, and then returns the value generated by the process.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the return value generated by the asynchronous operation.</para>
+        </returns>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> interface that represents the asynchronous operation started by calling <see cref="M:System.ComponentModel.ISynchronizeInvoke.BeginInvoke(System.Delegate,System.Object[])" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Invoke">
       <MemberSignature Language="C#" Value="public object Invoke (Delegate method, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Invoke(class System.Delegate method, object[] args) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -67,32 +121,48 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="method">To be added: an object of type 'Delegate'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike <see cref="M:System.ComponentModel.ISynchronizeInvoke.BeginInvoke(System.Delegate,System.Object[])" />, this method operates synchronously, that is, it waits until the process completes before returning. Exceptions raised during the call are propagated back to the caller.</para>
+          <para>Use this method when calling a method from a different thread to marshal the call to the proper thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronously executes the delegate on the thread that created this object and marshals the call to the creating thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the return value from the delegate being invoked, or null if the delegate has no return value.</para>
+        </returns>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Delegate" /> that contains a method to call, in the context of the thread for the control. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Object" /> that represents the arguments to pass to the given method. This can be null if no arguments are needed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InvokeRequired">
       <MemberSignature Language="C#" Value="public bool InvokeRequired { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool InvokeRequired" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property determines whether the caller must call <see cref="M:System.ComponentModel.ISynchronizeInvoke.Invoke(System.Delegate,System.Object[])" /> when making method calls to an object that implements this interface. Such objects are bound to a specific thread and are not thread-safe. If you are calling a method from a different thread, you must use the <see cref="M:System.ComponentModel.ISynchronizeInvoke.Invoke(System.Delegate,System.Object[])" /> method to marshal the call to the proper thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the caller must call <see cref="M:System.ComponentModel.ISynchronizeInvoke.Invoke(System.Delegate,System.Object[])" /> when calling an object that implements this interface.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

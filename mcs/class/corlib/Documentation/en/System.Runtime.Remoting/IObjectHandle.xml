@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IObjectHandle" FullName="System.Runtime.Remoting.IObjectHandle">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IObjectHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IObjectHandle" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,6 +10,7 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
@@ -20,28 +23,41 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marshal-by-value objects can be returned through an indirection, allowing the caller to control when the object is loaded into their domain. The caller can unwrap the object from the indirection through this interface.</para>
+      <para>The class implementing the <see cref="T:System.Runtime.Remoting.IObjectHandle" /> interface can be used to pass an object (in a wrapped state) between multiple application domains without loading the metadata for the wrapped object in each <see cref="T:System.AppDomain" /> through which the <see cref="T:System.Runtime.Remoting.IObjectHandle" /> travels. Thus, the <see cref="T:System.Runtime.Remoting.IObjectHandle" /> class gives the caller control of when the <see cref="T:System.Type" /> of the remote object is loaded into their domain.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface for unwrapping marshal-by-value objects from indirection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Unwrap">
       <MemberSignature Language="C#" Value="public object Unwrap ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Unwrap() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unwraps the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unwrapped object.</para>
+        </returns>
+      </Docs>
     </Member>
   </Members>
-  <Interfaces />
 </Type>

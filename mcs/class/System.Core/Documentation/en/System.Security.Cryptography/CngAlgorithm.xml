@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CngAlgorithm" FullName="System.Security.Cryptography.CngAlgorithm">
+  <TypeSignature Language="C#" Value="public sealed class CngAlgorithm : IEquatable&lt;System.Security.Cryptography.CngAlgorithm&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit CngAlgorithm extends System.Object implements class System.IEquatable`1&lt;class System.Security.Cryptography.CngAlgorithm&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Security.Cryptography.CngAlgorithm&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.CngAlgorithm" /> class is a utility class. It consists of static properties, comparison methods, and a private, internally maintained, algorithm name string.</para>
+      <para>The static properties return <see cref="T:System.Security.Cryptography.CngAlgorithm" /> objects. Each object's internal string is initialized to the algorithm name that corresponds to the name of the static property.</para>
+      <para>You can also use this class to create objects for algorithm types that are not covered by the static properties.</para>
+      <para>Several Cryptography Next Generation (CNG) classes (such as <see cref="T:System.Security.Cryptography.CngKey" />) accept <see cref="T:System.Security.Cryptography.CngAlgorithm" /> objects through an <paramref name="algorithm" /> parameter. When the class receives the <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object, it retrieves the embedded algorithm name by calling the object's <see cref="P:System.Security.Cryptography.CngAlgorithm.Algorithm" /> property.</para>
+      <para>Therefore, <see cref="T:System.Security.Cryptography.CngAlgorithm" /> serves as an enumeration of well-known algorithms. It lets you specify a well-known algorithm by using a strongly typed value instead of a string. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the name of an encryption algorithm. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CngAlgorithm (string algorithm);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string algorithm) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="algorithm" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instances of the <see cref="T:System.Security.Cryptography.CngAlgorithm" /> class internally maintain the algorithm name that is specified by the <paramref name="algorithm" /> parameter.</para>
+          <para>The primary purpose of this constructor is to provide a method for creating <see cref="T:System.Security.Cryptography.CngAlgorithm" /> objects for algorithm types that are not represented by the static properties of the <see cref="T:System.Security.Cryptography.CngAlgorithm" /> class. This capacity enables future dnprdnshort releases, service packs, and third-party developers to add new algorithms, which can be accessed just like the algorithms that are currently available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CngAlgorithm" /> class.</para>
+        </summary>
+        <param name="algorithm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the algorithm to initialize.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Algorithm">
+      <MemberSignature Language="C#" Value="public string Algorithm { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Algorithm" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the algorithm name that the current <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object specifies.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ECDiffieHellmanP256">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm ECDiffieHellmanP256 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm ECDiffieHellmanP256" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies an Elliptic Curve Diffie-Hellman (ECDH) key exchange algorithm that uses the P-256 curve.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ECDiffieHellmanP384">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm ECDiffieHellmanP384 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm ECDiffieHellmanP384" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies an Elliptic Curve Diffie-Hellman (ECDH) key exchange algorithm that uses the P-384 curve.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ECDiffieHellmanP521">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm ECDiffieHellmanP521 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm ECDiffieHellmanP521" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies an Elliptic Curve Diffie-Hellman (ECDH) key exchange algorithm that uses the P-521 curve.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ECDsaP256">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm ECDsaP256 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm ECDsaP256" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies an Elliptic Curve Digital Signature Algorithm (ECDSA) that uses the P-256 curve.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ECDsaP384">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm ECDsaP384 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm ECDsaP384" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies an Elliptic Curve Digital Signature Algorithm (ECDSA) that uses the P-384 curve.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ECDsaP521">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm ECDsaP521 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm ECDsaP521" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies an Elliptic Curve Digital Signature Algorithm (ECDSA) that uses the P-521 curve.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the specified object to the current <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="obj" /> parameter is a <see cref="T:System.Security.Cryptography.CngAlgorithm" /> that specifies the same algorithm as the current object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to be compared to the current <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (System.Security.Cryptography.CngAlgorithm other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(class System.Security.Cryptography.CngAlgorithm other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Security.Cryptography.CngAlgorithm" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the specified <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object to the current <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="other" /> parameter specifies the same algorithm as the current object; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to be compared to the current <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a hash value for the algorithm name that is embedded in the current <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash value of the embedded algorithm name.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="MD5">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm MD5 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm MD5" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies the Message Digest 5 (MD5) hash algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (System.Security.Cryptography.CngAlgorithm left, System.Security.Cryptography.CngAlgorithm right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(class System.Security.Cryptography.CngAlgorithm left, class System.Security.Cryptography.CngAlgorithm right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Security.Cryptography.CngAlgorithm" />
+        <Parameter Name="right" Type="System.Security.Cryptography.CngAlgorithm" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.Security.Cryptography.CngAlgorithm" /> objects specify the same algorithm name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two objects specify the same algorithm name; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies an algorithm name.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A second object, to be compared to the object that is identified by the <paramref name="left" /> parameter.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Security.Cryptography.CngAlgorithm left, System.Security.Cryptography.CngAlgorithm right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(class System.Security.Cryptography.CngAlgorithm left, class System.Security.Cryptography.CngAlgorithm right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Security.Cryptography.CngAlgorithm" />
+        <Parameter Name="right" Type="System.Security.Cryptography.CngAlgorithm" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.Security.Cryptography.CngAlgorithm" /> objects do not specify the same algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two objects do not specify the same algorithm name; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies an algorithm name.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A second object, to be compared to the object that is identified by the <paramref name="left" /> parameter.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Sha1">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm Sha1 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm Sha1" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies the Secure Hash Algorithm 1 (SHA-1) algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Sha256">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm Sha256 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm Sha256" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies the Secure Hash Algorithm 256 (SHA-256) algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Sha384">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm Sha384 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm Sha384" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies the Secure Hash Algorithm 384 (SHA-384) algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Sha512">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.CngAlgorithm Sha512 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Cryptography.CngAlgorithm Sha512" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CngAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object that specifies the Secure Hash Algorithm 512 (SHA-512) algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the algorithm that the current <see cref="T:System.Security.Cryptography.CngAlgorithm" /> object specifies.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The embedded algorithm name.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

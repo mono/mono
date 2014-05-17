@@ -1,71 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebRequestModuleElement" FullName="System.Net.Configuration.WebRequestModuleElement">
   <TypeSignature Language="C#" Value="public sealed class WebRequestModuleElement : System.Configuration.ConfigurationElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WebRequestModuleElement extends System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Configuration.ConfigurationElement</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Using the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes, applications can request resources for any valid <see cref="T:System.Uri" />. Use this configuration element to specify a module that is registered to work with the <see cref="Overload:System.Net.WebRequest.Create" /> overloads to create new requests.</para>
+      <para>This class corresponds to the <format type="text/html"><a href="47ec4adc-f39f-4bcd-8680-1ec21fd26890">Add Element for WebRequest Modules (Network Settings)</a></format> configuration element.</para>
+      <para>This class is used to specify modules registered to authenticate requests made with the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebClient" /> classes. </para>
+      <para>This class provides programmatic access to information that can be stored in configuration files.</para>
+      <para>The .NET Framework version 2.0 provides Web request modules that create requests for resources with the following prefixes:</para>
+      <list type="bullet">
+        <item>
+          <para>HTTP</para>
+        </item>
+        <item>
+          <para>HTTPS</para>
+        </item>
+        <item>
+          <para>FTP</para>
+        </item>
+        <item>
+          <para>FILE</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a URI prefix and the associated class that handles creating Web requests for the prefix. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public WebRequestModuleElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.WebRequestModuleElement" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public WebRequestModuleElement (string prefix, string type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string prefix, string type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="prefix" Type="System.String" />
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="type" /> parameter contains the fully qualified type name followed by a comma (,) and the assembly information. The elements of the assembly information are separated with commas, for example, "System.Net.DigestClient, System, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089".</para>
+          <para>The <see cref="P:System.Net.Configuration.WebRequestModuleElement.Prefix" /> property is set to <paramref name="prefix" /> and the <see cref="P:System.Net.Configuration.WebRequestModuleElement.Type" /> property is set to <paramref name="type" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.WebRequestModuleElement" /> class using the specified URI prefix and type information. </para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a URI prefix.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the type and assembly information for the class that handles creating requests for resources that use the <paramref name="prefix" /> URI prefix. For more information, see the Remarks section.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public WebRequestModuleElement (string prefix, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string prefix, class System.Type type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="prefix" Type="System.String" />
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Configuration.WebRequestModuleElement.Prefix" /> property is set to <paramref name="prefix" /> and the <see cref="P:System.Net.Configuration.WebRequestModuleElement.Type" /> property is set to <paramref name="type" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.WebRequestModuleElement" /> class using the specified URI prefix and type identifier.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a URI prefix.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that identifies the class that handles creating requests for resources that use the <paramref name="prefix" /> URI prefix. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Prefix">
-      <MemberSignature Language="C#" Value="public string Prefix { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Prefix { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Prefix" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("prefix", Options=System.Configuration.ConfigurationPropertyOptions.IsRequired | System.Configuration.ConfigurationPropertyOptions.IsKey)</AttributeName>
@@ -75,18 +133,40 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework version 2.0 provides Web request modules that create requests for resources with the following prefixes:</para>
+          <list type="bullet">
+            <item>
+              <para>HTTP</para>
+            </item>
+            <item>
+              <para>HTTPS</para>
+            </item>
+            <item>
+              <para>FTP</para>
+            </item>
+            <item>
+              <para>FILE</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI prefix for the current Web request module.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Properties">
       <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
@@ -96,13 +176,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public Type Type { set; get; }" />
+      <MemberSignature Language="C#" Value="public Type Type { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.TypeConverter(typeof(System.ComponentModel.TypeConverter))</AttributeName>
@@ -115,14 +197,32 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes, applications can request resources for any valid <see cref="T:System.Uri" />. Use this property to specify a type that is registered to work with the <see cref="M:System.Net.WebRequest.Create(System.String)" /> method to create new requests.</para>
+          <para>The .NET Framework version 2.0 provides Web request modules that create requests for resources with the following prefixes:</para>
+          <list type="bullet">
+            <item>
+              <para>HTTP</para>
+            </item>
+            <item>
+              <para>HTTPS</para>
+            </item>
+            <item>
+              <para>FTP</para>
+            </item>
+            <item>
+              <para>FILE</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a class that creates Web requests.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

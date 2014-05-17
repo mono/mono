@@ -1,35 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Ping" FullName="System.Net.NetworkInformation.Ping">
-  <TypeSignature Language="C#" Value="public class Ping : System.ComponentModel.Component" />
+  <TypeSignature Language="C#" Value="public class Ping : System.ComponentModel.Component, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi Ping extends System.ComponentModel.Component implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.Component</BaseTypeName>
   </Base>
-  <Interfaces />
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.MonoTODO("IPv6 support is missing")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Applications use the <see cref="T:System.Net.NetworkInformation.Ping" /> class to detect whether a remote computer is reachable. </para>
+      <para>Network topology can determine whether <see cref="T:System.Net.NetworkInformation.Ping" /> can successfully contact a remote host. The presence and configuration of proxies, network address translation (NAT) equipment, or firewalls can prevent <see cref="T:System.Net.NetworkInformation.Ping" /> from succeeding. A successful <see cref="T:System.Net.NetworkInformation.Ping" /> indicates only that the remote host can be reached on the network; the presence of higher level services (such as a Web server) on the remote host is not guaranteed.</para>
+      <para>This class provides functionality similar to the Ping.exe command line tool. The <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> and <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods send an Internet Control Message Protocol (ICMP) echo request message to a remote computer and waits for an ICMP echo reply message from that computer. For a detailed description of ICMP messages, see RFC 792, available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+      <para>The following types are used with the <see cref="T:System.Net.NetworkInformation.Ping" /> class and are described in detail below.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Type name</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.NetworkInformation.IPStatus" />
+            </para>
+          </term>
+          <description>
+            <para>Defines status codes that describe the outcome of an ICMP echo request message.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.NetworkInformation.PingOptions" />
+            </para>
+          </term>
+          <description>
+            <para>Allows you to configure or retrieve the settings that control how many times the request packet can be forwarded (<see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" />), and whether it can be fragmented (<see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> ).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.NetworkInformation.PingReply" />
+            </para>
+          </term>
+          <description>
+            <para>Contains the results of an ICMP echo request.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.NetworkInformation.PingException" />
+            </para>
+          </term>
+          <description>
+            <para>Thrown if an unrecoverable error occurs.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" />
+            </para>
+          </term>
+          <description>
+            <para>Contains the data associated with <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> events, which are raised when a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call completes or is canceled.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> </para>
+          </term>
+          <description>
+            <para>The delegate that provides the callback method invoked when a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call completes or is canceled.</para>
+          </description>
+        </item>
+      </list>
+      <para>The <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> and <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods return the reply in a <see cref="T:System.Net.NetworkInformation.PingReply" /> object. The <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property returns an <see cref="T:System.Net.NetworkInformation.IPStatus" /> value to indicate the outcome of the request. </para>
+      <para>When sending the request, you must specify the remote computer. You can do this by providing a host name string, an IP address in string format, or an <see cref="T:System.Net.IPAddress" /> object. </para>
+      <para>You can also specify any of the following types of information:</para>
+      <list type="bullet">
+        <item>
+          <para>Data to accompany the request. Specifying <paramref name="buffer" /> allows you to learn the amount of time required for a packet of a particular size to travel to and from the remote host and the maximum transmission unit of the network path. (See the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> or <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overloads that take a <paramref name="buffer" /> parameter.)</para>
+        </item>
+        <item>
+          <para>Whether the ICMP Echo packet can be fragmented in transit. (See the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property and the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> or <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overloads that take an <paramref name="options" /> parameter.)</para>
+        </item>
+        <item>
+          <para>How many times routing nodes, such as routers or gateways, can forward the packet before it either reaches the destination computer or is discarded. (See <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> and the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> or <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overloads that take an <paramref name="options" /> parameter.)</para>
+        </item>
+        <item>
+          <para>The time limit within which the reply must be received. (See the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> or <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overloads that take a <paramref name="timeout" /> parameter.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Net.NetworkInformation.Ping" /> class offers both synchronous and asynchronous methods for sending the request. If your application should block while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous. If your application should not block, use the asynchronous <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods. A call to <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> executes in its own thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. Applications use a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to specify the method that is called for <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> events. You must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. </para>
+      <para>You cannot use the same instance of the <see cref="T:System.Net.NetworkInformation.Ping" /> class to generate multiple simultaneous ICMP Echo requests. Calling <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> while a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call is in progress or calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> multiple times before all previous calls have completed causes an <see cref="T:System.InvalidOperationException" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows an application to determine whether a remote computer is accessible over the network.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Ping ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.Ping" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OnPingCompleted">
       <MemberSignature Language="C#" Value="protected void OnPingCompleted (System.Net.NetworkInformation.PingCompletedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void OnPingCompleted(class System.Net.NetworkInformation.PingCompletedEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -37,33 +158,52 @@
         <Parameter Name="e" Type="System.Net.NetworkInformation.PingCompletedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that inherit from the <see cref="T:System.Net.NetworkInformation.Ping" /> class can override this method to perform additional tasks, such as logging the data contained in the <paramref name="e" /> parameter.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Net.NetworkInformation.Ping.OnPingCompleted(System.Net.NetworkInformation.PingCompletedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" />  object that contains event data.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PingCompleted">
       <MemberSignature Language="C#" Value="public event System.Net.NetworkInformation.PingCompletedEventHandler PingCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Net.NetworkInformation.PingCompletedEventHandler PingCompleted" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingCompletedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applications use the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event to get information about the completion status and data collected by a call to one of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate provides the call back method invoked when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises this event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an asynchronous operation to send an Internet Control Message Protocol (ICMP) echo message and receive the corresponding ICMP echo reply message completes or is canceled.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (System.Net.IPAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(class System.Net.IPAddress address) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -71,19 +211,32 @@
         <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sends to the host that is specified by <paramref name="address" /> a 32 <see cref="T:System.Byte" /> data buffer with the ICMP echo message. The method waits five seconds for an ICMP echo reply message. If it does not receive a reply in that time, the method returns and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />. </para>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. The packet or packet fragments (if fragmented) can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receive a corresponding ICMP echo reply message from that computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message, if one was received, or describes the reason for the failure if no message was received.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (string hostNameOrAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(string hostNameOrAddress) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -91,19 +244,32 @@
         <Parameter Name="hostNameOrAddress" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sends a 32 <see cref="T:System.Byte" /> data buffer with the ICMP echo message. The method waits five seconds for an ICMP echo reply message. If it does not receive a reply in that time, the method returns and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />. </para>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. The packet or packet fragments (if fragmented) can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message to the specified computer, and receive a corresponding ICMP echo reply message from that computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message, if one was received, or provides the reason for the failure, if no message was received.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (System.Net.IPAddress address, int timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(class System.Net.IPAddress address, int32 timeout) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -112,20 +278,38 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the ICMP echo reply message is not received within the time specified in the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. </para>
+          <para>The packet or packet fragments can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receive a corresponding ICMP echo reply message from that computer. This method allows you to specify a time-out value for the operation. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message if one was received, or provides the reason for the failure if no message was received.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (string hostNameOrAddress, int timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(string hostNameOrAddress, int32 timeout) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -134,20 +318,37 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the ICMP echo reply message is not received within the time specified in the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. The packet or packet fragments (if fragmented) can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message to the specified computer, and receive a corresponding ICMP echo reply message from that computer. This method allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message if one was received, or provides the reason for the failure if no message was received.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (System.Net.IPAddress address, int timeout, byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(class System.Net.IPAddress address, int32 timeout, unsigned int8[] buffer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -157,21 +358,40 @@
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the ICMP echo reply message is not received within the time specified in the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. </para>
+          <para>The packet or packet fragments can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message, if one was received, or provides the reason for the failure, if no message was received. The method will return <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" /> if the packet exceeds the Maximum Transmission Unit (MTU).</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (string hostNameOrAddress, int timeout, byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(string hostNameOrAddress, int32 timeout, unsigned int8[] buffer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -181,21 +401,40 @@
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the ICMP echo reply message is not received within the time specified in the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. </para>
+          <para>The packet or packet fragments can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message if one was received, or provides the reason for the failure if no message was received.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (System.Net.IPAddress address, int timeout, byte[] buffer, System.Net.NetworkInformation.PingOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(class System.Net.IPAddress address, int32 timeout, unsigned int8[] buffer, class System.Net.NetworkInformation.PingOptions options) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -206,22 +445,42 @@
         <Parameter Name="options" Type="System.Net.NetworkInformation.PingOptions" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>If the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />.</para>
+          <para>Use the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to specify the maximum number of times the ICMP echo message can be forwarded before reaching its destination. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" /> and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation and control fragmentation and Time-to-Live values for the ICMP echo message packet.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message, if one was received, or provides the reason for the failure, if no message was received. The method will return <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" /> if the packet exceeds the Maximum Transmission Unit (MTU).</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.PingOptions" />  object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="public System.Net.NetworkInformation.PingReply Send (string hostNameOrAddress, int timeout, byte[] buffer, System.Net.NetworkInformation.PingOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.NetworkInformation.PingReply Send(string hostNameOrAddress, int32 timeout, unsigned int8[] buffer, class System.Net.NetworkInformation.PingOptions options) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.NetworkInformation.PingReply</ReturnType>
       </ReturnValue>
@@ -232,22 +491,42 @@
         <Parameter Name="options" Type="System.Net.NetworkInformation.PingOptions" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>If the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />.</para>
+          <para>Use the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to specify the maximum number of times the ICMP echo message can be forwarded before reaching its destination. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation and control fragmentation and Time-to-Live values for the ICMP packet.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PingReply" /> object that provides information about the ICMP echo reply message if one was received, or provides the reason for the failure if no message was received.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.PingOptions" />  object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (System.Net.IPAddress address, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(class System.Net.IPAddress address, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -256,19 +535,35 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method sends the echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method when your application should not block. Each call to this method executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. To specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event, you must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <block subset="none" type="note">
+            <para>If your application should block while waiting for a reply, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          </block>
+          <para>This method sends a 32 <see cref="T:System.Byte" /> data buffer with the ICMP echo message. The method waits five seconds for an ICMP echo reply message. If it does not receive a reply in that time, the method returns and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />. </para>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. </para>
+          <para>The packet or packet fragments can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receive a corresponding ICMP echo reply message from that computer.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (string hostNameOrAddress, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(string hostNameOrAddress, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -277,19 +572,35 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.NetworkInformation.Ping.SendAsync(System.String,System.Object)" /> method sends the echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="M:System.Net.NetworkInformation.Ping.SendAsync(System.String,System.Object)" /> method when your application should not block. Each call to this method executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. To specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event, you must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <block subset="none" type="note">
+            <para>If your application should block while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          </block>
+          <para>This method sends a 32 <see cref="T:System.Byte" /> data buffer with the ICMP echo message. The method waits five seconds for an ICMP echo reply message. If it does not receive a reply in that time the method returns and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />. </para>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. </para>
+          <para>The packet or packet fragments can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message to the specified computer, and receive a corresponding ICMP echo reply message from that computer.</para>
+        </summary>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (System.Net.IPAddress address, int timeout, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(class System.Net.IPAddress address, int32 timeout, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -299,20 +610,37 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.NetworkInformation.Ping.SendAsync(System.Net.IPAddress,System.Int32,System.Byte[],System.Object)" /> method sends the Echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method when your application should not block. Each call executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. Applications use a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event. You must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <para>If your application should block while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. The packet or packet fragments (if fragmented) can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (string hostNameOrAddress, int timeout, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(string hostNameOrAddress, int32 timeout, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -322,20 +650,37 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method sends the Echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method when your application should not block. Each call executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. Applications use a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event. You must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <para>If your application should block while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. The packet or packet fragments (if fragmented) can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message to the specified computer, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (System.Net.IPAddress address, int timeout, byte[] buffer, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(class System.Net.IPAddress address, int32 timeout, unsigned int8[] buffer, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -346,21 +691,41 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sends the echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method when your application should not block. Each call executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. To specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event, you must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <block subset="none" type="note">
+            <para>If your application blocks while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          </block>
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. The packet or packet fragments (if fragmented) can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (string hostNameOrAddress, int timeout, byte[] buffer, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(string hostNameOrAddress, int32 timeout, unsigned int8[] buffer, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -371,21 +736,39 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method sends the Echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method when your application should not block. Each call executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. Applications use a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event. You must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object containing a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <para>If your application should block while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>This overload uses default settings for packet fragmentation and packet forwarding. The packet that contains the ICMP echo message can be fragmented in transit if the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers. To prevent fragmentation, use one of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> methods that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property to true. When <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />. The packet or packet fragments (if fragmented) can be forwarded by routing nodes 128 times before being discarded. To change this setting, use a <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> overload that takes an <paramref name="options" /> parameter, and set the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to the desired value. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (System.Net.IPAddress address, int timeout, byte[] buffer, System.Net.NetworkInformation.PingOptions options, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(class System.Net.IPAddress address, int32 timeout, unsigned int8[] buffer, class System.Net.NetworkInformation.PingOptions options, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -397,22 +780,42 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method sends the Echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method when your application must not block. Each call executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. Applications use a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event. You must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <para>If your application blocks while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>If the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />.</para>
+          <para>Use the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to specify the maximum number of times the ICMP echo message can be forwarded before reaching its destination. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation and control fragmentation and Time-to-Live values for the ICMP echo message packet.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.PingOptions" />  object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public void SendAsync (string hostNameOrAddress, int timeout, byte[] buffer, System.Net.NetworkInformation.PingOptions options, object userToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsync(string hostNameOrAddress, int32 timeout, unsigned int8[] buffer, class System.Net.NetworkInformation.PingOptions options, object userToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -424,48 +827,363 @@
         <Parameter Name="userToken" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="hostNameOrAddress">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="userToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method sends the Echo message asynchronously and, when the operation completes (successfully or unsuccessfully), returns the status to your application. Call the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> method when your application must not block. Each call executes in a separate thread that is automatically allocated from the thread pool. When the asynchronous operation completes, it raises the <see cref="E:System.Net.NetworkInformation.Ping.PingCompleted" /> event. Applications use a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to specify the method that is called when <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> raises the event. You must add a <see cref="T:System.Net.NetworkInformation.PingCompletedEventHandler" /> delegate to the event before calling <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" />. The delegate's method receives a <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object that contains a <see cref="T:System.Net.NetworkInformation.PingReply" /> object that describes the result of the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call. The <see cref="T:System.Net.NetworkInformation.PingCompletedEventArgs" /> object inherits the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. This property contains the <paramref name="userToken" /> object passed into the <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> call.</para>
+          <para>If your application should block while waiting for a reply, use the <see cref="Overload:System.Net.NetworkInformation.Ping.Send" /> methods; these methods are synchronous.</para>
+          <para>If the ICMP echo reply message is not received within the time specified by the <paramref name="timeout" /> parameter, the ICMP echo fails, and the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> property is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TimedOut" />.</para>
+          <block subset="none" type="note">
+            <para>When specifying very small numbers for <paramref name="timeout" />, the Ping reply can be received even if <paramref name="timeout" /> milliseconds have elapsed.</para>
+          </block>
+          <para>If the <see cref="P:System.Net.NetworkInformation.PingOptions.DontFragment" /> property is true and the total packet size exceeds the maximum packet size that can be transmitted by one of the routing nodes between the local and remote computers, the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.PacketTooBig" />.</para>
+          <para>Use the <see cref="P:System.Net.NetworkInformation.PingOptions.Ttl" /> property to specify the maximum number of times the ICMP echo message can be forwarded before reaching its destination. If the packet does not reach its destination after being forwarded the specified number of times, the packet is discarded and the ICMP echo request fails. When this happens, the <see cref="P:System.Net.NetworkInformation.PingReply.Status" /> is set to <see cref="F:System.Net.NetworkInformation.IPStatus.TtlExpired" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer. This overload allows you to specify a time-out value for the operation and control fragmentation and Time-to-Live values for the ICMP packet.</para>
+        </summary>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int32" /> value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.PingOptions" />  object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is passed to the method invoked when the asynchronous operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendAsyncCancel">
       <MemberSignature Language="C#" Value="public void SendAsyncCancel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SendAsyncCancel() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to terminate any calls to <see cref="Overload:System.Net.NetworkInformation.Ping.SendAsync" /> that have not completed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels all pending asynchronous requests to send an Internet Control Message Protocol (ICMP) echo message and receives a corresponding ICMP echo reply message.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (System.Net.IPAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(class System.Net.IPAddress address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Net.IPAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receives a corresponding ICMP echo reply message from that computer as an asynchronous operation. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP address that identifies the computer that is the destination for the ICMP echo message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (string hostNameOrAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(string hostNameOrAddress) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostNameOrAddress" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (System.Net.IPAddress address, int timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(class System.Net.IPAddress address, int32 timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Net.IPAddress" />
+        <Parameter Name="timeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receives a corresponding ICMP echo reply message from that computer as an asynchronous operation. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP address that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (string hostNameOrAddress, int timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(string hostNameOrAddress, int32 timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostNameOrAddress" Type="System.String" />
+        <Parameter Name="timeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer as an asynchronous operation. This overload allows you to specify a time-out value for the operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (System.Net.IPAddress address, int timeout, byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(class System.Net.IPAddress address, int32 timeout, unsigned int8[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Net.IPAddress" />
+        <Parameter Name="timeout" Type="System.Int32" />
+        <Parameter Name="buffer" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receives a corresponding ICMP echo reply message from that computer as an asynchronous operation. This overload allows you to specify a time-out value for the operation and a buffer to use for send and receive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP address that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (string hostNameOrAddress, int timeout, byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(string hostNameOrAddress, int32 timeout, unsigned int8[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostNameOrAddress" Type="System.String" />
+        <Parameter Name="timeout" Type="System.Int32" />
+        <Parameter Name="buffer" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer as an asynchronous operation. This overload allows you to specify a time-out value for the operation and a buffer to use for send and receive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (System.Net.IPAddress address, int timeout, byte[] buffer, System.Net.NetworkInformation.PingOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(class System.Net.IPAddress address, int32 timeout, unsigned int8[] buffer, class System.Net.NetworkInformation.PingOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.Net.IPAddress" />
+        <Parameter Name="timeout" Type="System.Int32" />
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="options" Type="System.Net.NetworkInformation.PingOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Send an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the computer that has the specified <see cref="T:System.Net.IPAddress" />, and receives a corresponding ICMP echo reply message from that computer as an asynchronous operation. This overload allows you to specify a time-out value for the operation, a buffer to use for send and receive, and control fragmentation and Time-to-Live values for the ICMP echo message packet.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP address that identifies the computer that is the destination for the ICMP echo message.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.PingOptions" />  object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SendPingAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt; SendPingAsync (string hostNameOrAddress, int timeout, byte[] buffer, System.Net.NetworkInformation.PingOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.NetworkInformation.PingReply&gt; SendPingAsync(string hostNameOrAddress, int32 timeout, unsigned int8[] buffer, class System.Net.NetworkInformation.PingOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.NetworkInformation.PingReply&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostNameOrAddress" Type="System.String" />
+        <Parameter Name="timeout" Type="System.Int32" />
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="options" Type="System.Net.NetworkInformation.PingOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />&gt; object will complete after the ICMP packet has been sent and the response has been received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends an Internet Control Message Protocol (ICMP) echo message with the specified data buffer to the specified computer, and receive a corresponding ICMP echo reply message from that computer as an asynchronous operation. This overload allows you to specify a time-out value for the operation, a buffer to use for send and receive, and control fragmentation and Time-to-Live values for the ICMP echo message packet.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+        <param name="hostNameOrAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name or a string representation of an IP address.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500 bytes.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.PingOptions" />  object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+      </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.IDisposable.Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you call any method on a <see cref="T:System.Net.NetworkInformation.Ping" /> object that has been disposed, you receive an <see cref="T:System.ObjectDisposedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by instances of the <see cref="T:System.Net.NetworkInformation.Ping" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

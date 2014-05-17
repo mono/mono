@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="OperationContextScope" FullName="System.ServiceModel.OperationContextScope">
+  <TypeSignature Language="C#" Value="public sealed class OperationContextScope : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit OperationContextScope extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.OperationContextScope" /> class to create a scope for a specific <see cref="T:System.ServiceModel.OperationContext" /> object or a scope for a new <see cref="T:System.ServiceModel.OperationContext" /> object using a specified <see cref="T:System.ServiceModel.IContextChannel" /> object. An <see cref="T:System.ServiceModel.OperationContextScope" /> can be used in a indigo1 service or indigo2 client application.</para>
+      <para>Once the <see cref="T:System.ServiceModel.OperationContextScope" /> object has established the current operation context, you can use the <see cref="T:System.ServiceModel.OperationContext" /> to:</para>
+      <list type="bullet">
+        <item>
+          <para>Access and modify incoming and outgoing message headers and other properties.</para>
+        </item>
+        <item>
+          <para>Access the runtime, including dispatchers, the host, channel, and extensions.</para>
+        </item>
+        <item>
+          <para>Access other types of contexts, such as security, instance, and request contexts.</para>
+        </item>
+        <item>
+          <para>Access the channel associated with the <see cref="T:System.ServiceModel.OperationContext" /> object or (if the channel implements <see cref="T:System.ServiceModel.Channels.ISession" />) the associated channel's session identifier.</para>
+        </item>
+      </list>
+      <para>When an <see cref="T:System.ServiceModel.OperationContextScope" /> is created, the current <see cref="T:System.ServiceModel.OperationContext" /> is stored and the new <see cref="T:System.ServiceModel.OperationContext" /> becomes the one returned by the <see cref="P:System.ServiceModel.OperationContext.Current" /> property. When the <see cref="T:System.ServiceModel.OperationContextScope" /> is disposed, the original <see cref="T:System.ServiceModel.OperationContext" /> is restored.</para>
+      <block subset="none" type="note">
+        <para>Do not use the asynchronous “await” pattern within a OperationContextScope block. When the continuation occurs, it may run on a different thread and OperationContextScope is thread specific. If you need to call “await” for an async call, use it outside of the OperationContextScope block.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates a block within which an <see cref="T:System.ServiceModel.OperationContext" /> object is in scope.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OperationContextScope (System.ServiceModel.IContextChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.IContextChannel channel) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="channel" Type="System.ServiceModel.IContextChannel" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.OperationContextScope.#ctor(System.ServiceModel.IContextChannel)" /> constructor to create a new <see cref="T:System.ServiceModel.OperationContext" /> for a client channel that can be used to add or modify outbound message headers, read incoming message headers, or access other run-time properties of the <see cref="T:System.ServiceModel.OperationContext" />.</para>
+          <para>The headers added to the <see cref="P:System.ServiceModel.OperationContext.IncomingMessageHeaders" /> property of the newly created <see cref="T:System.ServiceModel.OperationContext" /> apply only to the channel that was passed to the <see cref="Overload:System.ServiceModel.OperationContextScope.#ctor" /> constructor. If the user creates a new channel within its scope then the headers are not applied to messages sent on the new channel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.OperationContextScope" /> class that uses the specified <see cref="T:System.ServiceModel.IContextChannel" /> to create a new <see cref="T:System.ServiceModel.OperationContext" /> for the scope.</para>
+        </summary>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The channel to use when creating the scope for a new <see cref="T:System.ServiceModel.OperationContext" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OperationContextScope (System.ServiceModel.OperationContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.OperationContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.OperationContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.OperationContextScope.#ctor(System.ServiceModel.OperationContext)" /> constructor to create a code block within which the specified <see cref="T:System.ServiceModel.OperationContextScope" /> object is the current scope.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.OperationContextScope" /> class to create a scope for the specified <see cref="T:System.ServiceModel.OperationContext" /> object.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The active <see cref="T:System.ServiceModel.OperationContext" /> in the created scope.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the original <see cref="T:System.ServiceModel.OperationContext" /> to the active context and recycles the <see cref="T:System.ServiceModel.OperationContextScope" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

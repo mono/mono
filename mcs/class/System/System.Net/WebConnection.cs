@@ -30,7 +30,7 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using Mono.Security.Protocol.Tls;
 #else
 extern alias MonoSecurity;
@@ -46,6 +46,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace System.Net
 {
@@ -62,8 +63,9 @@ namespace System.Net
 	{
 		ServicePoint sPoint;
 		Stream nstream;
-		Socket socket;
+		internal Socket socket;
 		object socketLock = new object ();
+		IWebConnectionState state;
 		WebExceptionStatus status;
 		WaitCallback initConn;
 		bool keepAlive;
@@ -77,7 +79,6 @@ namespace System.Net
 		Queue queue;
 		bool reused;
 		int position;
-		bool busy;		
 		HttpWebRequest priority_request;		
 		NetworkCredential ntlm_credentials;
 		bool ntlm_authenticated;
@@ -97,7 +98,7 @@ namespace System.Net
 		Exception connect_exception;
 		static object classLock = new object ();
 		static Type sslStream;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MONODROID
 		static PropertyInfo piClient;
 		static PropertyInfo piServer;
 		static PropertyInfo piTrustFailure;
@@ -108,8 +109,13 @@ namespace System.Net
 		static extern void monotouch_start_wwan (string uri);
 #endif
 
-		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
+		internal ChunkStream ChunkStream {
+			get { return chunkStream; }
+		}
+
+		public WebConnection (IWebConnectionState wcs, ServicePoint sPoint)
 		{
+			this.state = wcs;
 			this.sPoint = sPoint;
 			buffer = new byte [4096];
 			Data = new WebConnectionData ();
@@ -118,7 +124,7 @@ namespace System.Net
 					InitConnection (state);
 				} catch {}
 				});
-			queue = group.Queue;
+			queue = wcs.Group.Queue;
 			abortHelper = new AbortHelper ();
 			abortHelper.Connection = this;
 			abortHandler = new EventHandler (abortHelper.Abort);
@@ -251,7 +257,7 @@ namespace System.Net
 					throw new NotSupportedException (msg);
 				}
 #endif
-#if !MONOTOUCH
+#if !MONOTOUCH && !MONODROID
 				piClient = sslStream.GetProperty ("SelectedClientCertificate");
 				piServer = sslStream.GetProperty ("ServerCertificate");
 				piTrustFailure = sslStream.GetProperty ("TrustFailure");
@@ -435,7 +441,7 @@ namespace System.Net
 								return false;
 						}
 #if SECURITY_DEP
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 						nstream = new HttpsClientStream (serverStream, request.ClientCertificates, request, buffer);
 #else
 						object[] args = new object [4] { serverStream,
@@ -613,16 +619,16 @@ namespace System.Net
 			return (statusCode >= 200 && statusCode != 204 && statusCode != 304);
 		}
 
-		internal void GetCertificates () 
+		internal void GetCertificates (Stream stream) 
 		{
 			// here the SSL negotiation have been done
-#if SECURITY_DEP && MONOTOUCH
-			HttpsClientStream s = (nstream as HttpsClientStream);
+#if SECURITY_DEP && (MONOTOUCH || MONODROID)
+			HttpsClientStream s = (stream as HttpsClientStream);
 			X509Certificate client = s.SelectedClientCertificate;
 			X509Certificate server = s.ServerCertificate;
 #else
-			X509Certificate client = (X509Certificate) piClient.GetValue (nstream, null);
-			X509Certificate server = (X509Certificate) piServer.GetValue (nstream, null);
+			X509Certificate client = (X509Certificate) piClient.GetValue (stream, null);
+			X509Certificate server = (X509Certificate) piServer.GetValue (stream, null);
 #endif
 			sPoint.SetCertificates (client, server);
 			certsAvailable = (server != null);
@@ -750,6 +756,8 @@ namespace System.Net
 		{
 			HttpWebRequest request = (HttpWebRequest) state;
 			request.WebConnection = this;
+			if (request.ReuseConnection)
+				request.StoredConnection = this;
 
 			if (request.Aborted)
 				return;
@@ -797,8 +805,7 @@ namespace System.Net
 				return null;
 
 			lock (this) {
-				if (!busy) {
-					busy = true;
+				if (state.TrySetBusy ()) {
 					status = WebExceptionStatus.Success;
 					ThreadPool.QueueUserWorkItem (initConn, request);
 				} else {
@@ -844,7 +851,7 @@ namespace System.Net
 					Close (false);
 				}
 
-				busy = false;
+				state.SetIdle ();
 				if (priority_request != null) {
 					SendRequest (priority_request);
 					priority_request = null;
@@ -1047,10 +1054,10 @@ namespace System.Net
 			return result;
 		}
 
-		internal void EndWrite2 (HttpWebRequest request, IAsyncResult result)
+		internal bool EndWrite (HttpWebRequest request, bool throwOnError, IAsyncResult result)
 		{
 			if (request.FinishedReading)
-				return;
+				return true;
 
 			Stream s = null;
 			lock (this) {
@@ -1063,33 +1070,11 @@ namespace System.Net
 
 			try {
 				s.EndWrite (result);
+				return true;
 			} catch (Exception exc) {
 				status = WebExceptionStatus.SendFailure;
-				if (exc.InnerException != null)
+				if (throwOnError && exc.InnerException != null)
 					throw exc.InnerException;
-				throw;
-			}
-		}
-
-		internal bool EndWrite (HttpWebRequest request, IAsyncResult result)
-		{
-			if (request.FinishedReading)
-				return true;
-
-			Stream s = null;
-			lock (this) {
-				if (Data.request != request)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				if (nstream == null)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				s = nstream;
-			}
-
-			try {
-				s.EndWrite (result);
-				return true;
-			} catch {
-				status = WebExceptionStatus.SendFailure;
 				return false;
 			}
 		}
@@ -1142,16 +1127,16 @@ namespace System.Net
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				if (nstream == null)
-					return false;
 				s = nstream;
+				if (s == null)
+					return false;
 			}
 
 			try {
 				s.Write (buffer, offset, size);
 				// here SSL handshake should have been done
 				if (ssl && !certsAvailable)
-					GetCertificates ();
+					GetCertificates (s);
 			} catch (Exception e) {
 				err_msg = e.Message;
 				WebExceptionStatus wes = WebExceptionStatus.SendFailure;
@@ -1163,11 +1148,11 @@ namespace System.Net
 
 				// if SSL is in use then check for TrustFailure
 				if (ssl) {
-#if SECURITY_DEP && MONOTOUCH
-					HttpsClientStream https = (nstream as HttpsClientStream);
+#if SECURITY_DEP && (MONOTOUCH || MONODROID)
+					HttpsClientStream https = (s as HttpsClientStream);
 					if (https.TrustFailure) {
 #else
-					if ((bool) piTrustFailure.GetValue (nstream, null)) {
+					if ((bool) piTrustFailure.GetValue (s , null)) {
 #endif
 						wes = WebExceptionStatus.TrustFailure;
 						msg = "Trust failure";
@@ -1183,6 +1168,11 @@ namespace System.Net
 		internal void Close (bool sendNext)
 		{
 			lock (this) {
+				if (Data != null && Data.request != null && Data.request.ReuseConnection) {
+					Data.request.ReuseConnection = false;
+					return;
+				}
+
 				if (nstream != null) {
 					try {
 						nstream.Close ();
@@ -1204,7 +1194,7 @@ namespace System.Net
 						Data.ReadState = ReadState.Aborted;
 					}
 				}
-				busy = false;
+				state.SetIdle ();
 				Data = new WebConnectionData ();
 				if (sendNext)
 					SendNext ();
@@ -1254,10 +1244,6 @@ namespace System.Net
 			unsafe_sharing = false;
 		}
 
-		internal bool Busy {
-			get { lock (this) return busy; }
-		}
-		
 		internal bool Connected {
 			get {
 				lock (this) {

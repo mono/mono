@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Int16" FullName="System.Int16" FullNameSP="System_Int16" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable Int16 extends System.ValueType implements System.IComparable, System.IFormattable" />
   <TypeSignature Language="C#" Value="public struct Int16 : IComparable, IComparable&lt;short&gt;, IConvertible, IEquatable&lt;short&gt;, IFormattable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit int16 extends System.ValueType implements class System.IComparable, class System.IComparable`1&lt;int16&gt;, class System.IConvertible, class System.IEquatable`1&lt;int16&gt;, class System.IFormattable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -30,19 +32,33 @@
       <InterfaceName>System.IFormattable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Int16" /> value type represents signed integers with values ranging from negative 32768 through positive 32767.</para>
+      <para>This type provides methods to convert the value of an instance of this type to its string representation, to convert the string representation of a number to an instance of this type, and to compare instances of this type.</para>
+      <para>You can also call the members of the <see cref="T:System.Math" /> class to perform a wide range of numeric operations, including getting the absolute value of a number, calculating the quotient and remainder from integral division, determining the maximum or minimum value of two integers, getting the sign of a number, and rounding a number.  </para>
+      <para>For information about how format specification codes control the string representation of value types, see <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Types</a></format>.</para>
+    </remarks>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>Represents a 16-bit signed integer.</para>
     </summary>
-    <remarks>
-      <para>The <see cref="T:System.Int16" /> data type represents integer values ranging from
-   negative 32,768 to positive 32,767; that is, hexadecimal: 0x8000 to 0x7FFF.</para>
-    </remarks>
   </Docs>
   <Members>
     <Member MemberName="CompareTo">
       <MemberSignature Language="C#" Value="public int CompareTo (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(int16 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -50,48 +66,72 @@
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements the <see cref="T:System.IComparable`1" /> interface and performs slightly better than the <see cref="M:System.Int16.CompareTo(System.Object)" /> method because it does not have to convert the <paramref name="value" /> parameter to an object.</para>
+          <para>Depending on your programming language, it might be possible to code a <see cref="Overload:System.Int16.CompareTo" /> method where the parameter type has fewer bits (is narrower) than the instance type. This is possible because some programming languages perform an implicit widening conversion that represents the parameter as a type with as many bits as the instance.</para>
+          <para>For example, suppose the instance type is <see cref="T:System.Int32" /> and the parameter type is <see cref="T:System.Byte" />. The Microsoft C# compiler generates instructions to represent the value of the parameter as an <see cref="T:System.Int32" /> object, then generates a <see cref="M:System.Int32.CompareTo(System.Object)" /> method that compares the values of the <see cref="T:System.Int32" /> instance and the <see cref="T:System.Int32" /> parameter representation.</para>
+          <para>Consult your programming language's documentation to determine whether its compiler performs implicit widening conversions on numeric types.</para>
+        </remarks>
         <summary>
-          <para>Returns the sort order of the current instance compared to the specified
-      <see cref="T:System.Int16" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this instance to a specified 16-bit signed integer and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the specified 16-bit signed integer.</para>
         </summary>
         <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
           <list type="table">
             <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
             </listheader>
             <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
             </item>
             <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
             </item>
             <item>
-              <term> A positive number</term>
-              <description>Current instance &gt; <paramref name="value" />.</description>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />. </para>
+              </description>
             </item>
           </list>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IComparable&lt;Int16&gt;" /> interface.</block>
-          </para>
-        </remarks>
-        <since version=".NET 2.0" />
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer to compare. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompareTo">
       <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
       <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -99,53 +139,73 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="value" /> is not a <see cref="T:System.Int16" /> and is not a null reference.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int16" />, regardless of its value, is considered greater than a null reference.</para>
+          <para>The <paramref name="value" /> parameter must be null or an instance of <see cref="T:System.Int16" />; otherwise, an exception is thrown.</para>
+        </remarks>
         <summary>
-          <para>Returns the sort order of the current instance compared to the specified
-      <see cref="T:System.Object" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this instance to a specified object and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the object.</para>
         </summary>
         <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
           <list type="table">
             <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
             </listheader>
             <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
             </item>
             <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
             </item>
             <item>
-              <term> A positive number</term>
-              <description>Current instance &gt; <paramref name="value" />, or
-<paramref name="value" /> is a null reference.</description>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="value" /> is null. </para>
+              </description>
             </item>
           </list>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is
-      implemented to support the <see cref="T:System.IComparable" />
-      interface.</block>
-          </para>
-        </remarks>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="value" /> is not a <see cref="T:System.Int16" /> and is not a null reference.</exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (short obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(int16 obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -153,31 +213,33 @@
         <Parameter Name="obj" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements the <see cref="T:System.IEquatable`1" /> interface, and performs slightly better than <see cref="M:System.Int16.Equals(System.Object)" /> because it does not have to convert the <paramref name="obj" /> parameter to an object.</para>
+        </remarks>
         <summary>
-          <para>Determines whether the current instance and the
-      specified <see cref="T:System.Int16" /> represent the same value.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equal to a specified <see cref="T:System.Int16" /> value.</para>
         </summary>
         <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the same value as the current instance; otherwise, <see langword="false" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> has the same value as this instance; otherwise, false.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.IEquatable&lt;Int16&gt;" /> interface.</block>
-          </para>
-        </remarks>
-        <since version=".NET 2.0" />
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int16" /> value to compare to this instance.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -185,47 +247,40 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">The <see cref="T:System.Object" /> to compare to the current instance.</param>
-        <summary>
-          <para>Determines whether the current instance and the
-      specified <see cref="T:System.Object" /> represent the same type and
-      value.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the
-   same type and value as the current instance. If <paramref name="obj" /> is a null reference
-   or is not an instance of <see cref="T:System.Int16" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
       overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of <see cref="T:System.Int16" /> and equals the value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Generates a hash code for the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>The algorithm used to
       generate the hash code is unspecified. </para>
@@ -234,84 +289,108 @@
       overrides <see cref="M:System.Object.GetHashCode" />.</block>
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetTypeCode">
+      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.TypeCode GetTypeCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetTypeCode">
-      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TypeCode</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.TypeCode" /> for value type <see cref="T:System.Int16" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant, <see cref="F:System.TypeCode.Int16" />.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="ILASM" Value=".field public static literal int16 MaxValue = 32767" />
+      <MemberSignature Language="C#" Value="public const short MaxValue = 32767;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int16 MaxValue = int16(32767)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxValue">
-      <MemberSignature Language="ILASM" Value=".field public static literal int16 MaxValue = 32767" />
-      <MemberSignature Language="C#" Value="public const short MaxValue = 32767;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>32767</MemberValue>
       <Docs>
-        <summary>
-          <para>Contains the maximum value for the <see cref="T:System.Int16" /> type.</para>
-        </summary>
         <remarks>
-          <para> The value of this constant is 32,767 (hexadecimal 0X7FFF).</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this constant is 32767; that is, hexadecimal 0x7FFF.</para>
+          <para>The <see cref="F:System.Int16.MaxValue" /> property is typically used to prevent an <see cref="T:System.OverflowException" /> when converting from a numeric type with a greater upper range (such as a <see cref="T:System.UInt16" /> or a <see cref="T:System.Int32" />) to an <see cref="T:System.Int16" />. The example illustrates this usage.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the largest possible value of an <see cref="T:System.Int16" />. This field is constant.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MinValue">
       <MemberSignature Language="ILASM" Value=".field public static literal int16 MinValue = -32768" />
       <MemberSignature Language="C#" Value="public const short MinValue = -32768;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int16 MinValue = int16(-32768)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int16</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Contains the minimum value for the <see cref="T:System.Int16" /> type.</para>
-        </summary>
-        <remarks>
-          <para>The value of this constant is -32,768 (hexadecimal 0X8000).</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <MemberValue>-32768</MemberValue>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>-32768</MemberValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this constant is -32768; that is, hexadecimal 0x8000.</para>
+          <para>The <see cref="F:System.Int16.MinValue" /> property is typically used to prevent an <see cref="T:System.OverflowException" /> when converting from a numeric type with a greater lower range (such as an <see cref="T:System.Int32" /> or an <see cref="T:System.Int64" />) to an <see cref="T:System.Int16" />. The example illustrates this usage.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the smallest possible value of <see cref="T:System.Int16" />. This field is constant.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Parse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Parse(string s)" />
       <MemberSignature Language="C#" Value="public static short Parse (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 Parse(string s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -319,22 +398,6 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Integer" /> style.</param>
-        <summary>
-          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Int16" /> value.</para>
-        </summary>
-        <returns>
-          <para>The <see cref="T:System.Int16" /> value obtained from <paramref name="s" />.</para>
-        </returns>
-        <remarks>
-          <para>This version of <see cref="M:System.Int16.Parse(System.String)" /> is equivalent to <see cref="M:System.Int16.Parse(System.String)" />
-(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.Integer" />, <see langword="null" /> ).</para>
-          <para>The string <paramref name="s" /> is parsed using the formatting
-information in a <see cref="T:System.Globalization.NumberFormatInfo" /> initialized for the current system
-culture. <block subset="none" type="note"> For
-more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" />.</block></para>
-          <paramref name="" />
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -357,18 +420,73 @@ public class Int16ParseClass {
    100 " &lt;Int16&gt; 100</c>
           </para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="s" /> parameter contains a number of the form: </para>
+          <para>[ws][sign]digits[ws] </para>
+          <para>Elements in square brackets ([ and ]) are optional. The following table describes each element.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Element</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para> ws</para>
+              </term>
+              <description>
+                <para>Optional white space. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para> sign</para>
+              </term>
+              <description>
+                <para>An optional sign. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para> digits</para>
+              </term>
+              <description>
+                <para>A sequence of digits ranging from 0 to 9. </para>
+              </description>
+            </item>
+          </list>
+          <para>The <paramref name="s" /> parameter is interpreted using the <see cref="F:System.Globalization.NumberStyles.Integer" /> style. In addition to the integer value's decimal digits, only leading and trailing spaces together with a leading sign are allowed. To explicitly define the style elements that can be present in <paramref name="s" />, use either the <see cref="M:System.Int16.Parse(System.String,System.Globalization.NumberStyles)" /> or the <see cref="M:System.Int16.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)" /> method.</para>
+          <para>The <paramref name="s" /> parameter is parsed using the formatting information in a <see cref="T:System.Globalization.NumberFormatInfo" /> object that is initialized for the current system culture. For more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" />. To parse a string using the formatting information of some other culture, use the <see cref="M:System.Int16.Parse(System.String,System.IFormatProvider)" /> or the <see cref="M:System.Int16.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the string representation of a number to its 16-bit signed integer equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer equivalent to the number contained in <paramref name="s" />.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Parse(string s, valuetype System.Globalization.NumberStyles style)" />
+      <MemberSignature Language="C#" Value="public static short Parse (string s, System.Globalization.NumberStyles style);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 Parse(string s, valuetype System.Globalization.NumberStyles style) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Parse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Parse(string s, valuetype System.Globalization.NumberStyles style)" />
-      <MemberSignature Language="C#" Value="public static short Parse (string s, System.Globalization.NumberStyles style);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -377,40 +495,248 @@ public class Int16ParseClass {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the style specified by <paramref name="style" />. </param>
-        <param name="style">Zero or more <see cref="T:System.Globalization.NumberStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="style" /> using the bitwise OR operator. If <paramref name="style" /> is a null reference, the string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Integer" /> style. </param>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
-        <summary>
-          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Int16" />
-value.</para>
-        </summary>
-        <returns>
-          <para>The <see cref="T:System.Int16" /> value obtained from <paramref name="s" />.</para>
-        </returns>
-        <remarks>
-          <para>This version of <see cref="M:System.Int16.Parse(System.String)" /> is equivalent to <see cref="M:System.Int16.Parse(System.String)" />(<paramref name="s" />, <paramref name="style" />, <see langword="null" /> ).</para>
-          <para>The string <paramref name="s" /> is parsed using the formatting
-information in a <see cref="T:System.Globalization.NumberFormatInfo" /> initialized for the current system culture. <block subset="none" type="note">For more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" /> .</block></para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference. </exception>
         <exception cref="T:System.FormatException">
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="style" /> parameter defines the style elements (such as white space or a sign symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. Depending on the value of <paramref name="style" />, the <paramref name="s" /> parameter may include the following elements: </para>
+          <para>[ws][$][sign][digits,]digits[.fractional_digits][e[sign]digits][ws] </para>
+          <para>Or, if <paramref name="style" /> includes <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" />:</para>
+          <para>[ws]hexdigits[ws]</para>
+          <para>Items in square brackets ([ and ]) are optional. The following table describes each element.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Element</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ws</para>
+              </term>
+              <description>
+                <para>Optional white space. White space can appear at the beginning of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" /> flag, or at the end of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" /> flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>$</para>
+              </term>
+              <description>
+                <para>A culture-specific currency symbol. Its position in the string is defined by the <see cref="P:System.Globalization.NumberFormatInfo.CurrencyPositivePattern" /> and <see cref="P:System.Globalization.NumberFormatInfo.CurrencyNegativePattern" /> property of the current culture. The current culture's currency symbol can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" /> flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>sign</para>
+              </term>
+              <description>
+                <para>An optional sign. The sign can appear at the beginning of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" /> flag, and it can appear at the end of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" /> flag. Parentheses can be used in <paramref name="s" /> to indicate a negative value if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowParentheses" /> flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>digits</para>
+              </term>
+              <description>
+                <para>A sequence of digits from 0 through 9. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>,</para>
+              </term>
+              <description>
+                <para>A culture-specific thousands separator symbol. The current culture's thousands separator symbol can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> flag.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>.</para>
+              </term>
+              <description>
+                <para>A culture-specific decimal point symbol. The current culture's decimal point symbol can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" /> flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>fractional_digits</para>
+              </term>
+              <description>
+                <para>A sequence of the 0 digit. Fractional digits can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" /> flag. If any digit other than 0 appears in fractional_digits, the method throws an <see cref="T:System.OverflowException" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>e</para>
+              </term>
+              <description>
+                <para>The 'e' or 'E' character, which indicates that <paramref name="s" /> can be represented in exponential notation. The <paramref name="s" /> parameter can represent a number in exponential notation if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowExponent" /> flag. However, the <paramref name="s" /> parameter must represent a number in the range of the <see cref="T:System.Int16" /> data type and cannot have a non-zero fractional component. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hexdigits</para>
+              </term>
+              <description>
+                <para>A sequence of hexadecimal digits from 0 through f, or 0 through F. </para>
+              </description>
+            </item>
+          </list>
+          <para>A string with digits only (which corresponds to the <see cref="F:System.Globalization.NumberStyles.None" /> style) always parses successfully. Most of the remaining <see cref="T:System.Globalization.NumberStyles" /> members control elements that may be but are not required to be present in this input string. The following table indicates how individual <see cref="T:System.Globalization.NumberStyles" /> members affect the elements that may be present in <paramref name="s" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Non-composite NumberStyles values</para>
+                </term>
+                <description>
+                  <para>Elements permitted in s in addition to digits</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.None" />
+                </para>
+              </term>
+              <description>
+                <para>Decimal digits only.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />
+                </para>
+              </term>
+              <description>
+                <para>The . and fractional_digits elements. However, fractional_digits must consist of only one or more 0 digits or an <see cref="T:System.OverflowException" /> is thrown.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowExponent" />
+                </para>
+              </term>
+              <description>
+                <para>The <paramref name="s" /> parameter can also use exponential notation. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />
+                </para>
+              </term>
+              <description>
+                <para>The ws element at the beginning of <paramref name="s" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />
+                </para>
+              </term>
+              <description>
+                <para>The ws element at the end of <paramref name="s" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />
+                </para>
+              </term>
+              <description>
+                <para>A sign can appear before digits.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" />
+                </para>
+              </term>
+              <description>
+                <para>A sign can appear after digits.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowParentheses" />
+                </para>
+              </term>
+              <description>
+                <para>The sign element in the form of parentheses enclosing the numeric value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowThousands" />
+                </para>
+              </term>
+              <description>
+                <para>The , element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" />
+                </para>
+              </term>
+              <description>
+                <para>The $ element.</para>
+              </description>
+            </item>
+          </list>
+          <para>If the <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> flag is used, <paramref name="s" /> must be the string representation of a hexadecimal value. The only other flags that can be present in <paramref name="style" /> are <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" /> and <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />. (The <see cref="T:System.Globalization.NumberStyles" /> enumeration has a composite number style, <see cref="F:System.Globalization.NumberStyles.HexNumber" />, that includes both white space flags.) </para>
+          <para>The <paramref name="s" /> parameter is parsed using the formatting information in a <see cref="T:System.Globalization.NumberFormatInfo" /> object that is initialized for the current system culture. For more information, see <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" />. To parse <paramref name="s" /> using the formatting information of a specific culture, call the <see cref="M:System.Int16.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)" /> method.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the string representation of a number in a specified style to its 16-bit signed integer equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer equivalent to the number specified in <paramref name="s" />.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Parse(string s, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static short Parse (string s, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 Parse(string s, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Parse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Parse(string s, class System.IFormatProvider provider)" />
-      <MemberSignature Language="C#" Value="public static short Parse (string s, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -419,44 +745,83 @@ information in a <see cref="T:System.Globalization.NumberFormatInfo" /> initiali
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Integer" /> style.</param>
-        <param name="provider">To be added.</param>
-        <param name="s">To be added.</param>
-        <summary>
-          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Int16" />value.</para>
-        </summary>
-        <returns>
-          <para>The <see cref="T:System.Int16" /> value obtained from <paramref name="s" />.</para>
-        </returns>
-        <remarks>
-          <para>This version of <see cref="M:System.Int16.Parse(System.String)" /> is equivalent to <see cref="M:System.Int16.Parse(System.String)" />(<paramref name="s" />, <see cref="F:System.Globalization.NumberStyles.Integer" />, <paramref name="provider" />).</para>
-          <para>The string <paramref name="s" /> is parsed using the
-culture-specific formatting information from the <see cref="T:System.Globalization.NumberFormatInfo" />
-instance supplied by <paramref name="provider" />. If <paramref name="provider" /> is
-<see langword="null" /> or a
-<see cref="T:System.Globalization.NumberFormatInfo" /> 
-cannot be obtained from <paramref name="provider" />, the formatting information for the
-current system culture is used.</para>
-          <paramref name="" />
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="s" /> parameter contains a number of the form: </para>
+          <para>[ws][sign]digits[ws] </para>
+          <para>Elements in square brackets ([ and ]) are optional. The following table describes each element.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Element</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para> ws</para>
+              </term>
+              <description>
+                <para>An optional white space. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para> sign</para>
+              </term>
+              <description>
+                <para>An optional sign. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para> digits</para>
+              </term>
+              <description>
+                <para>A sequence of digits ranging from 0 to 9. </para>
+              </description>
+            </item>
+          </list>
+          <para>The <paramref name="s" /> parameter is interpreted using the <see cref="F:System.Globalization.NumberStyles.Integer" /> style. In addition to decimal digits, only leading and trailing spaces together with a leading sign are allowed in <paramref name="s" />. To explicitly define the style elements together with the culture-specific formatting information that can be present in <paramref name="s" />, use the <see cref="M:System.Int16.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)" /> method.</para>
+          <para>The <paramref name="provider" /> parameter is an <see cref="T:System.IFormatProvider" /> implementation that obtains a <see cref="T:System.Globalization.NumberFormatInfo" /> object. The <see cref="T:System.Globalization.NumberFormatInfo" /> provides culture-specific information about the format of <paramref name="s" />. If <paramref name="provider" /> is null, the <see cref="T:System.Globalization.NumberFormatInfo" /> for the current culture is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the string representation of a number in a specified culture-specific format to its 16-bit signed integer equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer equivalent to the number specified in <paramref name="s" />.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> that supplies culture-specific formatting information about <paramref name="s" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Parse(string s, valuetype System.Globalization.NumberStyles style, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public static short Parse (string s, System.Globalization.NumberStyles style, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 Parse(string s, valuetype System.Globalization.NumberStyles style, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Parse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Parse(string s, valuetype System.Globalization.NumberStyles style, class System.IFormatProvider provider)" />
-      <MemberSignature Language="C#" Value="public static short Parse (string s, System.Globalization.NumberStyles style, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -466,45 +831,249 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">A <see cref="T:System.String" /> containing the value to convert. The string is interpreted using the style specified by <paramref name="style" />.</param>
-        <param name="style">Zero or more <see cref="T:System.Globalization.NumberStyles" /> values that specify the style of <paramref name="s" />. Specify multiple values for <paramref name="style" /> using the bitwise OR operator. If <paramref name="style" /> is a null reference, the string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Integer" /> style.</param>
-        <param name="provider">To be added.</param>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
-        <summary>
-          <para>Returns the specified <see cref="T:System.String" /> converted to a <see cref="T:System.Int16" />
-value.</para>
-        </summary>
-        <returns>
-          <para>The <see cref="T:System.Int16" /> value obtained from <paramref name="s" />.</para>
-        </returns>
-        <remarks>
-          <para>The string <paramref name="s" /> is parsed using the
-   culture-specific formatting information from the <see cref="T:System.Globalization.NumberFormatInfo" />
-   instance supplied by <paramref name="provider" />. If <paramref name="provider" /> is
-<see langword="null" /> or a
-<see cref="T:System.Globalization.NumberFormatInfo" /> 
-cannot be obtained from <paramref name="provider" />, the formatting information for the
-current system culture is used.</para>
-          <paramref name="" />
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="style" /> parameter defines the style elements (such as white space or the positive sign) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. Depending on the value of <paramref name="style" />, the <paramref name="s" /> parameter may include the following elements: </para>
+          <para>[ws][$][sign][digits,]digits[.fractional_digits][e[sign]digits][ws] </para>
+          <para>Or, if <paramref name="style" /> includes <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" />:</para>
+          <para>[ws]hexdigits[ws]</para>
+          <para>Elements in square brackets ([ and ]) are optional. The following table describes each element.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Element</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ws</para>
+              </term>
+              <description>
+                <para>Optional white space. White space can appear at the beginning of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" /> flag, or at the end of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" /> flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>$</para>
+              </term>
+              <description>
+                <para>A culture-specific currency symbol. Its position in the string is defined by the <see cref="P:System.Globalization.NumberFormatInfo.CurrencyPositivePattern" /> and <see cref="P:System.Globalization.NumberFormatInfo.CurrencyNegativePattern" /> property of the current culture. The current culture's currency symbol can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" /> flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>sign</para>
+              </term>
+              <description>
+                <para>An optional sign. The sign can appear at the beginning of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" /> flag, and it can appear at the end of <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" /> flag. Parentheses can be used in <paramref name="s" /> to indicate a negative value if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowParentheses" /> flag.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>digits</para>
+              </term>
+              <description>
+                <para>A sequence of digits from 0 through 9. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>,</para>
+              </term>
+              <description>
+                <para>A culture-specific thousands separator symbol. The current culture's thousands separator symbol can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> flag.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>.</para>
+              </term>
+              <description>
+                <para>A culture-specific decimal point symbol. The current culture's decimal point symbol can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" /> flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>fractional_digits</para>
+              </term>
+              <description>
+                <para>A sequence of the 0 digit. Fractional digits can appear in <paramref name="s" /> if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" /> flag. If any digit other than 0 appears in fractional_digits, the method throws an <see cref="T:System.OverflowException" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>e</para>
+              </term>
+              <description>
+                <para>The 'e' or 'E' character, which indicates that <paramref name="s" /> can be represented in exponential notation. The <paramref name="s" /> parameter can represent a number in exponential notation if <paramref name="style" /> includes the <see cref="F:System.Globalization.NumberStyles.AllowExponent" /> flag. However, the <paramref name="s" /> parameter must represent a number in the range of the <see cref="T:System.Int16" /> data type and cannot have a non-zero fractional component.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hexdigits</para>
+              </term>
+              <description>
+                <para>A sequence of hexadecimal digits from 0 through f, or 0 through F. </para>
+              </description>
+            </item>
+          </list>
+          <para>A string with digits only (which corresponds to the <see cref="F:System.Globalization.NumberStyles.None" /> style) always parses successfully. Most of the remaining <see cref="T:System.Globalization.NumberStyles" /> members control elements that may be but are not required to be present in this input string. The following table indicates how individual <see cref="T:System.Globalization.NumberStyles" /> members affect the elements that may be present in <paramref name="s" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Non-composite NumberStyles values</para>
+                </term>
+                <description>
+                  <para>Elements permitted in s in addition to digits</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.None" />
+                </para>
+              </term>
+              <description>
+                <para>Decimal digits only.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />
+                </para>
+              </term>
+              <description>
+                <para>The . and fractional_digits elements. However, fractional_digits must consist of only one or more 0 digits or an <see cref="T:System.OverflowException" /> is thrown.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowExponent" />
+                </para>
+              </term>
+              <description>
+                <para>The <paramref name="s" /> parameter can also use exponential notation. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />
+                </para>
+              </term>
+              <description>
+                <para>The ws element at the beginning of <paramref name="s" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />
+                </para>
+              </term>
+              <description>
+                <para>The ws element at the end of <paramref name="s" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />
+                </para>
+              </term>
+              <description>
+                <para>A sign can appear before digits.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" />
+                </para>
+              </term>
+              <description>
+                <para>A sign can appear after digits.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowParentheses" />
+                </para>
+              </term>
+              <description>
+                <para>The sign element in the form of parentheses enclosing the numeric value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowThousands" />
+                </para>
+              </term>
+              <description>
+                <para>The , element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" />
+                </para>
+              </term>
+              <description>
+                <para>The $ element.</para>
+              </description>
+            </item>
+          </list>
+          <para>If the <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> flag is used, <paramref name="s" /> must be the string representation of a hexadecimal value. The only other flags that can be present in <paramref name="style" /> are <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" /> and <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />. (The <see cref="T:System.Globalization.NumberStyles" /> enumeration has a composite number style, <see cref="F:System.Globalization.NumberStyles.HexNumber" />, that includes both white space flags.) </para>
+          <para>The <paramref name="provider" /> parameter is an <see cref="T:System.IFormatProvider" /> implementation whose <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method obtains a <see cref="T:System.Globalization.NumberFormatInfo" /> object. The <see cref="T:System.Globalization.NumberFormatInfo" /> object provides culture-specific information about the format of <paramref name="s" />. If <paramref name="provider" /> is null, the <see cref="T:System.Globalization.NumberFormatInfo" /> object for the current culture is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the string representation of a number in a specified style and culture-specific format to its 16-bit signed integer equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer equivalent to the number specified in <paramref name="s" />.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> that supplies culture-specific formatting information about <paramref name="s" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="System.IConvertible.ToBoolean">
+      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.IConvertible.ToBoolean(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToBoolean">
-      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -512,20 +1081,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToBoolean(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToBoolean(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the current instance is not zero; otherwise, false.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToByte">
+      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int8 System.IConvertible.ToByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToByte">
-      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -533,20 +1113,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToByte(System.Int16)" /> method</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToByte(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Byte" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToChar">
+      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance char System.IConvertible.ToChar(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToChar">
-      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -554,20 +1145,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToChar(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToChar(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Char" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDateTime">
+      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance valuetype System.DateTime System.IConvertible.ToDateTime(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDateTime">
-      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -575,20 +1177,28 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. Attempting to use this method throws an <see cref="T:System.InvalidCastException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. No value is returned.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDecimal">
+      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance valuetype System.Decimal System.IConvertible.ToDecimal(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDecimal">
-      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -596,20 +1206,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToDecimal(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToDecimal(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Decimal" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDouble">
+      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance float64 System.IConvertible.ToDouble(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDouble">
-      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -617,20 +1238,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToDouble(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToDouble(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Double" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt16">
+      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int16 System.IConvertible.ToInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt16">
-      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -638,20 +1270,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt16(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, unchanged.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt32">
+      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.IConvertible.ToInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt32">
-      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -659,20 +1302,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt32(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt32(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int32" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt64">
+      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int64 System.IConvertible.ToInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt64">
-      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -680,20 +1334,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt64(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt64(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.Int64" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSByte">
+      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int8 System.IConvertible.ToSByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToSByte">
-      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -701,20 +1366,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSByte(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToSByte(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to an <see cref="T:System.SByte" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSingle">
+      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance float32 System.IConvertible.ToSingle(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToSingle">
-      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -722,20 +1398,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSingle(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToSingle(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.Single" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToType">
+      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type targetType, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.IConvertible.ToType(class System.Type targetType, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToType">
-      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type targetType, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -745,20 +1432,31 @@ current system culture is used.</para>
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the static (Shared in Visual Basic) <see cref="M:System.Convert.ChangeType(System.Object,System.Type,System.IFormatProvider)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToType(System.Type,System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to <paramref name="type" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> implementation that supplies information about the format of the returned value.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt16">
+      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int16 System.IConvertible.ToUInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt16">
-      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -766,20 +1464,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt16(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt16(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, unchanged.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt32">
+      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int32 System.IConvertible.ToUInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt32">
-      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -787,20 +1496,31 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt32(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt32(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt32" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt64">
+      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int64 System.IConvertible.ToUInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt64">
-      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -808,53 +1528,126 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Int16" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt64(System.Int16)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt64(System.IFormatProvider)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current instance, converted to a <see cref="T:System.UInt64" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Int16.ToString" /> method formats an <see cref="T:System.Int16" /> value in the default ("G", or general) format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of the current culture. If you want to specify a different format or culture, use the other overloads of the <see cref="M:System.Int16.ToString(System.String)" /> method, as follows: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To use format</para>
+                </term>
+                <description>
+                  <para>For culture</para>
+                </description>
+                <description>
+                  <para>Use the overload</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Default ("G") format</para>
+              </term>
+              <description>
+                <para>A specific culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.IFormatProvider)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A specific format</para>
+              </term>
+              <description>
+                <para>Default (current) culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.String)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A specific format</para>
+              </term>
+              <description>
+                <para>A specific culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.String,System.IFormatProvider)" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>     </para>
+          <para>The .NET Framework provides extensive formatting support, which is described in greater detail in the following formatting topics:</para>
+          <list type="bullet">
+            <item>
+              <para>For more information about numeric format specifiers, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>. </para>
+            </item>
+            <item>
+              <para>For more information about formatting, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>. </para>
+            </item>
+          </list>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the numeric value of this instance to its equivalent string representation.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier ("G"). The string takes into account the current
-   system culture.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance, consisting of a minus sign if the value is negative, and a sequence of digits ranging from 0 to 9 with no leading zeroes.</para>
         </returns>
-        <remarks>
-          <para>This version of <see cref="M:System.Int16.ToString" /> is equivalent to <see cref="M:System.Int16.ToString" />(<see langword="null" />, <see langword="null" />).</para>
-          <para>
-            <block subset="none" type="note">This method
-   overrides <see cref="M:System.Object.ToString" />.</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
-      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -862,36 +1655,97 @@ current system culture is used.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">A <see cref="T:System.IFormatProvider" /> that supplies a <see cref="T:System.Globalization.NumberFormatInfo" /> containing culture-specific formatting information.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Int16.ToString(System.IFormatProvider)" /> method formats an <see cref="T:System.Int16" /> value in the default ("G", or general) format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to specify a different format or the current culture, use the other overloads of the <see cref="M:System.Int16.ToString(System.String)" /> method, as follows:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To use format</para>
+                </term>
+                <description>
+                  <para>For culture</para>
+                </description>
+                <description>
+                  <para>Use the overload</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Default ("G") format</para>
+              </term>
+              <description>
+                <para>Default (current) culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A specific format</para>
+              </term>
+              <description>
+                <para>Default (current) culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.String)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A specific format</para>
+              </term>
+              <description>
+                <para>A specific culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.String,System.IFormatProvider)" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>The .NET Framework provides extensive formatting support, which is described in greater detail in the following formatting topics:</para>
+          <list type="bullet">
+            <item>
+              <para>For more information about numeric format specifiers, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>. </para>
+            </item>
+            <item>
+              <para>For more information about formatting, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>. </para>
+            </item>
+          </list>
+          <para>The <paramref name="provider" /> parameter is an <see cref="T:System.IFormatProvider" /> implementation whose <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method returns a <see cref="T:System.Globalization.NumberFormatInfo" /> object. Typically, <paramref name="provider" /> is a <see cref="T:System.Globalization.NumberFormatInfo" /> object or a <see cref="T:System.Globalization.CultureInfo" /> object. The <see cref="T:System.Globalization.NumberFormatInfo" /> object provides culture-specific information about the format of the string returned by this method. If <paramref name="provider" /> is null, this instance is formatted with the <see cref="T:System.Globalization.NumberFormatInfo" /> object for the current culture.</para>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the numeric value of this instance to its equivalent string representation using the specified culture-specific format information.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted using
-   the general format specifier, ("G"). The string takes into account the
-   formatting information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by
-<paramref name="provider" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="provider" />.</para>
         </returns>
-        <remarks>
-          <para>This version of <see cref="M:System.Int16.ToString" /> is equivalent to <see cref="M:System.Int16.ToString" />("G",
-<paramref name="provider" />).</para>
-          <para>If <paramref name="provider" /> is 
-<see langword="null" /> or a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot
-be obtained from <paramref name="provider" />, the formatting information for the current
-system culture is used.</para>
-        </remarks>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> that supplies culture-specific formatting information. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(string format)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(string format) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(string format)" />
-      <MemberSignature Language="C#" Value="public string ToString (string format);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -899,19 +1753,6 @@ system culture is used.</para>
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">A <see cref="T:System.String" /> that specifies the format of the returned string. <block subset="none" type="note">For a list of valid values, see <see cref="M:System.Int16.ToString" />(<see cref="T:System.String" />, <see cref="T:System.IFormatProvider" />).</block></param>
-        <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the current system culture.</para>
-        </returns>
-        <remarks>
-          <para>This version of <see cref="M:System.Int16.ToString" /> is equivalent to <see cref="M:System.Int16.ToString" />(<paramref name="format" />, null).</para>
-          <para>If <paramref name="format" /> is a null reference, the general
-format specifier "G" is used.</para>
-        </remarks>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
         <example>
@@ -940,18 +1781,98 @@ public class Int16ToStringExample {
             <para>x: 10</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Int16.ToString(System.String)" /> method formats an <see cref="T:System.Int16" /> value in a specified format by using a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the conventions of the current culture. If you want to use the default ("G", or general) format or specify a different culture, use the other overloads of the <see cref="M:System.Int16.ToString(System.String)" /> method, as follows:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To use format</para>
+                </term>
+                <description>
+                  <para>For culture</para>
+                </description>
+                <description>
+                  <para>Use the overload</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Default ("G") format</para>
+              </term>
+              <description>
+                <para>Default (current) culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Default ("G") format</para>
+              </term>
+              <description>
+                <para>A specific culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.IFormatProvider)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A specific format</para>
+              </term>
+              <description>
+                <para>A specific culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.String,System.IFormatProvider)" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>The <paramref name="format" /> parameter can be either a standard or a custom numeric format string. All standard numeric format strings other than "R" (or "r") are supported, as are all custom numeric format characters. If <paramref name="format" /> is null or an empty string, the return value of this instance is formatted with the general numeric format specifier ("G").</para>
+          <para>The .NET Framework provides extensive formatting support, which is described in greater detail in the following formatting topics:</para>
+          <list type="bullet">
+            <item>
+              <para>For more information about numeric format specifiers, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>. </para>
+            </item>
+            <item>
+              <para>For more information about formatting, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>. </para>
+            </item>
+          </list>
+          <para>The return value of this instance is formatted with the <see cref="T:System.Globalization.NumberFormatInfo" /> for the current culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the numeric value of this instance to its equivalent string representation, using the specified format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(string format, class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(string format, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(string format, class System.IFormatProvider provider)" />
-      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -960,84 +1881,114 @@ public class Int16ToStringExample {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="format">A <see cref="T:System.String" /> containing a character that specifies the format of the returned string.</param>
-        <param name="provider">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the value of
-   the current instance. </para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as
-   specified by <paramref name="format" />. The string takes into account the formatting
-   information in the <see cref="T:System.Globalization.NumberFormatInfo" /> instance supplied by <paramref name="provider" />.</para>
-        </returns>
-        <remarks>
-          <para>If <paramref name="provider" /> is 
-<see langword="null" /> or a <see cref="T:System.Globalization.NumberFormatInfo" /> cannot
-   be obtained from <paramref name="provider" />, the formatting information for the current
-   system culture is used.</para>
-          <para>If <paramref name="format" /> is a null reference, the general
-format specifier "G" is used.</para>
-          <block subset="none" type="note">
-            <para> For a
-      detailed description of formatting, see the <see cref="T:System.IFormattable" /> interface.</para>
-            <para> This method is implemented
-      to support the <see cref="T:System.IFormattable" /> interface.</para>
-          </block>
-          <para>The following table lists the characters that are valid for the <see cref="T:System.Int16" /> type.</para>
-          <list type="table">
-            <listheader>
-              <term>Format Characters</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> "C", "c"</term>
-              <description>Currency format.</description>
-            </item>
-            <item>
-              <term> "D", "d"</term>
-              <description>Decimal format.</description>
-            </item>
-            <item>
-              <term> "E", "e"</term>
-              <description>Exponential notation format.</description>
-            </item>
-            <item>
-              <term> "F", "f"</term>
-              <description>Fixed-point format.</description>
-            </item>
-            <item>
-              <term> "G", "g"</term>
-              <description>General format.</description>
-            </item>
-            <item>
-              <term> "N", "n"</term>
-              <description>Number format.</description>
-            </item>
-            <item>
-              <term> "P", "p"</term>
-              <description>Percent format.</description>
-            </item>
-            <item>
-              <term> "X", "x"</term>
-              <description>Hexadecimal format.</description>
-            </item>
-          </list>
-        </remarks>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Int16.ToString(System.String,System.IFormatProvider)" /> method formats an <see cref="T:System.Int16" /> value in a specified format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to use default format or culture settings, use the other overloads of the <see cref="M:System.Int16.ToString(System.String)" /> method, as follows:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To use format</para>
+                </term>
+                <description>
+                  <para>For culture</para>
+                </description>
+                <description>
+                  <para>Use the overload</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Default ("G") format</para>
+              </term>
+              <description>
+                <para>Default (current) culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Default ("G") format</para>
+              </term>
+              <description>
+                <para>A specific culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.IFormatProvider)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A specific format</para>
+              </term>
+              <description>
+                <para>Default (current) culture</para>
+              </description>
+              <description>
+                <para>
+                  <see cref="M:System.Int16.ToString(System.String)" />
+                </para>
+              </description>
+            </item>
+          </list>
+          <para>The <paramref name="format" /> parameter can be either a standard or a custom numeric format string. All standard numeric format strings other than "R" (or "r") are supported, as are all custom numeric format characters. If <paramref name="format" /> is null or an empty string (""), the string returned by this method is formatted with the general numeric format specifier ("G").</para>
+          <para>The .NET Framework provides extensive formatting support, which is described in greater detail in the following formatting topics:</para>
+          <list type="bullet">
+            <item>
+              <para>For more information about numeric format specifiers, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>. </para>
+            </item>
+            <item>
+              <para>For more information about formatting, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>. </para>
+            </item>
+          </list>
+          <para>The <paramref name="provider" /> parameter is an <see cref="T:System.IFormatProvider" /> implementation. Its <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method returns a <see cref="T:System.Globalization.NumberFormatInfo" /> object that provides culture-specific information about the format of the string that is returned by this method. The object that implements <see cref="T:System.IFormatProvider" /> can be any of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="T:System.Globalization.CultureInfo" /> object that represents the culture whose formatting rules are to be used.</para>
+            </item>
+            <item>
+              <para>A <see cref="T:System.Globalization.NumberFormatInfo" /> object that contains specific numeric formatting information for this value.</para>
+            </item>
+            <item>
+              <para>A custom object that implements <see cref="T:System.IFormatProvider" />.</para>
+            </item>
+          </list>
+          <para>If <paramref name="provider" /> is null, or a <see cref="T:System.Globalization.NumberFormatInfo" /> object cannot be obtained from <paramref name="provider" />, the return value is formatted with the <see cref="T:System.Globalization.NumberFormatInfo" /> for the current culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the numeric value of this instance to its equivalent string representation using the specified format and culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryParse">
       <MemberSignature Language="C#" Value="public static bool TryParse (string s, out short result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string s, int16 result) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1053,14 +2004,15 @@ format specifier "G" is used.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string s, System.Globalization.NumberStyles style, IFormatProvider provider, out short result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string s, valuetype System.Globalization.NumberStyles style, class System.IFormatProvider provider, int16 result) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TryParse">
-      <MemberSignature Language="C#" Value="public static bool TryParse (string s, System.Globalization.NumberStyles style, IFormatProvider provider, out short result);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1080,16 +2032,7 @@ format specifier "G" is used.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

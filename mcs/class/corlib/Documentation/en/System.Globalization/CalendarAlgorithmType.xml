@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CalendarAlgorithmType" FullName="System.Globalization.CalendarAlgorithmType">
   <TypeSignature Language="C#" Value="public enum CalendarAlgorithmType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CalendarAlgorithmType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,70 +16,93 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A date calculation for a particular calendar depends on whether the calendar is solar-based, lunar-based, or lunisolar-based. For example, the <see cref="T:System.Globalization.GregorianCalendar" />, <see cref="T:System.Globalization.JapaneseCalendar" />, and <see cref="T:System.Globalization.JulianCalendar" /> classes are solar-based, the <see cref="T:System.Globalization.HijriCalendar" /> and <see cref="T:System.Globalization.UmAlQuraCalendar" /> classes are lunar-based,.and the <see cref="T:System.Globalization.HebrewCalendar" /> and <see cref="T:System.Globalization.JapaneseLunisolarCalendar" /> classes are lunisolar-based, thus using solar calculations for the year and lunar calculations for the month and day.</para>
+      <para>A <see cref="T:System.Globalization.CalendarAlgorithmType" /> value, which is returned by a calendar member such as the <see cref="P:System.Globalization.Calendar.AlgorithmType" /> property, specifies the foundation for a particular calendar. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a calendar is solar-based, lunar-based, or lunisolar-based.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="LunarCalendar">
       <MemberSignature Language="C#" Value="LunarCalendar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType LunarCalendar = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A lunar-based calendar.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LunisolarCalendar">
       <MemberSignature Language="C#" Value="LunisolarCalendar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType LunisolarCalendar = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A lunisolar-based calendar.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SolarCalendar">
       <MemberSignature Language="C#" Value="SolarCalendar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType SolarCalendar = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A solar-based calendar.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType Unknown = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unknown calendar basis.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FieldInfo" FullName="System.Reflection.FieldInfo" FullNameSP="System_Reflection_FieldInfo" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable FieldInfo extends System.Reflection.MemberInfo" />
   <TypeSignature Language="C#" Value="public abstract class FieldInfo : System.Reflection.MemberInfo, System.Runtime.InteropServices._FieldInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit FieldInfo extends System.Reflection.MemberInfo implements class System.Runtime.InteropServices._FieldInfo" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -30,64 +32,58 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Provides access
-      to field metadata.</para>
-    </summary>
-    <remarks>To be added.</remarks>
     <permission cref="!:" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The field information is obtained from metadata. The <see cref="T:System.Reflection.FieldInfo" /> class does not have a public constructor. <see cref="T:System.Reflection.FieldInfo" /> objects are obtained by calling either the <see cref="M:System.Type.GetFields" /> or <see cref="M:System.Type.GetField(System.String,System.Reflection.BindingFlags)" /> method of a Type object.</para>
+      <para>Fields are variables defined in the class. <see cref="T:System.Reflection.FieldInfo" /> provides access to the metadata for a field within a class and provides dynamic set and get functionality for the field. The class is not loaded into memory until invoke or get is called on the object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Discovers the attributes of a field and provides access to field metadata. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected FieldInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.Reflection.FieldInfo" />
-class.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the FieldInfo class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Attributes">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Reflection.FieldAttributes Attributes { public hidebysig virtual abstract specialname valuetype System.Reflection.FieldAttributes get_Attributes() }" />
       <MemberSignature Language="C#" Value="public abstract System.Reflection.FieldAttributes Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.FieldAttributes Attributes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the attributes of the field reflected by
-      the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Reflection.FieldAttributes" /> value that indicates the attributes of
    the field reflected by the current instance.</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">This property
-      is read-only.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this property to determine the accessibility
-      of the field reflected by the current instance. Also use this
-      property to determine if the field reflected by the current instance can be set
-      after it is initialized, is implemented in native code, is a literal, or has a
-      special name.</block>
-          </para>
-        </remarks>
         <example>
           <para> The following example
       demonstrates obtaining the attributes of two fields.</para>
@@ -140,16 +136,21 @@ class FieldAttributesExample
             <para>Static Not-Public Literal</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All members have a set of attributes, which are defined in relation to the specific type of member. FieldAttributes informs the user whether this field is the private field, a static field, and so on.</para>
+          <para>To get the Attributes property, first get the class Type. From the Type, get the FieldInfo. From the FieldInfo, get the Attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes associated with this field.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -161,97 +162,111 @@ class FieldAttributesExample
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="FieldHandle">
       <MemberSignature Language="C#" Value="public abstract RuntimeFieldHandle FieldHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.RuntimeFieldHandle FieldHandle" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.RuntimeFieldHandle</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.RuntimeFieldHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The handles are valid only in the appdomain in which they were obtained.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a RuntimeFieldHandle, which is a handle to the internal metadata representation of a field.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="FieldType">
       <MemberSignature Language="ILASM" Value=".property class System.Type FieldType { public hidebysig virtual abstract specialname class System.Type get_FieldType() }" />
       <MemberSignature Language="C#" Value="public abstract Type FieldType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type FieldType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the type of the field reflected by
-      the current instance.</para>
-        </summary>
         <value>
           <para> The <see cref="T:System.Type" /> of the field
    reflected by the current instance.
    </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type is some primitive data type, such as String, Boolean, or GUID.</para>
+          <para>To get the FieldType property, first get the class Type. From the Type, get the FieldInfo. From the FieldInfo, get the FieldType value.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of this field object.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFieldFromHandle">
       <MemberSignature Language="C#" Value="public static System.Reflection.FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.FieldInfo GetFieldFromHandle(valuetype System.RuntimeFieldHandle handle) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.FieldInfo</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="handle" Type="System.RuntimeFieldHandle" />
-      </Parameters>
-      <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetFieldFromHandle">
-      <MemberSignature Language="C#" Value="public static System.Reflection.FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldInfo</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="handle" Type="System.RuntimeFieldHandle" />
-        <Parameter Name="declaringType" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <param name="declaringType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handles are valid only in the application domain in which they were obtained.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Reflection.FieldInfo" /> for the field represented by the specified handle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field specified by <paramref name="handle" />.</para>
+        </returns>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeFieldHandle" /> structure that contains the handle to the internal metadata representation of a field. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetFieldFromHandle">
+      <MemberSignature Language="C#" Value="public static System.Reflection.FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.FieldInfo GetFieldFromHandle(valuetype System.RuntimeFieldHandle handle, valuetype System.RuntimeTypeHandle declaringType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -261,9 +276,39 @@ class FieldAttributesExample
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="System.RuntimeFieldHandle" />
+        <Parameter Name="declaringType" Type="System.RuntimeTypeHandle" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handles are valid only in the application domain in which they were obtained.</para>
+          <para>The recommended practice is that <paramref name="declaringType" /> should always be the runtime type handle of the constructed type that <paramref name="handle" /> belongs to. That is, if <paramref name="handle" /> is a runtime field handle for a field that belongs to MyType&lt;int&gt; (MyType(Of Integer) in Visual Basic), <paramref name="declaringType" /> is the runtime type handle for MyType&lt;int&gt;. Do not use the runtime type handle of the generic type definition, unless the runtime field handle represents a field on the generic type definition.</para>
+          <para>Implementations are compatible in some cases. For example, a single implementation is shared by all types that are constructed from a particular generic type definition by using reference types for the generic type arguments. For example, MyType&lt;string&gt;, MyType&lt;object&gt;, and MyType&lt;ArrayList&gt; all share the same implementation. In this situation, the <see cref="T:System.Reflection.FieldInfo" /> object that is returned represents a field on the type that <paramref name="declaringType" /> specifies, regardless of the original source of <paramref name="handle" />. This practice is not recommended, because it works only if the generic type arguments of the constructed type are reference types.</para>
+          <para>If a generic argument is a value type, the runtime type handle of the constructed type is not compatible with runtime field handles from constructions that have a reference type in the same generic parameter position, or that have a different value type in that position. In that case, the only way to use the <see cref="M:System.Reflection.FieldInfo.GetFieldFromHandle(System.RuntimeFieldHandle,System.RuntimeTypeHandle)" /> overload is to ensure that <paramref name="declaringType" /> is the runtime type handle for the constructed type that <paramref name="handle" /> belongs to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Reflection.FieldInfo" /> for the field represented by the specified handle, for the specified generic type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field specified by <paramref name="handle" />, in the generic type specified by <paramref name="declaringType" />.</para>
+        </returns>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeFieldHandle" /> structure that contains the handle to the internal metadata representation of a field.</param>
+        <param name="declaringType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeTypeHandle" /> structure that contains the handle to the generic type that defines the field.</param>
+      </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -273,64 +318,105 @@ class FieldAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOptionalCustomModifiers">
       <MemberSignature Language="C#" Value="public virtual Type[] GetOptionalCustomModifiers ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type[] GetOptionalCustomModifiers() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Reflection.FieldInfo.GetOptionalCustomModifiers" /> and <see cref="M:System.Reflection.FieldInfo.GetRequiredCustomModifiers" /> methods are provided for designers of managed compilers. For more information on custom modifiers, see <see cref="T:System.Runtime.CompilerServices.IsBoxed" /> and related classes in the <see cref="N:System.Runtime.CompilerServices" /> namespace and the metadata specification in the ECMA Partition II documentation. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of types that identify the optional custom modifiers of the field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the optional custom modifiers of the current field, such as <see cref="T:System.Runtime.CompilerServices.IsConst" />.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetRawConstantValue">
+      <MemberSignature Language="C#" Value="public virtual object GetRawConstantValue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetRawConstantValue() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRawConstantValue">
-      <MemberSignature Language="C#" Value="public virtual object GetRawConstantValue ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is provided for designers of managed compilers and code analyzers.</para>
+          <para>This method can be used in both the execution context and the reflection-only context.</para>
+          <para>In unmanaged metadata, the Constant table is used to store constant values for fields, parameters, and properties. Constant information does not directly influence runtime behavior. Compilers inspect this information, at compile time, when importing metadata. If used, the value of a constant is embedded in the Microsoft intermediate language (MSIL) stream the compiler emits. There are no MSIL instructions that can be used to access the Constant table at run time.</para>
+          <block subset="none" type="note">
+            <para>For more information on constant values and the Constant table, see the ECMA Partition II documentation. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a literal value associated with the field by a compiler. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the literal value associated with the field. If the literal value is a class type with an element value of zero, the return value is null.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetRequiredCustomModifiers">
+      <MemberSignature Language="C#" Value="public virtual Type[] GetRequiredCustomModifiers ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type[] GetRequiredCustomModifiers() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRequiredCustomModifiers">
-      <MemberSignature Language="C#" Value="public virtual Type[] GetRequiredCustomModifiers ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Reflection.FieldInfo.GetOptionalCustomModifiers" /> and <see cref="M:System.Reflection.FieldInfo.GetRequiredCustomModifiers" /> methods are provided for designers of managed compilers. For more information on custom modifiers, see <see cref="T:System.Runtime.CompilerServices.IsBoxed" /> and related classes in the <see cref="N:System.Runtime.CompilerServices" /> namespace and the metadata specification in the ECMA Partition II documentation. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of types that identify the required custom modifiers of the property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the required custom modifiers of the current property, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsImplicitlyDereferenced" />.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
       <MemberSignature Language="C#" Value="public Type GetType ();" />
@@ -351,7 +437,13 @@ class FieldAttributesExample
     <Member MemberName="GetValue">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract object GetValue(object obj)" />
       <MemberSignature Language="C#" Value="public abstract object GetValue (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetValue(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -359,49 +451,39 @@ class FieldAttributesExample
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">An object that contains the field value to be returned. If the field reflected by the current instance is static, <paramref name="obj " />is ignored. For non-static fields, <paramref name="obj " /> is required to be an instance of a class that inherits or declares the field. </param>
-        <summary>
-          <para> Obtains the value of the field that is reflected by the current instance and contained in the specified object.
-      </para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Object" /> that contains the
-   value of the field reflected by the current instance.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">Before
-      returning the value, the system checks to see if the user has access permission. </block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">A field is marked literal, but the field does not have one of the accepted literal types. <block subset="none" type="note">For information regarding the accepted literal types, see Partition II of the CLI Specification.</block></exception>
         <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
         <exception cref="T:System.ArgumentException">The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</exception>
         <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" />. </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the field is static, <paramref name="obj" /> is ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field. Note that the return type of GetValue is Object. For example, if the field holds a Boolean primitive value, an instance of Object with the appropriate Boolean value is returned. Before returning the value, GetValue checks to see if the user has access permission.</para>
+          <block subset="none" type="note">
+            <para>Access restrictions are ignored for fully trusted code. That is, private constructors, methods, fields, and properties can be accessed and invoked through reflection whenever the code is fully trusted.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access non-public members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the non-public members is restricted to the caller’s grant set, or a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the value of a field supported by a given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the value of the field reflected by this instance.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose field value will be returned. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetValueDirect">
       <MemberSignature Language="C#" Value="public virtual object GetValueDirect (TypedReference obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetValueDirect(valuetype System.TypedReference obj) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.TypedReference" />
-      </Parameters>
-      <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -412,231 +494,612 @@ class FieldAttributesExample
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.TypedReference" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of a field supported by a given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Object containing a field value.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TypedReference" /> structure that encapsulates a managed pointer to a location and a runtime representation of the type that might be stored at that location. </param>
+      </Docs>
     </Member>
     <Member MemberName="IsAssembly">
       <MemberSignature Language="C#" Value="public bool IsAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAssembly" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual visibility of a field is limited by the visibility of its type. The <see cref="P:System.Reflection.FieldInfo.IsAssembly" /> property might be true for a field, but if it is a field of a private nested type then the field is not visible outside the containing type.</para>
+          <para>The visibility of a field is exactly described by <see cref="F:System.Reflection.FieldAttributes.Assembly" /> if the only visibility modifier is internal (Friend in Visual Basic). This property is false for fields that are protected internal in C# (Protected Friend in Visual Basic, protected public in C++); use the <see cref="P:System.Reflection.FieldInfo.IsFamilyOrAssembly" /> property to identify such fields.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the potential visibility of this field is described by <see cref="F:System.Reflection.FieldAttributes.Assembly" />; that is, the field is visible at most to other types in the same assembly, and is not visible to derived types outside the assembly.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsFamily">
       <MemberSignature Language="C#" Value="public bool IsFamily { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFamily" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The visibility of a field is exactly described by <see cref="F:System.Reflection.FieldAttributes.Family" /> if the only visibility modifier is protected. This property is false for fields that are protected internal in C# (Protected Friend in Visual Basic, protected public in C++); use the <see cref="P:System.Reflection.FieldInfo.IsFamilyOrAssembly" /> property to identify such fields.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the visibility of this field is described by <see cref="F:System.Reflection.FieldAttributes.Family" />; that is, the field is visible only within its class and derived classes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsFamilyAndAssembly">
       <MemberSignature Language="C#" Value="public bool IsFamilyAndAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFamilyAndAssembly" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a field has <see cref="F:System.Reflection.FieldAttributes.FamANDAssem" /> level visibility, it can be called from any member in a derived class that is also in the same assembly, but not from any other type.</para>
+          <para>The visibility of a field is exactly described by <see cref="F:System.Reflection.FieldAttributes.FamANDAssem" /> if the visibility modifier is protected private in C++. Fields with this visibility cannot be defined in Visual Basic or C#.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the visibility of this field is described by <see cref="F:System.Reflection.FieldAttributes.FamANDAssem" />; that is, the field can be accessed from derived classes, but only if they are in the same assembly.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsFamilyOrAssembly">
       <MemberSignature Language="C#" Value="public bool IsFamilyOrAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFamilyOrAssembly" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a field has <see cref="F:System.Reflection.FieldAttributes.FamORAssem" /> level visibility, it can be called from any member in a derived class or any member in the same assembly, but not from any other type.</para>
+          <para>The actual visibility of a field is limited by the visibility of its type. The <see cref="P:System.Reflection.FieldInfo.IsFamilyOrAssembly" /> property might be true for a field, but if it is a field of a private nested type then the field is not visible outside the containing type.</para>
+          <para>The visibility of a field is exactly described by <see cref="F:System.Reflection.FieldAttributes.FamORAssem" /> if the visibility modifier is protected internal in C# (Protected Friend in Visual Basic, protected public in C++).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the potential visibility of this field is described by <see cref="F:System.Reflection.FieldAttributes.FamORAssem" />; that is, the field can be accessed by derived classes wherever they are, and by classes in the same assembly.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsInitOnly">
       <MemberSignature Language="C#" Value="public bool IsInitOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInitOnly" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the returned value is true, the field can only be initialized, and is read-only thereafter.</para>
+          <para>To get the IsInitOnly property, first get the class Type. From the Type, get the FieldInfo. From the FieldInfo, get the IsInitOnly property. To access a non-public field, combine <see cref="F:System.Reflection.BindingFlags.NonPublic" /> with either or both of <see cref="F:System.Reflection.BindingFlags.Static" /> and <see cref="F:System.Reflection.BindingFlags.Instance" /> in the GetField method.</para>
+          <para>The IsInitOnly property is set when the <see cref="F:System.Reflection.FieldAttributes.InitOnly" /> attribute is set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the field can only be set in the body of the constructor.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsLiteral">
       <MemberSignature Language="C#" Value="public bool IsLiteral { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsLiteral" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The IsLiteral property is set when the FieldAttributes.Literal attribute is set. If this attribute is set, the field cannot be changed and is constant.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the value is written at compile time and cannot be changed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsNotSerialized">
       <MemberSignature Language="C#" Value="public bool IsNotSerialized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsNotSerialized" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The IsNotSerialized property returns true when the field is marked with the FieldAttributes.NotSerialized flag. When this flag is set on a field, it indicates that the field does not have to be serialized when the type is remoted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this field has the NotSerialized attribute.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsPinvokeImpl">
       <MemberSignature Language="C#" Value="public bool IsPinvokeImpl { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPinvokeImpl" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the corresponding PinvokeImpl attribute is set in <see cref="T:System.Reflection.FieldAttributes" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsPrivate">
       <MemberSignature Language="C#" Value="public bool IsPrivate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPrivate" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Private fields are accessible only from member functions.</para>
+          <para>The IsPrivate property is set when the FieldAttributes.Private attribute is set.</para>
+          <para>To get the IsPrivate property, first get the class Type. From the Type, get the FieldInfo. From the FieldInfo, get the IsPrivate property. To access a non-public field, set the BindingFlags to NonPublic, and either Static or Instance in the GetField method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the field is private.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsPublic">
       <MemberSignature Language="C#" Value="public bool IsPublic { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPublic" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Public fields are accessible everywhere their corresponding classes are visible.</para>
+          <para>The IsPublic property is set when the FieldAttributes.Public attribute is set.</para>
+          <para>To get the IsPublic property, first get the class Type. From the Type, get the FieldInfo. From the FieldInfo, get the IsPublic property. If the field is other than public, it is protected and cannot be readily accessed. To access a nonpublic field, set the BindingFlags to NonPublic, specify either BindingFlags.Instance or BindingFlags.Static, and use this for the GetField method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the field is public.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSecurityCritical">
+      <MemberSignature Language="C#" Value="public virtual bool IsSecurityCritical { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSecurityCritical" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Reflection.FieldInfo.IsSecurityCritical" />, <see cref="P:System.Reflection.FieldInfo.IsSecuritySafeCritical" />, and <see cref="P:System.Reflection.FieldInfo.IsSecurityTransparent" /> properties report the transparency level of the field at its current trust level, as determined by the common language runtime (CLR). The combinations of these properties are shown in the following table:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Security level</para>
+                </term>
+                <description>
+                  <para>IsSecurityCritical</para>
+                </description>
+                <description>
+                  <para>IsSecuritySafeCritical</para>
+                </description>
+                <description>
+                  <para>IsSecurityTransparent</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Critical</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Safe critical</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Transparent</para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+          </list>
+          <para>Using these properties is much simpler than examining the security annotations of an assembly and its types and members, checking the current trust level, and attempting to duplicate the runtime's rules.</para>
+          <block subset="none" type="note">
+            <para>For partial-trust assemblies, the value of this property depends on the current trust level of the assembly. If the assembly is loaded into a partially trusted application domain (for example, into a sandboxed application domain), then the runtime ignores the security annotations of the assembly. The assembly and all its types are treated as transparent. The runtime pays attention to the security annotations of a partial-trust assembly only when that assembly is loaded into a fully trusted application domain (for example, into the default application domain of a desktop application). By contrast, a trusted assembly (that is, a strong-named assembly that is installed in the global assembly cache) is always loaded with full trust regardless of the trust level of the application domain, so its current trust level is always fully trusted. You can determine the current trust levels of assemblies and application domains by using the <see cref="P:System.Reflection.Assembly.IsFullyTrusted" /> and <see cref="P:System.AppDomain.IsFullyTrusted" /> properties. </para>
+          </block>
+          <para>For more information about reflection and transparency, see <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>. For information about transparency, see <format type="text/html"><a href="5e87881c-9c13-4b52-8ad1-e34bb46e8aaa">Security Changes in the .NET Framework Version 4.0</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current field is security-critical or security-safe-critical at the current trust level. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSecuritySafeCritical">
+      <MemberSignature Language="C#" Value="public virtual bool IsSecuritySafeCritical { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSecuritySafeCritical" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Reflection.FieldInfo.IsSecurityCritical" />, <see cref="P:System.Reflection.FieldInfo.IsSecuritySafeCritical" />, and <see cref="P:System.Reflection.FieldInfo.IsSecurityTransparent" /> properties report the transparency level of the field at its current trust level, as determined by the common language runtime (CLR). The combinations of these properties are shown in the following table:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Security level</para>
+                </term>
+                <description>
+                  <para>IsSecurityCritical</para>
+                </description>
+                <description>
+                  <para>IsSecuritySafeCritical</para>
+                </description>
+                <description>
+                  <para>IsSecurityTransparent</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Critical</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Safe critical</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Transparent</para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+          </list>
+          <para>Using these properties is much simpler than examining the security annotations of an assembly and its types and members, checking the current trust level, and attempting to duplicate the runtime's rules.</para>
+          <block subset="none" type="note">
+            <para>For partial-trust assemblies, the value of this property depends on the current trust level of the assembly. If the assembly is loaded into a partially trusted application domain (for example, into a sandboxed application domain), then the runtime ignores the security annotations of the assembly. The assembly and all its types are treated as transparent. The runtime pays attention to the security annotations of a partial-trust assembly only when that assembly is loaded into a fully trusted application domain (for example, into the default application domain of a desktop application). By contrast, a trusted assembly (that is, a strong-named assembly that is installed in the global assembly cache) is always loaded with full trust regardless of the trust level of the application domain, so its current trust level is always fully trusted. You can determine the current trust levels of assemblies and application domains by using the <see cref="P:System.Reflection.Assembly.IsFullyTrusted" /> and <see cref="P:System.AppDomain.IsFullyTrusted" /> properties. </para>
+          </block>
+          <para>For more information about reflection and transparency, see <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>. For information about transparency, see <format type="text/html"><a href="5e87881c-9c13-4b52-8ad1-e34bb46e8aaa">Security Changes in the .NET Framework Version 4.0</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current field is security-safe-critical at the current trust level. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSecurityTransparent">
+      <MemberSignature Language="C#" Value="public virtual bool IsSecurityTransparent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSecurityTransparent" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Reflection.FieldInfo.IsSecurityCritical" />, <see cref="P:System.Reflection.FieldInfo.IsSecuritySafeCritical" />, and <see cref="P:System.Reflection.FieldInfo.IsSecurityTransparent" /> properties report the transparency level of the field at its current trust level, as determined by the common language runtime (CLR). The combinations of these properties are shown in the following table:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Security level</para>
+                </term>
+                <description>
+                  <para>IsSecurityCritical</para>
+                </description>
+                <description>
+                  <para>IsSecuritySafeCritical</para>
+                </description>
+                <description>
+                  <para>IsSecurityTransparent</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Critical</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Safe critical</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Transparent</para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+          </list>
+          <para>Using these properties is much simpler than examining the security annotations of an assembly and its types and members, checking the current trust level, and attempting to duplicate the runtime's rules.</para>
+          <block subset="none" type="note">
+            <para>For partial-trust assemblies, the value of this property depends on the current trust level of the assembly. If the assembly is loaded into a partially trusted application domain (for example, into a sandboxed application domain), then the runtime ignores the security annotations of the assembly. The assembly and all its types are treated as transparent. The runtime pays attention to the security annotations of a partial-trust assembly only when that assembly is loaded into a fully trusted application domain (for example, into the default application domain of a desktop application). By contrast, a trusted assembly (that is, a strong-named assembly that is installed in the global assembly cache) is always loaded with full trust regardless of the trust level of the application domain, so its current trust level is always fully trusted. You can determine the current trust levels of assemblies and application domains by using the <see cref="P:System.Reflection.Assembly.IsFullyTrusted" /> and <see cref="P:System.AppDomain.IsFullyTrusted" /> properties. </para>
+          </block>
+          <para>For more information about reflection and transparency, see <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>. For information about transparency, see <format type="text/html"><a href="5e87881c-9c13-4b52-8ad1-e34bb46e8aaa">Security Changes in the .NET Framework Version 4.0</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current field is transparent at the current trust level.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsSpecialName">
       <MemberSignature Language="C#" Value="public bool IsSpecialName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSpecialName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Names that begin with or contain an underscore character (_), property accessors, and operator overloading methods are examples of names that might require special treatment by some compilers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the corresponding SpecialName attribute is set in the <see cref="T:System.Reflection.FieldAttributes" /> enumerator.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsStatic">
       <MemberSignature Language="C#" Value="public bool IsStatic { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsStatic" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a field is static, one copy of the field is shared by all instances of the type.</para>
+          <para>The IsStatic property is set when the FieldAttributes.Static attribute is set.</para>
+          <para>To get the IsStatic property, first get the class Type. From the Type, get the FieldInfo. From the FieldInfo, get the IsStatic property. To access a non-public field, set the BindingFlags to NonPublic in the GetField method and set the accessibility to Instance or Static.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the field is static.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MemberType">
       <MemberSignature Language="C#" Value="public override System.Reflection.MemberTypes MemberType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.MemberTypes MemberType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MemberTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property overrides <see cref="P:System.Reflection.MemberInfo.MemberType" />. Therefore, when you examine a set of <see cref="T:System.Reflection.MemberInfo" /> objects — for example, the array returned by <see cref="Overload:System.Type.GetMembers" /> — the <see cref="P:System.Reflection.MemberInfo.MemberType" /> property returns <see cref="F:System.Reflection.MemberTypes.Field" /> only when a given member is a field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Reflection.MemberTypes" /> value indicating that this member is a field.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (System.Reflection.FieldInfo left, System.Reflection.FieldInfo right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(class System.Reflection.FieldInfo left, class System.Reflection.FieldInfo right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -649,15 +1112,24 @@ class FieldAttributesExample
         <Parameter Name="right" Type="System.Reflection.FieldInfo" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two <see cref="T:System.Reflection.FieldInfo" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Reflection.FieldInfo left, System.Reflection.FieldInfo right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(class System.Reflection.FieldInfo left, class System.Reflection.FieldInfo right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -670,48 +1142,26 @@ class FieldAttributesExample
         <Parameter Name="right" Type="System.Reflection.FieldInfo" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two <see cref="T:System.Reflection.FieldInfo" /> objects are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="SetValue">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object obj, object value)" />
       <MemberSignature Language="C#" Value="public void SetValue (object obj, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetValue(object obj, object value) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
-        <Parameter Name="value" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="obj">The object whose field value will be set. If the field is static, <paramref name="obj " />is ignored. For non-static fields, <paramref name="obj " />is required to be an instance of a class that inherits or declares the field. </param>
-        <param name="value">A <see cref="T:System.Object" /> that contains the value to assign to the field contained by <paramref name="obj" /> . </param>
-        <param name="value">To be added.</param>
-        <summary>
-          <para> Assigns the specified value to the field that is reflected by the current instance and contained in the specified object.
-      </para>
-        </summary>
-        <remarks>
-          <para> Before setting the value, the system
-      verifies that the user has access permission. If the user does not have access
-      permission, a <see cref="T:System.FieldAccessException" /> is
-      thrown.</para>
-        </remarks>
-        <exception cref="T:System.ArgumentException">
-          <para>The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</para>
-          <para>
-            <paramref name="value" /> is not assignment-compatible with the type of the field reflected by the current instance.</para>
-        </exception>
-        <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
-        <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> .</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -722,11 +1172,56 @@ class FieldAttributesExample
           <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <exception cref="T:System.ArgumentException">
+          <para>The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</para>
+          <para>
+            <paramref name="value" /> is not assignment-compatible with the type of the field reflected by the current instance.</para>
+        </exception>
+        <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
+        <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> .</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the field. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will assign <paramref name="value" /> to the field reflected by this instance on object <paramref name="obj" />. If the field is static, <paramref name="obj" /> will be ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field. The new value is passed as an Object. For example, if the field's type is Boolean, an instance of Object with the appropriate Boolean value is passed. Before setting the value, SetValue checks to see if the user has access permission. This final method is a convenience method for calling the following SetValue method.</para>
+          <block subset="none" type="note">
+            <para>Fully trusted code has the permissions that are needed to access and invoke private constructors, methods, fields, and properties using reflection.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access non-public members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the non-public members is restricted to the caller’s grant set, or a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the field supported by the given object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose field value will be set. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the field. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="SetValue">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void SetValue(object obj, object value, valuetype System.Reflection.BindingFlags invokeAttr, class System.Reflection.Binder binder, class System.Globalization.CultureInfo culture)" />
       <MemberSignature Language="C#" Value="public abstract void SetValue (object obj, object value, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetValue(object obj, object value, valuetype System.Reflection.BindingFlags invokeAttr, class System.Reflection.Binder binder, class System.Globalization.CultureInfo culture) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -738,26 +1233,6 @@ class FieldAttributesExample
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">The object whose field value will be set. If the field is static, <paramref name="obj " />is ignored. For non-static fields, <paramref name="obj " />is required to be an instance of a class that inherits or declares the field. </param>
-        <param name="value">An object that contains the value to assign to the field contained by <paramref name="obj" /> . </param>
-        <param name="invokeAttr">A <see cref="T:System.Reflection.BindingFlags" /> value that controls the binding process.</param>
-        <param name="binder">A <see cref="T:System.Reflection.Binder" /> instance that enables the binding, coercion of argument types, and invocation of members through reflection. If <paramref name="binder " />is <see langword="null" />, the default binder of the current implementation is used. </param>
-        <param name="culture">
-          <para>The only defined value for this parameter is <see langword="null" /> .</para>
-        </param>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>
-          <para>Assigns the specified value to the field that is reflected by the current
-      instance and contained in the specified object. </para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">Before setting
-      the value, the system verifies that the user has access permission. </block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</para>
           <para>
@@ -766,30 +1241,44 @@ class FieldAttributesExample
         <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
         <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> .</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A field of Binder that specifies the type of binding that is desired (for example, Binder.CreateInstance or Binder.ExactBinding). </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of properties that enables the binding, coercion of argument types, and invocation of members through reflection. If <paramref name="binder" /> is null, then Binder.DefaultBinding is used. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The software preferences of a particular culture. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will assign <paramref name="value" /> to the field reflected by this instance on <paramref name="obj" />. If the field is static, <paramref name="obj" /> will be ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field. The new value is passed as an Object. For example, if the field's type is Boolean, an instance of Object with the appropriate Boolean value is passed. Before setting the value, SetValue checks to see if the user has access permission.</para>
+          <block subset="none" type="note">
+            <para>Fully trusted code has the permissions that are needed to access and invoke private constructors, methods, fields, and properties using reflection.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access non-public members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the non-public members is restricted to the caller’s grant set, or a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, sets the value of the field supported by the given object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose field value will be set. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the field. </param>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A field of Binder that specifies the type of binding that is desired (for example, Binder.CreateInstance or Binder.ExactBinding). </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of properties that enables the binding, coercion of argument types, and invocation of members through reflection. If <paramref name="binder" /> is null, then Binder.DefaultBinding is used. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The software preferences of a particular culture. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetValueDirect">
       <MemberSignature Language="C#" Value="public virtual void SetValueDirect (TypedReference obj, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetValueDirect(valuetype System.TypedReference obj, object value) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.TypedReference" />
-        <Parameter Name="value" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="obj">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -800,10 +1289,40 @@ class FieldAttributesExample
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.TypedReference" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access non-public members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the non-public members is restricted to the caller’s grant set, or a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the field supported by the given object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TypedReference" /> structure that encapsulates a managed pointer to a location and a runtime representation of the type that can be stored at that location. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the field. </param>
+      </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._FieldInfo.GetIDsOfNames">
       <MemberSignature Language="C#" Value="void _FieldInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._FieldInfo.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -823,15 +1342,39 @@ class FieldAttributesExample
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._FieldInfo.GetType">
+      <MemberSignature Language="C#" Value="Type _FieldInfo.GetType ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Type System.Runtime.InteropServices._FieldInfo.GetType() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.FieldInfo" /> type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.FieldInfo" /> type.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._FieldInfo.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _FieldInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._FieldInfo.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._FieldInfo.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _FieldInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -841,21 +1384,31 @@ class FieldAttributesExample
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._FieldInfo.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _FieldInfo.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._FieldInfo.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._FieldInfo.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _FieldInfo.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -867,15 +1420,16 @@ class FieldAttributesExample
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._FieldInfo.Invoke">
+      <MemberSignature Language="C#" Value="void _FieldInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._FieldInfo.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._FieldInfo.Invoke">
-      <MemberSignature Language="C#" Value="void _FieldInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -901,11 +1455,6 @@ class FieldAttributesExample
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

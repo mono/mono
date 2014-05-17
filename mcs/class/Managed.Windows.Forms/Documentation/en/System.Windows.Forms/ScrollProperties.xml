@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ScrollProperties" FullName="System.Windows.Forms.ScrollProperties">
   <TypeSignature Language="C#" Value="public abstract class ScrollProperties" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is an abstract class. The actual derived classes used directly by Windows Forms are <see cref="T:System.Windows.Forms.HScrollProperties" /> and <see cref="T:System.Windows.Forms.VScrollProperties" />, which are returned by the <see cref="P:System.Windows.Forms.ScrollableControl.HorizontalScroll" /> and <see cref="P:System.Windows.Forms.ScrollableControl.VerticalScroll" /> properties of <see cref="T:System.Windows.Forms.ScrollableControl" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates properties related to scrolling. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +30,16 @@
         <Parameter Name="container" Type="System.Windows.Forms.ScrollableControl" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot instantiate this class directly, as it is abstract. You must instantiate one of its derived classes instead, such as <see cref="T:System.Windows.Forms.HScrollProperties" /> or <see cref="T:System.Windows.Forms.VScrollProperties" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ScrollProperties" /> class. </para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ScrollableControl" /> whose scrolling properties this object describes.</param>
       </Docs>
     </Member>
     <Member MemberName="Enabled">
@@ -43,9 +57,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the scroll bar can be used on the container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LargeChange">
@@ -66,9 +83,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.ScrollProperties.LargeChange" /> is used to determine how far the scroll bar is moved in response to a request to move a considerable distance, such as when the user presses the PAGE UP or PAGE DOWN button. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the distance to move a scroll bar in response to a large scroll command. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Maximum">
@@ -89,9 +113,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the new value of <see cref="P:System.Windows.Forms.ScrollProperties.Maximum" /> is less than <see cref="P:System.Windows.Forms.ScrollProperties.Minimum" />, then <see cref="P:System.Windows.Forms.ScrollProperties.Minimum" /> is set equal to <see cref="P:System.Windows.Forms.ScrollProperties.Maximum" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the upper limit of the scrollable range. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Minimum">
@@ -112,9 +142,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the new value of <see cref="P:System.Windows.Forms.ScrollProperties.Minimum" /> is greater than <see cref="P:System.Windows.Forms.ScrollProperties.Maximum" />, then <see cref="P:System.Windows.Forms.ScrollProperties.Maximum" /> is set equal to <see cref="P:System.Windows.Forms.ScrollProperties.Minimum" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lower limit of the scrollable range. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParentControl">
@@ -127,9 +163,12 @@
         <ReturnType>System.Windows.Forms.ScrollableControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the control to which this scroll information applies.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SmallChange">
@@ -147,9 +186,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.ScrollProperties.SmallChange" /> is used to calculate how far to move the scroll bar in response to an arrow key click or a click on a scroll bar button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the distance to move a scroll bar in response to a small scroll command. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -170,9 +216,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a numeric value that represents the current position of the scroll bar box.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Visible">
@@ -190,9 +239,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the scroll bar can be seen by the user.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

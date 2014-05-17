@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TypedMessageConverter" FullName="System.ServiceModel.Description.TypedMessageConverter">
+  <TypeSignature Language="C#" Value="public abstract class TypedMessageConverter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TypedMessageConverter extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides functionalities to convert a typed message to an untyped message, or an untyped message to a typed message. A typed message is an instance of a type that has the <see cref="T:System.ServiceModel.MessageContractAttribute" /> attribute annotated. An untyped message is one that is an instance of the <see cref="T:System.ServiceModel.Channels.Message" /> class.  You can annotate a type with the <see cref="T:System.ServiceModel.MessageContractAttribute" /> to create a custom message type, and then use the methods provided by this class to convert it to an untyped <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts a typed message to an untyped message, or an untyped message to a typed message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected TypedMessageConverter ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.TypedMessageConverter Create (Type type, string action);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.TypedMessageConverter Create(class System.Type type, string action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.TypedMessageConverter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="action" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.TypedMessageConverter Create (Type type, string action, System.ServiceModel.DataContractFormatAttribute formatterAttribute);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.TypedMessageConverter Create(class System.Type type, string action, class System.ServiceModel.DataContractFormatAttribute formatterAttribute) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.TypedMessageConverter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="action" Type="System.String" />
+        <Parameter Name="formatterAttribute" Type="System.ServiceModel.DataContractFormatAttribute" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
+        <param name="formatterAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.DataContractFormatAttribute" /> that specifies the formatter to be used.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.TypedMessageConverter Create (Type type, string action, System.ServiceModel.XmlSerializerFormatAttribute formatterAttribute);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.TypedMessageConverter Create(class System.Type type, string action, class System.ServiceModel.XmlSerializerFormatAttribute formatterAttribute) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.TypedMessageConverter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="action" Type="System.String" />
+        <Parameter Name="formatterAttribute" Type="System.ServiceModel.XmlSerializerFormatAttribute" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
+        <param name="formatterAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.XmlSerializerFormatAttribute" /> that specifies the formatter to be used.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.TypedMessageConverter Create (Type type, string action, string defaultNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.TypedMessageConverter Create(class System.Type type, string action, string defaultNamespace) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.TypedMessageConverter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="action" Type="System.String" />
+        <Parameter Name="defaultNamespace" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
+        <param name="defaultNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A namespace.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.TypedMessageConverter Create (Type type, string action, string defaultNamespace, System.ServiceModel.DataContractFormatAttribute formatterAttribute);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.TypedMessageConverter Create(class System.Type type, string action, string defaultNamespace, class System.ServiceModel.DataContractFormatAttribute formatterAttribute) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.TypedMessageConverter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="action" Type="System.String" />
+        <Parameter Name="defaultNamespace" Type="System.String" />
+        <Parameter Name="formatterAttribute" Type="System.ServiceModel.DataContractFormatAttribute" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
+        <param name="defaultNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A namespace.</param>
+        <param name="formatterAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.DataContractFormatAttribute" /> that specifies the formatter to be used.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.TypedMessageConverter Create (Type type, string action, string defaultNamespace, System.ServiceModel.XmlSerializerFormatAttribute formatterAttribute);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.TypedMessageConverter Create(class System.Type type, string action, string defaultNamespace, class System.ServiceModel.XmlSerializerFormatAttribute formatterAttribute) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.TypedMessageConverter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="action" Type="System.String" />
+        <Parameter Name="defaultNamespace" Type="System.String" />
+        <Parameter Name="formatterAttribute" Type="System.ServiceModel.XmlSerializerFormatAttribute" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
+        <param name="defaultNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A namespace.</param>
+        <param name="formatterAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.XmlSerializerFormatAttribute" /> that specifies the formatter to be used.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FromMessage">
+      <MemberSignature Language="C#" Value="public abstract object FromMessage (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object FromMessage(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method takes an untyped indigo1 message, that is, an instance of <see cref="T:System.ServiceModel.Channels.Message" />, and converts it into a typed message, that is, an instance of a type that is annotated by the <see cref="T:System.ServiceModel.MessageContractAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a typed message from the specified <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a typed message.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />An untyped message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToMessage">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.Message ToMessage (object typedMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message ToMessage(object typedMessage) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typedMessage" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ServiceModel.Channels.Message" /> instance from the specified typed message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
+        </returns>
+        <param name="typedMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />A typed message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToMessage">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.Message ToMessage (object typedMessage, System.ServiceModel.Channels.MessageVersion version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message ToMessage(object typedMessage, class System.ServiceModel.Channels.MessageVersion version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typedMessage" Type="System.Object" />
+        <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ServiceModel.Channels.Message" /> instance from the specified typed message using the specified version.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
+        </returns>
+        <param name="typedMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />A typed message.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> that specifies the versions of SOAP and WS-Addressing associated with a message.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

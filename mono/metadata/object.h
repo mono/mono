@@ -245,6 +245,9 @@ MONO_API int
 mono_runtime_exec_main	    (MonoMethod *method, MonoArray *args,
 			     MonoObject **exc);
 
+MONO_API int
+mono_runtime_set_main_args  (int argc, char* argv[]);
+
 /* The following functions won't be available with mono was configured with remoting disabled. */
 /*#ifndef DISABLE_REMOTING */
 MONO_API void*
@@ -311,11 +314,30 @@ MONO_API uint32_t      mono_gchandle_new_weakref (MonoObject *obj, mono_bool tra
 MONO_API MonoObject*  mono_gchandle_get_target  (uint32_t gchandle);
 MONO_API void         mono_gchandle_free        (uint32_t gchandle);
 
+/* Reference queue support
+ *
+ * A reference queue is used to get notifications of when objects are collected.
+ * Call mono_gc_reference_queue_new to create a new queue and pass the callback that
+ * will be invoked when registered objects are collected.
+ * Call mono_gc_reference_queue_add to register a pair of objects and data within a queue.
+ * The callback will be triggered once an object is both unreachable and finalized.
+ */
+
+typedef void (*mono_reference_queue_callback) (void *user_data);
+typedef struct _MonoReferenceQueue MonoReferenceQueue;
+
+MONO_API MonoReferenceQueue* mono_gc_reference_queue_new (mono_reference_queue_callback callback);
+MONO_API void mono_gc_reference_queue_free (MonoReferenceQueue *queue);
+MONO_API mono_bool mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data);
+
+
+
 /* GC write barriers support */
 MONO_API void mono_gc_wbarrier_set_field     (MonoObject *obj, void* field_ptr, MonoObject* value);
 MONO_API void mono_gc_wbarrier_set_arrayref  (MonoArray *arr, void* slot_ptr, MonoObject* value);
 MONO_API void mono_gc_wbarrier_arrayref_copy (void* dest_ptr, void* src_ptr, int count);
 MONO_API void mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value);
+MONO_API void mono_gc_wbarrier_generic_store_atomic (void *ptr, MonoObject *value);
 MONO_API void mono_gc_wbarrier_generic_nostore (void* ptr);
 MONO_API void mono_gc_wbarrier_value_copy    (void* dest, void* src, int count, MonoClass *klass);
 MONO_API void mono_gc_wbarrier_object_copy   (MonoObject* obj, MonoObject *src);

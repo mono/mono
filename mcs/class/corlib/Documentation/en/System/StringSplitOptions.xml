@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StringSplitOptions" FullName="System.StringSplitOptions">
   <TypeSignature Language="C#" Value="public enum StringSplitOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed StringSplitOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,40 +19,55 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="Overload:System.String.Split" /> method returns an array of the substrings in a given string that are delimited by specified characters or strings. Adjacent delimiters yield an array element that contains an empty string (""). The values of the <see cref="T:System.StringSplitOptions" /> enumeration specify whether an array element that contains an empty string is included in the returned array.</para>
+      <para>Specify the <see cref="F:System.StringSplitOptions.None" /> value to invoke the default behavior of the <see cref="Overload:System.String.Split" /> method, which is to return an array of both empty substrings and substrings that are not empty. Specify the <see cref="F:System.StringSplitOptions.RemoveEmptyEntries" /> value to cause the <see cref="Overload:System.String.Split" /> method to return an array consisting solely of substrings that are not empty.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether applicable <see cref="Overload:System.String.Split" /> method overloads include or omit empty substrings from the return value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.StringSplitOptions None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringSplitOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringSplitOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value includes array elements that contain an empty string</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RemoveEmptyEntries">
       <MemberSignature Language="C#" Value="RemoveEmptyEntries" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.StringSplitOptions RemoveEmptyEntries = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringSplitOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringSplitOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value does not include array elements that contain an empty string</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

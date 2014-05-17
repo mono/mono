@@ -1,10 +1,12 @@
 //
 // ConditionFunctionExpression.cs
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Marek Safar (marek.safar@gmail.com)
 // 
 // (C) 2006 Marek Sieradzki
+// Copyright (c) 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,40 +39,32 @@ namespace Microsoft.Build.BuildEngine {
 		List <ConditionFactorExpression> 	args;
 		string					name;
 		
-		static Dictionary <string, MethodInfo>	functions;
+		static readonly Dictionary<string, Func<string, Project, bool>> functions = new Dictionary<string, Func<string, Project, bool>> (StringComparer.OrdinalIgnoreCase) {
+			{ "Exists", Exists },
+			{ "HasTrailingSlash" , HasTrailingSlash }
+		};
 		
-		static ConditionFunctionExpression ()
-		{
-			Type t = typeof (ConditionFunctionExpression);
-			string [] names = new string [] { "Exists", "HasTrailingSlash" };
-		
-			functions = new Dictionary <string, MethodInfo> (StringComparer.OrdinalIgnoreCase);
-			foreach (string name in names)
-				functions.Add (name, t.GetMethod (name, BindingFlags.NonPublic | BindingFlags.Static));
-		}
-	
 		public ConditionFunctionExpression (string name, List <ConditionFactorExpression> args)
 		{
 			this.args = args;
 			this.name = name;
 		}
 		
-		public override  bool BoolEvaluate (Project context)
+		public override bool BoolEvaluate (Project context)
 		{
-			if (!functions.ContainsKey (name))
-				throw new InvalidOperationException ("Unknown function named: " + name);
+			Func<string, Project, bool> func;
+			if (!functions.TryGetValue (name, out func)) {
+				// MSB4091
+				throw new Exception (string.Format ("Found a call to an undefined function \"{0}\".", name));
+			}
+
+			if (args.Count != 1) {
+				// MSB4089
+				throw new Exception (string.Format ("Incorrect number of arguments to function in condition \"{0}\". Found {1} argument(s) when expecting {2}.",
+					name, args.Count, 1));
+			}
 			
-			if (functions [name] == null)
-				throw new InvalidOperationException ("Unknown function named: " + name);
-				
-			MethodInfo mi = functions [name];
-			object [] argsArr = new object [args.Count + 1];
-			int i = 0;
-			foreach (ConditionFactorExpression cfe in args)
-				argsArr [i++] = cfe.StringEvaluate (context);
-			argsArr [i] = context;
-				
-			return (bool) mi.Invoke (null, argsArr);
+			return func (args [0].StringEvaluate (context), context);
 		}
 		
 		public override float NumberEvaluate (Project context)
@@ -103,6 +97,9 @@ namespace Microsoft.Build.BuildEngine {
 		// FIXME imported projects
 		static bool Exists (string file, Project context)
 		{
+			if (string.IsNullOrEmpty (file))
+				return false;
+
 			string directory  = null;
 			
 			if (context.FullFileName != String.Empty)

@@ -1,0 +1,1780 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XmlDictionaryWriter" FullName="System.Xml.XmlDictionaryWriter">
+  <TypeSignature Language="C#" Value="public abstract class XmlDictionaryWriter : System.Xml.XmlWriter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlDictionaryWriter extends System.Xml.XmlWriter" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Xml.XmlWriter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can derive from this class to do other functions than serialization.</para>
+      <para>Note that there is a known issue with the normalization of linefeed characters inside of CDATA sections that you may encounter.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an abstract class that indigo1 derives from <see cref="T:System.Xml.XmlWriter" /> to do serialization and deserialization.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected XmlDictionaryWriter ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked only by its derived classes because this class is abstract.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlDictionaryWriter" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CanCanonicalize">
+      <MemberSignature Language="C#" Value="public virtual bool CanCanonicalize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanCanonicalize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if and only if this derived class of <see cref="T:System.Xml.XmlDictionaryWriter" /> can canonicalize the XML content being written to it, according to the Exclusive XML Canonicalization rules as defined in <see cref="http://go.microsoft.com/fwlink/?LinkId=96655">Exclusive XML Canonicalization Version 1.0</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns false. Its derived classes can override to return true if they support canonicalization.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBinaryWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateBinaryWriter (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateBinaryWriter(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes indigo2 binary XML format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBinaryWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateBinaryWriter (System.IO.Stream stream, System.Xml.IXmlDictionary dictionary);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateBinaryWriter(class System.IO.Stream stream, class System.Xml.IXmlDictionary dictionary) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="dictionary" Type="System.Xml.IXmlDictionary" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes indigo2 binary XML format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionary" /> to use as the shared dictionary.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBinaryWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateBinaryWriter (System.IO.Stream stream, System.Xml.IXmlDictionary dictionary, System.Xml.XmlBinaryWriterSession session);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateBinaryWriter(class System.IO.Stream stream, class System.Xml.IXmlDictionary dictionary, class System.Xml.XmlBinaryWriterSession session) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="dictionary" Type="System.Xml.IXmlDictionary" />
+        <Parameter Name="session" Type="System.Xml.XmlBinaryWriterSession" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes indigo2 binary XML format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionary" /> to use as the shared dictionary.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlBinaryWriterSession" /> to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBinaryWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateBinaryWriter (System.IO.Stream stream, System.Xml.IXmlDictionary dictionary, System.Xml.XmlBinaryWriterSession session, bool ownsStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateBinaryWriter(class System.IO.Stream stream, class System.Xml.IXmlDictionary dictionary, class System.Xml.XmlBinaryWriterSession session, bool ownsStream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="dictionary" Type="System.Xml.IXmlDictionary" />
+        <Parameter Name="session" Type="System.Xml.XmlBinaryWriterSession" />
+        <Parameter Name="ownsStream" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes indigo2 binary XML format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionary" /> to use as the shared dictionary.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlBinaryWriterSession" /> to use.</param>
+        <param name="ownsStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the stream is closed by the writer when done; otherwise false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateDictionaryWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateDictionaryWriter (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateDictionaryWriter(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> from an existing <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of <see cref="T:System.Xml.XmlWriter" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateMtomWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateMtomWriter (System.IO.Stream stream, System.Text.Encoding encoding, int maxSizeInBytes, string startInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateMtomWriter(class System.IO.Stream stream, class System.Text.Encoding encoding, int32 maxSizeInBytes, string startInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="maxSizeInBytes" Type="System.Int32" />
+        <Parameter Name="startInfo" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding of the stream.</param>
+        <param name="maxSizeInBytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes that are buffered in the writer.</param>
+        <param name="startInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />An attribute in the ContentType SOAP header.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateMtomWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateMtomWriter (System.IO.Stream stream, System.Text.Encoding encoding, int maxSizeInBytes, string startInfo, string boundary, string startUri, bool writeMessageHeaders, bool ownsStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateMtomWriter(class System.IO.Stream stream, class System.Text.Encoding encoding, int32 maxSizeInBytes, string startInfo, string boundary, string startUri, bool writeMessageHeaders, bool ownsStream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="maxSizeInBytes" Type="System.Int32" />
+        <Parameter Name="startInfo" Type="System.String" />
+        <Parameter Name="boundary" Type="System.String" />
+        <Parameter Name="startUri" Type="System.String" />
+        <Parameter Name="writeMessageHeaders" Type="System.Boolean" />
+        <Parameter Name="ownsStream" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes XML in the MTOM format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding of the stream.</param>
+        <param name="maxSizeInBytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of bytes that are buffered in the writer.</param>
+        <param name="startInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The content-type of the MIME part that contains the Infoset.</param>
+        <param name="boundary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The MIME boundary in the message.</param>
+        <param name="startUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The content-id URI of the MIME part that contains the Infoset.</param>
+        <param name="writeMessageHeaders">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to write message headers.</param>
+        <param name="ownsStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the stream is closed by the writer when done; otherwise false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateTextWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateTextWriter (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateTextWriter(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text writer writes the XML in UTF-8 format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes text XML.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateTextWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateTextWriter (System.IO.Stream stream, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateTextWriter(class System.IO.Stream stream, class System.Text.Encoding encoding) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes text XML.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding of the output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateTextWriter">
+      <MemberSignature Language="C#" Value="public static System.Xml.XmlDictionaryWriter CreateTextWriter (System.IO.Stream stream, System.Text.Encoding encoding, bool ownsStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.XmlDictionaryWriter CreateTextWriter(class System.IO.Stream stream, class System.Text.Encoding encoding, bool ownsStream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="ownsStream" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes text XML.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Xml.XmlDictionaryWriter" />.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding of the stream.</param>
+        <param name="ownsStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the stream is closed by the writer when done; otherwise false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndCanonicalization">
+      <MemberSignature Language="C#" Value="public virtual void EndCanonicalization ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndCanonicalization() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not yet implemented.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a derived class, it stops the canonicalization started by the matching <see cref="M:System.Xml.XmlDictionaryWriter.StartCanonicalization(System.IO.Stream,System.Boolean,System.String[])" /> call.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StartCanonicalization">
+      <MemberSignature Language="C#" Value="public virtual void StartCanonicalization (System.IO.Stream stream, bool includeComments, string[] inclusivePrefixes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void StartCanonicalization(class System.IO.Stream stream, bool includeComments, string[] inclusivePrefixes) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="includeComments" Type="System.Boolean" />
+        <Parameter Name="inclusivePrefixes" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not yet implemented.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a derived class, it starts the canonicalization.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="includeComments">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include comments; otherwise, false.</param>
+        <param name="inclusivePrefixes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefixes to be included.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, bool[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, bool[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Boolean[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Boolean" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the data.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, DateTime[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, valuetype System.DateTime[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.DateTime[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.DateTime" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, decimal[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, valuetype System.Decimal[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Decimal[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Decimal" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, double[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, float64[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Double[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Double" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, Guid[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, valuetype System.Guid[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Guid[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Guid" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, short[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, int16[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Int16[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Int16" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, int[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, int32[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Int32[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Int32" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, long[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, int64[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Int64[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Int64" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, float[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, float32[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.Single[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Single" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, string localName, string namespaceUri, TimeSpan[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, string localName, string namespaceUri, valuetype System.TimeSpan[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="array" Type="System.TimeSpan[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.TimeSpan" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, bool[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, bool[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Boolean[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Boolean" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, DateTime[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, valuetype System.DateTime[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.DateTime[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.DateTime" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, decimal[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, valuetype System.Decimal[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Decimal[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Decimal" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, double[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, float64[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Double[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Double" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, Guid[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, valuetype System.Guid[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Guid[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Guid" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, short[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, int16[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Int16[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Int16" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, int[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, int32[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Int32[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Int32" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, long[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, int64[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Int64[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Int64" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, float[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, float32[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.Single[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.Single" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteArray">
+      <MemberSignature Language="C#" Value="public virtual void WriteArray (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, TimeSpan[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteArray(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, valuetype System.TimeSpan[] array, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="array" Type="System.TimeSpan[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="length">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes nodes from a <see cref="T:System.TimeSpan" /> array.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array that contains the nodes.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index in the array.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeString">
+      <MemberSignature Language="C#" Value="public void WriteAttributeString (System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteAttributeString(class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an attribute qualified name and value.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeString">
+      <MemberSignature Language="C#" Value="public void WriteAttributeString (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteAttributeString(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an attribute qualified name and value.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the attribute.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementString">
+      <MemberSignature Language="C#" Value="public void WriteElementString (System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteElementString(class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an element with a text content.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element content.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementString">
+      <MemberSignature Language="C#" Value="public void WriteElementString (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteElementString(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri, string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an element with a text content.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the element.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element content.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteNode">
+      <MemberSignature Language="C#" Value="public virtual void WriteNode (System.Xml.XmlDictionaryReader reader, bool defattr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteNode(class System.Xml.XmlDictionaryReader reader, bool defattr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
+        <Parameter Name="defattr" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the current XML node from an <see cref="T:System.Xml.XmlDictionaryReader" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReader" />.</param>
+        <param name="defattr">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to copy the default attributes from the XmlReader; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteNode">
+      <MemberSignature Language="C#" Value="public override void WriteNode (System.Xml.XmlReader reader, bool defattr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteNode(class System.Xml.XmlReader reader, bool defattr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="defattr" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the current XML node from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" />.</param>
+        <param name="defattr">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to copy the default attributes from the <see cref="T:System.Xml.XmlReader" />; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteQualifiedName">
+      <MemberSignature Language="C#" Value="public virtual void WriteQualifiedName (System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteQualifiedName(class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the namespace maps to the current default namespace, no prefix is generated.</para>
+          <para>When writing attribute values, this method generates a prefix if the namespace is not found. When writing element content, it throws an exception if the namespace is not found.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the namespace-qualified name. This method looks up the prefix that is in scope for the given namespace.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the qualified name.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the qualified name.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartAttribute">
+      <MemberSignature Language="C#" Value="public void WriteStartAttribute (System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteStartAttribute(class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the start of an attribute with the specified local name, and namespace URI.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartAttribute">
+      <MemberSignature Language="C#" Value="public virtual void WriteStartAttribute (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteStartAttribute(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the start of an attribute with the specified prefix, local name, and namespace URI.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartElement">
+      <MemberSignature Language="C#" Value="public void WriteStartElement (System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteStartElement(class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified start tag and associates it with the given namespace.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartElement">
+      <MemberSignature Language="C#" Value="public virtual void WriteStartElement (string prefix, System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString namespaceUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteStartElement(string prefix, class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString namespaceUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified start tag and associates it with the given namespace and prefix.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the element.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteString">
+      <MemberSignature Language="C#" Value="public virtual void WriteString (System.Xml.XmlDictionaryString value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteString(class System.Xml.XmlDictionaryString value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the given text content.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTextNode">
+      <MemberSignature Language="C#" Value="protected virtual void WriteTextNode (System.Xml.XmlDictionaryReader reader, bool isAttribute);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void WriteTextNode(class System.Xml.XmlDictionaryReader reader, bool isAttribute) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
+        <Parameter Name="isAttribute" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If positioned on element content, this method advances the XmlDictionaryReader.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text node that an <see cref="T:System.Xml.XmlDictionaryReader" /> is currently positioned on.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReader" /> to get the text value from.</param>
+        <param name="isAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the reader is positioned on an attribute value or element content; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (Guid guid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteValue(valuetype System.Guid guid) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="guid" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="guid">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a <see cref="T:System.Guid" /> value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (TimeSpan duration);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteValue(valuetype System.TimeSpan duration) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="duration" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="duration">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a <see cref="T:System.TimeSpan" /> value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (System.Xml.IStreamProvider value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteValue(class System.Xml.IStreamProvider value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Xml.IStreamProvider" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the stream provided by the IStreamProvider are written as Base64 data, unless this method is overridden in a derived class.</para>
+          <para>For the asynchronous version of this method, see <see cref="M:System.Xml.XmlDictionaryWriter.WriteValueAsync(System.Xml.IStreamProvider)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a value from an <see cref="T:System.Xml.IStreamProvider" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.IStreamProvider" /> value to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (System.Xml.UniqueId id);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteValue(class System.Xml.UniqueId id) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="id" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <param name="id">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a Unique Id value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public virtual void WriteValue (System.Xml.XmlDictionaryString value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteValue(class System.Xml.XmlDictionaryString value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a <see cref="T:System.Xml.XmlDictionaryString" /> value.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryString" /> value.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteXmlAttribute">
+      <MemberSignature Language="C#" Value="public virtual void WriteXmlAttribute (string localName, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteXmlAttribute(string localName, string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a standard XML attribute in the current node.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteXmlAttribute">
+      <MemberSignature Language="C#" Value="public virtual void WriteXmlAttribute (System.Xml.XmlDictionaryString localName, System.Xml.XmlDictionaryString value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteXmlAttribute(class System.Xml.XmlDictionaryString localName, class System.Xml.XmlDictionaryString value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="value" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an XML attribute in the current node.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteXmlnsAttribute">
+      <MemberSignature Language="C#" Value="public virtual void WriteXmlnsAttribute (string prefix, string namespaceUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteXmlnsAttribute(string prefix, string namespaceUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a namespace declaration attribute.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix that is bound to the given namespace.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to which the prefix is bound.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteXmlnsAttribute">
+      <MemberSignature Language="C#" Value="public virtual void WriteXmlnsAttribute (string prefix, System.Xml.XmlDictionaryString namespaceUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteXmlnsAttribute(string prefix, class System.Xml.XmlDictionaryString namespaceUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+        <Parameter Name="namespaceUri" Type="System.Xml.XmlDictionaryString" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a namespace declaration attribute.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix that is bound to the given namespace.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to which the prefix is bound.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

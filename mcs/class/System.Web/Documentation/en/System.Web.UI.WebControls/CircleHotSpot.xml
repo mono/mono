@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CircleHotSpot" FullName="System.Web.UI.WebControls.CircleHotSpot">
   <TypeSignature Language="C#" Value="public sealed class CircleHotSpot : System.Web.UI.WebControls.HotSpot" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class defines a circle-shaped hot spot region in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. To define the region of the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object, set the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.X" /> property to the value that represents the x-coordinate of the center of the circular region. Set the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Y" /> property to the value that represents the y-coordinate of the center of the circular region. Set the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Radius" /> property to the distance from the center of the circle to the edge.</para>
+      <para>When a <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> control is clicked, the page either navigates to a URL, generates a post back to the server, or does nothing. The <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property specifies this behavior. To navigate to a URL, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Navigate, and use the <see cref="P:System.Web.UI.WebControls.HotSpot.NavigateUrl" /> property to specify the URL to navigate to. To post back to the server, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.PostBack, and use the <see cref="P:System.Web.UI.WebControls.HotSpot.PostBackValue" /> property to specify a name for the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object. This name will be passed in the <see cref="T:System.Web.UI.WebControls.ImageMapEventArgs" /> event data when the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> is clicked. If you want the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object to have no behavior, set the <see cref="P:System.Web.UI.WebControls.HotSpot.HotSpotMode" /> property to HotSpotMode.Inactive.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a circular hot spot region in an <see cref="T:System.Web.UI.WebControls.ImageMap" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,10 +49,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the values assigned to the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.X" /> and <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Y" /> properties to return the center coordinates and the value assigned to the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Radius" /> property to return the radius.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.CircleHotSpot.GetCoordinates" /> method is used internally by ASP.NET to get the text to use for the coordinates of a <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> when it is rendered. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the x- and y-coordinates of a <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object's center and the length of its radius.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the x- and y-coordinates of a <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object's center and the length of its radius.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,9 +78,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CircleHotSpot.MarkupName" /> property is used internally by ASP.NET to get the string representation for the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object's shape. This property always returns the string "circle". You cannot access this property directly from your application's code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the markup-language string representation for the shape of the <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Radius">
@@ -71,10 +101,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Radius" /> property allows you to get or set a value that represents the distance in pixels from the center to the edge of the circular region defined by this <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object. To completely define a <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object, you must specify a value for the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Radius" /> property as well as the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.X" /> and <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Y" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the distance from the center to the edge of the circular region defined by this <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,10 +128,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CircleHotSpot.X" /> property allows you to get or set a value that represents the x-coordinate of the center of the circular region defined by this <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object. To completely define a <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object, you must specify a value for the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.X" /> property as well as the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Y" /> and <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Radius" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the x-coordinate of the center of the circular region defined by this <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,10 +155,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Y" /> property allows you to get or set a value that represents the y-coordinate of the center of the circular region defined by this <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object. To completely define a <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object, you must specify a value for the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Y" /> property as well as the <see cref="P:System.Web.UI.WebControls.CircleHotSpot.X" /> and <see cref="P:System.Web.UI.WebControls.CircleHotSpot.Radius" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the y-coordinate of the center of the circular region defined by this <see cref="T:System.Web.UI.WebControls.CircleHotSpot" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

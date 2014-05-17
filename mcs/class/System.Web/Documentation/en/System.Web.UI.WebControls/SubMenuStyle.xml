@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SubMenuStyle" FullName="System.Web.UI.WebControls.SubMenuStyle">
   <TypeSignature Language="C#" Value="public class SubMenuStyle : System.Web.UI.WebControls.Style, System.ComponentModel.ICustomTypeDescriptor" />
   <AssemblyInfo>
@@ -13,9 +14,52 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class to represent the style of a submenu in the <see cref="T:System.Web.UI.WebControls.Menu" /> control. A submenu can be displayed within either a static menu or a dynamic menu. A static menu is always visible on a <see cref="T:System.Web.UI.WebControls.Menu" /> control, whereas a dynamic menu is displayed only when the user positions the mouse pointer over a parent menu item that contains a dynamic submenu. You can specify different style characteristics (such as font size and color) for the submenus within a static menu and a dynamic menu by using the properties in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Submenu item style property</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.DynamicMenuStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for a submenu within a dynamic menu.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.StaticMenuStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for a submenu within a static menu.</para>
+          </description>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class inherits most of its members from the Style class. It extends the Style class by providing properties that control the amount of space around a menu item's text. Use the <see cref="P:System.Web.UI.WebControls.SubMenuStyle.HorizontalPadding" /> property to control the amount of space to the left and right of the menu item's text. Similarly, the <see cref="P:System.Web.UI.WebControls.SubMenuStyle.VerticalPadding" /> property controls the amount of space above and below the menu item's text.</para>
+      <para>For more information on the inherited style settings, see <see cref="T:System.Web.UI.WebControls.Style" />.</para>
+      <block subset="none" type="note">
+        <para>Set the z-index of HTML objects that are associated with a submenu by setting the <see cref="P:System.Web.UI.WebControls.Style.CssClass" /> property of the submenu style. The z-index attribute defines the stacking order of rendered HTML objects. By default, dynamic menu items will appear above any HTML object that has the default z-index (0).</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the style of a submenu in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +67,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class. This constructor is commonly used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.LevelSubMenuStyles" /> collection. It is also used when extending the <see cref="T:System.Web.UI.WebControls.Menu" /> class to initialize the submenu item style properties, such as <see cref="P:System.Web.UI.WebControls.Menu.DynamicMenuStyle" /> or <see cref="P:System.Web.UI.WebControls.Menu.StaticMenuStyle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +88,17 @@
         <Parameter Name="bag" Type="System.Web.UI.StateBag" />
       </Parameters>
       <Docs>
-        <param name="bag">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object with the information contained in the request's view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class with the specified view-state information. </para>
+        </summary>
+        <param name="bag">
+          <attribution license="cc4" from="Microsoft" modified="false" />The view-state information of the current request.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +114,21 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.SubMenuStyle.CopyFrom(System.Web.UI.WebControls.Style)" /> method to duplicate the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object in the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object that calls this method.</para>
+          <block subset="none" type="note">
+            <para>All properties in the current instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class will be replaced by the corresponding properties in the specified <see cref="T:System.Web.UI.WebControls.Style" /> object.</para>
+          </block>
+          <para>To copy style properties without replacing any set values, use the <see cref="M:System.Web.UI.WebControls.SubMenuStyle.MergeWith(System.Web.UI.WebControls.Style)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object into the current instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Style" /> object to copy.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,11 +145,22 @@
         <Parameter Name="urlResolver" Type="System.Web.UI.IUrlResolutionService" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <param name="urlResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.SubMenuStyle.FillStyleAttributes(System.Web.UI.CssStyleCollection,System.Web.UI.IUrlResolutionService)" /> method to add the style properties of the current instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class to the specified <see cref="T:System.Web.UI.CssStyleCollection" /> object.</para>
+          <block subset="none" type="note">
+            <para>This method is used only by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the style properties of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to the specified <see cref="T:System.Web.UI.CssStyleCollection" /> object.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.CssStyleCollection" /> object to which to add the style properties.</param>
+        <param name="urlResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.IUrlResolutionService" />-implemented object that contains the context information for the current location (URL).</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -102,10 +181,16 @@
         <ReturnType>System.Web.UI.WebControls.Unit</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.SubMenuStyle.HorizontalPadding" /> property to control the amount of space between the text of the submenu item and the side of the containing menu. To control the vertical space between submenu items, use the <see cref="P:System.Web.UI.WebControls.SubMenuStyle.VerticalPadding" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of space to the left and right of a submenu.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -121,10 +206,20 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.SubMenuStyle.MergeWith(System.Web.UI.WebControls.Style)" /> method to combine the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object with the style properties of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object that this method is called from.</para>
+          <block subset="none" type="note">
+            <para>This method joins the style properties by setting each property that is not set in the current <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object with its corresponding value in the specified <see cref="T:System.Web.UI.WebControls.Style" /> object. Only properties that have not been set will be updated. If a property in the specified <see cref="T:System.Web.UI.WebControls.Style" /> object is not set, the corresponding property in the current <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object does not change.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object with those of the current instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Style" /> object to combine settings with.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -138,9 +233,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.SubMenuStyle.Reset" /> method to remove any defined style elements from the state bag and reset the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to its original state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the current instance of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> class to its original state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,9 +258,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetAttributes" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> containing the attributes for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetClassName">
@@ -173,9 +283,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetClassName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class name of the object, or null if the class does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetComponentName">
@@ -189,9 +308,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetComponentName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object, or null if the object does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetConverter">
@@ -205,9 +333,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetConverter" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> that is the converter for this object, or null if there is no <see cref="T:System.ComponentModel.TypeConverter" /> for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent">
@@ -221,9 +358,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> object that represents the default event for the object, or null if the object has no events.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty">
@@ -237,9 +383,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> object that represents the default property for this object, or null if the object does not have properties.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEditor">
@@ -255,10 +410,20 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="editorBaseType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEditor(System.Type)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> of the specified type that is the editor for this object, or null if the editor cannot be found.</para>
+        </returns>
+        <param name="editorBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the editor for this object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -272,9 +437,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEvents" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that contains the events for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -291,9 +465,18 @@
       </Parameters>
       <Docs>
         <param name="arr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEvents(System.Attribute[])" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that contains the filtered events for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -307,9 +490,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetProperties" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that contains the properties for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -326,9 +518,18 @@
       </Parameters>
       <Docs>
         <param name="arr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetProperties(System.Attribute[])" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> object that contains the filtered properties for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetPropertyOwner">
@@ -344,10 +545,20 @@
         <Parameter Name="pd" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="pd">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can only be used when the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is cast to the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetPropertyOwner(System.ComponentModel.PropertyDescriptor)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the owner of the specified property.</para>
+        </returns>
+        <param name="pd">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the property whose owner is to be found.</param>
       </Docs>
     </Member>
     <Member MemberName="VerticalPadding">
@@ -365,10 +576,16 @@
         <ReturnType>System.Web.UI.WebControls.Unit</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.SubMenuStyle.VerticalPadding" /> property to control the amount of vertical space between the text of submenu items. To control the horizontal space around submenu text, use the <see cref="P:System.Web.UI.WebControls.SubMenuStyle.HorizontalPadding" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of space above and below a submenu.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -208,9 +208,8 @@ namespace System.Collections.Generic
 				_version = t._version;
 			}
 			
-			// for some fucked up reason, MSFT added a useless dispose to this class
-			// It means that in foreach, we must still do a try/finally. Broken, very
-			// broken.
+			// for some reason, MSFT added a dispose to this class
+			// It means that in foreach, we must still do a try/finally. broken?
 			public void Dispose ()
 			{
 				idx = FINISHED;

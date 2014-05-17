@@ -1,76 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSecureResolver" FullName="System.Xml.XmlSecureResolver">
   <TypeSignature Language="C#" Value="public class XmlSecureResolver : System.Xml.XmlResolver" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSecureResolver extends System.Xml.XmlResolver" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Xml.XmlResolver</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Xml.XmlSecureResolver" /> wraps around a concrete implementation of <see cref="T:System.Xml.XmlResolver" /> and restricts the resources that the underlying <see cref="T:System.Xml.XmlResolver" /> has access to. For instance, <see cref="T:System.Xml.XmlSecureResolver" /> has the ability to prohibit cross-domain redirection, which occurs from an embedded Uniform Resource Identifier (URI) reference.</para>
+      <para>When you construct an <see cref="T:System.Xml.XmlSecureResolver" /> object, you provide a valid <see cref="T:System.Xml.XmlResolver" /> implementation along with a URL, an instance of <see cref="T:System.Security.Policy.Evidence" />, or a <see cref="T:System.Security.PermissionSet" />, which is used by the <see cref="T:System.Xml.XmlSecureResolver" /> to determine security. Either a <see cref="T:System.Security.PermissionSet" /> is generated or the existing one is used and <see cref="M:System.Security.PermissionSet.PermitOnly" /> is called on it to help secure the underlying <see cref="T:System.Xml.XmlResolver" />.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Xml.XmlSecureResolver" /> objects can contain sensitive information such as user credentials. You should be careful when caching <see cref="T:System.Xml.XmlSecureResolver" /> objects and should not pass the <see cref="T:System.Xml.XmlSecureResolver" /> object to an untrusted component.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>There are differences in the security infrastructure for code running on the .NET Framework common language runtime (CLR) and for code running on the CLR that is integrated within Microsoft SQL Server 2005. This can lead to cases where code developed for the .NET Framework CLR operates differently when used on the SQL Server integrated CLR. One of these differences affects the <see cref="T:System.Xml.XmlSecureResolver" /> class when you have evidence that is based on a URL (This can occur when you use the <see cref="M:System.Xml.XmlSecureResolver.CreateEvidenceForUrl(System.String)" /> method or the <see cref="M:System.Xml.XmlSecureResolver.#ctor(System.Xml.XmlResolver,System.String)" /> constructor). The policy resolution mechanism of the SQL Server integrated CLR does not utilize the <see cref="T:System.Security.Policy.Url" /> or <see cref="T:System.Security.Policy.Zone" /> information. Instead, the SQL Server integrated CLR grants permissions based on the GUID that the server adds when assemblies are loaded. When you use the <see cref="T:System.Xml.XmlSecureResolver" /> in the SQL Server integrated CLR, provide any required evidence directly using a specified <see cref="T:System.Security.PermissionSet" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Helps to secure another implementation of <see cref="T:System.Xml.XmlResolver" /> by wrapping the <see cref="T:System.Xml.XmlResolver" /> object and restricting the resources that the underlying <see cref="T:System.Xml.XmlResolver" /> has access to.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSecureResolver (System.Xml.XmlResolver resolver, System.Security.PermissionSet permissionSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlResolver resolver, class System.Security.PermissionSet permissionSet) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
         <Parameter Name="permissionSet" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <param name="resolver">To be added.</param>
-        <param name="permissionSet">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlSecureResolver" /> class with the <see cref="T:System.Xml.XmlResolver" /> and <see cref="T:System.Security.PermissionSet" /> specified.</para>
+        </summary>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> wrapped by the <see cref="T:System.Xml.XmlSecureResolver" />.</param>
+        <param name="permissionSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.PermissionSet" /> to apply to the underlying <see cref="T:System.Xml.XmlResolver" />. The <see cref="T:System.Xml.XmlSecureResolver" /> calls <see cref="M:System.Security.PermissionSet.PermitOnly" /> on the <see cref="T:System.Security.PermissionSet" /> before calling <see cref="M:System.Xml.XmlSecureResolver.GetEntity(System.Uri,System.String,System.Type)" /> on the underlying <see cref="T:System.Xml.XmlResolver" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSecureResolver (System.Xml.XmlResolver resolver, System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlResolver resolver, class System.Security.Policy.Evidence evidence) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="resolver">To be added.</param>
-        <param name="evidence">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlSecureResolver" /> class with the <see cref="T:System.Xml.XmlResolver" /> and <see cref="T:System.Security.Policy.Evidence" /> specified.</para>
+        </summary>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> wrapped by the <see cref="T:System.Xml.XmlSecureResolver" />.</param>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Evidence" /> used to create the <see cref="T:System.Security.PermissionSet" /> that will be applied to the underlying <see cref="T:System.Xml.XmlResolver" />. The <see cref="T:System.Xml.XmlSecureResolver" /> calls <see cref="M:System.Security.PermissionSet.PermitOnly" /> on the created <see cref="T:System.Security.PermissionSet" /> before calling <see cref="M:System.Xml.XmlSecureResolver.GetEntity(System.Uri,System.String,System.Type)" /> on the underlying <see cref="T:System.Xml.XmlResolver" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSecureResolver (System.Xml.XmlResolver resolver, string securityUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlResolver resolver, string securityUrl) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
         <Parameter Name="securityUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="resolver">To be added.</param>
-        <param name="securityUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>There are differences in the security infrastructure for code running on the .NET Framework common language runtime (CLR) and for code running on the CLR that is integrated within Microsoft SQL Server 2005. This can lead to cases where code developed for the .NET Framework CLR operates differently when used on the SQL Server integrated CLR. One of these differences affects the <see cref="T:System.Xml.XmlSecureResolver" /> class when you have evidence that is based on a URL (This can occur when you use the <see cref="M:System.Xml.XmlSecureResolver.CreateEvidenceForUrl(System.String)" /> method or the <see cref="M:System.Xml.XmlSecureResolver.#ctor(System.Xml.XmlResolver,System.String)" /> constructor). The policy resolution mechanism of the SQL Server integrated CLR does not utilize the <see cref="T:System.Security.Policy.Url" /> or <see cref="T:System.Security.Policy.Zone" /> information. Instead, the SQL Server integrated CLR grants permissions based on the GUID that the server adds when assemblies are loaded. When you use the <see cref="T:System.Xml.XmlSecureResolver" /> in the SQL Server integrated CLR, provide any required evidence directly using a specified <see cref="T:System.Security.PermissionSet" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlSecureResolver" /> class with the <see cref="T:System.Xml.XmlResolver" /> and URL provided.</para>
+        </summary>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> wrapped by the <see cref="T:System.Xml.XmlSecureResolver" />.</param>
+        <param name="securityUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL used to create the <see cref="T:System.Security.PermissionSet" /> that will be applied to the underlying <see cref="T:System.Xml.XmlResolver" />. The <see cref="T:System.Xml.XmlSecureResolver" /> calls <see cref="M:System.Security.PermissionSet.PermitOnly" /> on the created <see cref="T:System.Security.PermissionSet" /> before calling <see cref="M:System.Xml.XmlSecureResolver.GetEntity(System.Uri,System.String,System.Type)" /> on the underlying <see cref="T:System.Xml.XmlResolver" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateEvidenceForUrl">
       <MemberSignature Language="C#" Value="public static System.Security.Policy.Evidence CreateEvidenceForUrl (string securityUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Policy.Evidence CreateEvidenceForUrl(string securityUrl) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
@@ -78,35 +128,54 @@
         <Parameter Name="securityUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="securityUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>There are differences in the security infrastructure for code running on the .NET Framework common language runtime (CLR) and for code running on the CLR that is integrated within Microsoft SQL Server 2005. This can lead to cases where code developed for the .NET Framework CLR operates differently when used on the SQL Server integrated CLR. One of these differences affects the <see cref="T:System.Xml.XmlSecureResolver" /> class when you have evidence that is based on a URL (This can occur when you use the <see cref="M:System.Xml.XmlSecureResolver.CreateEvidenceForUrl(System.String)" /> method or the <see cref="M:System.Xml.XmlSecureResolver.#ctor(System.Xml.XmlResolver,System.String)" /> constructor). The policy resolution mechanism of the SQL Server integrated CLR does not utilize the <see cref="T:System.Security.Policy.Url" /> or <see cref="T:System.Security.Policy.Zone" /> information. Instead, the SQL Server integrated CLR grants permissions based on the GUID that the server adds when assemblies are loaded. When you use the <see cref="T:System.Xml.XmlSecureResolver" /> in the SQL Server integrated CLR, provide any required evidence directly using a specified <see cref="T:System.Security.PermissionSet" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates evidence using the supplied URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The evidence generated from the supplied URL as defined by the default policy.</para>
+        </returns>
+        <param name="securityUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL used to create the evidence.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Credentials">
       <MemberSignature Language="C#" Value="public override System.Net.ICredentials Credentials { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentials Credentials" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets credentials used to authenticate Web requests.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEntity">
       <MemberSignature Language="C#" Value="public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object GetEntity(class System.Uri absoluteUri, string role, class System.Type ofObjectToReturn) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -116,21 +185,70 @@
         <Parameter Name="ofObjectToReturn" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="absoluteUri">To be added.</param>
-        <param name="role">To be added.</param>
-        <param name="ofObjectToReturn">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Your application can mitigate memory Denial of Service threats to the <see cref="M:System.Xml.XmlSecureResolver.GetEntity(System.Uri,System.String,System.Type)" /> method by implementing a wrapping implemented IStream that limits the number of bytes read. This helps to guard against situations where malicious code attempts to pass an infinite stream of bytes to the <see cref="M:System.Xml.XmlSecureResolver.GetEntity(System.Uri,System.String,System.Type)" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps a URI to an object containing the actual resource. This method temporarily sets the <see cref="T:System.Security.PermissionSet" /> created in the constructor by calling <see cref="M:System.Security.PermissionSet.PermitOnly" /> before calling GetEntity on the underlying <see cref="T:System.Xml.XmlResolver" /> to open the resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object returned by calling GetEntity on the underlying <see cref="T:System.Xml.XmlResolver" />. If a type other than stream is specified, null is returned.</para>
+        </returns>
+        <param name="absoluteUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI returned from <see cref="M:System.Xml.XmlSecureResolver.ResolveUri(System.Uri,System.String)" />.</param>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current version does not use this parameter when resolving URIs. This is provided for future extensibility purposes. For example, this can be mapped to the xlink:role and used as an implementation-specific argument in other scenarios.</param>
+        <param name="ofObjectToReturn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to return. The current version only returns <see cref="T:System.IO.Stream" /> objects.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetEntityAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task&lt;object&gt; GetEntityAsync (Uri absoluteUri, string role, Type ofObjectToReturn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task`1&lt;object&gt; GetEntityAsync(class System.Uri absoluteUri, string role, class System.Type ofObjectToReturn) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="absoluteUri" Type="System.Uri" />
+        <Parameter Name="role" Type="System.String" />
+        <Parameter Name="ofObjectToReturn" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously maps a URI to an object containing the actual resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object or null if a type other than stream is specified.</para>
+        </returns>
+        <param name="absoluteUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI returned from <see cref="M:System.Xml.XmlSecureResolver.ResolveUri(System.Uri,System.String)" />.</param>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current version does not use this parameter when resolving URIs. This is provided for future extensibility purposes. For example, this can be mapped to the xlink:role and used as an implementation-specific argument in other scenarios.</param>
+        <param name="ofObjectToReturn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to return. The current version only returns <see cref="T:System.IO.Stream" /> objects.</param>
+      </Docs>
     </Member>
     <Member MemberName="ResolveUri">
       <MemberSignature Language="C#" Value="public override Uri ResolveUri (Uri baseUri, string relativeUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Uri ResolveUri(class System.Uri baseUri, string relativeUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
@@ -139,16 +257,20 @@
         <Parameter Name="relativeUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="baseUri">To be added.</param>
-        <param name="relativeUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves the absolute URI from the base and relative URIs by calling ResolveUri on the underlying <see cref="T:System.Xml.XmlResolver" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Uri" /> representing the absolute URI or null if the relative URI cannot be resolved (returned by calling ResolveUri on the underlying <see cref="T:System.Xml.XmlResolver" />).</para>
+        </returns>
+        <param name="baseUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI used to resolve the relative URI.</param>
+        <param name="relativeUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI to resolve. The URI can be absolute or relative. If absolute, this value effectively replaces the <paramref name="baseUri" /> value. If relative, it combines with the <paramref name="baseUri" /> to make an absolute URI.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -37,9 +37,11 @@ namespace System.Threading
 #endif
 	public class CancellationTokenSource : IDisposable
 	{
-		bool canceled;
-		bool disposed;
-		
+		const int StateValid = 0;
+		const int StateCanceled = 1 << 1;
+		const int StateDisposed = 1 << 2;
+
+		int state;
 		int currId = int.MinValue;
 		ConcurrentDictionary<CancellationTokenRegistration, Action> callbacks;
 		CancellationTokenRegistration[] linkedTokens;
@@ -56,12 +58,12 @@ namespace System.Threading
 
 		static CancellationTokenSource ()
 		{
-			CanceledSource.canceled = true;
+			CanceledSource.state = StateCanceled;
 
 #if NET_4_5
 			timer_callback = token => {
 				var cts = (CancellationTokenSource) token;
-				cts.Cancel ();
+				cts.CancelSafe ();
 			};
 #endif
 		}
@@ -98,7 +100,7 @@ namespace System.Threading
 		
 		public bool IsCancellationRequested {
 			get {
-				return canceled;
+				return (state & StateCanceled) != 0;
 			}
 		}
 		
@@ -118,23 +120,39 @@ namespace System.Threading
 		public void Cancel (bool throwOnFirstException)
 		{
 			CheckDisposed ();
+			Cancellation (throwOnFirstException);
+		}
 
-			if (canceled)
+		//
+		// Don't throw ObjectDisposedException if the callback
+		// is called concurrently with a Dispose
+		//
+		void CancelSafe ()
+		{
+			if (state == StateValid)
+				Cancellation (true);
+		}
+
+		void Cancellation (bool throwOnFirstException)
+		{
+			if (Interlocked.CompareExchange (ref state, StateCanceled, StateValid) != StateValid)
 				return;
 
-			Thread.MemoryBarrier ();
-			canceled = true;
-			
 			handle.Set ();
+
 			if (linkedTokens != null)
 				UnregisterLinkedTokens ();
-			
+
+			var cbs = callbacks;
+			if (cbs == null)
+				return;
+
 			List<Exception> exceptions = null;
-			
+
 			try {
 				Action cb;
-				for (int id = int.MinValue + 1; id <= currId; id++) {
-					if (!callbacks.TryRemove (new CancellationTokenRegistration (id, this), out cb))
+				for (int id = currId; id != int.MinValue; id--) {
+					if (!cbs.TryRemove (new CancellationTokenRegistration (id, this), out cb))
 						continue;
 					if (cb == null)
 						continue;
@@ -153,22 +171,11 @@ namespace System.Threading
 					}
 				}
 			} finally {
-				callbacks.Clear ();
+				cbs.Clear ();
 			}
 
 			if (exceptions != null)
 				throw new AggregateException (exceptions);
-		}
-
-		/* This is the callback registered on linked tokens
-		 * so that they don't throw an ODE if the callback
-		 * is called concurrently with a Dispose
-		 */
-		void SafeLinkedCancel ()
-		{
-			try {
-				Cancel ();
-			} catch (ObjectDisposedException) {}
 		}
 
 #if NET_4_5
@@ -184,7 +191,7 @@ namespace System.Threading
 
 			CheckDisposed ();
 
-			if (canceled || millisecondsDelay == Timeout.Infinite)
+			if (IsCancellationRequested || millisecondsDelay == Timeout.Infinite)
 				return;
 
 			if (timer == null) {
@@ -212,7 +219,7 @@ namespace System.Threading
 				throw new ArgumentException ("Empty tokens array");
 
 			CancellationTokenSource src = new CancellationTokenSource ();
-			Action action = src.SafeLinkedCancel;
+			Action action = src.CancelSafe;
 			var registrations = new List<CancellationTokenRegistration> (tokens.Length);
 
 			foreach (CancellationToken token in tokens) {
@@ -235,7 +242,7 @@ namespace System.Threading
 
 		void CheckDisposed ()
 		{
-			if (disposed)
+			if ((state & StateDisposed) != 0)
 				throw new ObjectDisposedException (GetType ().Name);
 		}
 
@@ -249,20 +256,24 @@ namespace System.Threading
 #endif
 		void Dispose (bool disposing)
 		{
-			if (disposing && !disposed) {
-				Thread.MemoryBarrier ();
-				disposed = true;
-
-				if (!canceled) {
-					Thread.MemoryBarrier ();
+			if (disposing && (state & StateDisposed) == 0) {
+				if (Interlocked.CompareExchange (ref state, StateDisposed, StateValid) == StateValid) {
 					UnregisterLinkedTokens ();
 					callbacks = null;
+				} else {
+					if (handle != null)
+						handle.WaitOne ();
+
+					state |= StateDisposed;
+					Thread.MemoryBarrier ();
 				}
 #if NET_4_5
 				if (timer != null)
 					timer.Dispose ();
 #endif
+
 				handle.Dispose ();
+				handle = null;
 			}
 		}
 
@@ -285,11 +296,11 @@ namespace System.Threading
 			 * if not, we try to add it to the queue and if it is currently being processed
 			 * we try to execute it back ourselves to be sure the callback is ran
 			 */
-			if (canceled)
+			if (IsCancellationRequested)
 				callback ();
 			else {
 				callbacks.TryAdd (tokenReg, callback);
-				if (canceled && callbacks.TryRemove (tokenReg, out callback))
+				if (IsCancellationRequested && callbacks.TryRemove (tokenReg, out callback))
 					callback ();
 			}
 			
@@ -299,7 +310,7 @@ namespace System.Threading
 		internal void RemoveCallback (CancellationTokenRegistration reg)
 		{
 			// Ignore call if the source has been disposed
-			if (disposed)
+			if ((state & StateDisposed) != 0)
 				return;
 			Action dummy;
 			var cbs = callbacks;

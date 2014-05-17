@@ -1,303 +1,1045 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlReaderSettings" FullName="System.Xml.XmlReaderSettings">
   <TypeSignature Language="C#" Value="public sealed class XmlReaderSettings" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlReaderSettings extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In the dnprdnext release, the <see cref="Overload:System.Xml.XmlReader.Create" /> method is the preferred mechanism for obtaining <see cref="T:System.Xml.XmlReader" /> instances. The <see cref="Overload:System.Xml.XmlReader.Create" /> method uses the <see cref="T:System.Xml.XmlReaderSettings" /> class to specify which features to implement in the created <see cref="T:System.Xml.XmlReader" /> object.</para>
+      <para>For more information, see <format type="text/html"><a href="441E5AAC-DFA9-41ED-9336-CD541B11C2D1">Creating XML Readers</a></format>.</para>
+      <format type="text/html">
+        <h2>Security Considerations</h2>
+      </format>
+      <para>The following are things to consider when using the <see cref="T:System.Xml.XmlReaderSettings" /> class.</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> and <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation" /> validation flags of an <see cref="T:System.Xml.XmlReaderSettings" /> object are not set by default. When these flags are set, the <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> of the <see cref="T:System.Xml.XmlReaderSettings" /> object is used to resolve schema locations encountered in the instance document in the <see cref="T:System.Xml.XmlReader" />. If the <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> object is null, schema locations are not resolved even if the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> and <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation" /> validation flags are set. </para>
+        </item>
+        <item>
+          <para>Schemas added during validation add new types and can change the validation outcome of the document being validated. As a result, external schemas should only be resolved from trusted sources.</para>
+        </item>
+        <item>
+          <para>Validation error messages may expose sensitive content model information. Validation error and warning messages are handled using the <see cref="T:System.Xml.Schema.ValidationEventHandler" /> delegate, or are exposed as an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> if no event handler is provided to the <see cref="T:System.Xml.XmlReaderSettings" /> object (validation warnings do not cause an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> to be thrown). This content model information should not be exposed in untrusted scenarios. Validation warning messages are suppressed by default and can be reported by setting the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ReportValidationWarnings" /> flag.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property of an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> returns the URI path to the schema file that caused the exception. The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property should not be exposed in untrusted scenarios.</para>
+        </item>
+        <item>
+          <para>Disabling the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessIdentityConstraints" /> flag (enabled by default) is recommended when validating, untrusted, large XML documents in high availability scenarios against a schema with identity constraints over a large part of the document.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.XmlReaderSettings" /> objects can contain sensitive information such as user credentials. You should be careful when caching <see cref="T:System.Xml.XmlReaderSettings" /> objects, or when passing the <see cref="T:System.Xml.XmlReaderSettings" /> object from one component to another.</para>
+        </item>
+        <item>
+          <para>DTD processing is disabled by default. If you enable DTD processing, you need to be aware of including DTDs from untrusted sources and possible denial of service attacks. Use the <see cref="T:System.Xml.XmlSecureResolver" /> to restrict the resources that the <see cref="T:System.Xml.XmlReader" /> can access.</para>
+        </item>
+        <item>
+          <para>Do not accept supporting components, such as <see cref="T:System.Xml.NameTable" />, <see cref="T:System.Xml.XmlNamespaceManager" />, and <see cref="T:System.Xml.XmlResolver" /> objects, from an untrusted source.</para>
+        </item>
+        <item>
+          <para>Memory usage of an application that uses <see cref="T:System.Xml.XmlReader" /> may have a correlation to the size of the parsed XML document. One form of denial of service attack is when excessively large XML documents are submitted to be parsed. You can limit the size of the document that can be parsed by setting the <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersInDocument" /> property and then limit the number of characters that result from expanding entities by setting the <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersFromEntities" /> property.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a set of features to support on the <see cref="T:System.Xml.XmlReader" /> object created by the <see cref="Overload:System.Xml.XmlReader.Create" /> method. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlReaderSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Xml.XmlReaderSettings" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.Async" />
+                </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.CheckCharacters" /> </para>
+              </term>
+              <description>
+                <para>true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ConformanceLevel" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.ConformanceLevel.Document" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.IgnoreComments" /> </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.IgnoreProcessingInstructions" /> </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.IgnoreWhitespace" /> </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.LineNumberOffset" /> </para>
+              </term>
+              <description>
+                <para>0.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.LinePositionOffset" /> </para>
+              </term>
+              <description>
+                <para>0.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersFromEntities" />
+                </para>
+              </term>
+              <description>
+                <para>0 (There is no limit on the number of characters that result from expanding entities).</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersInDocument" />
+                </para>
+              </term>
+              <description>
+                <para>0 (There is no limit on the size of the XML document).</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.NameTable" /> </para>
+              </term>
+              <description>
+                <para>null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlTextReader.DtdProcessing" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.DtdProcessing.Prohibit" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" />
+                </para>
+              </term>
+              <description>
+                <para>true. This property is obsolete. Use <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> instead. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to its default value true set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Prohibit. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to false set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Parse.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.Schemas" /> </para>
+              </term>
+              <description>
+                <para>An empty <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ValidationFlags" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessIdentityConstraints" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ValidationType" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.ValidationType.None" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> </para>
+              </term>
+              <description>
+                <para>A new <see cref="T:System.Xml.XmlUrlResolver" /> object.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlReaderSettings" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
-    <Member MemberName="CheckCharacters">
-      <MemberSignature Language="C#" Value="public bool CheckCharacters { set; get; }" />
+    <Member MemberName="Async">
+      <MemberSignature Language="C#" Value="public bool Async { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Async" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must set this value to true when you create a new <see cref="T:System.Xml.XmlReader" /> instance if you want to use asynchronous <see cref="T:System.Xml.XmlReader" /> methods on that instance. After the <see cref="T:System.Xml.XmlReader" /> instance is created, the <see cref="P:System.Xml.XmlReaderSettings.Async" /> property is read-only. The default value of this property is false.</para>
+          <para>This flag is ignored by the <see cref="M:System.Xml.XmlReader.Create(System.Xml.XmlReader,System.Xml.XmlReaderSettings)" /> overload. This means that if you create a new <see cref="T:System.Xml.XmlReader" /> based on an existing <see cref="T:System.Xml.XmlReader" />, the async behavior depends on the input <see cref="T:System.Xml.XmlReader" />, and you cannot use the <see cref="P:System.Xml.XmlReaderSettings.Async" /> flag to change the async behavior.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether asynchronous <see cref="T:System.Xml.XmlReader" /> methods can be used on a particular <see cref="T:System.Xml.XmlReader" /> instance.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CheckCharacters">
+      <MemberSignature Language="C#" Value="public bool CheckCharacters { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CheckCharacters" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the reader to check characters and throw an exception if any characters are outside the range of legal XML characters. Character checking includes checking for illegal characters in the document, as well as checking the validity of XML names (for example, an XML name may not start with a numeral).</para>
+          <para>For more information, see sections 2.2 (http://www.w3.org/TR/REC-xml#charsets) and 2.3 (http://www.w3.org/TR/REC-xml#NT-Name) of the W3C XML 1.0 recommendation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to do character checking.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public System.Xml.XmlReaderSettings Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlReaderSettings Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlReaderSettings</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned <see cref="T:System.Xml.XmlReaderSettings" /> object can be modified without affecting the settings on the original object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the <see cref="T:System.Xml.XmlReaderSettings" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned <see cref="T:System.Xml.XmlReaderSettings" /> object.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CloseInput">
-      <MemberSignature Language="C#" Value="public bool CloseInput { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool CloseInput { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CloseInput" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This setting is used when a stream or <see cref="T:System.IO.TextReader" /> is passed to the <see cref="Overload:System.Xml.XmlReader.Create" /> method. If a stream is created by the reader for its own processing, such as when the reader is created with a URI or when it opens an external document type definition, it is always closed when the reader is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the underlying stream or <see cref="T:System.IO.TextReader" /> should be closed when the reader is closed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConformanceLevel">
-      <MemberSignature Language="C#" Value="public System.Xml.ConformanceLevel ConformanceLevel { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.ConformanceLevel ConformanceLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.ConformanceLevel ConformanceLevel" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.ConformanceLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that <see cref="T:System.Xml.XmlReader" /> objects created by the <see cref="Overload:System.Xml.XmlReader.Create" /> method are more compliant by default than the <see cref="T:System.Xml.XmlTextReader" /> class. The following are conformance improvements that are not enabled on <see cref="T:System.Xml.XmlTextReader" />, but are available by default on readers created by the <see cref="Overload:System.Xml.XmlReader.Create" /> method: </para>
+          <list type="bullet">
+            <item>
+              <para>New lines and attribute value are normalized according to the XML spec.</para>
+            </item>
+            <item>
+              <para>All entities are automatically expanded.</para>
+            </item>
+            <item>
+              <para>Default attributes declared in the document type definition are always added even when the reader does not validate.</para>
+            </item>
+            <item>
+              <para>Declaration of XML prefix mapped to the correct XML namespace URI is allowed.</para>
+            </item>
+            <item>
+              <para>The notation names in a single NotationType attribute declaration, as well as the NmTokens in a single Enumeration attribute declaration, must all be distinct.</para>
+            </item>
+          </list>
+          <para>For more information, see <format type="text/html"><a href="64f382a0-4649-45a9-9635-89165d4182d6">Data Conformance Checking with XmlReader</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the level of conformance which the <see cref="T:System.Xml.XmlReader" /> will comply.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="DtdProcessing">
+      <MemberSignature Language="C#" Value="public System.Xml.DtdProcessing DtdProcessing { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.DtdProcessing DtdProcessing" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.DtdProcessing</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.DtdProcessing" /> enumeration contains the <see cref="F:System.Xml.DtdProcessing.Prohibit" />, <see cref="F:System.Xml.DtdProcessing.Ignore" />, and <see cref="F:System.Xml.DtdProcessing.Parse" /> enumerators. <see cref="F:System.Xml.DtdProcessing.Prohibit" /> is the default behavior. The <see cref="P:System.Xml.XmlReaderSettings.DtdProcessing" /> property replaces the <unmanagedCodeEntityReference>ProhibitDTD</unmanagedCodeEntityReference> property and adds the ability to ignore the DOCTYPE element. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to its default value true set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Prohibit. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to false set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Parse.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Xml.XmlReaderSettings.DtdProcessing" /> property is set to <see cref="F:System.Xml.DtdProcessing.Ignore" />, the <see cref="T:System.Xml.XmlReader" /> will not report the DTDs. This means that the DTD/DOCTYPE will be lost on output. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines the processing of DTDs.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IgnoreComments">
-      <MemberSignature Language="C#" Value="public bool IgnoreComments { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IgnoreComments { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreComments" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to true can result in multiple contiguous text nodes being returned from the reader. This does not affect validation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to ignore comments.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IgnoreProcessingInstructions">
-      <MemberSignature Language="C#" Value="public bool IgnoreProcessingInstructions { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IgnoreProcessingInstructions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreProcessingInstructions" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to true can result in multiple contiguous text nodes being returned from the reader. This does not affect validation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to ignore processing instructions.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IgnoreWhitespace">
-      <MemberSignature Language="C#" Value="public bool IgnoreWhitespace { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IgnoreWhitespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreWhitespace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>White space that is not considered to be significant includes spaces, tabs, and blank lines used to set apart the markup for greater readability. An example of this is white space in element content.</para>
+          <para>This property setting does not affect white space between markup in a mixed content mode, or white space that occurs within the scope of an xml:space='preserve' attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to ignore insignificant white space.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LineNumberOffset">
-      <MemberSignature Language="C#" Value="public int LineNumberOffset { set; get; }" />
+      <MemberSignature Language="C#" Value="public int LineNumberOffset { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LineNumberOffset" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.XmlReaderSettings.LineNumberOffset" /> setting determines the point where the <see cref="P:System.Xml.IXmlLineInfo.LineNumber" /> property starts counting. This is useful if your XML data is embedded within a larger document. For example, if your XML data were embedded in a larger document, and your data started on line 101 of the document, you may want to specify that the reader start at line 100. Therefore, if the reader threw an exception while parsing the first line of the XML, it would report the line number as line 101, rather than line 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets line number offset of the <see cref="T:System.Xml.XmlReader" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LinePositionOffset">
-      <MemberSignature Language="C#" Value="public int LinePositionOffset { set; get; }" />
+      <MemberSignature Language="C#" Value="public int LinePositionOffset { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LinePositionOffset" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.XmlReaderSettings.LinePositionOffset" /> setting determines the point where the <see cref="P:System.Xml.IXmlLineInfo.LinePosition" /> property starts counting. This is useful if your XML data is embedded within a larger document and there is no new line at the beginning of the XML. In this case, if the reader throws an exception while parsing the XML, you want it to return the line position relative to the main document, not just relative to the XML fragment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets line position offset of the <see cref="T:System.Xml.XmlReader" /> object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="MaxCharactersFromEntities">
+      <MemberSignature Language="C#" Value="public long MaxCharactersFromEntities { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 MaxCharactersFromEntities" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zero (0) value means no limits on the number of characters that result from expanding entities. A non-zero value specifies the maximum number of characters that can result from expanding entities.</para>
+          <para>If the reader attempts to read a document that contains entities such that the expanded size will exceed this property, an <see cref="T:System.Xml.XmlException" /> will be thrown.</para>
+          <para>This property allows you to mitigate denial of service attacks where the attacker submits XML documents that attempt to exceed memory limits via expanding entities. By limiting the characters that result from expanded entities, you can detect the attack and recover reliably.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the maximum allowable number of characters in a document that result from expanding entities.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxCharactersInDocument">
+      <MemberSignature Language="C#" Value="public long MaxCharactersInDocument { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 MaxCharactersInDocument" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zero (0) value means no limits on the number of characters in the parsed document. A non-zero value specifies the maximum number of characters that can be parsed.</para>
+          <para>The maximum character count for the document includes the count of characters that result from expanded entities.</para>
+          <para>If the reader attempts to read a document with a size that exceeds this property, an <see cref="T:System.Xml.XmlException" /> will be thrown.</para>
+          <para>This property allows you to mitigate denial of service attacks where the attacker submits extremely large XML documents. By limiting the size of a document, you can detect the attack and recover reliably.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the maximum allowable number of characters XML document. A zero (0) value means no limits on the size of the XML document. A non-zero value specifies the maximum size, in characters.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NameTable">
-      <MemberSignature Language="C#" Value="public System.Xml.XmlNameTable NameTable { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.XmlNameTable NameTable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNameTable NameTable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNameTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to an <see cref="T:System.Xml.XmlNameTable" /> instance if you want to share a common name table among all the created <see cref="T:System.Xml.XmlReader" /> instances.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.NameTable" /> class is not thread-safe. Therefore it cannot be shared between <see cref="T:System.Xml.XmlReader" /> objects that run simultaneously in different threads.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.XmlNameTable" /> used for atomized string comparisons.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProhibitDtd">
-      <MemberSignature Language="C#" Value="public bool ProhibitDtd { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ProhibitDtd { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ProhibitDtd" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use DtdProcessing property instead")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When set to true, the <see cref="T:System.Xml.XmlReader" /> throws an <see cref="T:System.Xml.XmlException" /> when any DTD content is encountered. Do not enable DTD processing if you are concerned about Denial of Service issues or if you are dealing with untrusted sources. </para>
+          <para>If you have DTD processing enabled, you can use the <see cref="T:System.Xml.XmlSecureResolver" /> to restrict the resources that the <see cref="T:System.Xml.XmlReader" /> can access. You can also design your application so that the XML processing is memory and time constrained. For example, configure time-out limits in your ASP.NET application.</para>
+          <para>This property is obsolete. Use <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> instead. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to its default value true set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Prohibit. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to false set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Parse.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to prohibit document type definition (DTD) processing. This property is obsolete. Use <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> instead.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Xml.XmlReaderSettings" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.Async" />
+                </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.CheckCharacters" /> </para>
+              </term>
+              <description>
+                <para>true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ConformanceLevel" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.ConformanceLevel.Document" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.IgnoreComments" /> </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.IgnoreProcessingInstructions" /> </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.IgnoreWhitespace" /> </para>
+              </term>
+              <description>
+                <para>false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.LineNumberOffset" /> </para>
+              </term>
+              <description>
+                <para>0.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.LinePositionOffset" /> </para>
+              </term>
+              <description>
+                <para>0.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersFromEntities" />
+                </para>
+              </term>
+              <description>
+                <para>0 (There is no limit on the number of characters that result from expanding entities).</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.MaxCharactersInDocument" />
+                </para>
+              </term>
+              <description>
+                <para>0 (There is no limit on the size of the XML document).</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.NameTable" />
+                </para>
+              </term>
+              <description>
+                <para>null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlTextReader.DtdProcessing" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.DtdProcessing.Prohibit" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" />
+                </para>
+              </term>
+              <description>
+                <para>true. This property is obsolete. Use <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> instead. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to its default value true set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Prohibit. If you had set <see cref="P:System.Xml.XmlReaderSettings.ProhibitDtd" /> to false set <see cref="P:System.Xml.XmlTextReader.DtdProcessing" /> to Parse.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.Schemas" /> </para>
+              </term>
+              <description>
+                <para>An empty <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ValidationFlags" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessIdentityConstraints" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.ValidationType" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Xml.ValidationType.None" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" />
+                </para>
+              </term>
+              <description>
+                <para>A new <see cref="T:System.Xml.XmlUrlResolver" /> object.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the members of the settings class to their default values.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Schemas">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet Schemas { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet Schemas { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaSet Schemas" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class only supports XML Schema definition language (XSD) schemas. <see cref="T:System.Xml.XmlReader" /> instances created by the <see cref="Overload:System.Xml.XmlReader.Create" /> method cannot be configured to enable XML-Data Reduced (XDR) schema validation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to use when performing schema validation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ValidationEventHandler">
       <MemberSignature Language="C#" Value="public event System.Xml.Schema.ValidationEventHandler ValidationEventHandler;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.Schema.ValidationEventHandler ValidationEventHandler" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.ValidationEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>These events occur while reading an XML instance document if the <see cref="P:System.Xml.XmlReaderSettings.ValidationType" /> is set to either <see cref="F:System.Xml.ValidationType.DTD" /> or <see cref="F:System.Xml.ValidationType.Schema" />. If the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ReportValidationWarnings" /> setting has been enabled on the <see cref="P:System.Xml.XmlReaderSettings.ValidationFlags" /> property these events also occur when any validation warnings are encountered.</para>
+          <para>If the reader is configured for validation and no validation event handler has been set, an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> is thrown for all validation errors. (Validation warnings do not cause an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> to be thrown).</para>
+          <block subset="none" type="note">
+            <para>Validation error messages may expose sensitive content model information. Validation error and warning messages are handled using the <see cref="T:System.Xml.Schema.ValidationEventHandler" /> delegate, or are exposed as an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> if no event handler is provided to the <see cref="T:System.Xml.XmlReaderSettings" /> object (validation warnings do not cause an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> to be thrown). This content model information should not be exposed in untrusted scenarios. Validation warning messages are suppressed by default and can be reported by setting the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ReportValidationWarnings" /> flag.</para>
+            <para>The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property of an <see cref="T:System.Xml.Schema.XmlSchemaValidationException" /> returns the URI path to the schema file that caused the exception. The <see cref="P:System.Xml.Schema.XmlSchemaException.SourceUri" /> property should not be exposed in untrusted scenarios.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the reader encounters validation errors.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ValidationFlags">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaValidationFlags ValidationFlags { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaValidationFlags ValidationFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlSchemaValidationFlags ValidationFlags" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaValidationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> and <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation" /> validation flags of an <see cref="T:System.Xml.XmlReaderSettings" /> object are not set by default. When these flags are set, the <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> of the <see cref="T:System.Xml.XmlReaderSettings" /> object is used to resolve schema locations encountered in the instance document in the <see cref="T:System.Xml.XmlReader" />. If the <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> object is null, schema locations are not resolved even if the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> and <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation" /> validation flags are set. </para>
+            <para>Schemas added during validation add new types and can change the validation outcome of the document being validated. As a result, external schemas should only be resolved from trusted sources.</para>
+            <para>Disabling the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessIdentityConstraints" /> flag (enabled by default) is recommended when validating, untrusted, large XML documents in high availability scenarios against a schema with identity constraints over a large part of the document.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the schema validation settings. This setting applies to schema validating <see cref="T:System.Xml.XmlReader" /> objects (<see cref="P:System.Xml.XmlReaderSettings.ValidationType" /> property set to ValidationType.Schema).</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ValidationType">
-      <MemberSignature Language="C#" Value="public System.Xml.ValidationType ValidationType { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.ValidationType ValidationType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.ValidationType ValidationType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.ValidationType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table describes the <see cref="T:System.Xml.ValidationType" /> values.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="F:System.Xml.ValidationType.Auto" /> and <see cref="F:System.Xml.ValidationType.XDR" /> enumeration values are obsolete in .NET Framework version 2.0.</para>
+          </block>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>ValidationType</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>DTD</para>
+              </term>
+              <description>
+                <para>Validation is performed using a document type definition (DTD).</para>
+                <block subset="none" type="note">
+                  <para>The <see cref="P:System.Xml.XmlReaderSettings.DtdProcessing" /> property must also be set to <see cref="F:System.Xml.DtdProcessing.Parse" />.</para>
+                </block>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>None</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Xml.XmlReader" /> does not validate data, or perform any type assignment.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Schema</para>
+              </term>
+              <description>
+                <para>Validation and type assignment is performed using an XML Schema definition language (XSD) schema. The reader accesses the XML Schema using the following:</para>
+                <list type="bullet">
+                  <item>
+                    <para>Uses the <see cref="P:System.Xml.XmlReaderSettings.Schemas" /> property to access the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object associated with this reader.</para>
+                  </item>
+                  <item>
+                    <para>Uses the in-line schema contained in the XML instance document. (The <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> option must be enabled.)</para>
+                  </item>
+                  <item>
+                    <para>Uses the XML Schema specified by schema location hints (xsi:schemaLocation or xsi:noNamespaceSchemaLocation attribute) found in the XML instance document. (The <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation" /> option must be enabled.)</para>
+                  </item>
+                </list>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Xml.XmlReader" /> will perform validation or type assignment when reading.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlResolver">
       <MemberSignature Language="C#" Value="public System.Xml.XmlResolver XmlResolver { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlResolver XmlResolver" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlResolver</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlResolver" /> is used to locate and open an XML instance document, or to locate and open any external resources referenced by the XML instance document. This can include entities, DTD, or schemas. The <see cref="P:System.Xml.XmlResolver.Credentials" /> property can be used to specify any credentials required for network authentication.</para>
+          <block subset="none" type="note">
+            <para>Because the <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> can contain sensitive information such as user credentials, you should be careful when caching <see cref="T:System.Xml.XmlReaderSettings" /> objects, or when passing the <see cref="T:System.Xml.XmlReaderSettings" /> object from one component to another.</para>
+            <para>An <see cref="T:System.Xml.XmlSecureResolver" /> can be used to access external documents. The <see cref="T:System.Xml.XmlSecureResolver" /> class helps to secure another implementation of <see cref="T:System.Xml.XmlResolver" /> by wrapping the <see cref="T:System.Xml.XmlResolver" /> object and restricting the resources that the underlying <see cref="T:System.Xml.XmlResolver" /> has access to. For more information, see <format type="text/html"><a href="6336772c-6433-470c-a1a2-08da0a08bdf1">How to: Use the XmlSecureResolver Class</a></format>.</para>
+            <para>The <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> and <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation" /> validation flags of an <see cref="T:System.Xml.XmlReaderSettings" /> object are not set by default. When these flags are set, the <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> of the <see cref="T:System.Xml.XmlReaderSettings" /> object is used to resolve schema locations encountered in the instance document in the <see cref="T:System.Xml.XmlReader" />. If the <see cref="P:System.Xml.XmlReaderSettings.XmlResolver" /> object is null, schema locations are not resolved even if the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema" /> and <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation" /> validation flags are set.</para>
+            <para>Schemas added during validation add new types and can change the validation outcome of the document being validated. As a result, external schemas should only be resolved from trusted sources.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Xml.XmlResolver" /> used to access external documents.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

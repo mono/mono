@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IIssuanceSecurityTokenAuthenticator" FullName="System.ServiceModel.Security.Tokens.IIssuanceSecurityTokenAuthenticator">
+  <TypeSignature Language="C#" Value="public interface IIssuanceSecurityTokenAuthenticator" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IIssuanceSecurityTokenAuthenticator" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The token authenticators used by indigo2 for issuing SSLNEGO/SPNEGO SecurityContextTokens or SecureConversation-based SecurityContextTokens are IIssuanceSecurityTokenAuthenticators.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the contract that should be implemented by a custom security token authenticator that issues tokens to the client.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="IssuedSecurityTokenHandler">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.Tokens.IssuedSecurityTokenHandler IssuedSecurityTokenHandler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.Tokens.IssuedSecurityTokenHandler IssuedSecurityTokenHandler" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.IssuedSecurityTokenHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a handler for when the token is issued.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RenewedSecurityTokenHandler">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.Tokens.RenewedSecurityTokenHandler RenewedSecurityTokenHandler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.Tokens.RenewedSecurityTokenHandler RenewedSecurityTokenHandler" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.RenewedSecurityTokenHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This delegate should be invoked only if the token authenticator handles renewal of issued tokens.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a handler for when the token is renewed.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

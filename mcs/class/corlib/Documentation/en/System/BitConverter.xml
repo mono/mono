@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BitConverter" FullName="System.BitConverter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public static class BitConverter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit BitConverter extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,35 +15,252 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Use BitConverter class to work with binary representations of value types.</summary>
-    <remarks>This class returns a value type from an array of bytes or an array of bytes that is the binary representation of a value type. This lets you work with streams of bytes that are binary representations of value types, for example a file or a socket. The class also has a <see cref="T:System.Boolean" /> Field (<see cref="F:System.BitConverter.IsLittleEndian" />) that indicates wherever the CPU is Little Endian or not.
-
-<para><example>
-In this example we convert the number 3516 (0x0DBC in hexadecimal) from binary to <see cref="T:System.Int16" />. This code works only in a Little Endian Machine. If your Machine is Big Endian, change the indexs of the data <see cref="T:System.Array" />.
-<code lang="C#">
-public class TestBitConverter 
-{
-	public static void Main() {
-		// The hexadecimal representation of the number 3516 is 0x0DBC
-		byte[] data = new byte[2];
-		data[0] = 0xBC; // Little Endian Machine
-		data[1] = 0x0D;
-		
-		short num = System.BitConverter.ToInt16(data, 0);
-		System.Console.WriteLine("LittleEndian: {0}", System.BitConverter.IsLittleEndian? "yes" : "no" );
-		System.Console.WriteLine("Number: {0}", num);
-	}
-}		
-  </code>
-
-The output is:
-<code>LittleEndian: yes
-Number: 3516</code></example></para></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.BitConverter" /> class helps manipulate value types in their fundamental form, as a series of bytes. A byte is defined as an 8-bit unsigned integer. The <see cref="T:System.BitConverter" /> class includes static methods to convert each of the primitive types to and from an array of bytes, as the following table illustrates.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Type</para>
+            </term>
+            <description>
+              <para>To byte conversion </para>
+            </description>
+            <description>
+              <para>From byte conversion</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Boolean" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.Boolean)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToBoolean(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Char" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.Char)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToChar(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Double" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.Double)" />
+            </para>
+            <para>-or-</para>
+            <para>
+              <see cref="M:System.BitConverter.DoubleToInt64Bits(System.Double)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToDouble(System.Byte[],System.Int32)" />
+            </para>
+            <para>-or-</para>
+            <para>
+              <see cref="M:System.BitConverter.Int64BitsToDouble(System.Int64)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Int16" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.Int16)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToInt16(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Int32" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.Int32)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToInt32(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Int64" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.Int64)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToInt64(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Single" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.Single)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToSingle(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.UInt16" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.UInt16)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToUInt16(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.UInt32" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.UInt32)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToUInt32(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.UInt64" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.GetBytes(System.UInt64)" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.BitConverter.ToUInt64(System.Byte[],System.Int32)" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <para>If you use <see cref="T:System.BitConverter" /> methods to round-trip data, make sure that the <see cref="Overload:System.BitConverter.GetBytes" /> overload and the ToType method specify the same type. As the following example illustrates, restoring an array that represents a signed integer by calling the <see cref="M:System.BitConverter.ToUInt32(System.Byte[],System.Int32)" /> method can result in a value that is different from the original. For more information, see the entry <see cref="http://go.microsoft.com/fwlink/?LinkId=186999">Working with Signed Non-Decimal and Bitwise Values</see> in the BCL Team Blog. </para>
+      <para>code reference: System.BitConverter.Class#3</para>
+      <para>The order of bytes in the array returned by the <see cref="Overload:System.BitConverter.GetBytes" /> method overloads (as well as the order of bits in the integer returned by the <see cref="M:System.BitConverter.DoubleToInt64Bits(System.Double)" /> method and the order of hexadecimal strings returned by the <see cref="M:System.BitConverter.ToString(System.Byte[])" /> method) depends on whether the computer architecture is little-endian or big-endian. Similarly, the order of bytes in the array and returned by the ToIntegerValue methods and the <see cref="M:System.BitConverter.ToChar(System.Byte[],System.Int32)" /> method depends on whether the computer architecture is little-endian or big-endian. The endianness of an architecture is indicated by the <see cref="F:System.BitConverter.IsLittleEndian" /> property, which returns true on little-endian systems and false on big-endian systems. On little-endian systems, lower-order bytes precede higher-order bytes. On big-endian system, higher-order bytes precede lower-order bytes. The following table illustrates the difference in the byte arrays that result from passing the integer 1,234,567,890 (0x499602D2) to the <see cref="M:System.BitConverter.GetBytes(System.Int32)" /> method. The bytes are listed in order from the byte at index 0 to the byte at index 3.</para>
+      <list type="table">
+        <item>
+          <term>
+            <para>Little-endian </para>
+          </term>
+          <description>
+            <para>D2-02-96-49</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Big-endian</para>
+          </term>
+          <description>
+            <para>49-96-02-D2</para>
+          </description>
+        </item>
+      </list>
+      <para>Because the return value of some methods depends on system architecture, be careful when transmitting byte data beyond machine boundaries:</para>
+      <list type="bullet">
+        <item>
+          <para>If all systems sending and receiving data are guaranteed to have the same endianness, nothing has be done to the data.</para>
+        </item>
+        <item>
+          <para>If systems sending and receiving data can have different endianness, always transmit data in a particular order. This means that the order of bytes in the array may have to be reversed either before sending them or after receiving them. A common convention is to transmit data in network byte order (big-endian order). The following example provides an implementation for sending an integer value in network byte order.</para>
+          <para>code reference: System.BitConverter.Class#4</para>
+        </item>
+        <item>
+          <para>If systems sending and receiving data can have different endianness and the data to be transmitted consists of signed integers, call the <see cref="M:System.Net.IPAddress.HostToNetworkOrder(System.Int32)" /> method to convert the data to network byte order and the <see cref="M:System.Net.IPAddress.NetworkToHostOrder(System.Int32)" /> method to convert it to the order required by the recipient.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts base data types to an array of bytes, and an array of bytes to base data types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DoubleToInt64Bits">
       <MemberSignature Language="C#" Value="public static long DoubleToInt64Bits (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 DoubleToInt64Bits(float64 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -49,20 +268,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bits in the integer returned by the <see cref="M:System.BitConverter.DoubleToInt64Bits(System.Double)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified double-precision floating point number to a 64-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer whose value is equivalent to <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(bool value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (bool value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -70,20 +300,28 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.Boolean" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>Returns 1 byte (true: 1, false: 0)</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified Boolean value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -91,20 +329,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.Char" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 2 bytes (16-bit Unicode character, see <see cref="T:System.Char" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified Unicode character value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 2.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A character to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -112,20 +361,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.Double" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 8 bytes (64-bit double-precision floating-point number, see <see cref="T:System.Double" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified double-precision floating point value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 8.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -133,20 +393,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.Int16" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 2 bytes (16-bits signed integer, see <see cref="T:System.Int16" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified 16-bit signed integer value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 2.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -154,20 +425,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data </param>
-        <summary>Returns the binary representation of the <see cref="T:System.Int32" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 4 bytes (32-bits signed integer, see <see cref="T:System.Int32" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified 32-bit signed integer value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 4.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -175,20 +457,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data </param>
-        <summary>Returns the binary representation of the <see cref="T:System.Int64" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 8 bytes (64-bits signed integer, see <see cref="T:System.Int64" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified 64-bit signed integer value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 8.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -196,21 +489,36 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.Single" /> value
-</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 4 bytes (32-bit single-precision floating-point number, see <see cref="T:System.Single" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified single-precision floating point value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 4.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (ushort value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(unsigned int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (ushort value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -218,12 +526,26 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.UInt16" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified 16-bit unsigned integer value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 2.</para>
         </returns>
-        <remarks>Returns 2 bytes (16-bits unsigned integer, see <see cref="T:System.UInt16" />)</remarks>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -234,10 +556,6 @@ Number: 3516</code></example></para></remarks>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (uint value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -245,11 +563,26 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.UInt32" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 4 bytes (32-bits unsigned integer, see <see cref="T:System.UInt32" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified 32-bit unsigned integer value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 4.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public static byte[] GetBytes (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetBytes(unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -260,10 +593,6 @@ Number: 3516</code></example></para></remarks>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public static byte[] GetBytes (ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -271,25 +600,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <param name="value">The value to convert in binary data</param>
-        <summary>Returns the binary representation of the <see cref="T:System.UInt64" /> value</summary>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
-        <remarks>Returns 8 bytes (64-bits unsigned integer, see <see cref="T:System.UInt64" />)</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified 64-bit unsigned integer value as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 8.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Int64BitsToDouble">
+      <MemberSignature Language="C#" Value="public static double Int64BitsToDouble (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Int64BitsToDouble(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Int64BitsToDouble">
-      <MemberSignature Language="C#" Value="public static double Int64BitsToDouble (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -297,37 +632,56 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, <paramref name="value" /> is an integer that is returned by the <see cref="M:System.BitConverter.DoubleToInt64Bits(System.Double)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified 64-bit signed integer to a double-precision floating point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating point number whose value is equivalent to <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsLittleEndian">
+      <MemberSignature Language="C#" Value="public static readonly bool IsLittleEndian;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly bool IsLittleEndian" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsLittleEndian">
-      <MemberSignature Language="C#" Value="public static readonly bool IsLittleEndian;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Get the Endianess of the Machine. </summary>
-        <remarks>True for Little Endian Machine (least significant byte will be at position 0).</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is true if the architecture is little-endian; false if it is big-endian.</para>
+          <para>Different computer architectures store data using different byte orders. "Big-endian" means the most significant byte is on the left end of a word. "Little-endian" means the most significant byte is on the right end of a word.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the byte order ("endianness") in which data is stored in this computer architecture.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ToBoolean">
+      <MemberSignature Language="C#" Value="public static bool ToBoolean (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ToBoolean(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToBoolean">
-      <MemberSignature Language="C#" Value="public static bool ToBoolean (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -336,21 +690,30 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">A <see cref="T:System.Int32" /> containing the index from which to start the conversion.</param>
-        <summary>Returns the <see cref="T:System.Boolean" /> value from a given byte</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value converted from one byte at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the byte at <paramref name="startIndex" /> in <paramref name="value" /> is nonzero; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToChar">
+      <MemberSignature Language="C#" Value="public static char ToChar (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig char ToChar(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToChar">
-      <MemberSignature Language="C#" Value="public static char ToChar (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -359,21 +722,33 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToChar(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 1 to a <see cref="T:System.Char" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Unicode character converted from two bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character formed by two bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToDouble">
+      <MemberSignature Language="C#" Value="public static double ToDouble (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 ToDouble(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToDouble">
-      <MemberSignature Language="C#" Value="public static double ToDouble (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -382,21 +757,33 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToDouble(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 7 to a <see cref="T:System.Double" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a double-precision floating point number converted from eight bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double precision floating point number formed by eight bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToInt16">
+      <MemberSignature Language="C#" Value="public static short ToInt16 (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 ToInt16(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToInt16">
-      <MemberSignature Language="C#" Value="public static short ToInt16 (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -405,21 +792,33 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToInt16(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 1 to an <see cref="T:System.Int16" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a 16-bit signed integer converted from two bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer formed by two bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToInt32">
+      <MemberSignature Language="C#" Value="public static int ToInt32 (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 ToInt32(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToInt32">
-      <MemberSignature Language="C#" Value="public static int ToInt32 (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -428,21 +827,33 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToInt32(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 3 to an <see cref="T:System.Int32" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of <see cref="T:System.BitConverter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer formed by four bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToInt64">
+      <MemberSignature Language="C#" Value="public static long ToInt64 (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 ToInt64(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToInt64">
-      <MemberSignature Language="C#" Value="public static long ToInt64 (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -451,21 +862,33 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToInt64(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 7 to a <see cref="T:System.Int64" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer formed by eight bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToSingle">
+      <MemberSignature Language="C#" Value="public static float ToSingle (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 ToSingle(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToSingle">
-      <MemberSignature Language="C#" Value="public static float ToSingle (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -474,21 +897,33 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToSingle(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 3 to a <see cref="T:System.Single" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of <see cref="T:System.BitConverter" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a single-precision floating point number converted from four bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single-precision floating point number formed by four bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (byte[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToString(unsigned int8[] value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public static string ToString (byte[] value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -496,20 +931,31 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All the elements of <paramref name="value" /> are converted. The order of hexadecimal strings returned by the <see cref="M:System.BitConverter.ToString(System.Byte[])" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the numeric value of each element of a specified array of bytes to its equivalent hexadecimal string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of hexadecimal pairs separated by hyphens, where each pair represents the corresponding element in <paramref name="value" />; for example, "7F-2C-4A-00".</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToString(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public static string ToString (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -518,21 +964,33 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements from array position <paramref name="startIndex" /> to the end of the array are converted. The order of hexadecimal strings returned by the <see cref="M:System.BitConverter.ToString(System.Byte[])" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of hexadecimal pairs separated by hyphens, where each pair represents the corresponding element in a subarray of <paramref name="value" />; for example, "7F-2C-4A-00".</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public static string ToString (byte[] value, int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToString(unsigned int8[] value, int32 startIndex, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public static string ToString (byte[] value, int startIndex, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -542,22 +1000,41 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="length" /> elements from array position <paramref name="startIndex" /> are converted. If <paramref name="length" /> equals zero, the method returns <see cref="F:System.String.Empty" />.</para>
+          <para>The order of hexadecimal strings returned by the <see cref="M:System.BitConverter.ToString(System.Byte[])" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of hexadecimal pairs separated by hyphens, where each pair represents the corresponding element in a subarray of <paramref name="value" />; for example, "7F-2C-4A-00".</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of array elements in <paramref name="value" /> to convert. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToUInt16">
+      <MemberSignature Language="C#" Value="public static ushort ToUInt16 (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int16 ToUInt16(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToUInt16">
-      <MemberSignature Language="C#" Value="public static ushort ToUInt16 (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -566,12 +1043,28 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ushort'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToUInt16(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 1 to a <see cref="T:System.UInt16" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit unsigned integer formed by two bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToUInt32">
+      <MemberSignature Language="C#" Value="public static uint ToUInt32 (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int32 ToUInt32(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -582,10 +1075,6 @@ Number: 3516</code></example></para></remarks>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToUInt32">
-      <MemberSignature Language="C#" Value="public static uint ToUInt32 (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -594,12 +1083,28 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'uint'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToUInt32(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 3 to a <see cref="T:System.UInt32" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer formed by four bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToUInt64">
+      <MemberSignature Language="C#" Value="public static ulong ToUInt64 (byte[] value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 ToUInt64(unsigned int8[] value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -610,10 +1115,6 @@ Number: 3516</code></example></para></remarks>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ToUInt64">
-      <MemberSignature Language="C#" Value="public static ulong ToUInt64 (byte[] value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -622,22 +1123,23 @@ Number: 3516</code></example></para></remarks>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <param name="startIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ulong'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.BitConverter.ToUInt64(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 7 to a <see cref="T:System.UInt64" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit unsigned integer formed by the eight bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position within <paramref name="value" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
 </Type>

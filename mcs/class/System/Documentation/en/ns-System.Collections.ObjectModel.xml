@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Collections.ObjectModel">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Collections.ObjectModel" /> namespace contains classes that can be used as collections in the object model of a reusable library. Use these classes when properties or methods return collections.</para>
+    </summary>
+  </Docs>
+</Namespace>

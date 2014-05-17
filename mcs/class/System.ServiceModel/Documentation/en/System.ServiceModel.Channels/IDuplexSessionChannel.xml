@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IDuplexSessionChannel" FullName="System.ServiceModel.Channels.IDuplexSessionChannel">
+  <TypeSignature Language="C#" Value="public interface IDuplexSessionChannel : System.ServiceModel.Channels.IDuplexChannel, System.ServiceModel.Channels.ISessionChannel&lt;System.ServiceModel.Channels.IDuplexSession&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDuplexSessionChannel implements class System.ServiceModel.Channels.IChannel, class System.ServiceModel.Channels.IDuplexChannel, class System.ServiceModel.Channels.IInputChannel, class System.ServiceModel.Channels.IOutputChannel, class System.ServiceModel.Channels.ISessionChannel`1&lt;class System.ServiceModel.Channels.IDuplexSession&gt;, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IDuplexChannel</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.ISessionChannel&lt;System.ServiceModel.Channels.IDuplexSession&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.IDuplexSessionChannel" /> interface indicates that an <see cref="T:System.ServiceModel.Channels.IDuplexChannel" /> implements <see cref="T:System.ServiceModel.Channels.IDuplexSession" /> semantics.</para>
+      <para>Given an <see cref="T:System.ServiceModel.Channels.IDuplexSessionChannel" />, its associated <see cref="T:System.ServiceModel.Channels.IDuplexSession" /> can be retrieved through the <see cref="P:System.ServiceModel.Channels.ISessionChannel`1.Session" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface that associates a duplex channel with a session.</para>
+    </summary>
+  </Docs>
+  <Members />
+</Type>

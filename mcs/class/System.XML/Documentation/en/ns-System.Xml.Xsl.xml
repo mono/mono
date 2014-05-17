@@ -1,8 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Xml.Xsl" FullName="System.Xml.Xsl" FullNameSP="System.Xml.Xsl" Maintainer="Mono">
   <Docs>
-    <summary>
-		This namespace contains an implementation of Xml Stylesheet Transformations (XSLT).
-    </summary>
     <remarks />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The System.Xml.Xsl namespace provides support for Extensible Stylesheet Transformation (XSLT) transforms. It supports the W3C XSL Transformations (XSLT) Version 1.0 Recommendation (www.w3.org/TR/xslt).</para>
+    </summary>
   </Docs>
 </Namespace>

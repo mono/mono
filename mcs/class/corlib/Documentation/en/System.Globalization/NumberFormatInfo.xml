@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NumberFormatInfo" FullName="System.Globalization.NumberFormatInfo" FullNameSP="System_Globalization_NumberFormatInfo" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable NumberFormatInfo extends System.Object implements System.ICloneable, System.IFormatProvider" />
   <TypeSignature Language="C#" Value="public sealed class NumberFormatInfo : ICloneable, IFormatProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit NumberFormatInfo extends System.Object implements class System.ICloneable, class System.IFormatProvider" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -21,196 +23,799 @@
       <InterfaceName>System.IFormatProvider</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Supplies culture-specific formatting information for
-      string representations of numeric values.</para>
-    </summary>
     <remarks>
-      <para>
-        <see cref="T:System.Globalization.NumberFormatInfo" /> supplies symbols such as currency symbols and decimal
-   separators.</para>
-      <para>
-        <block subset="none" type="note">A <see cref="T:System.Globalization.NumberFormatInfo" />
-instance typically contains the set of symbols for a specific language and
-culture. Instances of <see cref="T:System.Globalization.NumberFormatInfo" /> can be created to provide customized formatting
-information. </block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Globalization.NumberFormatInfo" /> class contains culture-specific information that is used when you format and parse numeric values. This information includes the currency symbol, the decimal symbol, the group separator symbol, and the symbols for positive and negative signs. </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Instantiating">Instantiating a NumberFormatInfo object</a>
+            </format>
+          </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#Instantiating_Current">For the current culture</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#Instantiating_Invariant">For the invariant culture</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#Instantiating_Specific">For a specific culture</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#Instantiating_Neutral">For a neutral culture</a>
+                </format>
+              </para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#dynamic">NumberFormatInfo and dynamic data</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#formatProvider">IFormatProvider, NumberFormatInfo, and numeric formatting</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#properties">Format strings and NumberFormatInfo properties</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#modifying">Modifying NumberFormatInfo properties</a>
+            </format>
+          </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#currency">Modifying the currency symbol and pattern</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#id">Formatting a national identification number</a>
+                </format>
+              </para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#parsing">Parsing numeric strings</a>
+            </format>
+          </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#ParseUser">Parsing user strings</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#ParseSerial">Serializing and deserializing numeric data</a>
+                </format>
+              </para>
+            </item>
+          </list>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#Instantiating" />
+      </format>
+      <format type="text/html">
+        <h2>Instantiating a NumberFormatInfo object</h2>
+      </format>
+      <para>You can instantiate a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the formatting conventions of the current culture, the invariant culture, a specific culture, or a neutral culture. </para>
+      <format type="text/html">
+        <a href="#Instantiating_Current" />
+      </format>
+      <format type="text/html">
+        <h2>Instantiating a NumberFormatInfo object for the current culture</h2>
+      </format>
+      <para>You can instantiate a <see cref="T:System.Globalization.NumberFormatInfo" /> object for the current thread culture in any of the following ways. In each case, the returned <see cref="T:System.Globalization.NumberFormatInfo" /> object is read-only.</para>
+      <list type="bullet">
+        <item>
+          <para>By retrieving a <see cref="T:System.Globalization.CultureInfo" /> object that represents the current thread culture from the <see cref="P:System.Globalization.CultureInfo.CurrentCulture" /> property, and retrieving the <see cref="T:System.Globalization.CultureInfo" /> object from its <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property. </para>
+        </item>
+        <item>
+          <para>By retrieving the <see cref="T:System.Globalization.NumberFormatInfo" /> object returned by the static (Shared in Visual Basic) <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" /> property. </para>
+        </item>
+        <item>
+          <para>By calling the <see cref="M:System.Globalization.NumberFormatInfo.GetInstance(System.IFormatProvider)" /> method with a <see cref="T:System.Globalization.CultureInfo" /> object that represents the current culture. </para>
+        </item>
+      </list>
+      <para>The following example uses these three ways to create <see cref="T:System.Globalization.NumberFormatInfo" /> objects that represent the formatting conventions of the current culture. It also retrieves the value of the <see cref="P:System.Globalization.NumberFormatInfo.IsReadOnly" /> property to illustrate that each object is read-only.</para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class.Instantiate#1</para>
+      <para>You can create a writable <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the conventions of the current thread culture in any of the following ways:</para>
+      <list type="bullet">
+        <item>
+          <para>By retrieving a <see cref="T:System.Globalization.NumberFormatInfo" /> object in any of the ways illustrated in the previous code example, and calling the <see cref="M:System.Globalization.NumberFormatInfo.Clone" /> method on the returned <see cref="T:System.Globalization.NumberFormatInfo" /> object. This creates a copy of the original <see cref="T:System.Globalization.NumberFormatInfo" /> object, except that its <see cref="P:System.Globalization.NumberFormatInfo.IsReadOnly" /> property is false.</para>
+        </item>
+        <item>
+          <para>By calling the <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture(System.String)" /> method to create a <see cref="T:System.Globalization.CultureInfo" /> object that represents the current culture, and then using its <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property to retrieve the <see cref="T:System.Globalization.NumberFormatInfo" /> object. </para>
+        </item>
+      </list>
+      <para>The following example illustrates these two ways of instantiating a <see cref="T:System.Globalization.NumberFormatInfo" /> object, and displays the value of its <see cref="P:System.Globalization.NumberFormatInfo.IsReadOnly" /> property to illustrate that the object is not read-only. </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class.Instantiate#2</para>
+      <para>Note that the Windows operating system allows the user to override some of the <see cref="T:System.Globalization.NumberFormatInfo" /> property values used in numeric formatting and parsing operations through the <ui>Region and Language</ui> item in Control Panel. For example, a user whose culture is English (United States) might choose to display currency values as 1.1 USD instead of the default of $1.1. The <see cref="T:System.Globalization.NumberFormatInfo" /> objects retrieved in the ways discussed previously all reflect these user overrides. If this is undesirable, you can create a <see cref="T:System.Globalization.NumberFormatInfo" /> object that does not reflect user overrides (and that is also read/write rather than read-only) by calling the <see cref="M:System.Globalization.CultureInfo.#ctor(System.String,System.Boolean)" /> constructor and supplying a value of false for the <paramref name="useUserOverride" /> argument. The following example provides an illustration for a system whose current culture is English (United States) and whose currency symbol has been changed from the default of $ to USD. </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class.Instantiate#3</para>
+      <para />
+      <para>If the <see cref="P:System.Globalization.CultureInfo.UseUserOverride" /> property is set to true, the properties <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" />, <see cref="P:System.Globalization.CultureInfo.NumberFormat" />, and <see cref="P:System.Globalization.CultureInfo.TextInfo" /> are also retrieved from the user settings. If the user settings are incompatible with the culture associated with the <see cref="T:System.Globalization.CultureInfo" /> object (for example, if the selected calendar is not one of the calendars listed by the <see cref="P:System.Globalization.CultureInfo.OptionalCalendars" /> property), the results of the methods and the values of the properties are undefined.</para>
+      <format type="text/html">
+        <a href="#Instantiating_Invariant" />
+      </format>
+      <format type="text/html">
+        <h2>Instantiating a NumberFormatInfo object for the invariant culture</h2>
+      </format>
+      <para>The invariant culture represents a culture that is culture-insensitive. It is based on the English language but not on any specific English-speaking country/region. Although the data of specific cultures can be dynamic and can change to reflect new cultural conventions or user preferences, the data of the invariant culture does not change. A <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the formatting conventions of the invariant culture can be used for formatting operations in which result strings should not vary by culture. </para>
+      <para>You can instantiate a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the formatting conventions of the invariant culture in the following ways: </para>
+      <list type="bullet">
+        <item>
+          <para>By retrieving the value of the <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> property. The returned  <see cref="T:System.Globalization.NumberFormatInfo" /> object is read-only. </para>
+        </item>
+        <item>
+          <para>By retrieving the value of the <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property from the <see cref="T:System.Globalization.CultureInfo" /> object that is returned by the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property. The returned <see cref="T:System.Globalization.NumberFormatInfo" /> object is read-only. </para>
+        </item>
+        <item>
+          <para>By calling the parameterless <see cref="M:System.Globalization.NumberFormatInfo.#ctor" /> class constructor. The returned <see cref="T:System.Globalization.NumberFormatInfo" /> object is read/write. </para>
+        </item>
+      </list>
+      <para>The following example uses each of these methods to instantiate a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the invariant culture. It then indicates whether the object is read-only, </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class.Instantiate#4</para>
+      <format type="text/html">
+        <a href="#Instantiating_Specific" />
+      </format>
+      <format type="text/html">
+        <h2>Instantiating a NumberFormatInfo object for a specific culture</h2>
+      </format>
+      <para>A specific culture represents a language that is spoken in a particular country/region. For example, en-US is a specific culture that represents the English language spoken in the United States, and en-CA is a specific culture that represents the English language spoken in Canada. You can instantiate a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the formatting conventions of a specific culture in the following ways: </para>
+      <list type="bullet">
+        <item>
+          <para>By calling the <see cref="M:System.Globalization.CultureInfo.GetCultureInfo(System.String)" /> method and retrieving the value of the returned <see cref="T:System.Globalization.CultureInfo" /> object's <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property. The returned <see cref="T:System.Globalization.NumberFormatInfo" /> object is read-only. </para>
+        </item>
+        <item>
+          <para>By passing a <see cref="T:System.Globalization.CultureInfo" /> object that represents the culture whose <see cref="T:System.Globalization.NumberFormatInfo" /> object you want to retrieve to the static <see cref="M:System.Globalization.NumberFormatInfo.GetInstance(System.IFormatProvider)" /> method. The returned <see cref="T:System.Globalization.NumberFormatInfo" /> object is read/write.</para>
+        </item>
+        <item>
+          <para>By calling the <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture(System.String)" /> method and retrieving the value of the returned <see cref="T:System.Globalization.CultureInfo" /> object's <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property. The returned <see cref="T:System.Globalization.NumberFormatInfo" /> object is read/write. </para>
+        </item>
+        <item>
+          <para>By calling one of the <see cref="M:System.Globalization.CultureInfo.#ctor(System.String)" /> class constructors and retrieving the value of the returned <see cref="T:System.Globalization.CultureInfo" /> object's <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property. The returned <see cref="T:System.Globalization.NumberFormatInfo" /> object is read/write. </para>
+        </item>
+      </list>
+      <para>The following example uses these four ways to create a <see cref="T:System.Globalization.NumberFormatInfo" /> object that reflects the formatting conventions of the Indonesian (Indonesia) culture. It also indicates whether each object is read-only. </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class.Instantiate#5</para>
+      <format type="text/html">
+        <a href="#Instantiating_Neutral" />
+      </format>
+      <format type="text/html">
+        <h2>Instantiating a NumberFormatInfo object for a neutral culture</h2>
+      </format>
+      <para>A neutral culture represents a culture or language that is independent of a country/region. It is typically the parent of one or more specific cultures. For example, fr is a neutral culture for the French language and the parent of the fr-FR culture. You create a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the formatting conventions of a neutral culture in the same way that you create a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the formatting conventions of a specific culture. </para>
+      <block subset="none" type="note">
+        <para>In the net_v35_short and earlier versions, trying to retrieve a <see cref="T:System.Globalization.NumberFormatInfo" /> object that reflects the formatting conventions of a neutral culture throws a <see cref="T:System.NotSupportedException" /> exception.</para>
+      </block>
+      <para>However, because it is independent of a specific country/region, a neutral culture lacks culture-specific formatting information. Rather than populating the <see cref="T:System.Globalization.NumberFormatInfo" /> object with generic values, the .NET Framework returns a <see cref="T:System.Globalization.NumberFormatInfo" /> object that reflects the formatting conventions of a specific culture that is a child of the neutral culture. For example, the <see cref="T:System.Globalization.NumberFormatInfo" /> object for the neutral en culture reflects the formatting conventions of the en-US culture, and the <see cref="T:System.Globalization.NumberFormatInfo" /> object for the fr culture reflects the formatting conventions of the fr-FR culture. </para>
+      <para>You can use code like the following to determine which specific culture's formatting conventions each neutral culture represents. </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class.Instantiate#6</para>
+      <format type="text/html">
+        <a href="#dynamic" />
+      </format>
+      <format type="text/html">
+        <h2>NumberFormatInfo and dynamic data</h2>
+      </format>
+      <para>The culture-specific data for formatting numeric values provided by the <see cref="T:System.Globalization.NumberFormatInfo" /> class is dynamic, just like the cultural data provided by the <see cref="T:System.Globalization.CultureInfo" /> class. You should not make any assumptions about the stability of values for <see cref="T:System.Globalization.NumberFormatInfo" /> objects that are associated with particular <see cref="T:System.Globalization.CultureInfo" /> objects. Only the data provided by the invariant culture and its associated <see cref="T:System.Globalization.NumberFormatInfo" /> object is stable. Other data can change between application sessions, or even within a single session, for the following reasons: </para>
+      <list type="bullet">
+        <item>
+          <para>System updates. Cultural preferences such as the currency symbol or currency formats change over time. When this happens, Windows Update includes changes to the <see cref="T:System.Globalization.NumberFormatInfo" /> property value for a particular culture. </para>
+        </item>
+        <item>
+          <para>Replacement cultures. The <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> class can be used to replace the data of an existing culture. </para>
+        </item>
+        <item>
+          <para>Cascading changes to property values. A number of culture-related properties can change at run time, which, in turn, causes <see cref="T:System.Globalization.NumberFormatInfo" /> data to change. For example, the current culture can be changed either programmatically or through user action. When this happens, the <see cref="T:System.Globalization.NumberFormatInfo" /> object returned by the <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" /> property changes to an object associated with the current culture. </para>
+        </item>
+        <item>
+          <para>User preferences. Users of your application might override some of the values associated with the current system culture through the region and language options in Control Panel. For example, users might choose a different currency symbol or a different decimal separator symbol. If the <see cref="P:System.Globalization.CultureInfo.UseUserOverride" /> property is set to true (its default value), the properties of the <see cref="T:System.Globalization.NumberFormatInfo" /> object are also retrieved from the user settings.</para>
+        </item>
+      </list>
+      <para>Starting with the .NET Framework 2.0, all user-overridable properties of a <see cref="T:System.Globalization.NumberFormatInfo" /> object are initialized when the object is created. There is still a possibility of inconsistency, because neither object creation nor the user override process is atomic, and the relevant values may change during object creation. However, these inconsistencies should be extremely rare.</para>
+      <para>You can control whether user overrides are reflected in <see cref="T:System.Globalization.NumberFormatInfo" /> objects that represent the same culture as the current thread culture. The following table lists the ways in which a <see cref="T:System.Globalization.NumberFormatInfo" /> object can be retrieved and indicates whether the resulting object reflects user overrides. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Source of CultureInfo and NumberFormatInfo object</para>
+            </term>
+            <description>
+              <para>Reflects user overrides</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>CultureInfo.CurrentCulture.NumberFormat property</para>
+          </term>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" /> property</para>
+          </term>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture(System.String)" /> method</para>
+          </term>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.Globalization.CultureInfo.GetCultureInfo(System.String)" /> method</para>
+          </term>
+          <description>
+            <para>No</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.Globalization.CultureInfo.#ctor(System.String)" /> constructor</para>
+          </term>
+          <description>
+            <para>Yes</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="M:System.Globalization.CultureInfo.#ctor(System.String,System.Boolean)" /> constructor</para>
+          </term>
+          <description>
+            <para>Depends on value of <paramref name="useUserOverride" /> parameter</para>
+          </description>
+        </item>
+      </list>
+      <para>Unless there is a compelling reason to do otherwise, you should respect user overrides when you use the <see cref="T:System.Globalization.NumberFormatInfo" /> object in client applications to format and parse user input or to display numeric data. For server applications or unattended applications, you should not respect user overrides. However, if you are using the <see cref="T:System.Globalization.NumberFormatInfo" /> object either explicitly or implicitly to persist numeric data in string form, you should either use a <see cref="T:System.Globalization.NumberFormatInfo" /> object that reflects the formatting conventions of the invariant culture, or you should specify a custom numeric format string that you use regardless of culture.</para>
+      <format type="text/html">
+        <a href="#formatProvider" />
+      </format>
+      <format type="text/html">
+        <h2>IFormatProvider, NumberFormatInfo, and numeric formatting</h2>
+      </format>
+      <para>A <see cref="T:System.Globalization.NumberFormatInfo" /> object is used implicitly or explicitly in all numeric formatting operations. These include calls to the following methods: </para>
+      <list type="bullet">
+        <item>
+          <para>All numeric formatting methods, such as <see cref="M:System.Int32.ToString" />, <see cref="M:System.Double.ToString" />, and <see cref="M:System.Convert.ToString(System.Int32)" />. </para>
+        </item>
+        <item>
+          <para>The major composite formatting method, <see cref="M:System.String.Format(System.String,System.Object[])" />. </para>
+        </item>
+        <item>
+          <para>Other composite formatting methods, such as <see cref="M:System.Console.WriteLine(System.String,System.Object[])" /> and <see cref="M:System.Text.StringBuilder.AppendFormat(System.String,System.Object[])" />. </para>
+        </item>
+      </list>
+      <para>All numeric formatting operations make use of an <see cref="T:System.IFormatProvider" /> implementation. The <see cref="T:System.IFormatProvider" /> interface includes a single method, <see cref="M:System.IFormatProvider.GetFormat(System.Type)" />. This is a callback method that is passed a <see cref="T:System.Type" /> object that represents the type needed to provide formatting information. The method is responsible for returning either an instance of that type or null, if it cannot provide an instance of the type. The .NET Framework provides two <see cref="T:System.IFormatProvider" /> implementations for formatting numbers: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="T:System.Globalization.CultureInfo" /> class, which represents a specific culture (or a specific language in a specific country/region). In a numeric formatting operation, the <see cref="M:System.Globalization.CultureInfo.GetFormat(System.Type)" /> method returns the <see cref="T:System.Globalization.NumberFormatInfo" /> object associated with its <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property. </para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Globalization.NumberFormatInfo" /> class, which provides information about the formatting conventions of its associated culture. The <see cref="M:System.Globalization.NumberFormatInfo.GetFormat(System.Type)" /> method returns an instance of itself. </para>
+        </item>
+      </list>
+      <para>If an <see cref="T:System.IFormatProvider" /> implementation is not provided to a formatting method explicitly, a <see cref="T:System.Globalization.CultureInfo" /> object returned by the <see cref="P:System.Globalization.CultureInfo.CurrentCulture" /> property that represents the current thread culture is used.</para>
+      <para>The following example illustrates the relationship between the <see cref="T:System.IFormatProvider" /> interface and the <see cref="T:System.Globalization.NumberFormatInfo" /> class in formatting operations by defining a custom <see cref="T:System.IFormatProvider" /> implementation. Its <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method displays the type name of the object requested by the formatting operation. If the interface is requesting a <see cref="T:System.Globalization.NumberFormatInfo" /> object, this method provides the <see cref="T:System.Globalization.NumberFormatInfo" /> object for the current thread culture. As the output from the example shows, the <see cref="M:System.Decimal.ToString(System.IFormatProvider)" /> method requests a <see cref="T:System.Globalization.NumberFormatInfo" /> object to provide formatting information, whereas the <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" /> method requests <see cref="T:System.Globalization.NumberFormatInfo" /> and <see cref="T:System.Globalization.DateTimeFormatInfo" /> objects as well as an <see cref="T:System.ICustomFormatter" /> implementation.</para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class#1</para>
+      <para>If an <see cref="T:System.IFormatProvider" /> implementation is not explicitly provided in a numeric formatting method call, the method calls the CultureInfo.CurrentCulture.GetFormat method, which returns the <see cref="T:System.Globalization.NumberFormatInfo" /> object that corresponds to the current thread culture. </para>
+      <format type="text/html">
+        <a href="#properties" />
+      </format>
+      <format type="text/html">
+        <h2>Format strings and NumberFormatInfo properties</h2>
+      </format>
+      <para>Every formatting operation uses either a standard or a custom numeric format string to produce a result string from a number. In some cases, the use of a format string to produce a result string is explicit, as in the following example. This code calls the <see cref="M:System.Decimal.ToString(System.IFormatProvider)" /> method to convert a <see cref="T:System.Decimal" /> value to a number of different string representations by using the formatting conventions of the en-US culture. </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class#2</para>
+      <para>In other cases, the use of a format string is implicit. For example, in the following method calls to the default or parameterless <see cref="M:System.Decimal.ToString" /> method, the value of the <see cref="T:System.Decimal" /> instance is formatted by using the general ("G") format specifier and the conventions of the current culture, which in this case is the en-US culture.</para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class#3</para>
+      <para>Each standard numeric format string uses one or more <see cref="T:System.Globalization.NumberFormatInfo" /> properties to determine the pattern or the symbols used in the result string. Similarly, each custom numeric format specifier except "0" and "#" insert symbols in the result string that are defined by <see cref="T:System.Globalization.NumberFormatInfo" /> properties. The following table lists the standard and custom numeric format specifiers and their associated <see cref="T:System.Globalization.NumberFormatInfo" /> properties.  To change the appearance of the result string for a particular culture, see the <format type="text/html"><a href="#modifying">Modifying NumberFormatInfo properties</a></format> section. For details about the use of these format specifiers, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Format specifier</para>
+            </term>
+            <description>
+              <para>Associated properties </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>"C" or "c" (currency format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalDigits" />, to define the default number of fractional digits. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalSeparator" />, to define the decimal separator symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrencyGroupSeparator" />, to define the group or thousands separator. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrencyGroupSizes" />, to define the sizes of integral groups. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrencyNegativePattern" />, to define the pattern of negative currency values. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrencyPositivePattern" />, to define the pattern of positive currency values. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" />, to define the currency symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"D" or "d" (decimal format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"E" or "e" (exponential or scientific format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol in the mantissa and exponent. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />, to define the decimal separator symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" />, to define the positive sign symbol in the exponent. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"F" or "f" (fixed-point format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalDigits" />, to define the default number of fractional digits. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />, to define the decimal separator symbol. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"G" or "g" (general format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />, to define the decimal separator symbol.</para>
+            <para> <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" />, to define the positive sign symbol for result strings in exponential format. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"N" or "n" (number format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalDigits" />, to define the default number of fractional digits. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />, to define the decimal separator symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" />, to define the group separator (thousands) symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSizes" />, to define the number of integral digits in a group. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberNegativePattern" />, to define the format of negative values. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"P" or "p" (percent format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol.</para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentDecimalDigits" />, to define the default number of fractional digits. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentDecimalSeparator" />, to define the decimal separator symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentGroupSeparator" />, to define the group separator symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentGroupSizes" />, to define the number of integral digits in a group.</para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentNegativePattern" />, to define the placement of the percent symbol and the negative symbol for negative values. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentPositivePattern" />, to define the placement of the percent symbol for positive values. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentSymbol" />, to define the percent symbol. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"R" or "r" (round-trip format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />, to define the decimal separator symbol.</para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" />, to define the positive sign symbol in an exponent. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"X" or "x" (hexadecimal format specifier)</para>
+          </term>
+          <description>
+            <para>None. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"." (decimal point custom format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />, to define the decimal separator symbol. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"," (group separator custom format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" />, to define the group (thousands) separator symbol. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"%" (percentage placeholder custom format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PercentSymbol" />, to define the percent symbol. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"‰" (per mille placeholder custom format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PerMilleSymbol" />, to define the per mille symbol.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"E" (exponential notation custom format specifier)</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, to define the negative sign symbol in the mantissa and exponent. </para>
+            <para>
+              <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" />, to define the positive sign symbol in the exponent.</para>
+          </description>
+        </item>
+      </list>
+      <para>Note that the <see cref="T:System.Globalization.NumberFormatInfo" /> class includes a <see cref="P:System.Globalization.NumberFormatInfo.NativeDigits" /> property that specifies the base 10 digits used by a specific culture. However, the property is not used in formatting operations; only the Basic Latin digits 0 (U+0030) through 9 (U+0039) are used in the result string. In addition, for <see cref="T:System.Single" /> and <see cref="T:System.Double" /> values of NaN, PositiveInfinity, and NegativeInfinity, the result string consists exclusively of the symbols defined by the <see cref="P:System.Globalization.NumberFormatInfo.NaNSymbol" />, <see cref="P:System.Globalization.NumberFormatInfo.PositiveInfinitySymbol" />, and <see cref="P:System.Globalization.NumberFormatInfo.NegativeInfinitySymbol" /> properties, respectively. </para>
+      <format type="text/html">
+        <a href="#modifying" />
+      </format>
+      <format type="text/html">
+        <h2>Modifying NumberFormatInfo properties</h2>
+      </format>
+      <para>You can modify the properties of a <see cref="T:System.Globalization.NumberFormatInfo" /> object to customize the result string produced in a numeric formatting operation. To do this:</para>
+      <list type="ordered">
+        <item>
+          <para>Create a read/write copy of a <see cref="T:System.Globalization.NumberFormatInfo" /> object whose formatting conventions you want to modify. For more information, see the <format type="text/html"><a href="#Instantiating">Instantiating a NumberFormatInfo object</a></format> section.  </para>
+        </item>
+        <item>
+          <para>Modify the property or properties that are used to produce the desired result string. For information about how formatting methods use <see cref="T:System.Globalization.NumberFormatInfo" /> properties to define result strings, see the <format type="text/html"><a href="#properties">Format strings and NumberFormatInfo properties</a></format> section.  </para>
+        </item>
+        <item>
+          <para>Use the custom <see cref="T:System.Globalization.NumberFormatInfo" /> object as the <see cref="T:System.IFormatProvider" /> argument in calls to formatting methods. </para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Instead of dynamically modifying a culture's property values each time an application is started, you can use the <see cref="T:System.Globalization.CultureAndRegionInfoBuilder" /> class to define either a custom culture (a culture that has a unique name and that supplements existing cultures) or a replacement culture (one that is used instead of a specific culture).</para>
+      </block>
+      <para>The following sections provide some examples. </para>
+      <format type="text/html">
+        <a href="#currency" />
+      </format>
+      <format type="text/html">
+        <h2>Modifying the currency symbol and pattern</h2>
+      </format>
+      <para>The following example modifies a <see cref="T:System.Globalization.NumberFormatInfo" /> object that that represents the formatting conventions of the en-US culture. It assigns the ISO-4217 currency symbol to the <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" /> property and defines a pattern for currency values that consists of the currency symbol followed by a space and a numeric value.  </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Customize#1</para>
+      <format type="text/html">
+        <a href="#id" />
+      </format>
+      <format type="text/html">
+        <h2>Formatting a national identification number</h2>
+      </format>
+      <para>Many national identification numbers consist exclusively of digits and so can easily be formatted by modifying the properties of a <see cref="T:System.Globalization.NumberFormatInfo" /> object. For example, a social security number in the United States consists of 9 digits arranged as follows: <literal>XXX-XX-XXXX</literal>. The following example assumes that social security numbers are stored as integer values and formats them appropriately.</para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Customize#2</para>
+      <format type="text/html">
+        <a href="#parsing" />
+      </format>
+      <format type="text/html">
+        <h2>Parsing numeric strings</h2>
+      </format>
+      <para>Parsing involves converting the string representation of a number to a number. Each numeric type in the .NET Framework includes two overloaded parsing methods: Parse and TryParse. The Parse method converts a string to a number and throws an exception if the conversion fails. The TryParse method converts a string to a number, assigns the number to an out argument, and returns a <see cref="T:System.Boolean" /> value that indicates whether the conversion succeeded. </para>
+      <para>The parsing methods implicitly or explicitly use a <see cref="T:System.Globalization.NumberStyles" /> enumeration value to determine what style elements (such as group separators, a decimal separator, or a currency symbol) can be present in a string if the parsing operation is to succeed. If a <see cref="T:System.Globalization.NumberStyles" /> value is not provided in the method call, the default is a <see cref="T:System.Globalization.NumberStyles" /> value that includes the <see cref="F:System.Globalization.NumberStyles.Float" /> and <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> flags, which specifies that the parsed string can include group symbols, a decimal separator, a negative sign, and white-space characters, or it can be the string representation of a number in exponential notation.  </para>
+      <para>The parsing methods also implicitly or explicitly use a <see cref="T:System.Globalization.NumberFormatInfo" /> object that defines the specific symbols and patterns that can occur in the string to be parsed. If a <see cref="T:System.Globalization.NumberFormatInfo" /> object is not provided, the default is the <see cref="T:System.Globalization.NumberFormatInfo" /> for the current thread culture. For more information about parsing, see the individual parsing methods, such as <see cref="M:System.Int16.Parse(System.String)" />, <see cref="M:System.Int32.Parse(System.String,System.Globalization.NumberStyles)" />, <see cref="M:System.Int64.Parse(System.String,System.IFormatProvider)" />, <see cref="M:System.Decimal.Parse(System.String,System.Globalization.NumberStyles,System.IFormatProvider)" />, <see cref="M:System.Double.TryParse(System.String,System.Double@)" />, and <see cref="M:System.Numerics.BigInteger.TryParse(System.String,System.Globalization.NumberStyles,System.IFormatProvider,System.Numerics.BigInteger@)" />.</para>
+      <para>The following example illustrates the culture-sensitive nature of parsing strings. It tries to parse a string that include thousands separators by using the conventions of the en-US, fr-FR, and invariant cultures. A string that includes the comma as a group separator and the period as a decimal separator fails to parse in the fr-FR culture, and a string with white space as a group separator and a comma as a decimal separator fails to parse in the en-US and invariant cultures. </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class#4</para>
+      <para>Parsing generally occurs in two contexts: </para>
+      <list type="bullet">
+        <item>
+          <para>As an operation that is designed to convert user input into a numeric value. </para>
+        </item>
+        <item>
+          <para>As an operation that is designed to round-trip a numeric value; that is, to deserialize a numeric value that was previously serialized as a string. </para>
+        </item>
+      </list>
+      <para>The following sections discuss these two operations in greater detail. </para>
+      <format type="text/html">
+        <a href="#ParseUser" />
+      </format>
+      <format type="text/html">
+        <h2>Parsing user strings</h2>
+      </format>
+      <para>When you are parsing numeric strings input by the user, you should always instantiate a <see cref="T:System.Globalization.NumberFormatInfo" /> object that reflects the user's cultural settings. For information about how to instantiate a <see cref="T:System.Globalization.NumberFormatInfo" /> object that reflects user customizations, see the <format type="text/html"><a href="#dynamic">NumberFormatInfo and dynamic data</a></format> section. </para>
+      <para>The following example illustrates the difference between a parsing operation that reflects user cultural settings and one that does not. In this case, the default system culture is en-US, but the user has defined "," as the decimal symbol and "." as the group separator in Control Panel, <ui>Region and Language</ui>. Ordinarily, these symbols are reversed in the default en-US culture. When the user enters a string that reflects user settings, and the string is parsed by a <see cref="T:System.Globalization.NumberFormatInfo" /> object that also reflects user settings (overrides), the parsing operation returns a correct result. However, when the string is parsed by a <see cref="T:System.Globalization.NumberFormatInfo" /> object that reflects standard en-US cultural settings, it mistakes the comma symbol for a group separator and returns an incorrect result. </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class#5</para>
+      <format type="text/html">
+        <a href="#ParseSerial" />
+      </format>
+      <format type="text/html">
+        <h2>Serializing and deserializing numeric data</h2>
+      </format>
+      <para>When numeric data is serialized in string format and later deserialized and parsed, the strings should be generated and parsed by using the conventions of the invariant culture. The formatting and parsing operations should never reflect the conventions of a specific culture. If culture-specific settings are used, the portability of the data is strictly limited; it can be successfully deserialized only on a thread whose culture-specific settings are identical to those of the thread on which it was serialized. In some cases, this means that the data cannot even be successfully deserialized on the same system on which it was serialized. </para>
+      <para>The following example illustrates what can happen when this principle is violated. Floating-point values in an array are converted to strings when the current thread uses the culture-specific settings of the en-US culture. The data is then parsed by a thread that uses the culture-specific settings of the en-GB culture. In this case, although each parsing operation succeeds, the data does not round-trip successfully and data corruption occurs. In other cases, a parsing operation could fail and a <see cref="T:System.FormatException" /> exception could be thrown.  </para>
+      <para>code reference: System.Globalization.NumberFormatInfo.Class#6</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides culture-specific information for formatting and parsing numeric values. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public NumberFormatInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Globalization.NumberFormatInfo" /> class.</para>
-        </summary>
-        <remarks>
-          <para>The new instance is not read-only, and is otherwise
-      identical to the <see cref="T:System.Globalization.NumberFormatInfo" /> instance returned by the <see cref="P:System.Globalization.NumberFormatInfo.InvariantInfo" /> property.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties of the new instance can be modified if your application needs user-defined formatting.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new writable instance of the <see cref="T:System.Globalization.NumberFormatInfo" /> class that is culture-independent (invariant).</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
       <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The clone is writable even if the original <see cref="T:System.Globalization.NumberFormatInfo" /> object is read-only. Therefore, the properties of the clone can be modified with user-defined patterns.</para>
+          <para>A shallow copy of an object is a copy of the object only. If the object contains references to other objects, the shallow copy will not create copies of the referred objects. It will refer to the original objects instead. On the other hand, a deep copy of an object creates a copy of the object and a copy of everything directly or indirectly referenced by that object. In the case of a <see cref="T:System.Globalization.NumberFormatInfo" /> object, a shallow copy is sufficient for copying all instance properties, because all properties that return object references are static (Shared in Visual Basic). </para>
+        </remarks>
         <summary>
-          <para>Creates a copy of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a shallow copy of the <see cref="T:System.Globalization.NumberFormatInfo" /> object.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of the current
-   instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object copied from the original <see cref="T:System.Globalization.NumberFormatInfo" /> object.</para>
         </returns>
-        <remarks>
-          <para>The <see cref="M:System.Globalization.NumberFormatInfo.Clone" /> method returns a new instance of <see cref="T:System.Globalization.NumberFormatInfo" /> with property values that are equal to the
-   property values of the current instance except for the <see cref="P:System.Globalization.DateTimeFormatInfo.IsReadOnly" /> property, which is always <see langword="false" />.</para>
-          <para>
-            <block subset="none" type="note">This method is
-   implemented to support the <see cref="T:System.ICloneable" /> interface.</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrencyDecimalDigits">
+      <MemberSignature Language="ILASM" Value=".property int32 CurrencyDecimalDigits { public hidebysig specialname instance int32 get_CurrencyDecimalDigits() public hidebysig specialname instance void set_CurrencyDecimalDigits(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int CurrencyDecimalDigits { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CurrencyDecimalDigits" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrencyDecimalDigits">
-      <MemberSignature Language="ILASM" Value=".property int32 CurrencyDecimalDigits { public hidebysig specialname instance int32 get_CurrencyDecimalDigits() public hidebysig specialname instance void set_CurrencyDecimalDigits(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int CurrencyDecimalDigits { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the number of decimal places in currency values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 containing the number of decimal places in currency values.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is 2.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 99.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalDigits" /> property is used with the "C" standard format string without a precision specifier in numeric formatting operations. It defines the default number of fractional digits that appear after the decimal separator. This value is overridden if a precision specifier is used. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of decimal places to use in currency values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CurrencyDecimalSeparator">
       <MemberSignature Language="ILASM" Value=".property string CurrencyDecimalSeparator { public hidebysig specialname instance string get_CurrencyDecimalSeparator() public hidebysig specialname instance void set_CurrencyDecimalSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string CurrencyDecimalSeparator { set; get; }" />
+      <MemberSignature Language="C#" Value="public string CurrencyDecimalSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CurrencyDecimalSeparator" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Gets or sets the symbol used as the decimal separator in currency values.</para>
-        </summary>
-        <value>
-          <para>A <see cref="T:System.String" /> containing the decimal separator used in currency values.</para>
-        </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      ".".</para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
-        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrencyGroupSeparator">
-      <MemberSignature Language="ILASM" Value=".property string CurrencyGroupSeparator { public hidebysig specialname instance string get_CurrencyGroupSeparator() public hidebysig specialname instance void set_CurrencyGroupSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string CurrencyGroupSeparator { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the decimal separator used in currency values.</para>
+        </value>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial value of this property is derived from the settings in the <ui>Region and Language</ui> item in Control Panel. </para>
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalSeparator" /> property is used with the "C" standard format string to define the symbol that separates integral from fractional digits. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. </para>
+        </remarks>
         <summary>
-          <para>Gets or sets the symbol used to separate groups of
-      digits to the left of the decimal point in currency values.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string to use as the decimal separator in currency values.</para>
         </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrencyGroupSeparator">
+      <MemberSignature Language="ILASM" Value=".property string CurrencyGroupSeparator { public hidebysig specialname instance string get_CurrencyGroupSeparator() public hidebysig specialname instance void set_CurrencyGroupSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string CurrencyGroupSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CurrencyGroupSeparator" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <value>
           <para>A <see cref="T:System.String" />
 containing the group separator used in currency values.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is ",".</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial value of this property is derived from the settings in the <ui>Regional and Language</ui> item in Control Panel. </para>
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.CurrencyGroupSeparator" />  property is used with the "C" standard format string to define the symbol that separates groups of integers. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that separates groups of digits to the left of the decimal in currency values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrencyGroupSizes">
+      <MemberSignature Language="ILASM" Value=".property class System.Int32[] CurrencyGroupSizes { public hidebysig specialname instance class System.Int32[] get_CurrencyGroupSizes() public hidebysig specialname instance void set_CurrencyGroupSizes(class System.Int32[] value) }" />
+      <MemberSignature Language="C#" Value="public int[] CurrencyGroupSizes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32[] CurrencyGroupSizes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrencyGroupSizes">
-      <MemberSignature Language="ILASM" Value=".property class System.Int32[] CurrencyGroupSizes { public hidebysig specialname instance class System.Int32[] get_CurrencyGroupSizes() public hidebysig specialname instance void set_CurrencyGroupSizes(class System.Int32[] value) }" />
-      <MemberSignature Language="C#" Value="public int[] CurrencyGroupSizes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the number of digits in each group to the
-      left of the decimal point in currency values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> array containing elements that define the number of digits in
    each group in currency values.</para>
         </value>
-        <remarks>
-          <para>All elements of the array except the last are required
-      to be between 1 and 9, inclusive. The last element can be 0.</para>
-          <para>The first element of the array defines the number of
-      elements in the first group of digits located immediately to the left of the
-   <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalSeparator" />. Each subsequent element refers to the next group of
-      digits located to the left of the previous group. If the last element of the
-      array is not zero, any remaining digits are grouped based on the last element of
-      the array. If the last element is zero, the remaining digits are not
-      grouped.</para>
-          <para>The culture-invariant value for this property is an
-      array with a single element containing the value 3.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>The array specified for a set operation is a null reference.</para>
         </exception>
@@ -254,112 +859,39 @@ class Test {
           <para>-or-</para>
           <para>The array contains an element, other than the last element, that is set to 0.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.CurrencyGroupSizes" />  property is used with the "C" standard format string to define the number of digits that appear in integral groups. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. Every element in the one-dimensional array must be an integer from 1 through 9. The last element can be 0.</para>
+          <para>The first element of the array defines the number of elements in the least significant group of digits immediately to the left of the <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalSeparator" />. Each subsequent element refers to the next significant group of digits to the left of the previous group. If the last element of the array is not 0, the remaining digits are grouped based on the last element of the array. If the last element is 0, the remaining digits are not grouped.</para>
+          <para>For example, if the array contains { 3, 4, 5 }, the digits are grouped similar to "$55,55555,55555,55555,4444,333.00". If the array contains { 3, 4, 0 }, the digits are grouped similar to "$55555555555555555,4444,333.00".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of digits in each group to the left of the decimal in currency values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrencyNegativePattern">
+      <MemberSignature Language="ILASM" Value=".property int32 CurrencyNegativePattern { public hidebysig specialname instance int32 get_CurrencyNegativePattern() public hidebysig specialname instance void set_CurrencyNegativePattern(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int CurrencyNegativePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CurrencyNegativePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrencyNegativePattern">
-      <MemberSignature Language="ILASM" Value=".property int32 CurrencyNegativePattern { public hidebysig specialname instance int32 get_CurrencyNegativePattern() public hidebysig specialname instance void set_CurrencyNegativePattern(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int CurrencyNegativePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the format of negative currency values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 between 0 and 15 inclusive, which specifies the format of negative currency
 values.</para>
         </value>
-        <remarks>
-          <para>The following table describes the valid values for this
-      property. "$" is used as the value for <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" />, "-" is used as the value for <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, and 999 represents any numeric value.</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Pattern</description>
-            </listheader>
-            <item>
-              <term> 0</term>
-              <description>($999)</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>-$999</description>
-            </item>
-            <item>
-              <term> 2</term>
-              <description>$-999</description>
-            </item>
-            <item>
-              <term> 3</term>
-              <description>$999-</description>
-            </item>
-            <item>
-              <term> 4</term>
-              <description>(999$)</description>
-            </item>
-            <item>
-              <term> 5</term>
-              <description>-999$</description>
-            </item>
-            <item>
-              <term> 6</term>
-              <description>999-$</description>
-            </item>
-            <item>
-              <term> 7</term>
-              <description>999$-</description>
-            </item>
-            <item>
-              <term> 8</term>
-              <description>-999
-            $</description>
-            </item>
-            <item>
-              <term> 9</term>
-              <description>-$
-            999</description>
-            </item>
-            <item>
-              <term> 10</term>
-              <description>999 $-</description>
-            </item>
-            <item>
-              <term> 11</term>
-              <description>$
-            999-</description>
-            </item>
-            <item>
-              <term> 12</term>
-              <description>$
-            -999</description>
-            </item>
-            <item>
-              <term> 13</term>
-              <description>999- $</description>
-            </item>
-            <item>
-              <term> 14</term>
-              <description>($
-            999)</description>
-            </item>
-            <item>
-              <term> 15</term>
-              <description>(999
-            $)</description>
-            </item>
-          </list>
-          <para>The culture-invariant value for this property is 0.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 15.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
         <example>
@@ -399,59 +931,177 @@ class Test {
             <para>pattern # 15: (9,999,999,999,999.00 $)</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.CurrencyNegativePattern" /> property is used with the "C" standard format string to define the pattern of negative currency values. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. This property has one of the values in the following table. The symbol "$" is the <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" />, the symbol "-" is the <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, and <paramref name="n" /> is a number.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Associated pattern </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>($n) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>-$n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>$-n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para>$n- </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para>(n$) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>5 </para>
+              </term>
+              <description>
+                <para>-n$ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>6 </para>
+              </term>
+              <description>
+                <para>n-$ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>7 </para>
+              </term>
+              <description>
+                <para>n$- </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>8 </para>
+              </term>
+              <description>
+                <para>-n $ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>9 </para>
+              </term>
+              <description>
+                <para>-$ n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>10 </para>
+              </term>
+              <description>
+                <para>n $- </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>11 </para>
+              </term>
+              <description>
+                <para>$ n- </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>12 </para>
+              </term>
+              <description>
+                <para>$ -n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>13 </para>
+              </term>
+              <description>
+                <para>n- $ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>14 </para>
+              </term>
+              <description>
+                <para>($ n) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>15 </para>
+              </term>
+              <description>
+                <para>(n $) </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format pattern for negative currency values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrencyPositivePattern">
+      <MemberSignature Language="ILASM" Value=".property int32 CurrencyPositivePattern { public hidebysig specialname instance int32 get_CurrencyPositivePattern() public hidebysig specialname instance void set_CurrencyPositivePattern(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int CurrencyPositivePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CurrencyPositivePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrencyPositivePattern">
-      <MemberSignature Language="ILASM" Value=".property int32 CurrencyPositivePattern { public hidebysig specialname instance int32 get_CurrencyPositivePattern() public hidebysig specialname instance void set_CurrencyPositivePattern(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int CurrencyPositivePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the format of positive currency values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 between 0 and 3 inclusive, containing the format of positive currency
 values.</para>
         </value>
-        <remarks>
-          <para>The following table describes the valid values for this
-      property. "$" is used as the value for <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" />, and 999 represents any numeric value.</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Pattern</description>
-            </listheader>
-            <item>
-              <term> 0</term>
-              <description>$999</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>999$</description>
-            </item>
-            <item>
-              <term> 2</term>
-              <description>$ 
-            999</description>
-            </item>
-            <item>
-              <term> 3</term>
-              <description>999 $</description>
-            </item>
-          </list>
-          <para>The culture-invariant value for this property is 0.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 3.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
         <example>
@@ -478,74 +1128,127 @@ class Test {
             <para>pattern # 3: 9,999,999,999,999.00 $</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.CurrencyPositivePattern" />  property is used with the "C" standard format string to define pattern of positive currency values. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. This property has one of the values in the following table. The symbol "$" is the <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" /> and <paramref name="n" /> is a number.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Associated pattern </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>$n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>n$ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>$ n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para>n $ </para>
+              </description>
+            </item>
+          </list>
+          <para>Note that the pattern does not support a positive sign.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format pattern for positive currency values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrencySymbol">
+      <MemberSignature Language="ILASM" Value=".property string CurrencySymbol { public hidebysig specialname instance string get_CurrencySymbol() public hidebysig specialname instance void set_CurrencySymbol(string value) }" />
+      <MemberSignature Language="C#" Value="public string CurrencySymbol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CurrencySymbol" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrencySymbol">
-      <MemberSignature Language="ILASM" Value=".property string CurrencySymbol { public hidebysig specialname instance string get_CurrencySymbol() public hidebysig specialname instance void set_CurrencySymbol(string value) }" />
-      <MemberSignature Language="C#" Value="public string CurrencySymbol { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the currency symbol.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" />
 containing the currency symbol.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is the Unicode currency symbol 
-      0x00a4.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string assigned to the <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" /> property is included in the result string when a numeric value is formatted with the "C" <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">standard numeric format specifier</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string to use as the currency symbol.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrentInfo">
+      <MemberSignature Language="ILASM" Value=".property class System.Globalization.NumberFormatInfo CurrentInfo { public hidebysig static specialname class System.Globalization.NumberFormatInfo get_CurrentInfo() }" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo CurrentInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Globalization.NumberFormatInfo CurrentInfo" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrentInfo">
-      <MemberSignature Language="ILASM" Value=".property class System.Globalization.NumberFormatInfo CurrentInfo { public hidebysig static specialname class System.Globalization.NumberFormatInfo get_CurrentInfo() }" />
-      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo CurrentInfo { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberFormatInfo</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Globalization.NumberFormatInfo" /> instance containing formatting
- information for the current system culture.</para>
-        </summary>
         <value>
           <para>A read-only <see cref="T:System.Globalization.NumberFormatInfo" /> containing the settings for the current
  system culture.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieving a <see cref="T:System.Globalization.NumberFormatInfo" /> object from the <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" /> property is equivalent to retrieving a <see cref="T:System.Globalization.NumberFormatInfo" /> object from the CultureInfo.CurrentCulture.NumberFormat property. </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a read-only <see cref="T:System.Globalization.NumberFormatInfo" /> that formats values based on the current culture.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DigitSubstitution">
-      <MemberSignature Language="C#" Value="public System.Globalization.DigitShapes DigitSubstitution { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Globalization.DigitShapes DigitSubstitution { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Globalization.DigitShapes DigitSubstitution" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -560,15 +1263,29 @@ containing the currency symbol.</para>
         <ReturnType>System.Globalization.DigitShapes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Globalization.NumberFormatInfo.DigitSubstitution" /> property is reserved for future use. Currently, it is not used in either parsing or formatting operations for the current <see cref="T:System.Globalization.NumberFormatInfo" /> object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how the graphical user interface displays the shape of a digit.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetFormat">
       <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object GetFormat(class System.Type formatType)" />
       <MemberSignature Language="C#" Value="public object GetFormat (Type formatType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetFormat(class System.Type formatType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -576,30 +1293,32 @@ containing the currency symbol.</para>
         <Parameter Name="formatType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="formatType">The <see cref="T:System.Type" /> of the formatting object to be returned.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Format(String, IFormatProvider) methods supported by the base data types invoke this method when the current <see cref="T:System.Globalization.NumberFormatInfo" /> is passed as the <see cref="T:System.IFormatProvider" /> parameter. This method implements <see cref="M:System.IFormatProvider.GetFormat(System.Type)" />.</para>
+        </remarks>
         <summary>
-          <para>Returns an object of the specified type that provides formatting services.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object of the specified type that provides a number formatting service.</para>
         </summary>
         <returns>
-          <para>The current instance, if <paramref name="formatType" /> is of type <see cref="T:System.Globalization.NumberFormatInfo" />; otherwise, a null reference.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="T:System.Globalization.NumberFormatInfo" />, if <paramref name="formatType" /> is the same as the type of the current <see cref="T:System.Globalization.NumberFormatInfo" />; otherwise, null.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is
-      implemented to support the <see cref="T:System.IFormatProvider" /> interface.</block>
-          </para>
-        </remarks>
+        <param name="formatType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the required formatting service. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetInstance">
+      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo GetInstance (IFormatProvider formatProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Globalization.NumberFormatInfo GetInstance(class System.IFormatProvider formatProvider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInstance">
-      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo GetInstance (IFormatProvider formatProvider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberFormatInfo</ReturnType>
       </ReturnValue>
@@ -607,308 +1326,131 @@ containing the currency symbol.</para>
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="formatProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method of <paramref name="formatProvider" /> using <see cref="T:System.Globalization.NumberFormatInfo" /> as the Type parameter. If <paramref name="formatProvider" /> is null or if <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> returns null, this method returns <see cref="P:System.Globalization.NumberFormatInfo.CurrentInfo" />.</para>
+          <para>Your application gets a <see cref="T:System.Globalization.NumberFormatInfo" /> object for a specific culture using one of the following methods: </para>
+          <list type="bullet">
+            <item>
+              <para>Through the <see cref="P:System.Globalization.CultureInfo.NumberFormat" /> property.</para>
+            </item>
+            <item>
+              <para>Through the <see cref="M:System.Globalization.NumberFormatInfo.GetInstance(System.IFormatProvider)" /> method where <paramref name="provider" /> is a <see cref="T:System.Globalization.CultureInfo" />.</para>
+            </item>
+          </list>
+          <para>A <see cref="T:System.Globalization.NumberFormatInfo" /> object is created only for the invariant culture or for specific cultures, not for neutral cultures. For more information about the invariant culture, specific cultures, and neutral cultures, see the <see cref="T:System.Globalization.CultureInfo" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Globalization.NumberFormatInfo" /> associated with the specified <see cref="T:System.IFormatProvider" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.NumberFormatInfo" /> associated with the specified <see cref="T:System.IFormatProvider" />.</para>
+        </returns>
+        <param name="formatProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IFormatProvider" /> used to get the <see cref="T:System.Globalization.NumberFormatInfo" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="InvariantInfo">
+      <MemberSignature Language="ILASM" Value=".property class System.Globalization.NumberFormatInfo InvariantInfo { public hidebysig static specialname class System.Globalization.NumberFormatInfo get_InvariantInfo() }" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo InvariantInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Globalization.NumberFormatInfo InvariantInfo" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InvariantInfo">
-      <MemberSignature Language="ILASM" Value=".property class System.Globalization.NumberFormatInfo InvariantInfo { public hidebysig static specialname class System.Globalization.NumberFormatInfo get_InvariantInfo() }" />
-      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo InvariantInfo { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberFormatInfo</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Globalization.NumberFormatInfo" /> instance containing formatting
-   information that is culture-independent and does not change.</para>
-        </summary>
         <value>
           <para>A read-only <see cref="T:System.Globalization.NumberFormatInfo" /> with property values which are
    universally supported. The property values of the returned <see cref="T:System.Globalization.NumberFormatInfo" /> are not
    impacted by changes to the current culture.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>The following table lists the property values of the
-   <see cref="T:System.Globalization.NumberFormatInfo" />
-   returned by this property.</para>
-          <list type="table">
-            <listheader>
-              <term>Property</term>
-              <description>Default</description>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term>
-                <see langword="CurrencyDecimalDigits" />
-              </term>
-              <description>2</description>
-              <description>The number of decimal places in currency
-      values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="CurrencyDecimalSeparator" />
-              </term>
-              <description>"."</description>
-              <description>The string used as the decimal separator in currency values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="CurrencyGroupSeparator" />
-              </term>
-              <description>","</description>
-              <description>The string used to separate groups of digits to the left of the
-   decimal point in currency values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="CurrencyGroupSizes" />
-              </term>
-              <description>3</description>
-              <description>The number of digits in each group to the left of the decimal point in
-   currency values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="CurrencyNegativePattern" />
-              </term>
-              <description>0</description>
-              <description>The format of negative currency values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="CurrencyPositivePattern" />
-              </term>
-              <description>0</description>
-              <description>The format of positive currency values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="CurrencySymbol" />
-              </term>
-              <description>0x00a4</description>
-              <description>The Unicode currency symbol.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NaNSymbol" />
-              </term>
-              <description>"NaN"</description>
-              <description>The string used to represent undefined floating-point values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NegativeInfinitySymbol" />
-              </term>
-              <description>"-Infinity"</description>
-              <description>The string used to represent negative infinities.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NegativeSign" />
-              </term>
-              <description>"-"</description>
-              <description>The string used to indicate negative values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NumberDecimalDigits" />
-              </term>
-              <description>2</description>
-              <description>The default number of decimal places.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NumberDecimalSeparator" />
-              </term>
-              <description>"."</description>
-              <description>The string used as the decimal separator.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NumberGroupSeparator" />
-              </term>
-              <description>","</description>
-              <description>The string used to separate groups of digits to the left of the
-   decimal point.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NumberGroupSizes" />
-              </term>
-              <description>3</description>
-              <description>The number of digits in each group to the left of the decimal
-   point.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="NumberNegativePattern" />
-              </term>
-              <description>1</description>
-              <description>The format of negative values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PercentDecimalDigits" />
-              </term>
-              <description>2</description>
-              <description>The default number of decimal places in percent values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PercentDecimalSeparator" />
-              </term>
-              <description>"."</description>
-              <description>The string used as the decimal separator in percent values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PercentGroupSeparator" />
-              </term>
-              <description>","</description>
-              <description>The string used to separate groups of digits to the left of the
-   decimal point in percent values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PercentGroupSizes" />
-              </term>
-              <description>3</description>
-              <description>The number of digits in each group to the left of the decimal in
-   percent values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PercentNegativePattern" />
-              </term>
-              <description>0</description>
-              <description>The format of negative percent values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PercentPositivePattern" />
-              </term>
-              <description>0</description>
-              <description>The format of positive percent values.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PercentSymbol" />
-              </term>
-              <description>"%"</description>
-              <description>The percent symbol.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PerMilleSymbol" />
-              </term>
-              <description>"<permille />"</description>
-              <description>The per mille symbol.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PositiveInfinitySymbol" />
-              </term>
-              <description>"Infinity"</description>
-              <description>The string used to represent positive infinities.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="PositiveSign" />
-              </term>
-              <description>"+"</description>
-              <description>The string used to indicate positive values.</description>
-            </item>
-          </list>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This <see cref="T:System.Globalization.NumberFormatInfo" /> object returned by this property does not change, regardless of the current culture. It represents the formatting conventions of the invariant culture, which is a culture associated with the English language but not with any country/region. The invariant culture is used in formatting operations that are culture-independent or that produce result strings suitable for display across multiple cultures. </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a read-only <see cref="T:System.Globalization.NumberFormatInfo" /> object that is culture-independent (invariant).</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig specialname instance bool get_IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig specialname instance bool get_IsReadOnly() }" />
-      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a value indicating whether the current instance is read-only.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> if the current instance is read-only; otherwise
 <see langword="false" />.</para>
         </value>
         <remarks>
-          <para>This property is read-only. </para>
-          <para>
-            <block subset="none" type="note">Attempting to perform an assignment to a
-      property of a read-only <see cref="T:System.Globalization.NumberFormatInfo" /> causes a <see cref="T:System.InvalidOperationException" />.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempting to perform an assignment to a property of a read-only <see cref="T:System.Globalization.NumberFormatInfo" /> causes an <see cref="T:System.InvalidOperationException" />.</para>
+          <para>You can call the <see cref="M:System.Globalization.NumberFormatInfo.Clone" /> method to create a read/write <see cref="T:System.Globalization.NumberFormatInfo" /> object from a read-only object, as the following example illustrates. </para>
+          <para>code reference: System.Globalization.NumberFormatInfo.IsReadOnly#1</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this <see cref="T:System.Globalization.NumberFormatInfo" /> object is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NaNSymbol">
+      <MemberSignature Language="ILASM" Value=".property string NaNSymbol { public hidebysig specialname instance string get_NaNSymbol() public hidebysig specialname instance void set_NaNSymbol(string value) }" />
+      <MemberSignature Language="C#" Value="public string NaNSymbol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NaNSymbol" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NaNSymbol">
-      <MemberSignature Language="ILASM" Value=".property string NaNSymbol { public hidebysig specialname instance string get_NaNSymbol() public hidebysig specialname instance void set_NaNSymbol(string value) }" />
-      <MemberSignature Language="C#" Value="public string NaNSymbol { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the symbol that represents NaN
-      (Not-a-Number) floating-point values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" />
 containing the symbol for NaN values. </para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      "NaN".</para>
-          <para>
-            <block subset="none" type="note">For more
-      information on NaN
-      values, see <see cref="T:System.Double" /> or <see cref="T:System.Single" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on NaN values, see <see cref="T:System.Double" /> or <see cref="T:System.Single" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that represents the IEEE NaN (not a number) value.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NativeDigits">
-      <MemberSignature Language="C#" Value="public string[] NativeDigits { set; get; }" />
+      <MemberSignature Language="C#" Value="public string[] NativeDigits { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] NativeDigits" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -923,57 +1465,66 @@ containing the symbol for NaN values. </para>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The character set that is specified by the <see cref="P:System.Globalization.NumberFormatInfo.NativeDigits" /> property has no effect on parsing or formatting operations. Only the Basic Latin digits 0 (U+0030) through 9 (U+0039) are used when formatting or parsing numeric values or date and time values.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string array of native digits equivalent to the Western digits 0 through 9.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NegativeInfinitySymbol">
       <MemberSignature Language="ILASM" Value=".property string NegativeInfinitySymbol { public hidebysig specialname instance string get_NegativeInfinitySymbol() public hidebysig specialname instance void set_NegativeInfinitySymbol(string value) }" />
-      <MemberSignature Language="C#" Value="public string NegativeInfinitySymbol { set; get; }" />
+      <MemberSignature Language="C#" Value="public string NegativeInfinitySymbol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NegativeInfinitySymbol" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Gets or sets the symbol that represents negative infinity.</para>
-        </summary>
-        <value>
-          <para>A <see cref="T:System.String" />
-containing the symbol for negative infinity. </para>
-        </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      "-Infinity".</para>
-          <para>
-            <block subset="none" type="note">For more
-      information on negative infinity, see <see cref="T:System.Double" /> or <see cref="T:System.Single" />.</block>
-          </para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
-        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NegativeSign">
-      <MemberSignature Language="ILASM" Value=".property string NegativeSign { public hidebysig specialname instance string get_NegativeSign() public hidebysig specialname instance void set_NegativeSign(string value) }" />
-      <MemberSignature Language="C#" Value="public string NegativeSign { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <value>
+          <para>A <see cref="T:System.String" />
+containing the symbol for negative infinity. </para>
+        </value>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on negative infinity, see <see cref="T:System.Double" /> or <see cref="T:System.Single" />.</para>
+        </remarks>
         <summary>
-          <para>Gets or sets the symbol used to represent negative values.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that represents negative infinity.</para>
         </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NegativeSign">
+      <MemberSignature Language="ILASM" Value=".property string NegativeSign { public hidebysig specialname instance string get_NegativeSign() public hidebysig specialname instance void set_NegativeSign(string value) }" />
+      <MemberSignature Language="C#" Value="public string NegativeSign { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NegativeSign" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <value>
           <para>A <see cref="T:System.String" />
 containing the symbol that indicates a value is negative. </para>
@@ -984,135 +1535,130 @@ containing the symbol that indicates a value is negative. </para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that denotes that the associated number is negative.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NumberDecimalDigits">
+      <MemberSignature Language="ILASM" Value=".property int32 NumberDecimalDigits { public hidebysig specialname instance int32 get_NumberDecimalDigits() public hidebysig specialname instance void set_NumberDecimalDigits(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int NumberDecimalDigits { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 NumberDecimalDigits" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NumberDecimalDigits">
-      <MemberSignature Language="ILASM" Value=".property int32 NumberDecimalDigits { public hidebysig specialname instance int32 get_NumberDecimalDigits() public hidebysig specialname instance void set_NumberDecimalDigits(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int NumberDecimalDigits { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the number of decimal places for numeric values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 containing the number of decimal places for numeric values.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is 2.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 99.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalDigits" /> property is used with the "F" and "N" standard format strings without a precision specifier in numeric formatting operations. It defines the default number of fractional digits that appear after the decimal separator. This value is overridden if a precision specifier is used. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of decimal places to use in numeric values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NumberDecimalSeparator">
+      <MemberSignature Language="ILASM" Value=".property string NumberDecimalSeparator { public hidebysig specialname instance string get_NumberDecimalSeparator() public hidebysig specialname instance void set_NumberDecimalSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string NumberDecimalSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NumberDecimalSeparator" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NumberDecimalSeparator">
-      <MemberSignature Language="ILASM" Value=".property string NumberDecimalSeparator { public hidebysig specialname instance string get_NumberDecimalSeparator() public hidebysig specialname instance void set_NumberDecimalSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string NumberDecimalSeparator { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the symbol used as the decimal separator
-      for numeric values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" />
 containing the decimal separator.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      ".".</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" /> property is used with the "E", "F", "G", "N", and "R" standard format strings to define the symbol that separates integral from fractional digits. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. </para>
+          <para>The initial value of this property is derived from the settings in the <ui>Region and Language</ui> item in Control Panel. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string to use as the decimal separator in numeric values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NumberGroupSeparator">
+      <MemberSignature Language="ILASM" Value=".property string NumberGroupSeparator { public hidebysig specialname instance string get_NumberGroupSeparator() public hidebysig specialname instance void set_NumberGroupSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string NumberGroupSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NumberGroupSeparator" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NumberGroupSeparator">
-      <MemberSignature Language="ILASM" Value=".property string NumberGroupSeparator { public hidebysig specialname instance string get_NumberGroupSeparator() public hidebysig specialname instance void set_NumberGroupSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string NumberGroupSeparator { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the symbol used to separate groups of
-      digits to the left of the decimal point for numeric values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" />
 containing the group separator.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      ",".</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" />  property is used with the "N" standard format string to define the symbol that separates groups of integers. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>.</para>
+          <para>The initial value of this property is derived from the settings in the <ui>Region and Language</ui> item in Control Panel. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that separates groups of digits to the left of the decimal in numeric values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NumberGroupSizes">
+      <MemberSignature Language="ILASM" Value=".property class System.Int32[] NumberGroupSizes { public hidebysig specialname instance class System.Int32[] get_NumberGroupSizes() public hidebysig specialname instance void set_NumberGroupSizes(class System.Int32[] value) }" />
+      <MemberSignature Language="C#" Value="public int[] NumberGroupSizes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32[] NumberGroupSizes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NumberGroupSizes">
-      <MemberSignature Language="ILASM" Value=".property class System.Int32[] NumberGroupSizes { public hidebysig specialname instance class System.Int32[] get_NumberGroupSizes() public hidebysig specialname instance void set_NumberGroupSizes(class System.Int32[] value) }" />
-      <MemberSignature Language="C#" Value="public int[] NumberGroupSizes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the number of digits in each group to the
-      left of the decimal point for numeric values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> array containing elements that define the number of digits in
    each group in numeric values.</para>
         </value>
-        <remarks>
-          <para>All elements of the array except the last are required
-      to be between 1 and 9, inclusive. The last element can be 0.</para>
-          <para>The first element of the array defines the number of
-      elements in the first group of digits located immediately to the left of the
-   <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />. Each subsequent element refers to the next group of
-      digits located to the left of the previous group. If the last element of the
-      array is not zero, any remaining digits are grouped based on the last element of
-      the array. If the last element is zero, the remaining digits are not
-      grouped.</para>
-          <para>The culture-invariant value for this property is an
-      array with a single element containing the value 3.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The array specified for a set operation is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">One of the elements in the array specified for a set operation is not between 0 and 9.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
@@ -1146,63 +1692,39 @@ class Test {
             <para>123456789123,456.78</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSizes" /> property affects the result of number values that are formatted by using the "N" <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">standard numeric format string</a></format>. If a custom numeric format string or other standard numeric format strings are used, the value of the <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSizes" /> property is ignored. </para>
+          <para>Every element in the one-dimensional array must be an integer from 1 through 9. The last element can be 0.</para>
+          <para>The first element of the array defines the number of elements in the least significant group of digits immediately to the left of the <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />. Each subsequent element refers to the next significant group of digits to the left of the previous group. If the last element of the array is not 0, the remaining digits are grouped based on the last element of the array. If the last element is 0, the remaining digits are not grouped.</para>
+          <para>For example, if the array contains { 3, 4, 5 }, the digits are grouped similar to "55,55555,55555,55555,4444,333.00". If the array contains { 3, 4, 0 }, the digits are grouped similar to "55555555555555555,4444,333.00".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of digits in each group to the left of the decimal in numeric values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NumberNegativePattern">
+      <MemberSignature Language="ILASM" Value=".property int32 NumberNegativePattern { public hidebysig specialname instance int32 get_NumberNegativePattern() public hidebysig specialname instance void set_NumberNegativePattern(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int NumberNegativePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 NumberNegativePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NumberNegativePattern">
-      <MemberSignature Language="ILASM" Value=".property int32 NumberNegativePattern { public hidebysig specialname instance int32 get_NumberNegativePattern() public hidebysig specialname instance void set_NumberNegativePattern(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int NumberNegativePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the format of negative values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 between 0 and 4 inclusive that specifies the format of negative values.</para>
         </value>
-        <remarks>
-          <para>The following table describes the valid values for this property. "-" is used
-      as the value for <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, and 999
-      represents any numeric value.</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Pattern</description>
-            </listheader>
-            <item>
-              <term> 0</term>
-              <description>(999)</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>-999</description>
-            </item>
-            <item>
-              <term> 2</term>
-              <description>- 
-            999</description>
-            </item>
-            <item>
-              <term> 3</term>
-              <description>999-</description>
-            </item>
-            <item>
-              <term> 4</term>
-              <description>999 -</description>
-            </item>
-          </list>
-          <para>The culture-invariant value for this property is 1.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 4.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
         <example>
@@ -1231,132 +1753,183 @@ class Test {
             <para>pattern # 4: 9,999,999,999,999.00 -</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.NumberNegativePattern" /> property defines the format of negative values formatted with the "N" standard numeric format string. This property has one of the values in the following table. The symbol "-" is the <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" /> and <paramref name="n" /> is a number.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Associated pattern </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>(n) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>-n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>- n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 </para>
+              </term>
+              <description>
+                <para>n- </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para>n - </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format pattern for negative numeric values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PercentDecimalDigits">
+      <MemberSignature Language="ILASM" Value=".property int32 PercentDecimalDigits { public hidebysig specialname instance int32 get_PercentDecimalDigits() public hidebysig specialname instance void set_PercentDecimalDigits(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int PercentDecimalDigits { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 PercentDecimalDigits" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PercentDecimalDigits">
-      <MemberSignature Language="ILASM" Value=".property int32 PercentDecimalDigits { public hidebysig specialname instance int32 get_PercentDecimalDigits() public hidebysig specialname instance void set_PercentDecimalDigits(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int PercentDecimalDigits { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the number of decimal places in percent values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 containing the number of decimal places in percent values.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is 2.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 99.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.PercentDecimalDigits" /> property is used with the "P" standard format string without a precision specifier in numeric formatting operations. It defines the default number of fractional digits that appear after the decimal separator. This value is overridden if a precision specifier is used. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of decimal places to use in percent values. </para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PercentDecimalSeparator">
       <MemberSignature Language="ILASM" Value=".property string PercentDecimalSeparator { public hidebysig specialname instance string get_PercentDecimalSeparator() public hidebysig specialname instance void set_PercentDecimalSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string PercentDecimalSeparator { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PercentDecimalSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PercentDecimalSeparator" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Gets or sets the symbol used as the decimal separator in percent values.</para>
-        </summary>
-        <value>
-          <para>A <see cref="T:System.String" /> containing the decimal separator used in percent values.</para>
-        </value>
-        <remarks>
-          <para>The culture-invariant value for this property is ".".</para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
-        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PercentGroupSeparator">
-      <MemberSignature Language="ILASM" Value=".property string PercentGroupSeparator { public hidebysig specialname instance string get_PercentGroupSeparator() public hidebysig specialname instance void set_PercentGroupSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string PercentGroupSeparator { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the decimal separator used in percent values.</para>
+        </value>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.PercentDecimalSeparator" /> property is used with the "P" standard format string to define the symbol that separates integral from fractional digits. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>.</para>
+        </remarks>
         <summary>
-          <para>Gets or sets the symbol used to separate groups of
-      digits to the left of the decimal point in percent values.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string to use as the decimal separator in percent values. </para>
         </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PercentGroupSeparator">
+      <MemberSignature Language="ILASM" Value=".property string PercentGroupSeparator { public hidebysig specialname instance string get_PercentGroupSeparator() public hidebysig specialname instance void set_PercentGroupSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string PercentGroupSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PercentGroupSeparator" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <value>
           <para>A <see cref="T:System.String" />
 containing the group separator symbol used in percent values.</para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      ",".</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.PercentGroupSeparator" />  property is used with the "P" standard format string to define the symbol that separates groups of integers. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that separates groups of digits to the left of the decimal in percent values. </para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PercentGroupSizes">
+      <MemberSignature Language="ILASM" Value=".property class System.Int32[] PercentGroupSizes { public hidebysig specialname instance class System.Int32[] get_PercentGroupSizes() public hidebysig specialname instance void set_PercentGroupSizes(class System.Int32[] value) }" />
+      <MemberSignature Language="C#" Value="public int[] PercentGroupSizes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32[] PercentGroupSizes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PercentGroupSizes">
-      <MemberSignature Language="ILASM" Value=".property class System.Int32[] PercentGroupSizes { public hidebysig specialname instance class System.Int32[] get_PercentGroupSizes() public hidebysig specialname instance void set_PercentGroupSizes(class System.Int32[] value) }" />
-      <MemberSignature Language="C#" Value="public int[] PercentGroupSizes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the number of digits in each group to the
-      left of the decimal point in percent values.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Int32" /> array containing elements that define the number of digits in
    each group in percent values.</para>
         </value>
-        <remarks>
-          <para>All elements of the array except the last are required
-      to be between 1 and 9, inclusive. The last element can be 0.</para>
-          <para>The first element of the array defines the number of
-      elements in the first group of digits located immediately to the left of the
-   <see cref="P:System.Globalization.NumberFormatInfo.PercentDecimalSeparator" />. Each subsequent element refers to the next group of
-      digits located to the left of the previous group. If the last element of the
-      array is not zero, any remaining digits are grouped based on the last element of
-      the array. If the last element is zero, the remaining digits are not
-      grouped.</para>
-          <para>The culture-invariant value for this property is an
-      array with a single element containing the value 3.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>The array specified for a set operation is a null reference.</para>
         </exception>
@@ -1399,55 +1972,39 @@ class Test {
           <para>-or-</para>
           <para>The array contains an element, other than the last element, that is set to 0.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.PercentGroupSizes" /> property is used with the "P" standard format string to define the number of digits that appear in integral groups. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. Every element in the one-dimensional array must be an integer from 1 through 9. The last element can be 0.</para>
+          <para>The first element of the array defines the number of elements in the least significant group of digits immediately to the left of the <see cref="P:System.Globalization.NumberFormatInfo.PercentDecimalSeparator" />. Each subsequent element refers to the next significant group of digits to the left of the previous group. If the last element of the array is not 0, the remaining digits are grouped based on the last element of the array. If the last element is 0, the remaining digits are not grouped.</para>
+          <para>For example, if the array contains { 3, 4, 5 }, the digits are grouped similar to "55,55555,55555,55555,4444,333.00%". If the array contains { 3, 4, 0 }, the digits are grouped similar to "55555555555555555,4444,333.00%".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of digits in each group to the left of the decimal in percent values. </para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PercentNegativePattern">
+      <MemberSignature Language="ILASM" Value=".property int32 PercentNegativePattern { public hidebysig specialname instance int32 get_PercentNegativePattern() public hidebysig specialname instance void set_PercentNegativePattern(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int PercentNegativePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 PercentNegativePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PercentNegativePattern">
-      <MemberSignature Language="ILASM" Value=".property int32 PercentNegativePattern { public hidebysig specialname instance int32 get_PercentNegativePattern() public hidebysig specialname instance void set_PercentNegativePattern(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int PercentNegativePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the format of negative percent values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 between 0 and 2 inclusive that specifies the format of negative percent
 values.</para>
         </value>
-        <remarks>
-          <para>The following table describes the valid values for this
-      property. "%" is used as the value for <see cref="P:System.Globalization.NumberFormatInfo.PercentSymbol" />, "-" is used as the value for <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, and 999 represents any numeric
-      value.</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Pattern</description>
-            </listheader>
-            <item>
-              <term> 0</term>
-              <description>-999 %</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>-999%</description>
-            </item>
-            <item>
-              <term> 2</term>
-              <description>-%999</description>
-            </item>
-          </list>
-          <para>The culture-invariant value for this property is 0.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 2.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
         <example>
@@ -1473,54 +2030,144 @@ class Test {
             <para>pattern # 2: -%99.00</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.PercentNegativePattern" /> property is used with the "P" standard format string to define the pattern of negative percentage values. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. This property has one of the values in the following table. The symbol "%" is the <see cref="P:System.Globalization.NumberFormatInfo.PercentSymbol" />, the symbol "-" is the <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" />, and <paramref name="n" /> is a number. Values 3-11 were introduced in the .NET Framework 2.0 and cannot be used in earlier versions.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Associated pattern </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>-n % </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>-n% </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>-%n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3</para>
+              </term>
+              <description>
+                <para>%-n</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4</para>
+              </term>
+              <description>
+                <para>%n-</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>5</para>
+              </term>
+              <description>
+                <para>n-%</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>6</para>
+              </term>
+              <description>
+                <para>n%-</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>7</para>
+              </term>
+              <description>
+                <para>-% n</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>8</para>
+              </term>
+              <description>
+                <para>n %-</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>9</para>
+              </term>
+              <description>
+                <para>% n-</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>10</para>
+              </term>
+              <description>
+                <para>% -n</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>11</para>
+              </term>
+              <description>
+                <para>n- %</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format pattern for negative percent values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PercentPositivePattern">
+      <MemberSignature Language="ILASM" Value=".property int32 PercentPositivePattern { public hidebysig specialname instance int32 get_PercentPositivePattern() public hidebysig specialname instance void set_PercentPositivePattern(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int PercentPositivePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 PercentPositivePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PercentPositivePattern">
-      <MemberSignature Language="ILASM" Value=".property int32 PercentPositivePattern { public hidebysig specialname instance int32 get_PercentPositivePattern() public hidebysig specialname instance void set_PercentPositivePattern(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int PercentPositivePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the format of positive percent values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> between 0 and 2 inclusive that specifies
    the format of positive percent values.</para>
         </value>
-        <remarks>
-          <para>The following table describes the valid values for this
-      property. "%" is used as the value for <see cref="P:System.Globalization.NumberFormatInfo.PercentSymbol" />, and 999 represents a numeric
-      value.</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Pattern</description>
-            </listheader>
-            <item>
-              <term> 0</term>
-              <description>999 %</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>999%</description>
-            </item>
-            <item>
-              <term> 2</term>
-              <description>%999</description>
-            </item>
-          </list>
-          <para>The culture-invariant value for this property is 0.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0 or greater than 2.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
         <example>
@@ -1547,141 +2194,197 @@ class Test {
             <para>pattern # 2: %99.00</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.NumberFormatInfo.PercentPositivePattern" />  property is used with the "P" standard format string to define pattern of positive percentage values. For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format>. This property has one of the values in the following table. The symbol "%" is the <see cref="P:System.Globalization.NumberFormatInfo.PercentSymbol" /> and <paramref name="n" /> is a number.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Associated pattern </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>n % </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>n% </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>%n </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3</para>
+              </term>
+              <description>
+                <para>% n</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format pattern for positive percent values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PercentSymbol">
       <MemberSignature Language="ILASM" Value=".property string PercentSymbol { public hidebysig specialname instance string get_PercentSymbol() public hidebysig specialname instance void set_PercentSymbol(string value) }" />
-      <MemberSignature Language="C#" Value="public string PercentSymbol { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PercentSymbol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PercentSymbol" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the symbol that represents percentage values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the percent symbol. </para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      "%".</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string assigned to the <see cref="P:System.Globalization.NumberFormatInfo.PercentSymbol" /> property is included in the result string when a numeric value is formatted with the "P" <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">standard numeric format specifier</a></format> or with a format string that includes the "%" <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">custom numeric format specifier</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string to use as the percent symbol.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PerMilleSymbol">
       <MemberSignature Language="ILASM" Value=".property string PerMilleSymbol { public hidebysig specialname instance string get_PerMilleSymbol() public hidebysig specialname instance void set_PerMilleSymbol(string value) }" />
-      <MemberSignature Language="C#" Value="public string PerMilleSymbol { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PerMilleSymbol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PerMilleSymbol" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Gets or sets the per mille symbol.</para>
-        </summary>
-        <value>
-          <para>A <see cref="T:System.String" /> containing the per mille symbol. </para>
-        </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      "<permille />".</para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
-        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PositiveInfinitySymbol">
-      <MemberSignature Language="ILASM" Value=".property string PositiveInfinitySymbol { public hidebysig specialname instance string get_PositiveInfinitySymbol() public hidebysig specialname instance void set_PositiveInfinitySymbol(string value) }" />
-      <MemberSignature Language="C#" Value="public string PositiveInfinitySymbol { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <value>
+          <para>A <see cref="T:System.String" /> containing the per mille symbol. </para>
+        </value>
+        <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
+        <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string assigned to the <see cref="P:System.Globalization.NumberFormatInfo.PerMilleSymbol" /> property is included in the result string when a numeric value is formatted with a format string that includes the "‰" <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">custom numeric format specifier</a></format>.</para>
+        </remarks>
         <summary>
-          <para>Gets or sets the symbol that represents positive infinity.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string to use as the per mille symbol.</para>
         </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PositiveInfinitySymbol">
+      <MemberSignature Language="ILASM" Value=".property string PositiveInfinitySymbol { public hidebysig specialname instance string get_PositiveInfinitySymbol() public hidebysig specialname instance void set_PositiveInfinitySymbol(string value) }" />
+      <MemberSignature Language="C#" Value="public string PositiveInfinitySymbol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PositiveInfinitySymbol" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <value>
           <para>A <see cref="T:System.String" /> containing the symbol for positive
    infinity. </para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      "Infinity".</para>
-          <para>
-            <block subset="none" type="note">For more
-      information on positive infinity, see <see cref="T:System.Double" /> or <see cref="T:System.Single" />
-      .</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on positive infinity, see <see cref="T:System.Double" /> or <see cref="T:System.Single" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that represents positive infinity.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PositiveSign">
+      <MemberSignature Language="ILASM" Value=".property string PositiveSign { public hidebysig specialname instance string get_PositiveSign() public hidebysig specialname instance void set_PositiveSign(string value) }" />
+      <MemberSignature Language="C#" Value="public string PositiveSign { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PositiveSign" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PositiveSign">
-      <MemberSignature Language="ILASM" Value=".property string PositiveSign { public hidebysig specialname instance string get_PositiveSign() public hidebysig specialname instance void set_PositiveSign(string value) }" />
-      <MemberSignature Language="C#" Value="public string PositiveSign { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the symbol used to represent positive values.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the symbol that indicates the
    value is positive. </para>
         </value>
-        <remarks>
-          <para>The culture-invariant value for this property is
-      "+".</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">The value specified for a set operation is a null reference</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used only for parsing numeric strings, not for formatting.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that denotes that the associated number is positive.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadOnly">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Globalization.NumberFormatInfo ReadOnly(class System.Globalization.NumberFormatInfo nfi)" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo ReadOnly (System.Globalization.NumberFormatInfo nfi);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Globalization.NumberFormatInfo ReadOnly(class System.Globalization.NumberFormatInfo nfi) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadOnly">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Globalization.NumberFormatInfo ReadOnly(class System.Globalization.NumberFormatInfo nfi)" />
-      <MemberSignature Language="C#" Value="public static System.Globalization.NumberFormatInfo ReadOnly (System.Globalization.NumberFormatInfo nfi);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberFormatInfo</ReturnType>
       </ReturnValue>
@@ -1689,31 +2392,26 @@ class Test {
         <Parameter Name="nfi" Type="System.Globalization.NumberFormatInfo" />
       </Parameters>
       <Docs>
-        <param name="nfi">A <see cref="T:System.Globalization.NumberFormatInfo" /> object to copy.</param>
-        <summary>
-          <para>Creates a read-only copy of the specified <see cref="T:System.Globalization.NumberFormatInfo" />
-instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of the current instance,
-   and cannot be altered.</para>
-        </returns>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="nfi" /> is a null reference.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This wrapper prevents any modifications to <paramref name="nfi" />.</para>
+          <para>Attempting to perform an assignment to a property of a read-only <see cref="T:System.Globalization.NumberFormatInfo" /> causes an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a read-only <see cref="T:System.Globalization.NumberFormatInfo" /> wrapper.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.NumberFormatInfo" /> wrapper around <paramref name="nfi" />.</para>
+        </returns>
+        <param name="nfi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.NumberFormatInfo" /> to wrap. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

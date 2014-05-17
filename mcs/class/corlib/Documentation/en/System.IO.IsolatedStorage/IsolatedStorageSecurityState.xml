@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsolatedStorageSecurityState" FullName="System.IO.IsolatedStorage.IsolatedStorageSecurityState">
   <TypeSignature Language="C#" Value="public class IsolatedStorageSecurityState : System.Security.SecurityState" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit IsolatedStorageSecurityState extends System.Security.SecurityState" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides a host application with settings to perform policy decisions in the host's implementation of the <see cref="M:System.AppDomainManager.CheckSecuritySettings(System.Security.SecurityState)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides settings for maintaining the quota size for isolated storage. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnsureState">
       <MemberSignature Language="C#" Value="public override void EnsureState ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void EnsureState() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -30,6 +39,7 @@
     </Member>
     <Member MemberName="Options">
       <MemberSignature Language="C#" Value="public System.IO.IsolatedStorage.IsolatedStorageSecurityOptions Options { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.IsolatedStorage.IsolatedStorageSecurityOptions Options" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -38,13 +48,20 @@
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageSecurityOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is equal to the <see cref="F:System.IO.IsolatedStorage.IsolatedStorageSecurityOptions.IncreaseQuotaForApplication" /> enumeration value, which is the only value in the enumeration. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the option for managing isolated storage security. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Quota">
-      <MemberSignature Language="C#" Value="public long Quota { set; get; }" />
+      <MemberSignature Language="C#" Value="public long Quota { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Quota" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -53,13 +70,17 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current size of the quota for isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UsedSize">
       <MemberSignature Language="C#" Value="public long UsedSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 UsedSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -68,9 +89,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current usage size in isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

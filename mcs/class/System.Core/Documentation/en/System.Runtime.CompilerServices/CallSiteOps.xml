@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallSiteOps" FullName="System.Runtime.CompilerServices.CallSiteOps">
+  <TypeSignature Language="C#" Value="public static class CallSiteOps" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CallSiteOps extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates and caches binding rules.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AddRule&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void AddRule&lt;T&gt; (System.Runtime.CompilerServices.CallSite&lt;T&gt; site, T rule) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddRule&lt;class T&gt;(class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; site, !!T rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
+        <Parameter Name="rule" Type="T" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a rule to the cache maintained on the dynamic call site.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the call site rule.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Bind&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T Bind&lt;T&gt; (System.Runtime.CompilerServices.CallSiteBinder binder, System.Runtime.CompilerServices.CallSite&lt;T&gt; site, object[] args) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T Bind&lt;class T&gt;(class System.Runtime.CompilerServices.CallSiteBinder binder, class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; site, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Runtime.CompilerServices.CallSiteBinder" />
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
+        <Parameter Name="args" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the call site target with a new rule based on the arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new call site target.</para>
+        </returns>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The call site binder.</param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />Arguments to the call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="ClearMatch">
+      <MemberSignature Language="C#" Value="public static void ClearMatch (System.Runtime.CompilerServices.CallSite site);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ClearMatch(class System.Runtime.CompilerServices.CallSite site) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the match flag on the matchmaker call site.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateMatchmaker&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSite&lt;T&gt; CreateMatchmaker&lt;T&gt; (System.Runtime.CompilerServices.CallSite&lt;T&gt; site) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; CreateMatchmaker&lt;class T&gt;(class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; site) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSite&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a dynamic call site used for cache lookup.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new call site.</para>
+        </returns>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCachedRules&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T[] GetCachedRules&lt;T&gt; (System.Runtime.CompilerServices.RuleCache&lt;T&gt; cache) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T[] GetCachedRules&lt;class T&gt;(class System.Runtime.CompilerServices.RuleCache`1&lt;!!T&gt; cache) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>T[]</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="cache" Type="System.Runtime.CompilerServices.RuleCache&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the dynamic rule cache for rules applicable to the dynamic operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of applicable rules.</para>
+        </returns>
+        <param name="cache">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cache.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />. </typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMatch">
+      <MemberSignature Language="C#" Value="public static bool GetMatch (System.Runtime.CompilerServices.CallSite site);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool GetMatch(class System.Runtime.CompilerServices.CallSite site) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the executed rule matched</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if rule matched, false otherwise.</para>
+        </returns>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRuleCache&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.RuleCache&lt;T&gt; GetRuleCache&lt;T&gt; (System.Runtime.CompilerServices.CallSite&lt;T&gt; site) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.RuleCache`1&lt;!!T&gt; GetRuleCache&lt;class T&gt;(class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; site) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.RuleCache&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves binding rule cache.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cache.</para>
+        </returns>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRules&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T[] GetRules&lt;T&gt; (System.Runtime.CompilerServices.CallSite&lt;T&gt; site) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T[] GetRules&lt;class T&gt;(class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; site) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>T[]</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dynamic binding rules from the call site.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of dynamic binding rules.</para>
+        </returns>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="MoveRule&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void MoveRule&lt;T&gt; (System.Runtime.CompilerServices.RuleCache&lt;T&gt; cache, T rule, int i) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void MoveRule&lt;class T&gt;(class System.Runtime.CompilerServices.RuleCache`1&lt;!!T&gt; cache, !!T rule, int32 i) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="cache" Type="System.Runtime.CompilerServices.RuleCache&lt;T&gt;" />
+        <Parameter Name="rule" Type="T" />
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves the binding rule within the cache.</para>
+        </summary>
+        <param name="cache">
+          <attribution license="cc4" from="Microsoft" modified="false" />The call site rule cache.</param>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the call site rule.</param>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />An index of the call site rule.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />. </typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="SetNotMatched">
+      <MemberSignature Language="C#" Value="public static bool SetNotMatched (System.Runtime.CompilerServices.CallSite site);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SetNotMatched(class System.Runtime.CompilerServices.CallSite site) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks if a dynamic site requires an update.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if rule does not need updating, false otherwise.</para>
+        </returns>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateRules&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void UpdateRules&lt;T&gt; (System.Runtime.CompilerServices.CallSite&lt;T&gt; this, int matched) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void UpdateRules&lt;class T&gt;(class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; this, int32 matched) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("do not use this method", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="this" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
+        <Parameter Name="matched" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates rules in the cache.</para>
+        </summary>
+        <param name="this">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <param name="matched">
+          <attribution license="cc4" from="Microsoft" modified="false" />The matched rule index.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

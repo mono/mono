@@ -1,9 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting" FullName="System.Runtime.Remoting" FullNameSP="System.Runtime.Remoting" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting" /> namespace provides classes and interfaces that allow developers to create and configure distributed applications. Some of the more important classes of the <see cref="N:System.Runtime.Remoting" /> namespace are the <see cref="T:System.Runtime.Remoting.RemotingConfiguration" /> class, the <see cref="T:System.Runtime.Remoting.RemotingServices" /> class, and the <see cref="T:System.Runtime.Remoting.ObjRef" /> class.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.RemotingConfiguration" /> class contains static methods for interfacing with configuration settings. The <see cref="M:System.Runtime.Remoting.RemotingConfiguration.Configure(System.String)" /> method allows developers to configure the remoting infrastructure through the use of XML formatted configuration files. The <see cref="T:System.Runtime.Remoting.RemotingConfiguration" /> class also contains several methods for client-end and server-end registration of client and server activated objects that reside on the server.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.RemotingServices" /> class provides a number of methods to help in using and publishing remoted objects. The <see cref="M:System.Runtime.Remoting.RemotingServices.Marshal" /> method provides the functionality for storing all the relevant information required to activate and communicate with a remote object in an instance of the <see cref="T:System.Runtime.Remoting.ObjRef" /> class for later serialization and transmission to a remote location. The <see cref="M:System.Runtime.Remoting.RemotingServices.Unmarshal" /> method reverses this process, creating a proxy for a remote object that can be used by an application without regard for any remoting subdivisions.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.ObjRef" /> class holds all the relevant information required to activate and communicate with a remote object. This class is a serializable representation of an object that is transmitted to a remote location using a channel, where it is unmarshaled (see <see cref="M:System.Runtime.Remoting.RemotingServices.Unmarshal" />) and can be used to create a local proxy of the remoted object.</para>
+      <block subset="none" type="note">
+        <para>Marshal-by-reference objects (MBRs) do not reside in memory forever. Instead, unless the type overrides <see cref="M:System.MarshalByRefObject.InitializeLifetimeService" /> to control its own lifetime policies, each MBR has a finite lifetime before the .NET Framework remoting system begins the process of deleting it and reclaiming the memory. For more information, see <format type="text/html"><a href="c72d561c-1266-4c8b-b258-2c168c08da9a">Lifetime Leases</a></format>.</para>
+      </block>
     </remarks>
   </Docs>
 </Namespace>

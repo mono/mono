@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.ServiceModel.Security">
+  <Docs>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.ServiceModel.Security" /> namespace deals with general security-related topics, for example, <see cref="T:System.ServiceModel.Security.SecurityAlgorithmSuite" />.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For topics dealing with security tokens and certificates, for example <see cref="T:System.ServiceModel.Security.Tokens.WrappedKeySecurityToken" /> see <see cref="N:System.ServiceModel.Security.Tokens" />.</para>
+      <para>For security topics that overlap with the service model, for example <see cref="T:System.ServiceModel.TcpTransportSecurity" />, see <see cref="N:System.ServiceModel" />.</para>
+    </remarks>
+  </Docs>
+</Namespace>

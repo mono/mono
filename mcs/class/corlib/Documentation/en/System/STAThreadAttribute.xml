@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="STAThreadAttribute" FullName="System.STAThreadAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class STAThreadAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit STAThreadAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,33 +23,45 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>This attribute is used to flag the method as using the Single Threaded Apartment model.</summary>
-    <remarks>For example:
-
-
-<example><code lang="C#">
-
-   [STAThread]
-   static void Dingus () 
-   {
-   }
-  </code></example></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Apply this attribute to the entry point method (the Main() method in C# and Visual Basic). It has no effect on other methods. To set the apartment state of threads you start in your code, use the <see cref="M:System.Threading.Thread.SetApartmentState(System.Threading.ApartmentState)" /> method before starting the thread.</para>
+      <block subset="none" type="note">
+        <para>In the .NET Framework versions 1.0 and 1.1, set the <see cref="P:System.Threading.Thread.ApartmentState" /> property before starting the thread.</para>
+      </block>
+      <para>COM threading models only pertain to applications that use COM interop. Using this attribute in an application that does not use COM interop has no effect.</para>
+      <para>The COM threading model can be set to single-threaded apartment or multithreaded apartment. The application thread is only initialized for COM interop if the thread actually makes a call to a COM component. If COM interop is not used, then the thread is not initialized.</para>
+      <para>In the .NET Framework versions 1.0 and 1.1, use this attribute on Main() instead of setting the <see cref="P:System.Threading.Thread.ApartmentState" /> property on the first line of code, to ensure that the threading model is set before any startup code is executed.</para>
+      <block subset="none" type="note">
+        <para>In the .NET Framework version 2.0, new threads are initialized as <see cref="F:System.Threading.ApartmentState.MTA" /> if their apartment state has not been set before they are started. The main application thread is initialized to <see cref="F:System.Threading.ApartmentState.MTA" /> by default. You can no longer set the main application thread to <see cref="F:System.Threading.ApartmentState.STA" /> by setting the <see cref="P:System.Threading.Thread.ApartmentState" /> property on the first line of code. Use the <see cref="T:System.STAThreadAttribute" /> instead.</para>
+      </block>
+      <para>In the .NET Framework version 2.0, you can also specify the COM threading model for a C++ application using the <format type="text/html"><a href="4907e9ef-5031-446c-aecf-0a0b32fae1e8">/CLRTHREADATTRIBUTE (Set CLR Thread Attribute)</a></format> linker option.</para>
+      <para>ASP.NET applications should set the ASPCompat attribute of the <format type="text/html"><a href="F06CF9E5-22BB-461D-8B8F-549E53FF40A4">[&lt;topic://cpconpage&gt;]</a></format> directive to true, to force the page to be serviced by the STA thread pool.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the COM threading model for an application is single-threaded apartment (STA). </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public STAThreadAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>Creates a new instance of the <see cref="T:System.STAThreadAttribute" />.</summary>
-        <remarks />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.STAThreadAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

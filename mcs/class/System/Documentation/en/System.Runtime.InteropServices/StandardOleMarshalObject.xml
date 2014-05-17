@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StandardOleMarshalObject" FullName="System.Runtime.InteropServices.StandardOleMarshalObject">
   <TypeSignature Language="C#" Value="public class StandardOleMarshalObject : MarshalByRefObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit StandardOleMarshalObject extends System.MarshalByRefObject" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.MarshalByRefObject</BaseTypeName>
@@ -10,24 +13,42 @@
   <Interfaces />
   <Attributes>
     <Attribute>
+      <AttributeName>System.MonoLimitation("The runtime does nothing special apart from what it already does with marshal-by-ref objects")</AttributeName>
+    </Attribute>
+    <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.InteropServices.StandardOleMarshalObject" /> class prevents calls made into a hosting object by OLE from entering threads other than the UI thread.</para>
+      <para>You should derive your class from the <see cref="T:System.Runtime.InteropServices.StandardOleMarshalObject" /> class to gain this functionality.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Replaces the standard common language runtime (CLR) free-threaded marshaler with the standard OLE STA marshaler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected StandardOleMarshalObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should derive your class from the <see cref="T:System.Runtime.InteropServices.StandardOleMarshalObject" /> class-.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.StandardOleMarshalObject" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

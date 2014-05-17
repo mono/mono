@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Object" FullName="System.Object" FullNameSP="System_Object" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable Object" />
   <TypeSignature Language="C#" Value="public class Object" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -20,61 +22,53 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Provides support for classes. This class is the root of the object hierarchy.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>Classes derived from <see cref="T:System.Object" /> can override the following methods of
- the <see cref="T:System.Object" /> class:</para>
-        <list type="bullet">
-          <item>
-            <term>
-              <see cref="M:System.Object.Equals(System.Object)" /> - Enables 
- comparisons between objects.</term>
-          </item>
-          <item>
-            <term>
-              <see cref="M:System.Object.Finalize" /> - 
- Performs clean up operations before an object is automatically reclaimed.</term>
-          </item>
-          <item>
-            <term>
-              <see cref="M:System.Object.GetHashCode" /> - Generates a number corresponding to the value 
- of the object (to support the use of a hashtable).</term>
-          </item>
-          <item>
-            <term>
-              <see cref="M:System.Object.ToString" /> - Manufactures a human-readable text string that
- describes an instance of the class.</term>
-          </item>
-        </list>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Languages typically do not require a class to declare inheritance from <see cref="T:System.Object" /> because the inheritance is implicit.</para>
+      <para>Because all classes in the .NET Framework are derived from <see cref="T:System.Object" />, every method defined in the <see cref="T:System.Object" /> class is available in all objects in the system. Derived classes can and do override some of these methods, including: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.Object.Equals(System.Object)" /> - Supports comparisons between objects.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Object.Finalize" /> - Performs cleanup operations before an object is automatically reclaimed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Object.GetHashCode" /> - Generates a number corresponding to the value of the object to support the use of a hash table.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Object.ToString" /> - Manufactures a human-readable text string that describes an instance of the class.</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Performance Considerations</h2>
+      </format>
+      <para>If you are designing a class, such as a collection, that must handle any type of object, you can create class members that accept instances of the <see cref="T:System.Object" /> class. However, the process of boxing and unboxing a type carries a performance cost. If you know your new class will frequently handle certain value types you can use one of two tactics to minimize the cost of boxing. </para>
+      <list type="bullet">
+        <item>
+          <para>Create a general method that accepts an <see cref="T:System.Object" /> type, and a set of type-specific method overloads that accept each value type you expect your class to frequently handle. If a type-specific method exists that accepts the calling parameter type, no boxing occurs and the type-specific method is invoked. If there is no method argument that matches the calling parameter type, the parameter is boxed and the general method is invoked. </para>
+        </item>
+        <item>
+          <para>Design your type and its members to use generics. The common language runtime creates a closed generic type when you create an instance of your class and specify a generic type argument. The generic method is type-specific and can be invoked without boxing the calling parameter. </para>
+        </item>
+      </list>
+      <para>Although it is sometimes necessary to develop general purpose classes that accept and return <see cref="T:System.Object" /> types, you can improve performance by also providing a type-specific class to handle a frequently used type. For example, providing a class that is specific to setting and getting Boolean values eliminates the cost of boxing and unboxing Boolean values.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports all classes in the .NET Framework class hierarchy and provides low-level services to derived classes. This is the ultimate base class of all classes in the .NET Framework; it is the root of the type hierarchy.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public Object ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs a new instance of the <see cref="T:System.Object" /> class.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="usage">This constructor is 
-      called by constructors in derived classes, but it can also be used to directly
-      create an instance of the <see langword=" Object" />
-      class. This might be useful, for example, if you need to obtain a reference to
-      an object so that you can synchronize on it, as might be the case when using the
-      C# <see langword="lock" /> statement.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,11 +79,30 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by constructors in derived classes, but it can also be used to directly create an instance of the <see cref="T:System.Object" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Object" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
       <MemberSignature Language="C#" Value="public virtual bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -97,143 +110,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">The <see cref="T:System.Object" /> to compare with the current instance.</param>
-        <summary>
-          <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the
-   current instance.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is equal to the
-   current instance; otherwise, <see langword="false" />.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="behaviors">
-            <para>The statements listed below are required to be true for all
-         implementations of the <see cref="M:System.Object.Equals(System.Object)" />
-         method. In the list, x, y, and z represent non-null object references. </para>
-            <list type="bullet">
-              <item>
-                <term>x.Equals(x) returns <see langword="true" />.</term>
-              </item>
-              <item>
-                <term>x.Equals(y) returns the same value as y.Equals(x).</term>
-              </item>
-              <item>
-                <term>If (x.Equals(y) &amp;&amp; y.Equals(z)) returns <see langword="true" />, then x.Equals(z) returns <see langword="true" />.</term>
-              </item>
-              <item>
-                <term>Successive invocations of x.Equals(y) return the same 
-value as long as the objects referenced by x and y are not modified.</term>
-              </item>
-              <item>
-                <term>x.Equals(<see langword="null" />) returns <see langword="false" /> for non-null x.</term>
-              </item>
-            </list>
-            <para>See <see cref="M:System.Object.GetHashCode" /> for additional required behaviors pertaining to the
-<see cref="M:System.Object.Equals(System.Object)" /> 
-method.</para>
-            <para>
-              <block subset="none" type="note">Implementations of <see cref="M:System.Object.Equals(System.Object)" /> should
-not
-throw exceptions.</block>
-            </para>
-          </block>
-          <block subset="none" type="default">
-            <para>The <see cref="M:System.Object.Equals(System.Object)" /> method
-   tests for <paramref name="referential equality" /> , which means that
-<see cref="M:System.Object.Equals(System.Object)" /> returns 
-<see langword="true" /> if the specified instance of <see langword="Object" /> and 
-   the current instance are the same instance; otherwise, it returns
-<see langword="false" /> 
-. </para>
-            <block subset="none" type="note">
-              <para>An implementation of the <see cref="M:System.Object.Equals(System.Object)" /> method is shown in the following C#
-   code:</para>
-              <c>
-                <para>public virtual bool Equals(Object obj) {</para>
-              </c>
-              <c>
-                <para>return this == obj;</para>
-              </c>
-              <c>
-                <para>} </para>
-              </c>
-            </block>
-          </block>
-          <block subset="none" type="overrides">
-            <para>For some kinds of objects, it is desirable to have <see cref="M:System.Object.Equals(System.Object)" /> test for <paramref name="value    equality" /> instead of
-   referential equality. Such implementations of <see langword="Equals" /> return true if the two objects have the
-   same "value", even if they are not the same instance. The definition of what
-   constitutes an object's "value" is up to the implementer of the type, but it is
-   typically some or all of the data stored in the instance variables of the
-   object. For example, the value of a <see cref="T:System.String" /> is based on the characters of the
-   string; the <see langword="Equals" />
-   method of the <see cref="T:System.String" /> class returns
-<see langword="true" /> for any two string instances that
-   contain exactly the same characters in the same order. </para>
-            <para>When the <see langword="Equals" />
-method of a base class provides value equality, an override of
-<see langword="Equals" /> in a class 
-derived from that base class should invoke the inherited implementation of
-<see langword="Equals" /> . </para>
-            <para>All implementations of <see cref="M:System.Object.GetHashCode" /> are required to ensure that for any two object references <paramref name="x" /> and <paramref name="y" />, if <paramref name="x" /><see langword=".Equals(" /><paramref name="y" /><see langword=") == true" />, then <paramref name="x" /><see langword=".GetHashCode() == " /><paramref name="y" /><see langword=".GetHashCode()" />.</para>
-            <para>If your programming language supports operator
-   overloading, and if you choose to overload the equality operator for a given
-   type, that type should override the <see langword="Equals" /> method. Such
-   implementations of the <see langword="Equals" /> method should return the same
-   results as the equality operator. Following this guideline will help ensure that
-   class library code using <see langword="Equals" /> (such as <see cref="T:System.Collections.ArrayList" /> and <see cref="T:System.Collections.Hashtable" />
-   
-   ) behaves
-   in a manner that is consistent with the way the equality operator is used by
-   application code.</para>
-            <para>If you are implementing a value type, you should follow these guidelines:</para>
-            <list type="bullet">
-              <item>
-                <term>
-      Consider overriding <see langword="Equals" /> to gain
-      increased performance over that provided by the default implementation of
-      <see langword="Equals" /> on <see cref="T:System.ValueType" />.</term>
-              </item>
-              <item>
-                <term>
-      If you override <see langword="Equals" />
-      
-      and the language supports operator overloading, you
-      should overload the equality operator for your value type.</term>
-              </item>
-            </list>
-            <para>For reference types, the guidelines are as follows:</para>
-            <list type="bullet">
-              <item>
-                <term>
-      Consider overriding <see langword="Equals" /> on a
-      reference type if the semantics of the type are based on the fact that the
-      type represents some value(s). For example, reference types such as Point and
-      BigNumber should override <see langword="Equals" />.</term>
-              </item>
-              <item>
-                <term>
-      Most reference types should not overload the equality
-      operator, even if they override <see langword="Equals" />
-      
-      . However, if you are implementing a reference type that
-      is intended to have value semantics, such as a complex number type, you should
-      override the equality operator.</term>
-              </item>
-            </list>
-            <para>If you implement <see cref="T:System.IComparable" /> on a given type, you should override
-<see langword="Equals" /> on that
-type.</para>
-          </block>
-          <para>
-            <block subset="none" type="usage">The <see cref="M:System.Object.Equals(System.Object)" /> method is called by methods in collections
-classes that perform search operations, including the <see cref="M:System.Array.IndexOf(System.Array,System.Object)" /> method and
-the <see cref="M:System.Collections.ArrayList.Contains(System.Object)" />
-method.</block>
-          </para>
-        </remarks>
         <example>
           <para>
             <see langword="Example 1:" />
@@ -379,18 +255,223 @@ public struct Complex {
 <see langword="is" /> operator to check the type of the <paramref name="obj" /> 
 parameter.</para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The type of comparison between the current instance and the <paramref name="obj" /> parameter depends on whether the current instance is a reference type or a value type. </para>
+          <list type="bullet">
+            <item>
+              <para>If the current instance is a reference type, the <see cref="M:System.Object.Equals(System.Object)" /> method tests for reference equality, and a call to the <see cref="M:System.Object.Equals(System.Object)" /> method is equivalent to a call to the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method. Reference equality means that the object variables that are compared refer to the same object. The following example illustrates the result of such a comparison. It defines a Person class, which is a reference type, and calls the Person class constructor to instantiate two new Person objects, person1a and person2, which have the same value. It also assigns person1a to another object variable, person1b. As the output from the example shows, person1a and person1b are equal because they reference the same object. However, person1a and person2 are not equal, although they have the same value.</para>
+              <para>code reference: System.Object.Equals#2</para>
+            </item>
+            <item>
+              <para>If the current instance is a value type, the <see cref="M:System.Object.Equals(System.Object)" /> method tests for value equality. Value equality means the following:</para>
+              <list type="bullet">
+                <item>
+                  <para>The two objects are of the same type. As the following example shows, a <see cref="T:System.Byte" /> object that has a value of 12 does not equal an <see cref="T:System.Int32" /> object that has a value of 12, because the two objects have different run-time types.</para>
+                  <para>code reference: System.Object.Equals#3</para>
+                </item>
+                <item>
+                  <para>The values of the public and private fields of the two objects are equal. The following example tests for value equality. It defines a Person structure, which is a value type, and calls the Person class constructor to instantiate two new Person objects, person1 and person2, which have the same value. As the output from the example shows, although the two object variables refer to different objects, person1 and person2 are equal because they have the same value for the private personName field.</para>
+                  <para>code reference: System.Object.Equals#4</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>Because the <see cref="T:System.Object" /> class is the base class for all types in the .NET Framework, the <see cref="M:System.Object.Equals(System.Object)" /> method provides the default equality comparison for all other types. However, types often override the <see cref="M:System.Object.Equals(System.Object)" /> method to implement value equality. For more information, see the Notes for Callers and Notes for Inheritors sections. </para>
+          <format type="text/html">
+            <h2>Notes for the wrt</h2>
+          </format>
+          <para>When you call the <see cref="M:System.Object.Equals(System.Object)" /> method overload on a class in the wrt, it provides the default behavior for classes that don’t override <see cref="M:System.Object.Equals(System.Object)" />. This is part of the support that the .NET Framework provides for the wrt (see <format type="text/html"><a href="6fa7d044-ae12-4c54-b8ee-50915607a565">.NET Framework Support for Windows Store Apps and Windows Runtime</a></format>). Classes in the wrt don’t inherit <see cref="T:System.Object" />, and currently don’t implement an <see cref="M:System.Object.Equals(System.Object)" /> method. However, they appear to have <see cref="M:System.Object.ToString" />, <see cref="M:System.Object.Equals(System.Object)" />, and <see cref="M:System.Object.GetHashCode" /> methods when you use them in your C# or Visual Basic code, and the .NET Framework provides the default behavior for these methods. </para>
+          <block subset="none" type="note">
+            <para>wrt classes that are written in C# or Visual Basic can override the <see cref="M:System.Object.Equals(System.Object)" /> method overload. </para>
+          </block>
+          <format type="text/html">
+            <h2>Notes for Callers</h2>
+          </format>
+          <para>Derived classes frequently override the <see cref="M:System.Object.Equals(System.Object)" /> method to implement value equality. In addition, types also frequently provide an additional strongly typed overload to the Equals method, typically by implementing the <see cref="T:System.IEquatable`1" /> interface. When you call the Equals method to test for equality, you should know whether the current instance overrides <see cref="M:System.Object.Equals(System.Object)" /> and understand how a particular call to an Equals method is resolved. Otherwise, you may be performing a test for equality that is different from what you intended, and the method may return an unexpected value. </para>
+          <para>The following example provides an illustration. It instantiates three <see cref="T:System.Text.StringBuilder" /> objects with identical strings, and then makes four calls to Equals methods. The first method call returns true, and the remaining three return false. </para>
+          <para>code reference: System.Object.Equals#5</para>
+          <para>In the first case, the strongly typed <see cref="M:System.Text.StringBuilder.Equals(System.Text.StringBuilder)" /> method overload, which tests for value equality, is called. Because the strings assigned to the two <see cref="T:System.Text.StringBuilder" /> objects are equal, the method returns true. However, <see cref="T:System.Text.StringBuilder" /> does not override <see cref="M:System.Object.Equals(System.Object)" />. Because of this, when the <see cref="T:System.Text.StringBuilder" /> object is cast to an <see cref="T:System.Object" />, when a <see cref="T:System.Text.StringBuilder" /> instance is assigned to a variable of type <see cref="T:System.Object" />, and when the <see cref="M:System.Object.Equals(System.Object,System.Object)" /> method is passed two <see cref="T:System.Text.StringBuilder" /> objects, the default <see cref="M:System.Object.Equals(System.Object)" /> method is called. Because <see cref="T:System.Text.StringBuilder" /> is a reference type, this is equivalent to passing the two <see cref="T:System.Text.StringBuilder" /> objects to the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method. Although all three <see cref="T:System.Text.StringBuilder" /> objects contain identical strings, they refer to three distinct objects. As a result, these three method calls return false. </para>
+          <para>You can compare the current object to another object for reference equality by calling the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method. In Visual Basic, you can also use the is keyword (for example, If Me Is otherObject Then ...).</para>
+          <format type="text/html">
+            <h2>Notes for Inheritors</h2>
+          </format>
+          <para>When you define your own type, that type inherits the functionality defined by the Equals method of its base type. The following table lists the default implementation of the Equals method for the major categories of types in the .NET Framework.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Type category</para>
+                </term>
+                <description>
+                  <para>Equality defined by</para>
+                </description>
+                <description>
+                  <para>Comments</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Class derived directly from <see cref="T:System.Object" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Object.Equals(System.Object)" />
+                </para>
+              </description>
+              <description>
+                <para>Reference equality; equivalent to calling <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Structure</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.ValueType.Equals(System.Object)" />
+                </para>
+              </description>
+              <description>
+                <para>Value equality; either direct byte-by-byte comparison or field-by-field comparison using reflection.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Enumeration</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Enum.Equals(System.Object)" />
+                </para>
+              </description>
+              <description>
+                <para>Values must have the same enumeration type and the same underlying value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Delegate</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.MulticastDelegate.Equals(System.Object)" />
+                </para>
+              </description>
+              <description>
+                <para>Delegates must have the same type with identical invocation lists. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Interface</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Object.Equals(System.Object)" />
+                </para>
+              </description>
+              <description>
+                <para>Reference equality. </para>
+              </description>
+            </item>
+          </list>
+          <para>For a value type, you should always override <see cref="M:System.Object.Equals(System.Object)" />, because tests for equality that rely on reflection offer poor performance. You can also override the default implementation of <see cref="M:System.Object.Equals(System.Object)" /> for reference types to test for value equality instead of reference equality and to define the precise meaning of value equality. Such implementations of <see cref="M:System.Object.Equals(System.Object)" /> return true if the two objects have the same value, even if they are not the same instance. The type's implementer decides what constitutes an object's value, but it is typically some or all the data stored in the instance variables of the object. For example, the value of a <see cref="T:System.String" /> object is based on the characters of the string; the <see cref="M:System.String.Equals(System.Object)" />  method overrides the <see cref="M:System.Object.Equals(System.Object)" /> method to return true for any two string instances that contain the same characters in the same order. </para>
+          <para>The following example shows how to override the <see cref="M:System.Object.Equals(System.Object)" /> method to test for value equality. It overrides the <see cref="M:System.Object.Equals(System.Object)" /> method for the Person class. If Person accepted its base class implementation of equality, two Person objects would be equal only if they referenced a single object. However, in this case, two Person objects are equal if they have the same value for the Person.Id property.</para>
+          <para>code reference: System.Object.Equals#6</para>
+          <para>In addition to overriding <see cref="M:System.Object.Equals(System.Object)" />, you can implement the <see cref="T:System.IEquatable`1" /> interface to provide a strongly typed test for equality. </para>
+          <para>The following statements must be true for all implementations of the <see cref="M:System.Object.Equals(System.Object)" /> method. In the list, x, y, and z represent object references that are not null.</para>
+          <list type="bullet">
+            <item>
+              <para>x.Equals(x) returns true, except in cases that involve floating-point types. See ISO/IEC/IEEE 60559:2011, Information technology -- Microprocessor Systems -- Floating-Point arithmetic.</para>
+            </item>
+            <item>
+              <para>x.Equals(y) returns the same value as y.Equals(x).</para>
+            </item>
+            <item>
+              <para>x.Equals(y) returns true if both x and y are NaN.</para>
+            </item>
+            <item>
+              <para>If (x.Equals(y) &amp;&amp; y.Equals(z)) returns true, then x.Equals(z) returns true.</para>
+            </item>
+            <item>
+              <para>Successive calls to x.Equals(y) return the same value as long as the objects referenced by x and y are not modified.</para>
+            </item>
+            <item>
+              <para>x.Equals(null) returns false. </para>
+            </item>
+          </list>
+          <para>Implementations of <see cref="M:System.Object.Equals(System.Object)" /> must not throw exceptions; they should always return a value. For example, if <paramref name="obj" /> is null, the <see cref="M:System.Object.Equals(System.Object)" /> method should return false instead of throwing an <see cref="T:System.ArgumentNullException" />. </para>
+          <para>Follow these guidelines when overriding <see cref="M:System.Object.Equals(System.Object)" />:</para>
+          <list type="bullet">
+            <item>
+              <para>Types that implement <see cref="T:System.IComparable" /> must override <see cref="M:System.Object.Equals(System.Object)" />.</para>
+            </item>
+            <item>
+              <para>Types that override <see cref="M:System.Object.Equals(System.Object)" /> must also override <see cref="M:System.Object.GetHashCode" />; otherwise, hash tables  might not work correctly.</para>
+            </item>
+            <item>
+              <para>You should consider implementing the <see cref="T:System.IEquatable`1" /> interface to support strongly typed tests for equality. Your <see cref="M:System.IEquatable`1.Equals(`0)" /> implementation should return results that are consistent with <see cref="M:System.Object.Equals(System.Object)" />. </para>
+            </item>
+            <item>
+              <para>If your programming language supports operator overloading and you overload the equality operator for a given type, you must also override the <see cref="M:System.Object.Equals(System.Object)" /> method to return the same result as the equality operator. This  helps ensure that class library code that uses <see cref="M:System.Object.Equals(System.Object)" /> (such as <see cref="T:System.Collections.ArrayList" /> and <see cref="T:System.Collections.Hashtable" />) behaves in a manner that is consistent with the way the equality operator is used by application code.</para>
+            </item>
+          </list>
+          <format type="text/html">
+            <h2>Guidelines for Reference Types</h2>
+          </format>
+          <para>The following guidelines apply to overriding <see cref="M:System.Object.Equals(System.Object)" /> for a reference type:</para>
+          <list type="bullet">
+            <item>
+              <para>Consider overriding <see cref="M:System.Object.Equals(System.Object)" /> if the semantics of the type are based on the fact that the type represents some value(s).</para>
+            </item>
+            <item>
+              <para>Most reference types must not overload the equality operator, even if they override <see cref="M:System.Object.Equals(System.Object)" />. However, if you are implementing a reference type that is intended to have value semantics, such as a complex number type, you must override the equality operator.</para>
+            </item>
+            <item>
+              <para>You should not override <see cref="M:System.Object.Equals(System.Object)" /> on a mutable reference type. This is because overriding <see cref="M:System.Object.Equals(System.Object)" /> requires that you also override the <see cref="M:System.Object.GetHashCode" /> method, as discussed in the previous section. This means that the hash code of an instance of a mutable reference type can change during its lifetime, which can cause the object to be lost in a hash table. </para>
+            </item>
+          </list>
+          <format type="text/html">
+            <h2>Guidelines for Value Types</h2>
+          </format>
+          <para>The following guidelines apply to overriding <see cref="M:System.Object.Equals(System.Object)" /> for a value type:</para>
+          <list type="bullet">
+            <item>
+              <para>If you are defining a value type that includes one or more fields whose values are reference types, you should override <see cref="M:System.Object.Equals(System.Object)" />. The <see cref="M:System.Object.Equals(System.Object)" /> implementation provided by <see cref="T:System.ValueType" /> performs a byte-by-byte comparison for value types whose fields are all value types, but it uses reflection to perform a field-by-field comparison of value types whose fields include reference types. </para>
+            </item>
+            <item>
+              <para>If you override <see cref="M:System.Object.Equals(System.Object)" /> and your development language supports operator overloading, you must overload the equality operator.</para>
+            </item>
+            <item>
+              <para>You should implement the <see cref="T:System.IEquatable`1" /> interface. Calling the strongly typed <see cref="M:System.IEquatable`1.Equals(`0)" /> method avoids boxing the <paramref name="obj" /> argument. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is equal to the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object  is equal to the current object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(object objA, object objB)" />
+      <MemberSignature Language="C#" Value="public static bool Equals (object objA, object objB);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Equals(object objA, object objB) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(object objA, object objB)" />
-      <MemberSignature Language="C#" Value="public static bool Equals (object objA, object objB);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -399,40 +480,6 @@ parameter.</para>
         <Parameter Name="objB" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="objA">To be added.</param>
-        <param name="objB">To be added.</param>
-        <summary>
-          <para>Determines whether two object references are equal.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if one or more of the following statements is
-   true:</para>
-          <list type="bullet">
-            <item>
-              <term>
-                <paramref name="objA" /> and <paramref name="objB" /> refer to the same object,</term>
-            </item>
-            <item>
-              <term>
-                <paramref name="objA" /> and <paramref name="objB" /> are both null references,</term>
-            </item>
-            <item>
-              <term>
-                <paramref name="objA" /> is not 
-   <see langword="null" /> and
-   <paramref name="objA" />.Equals(<paramref name="objB" /> ) returns true;</term>
-            </item>
-          </list>
-          <para>otherwise returns <see langword="false" />.</para>
-        </returns>
-        <remarks>
-          <para>This static method checks for null references before it
-      calls <paramref name="objA" />.Equals(<paramref name="objB" /> ) and
-      returns false if either <paramref name="objA" /> or <paramref name="objB" /> is null. If the Equals(object
-   <paramref name="obj" />) implementation throws an exception, this method throws an
-      exception.</para>
-        </remarks>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
           <code lang="C#">using System;
@@ -475,85 +522,41 @@ public class MyClass {
             <para>Object.Equals(null, null) =&gt; True</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The static <see cref="M:System.Object.Equals(System.Object,System.Object)" /> method indicates whether two objects, <paramref name="objA" /> and <paramref name=" objB" />, are equal. It also enables you to test objects whose value is  null for equality. It compares <paramref name="objA" /> and<paramref name=" objB" /> for equality as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>It determines whether the two objects represent the same object reference. If they do, the method returns true. This test is equivalent to calling the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method. In addition, if both <paramref name="objA" /> and <paramref name="objB" /> are  null, the method returns true.</para>
+            </item>
+            <item>
+              <para>It determines whether either <paramref name="objA" /> or <paramref name="objB" /> is null. If so, it returns false.</para>
+            </item>
+            <item>
+              <para>If the two objects do not represent the same object reference and neither is null, it calls <paramref name="objA" />.Equals(<paramref name="objB" />) and returns the result. This means that if <paramref name="objA" /> overrides the <see cref="M:System.Object.Equals(System.Object)" /> method, this override is called.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object instances are considered equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are considered equal; otherwise, false. If both <paramref name="objA" /> and <paramref name="objB" /> are null, the method returns true.</para>
+        </returns>
+        <param name="objA">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
+        <param name="objB">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Finalize()" />
       <MemberSignature Language="C#" Value="~Object ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Allows a <see cref="T:System.Object" /> to perform cleanup operations before the memory
-   allocated for the <see cref="T:System.Object" /> is automatically reclaimed.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="behaviors">
-            <para>During execution, <see cref="M:System.Object.Finalize" /> is automatically called after an object
-      becomes inaccessible, unless the object has been exempted from finalization by a
-      call to <see cref="M:System.GC.SuppressFinalize(System.Object)" />. During shutdown of an application domain, <see cref="M:System.Object.Finalize" /> is
-      automatically called on objects that are not exempt from finalization, even
-      those that are still accessible. <see cref="M:System.Object.Finalize" /> is automatically called only once on a
-      given instance, unless the object is re-registered using a mechanism such as
-   <see cref="M:System.GC.ReRegisterForFinalize(System.Object)" /> and <see cref="M:System.GC.SuppressFinalize(System.Object)" /> has not been subsequently called.</para>
-            <para>Conforming implementations of the CLI are required to make every
-         effort to ensure that for every object that has not been exempted from
-         finalization, the <see cref="M:System.Object.Finalize" /> method is called after the object becomes inaccessible.
-         However, there might be some circumstances under which <see langword="Finalize" /> is not
-         called. Conforming CLI implementations are required to explicitly specify the conditions
-         under which <see langword="Finalize" /> is not guaranteed to be called. <block subset="none" type="note">For example, <see langword="Finalize" /> might not be guaranteed to be called in
-         the event of equipment failure, power failure, or other catastrophic system failures.</block></para>
-            <para>In addition to <see cref="M:System.GC.ReRegisterForFinalize(System.Object)" />
-   and <see cref="M:System.GC.SuppressFinalize(System.Object)" />, conforming implementations of the CLI are allowed to
-   provide other mechanisms that affect the behavior of <see cref="M:System.Object.Finalize" /> . Any mechanisms provided are required to be specified by the CLI implementation.</para>
-            <para>The order in which the <see langword="Finalize" /> methods
-of two objects are run is unspecified, even if one object refers to the other.</para>
-            <para>The thread on which <see langword="Finalize" /> is run is unspecified.</para>
-            <para>Every implementation of <see cref="M:System.Object.Finalize" /> in a
-derived type is required to call its base type's implementation of <see langword="Finalize" />
-. This is the only case in which application code calls <see cref="M:System.Object.Finalize" /> .</para>
-          </block>
-          <block subset="none" type="default">
-            <para>The <see cref="M:System.Object.Finalize" />
-implementation does nothing.</para>
-          </block>
-          <block subset="none" type="overrides">
-            <para>A type should implement <see langword="Finalize" /> when it uses unmanaged resources such as
-   file handles or database connections that must be released when the managed
-   object that uses them is reclaimed. Because <see langword="Finalize" /> methods
-   can be invoked in any order (including from multiple threads), synchronization
-   can be necessary if the <see langword="Finalize" /> method can interact with other
-   objects, whether accessible or not. Furthermore, since the order in which
-<see langword="Finalize" /> is called is unspecified, implementers of 
-<see langword="Finalize" /> (or of destructors implemented through 
-   overriding Finalize) must take care to correctly handle references to
-   other objects, as their <see langword="Finalize" />
-   
-   
-   method might already have been invoked. In
-   general, referenced objects should not be considered valid during
-   finalization.</para>
-            <para>See the <see cref="T:System.IDisposable" /> interface for an alternate means of disposing of
-resources.</para>
-          </block>
-          <para>
-            <block subset="none" type="usage">For C# developers: Destructors are the C# mechanism for
-   performing cleanup operations. Destructors provide appropriate safeguards, such
-   as automatically calling the base type's destructor. In C# code, <see cref="M:System.Object.Finalize" /> cannot be
-   called or overridden.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -564,56 +567,161 @@ resources.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Object.Finalize" /> method is used to perform cleanup operations on unmanaged resources held by the current object before the object is destroyed. The method is protected and therefore is accessible only through this class or through a derived class.</para>
+          <para>In this section:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#How">How finalization works</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#Notes">Notes for implementers</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="#SafeHandle">The SafeHandle alternative</a>
+                </format>
+              </para>
+            </item>
+          </list>
+          <format type="text/html">
+            <a href="#How" />
+          </format>
+          <format type="text/html">
+            <h2>How finalization works</h2>
+          </format>
+          <para>The <see cref="T:System.Object" /> class provides no implementation for the <see cref="M:System.Object.Finalize" /> method, and the garbage collector does not mark types derived from <see cref="T:System.Object" /> for finalization unless they override the <see cref="M:System.Object.Finalize" /> method. </para>
+          <para>If a type does override the <see cref="M:System.Object.Finalize" /> method, the garbage collector adds an entry for each instance of the type to an internal structure called the finalization queue. The finalization queue contains entries for all the objects in the managed heap whose finalization code must run before the garbage collector can reclaim their memory. The garbage collector then calls the <see cref="M:System.Object.Finalize" /> method automatically under the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>After an object becomes inaccessible, unless the object has been exempted from finalization by a call to the <see cref="M:System.GC.SuppressFinalize(System.Object)" /> method. </para>
+            </item>
+            <item>
+              <para>During shutdown of an application domain, unless the object is exempt from finalization. During shutdown, even objects that are still accessible are finalized. </para>
+            </item>
+          </list>
+          <para>
+            <see cref="M:System.Object.Finalize" /> is automatically called only once on a given instance, unless the object is re-registered by using a mechanism such as <see cref="M:System.GC.ReRegisterForFinalize(System.Object)" /> and the <see cref="M:System.GC.SuppressFinalize(System.Object)" /> method has not been subsequently called. </para>
+          <para>
+            <see cref="M:System.Object.Finalize" /> operations have the following limitations: </para>
+          <list type="bullet">
+            <item>
+              <para>The exact time when the finalizer executes during garbage collection is undefined. To ensure deterministic release of resources for instances of your class, implement a Close method or provide a <see cref="M:System.IDisposable.Dispose" /> implementation. </para>
+            </item>
+            <item>
+              <para>The finalizers of two objects are not guaranteed to run in any specific order, even if one object refers to the other. That is, if Object A has a reference to Object B and both have finalizers, Object B might have already been finalized when the finalizer of Object A starts. </para>
+            </item>
+            <item>
+              <para>The thread on which the finalizer runs is unspecified. </para>
+            </item>
+          </list>
+          <para>The <see cref="M:System.Object.Finalize" /> method might not run to completion or might not run at all under the following exceptional circumstances: </para>
+          <list type="bullet">
+            <item>
+              <para>If another finalizer blocks indefinitely (goes into an infinite loop, tries to obtain a lock it can never obtain, and so on). Because the runtime tries to run finalizers to completion, other finalizers might not be called if a finalizer blocks indefinitely.</para>
+            </item>
+            <item>
+              <para>If the process terminates without giving the runtime a chance to clean up. In this case, the runtime's first notification of process termination is a DLL_PROCESS_DETACH notification.</para>
+            </item>
+          </list>
+          <para>The runtime continues to finalize objects during shutdown only while the number of finalizable objects continues to decrease.</para>
+          <para>If <see cref="M:System.Object.Finalize" /> or an override of <see cref="M:System.Object.Finalize" /> throws an exception, and the runtime is not hosted by an application that overrides the default policy, the runtime terminates the process and no active try/finally blocks or finalizers are executed. This behavior ensures process integrity if the finalizer cannot free or destroy resources. </para>
+          <format type="text/html">
+            <a href="#Notes" />
+          </format>
+          <format type="text/html">
+            <h2>Notes for implementers</h2>
+          </format>
+          <para>You should override <see cref="M:System.Object.Finalize" /> for a class that uses unmanaged resources such as file handles or database connections that must be released when the managed object that uses them is discarded during garbage collection. </para>
+          <block subset="none" type="note">
+            <para>If a <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object is available that wraps your unmanaged resource, the recommended alternative is to implement the dispose pattern with a safe handle and not override <see cref="M:System.Object.Finalize" />. For more information, see <format type="text/html"><a href="#SafeHandle">The SafeHandle alternative</a></format> section. </para>
+          </block>
+          <para>The <see cref="M:System.Object.Finalize" /> method does nothing by default, but you should override <see cref="M:System.Object.Finalize" /> only if necessary, and only to release unmanaged resources. Reclaiming memory during garbage collection tends to take much longer if a finalization operation runs, because it requires at least two garbage collections. In addition, you should override the <see cref="M:System.Object.Finalize" /> method for reference types only. The common language runtime only finalizes reference types. It ignores finalizers on value types. </para>
+          <para>Every implementation of <see cref="M:System.Object.Finalize" /> in a derived type must call its base type's implementation of <see cref="M:System.Object.Finalize" />. This is the only case in which application code is allowed to call <see cref="M:System.Object.Finalize" />.</para>
+          <block subset="none" type="note">
+            <para>The C# compiler does not allow you to override the <see cref="M:System.Object.Finalize" /> method. Instead, you provide a finalizer by implementing a <format type="text/html"><a href="1ae6e46d-a4b1-4a49-abe5-b97f53d9e049">destructor</a></format> for your class. A C# destructor automatically calls the destructor of its base class.</para>
+            <para>Visual C++ also provides its own syntax for implementing the <see cref="M:System.Object.Finalize" /> method. For more information, see the "Destructors and finalizers" section of <format type="text/html"><a href="1c03cb0d-1459-4b5e-af65-97d6b3094fd7">How to: Define and Consume Classes and Structs (C++/CLI)</a></format>. </para>
+          </block>
+          <para>Because garbage collection is non-deterministic, you do not know precisely when the garbage collector performs finalization. To release resources immediately, you can also choose to implement the <format type="text/html"><a href="31a6c13b-d6a2-492b-9a9f-e5238c983bcb">dispose pattern</a></format> and the <see cref="T:System.IDisposable" /> interface. The <see cref="M:System.IDisposable.Dispose" /> implementation can be called by consumers of your class to free unmanaged resources, and you can use the <see cref="M:System.Object.Finalize" /> method to free unmanaged resources in the event that the <see cref="M:System.IDisposable.Dispose" /> method is not called. </para>
+          <para>
+            <see cref="M:System.Object.Finalize" /> can take almost any action, including resurrecting an object (that is, making the object accessible again) after it has been cleaned up during garbage collection. However, the object can only be resurrected once; <see cref="M:System.Object.Finalize" /> cannot be called on resurrected objects during garbage collection. There is one action that your implementation of <see cref="M:System.Object.Finalize" /> should never take: it should never throw an exception. </para>
+          <format type="text/html">
+            <a href="#SafeHandle" />
+          </format>
+          <format type="text/html">
+            <h2>The SafeHandle alternative</h2>
+          </format>
+          <para>Creating reliable finalizers is often difficult, because you cannot make assumptions about the state of your application, and because unhandled system exceptions such as <see cref="T:System.OutOfMemoryException" /> and <see cref="T:System.StackOverflowException" /> terminate the finalizer. Instead of implementing a finalizer for your class to release unmanaged resources, you can use an object that is derived from the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class to wrap your unmanaged resources, and then implement the dispose pattern without a finalizer. The .NET Framework provides the following classes in the <see cref="N:Microsoft.Win32" /> namespace that are derived from <see cref="T:System.Runtime.InteropServices.SafeHandle" />: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:Microsoft.Win32.SafeHandles.SafeFileHandle" /> is a wrapper class for a file handle. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:Microsoft.Win32.SafeHandles.SafeMemoryMappedFileHandle" /> is a wrapper class for memory-mapped file handles. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:Microsoft.Win32.SafeHandles.SafeMemoryMappedViewHandle" /> is a wrapper class for a pointer to a block of unmanaged memory. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:Microsoft.Win32.SafeHandles.SafeNCryptKeyHandle" />, <see cref="T:Microsoft.Win32.SafeHandles.SafeNCryptProviderHandle" />, and <see cref="T:Microsoft.Win32.SafeHandles.SafeNCryptSecretHandle" /> are wrapper classes for cryptographic handles. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:Microsoft.Win32.SafeHandles.SafePipeHandle" /> is a wrapper class for pipe handles. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:Microsoft.Win32.SafeHandles.SafeRegistryHandle" /> is a wrapper class for a handle to a registry key. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:Microsoft.Win32.SafeHandles.SafeWaitHandle" /> is a wrapper class for a wait handle. </para>
+            </item>
+          </list>
+          <para>The following example uses the <format type="text/html"><a href="31a6c13b-d6a2-492b-9a9f-e5238c983bcb">dispose pattern</a></format> with safe handles instead of overriding the <see cref="M:System.Object.Finalize" /> method. It defines a FileAssociation class that wraps registry information about the application that handles files with a particular file extension. The two registry handles returned as out parameters by Windows <see cref="http://msdn.microsoft.com/library/windows/desktop/ms724897.aspx">RegOpenKeyEx</see> function calls are passed to the <see cref="T:Microsoft.Win32.SafeHandles.SafeRegistryHandle" /> constructor. The type's protected Dispose method then calls the SafeRegistryHandle.Dispose method  to free these two handles. </para>
+          <para>code reference: System.Object.Finalize#2</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
       <MemberSignature Language="C#" Value="public virtual int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Generates a hash code for the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
-        <remarks>
-          <para>
-            <see cref="M:System.Object.GetHashCode" /> serves as a hash function for a specific
-   type. <block subset="none" type="note"> A hash function is used to
-   quickly generate a number (a hash code) corresponding to the value of an object.
-   Hash functions are used with <see langword="hashtables" />. A good hash function
-   algorithm rarely generates hash codes that collide. For more information about
-   hash functions, see <paramref name="The Art of Computer Programming" />
-   
-   , Vol. 3, by Donald E. Knuth.</block></para>
-          <block subset="none" type="behaviors">
-            <para>All implementations of <see cref="M:System.Object.GetHashCode" /> are required to ensure that for any two object references x
-   and y, if x.Equals(y) ==
-   true, then x.GetHashCode() ==
-   y.GetHashCode().</para>
-            <para>Hash codes generated by <see cref="M:System.Object.GetHashCode" />
-need not be unique.</para>
-            <para>Implementations of <see cref="M:System.Object.GetHashCode" />
-are not permitted to throw exceptions.</para>
-          </block>
-          <para>
-            <block subset="none" type="default">The <see cref="M:System.Object.GetHashCode" /> implementation attempts to produce a
-unique hash code for every object, but the hash codes generated by this method
-are not guaranteed to be unique. Therefore, <see cref="M:System.Object.GetHashCode" /> can generate the same hash code for two different instances.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">It is recommended (but not required) that types
-   overriding <see cref="M:System.Object.GetHashCode" /> also override <see cref="M:System.Object.Equals(System.Object)" /> . Hashtables cannot be relied on to work correctly if this recommendation is not followed.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to obtain
-   the hash code of an object. Hash codes should not be persisted (i.e. in a database or file) as they are allowed to change from run to run.</block>
-          </para>
-        </remarks>
         <example>
           <para>
             <see langword="Example 1" />
@@ -706,35 +814,80 @@ public struct Int64 {
 }
 </code>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code is a numeric value that is used to insert and identify an object in a hash-based collection such as the <see cref="T:System.Collections.Generic.Dictionary`2" /> class, the <see cref="T:System.Collections.Hashtable" /> class, or a type derived from the <see cref="T:System.Collections.DictionaryBase" /> class. The <see cref="M:System.Object.GetHashCode" /> method provides this hash code for algorithms that need quick checks of object equality. </para>
+          <block subset="none" type="note">
+            <para>For information about how hash codes are used in hash tables and for some additional hash code algorithms, see the <see cref="http://en.wikipedia.org/wiki/Hash_function">Hash Function</see> entry in Wikipedia. </para>
+          </block>
+          <para>Two objects that are equal return hash codes that are equal. However, the reverse is not true: equal hash codes do not imply object equality, because different (unequal) objects can have identical hash codes. Furthermore, the .NET Framework does not guarantee the default implementation of the <see cref="M:System.Object.GetHashCode" /> method, and the value this method returns may differ between .NET Framework versions and platforms, such as 32-bit and 64-bit platforms. For these reasons, do not use the default implementation of this method as a unique object identifier for hashing purposes. Two consequences follow from this: </para>
+          <list type="bullet">
+            <item>
+              <para>You should not assume that equal hash codes imply object equality. </para>
+            </item>
+            <item>
+              <para>You should never persist or use a hash code outside the application domain in which it was created, because the same object may hash across application domains, processes, and platforms. </para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>A hash code is intended for efficient insertion and lookup in collections that are based on a hash table. A hash code is not a permanent value. For this reason: </para>
+            <list type="bullet">
+              <item>
+                <para>Do not serialize hash code values or store them in databases.</para>
+              </item>
+              <item>
+                <para>Do not use the hash code as the key to retrieve an object from a keyed collection. </para>
+              </item>
+              <item>
+                <para>Do not send hash codes across application domains or processes. In some cases, hash codes may be computed on a per-process or per-application domain basis. </para>
+              </item>
+              <item>
+                <para>Do not use the hash code instead of a value returned by a cryptographic hashing function if you need a cryptographically strong hash. For cryptographic hashes, use a class derived from the <see cref="T:System.Security.Cryptography.HashAlgorithm" /> or <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> class.</para>
+              </item>
+              <item>
+                <para>Do not test for equality of hash codes to determine whether two objects are equal. (Unequal objects can have identical hash codes.) To test for equality, call the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> or <see cref="M:System.Object.Equals(System.Object)" /> method. </para>
+              </item>
+            </list>
+          </block>
+          <para>The <see cref="M:System.Object.GetHashCode" /> method can be overridden by a derived type. If <see cref="M:System.Object.GetHashCode" /> is not overridden, hash codes for reference types are computed by calling the <see cref="M:System.Object.GetHashCode" /> method of the base class, which computes a hash code based on an object's reference; for more information, see <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" />. In other words, two objects for which the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method returns true have identical hash codes. If value types do not override <see cref="M:System.Object.GetHashCode" />, the <see cref="M:System.ValueType.GetHashCode" /> method of the base class uses reflection to compute the hash code based on the values of the type's fields. In other words, value types whose fields have equal values have equal hash codes. For more information about overriding <see cref="M:System.Object.GetHashCode" />, see the "Notes to Inheritors" section. </para>
+          <block subset="none" type="note">
+            <para>If you override the <see cref="M:System.Object.GetHashCode" /> method, you should also override <see cref="M:System.Object.Equals(System.Object)" />, and vice versa. If your overridden <see cref="M:System.Object.Equals(System.Object)" /> method returns true when two objects are tested for equality, your overridden <see cref="M:System.Object.GetHashCode" /> method must return the same value for the two objects. </para>
+          </block>
+          <para>If an object that is used as a key in a hash table does not provide a useful implementation of <see cref="M:System.Object.GetHashCode" />, you can specify a hash code provider by supplying an <see cref="T:System.Collections.IEqualityComparer" /> implementation to one of the overloads of the <see cref="T:System.Collections.Hashtable" /> class constructor. </para>
+          <format type="text/html">
+            <h2>Notes for the wrt</h2>
+          </format>
+          <para>When you call the <see cref="M:System.Object.GetHashCode" /> method on a class in the wrt, it provides the default behavior for classes that don’t override <see cref="M:System.Object.GetHashCode" />. This is part of the support that the .NET Framework provides for the wrt (see <format type="text/html"><a href="6fa7d044-ae12-4c54-b8ee-50915607a565">.NET Framework Support for Windows Store Apps and Windows Runtime</a></format>). Classes in the wrt don’t inherit <see cref="T:System.Object" />, and currently don’t implement a <see cref="M:System.Object.GetHashCode" />. However, they appear to have <see cref="M:System.Object.ToString" />, <see cref="M:System.Object.Equals(System.Object)" />, and <see cref="M:System.Object.GetHashCode" /> methods when you use them in your C# or Visual Basic code, and the .NET Framework provides the default behavior for these methods. </para>
+          <block subset="none" type="note">
+            <para>wrt classes that are written in C# or Visual Basic can override the <see cref="M:System.Object.GetHashCode" /> method. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as the default hash function. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Type GetType()" />
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Type GetType() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetType">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Type GetType()" />
-      <MemberSignature Language="C#" Value="public Type GetType ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the type of the current instance.</para>
-        </summary>
-        <returns>
-          <para> The instance of <see cref="T:System.Type" /> that represents the run-time type (the exact type) of the current instance.</para>
-        </returns>
-        <remarks>
-          <para>For two objects x and y that have identical run-time 
-      types, <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" />(x.GetType(),y.GetType()) returns
-   <see langword="true" /> 
-   .</para>
-        </remarks>
         <example>
           <para>The following example demonstrates the fact that <see cref="M:System.Object.GetType" />
 returns the run-time type of the current instance:</para>
@@ -766,89 +919,41 @@ public class Test {
             <para>MyBaseClass b = myDerived: Type is MyDerivedClass </para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For two objects <paramref name="x" /> and <paramref name="y" /> that have identical runtime types, Object.ReferenceEquals(x.GetType(),y.GetType()) returns true. The following example uses the <see cref="M:System.Object.GetType" /> method with the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method to determine whether one numeric value is the same type as two other numeric values.</para>
+          <para>code reference: System.Object.GetType#1</para>
+          <block subset="none" type="note">
+            <para>To determine whether an object is a specific type, you can use your language's type comparison keyword or construct. For example, you can use the TypeOf…Is construct in Visual Basic or the is keyword in C#.</para>
+          </block>
+          <para>The <see cref="T:System.Type" /> object exposes the metadata associated with the class of the current <see cref="T:System.Object" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exact runtime type of the current instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MemberwiseClone">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig instance object MemberwiseClone()" />
+      <MemberSignature Language="C#" Value="protected object MemberwiseClone ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance object MemberwiseClone() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MemberwiseClone">
-      <MemberSignature Language="ILASM" Value=".method family hidebysig instance object MemberwiseClone()" />
-      <MemberSignature Language="C#" Value="protected object MemberwiseClone ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Creates a shallow copy of the current instance.</para>
-        </summary>
-        <returns>
-          <para>A shallow copy of the current instance. The run-time
-      type (the exact type) of the returned object is the same as the run-time type of
-      the object that was copied.</para>
-        </returns>
-        <remarks>
-          <para>
-            <see cref="M:System.Object.MemberwiseClone" /> creates a new instance of the same type
-   as the current instance and then copies each of the object's non-static fields
-   in a manner that depends on whether the field is a value type or a reference
-   type. If the field is a value type, a bit-by-bit copy of all the field's bits is
-   performed. If the field is a reference type, only the reference is copied. The algorithm for performing a shallow copy is as follows (in pseudo-code):</para>
-          <c>
-            <para>for each instance field f in this instance</para>
-            <para> if (f is a value type)</para>
-            <para> bitwise copy the field</para>
-            <para> if (f is a reference type)</para>
-            <para> copy the reference</para>
-            <para>end for loop</para>
-          </c>
-          <para>
-            <block subset="none" type="note">This mechanism is
-   referred to as a shallow copy because it copies rather than clones the non-static fields.</block>
-          </para>
-          <para>Because <see cref="M:System.Object.MemberwiseClone" /> implements the above algorithm, for any object, a, the following statements are required to be true:</para>
-          <list type="bullet">
-            <item>
-              <term>
-      
-      a.MemberwiseClone() is not identical to a.</term>
-            </item>
-            <item>
-              <term>
-      
-      a.MemberwiseClone().GetType() is identical to a.GetType().</term>
-            </item>
-          </list>
-          <para>
-            <see cref="M:System.Object.MemberwiseClone" /> does not call any of the type's constructors.</para>
-          <para>
-            <block subset="none" type="note">If <see cref="M:System.Object.Equals(System.Object)" /> has been
-overridden, a.MemberwiseClone().Equals(a) might return
-<see langword=" false" /> .</block>
-          </para>
-          <block subset="none" type="usage">
-            <para>For an alternate copying mechanism, see <see cref="T:System.ICloneable" /> .</para>
-            <para>
-              <see cref="M:System.Object.MemberwiseClone" /> is protected (rather than public) to
-   ensure that from verifiable code it is only possible to clone objects of the
-   same class as the one performing the operation (or one of its subclasses).
-   Although cloning an object does not directly open security holes, it does allow
-   an object to be created without running any of its constructors. Since these
-   constructors might establish important invariants, objects created by cloning might
-   not have these invariants established, and this can lead to incorrect program
-   behavior. For example, a constructor might add the new object to a linked list
-   of all objects of this class, and cloning the object would not add the new
-   object to that list -- thus operations that relied on the list to locate all
-   instances would fail to notice the cloned object. By making the method
-   protected, only objects of the same class (or a subclass) can produce a clone
-   and implementers of those classes are (presumably) aware of the appropriate
-   invariants and can arrange for them to be true without necessarily calling a constructor.</para>
-          </block>
-        </remarks>
         <example>
           <para>The following example shows a class called
    <see langword="MyClass" /> as well as a representation of the instance of
@@ -903,18 +1008,52 @@ class MyDerivedClass: MyBaseClass {
 +---------------+
 </code>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Object.MemberwiseClone" /> method creates a shallow copy by creating a new object, and then copying the nonstatic fields of the current object to the new object. If a field is a value type, a bit-by-bit copy of the field is performed. If a field is a reference type, the reference is copied but the referred object is not; therefore, the original object and its clone refer to the same object.</para>
+          <para>For example, consider an object called X that references objects A and B. Object B, in turn, references object C. A shallow copy of X creates new object X2 that also references objects A and B. In contrast, a deep copy of X creates a new object X2 that references the new objects A2 and B2, which are copies of A and B. B2, in turn, references the new object C2, which is a copy of C. The example illustrates the difference between a shallow and a deep copy operation.</para>
+          <para>There are numerous ways to implement a deep copy operation if the shallow copy operation performed by the <see cref="M:System.Object.MemberwiseClone" /> method does not meet your needs. These include the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Call a class constructor of the object to be copied to create a second object with property values taken from the first object. This assumes that the values of an object are entirely defined by its class constructor.</para>
+            </item>
+            <item>
+              <para>Call the <see cref="M:System.Object.MemberwiseClone" /> method to create a shallow copy of an object, and then assign new objects whose values are the same as the original object to any properties or fields whose values are reference types. The DeepCopy method in the example illustrates this approach. </para>
+            </item>
+            <item>
+              <para>Serialize the object to be deep copied, and then restore the serialized data to a different object variable.</para>
+            </item>
+            <item>
+              <para>Use reflection with recursion to perform the deep copy operation. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a shallow copy of the current <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the current <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReferenceEquals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool ReferenceEquals(object objA, object objB)" />
+      <MemberSignature Language="C#" Value="public static bool ReferenceEquals (object objA, object objB);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ReferenceEquals(object objA, object objB) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReferenceEquals">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool ReferenceEquals(object objA, object objB)" />
-      <MemberSignature Language="C#" Value="public static bool ReferenceEquals (object objA, object objB);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -923,23 +1062,6 @@ class MyDerivedClass: MyBaseClass {
         <Parameter Name="objB" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="objA">To be added.</param>
-        <param name="objB">To be added.</param>
-        <summary>
-          <para>Determines whether two object references are identical.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="True" /> if <paramref name="a" /> and <paramref name="b" /> refer
-   to the same object or are both null references; otherwise,
-<see langword="false" />.</para>
-        </returns>
-        <remarks>
-          <para>This static method provides a way to compare two objects 
-      for reference equality. It does not call any user-defined code, including
-      overrides of <see cref="M:System.Object.Equals(System.Object)" />
-      .</para>
-        </remarks>
         <example>
           <code lang="C#">using System;
 class MyClass {
@@ -961,66 +1083,51 @@ class MyClass {
             <para>False</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike the <see cref="M:System.Object.Equals(System.Object)" /> method and the equality operator, the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method cannot be overridden. Because of this, if you want to test two object references for equality and you are unsure about the implementation of the Equals method, you can call the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method. </para>
+          <para>However, the return value of the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method may appear to be anomalous in these two scenarios: </para>
+          <list type="bullet">
+            <item>
+              <para>When comparing value types. If <paramref name="objA" /> and <paramref name="objB" /> are value types, they are boxed before they are passed to the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method. This means that if both <paramref name="objA" /> and <paramref name="objB" /> represent the same instance of a value type, the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method nevertheless returns false, as the following example shows.</para>
+              <para>code reference: System.Object.ReferenceEquals#1</para>
+            </item>
+            <item>
+              <para>When comparing strings. If <paramref name="objA" /> and <paramref name="objB" /> are strings, the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method returns true if the string is interned. It does not perform a test for value equality.  In the following example, <paramref name="s1" /> and <paramref name="s2" /> are equal because they are two instances of a single interned string. However, <paramref name="s3" /> and <paramref name="s4" /> are not equal, because although they are have identical string values, that string is not interned. </para>
+              <para>code reference: System.Object.ReferenceEquals#2</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> instances are the same instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="objA" /> is the same instance as <paramref name="objB" /> or if both are null; otherwise, false.</para>
+        </returns>
+        <param name="objA">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
+        <param name="objB">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object  to compare. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public virtual string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
-      <MemberSignature Language="C#" Value="public virtual string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Creates and returns a <see cref="T:System.String" /> representation of the current
-   instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">
-              <see cref="M:System.Object.ToString" /> returns a string whose content is intended to be
-      understood by humans. Where the object contains culture-sensitive data, the
-      string representation returned by <see cref="M:System.Object.ToString" /> takes into account the current
-      system culture. For example, for an instance of the <see cref="T:System.Double" /> class whose value
-      is zero, the implementation of <see cref="M:System.Double.ToString" /> might return "0.00" or "0,00" depending on the
-      current UI culture. <block subset="none" type="note"> Although there are no exact requirements
-      for the format of the returned string, it should as much as possible
-      reflect the value of the object as perceived by the user.</block></block>
-          </para>
-          <para>
-            <block subset="none" type="default">
-              <see cref="M:System.Object.ToString" /> is equivalent to calling <see cref="M:System.Object.GetType" /> to obtain
-   the <see cref="T:System.Type" /> object
-   for the current instance and then returning the result of calling the <see cref="M:System.Object.ToString" />
-   implementation
-   for that type. <block subset="none" type="note"> The value returned includes the full name of the type.</block></block>
-          </para>
-          <block subset="none" type="overrides">
-            <para> It is recommended, but not required, that <see cref="M:System.Object.ToString" /> be
-   overridden in a derived class to return values that are meaningful for that
-   type. For example, the base data types, such as <see cref="T:System.Int32" />, implement <see cref="M:System.Object.ToString" /> so that
-   it returns the string form of the value the object represents.</para>
-            <para> Subclasses that require more control over the formatting
-   of strings than <see cref="M:System.Object.ToString" /> provides should implement <see cref="T:System.IFormattable" />, whose
-<see cref="M:System.Object.ToString" /> method 
-   uses the culture of the current thread.</para>
-          </block>
-        </remarks>
         <example>
           <para>The following example outputs the textual description of
       the value of an object of type <see cref="T:System.Object" /> to the console.</para>
@@ -1038,13 +1145,77 @@ class MyClass {
             <c>System.Object</c>
           </para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Object.ToString" /> is the major formatting method in the .NET Framework. It converts an object to its string representation so that it is suitable for display. (For information about formatting support in the .NET Framework, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>.) </para>
+          <para>The default implementation of the <see cref="M:System.Object.ToString" /> method returns the fully qualified name of the type of the <see cref="T:System.Object" />, as the following example shows.</para>
+          <para>code reference: System.Object.ToString#1</para>
+          <para>Because <see cref="T:System.Object" /> is the base class of all reference types in the .NET Framework, this behavior is inherited by reference types that do not override the <see cref="M:System.Object.ToString" /> method. The following example illustrates this. It defines a class named Object1 that accepts the default implementation of all <see cref="T:System.Object" /> members. Its <see cref="M:System.Object.ToString" /> method returns the object's fully qualified type name.</para>
+          <para>code reference: System.Object.ToString#2</para>
+          <para>Types commonly override the <see cref="M:System.Object.ToString" /> method to return a string that represents the object instance. For example, the base types such as <see cref="T:System.Char" />, <see cref="T:System.Int32" />, and <see cref="T:System.String" /> provide <see cref="M:System.Object.ToString" /> implementations that return the string form of the value that the object represents. The following example defines a class, Object2, that overrides the <see cref="M:System.Object.ToString" /> method to return the type name along with its value.</para>
+          <para>code reference: System.Object.ToString#3</para>
+          <format type="text/html">
+            <h2>Notes for the wrt</h2>
+          </format>
+          <para>When you call the <see cref="M:System.Object.ToString" /> method on a class in the wrt, it provides the default behavior for classes that don’t override <see cref="M:System.Object.ToString" />. This is part of the support that the .NET Framework provides for the wrt (see <format type="text/html"><a href="6fa7d044-ae12-4c54-b8ee-50915607a565">.NET Framework Support for Windows Store Apps and Windows Runtime</a></format>). Classes in the wrt don’t inherit <see cref="T:System.Object" />, and don’t always implement a <see cref="M:System.Object.ToString" />. However, they always appear to have <see cref="M:System.Object.ToString" />, <see cref="M:System.Object.Equals(System.Object)" />, and <see cref="M:System.Object.GetHashCode" /> methods when you use them in your C# or Visual Basic code, and the .NET Framework provides a default behavior for these methods. </para>
+          <para>Starting with the net_v451, the common language runtime will use <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.tostring.aspx">IStringable.ToString</see> on a wrt object before falling back to the default implementation of <see cref="M:System.Object.ToString" />. </para>
+          <block subset="none" type="note">
+            <para>wrt classes that are written in C# or Visual Basic can override the <see cref="M:System.Object.ToString" /> method. </para>
+          </block>
+          <format type="text/html">
+            <h2>The wrt and the IStringable Interface</h2>
+          </format>
+          <para>Starting with win81, the wrt includes an <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> interface whose single method, <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.tostring.aspx">IStringable.ToString</see>, provides basic formatting support comparable to that provided by <see cref="M:System.Object.ToString" />. To prevent ambiguity, you should not implement <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> on managed types. </para>
+          <para>When managed objects are called by native code or by code written in languages such as JavaScript or C++/CX, they appear to implement <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see>. The common language runtime will automatically route calls from <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.tostring.aspx">IStringable.ToString</see> to <see cref="M:System.Object.ToString" /> in the event <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> is not implemented on the managed object. </para>
+          <block subset="none" type="note">
+            <para>Because the common language runtime auto-implements <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> for all managed types in win8_appstore_long apps, we recommend that you do not provide your own <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> implementation. Implementing <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> may result in unintended behavior when calling ToString  from the wrt, C++/CX, or JavaScript. </para>
+          </block>
+          <para>If you do choose to implement <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> in a public managed type that is exported in a wrt component, the following restrictions apply: </para>
+          <list type="bullet">
+            <item>
+              <para>You can define the <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> interface only in a "class implements" relationship, such as </para>
+              <code>public class NewClass : IStringable</code>
+              <para>in C#, or</para>
+              <code>Public Class NewClass : Implements IStringable</code>
+              <para>in Visual Basic. </para>
+            </item>
+            <item>
+              <para>You cannot implement <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> on an interface. </para>
+            </item>
+            <item>
+              <para>You cannot declare a parameter to be of type <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see>. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> cannot be the return type of a method, property, or field. </para>
+            </item>
+            <item>
+              <para>You cannot hide your <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> implementation from base classes by using a method definition such as the following:  </para>
+              <code>
+public class NewClass : IStringable
+{
+   public new string ToString()
+   {
+      return "New ToString in NewClass";
+   }
+}
+</code>
+              <para>Instead, the <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.tostring.aspx">IStringable.ToString</see> implementation must always override the base class implementation. You can hide a ToString implementation only by invoking it on a strongly typed class instance. </para>
+            </item>
+          </list>
+          <para>Note that under a variety of conditions, calls from native code to a managed type that implements <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.aspx">IStringable</see> or hides its <see cref="http://msdn.microsoft.com/library/windows/apps/windows.foundation.istringable.tostring.aspx">ToString</see> implementation can produce unexpected behavior. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

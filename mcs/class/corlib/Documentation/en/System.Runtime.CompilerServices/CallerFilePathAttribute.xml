@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallerFilePathAttribute" FullName="System.Runtime.CompilerServices.CallerFilePathAttribute">
+  <TypeSignature Language="C#" Value="public sealed class CallerFilePathAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CallerFilePathAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Parameter, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You apply the <unmanagedCodeEntityReference>CallerFilePath</unmanagedCodeEntityReference> attribute to an optional parameter that has a default value. You must specify an explicit default value for the optional parameter. You can't apply this attribute to parameters that aren't specified as optional.</para>
+      <para>For more information, see <format type="text/html"><a href="9cb2b8c0-c4f6-44b8-9c90-38948455b373">Caller Information (C# and Visual Basic)</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows you to obtain the full path of the source file that contains the caller. This is the file path at the time of compile.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CallerFilePathAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.CallerFilePathAttribute" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

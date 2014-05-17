@@ -1,35 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSerializerFactory" FullName="System.Xml.Serialization.XmlSerializerFactory">
   <TypeSignature Language="C#" Value="public class XmlSerializerFactory" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSerializerFactory extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates typed versions of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> for more efficient serialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSerializerFactory ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlSerializerFactory" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -37,19 +53,28 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializerFactory" /> class that is used to serialize the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class that is specifically created to serialize the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to serialize.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (System.Xml.Serialization.XmlTypeMapping xmlTypeMapping);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Xml.Serialization.XmlTypeMapping xmlTypeMapping) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -57,19 +82,28 @@
         <Parameter Name="xmlTypeMapping" Type="System.Xml.Serialization.XmlTypeMapping" />
       </Parameters>
       <Docs>
-        <param name="xmlTypeMapping">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializerFactory" /> class using an object that maps one type to another.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class that is specifically created to serialize the mapped type.</para>
+        </returns>
+        <param name="xmlTypeMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> that maps one type to another.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (Type type, string defaultNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Type type, string defaultNamespace) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -78,20 +112,30 @@
         <Parameter Name="defaultNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="defaultNamespace">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializerFactory" /> class that is used to serialize the specified type and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class that is specifically created to serialize the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to serialize.</param>
+        <param name="defaultNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default namespace to use for all the XML elements. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (Type type, Type[] extraTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Type type, class System.Type[] extraTypes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -100,20 +144,33 @@
         <Parameter Name="extraTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="extraTypes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this overload is similar to calling the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor(System.Type,System.Type[])" /> to create an instance of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializerFactory" /> class that is used to serialize the specified type. If a property or field returns an array, the <paramref name="extraTypes" /> parameter specifies objects that can be inserted into the array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to serialize.</param>
+        <param name="extraTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (Type type, System.Xml.Serialization.XmlAttributeOverrides overrides);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Type type, class System.Xml.Serialization.XmlAttributeOverrides overrides) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -122,20 +179,33 @@
         <Parameter Name="overrides" Type="System.Xml.Serialization.XmlAttributeOverrides" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="overrides">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this overload is similar to calling the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor(System.Type,System.Xml.Serialization.XmlAttributeOverrides)" /> to create an instance of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class that can serialize objects of the specified type into XML documents, and vice versa. Each object to be serialized can itself contain instances of classes, which this overload can override with other classes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to serialize.</param>
+        <param name="overrides">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> that contains fields that override the default serialization behavior.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (Type type, System.Xml.Serialization.XmlRootAttribute root);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Type type, class System.Xml.Serialization.XmlRootAttribute root) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -144,20 +214,33 @@
         <Parameter Name="root" Type="System.Xml.Serialization.XmlRootAttribute" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="root">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this overload is similar to calling the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor(System.Type,System.Xml.Serialization.XmlRootAttribute)" /> to create an instance of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class that can serialize objects of the specified type into XML documents, and vice versa. Specifies the object that represents the XML root element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to serialize.</param>
+        <param name="root">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlRootAttribute" /> that represents the XML root element.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (Type type, System.Xml.Serialization.XmlAttributeOverrides overrides, Type[] extraTypes, System.Xml.Serialization.XmlRootAttribute root, string defaultNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Type type, class System.Xml.Serialization.XmlAttributeOverrides overrides, class System.Type[] extraTypes, class System.Xml.Serialization.XmlRootAttribute root, string defaultNamespace) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -169,23 +252,39 @@
         <Parameter Name="defaultNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="overrides">To be added.</param>
-        <param name="extraTypes">To be added.</param>
-        <param name="root">To be added.</param>
-        <param name="defaultNamespace">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this overload is similar to calling the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor(System.Type,System.Xml.Serialization.XmlAttributeOverrides,System.Type[],System.Xml.Serialization.XmlRootAttribute,System.String)" /> to create an instance of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class that can serialize objects of the specified type into XML document instances, and vice versa. Each object to be serialized can itself contain instances of classes, which this overload can override with other classes. This overload also specifies the default namespace for all the XML elements, and the class to use as the XML root element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to serialize.</param>
+        <param name="overrides">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> that contains fields that override the default serialization behavior.</param>
+        <param name="extraTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
+        <param name="root">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlRootAttribute" /> that represents the XML root element.</param>
+        <param name="defaultNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default namespace of all XML elements in the XML document. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSerializer">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlSerializer CreateSerializer (Type type, System.Xml.Serialization.XmlAttributeOverrides overrides, Type[] extraTypes, System.Xml.Serialization.XmlRootAttribute root, string defaultNamespace, string location, System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Serialization.XmlSerializer CreateSerializer(class System.Type type, class System.Xml.Serialization.XmlAttributeOverrides overrides, class System.Type[] extraTypes, class System.Xml.Serialization.XmlRootAttribute root, string defaultNamespace, string location, class System.Security.Policy.Evidence evidence) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
@@ -199,21 +298,34 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="overrides">To be added.</param>
-        <param name="extraTypes">To be added.</param>
-        <param name="root">To be added.</param>
-        <param name="defaultNamespace">To be added.</param>
-        <param name="location">To be added.</param>
-        <param name="evidence">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this overload is similar to calling the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor(System.Type,System.Xml.Serialization.XmlAttributeOverrides,System.Type[],System.Xml.Serialization.XmlRootAttribute,System.String,System.String,System.Security.Policy.Evidence)" /> to create an instance of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class that can serialize objects of the specified type into XML document instances, and vice versa. Each object to be serialized can itself contain instances of classes, which this overload can override with other classes. This overload also specifies the default namespace for all the XML elements, and the class to use as the XML root element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derivation of the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the object that this <see cref="T:System.Xml.Serialization.XmlSerializer" /> can serialize.</param>
+        <param name="overrides">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> that extends or overrides the behavior of the class specified in the type parameter.</param>
+        <param name="extraTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
+        <param name="root">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlRootAttribute" /> that defines the XML root element properties.</param>
+        <param name="defaultNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default namespace of all XML elements in the XML document.</param>
+        <param name="location">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path that specifies the location of the types.</param>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Security.Policy.Evidence" /> class that contains credentials needed to access types.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceBehaviorAttribute" FullName="System.ServiceModel.ServiceBehaviorAttribute">
+  <TypeSignature Language="C#" Value="public sealed class ServiceBehaviorAttribute : Attribute, System.ServiceModel.Description.IServiceBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ServiceBehaviorAttribute extends System.Attribute implements class System.ServiceModel.Description.IServiceBehavior" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Description.IServiceBehavior</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Apply the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> attribute to a service implementation to specify service-wide execution behavior. (To specify execution behavior at the method level, use the <see cref="T:System.ServiceModel.OperationBehaviorAttribute" /> attribute.) This attribute can be applied only to service implementations. For working examples, see the <format type="text/html"><a href="4e3c6513-a7ff-4b35-8dcf-b5506c6f39a7">Service Behaviors Samples</a></format>. </para>
+      <para>
+        <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> properties are a indigo1 programming model feature that enables common features that developers otherwise have to implement. For more information about these and other behaviors, see <format type="text/html"><a href="5c5450ea-6af1-4b75-a267-613d0ac54707">Specifying Runtime Behavior</a></format>. For more information about the underlying runtime properties that some of the following properties set, see <format type="text/html"><a href="954c138a-1cd0-45a0-8abe-e4d2b8ff5400">Extending ServiceHost and the Dispatcher</a></format>.</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.AddressFilterMode" /> property specifies the type of filter that the dispatcher system uses to locate the endpoint that handles requests.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.AutomaticSessionShutdown" /> property automatically closes the session when the channel is closed and the service has finished processing any remaining messages.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> property controls the internal threading model, enabling support for reentrant or multithreaded services.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConfigurationName" /> property is used to declare a name for use in the name attribute of the &lt;service&gt; element in a configuration file.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IgnoreExtensionDataObject" /> property enables the run time to ignore extra serialization information that is not required to process the message.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> property specifies whether unhandled exceptions in a service are returned as SOAP faults. This is for debugging purposes only.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property specifies whether and when services and their service objects are to be recycled during an exchange with a client.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.MaxItemsInObjectGraph" /> property to limit on the number of items in an object graph that are serialized.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.Name" /> and <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.Namespace" /> properties control the name and namespace for the WSDL expression of the service element.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ReleaseServiceInstanceOnTransactionComplete" /> property specifies whether the service object is recycled when a transaction completes.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.TransactionAutoCompleteOnSessionClose" /> property specifies whether outstanding transactions are completed when the session closes.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.TransactionIsolationLevel" /> property specifies the transaction isolation level that the contract supports.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.TransactionTimeout" /> property specifies the time period within which a transaction must complete or it aborts.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.UseSynchronizationContext" /> property indicates whether to synchronize inbound method calls with the user interface thread automatically.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ValidateMustUnderstand" /> property informs the system whether it should confirm that SOAP headers marked as MustUnderstand have, in fact, been understood.</para>
+        </item>
+      </list>
+      <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> property can also be set using an application configuration file. For details, see <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the internal execution behavior of a service contract implementation.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceBehaviorAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default values for the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> are:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.AddressFilterMode" /> is set to <see cref="F:System.ServiceModel.AddressFilterMode.Exact" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.AutomaticSessionShutdown" /> property is true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> is set to <see cref="F:System.ServiceModel.ConcurrencyMode.Single" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConfigurationName" /> property is the namespace-qualified name of the type without the assembly information.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IgnoreExtensionDataObject" /> property is false.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.MaxItemsInObjectGraph" /> property is set to 64KB.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.Name" /> property is the name of the service type, without namespace or assembly information.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.Namespace" /> property is "http://tempuri.org". </para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ReleaseServiceInstanceOnTransactionComplete" /> property is true.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> is false.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.UseSynchronizationContext" /> is true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.TransactionAutoCompleteOnSessionClose" /> property is false.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.TransactionIsolationLevel" /> property is <see cref="F:System.Transactions.IsolationLevel.Unspecified" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.TransactionTimeout" /> property is set to <see cref="F:System.TimeSpan.Zero" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ValidateMustUnderstand" /> property is true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddressFilterMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.AddressFilterMode AddressFilterMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.AddressFilterMode AddressFilterMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AddressFilterMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.AddressFilterMode" /> that is used by the dispatcher to route incoming messages to the correct endpoint.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AutomaticSessionShutdown">
+      <MemberSignature Language="C#" Value="public bool AutomaticSessionShutdown { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AutomaticSessionShutdown" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default when a client closes an output session and the service has finished processing any remaining messages the server closes the session. Setting <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.AutomaticSessionShutdown" /> to false prevents the server from automatically closing the session and enables custom control of session lifetimes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether to automatically close a session when a client closes an output session.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConcurrencyMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ConcurrencyMode ConcurrencyMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.ConcurrencyMode ConcurrencyMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ConcurrencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates whether an instance of a service can handle one thread or multiple threads that execute concurrently, and if single-threaded, whether reentrancy is supported. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> property interacts with some other settings. For example, if the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> value is set to <see cref="F:System.ServiceModel.InstanceContextMode.Single" /> the result is that your service can only process one message at a time unless you also set the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> value to <see cref="F:System.ServiceModel.ConcurrencyMode.Multiple" />. This property also produces behavior in combination with the <see cref="P:System.ServiceModel.ServiceContractAttribute.SessionMode" /> property. For details, see <format type="text/html"><a href="50797a3b-7678-44ed-8138-49ac1602f35b">Sessions, Instancing, and Concurrency</a></format>.</para>
+          </block>
+          <para>Setting <see cref="T:System.ServiceModel.ConcurrencyMode" /> to <see cref="F:System.ServiceModel.ConcurrencyMode.Single" /> instructs the system to restrict instances of the service to one thread of execution at a time, which frees you from dealing with threading issues. A value of <see cref="F:System.ServiceModel.ConcurrencyMode.Multiple" /> means that service objects can be executed by multiple threads at any one time. In this case, you must ensure thread safety.</para>
+          <para>
+            <see cref="F:System.ServiceModel.ConcurrencyMode.Reentrant" /> also restricts access to a single thread at a time; while the operation is processing, no other message can enter the operation. If during the operation a call to another service leaves, the current message loses the lock on the operation, which is free to process other messages. When the service call out returns, the lock is reestablished and the original message can continue processing to its conclusion or until another call out of the operation occurs.</para>
+          <block subset="none" type="note">
+            <para>It is your responsibility to leave your object state consistent before callouts and you must confirm that operation-local data is valid after callouts. Note that the service instance is unlocked only by calling another service over a indigo2 channel. In this case, the called service can reenter the first service via a callback. If the first service is not reentrant, the sequence of calls results in a deadlock. For details, see <see cref="T:System.ServiceModel.ConcurrencyMode" />.</para>
+          </block>
+          <para>During any outbound call from a processing operation, data not local to the operation can be modified. (Local state data is guaranteed to be valid when the original message resumes processing.) As a result, before your outbound call you must ensure that non-local data is valid for other incoming calls and revalidate non-local data after the outbound call returns. </para>
+          <para>The following pseudo-code illustrates the required pattern for successful reentrant support.</para>
+          <code>public void MyMethod()
+{
+  this.SomeNonLocalDataState;
+  // Here you need to clean nonlocal state for other users
+  OutboundProxy proxy = new OutboundProxy();
+  int returnValue = proxy.CallOutOfOperation();
+  // Ensure that this.SomeNonLocalDataState is valid for continued use.
+  this.ModifyNonLocalState;
+  return returnValue;
+}
+</code>
+          <para>Using the Begin/End asynchronous call pattern for an outbound call when the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> is <see cref="F:System.ServiceModel.ConcurrencyMode.Reentrant" /> triggers an exception. Asynchronous outbound calls require an operation in which <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> is <see cref="F:System.ServiceModel.ConcurrencyMode.Multiple" />, in which case you must handle synchronization issues.</para>
+          <para>Generally, if a message arrives for an instance that violates its concurrency mode, the message waits until the instance is available, or until it times out.  </para>
+          <para>In addition, if the <see cref="T:System.ServiceModel.ConcurrencyMode" /> is set to <see cref="F:System.ServiceModel.ConcurrencyMode.Single" /> and a reentrant call is blocked while waiting for the instance to be freed, the system detects the deadlock and throws an exception.</para>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.InvalidOperationException" /> is thrown at runtime if <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ReleaseServiceInstanceOnTransactionComplete" /> is true when the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> property is set to <see cref="F:System.ServiceModel.ConcurrencyMode.Single" />.</para>
+          </block>
+          <para>Note that you must explicitly set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ReleaseServiceInstanceOnTransactionComplete" /> to false if there is an operation with <see cref="P:System.ServiceModel.OperationBehaviorAttribute.TransactionScopeRequired" /> set to true and you set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> to <see cref="F:System.ServiceModel.ConcurrencyMode.Reentrant" />. Otherwise a validation exception is thrown because the default value of <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ReleaseServiceInstanceOnTransactionComplete" /> is true.</para>
+          <para>There is an interaction of the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> and other properties that can alter runtime behavior. For a complete description of these interactions, see <format type="text/html"><a href="50797a3b-7678-44ed-8138-49ac1602f35b">Sessions, Instancing, and Concurrency</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether a service supports one thread, multiple threads, or reentrant calls.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConfigurationName">
+      <MemberSignature Language="C#" Value="public string ConfigurationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConfigurationName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this value to specify a particular service in the configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value used to locate the service element in an application configuration file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetWellKnownSingleton">
+      <MemberSignature Language="C#" Value="public object GetWellKnownSingleton ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetWellKnownSingleton() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A non-null value provides the service instance to which all messages addressed to the service will be dispatched. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an object that implements the service and that is used as the singleton instance of the service, or null if there is no singleton instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An implementation of the service. The default value is null.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="IgnoreExtensionDataObject">
+      <MemberSignature Language="C#" Value="public bool IgnoreExtensionDataObject { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreExtensionDataObject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a type implements the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface, it stores any extra data it doesn’t know about that comes over the wire when deserializing into that type. For example, if a type Person has members FirstName and LastName, and an element called PhoneNumber comes in, it is stored. When later serializing the type, PhoneNumber will be re-emitted. The problem is that the schema for Person exported by that service only has FirstName and LastName, so indigo1 generates a schema-invalid instance! If strict schema compliance is important, you can set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IgnoreExtensionDataObject" /> to true to turn this re-emitting behavior off.</para>
+          <para>Regardless <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IgnoreExtensionDataObject" /> setting, indigo2 always processes known data (both in and out) and does not throw exceptions when extra data comes in. You can also set this property using the <format type="text/html"><a href="f41fb4d5-24e7-4059-8010-286a30bfea93">&lt;dataContractSerializer&gt;</a></format> element in an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to send unknown serialization data onto the wire.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeExceptionDetailInFaults">
+      <MemberSignature Language="C#" Value="public bool IncludeExceptionDetailInFaults { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeExceptionDetailInFaults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> to true to enable exception information to flow to clients for debugging purposes. This property requires a binding that supports either request-response or duplex messaging. </para>
+          <para>In all managed applications, processing errors are represented by <see cref="T:System.Exception" /> objects. In SOAP-based applications such as indigo2 applications, methods that implement service operations communicate error information using SOAP fault messages. Because indigo2 applications execute under both types of error systems, any managed exception information that needs to be sent to the client must be converted from exceptions into SOAP faults. For more information, see <format type="text/html"><a href="a9696563-d404-4905-942d-1e0834c26dea">Specifying and Handling Faults in Contracts and Services</a></format>.</para>
+          <para>During development, you may want your service to also send other exceptions back to the client to assist you in debugging. This is a development-only feature and should not be employed in deployed services.</para>
+          <para>To facilitate debugging development, set the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> to true either in code or using an application configuration file. </para>
+          <para>When enabled, the service automatically returns safer exception information to the caller. These faults appear to the client as <see cref="T:System.ServiceModel.FaultException`1" /> objects of type <see cref="T:System.ServiceModel.ExceptionDetail" />. </para>
+          <block subset="none" type="note">
+            <para>Setting <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> to true enables clients to obtain information about internal service method exceptions; it is only recommended as a way of temporarily debugging a service application. In addition, the WSDL for a method that returns unhandled managed exceptions in this way does not contain the contract for the <see cref="T:System.ServiceModel.FaultException`1" /> of type <see cref="T:System.ServiceModel.ExceptionDetail" />. Clients must expect the possibility of an unknown SOAP fault to obtain the debugging information properly. </para>
+            <para />
+          </block>
+          <para>Setting this property to true can also be done using an application configuration file and the <format type="text/html"><a href="6d7ea986-f232-49fe-842c-f934d9966889">&lt;serviceDebug&gt;</a></format> element, as the following code example shows.</para>
+          <para>code reference: OperationBehaviorAttribute1#10</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies that general unhandled execution exceptions are to be converted into a <see cref="T:System.ServiceModel.FaultException`1" /> of type <see cref="T:System.ServiceModel.ExceptionDetail" /> and sent as a fault message. Set this to true only during development to troubleshoot a service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InstanceContextMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.InstanceContextMode InstanceContextMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.InstanceContextMode InstanceContextMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.InstanceContextMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="T:System.ServiceModel.InstanceContextMode" /> property to specify when new service objects are created. Because the service object is not directly connected to the communicating channel, the lifetime of the service objects is independent of the lifetime of the channel between a client and the service application. The default value, <see cref="F:System.ServiceModel.InstanceContextMode.PerSession" />, instructs the service application to create a new service object when a new communication session is established between a client and the service application. Subsequent calls in the same session are handled by the same object. </para>
+          <para>
+            <see cref="F:System.ServiceModel.InstanceContextMode.PerSession" /> indicates that each service object handles requests from one client channel. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property interacts with some other settings. For example, if the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> value is set to <see cref="F:System.ServiceModel.InstanceContextMode.Single" /> the result is that your service can only process one message at a time unless you also set the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> value to <see cref="F:System.ServiceModel.ConcurrencyMode.Multiple" />. This property also produces behavior in combination with the <see cref="P:System.ServiceModel.ServiceContractAttribute.SessionMode" /> property. For details, see <format type="text/html"><a href="50797a3b-7678-44ed-8138-49ac1602f35b">Sessions, Instancing, and Concurrency</a></format>. </para>
+          </block>
+          <para>For singleton lifetime behavior (for example, if the host application calls the <see cref="M:System.ServiceModel.ServiceHost.#ctor(System.Object,System.Uri[])" /> constructor and passes an object to use as the service), the service class must set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> to Single, or an exception is thrown at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value that indicates when new service objects are created.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxItemsInObjectGraph">
+      <MemberSignature Language="C#" Value="public int MaxItemsInObjectGraph { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxItemsInObjectGraph" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.MaxItemsInObjectGraph" /> property set a limit on the number of items in an object graph that are serialized. You can also set this property using the <format type="text/html"><a href="f41fb4d5-24e7-4059-8010-286a30bfea93">&lt;dataContractSerializer&gt;</a></format> element in an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of items allowed in a serialized object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the name attribute in the service element in Web Services Description Language (WSDL).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the target namespace for the service in Web Services Description Language (WSDL).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReleaseServiceInstanceOnTransactionComplete">
+      <MemberSignature Language="C#" Value="public bool ReleaseServiceInstanceOnTransactionComplete { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ReleaseServiceInstanceOnTransactionComplete" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that you must explicitly set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ReleaseServiceInstanceOnTransactionComplete" /> to false if there is an operation with <see cref="P:System.ServiceModel.OperationBehaviorAttribute.TransactionScopeRequired" /> set to true and you set <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConcurrencyMode" /> to <see cref="F:System.ServiceModel.ConcurrencyMode.Reentrant" />. Otherwise a validation exception is thrown because the default value of <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ReleaseServiceInstanceOnTransactionComplete" /> is true.</para>
+          <para>In addition, it is important to realize that if the service is created by passing a service object to the <see cref="M:System.ServiceModel.ServiceHost.#ctor(System.Object,System.Uri[])" /> constructor, the value of this property is treated as if it were false. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the service object is released when the current transaction completes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetWellKnownSingleton">
+      <MemberSignature Language="C#" Value="public void SetWellKnownSingleton (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetWellKnownSingleton(object value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This provides the service instance to which all messages addressed to the service will be dispatched. </para>
+          <para>If <see cref="M:System.ServiceModel.ServiceBehaviorAttribute.SetWellKnownSingleton(System.Object)" /> is set to a non-null value, then the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> must be set to <see cref="F:System.ServiceModel.InstanceContextMode.Single" /> or an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an object that implements the service and that is used as the singleton instance of the service.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The singleton instance of the service. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.AddBindingParameters">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.AddBindingParameters (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase, System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase, class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+        <Parameter Name="endpoints" Type="System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Passes custom data objects to the bindings that support the behavior properties.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host.</param>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service endpoints.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data objects needed by bindings to support the behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.ApplyDispatchBehavior (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Customizes the service run time to support the behavior properties.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.Validate">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.Validate (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.Validate(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Confirms that the service description and service host are capable of supporting the behavior.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TransactionAutoCompleteOnSessionClose">
+      <MemberSignature Language="C#" Value="public bool TransactionAutoCompleteOnSessionClose { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool TransactionAutoCompleteOnSessionClose" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether pending transactions are completed when the current session closes without error.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TransactionIsolationLevel">
+      <MemberSignature Language="C#" Value="public System.Transactions.IsolationLevel TransactionIsolationLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Transactions.IsolationLevel TransactionIsolationLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Transactions.IsolationLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The isolation level in which your transaction runs determines how data is treated when changes are made in other transactions and how long your transaction must hold locks to protect against these changes. For example, the default value, <see cref="F:System.Transactions.IsolationLevel.Unspecified" />, specifies that no updating or inserting can occur until the transaction is complete. </para>
+          <para>This property can also be used to restrict the isolation level of incoming transactions flowed from a client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the transaction isolation level for new transactions created inside the service, and incoming transactions flowed from a client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TransactionTimeout">
+      <MemberSignature Language="C#" Value="public string TransactionTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TransactionTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value sets the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.TransactionTimeout" /> property. You can also set this property using the <format type="text/html"><a href="ada536cf-97dc-4cd7-89ec-ed1466c1c557">&lt;serviceTimeOuts&gt;</a></format> element in an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the period within which a transaction must complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseSynchronizationContext">
+      <MemberSignature Language="C#" Value="public bool UseSynchronizationContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseSynchronizationContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide the user interface thread affinity that some applications require. For example, a Windows Forms application may be registered as a singleton service object. In this case, all calls into the service must run on the Windows Forms thread. The default case, in which <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.UseSynchronizationContext" /> is set to true, synchronizes all calls to the service to run on the thread captured from the <see cref="T:System.Threading.SynchronizationContext" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to use the current synchronization context to choose the thread of execution.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateMustUnderstand">
+      <MemberSignature Language="C#" Value="public bool ValidateMustUnderstand { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ValidateMustUnderstand" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ValidateMustUnderstand" /> property to turn off the enforced validation of arriving message headers. In normal execution, message headers are compared against the <see cref="P:System.ServiceModel.Channels.MessageHeaders.UnderstoodHeaders" /> property to confirm that arriving headers are explicitly handled by the service. Set this to false to disable this checking. When set to false, the application must check for headers marked with MustUnderstand="true" and return a fault if one or more of them were not understood. This is useful when the application is supposed to accept any incoming SOAP messages (for example, when using typed or untyped messages) and perform custom header processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the system or the application enforces SOAP MustUnderstand header processing.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

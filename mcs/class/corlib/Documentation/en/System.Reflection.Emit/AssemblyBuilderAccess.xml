@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyBuilderAccess" FullName="System.Reflection.Emit.AssemblyBuilderAccess">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum AssemblyBuilderAccess" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AssemblyBuilderAccess extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -20,44 +22,56 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the access modes for a dynamic assembly. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ReflectionOnly">
       <MemberSignature Language="C#" Value="ReflectionOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.AssemblyBuilderAccess ReflectionOnly = int32(6)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Run">
-      <MemberSignature Language="C#" Value="Run" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
       </ReturnValue>
-      <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly is loaded into the reflection-only context, and cannot be executed.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Run">
+      <MemberSignature Language="C#" Value="Run" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.AssemblyBuilderAccess Run = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be executed, but not saved.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RunAndCollect">
       <MemberSignature Language="C#" Value="RunAndCollect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.AssemblyBuilderAccess RunAndCollect = int32(9)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,42 +80,53 @@
         <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be unloaded and its memory reclaimed, subject to the restrictions described in <format type="text/html"><a href="4c3432e6-0dfd-453a-88a7-533979ec5d2b">Collectible Dynamic Assemblies</a></format>.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RunAndSave">
       <MemberSignature Language="C#" Value="RunAndSave" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.AssemblyBuilderAccess RunAndSave = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be executed and saved.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Save">
       <MemberSignature Language="C#" Value="Save" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.AssemblyBuilderAccess Save = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be saved, but not executed.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

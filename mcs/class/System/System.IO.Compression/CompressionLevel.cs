@@ -27,7 +27,7 @@
 #if NET_4_5
 namespace System.IO.Compression {
 	public enum CompressionLevel {
-		Optional,
+		Optimal,
 		Fastest,
 		NoCompression
 	}

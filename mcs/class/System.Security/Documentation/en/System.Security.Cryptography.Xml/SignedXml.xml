@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SignedXml" FullName="System.Security.Cryptography.Xml.SignedXml">
   <TypeSignature Language="C#" Value="public class SignedXml" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SignedXml extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 07 D1 FA 57 C4 AE D9 F0 A3 2E 84 AA 0F AE FD 0D E9 E8 FD 6A EC 8F 87 FB 03 76 6C 83 4C 99 92 1E B2 3B E7 9A D9 D5 DC C1 DD 9A D2 36 13 21 02 90 0B 72 3C F9 80 95 7F C4 E1 77 10 8F C6 07 77 4F 29 E8 32 0E 92 EA 05 EC E4 E8 21 C0 A5 EF E8 F1 64 5C 4C 0C 93 C1 AB 99 28 5D 62 2C AA 65 2C 1D FA D6 3D 74 5D 6F 2D E5 F1 7E 5E AF 0F C4 96 3D 26 1C 8A 12 43 65 18 20 6D C0 93 34 4D 5A D2 93]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
@@ -12,61 +15,144 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Master class to load and verify signed XML document and to generate new XML signatures.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class is the main class used for XML signing and verification (XMLDSIG) in the .NET Framework.  XMLDSIG is a standards-based, interoperable way to sign and verify all or part of an XML document or other data that is addressable from a Uniform Resource Identifier (URI). The .NET Framework XMLDSIG classes implement the World Wide Web Consortium (W3C) specification for XML signing and verification located at http://www.w3.org/TR/xmldsig-core/.</para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class whenever you need to share signed XML data between applications or organizations in a standard way.  Any data signed using this class can be verified by any conforming implementation of the W3C specification for XMLDSIG. </para>
+      <para>XMLDSIG creates a &lt;Signature&gt; element, which contains a digital signature of an XML document or other data that is addressable from a URI.  The &lt;Signature&gt; element can optionally contain information about where to find a key that will verify the signature and which cryptographic algorithm was used for signing.</para>
+      <para>The <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class allows you to create the following three kinds of XML digital signatures:</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Signature Type</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Enveloped signature</para>
+          </term>
+          <description>
+            <para>The signature is contained within the XML document being signed.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Enveloping signature</para>
+          </term>
+          <description>
+            <para>The signed XML is contained within the &lt;Signature&gt; element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Detached signature</para>
+          </term>
+          <description>
+            <para>The signature is in a separate document from the data being signed.</para>
+          </description>
+        </item>
+      </list>
+      <para>Use one of the following methods to exchange key information:  </para>
+      <list type="bullet">
+        <item>
+          <para>Do not include any key information.  If you choose this option, both parties must agree on an algorithm and key before they exchange a digital signature.</para>
+        </item>
+        <item>
+          <para>Include a public key in the &lt;EncryptedKey&gt; element.</para>
+        </item>
+        <item>
+          <para>Include the location of the key in the URI attribute of the &lt;RetrievalMethod&gt; element. Both parties must agree on the key location ahead of time and this location must be kept secret. </para>
+        </item>
+        <item>
+          <para>Include a string name that maps to a key in the &lt;KeyName&gt; element.  Both parties must agree on the key name mapping before they exchange encrypted data and this mapping must be kept secret.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a wrapper on a core XML signature object to facilitate creating XML signatures.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SignedXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SignedXml (System.Xml.XmlDocument document);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlDocument document) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="document" Type="System.Xml.XmlDocument" />
       </Parameters>
       <Docs>
-        <param name="document">a <see cref="T:System.Xml.XmlDocument" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class from the specified XML document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDocument" /> object to use to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.SignedXml" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SignedXml (System.Xml.XmlElement elem);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlElement elem) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="elem" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="elem">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class from the specified <see cref="T:System.Xml.XmlElement" /> object.</para>
+        </summary>
+        <param name="elem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlElement" /> object to use to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.SignedXml" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddObject">
       <MemberSignature Language="C#" Value="public void AddObject (System.Security.Cryptography.Xml.DataObject dataObject);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddObject(class System.Security.Cryptography.Xml.DataObject dataObject) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -74,18 +160,29 @@
         <Parameter Name="dataObject" Type="System.Security.Cryptography.Xml.DataObject" />
       </Parameters>
       <Docs>
-        <param name="dataObject">a <see cref="T:System.Security.Cryptography.Xml.DataObject" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.AddObject(System.Security.Cryptography.Xml.DataObject)" /> method adds an &lt;Object&gt; element that represents an object to be signed to the &lt;Signature&gt; element of an XML digital signature. </para>
+          <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.AddObject(System.Security.Cryptography.Xml.DataObject)" /> method internally calls the <see cref="M:System.Security.Cryptography.Xml.Signature.AddObject(System.Security.Cryptography.Xml.DataObject)" /> method of the <see cref="T:System.Security.Cryptography.Xml.Signature" /> object encapsulated by the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.  You can also add a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object by directly calling the <see cref="M:System.Security.Cryptography.Xml.Signature.AddObject(System.Security.Cryptography.Xml.DataObject)" /> method from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property. </para>
+          <para>For more information about XML digital signatures, see the XMLDSIG specification available at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object to the list of objects to be signed.</para>
+        </summary>
+        <param name="dataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object to add to the list of objects to be signed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddReference">
       <MemberSignature Language="C#" Value="public void AddReference (System.Security.Cryptography.Xml.Reference reference);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddReference(class System.Security.Cryptography.Xml.Reference reference) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -93,35 +190,58 @@
         <Parameter Name="reference" Type="System.Security.Cryptography.Xml.Reference" />
       </Parameters>
       <Docs>
-        <param name="reference">a <see cref="T:System.Security.Cryptography.Xml.Reference" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.AddReference(System.Security.Cryptography.Xml.Reference)" /> method adds a &lt;Reference&gt; element to the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object that describes a digest method, digest value, and transform to use for creating an XML digital signature.  The &lt;Reference&gt; element is a subelement of the &lt;SignedInfo&gt; element.</para>
+          <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.AddReference(System.Security.Cryptography.Xml.Reference)" /> method internally calls the <see cref="M:System.Security.Cryptography.Xml.SignedInfo.AddReference(System.Security.Cryptography.Xml.Reference)" /> method of the <see cref="T:System.Security.Cryptography.Xml.SignedInfo" /> object encapsulated by the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.  You can also add a <see cref="T:System.Security.Cryptography.Xml.Reference" /> object by directly calling the <see cref="M:System.Security.Cryptography.Xml.SignedInfo.AddReference(System.Security.Cryptography.Xml.Reference)" /> method from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property. </para>
+          <para>For more information about XML digital signatures, see the XMLDSIG specification available at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Security.Cryptography.Xml.Reference" /> object to the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object that describes a digest method, digest value, and transform to use for creating an XML digital signature.</para>
+        </summary>
+        <param name="reference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The  <see cref="T:System.Security.Cryptography.Xml.Reference" /> object that describes a digest method, digest value, and transform to use for creating an XML digital signature.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CheckSignature">
       <MemberSignature Language="C#" Value="public bool CheckSignature ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CheckSignature() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Check the document signature using the keys specified under the &lt;KeyInfo&gt;.</summary>
-        <returns>True if the signature was verified, false otherwise.</returns>
-        <remarks>False could also mean that the public key to verify the document isn't part of the document (and must be supplied independently).</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method also computes the digest of the references and the value of the signature.</para>
+          <para>If an XML document was signed with an X.509 signature, the <see cref="M:System.Security.Cryptography.Xml.SignedXml.CheckSignature" /> method will search the "AddressBook" store for certificates suitable for the verification. For example, if the certificate is referenced by a Subject Key Identifier (SKI), the <see cref="M:System.Security.Cryptography.Xml.SignedXml.CheckSignature(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Boolean)" /> method will select certificates with this SKI and try them one after another until it can verify the certificate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies using the public key in the signature.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CheckSignature">
       <MemberSignature Language="C#" Value="public bool CheckSignature (System.Security.Cryptography.AsymmetricAlgorithm key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CheckSignature(class System.Security.Cryptography.AsymmetricAlgorithm key) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -129,19 +249,28 @@
         <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="key">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
-        <summary>Check the document signature using the specified public key.</summary>
-        <returns>True if the signature was verified, false otherwise.</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified key; otherwise, false.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The implementation of the <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> property that holds the key to be used to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CheckSignature">
       <MemberSignature Language="C#" Value="public bool CheckSignature (System.Security.Cryptography.KeyedHashAlgorithm macAlg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CheckSignature(class System.Security.Cryptography.KeyedHashAlgorithm macAlg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -149,9 +278,6 @@
         <Parameter Name="macAlg" Type="System.Security.Cryptography.KeyedHashAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="macAlg">a <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /></param>
-        <summary>Check the document signature using the specified secret (symmetric) key.</summary>
-        <returns>True if the signature was verified, false otherwise.</returns>
         <remarks>
           <para>Only <see cref="T:System.Security.Cryptography.HMACSHA1" /> is supported by the XMLDSIG specification.</para>
           <para>This example read a XML file (document.xml) and verify if it has been signed with the shared secret "trustme".</para>
@@ -180,17 +306,25 @@ else {
   </code>
           </example>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified message authentication code (MAC) algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified MAC; otherwise, false.</para>
+        </returns>
+        <param name="macAlg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The implementation of <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> that holds the MAC to be used to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CheckSignature">
       <MemberSignature Language="C#" Value="public bool CheckSignature (System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, bool verifySignatureOnly);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CheckSignature(class System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, bool verifySignatureOnly) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -205,16 +339,36 @@ else {
         <Parameter Name="verifySignatureOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="certificate">To be added.</param>
-        <param name="verifySignatureOnly">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In version 1.1 of the .NET Framework, the X.509 certificate is not verified.  In version 2.0 and later, the X.509 certificate is verified.  </para>
+          <para>In version 2.0 and later of the .NET Framework, the <see cref="M:System.Security.Cryptography.Xml.SignedXml.CheckSignature(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Boolean)" /> method will search the "AddressBook" store for certificates suitable for the verification. For example, if the certificate is referenced by a Subject Key Identifier (SKI), the <see cref="M:System.Security.Cryptography.Xml.SignedXml.CheckSignature(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Boolean)" /> method will select certificates with this SKI and try them one after another until it can verify the certificate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> object and, optionally, whether the certificate is valid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature is valid; otherwise, false. </para>
+          <para>-or-</para>
+          <para>true if the signature and certificate are valid; otherwise, false. </para>
+        </returns>
+        <param name="certificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> object to use to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property.</param>
+        <param name="verifySignatureOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to verify the signature only; false to verify both the signature and certificate.</param>
       </Docs>
     </Member>
     <Member MemberName="CheckSignatureReturningKey">
       <MemberSignature Language="C#" Value="public bool CheckSignatureReturningKey (out System.Security.Cryptography.AsymmetricAlgorithm signingKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CheckSignatureReturningKey(class System.Security.Cryptography.AsymmetricAlgorithm signingKey) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -227,30 +381,41 @@ else {
         <returns>True if the signature was verified, false otherwise.</returns>
         <remarks>False could also mean that the public key to verify the document isn't part of the document (and must be supplied independently).</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComputeSignature">
       <MemberSignature Language="C#" Value="public void ComputeSignature ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ComputeSignature() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Generate the signature using the private key available if the SigningKey property.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.ComputeSignature" /> method creates an XML digital signature and constructs many of the XML elements needed.    </para>
+          <para>You must set the data to be signed and the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SigningKey" /> property before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes an XML digital signature.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComputeSignature">
       <MemberSignature Language="C#" Value="public void ComputeSignature (System.Security.Cryptography.KeyedHashAlgorithm macAlg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ComputeSignature(class System.Security.Cryptography.KeyedHashAlgorithm macAlg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -258,20 +423,26 @@ else {
         <Parameter Name="macAlg" Type="System.Security.Cryptography.KeyedHashAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="macAlg">the keyed-hash algorithm instance to use to sign the XML document.</param>
-        <summary>Generate the signature using the specified secret (symmetric) algorithm.</summary>
-        <remarks>Only <see cref="T:System.Security.Cryptography.HMACSHA1" /> is supported by the XMLDSIG specification.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.ComputeSignature(System.Security.Cryptography.KeyedHashAlgorithm)" /> method creates an XML digital signature using the specified MAC algorithm and constructs many of the XML elements needed.    </para>
+          <para>You must set the data to be signed before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes an XML digital signature using the specified message authentication code (MAC) algorithm.</para>
+        </summary>
+        <param name="macAlg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> object that holds the MAC to be used to compute the value of the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EncryptedXml">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.EncryptedXml EncryptedXml { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.EncryptedXml EncryptedXml { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.Xml.EncryptedXml EncryptedXml" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -282,14 +453,23 @@ else {
         <ReturnType>System.Security.Cryptography.Xml.EncryptedXml</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object that defines the XML encryption processing rules.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetIdElement">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement GetIdElement (System.Xml.XmlDocument document, string idValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlElement GetIdElement(class System.Xml.XmlDocument document, string idValue) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -298,71 +478,111 @@ else {
         <Parameter Name="idValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="document">a <see cref="T:System.Xml.XmlDocument" /></param>
-        <param name="idValue">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Xml.XmlElement" /> object with the specified ID from the specified <see cref="T:System.Xml.XmlDocument" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlElement" /> object with the specified ID from the specified <see cref="T:System.Xml.XmlDocument" /> object, or null if it could not be found.</para>
+        </returns>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDocument" /> object to retrieve the <see cref="T:System.Xml.XmlElement" /> object from.</param>
+        <param name="idValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the <see cref="T:System.Xml.XmlElement" /> object to retrieve from the <see cref="T:System.Xml.XmlDocument" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPublicKey">
       <MemberSignature Language="C#" Value="protected virtual System.Security.Cryptography.AsymmetricAlgorithm GetPublicKey ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Security.Cryptography.AsymmetricAlgorithm GetPublicKey() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.AsymmetricAlgorithm</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.SignedXml.GetPublicKey" /> method returns an <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object that contains a public key that can be used to verify an XML digital signature.</para>
+          <para>The key must be either a <see cref="T:System.Security.Cryptography.DSA" /> or an <see cref="T:System.Security.Cryptography.RSA" /> key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the public key of a signature.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object that contains the public key of the signature, or null if the key cannot be found.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetXml">
       <MemberSignature Language="C#" Value="public System.Xml.XmlElement GetXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlElement GetXml() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of a <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.Signature" /> object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="KeyInfo">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.KeyInfo KeyInfo { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.Xml.KeyInfo KeyInfo" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="KeyInfo">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.KeyInfo KeyInfo { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Xml.KeyInfo</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.SignedXml.KeyInfo" /> property represents the &lt;KeyInfo&gt; element of an XML digital signature using a <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object contained within the property.  The &lt;KeyInfo&gt; element is a subelement of the &lt;Signature&gt; element.</para>
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.SignedXml.KeyInfo" /> property to embed key-related information intended to help identify the key necessary for validating an XML document.</para>
+          <para>For more information about the &lt;KeyInfo&gt; element, see the XMLDSIG specification, which is available at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object of the current <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LoadXml">
       <MemberSignature Language="C#" Value="public void LoadXml (System.Xml.XmlElement value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void LoadXml(class System.Xml.XmlElement value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -370,463 +590,733 @@ else {
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> state from an XML element.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element to load the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> state from. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="m_signature">
       <MemberSignature Language="C#" Value="protected System.Security.Cryptography.Xml.Signature m_signature;" />
+      <MemberSignature Language="ILAsm" Value=".field family class System.Security.Cryptography.Xml.Signature m_signature" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Xml.Signature</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the <see cref="T:System.Security.Cryptography.Xml.Signature" /> object of the current <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="m_strSigningKeyName">
       <MemberSignature Language="C#" Value="protected string m_strSigningKeyName;" />
+      <MemberSignature Language="ILAsm" Value=".field family string m_strSigningKeyName" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the name of the installed key to be used for signing the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Resolver">
       <MemberSignature Language="C#" Value="public System.Xml.XmlResolver Resolver { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlResolver Resolver" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Xml.XmlResolver</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>a <see cref="T:System.Xml.XmlResolver" /></value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlResolver</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>a <see cref="T:System.Xml.XmlResolver" /></value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlResolver" /> class resolves external XML resources named by a Uniform Resource Identifier (URI). If you do not trust the source of the XML file, you might not want to allow the XML file to access computer resources named by the URI. You can use the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Resolver" /> property to control the level of access that XML files have to computer resources by specifying different <see cref="T:System.Xml.XmlResolver" /> objects. If you do not want to allow any access, you can set this property to null (Nothing in Visual Basic).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current <see cref="T:System.Xml.XmlResolver" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Signature">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.Signature Signature { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.Xml.Signature Signature" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Xml.Signature</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.Xml.Signature" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property represents the &lt;Signature&gt; element of an XML digital signature using a <see cref="T:System.Security.Cryptography.Xml.Signature" /> object contained within the property.  The &lt;Signature&gt; element is the root element used for XML digital signature creation and verification. </para>
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property to retrieve the <see cref="T:System.Security.Cryptography.Xml.Signature" /> object used by the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+          <para>For more information about the &lt;Signature&gt; element, see the XMLDSIG specification, which is available at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Security.Cryptography.Xml.Signature" /> object of the current <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SignatureLength">
       <MemberSignature Language="C#" Value="public string SignatureLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SignatureLength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the signature for the current <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SignatureMethod">
       <MemberSignature Language="C#" Value="public string SignatureMethod { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SignatureMethod" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property represents the &lt;SignatureMethod&gt; element of an XML digital signature using a Uniform Resource Identifier (URI) string contained within the property. The &lt;SignatureMethod&gt; element is a subelement of the &lt;SignedInfo&gt; element.</para>
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property to retrieve the &lt;SignatureMethod&gt; URI used by the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object. This property is read only. For more information about programmatically specifying a URI for the &lt;SignatureMethod&gt; element, see the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.SignatureMethod" /> property.</para>
+          <para>For more information about the &lt;SignatureMethod&gt; element, see the XMLDSIG specification, which is available at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the signature method of the current <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SignatureValue">
       <MemberSignature Language="C#" Value="public byte[] SignatureValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] SignatureValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Byte[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureValue" /> property represents the &lt;SignatureValue&gt; element of an XML digital signature using an array of bytes contained within the property.  The &lt;SignatureValue&gt; element is a subelement of the &lt;Signature&gt; element.</para>
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureValue" /> property to retrieve the value of the XML digital signature.  This property is automatically populated when you make a successful call to the <see cref="Overload:System.Security.Cryptography.Xml.SignedXml.ComputeSignature" /> method. </para>
+          <para>For more information about the &lt;SignatureValue&gt; element, see the XMLDSIG specification, which is available at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the signature value of the current <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SignedInfo">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.SignedInfo SignedInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.Xml.SignedInfo SignedInfo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Xml.SignedInfo</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.Xml.SignedInfo" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property represents the &lt;SignedInfo&gt; element of an XML digital signature using an array of bytes contained within the property.  The &lt;SignedInfo&gt; element is a subelement of the &lt;Signature&gt; element.</para>
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property to retrieve the <see cref="T:System.Security.Cryptography.Xml.SignedInfo" /> object that is used by the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object to create an XML digital signature.  </para>
+          <para>For more information about the &lt;SignedInfo&gt; element, see the XMLDSIG specification, which is available at www.w3.org/TR/xmldsig-core/.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Security.Cryptography.Xml.SignedInfo" /> object of the current <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SigningKey">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.AsymmetricAlgorithm SigningKey { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.AsymmetricAlgorithm SigningKey" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SigningKey">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.AsymmetricAlgorithm SigningKey { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.AsymmetricAlgorithm</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SigningKey" /> property to specify the asymmetric key you want to use to create an XML digital signature.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the asymmetric algorithm key used for signing a <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SigningKeyName">
+      <MemberSignature Language="C#" Value="public string SigningKeyName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SigningKeyName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SigningKeyName">
-      <MemberSignature Language="C#" Value="public string SigningKeyName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the installed key to be used for signing the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDecryptionTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDecryptionTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDecryptionTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDecryptionTransformUrl" /> field is "http://www.w3.org/2002/07/decrypt#XML".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2002/07/decrypt#XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the XML mode decryption transformation. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigBase64TransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigBase64TransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigBase64TransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigBase64TransformUrl" /> field is "http://www.w3.org/2000/09/xmldsig#base64".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigBase64Transform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigBase64TransformUrl" /> field.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#base64.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the base 64 transformation. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigC14NTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigC14NTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigC14NTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NTransformUrl" /> field is "http://www.w3.org/TR/2001/REC-xml-c14n-20010315".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NTransformUrl" /> field.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/TR/2001/REC-xml-c14n-20010315.</para>
+          <para>This field has the same value as the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationUrl" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the Canonical XML transformation. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigC14NWithCommentsTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigC14NWithCommentsTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigC14NWithCommentsTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NWithCommentsTransformUrl" /> field is "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments ".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NWithCommentsTransformUrl" /> field. </para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments.</para>
+          <para>This field has the same value as the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationWithCommentsUrl" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the Canonical XML transformation, with comments. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigCanonicalizationUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigCanonicalizationUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigCanonicalizationUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the XMLDSIG default canonicalization algorithm.</summary>
-        <remarks>http://www.w3.org/TR/2001/REC-xml-c14n-20010315</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationUrl" /> field is "http://www.w3.org/TR/2001/REC-xml-c14n-20010315". </para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG. </para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationUrl" /> field. </para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/TR/2001/REC-xml-c14n-20010315. </para>
+          <para>This field has the same value as the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NTransformUrl" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard canonicalization algorithm for XML digital signatures. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigCanonicalizationWithCommentsUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigCanonicalizationWithCommentsUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigCanonicalizationWithCommentsUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the XMLDSIG default canonicalization algorithm when signing/verifying XML comments.</summary>
-        <remarks>http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationWithCommentsUrl" /> field is "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.  </para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationWithCommentsUrl" /> field.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments.</para>
+          <para>This field has the same value as the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NWithCommentsTransformUrl" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard canonicalization algorithm for XML digital signatures and includes comments. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigDSAUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigDSAUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigDSAUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the Digital Signature Algorithm (DSA) using SHA-1.</summary>
-        <remarks>http://www.w3.org/2000/09/xmldsig#dsa-sha1</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigDSAUrl" /> field is "http://www.w3.org/2000/09/xmldsig#dsa-sha1".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.  </para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#dsa-sha1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard <see cref="T:System.Security.Cryptography.DSA" /> algorithm for XML digital signatures. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigEnvelopedSignatureTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigEnvelopedSignatureTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigEnvelopedSignatureTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigEnvelopedSignatureTransformUrl" /> field is "http://www.w3.org/2000/09/xmldsig#enveloped-signature".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigEnvelopedSignatureTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigEnvelopedSignatureTransformUrl" /> field.   </para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#enveloped-signature.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for enveloped signature transformation. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigExcC14NTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigExcC14NTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigExcC14NTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigExcC14NTransformUrl" /> field is "http://www.w3.org/2001/10/xml-exc-c14n#".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigExcC14NTransformUrl" /> field.  </para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2001/10/xml-exc-c14n#.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for exclusive XML canonicalization. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigExcC14NWithCommentsTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigExcC14NWithCommentsTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigExcC14NWithCommentsTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigExcC14NWithCommentsTransformUrl" /> field is "http://www.w3.org/2001/10/xml-exc-c14n#WithComments".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigExcC14NWithCommentsTransformUrl" /> field.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2001/10/xml-exc-c14n#WithComments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for exclusive XML canonicalization, with comments. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigHMACSHA1Url">
       <MemberSignature Language="C#" Value="public const string XmlDsigHMACSHA1Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigHMACSHA1Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the HMAC mechanism using the SHA1 hash algorithm.</summary>
-        <remarks>http://www.w3.org/2000/09/xmldsig#hmac-sha1</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigHMACSHA1Url" /> field is "http://www.w3.org/2000/09/xmldsig#hmac-sha1".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#hmac-sha1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard <see cref="T:System.Security.Cryptography.HMACSHA1" /> algorithm for XML digital signatures. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigMinimalCanonicalizationUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigMinimalCanonicalizationUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigMinimalCanonicalizationUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the XMLDSIG minimal canonicalization algorithm.</summary>
-        <remarks>http://www.w3.org/2000/09/xmldsig#minimal</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigMinimalCanonicalizationUrl" /> field is "http://www.w3.org/2000/09/xmldsig#minimal".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#minimal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard minimal canonicalization algorithm for XML digital signatures. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigNamespaceUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigNamespaceUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigNamespaceUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the W3 XMLDSIG namespace.</summary>
-        <remarks>http://www.w3.org/2000/09/xmldsig#</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigNamespaceUrl" /> field is "http://www.w3.org/2000/09/xmldsig#".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard namespace for XML digital signatures. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigRSASHA1Url">
       <MemberSignature Language="C#" Value="public const string XmlDsigRSASHA1Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigRSASHA1Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the RSA signatures using SHA-1 (PKCS #1).</summary>
-        <remarks>http://www.w3.org/2000/09/xmldsig#rsa-sha1</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigRSASHA1Url" /> field is "http://www.w3.org/2000/09/xmldsig#rsa-sha1".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#rsa-sha1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard <see cref="T:System.Security.Cryptography.RSA" /> signature method for XML digital signatures. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigSHA1Url">
       <MemberSignature Language="C#" Value="public const string XmlDsigSHA1Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigSHA1Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Unique URL identifier for the SHA1 hash algorithm.</summary>
-        <remarks>http://www.w3.org/2000/09/xmldsig#sha1</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigSHA1Url" /> field is "http://www.w3.org/2000/09/xmldsig#sha1".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/2000/09/xmldsig#sha1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the standard <see cref="T:System.Security.Cryptography.SHA1" /> digest method for XML digital signatures. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlDsigXPathTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigXPathTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigXPathTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigXPathTransformUrl" /> field is "http://www.w3.org/TR/1999/REC-xpath-19991116".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigXPathTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigXPathTransformUrl" /> field.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/TR/1999/REC-xpath-19991116.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the XML Path Language (XPath). This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlDsigXsltTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlDsigXsltTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlDsigXsltTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigXsltTransformUrl" /> field is "http://www.w3.org/TR/1999/REC-xslt-19991116".</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigXsltTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigXsltTransformUrl" /> field.</para>
+          <para>For more information, see the World Wide Web Consortium (W3C) specification at http://www.w3.org/TR/1999/REC-xslt-19991116.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for XSLT transformations. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlLicenseTransformUrl">
       <MemberSignature Language="C#" Value="public const string XmlLicenseTransformUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlLicenseTransformUrl" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlLicenseTransformUrl" /> field is "urn:mpeg:mpeg21:2003:01-REL-R-NS:licenseTransform"</para>
+          <para>Use this field to conveniently supply a value to one of the URI attributes of an element used for XMLDSIG.</para>
+          <para>The <see cref="T:System.Security.Cryptography.Xml.XmlLicenseTransform" /> class implements the transform described by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlLicenseTransformUrl" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the Uniform Resource Identifier (URI) for the license transform algorithm used to normalize XrML licenses for signatures.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDisposable" FullName="System.IDisposable" FullNameSP="System_IDisposable" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IDisposable" />
   <TypeSignature Language="C#" Value="public interface IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDisposable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -9,83 +11,74 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Implemented by classes that require explicit control over resource cleanup.</para>
-    </summary>
     <remarks>
-      <para>Objects that need to free resources that cannot safely be reclaimed by the
-      garbage collector implement the <see cref="T:System.IDisposable" /> interface. </para>
-      <para>It is a version breaking change to add the <see cref="T:System.IDisposable" /> interface to an existing class, as it
-   changes the semantics of the class. </para>
-      <para>
-        <block subset="none" type="note">
-          <see cref="T:System.IDisposable" /> contains the <see cref="M:System.IDisposable.Dispose" /> method. The consumer of an object should 
-call this method when the object is no longer needed. The <see cref="T:System.IDisposable" /> interface is generally provided for the
-release of unmanaged resources that need to be reclaimed in some order or time
-dependent manner. It is important to note that the actual release of these
-resources happens at the first call to <see cref="M:System.IDisposable.Dispose" /> for
-any given object that supports this interface. Programmers should take care
-to pair the creation of objects that implement <see langword="IDisposable" /> with
-at most one invocation of the <see langword="Dispose" /> method. Though it
-is legal to invoke <see langword="Dispose" /> more than once, if this happens it
-might indicate the presence of a bug since such an object is usually rendered
-otherwise unusable after the first <see langword="Dispose" /> invocation. </block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The primary use of this interface is to release unmanaged resources. The garbage collector automatically releases the memory allocated to a managed object when that object is no longer used. However, it is not possible to predict when garbage collection will occur. Furthermore, the garbage collector has no knowledge of unmanaged resources such as window handles, or open files and streams.</para>
+      <para>Use the <see cref="M:System.IDisposable.Dispose" /> method of this interface to explicitly release unmanaged resources in conjunction with the garbage collector. The consumer of an object can call this method when the object is no longer needed.</para>
+      <para>It is a version-breaking change to add the <see cref="T:System.IDisposable" /> interface to an existing class, because it changes the semantics of the class.</para>
+      <block subset="none" type="note">
+        <para>C++ programmers should read <format type="text/html"><a href="0d09d3f1-13a0-4041-8178-402aad667edd">Destructors and Finalizers in Visual C++</a></format>. In the .NET Framework version, the C++ compiler provides support for implementing deterministic disposal of resources and does not allow direct implementation of the <see cref="M:System.IDisposable.Dispose" /> method. </para>
+      </block>
+      <para>For a detailed discussion about how this interface and the <see cref="M:System.Object.Finalize" /> method are used, see the <format type="text/html"><a href="22B6CB97-0C80-4EEB-A2CF-5ED7655E37F9">Garbage Collection</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format> topics.</para>
+      <format type="text/html">
+        <h2>IDisposable and the inheritance hierarchy</h2>
+      </format>
+      <para>A base class with subclasses that should be disposable must implement <see cref="T:System.IDisposable" /> as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>It should provide one public non-virtual <see cref="M:System.IDisposable.Dispose" /> method and a protected virtual Dispose(Boolean <paramref name="disposing" />) method. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.IDisposable.Dispose" /> method must call Dispose(true) and should suppress finalization for performance. </para>
+        </item>
+        <item>
+          <para>The base type should not include any finalizers. </para>
+        </item>
+      </list>
+      <para>Subclasses should implement the disposable pattern as follows:</para>
+      <list type="bullet">
+        <item>
+          <para>They must override Dispose(Boolean) and call the base class Dispose(Boolean) implementation. </para>
+        </item>
+        <item>
+          <para>They can provide a finalizer if needed. The finalizer must call Dispose(false).</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Calling the IDisposable interface</h2>
+      </format>
+      <para>When calling a class that implements the <see cref="T:System.IDisposable" /> interface, use the try/finally pattern to make sure that unmanaged resources are disposed of even if an exception interrupts your application.  </para>
+      <para>For more information about the try/finally pattern, see <format type="text/html"><a href="d6488026-ccb3-42b8-a810-0d97b9d6472b">Try...Catch...Finally Statement (Visual Basic)</a></format>, <format type="text/html"><a href="c27623fb-7261-4464-862c-7a369d3c8f0a">try-finally (C# Reference)</a></format>, or <format type="text/html"><a href="514400c1-c322-4bf3-9e48-3047240b8a82">The try-finally Statement(C++)</a></format>. </para>
+      <para>Note that you can use the using statement (Using in Visual Basic) instead of the try/finally pattern. For more information, see the <format type="text/html"><a href="665d1580-dd54-4e96-a9a9-6be2a68948f1">Using Statement (Visual Basic)</a></format> documentation or the <format type="text/html"><a href="afc355e6-f0b9-4240-94dd-0d93f17d9fc3">using Statement (C# Reference)</a></format> documentation.     </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a method to release allocated resources.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Dispose">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Dispose()" />
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Performs application-defined tasks associated with
-      freeing or resetting resources.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method is, by convention, used for all tasks associated with freeing
-         resources held by an object, or preparing an object for reuse. </para>
-            <para>When implementing the <see cref="M:System.IDisposable.Dispose" /> method, objects should seek to ensure
-      that all held resources are freed by propagating the call through the
-      containment hierarchy. For example, if an object A allocates an object B, and B
-      allocates an object C, then A's <see cref="M:System.IDisposable.Dispose" /> implementation should call
-   <see cref="M:System.IDisposable.Dispose" /> on B,
-      which should in turn call <see cref="M:System.IDisposable.Dispose" /> on C. Objects should also call the
-   <see cref="M:System.IDisposable.Dispose" /> method
-      of their base class if the base class implements <see cref="T:System.IDisposable" />.</para>
-            <para>If an object's <see cref="M:System.IDisposable.Dispose" /> method is called more than once, the object should
-   ignore all calls after the first one. The object should not throw an exception
-   if its <see cref="M:System.IDisposable.Dispose" />
-   method is called multiple times. <see cref="M:System.IDisposable.Dispose" /> can throw an exception if an error
-   occurs because a resource has already been freed and
-<see cref="M:System.IDisposable.Dispose" /> had 
-   not been called previously. </para>
-            <para>A resource type might use a particular convention to denote an allocated state
-   versus a freed state. An example of this is stream classes, which are
-   traditionally thought of as open or closed. Classes that have such conventions
-   might choose to implement a public method with a customized name, which calls the
-<see cref="M:System.IDisposable.Dispose" /> 
-method. </para>
-            <para>Because the <see cref="M:System.IDisposable.Dispose" /> method must be called explicitly, objects that implement
-<see cref="T:System.IDisposable" /> 
-should also implement a finalizer to handle freeing resources when
-<see cref="M:System.IDisposable.Dispose" /> is not 
-called. By default, the garbage collector will automatically call an object's
-finalizer prior to reclaiming its memory. However, once the
-<see cref="M:System.IDisposable.Dispose" /> method 
-has been called, it is typically unnecessary and/or undesirable for the garbage
-collector to call the disposed object's finalizer. To prevent automatic
-finalization, <see cref="M:System.IDisposable.Dispose" /> implementations can call <see cref="M:System.GC.SuppressFinalize(System.Object)" />. For
-additional information on implementing finalizers, see <see cref="T:System.GC" /> and <see cref="M:System.Object.Finalize" />.</para>
-          </block>
-        </remarks>
         <example>
           <para>Resource classes should follow the pattern illustrated by
       this example:</para>
@@ -125,20 +118,27 @@ additional information on implementing finalizers, see <see cref="T:System.GC" /
 }
    </code>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to close or release unmanaged resources such as files, streams, and handles held by an instance of the class that implements this interface. By convention, this method is  used for all tasks associated with freeing resources held by an object, or preparing an object for reuse.</para>
+          <block subset="none" type="note">
+            <para>C++ programmers should read <format type="text/html"><a href="0d09d3f1-13a0-4041-8178-402aad667edd">Destructors and Finalizers in Visual C++</a></format>. In the .NET Framework version 2.0, the C++ compiler provides support for implementing deterministic disposal of resources and does not allow direct implementation of the <see cref="M:System.IDisposable.Dispose" /> method. </para>
+          </block>
+          <para>When implementing this method, ensure that all held resources are freed by propagating the call through the containment hierarchy. For example, if an object A allocates an object B, and object B allocates an object C, then A's <see cref="M:System.IDisposable.Dispose" /> implementation must call <see cref="M:System.IDisposable.Dispose" /> on B, which must in turn call <see cref="M:System.IDisposable.Dispose" /> on C. </para>
+          <para>An object must also call the <see cref="M:System.IDisposable.Dispose" /> method of its base class if the base class implements <see cref="T:System.IDisposable" />. For more information about implementing <see cref="T:System.IDisposable" /> on a base class and its subclasses, see the "IDisposable and the inheritance hierarchy" section in the <see cref="T:System.IDisposable" /> topic. </para>
+          <para>If an object's <see cref="M:System.IDisposable.Dispose" /> method is called more than once, the object must ignore all calls after the first one. The object must not throw an exception if its <see cref="M:System.IDisposable.Dispose" /> method is called multiple times. Instance methods other than <see cref="M:System.IDisposable.Dispose" /> can throw an <see cref="T:System.ObjectDisposedException" /> when resources are already disposed.</para>
+          <para>Users might expect a resource type to use a particular convention to denote an allocated state versus a freed state. An example of this is stream classes, which are traditionally thought of as open or closed. The implementer of a class that has such a convention might choose to implement a public method with a customized name, such as Close, that calls the <see cref="M:System.IDisposable.Dispose" /> method.</para>
+          <para>Because the <see cref="M:System.IDisposable.Dispose" /> method must be called explicitly, objects that implement <see cref="T:System.IDisposable" /> must also implement a finalizer to handle freeing resources when <see cref="M:System.IDisposable.Dispose" /> is not called. By default, the garbage collector automatically calls an object's finalizer prior to reclaiming its memory. However, once the <see cref="M:System.IDisposable.Dispose" /> method has been called, it is typically unnecessary for the garbage collector to call the disposed object's finalizer. To prevent automatic finalization, <see cref="M:System.IDisposable.Dispose" /> implementations can call the <see cref="M:System.GC.SuppressFinalize(System.Object)" /> method.</para>
+          <para>For more information on implementing finalizers and the <see cref="M:System.IDisposable.Dispose" /> method, see the <see cref="T:System.GC" /> class, the <see cref="M:System.Object.Finalize" /> method, and <format type="text/html"><a href="31a6c13b-d6a2-492b-9a9f-e5238c983bcb">Implementing Finalize and Dispose to Clean Up Unmanaged Resources</a></format>.</para>
+          <para>When you use an object that accesses unmanaged resources, such as a <see cref="T:System.IO.StreamWriter" />, a good practice is to create the instance with a using statement. The using statement automatically closes the stream and calls <see cref="M:System.IDisposable.Dispose" /> on the object when the code that is using it has completed. For an example, see the <see cref="T:System.IO.StreamWriter" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Interfaces />
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodBody" FullName="System.Reflection.MethodBody">
   <TypeSignature Language="C#" Value="public class MethodBody" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi beforefieldinit MethodBody extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,125 +17,198 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Reflection.MethodBody" /> class provides access to information about the local variables and exception-handling clauses in a method body, and to the Microsoft intermediate language (MSIL) that makes up the method body. </para>
+      <para>You can use the token-resolution methods of the module class, such as <see cref="M:System.Reflection.Module.ResolveType(System.Int32,System.Type[],System.Type[])" />, <see cref="M:System.Reflection.Module.ResolveMethod(System.Int32,System.Type[],System.Type[])" />, and <see cref="M:System.Reflection.Module.ResolveType(System.Int32,System.Type[],System.Type[])" />, to resolve the tokens in the method body to <see cref="T:System.Type" /> objects, <see cref="T:System.Reflection.MethodInfo" /> objects, and <see cref="T:System.Reflection.FieldInfo" /> objects that provide detailed information about the types, methods, and fields accessed by the MSIL in the method body.</para>
+      <block subset="none" type="note">
+        <para>Parsing method bodies requires a thorough understanding of metadata and MSIL instruction formats. Information can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics" and "Partition III: CIL Instruction Set". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+      </block>
+      <para>To obtain a <see cref="T:System.Reflection.MethodBody" /> object for a given method, first obtain a <see cref="T:System.Reflection.MethodInfo" /> object for the method, then call the <see cref="T:System.Reflection.MethodInfo" /> object's <see cref="M:System.Reflection.MethodBase.GetMethodBody" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the metadata and MSIL for the body of a method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected MethodBody ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is invoked by derived classes during the construction of <see cref="T:System.Reflection.MethodBody" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.MethodBody" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExceptionHandlingClauses">
       <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IList&lt;System.Reflection.ExceptionHandlingClause&gt; ExceptionHandlingClauses { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;class System.Reflection.ExceptionHandlingClause&gt; ExceptionHandlingClauses" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IList&lt;System.Reflection.ExceptionHandlingClause&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Reflection.ExceptionHandlingClause&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list includes all clauses from all try blocks in the method body. Each <see cref="T:System.Reflection.ExceptionHandlingClause" /> object contains information that identifies the try block with which it is associated.</para>
+          <block subset="none" type="note">
+            <para>Working with exception-handling clauses requires a thorough understanding of metadata and MSIL instruction formats. Information can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics" and "Partition III: CIL Instruction Set". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list that includes all the exception-handling clauses in the method body.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetILAsByteArray">
       <MemberSignature Language="C#" Value="public virtual byte[] GetILAsByteArray ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] GetILAsByteArray() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the token-resolution methods of the module class, such as <see cref="M:System.Reflection.Module.ResolveType(System.Int32,System.Type[],System.Type[])" />, <see cref="M:System.Reflection.Module.ResolveMethod(System.Int32,System.Type[],System.Type[])" />, and <see cref="M:System.Reflection.Module.ResolveMember(System.Int32,System.Type[],System.Type[])" />, to resolve the tokens in the method body to <see cref="T:System.Type" /> objects, <see cref="T:System.Reflection.MethodInfo" /> objects, and <see cref="T:System.Reflection.FieldInfo" /> objects that provide detailed information about the types, methods, and fields accessed by the MSIL in the method body.</para>
+          <block subset="none" type="note">
+            <para>Parsing method bodies requires a thorough understanding of metadata and MSIL instruction formats. Information can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics" and "Partition III: CIL Instruction Set". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the MSIL for the method body, as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Byte" /> that contains the MSIL for the method body. </para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="InitLocals">
+      <MemberSignature Language="C#" Value="public virtual bool InitLocals { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool InitLocals" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InitLocals">
-      <MemberSignature Language="C#" Value="public virtual bool InitLocals { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Reflection.MethodBody.InitLocals" /> property refers to variables that are not explicitly initialized; that is, variables that are declared with syntax such as int x; in C# or Dim x As Integer in Visual Basic.</para>
+          <para>Reference variables are initialized to null by default. Numeric variables are initialized to zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether local variables in the method body are initialized to the default values for their types.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="LocalSignatureMetadataToken">
+      <MemberSignature Language="C#" Value="public virtual int LocalSignatureMetadataToken { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LocalSignatureMetadataToken" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LocalSignatureMetadataToken">
-      <MemberSignature Language="C#" Value="public virtual int LocalSignatureMetadataToken { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Reflection.MethodBody.LocalVariables" /> property to obtain information about the method's local variables.</para>
+          <block subset="none" type="note">
+            <para>Information about local variable signatures can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a metadata token for the signature that describes the local variables for the method in metadata.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="LocalVariables">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IList&lt;System.Reflection.LocalVariableInfo&gt; LocalVariables { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;class System.Reflection.LocalVariableInfo&gt; LocalVariables" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LocalVariables">
-      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IList&lt;System.Reflection.LocalVariableInfo&gt; LocalVariables { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Reflection.LocalVariableInfo&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need the metadata token for the local variable signature provided by the <see cref="P:System.Reflection.MethodBody.LocalSignatureMetadataToken" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of local variables declared in the method body.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="MaxStackSize">
+      <MemberSignature Language="C#" Value="public virtual int MaxStackSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxStackSize" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxStackSize">
-      <MemberSignature Language="C#" Value="public virtual int MaxStackSize { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics" and "Partition III: CIL Instruction Set". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum number of items on the operand stack when the method is executing.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

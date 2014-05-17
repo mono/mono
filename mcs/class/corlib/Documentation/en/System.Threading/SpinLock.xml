@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SpinLock" FullName="System.Threading.SpinLock">
   <TypeSignature Language="C#" Value="public struct SpinLock" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit SpinLock extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,28 +10,75 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerDisplay("IsHeld = {IsHeld}")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerTypeProxy("System.Threading.SpinLock+SystemThreading_SpinLockDebugView")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For an example of how to use a Spin Lock, see <format type="text/html"><a href="a9ed3e4e-4f29-4207-b730-ed0a51ecbc19">How to: Use SpinWait and SpinLock</a></format>.</para>
+      <para>Spin locks can be used for leaf-level locks where the object allocation implied by using a <see cref="T:System.Threading.Monitor" />, in size or due to garbage collection pressure, is overly expensive. A spin lock can be useful in to avoid blocking; however, if you expect a significant amount of blocking, you should probably not use spin locks due to excessive spinning. Spinning can be beneficial when locks are fine-grained and large in number (for example, a lock per node in a linked list) and also when lock hold-times are always extremely short. In general, while holding a spin lock, one should avoid any of these actions:</para>
+      <list type="bullet">
+        <item>
+          <para>blocking, </para>
+        </item>
+        <item>
+          <para>calling anything that itself may block, </para>
+        </item>
+        <item>
+          <para>holding more than one spin lock at once, </para>
+        </item>
+        <item>
+          <para>making dynamically dispatched calls (interface and virtuals), </para>
+        </item>
+        <item>
+          <para>making statically dispatched calls into any code one doesn't own, or </para>
+        </item>
+        <item>
+          <para>allocating memory. </para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.Threading.SpinLock" /> should only be used after you have been determined that doing so will improve an application's performance. It is also important to note that <see cref="T:System.Threading.SpinLock" /> is a value type, for performance reasons. For this reason, you must be very careful not to accidentally copy a <see cref="T:System.Threading.SpinLock" /> instance, as the two instances (the original and the copy) would then be completely independent of one another, which would likely lead to erroneous behavior of the application. If a <see cref="T:System.Threading.SpinLock" /> instance must be passed around, it should be passed by reference rather than by value. </para>
+      <para>Do not store <see cref="T:System.Threading.SpinLock" /> instances in readonly fields. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a mutual exclusion lock primitive where a thread trying to acquire the lock waits in a loop repeatedly checking until the lock becomes available.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SpinLock (bool trackId);" />
+      <MemberSignature Language="C#" Value="public SpinLock (bool enableThreadOwnerTracking);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool enableThreadOwnerTracking) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="trackId" Type="System.Boolean" />
+        <Parameter Name="enableThreadOwnerTracking" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="trackId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor for <see cref="T:System.Threading.SpinLock" /> tracks thread ownership.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.SpinLock" /> structure with the option to track thread IDs to improve debugging.</para>
+        </summary>
+        <param name="enableThreadOwnerTracking">
+          <attribution license="cc4" from="Microsoft" modified="false" />Whether to capture and use thread IDs for debugging purposes.</param>
       </Docs>
     </Member>
     <Member MemberName="Enter">
       <MemberSignature Language="C#" Value="public void Enter (ref bool lockTaken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Enter(bool lockTaken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -48,39 +97,67 @@
     </Member>
     <Member MemberName="Exit">
       <MemberSignature Language="C#" Value="public void Exit ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Exit() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default overload of <see cref="M:System.Threading.SpinLock.Exit" /> provides the same behavior as if calling <see cref="M:System.Threading.SpinLock.Exit(System.Boolean)" /> using true as the argument.</para>
+          <para>If you call <see cref="M:System.Threading.SpinLock.Exit" /> without having first called <see cref="M:System.Threading.SpinLock.Enter(System.Boolean@)" />  the internal state of the <see cref="T:System.Threading.SpinLock" /> can become corrupted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the lock.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Exit">
-      <MemberSignature Language="C#" Value="public void Exit (bool flushReleaseWrites);" />
+      <MemberSignature Language="C#" Value="public void Exit (bool useMemoryBarrier);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Exit(bool useMemoryBarrier) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="flushReleaseWrites" Type="System.Boolean" />
+        <Parameter Name="useMemoryBarrier" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="flushReleaseWrites">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Threading.SpinLock.Exit(System.Boolean)" /> with the <paramref name="useMemoryBarrier" /> argument set to true will improve the fairness of the lock at the expense of some performance. The default <see cref="M:System.Threading.SpinLock.Exit" /> overload behaves as if specifying true for <paramref name="useMemoryBarrier" />.</para>
+          <para>If you call <see cref="M:System.Threading.SpinLock.Exit" /> without having first called <see cref="M:System.Threading.SpinLock.Enter(System.Boolean@)" /> the internal state of the <see cref="T:System.Threading.SpinLock" /> can become corrupted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the lock.</para>
+        </summary>
+        <param name="useMemoryBarrier">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether a memory fence should be issued in order to immediately publish the exit operation to other threads.</param>
       </Docs>
     </Member>
     <Member MemberName="IsHeld">
       <MemberSignature Language="C#" Value="public bool IsHeld { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsHeld" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -89,13 +166,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the lock is currently held by any thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsHeldByCurrentThread">
       <MemberSignature Language="C#" Value="public bool IsHeldByCurrentThread { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsHeldByCurrentThread" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -104,13 +185,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the lock was initialized to track owner threads, this will return whether the lock is acquired by the current thread. It is invalid to use this property when the lock was initialized to not track thread ownership.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the lock is held by the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsThreadOwnerTrackingEnabled">
       <MemberSignature Language="C#" Value="public bool IsThreadOwnerTrackingEnabled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsThreadOwnerTrackingEnabled" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -119,13 +207,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether thread ownership tracking is enabled for this instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryEnter">
       <MemberSignature Language="C#" Value="public void TryEnter (ref bool lockTaken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TryEnter(bool lockTaken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -143,7 +235,8 @@
       </Docs>
     </Member>
     <Member MemberName="TryEnter">
-      <MemberSignature Language="C#" Value="public void TryEnter (int milliSeconds, ref bool lockTaken);" />
+      <MemberSignature Language="C#" Value="public void TryEnter (int millisecondsTimeout, ref bool lockTaken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TryEnter(int32 millisecondsTimeout, bool lockTaken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -152,11 +245,11 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="milliSeconds" Type="System.Int32" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
         <Parameter Name="lockTaken" Type="System.Boolean&amp;" RefType="ref" />
       </Parameters>
       <Docs>
-        <param name="milliSeconds">To be added.</param>
+        <param name="millisecondsTimeout">To be added.</param>
         <param name="lockTaken">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
@@ -164,6 +257,7 @@
     </Member>
     <Member MemberName="TryEnter">
       <MemberSignature Language="C#" Value="public void TryEnter (TimeSpan timeout, ref bool lockTaken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TryEnter(valuetype System.TimeSpan timeout, bool lockTaken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

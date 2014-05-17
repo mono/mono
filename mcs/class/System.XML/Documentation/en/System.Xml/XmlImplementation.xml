@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlImplementation" FullName="System.Xml.XmlImplementation">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlImplementation" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlImplementation extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,60 +15,96 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XmlDocument objects that are created from the same implementation share the same <see cref="T:System.Xml.XmlNameTable" />. This enables users to compare attribute and element names between the objects more efficiently.</para>
+      <para>Although the XmlDocument objects share the same implementation, to move nodes from one document to another, you must use the <see cref="M:System.Xml.XmlDocument.ImportNode(System.Xml.XmlNode,System.Boolean)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the context for a set of <see cref="T:System.Xml.XmlDocument" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlImplementation ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlImplementation" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public XmlImplementation (System.Xml.XmlNameTable nameTable);" />
+      <MemberSignature Language="C#" Value="public XmlImplementation (System.Xml.XmlNameTable nt);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlNameTable nt) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="nameTable" Type="System.Xml.XmlNameTable" />
-      </Parameters>
-      <Docs>
-        <param name="nameTable">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlImplementation" /> class with the <see cref="T:System.Xml.XmlNameTable" /> specified.</para>
+        </summary>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNameTable" /> object.</param>
+      </Docs>
     </Member>
     <Member MemberName="CreateDocument">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocument CreateDocument ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlDocument CreateDocument() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlDocument</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlDocument'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XmlDocument objects created from the same implementation share the same name table. This enables users to compare attribute and element names between the objects more efficiently.</para>
+          <para>Although the XmlDocument objects share the same implementation, to move nodes from one document to another, you must use the <see cref="M:System.Xml.XmlDocument.ImportNode(System.Xml.XmlNode,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Xml.XmlDocument" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlDocument object.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasFeature">
       <MemberSignature Language="C#" Value="public bool HasFeature (string strFeature, string strVersion);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool HasFeature(string strFeature, string strVersion) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -74,16 +113,49 @@
         <Parameter Name="strVersion" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strFeature">To be added: an object of type 'string'</param>
-        <param name="strVersion">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests if the Document Object Model (DOM) implementation implements a specific feature.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is implemented in the specified version; otherwise, false.</para>
+          <para>The following table shows the combinations that cause HasFeature to return true.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>strFeature </para>
+                </term>
+                <description>
+                  <para>strVersion </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>XML </para>
+              </term>
+              <description>
+                <para>1.0 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XML </para>
+              </term>
+              <description>
+                <para>2.0 </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="strFeature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The package name of the feature to test. This name is not case-sensitive. </param>
+        <param name="strVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />This is the version number of the package name to test. If the version is not specified (null), supporting any version of the feature causes the method to return true. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DaylightTime" FullName="System.Globalization.DaylightTime">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class DaylightTime" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit DaylightTime extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,14 +14,34 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Daylight saving time is a period during the year when the clock is advanced, usually by an hour, to take advantage of extended daylight hours. At the end of the period, the clock is set back to the standard time.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Globalization.DaylightTime" /> object returned by the <see cref="M:System.TimeZone.GetDaylightChanges(System.Int32)" /> method recognizes only the time zone adjustment rule that is currently in effect, and ignores any previous adjustment rules for which the system has information. Instead, it applies the current adjustment rule backward in time to periods when it may not have been in effect. To retrieve information about all the known adjustment rules for a particular time zone, use the <see cref="M:System.TimeZoneInfo.GetAdjustmentRules" /> method.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the period of daylight saving time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DaylightTime (DateTime start, DateTime end, TimeSpan delta);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.DateTime start, valuetype System.DateTime end, valuetype System.TimeSpan delta) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="start" Type="System.DateTime" />
@@ -27,73 +49,96 @@
         <Parameter Name="delta" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="start">To be added: an object of type 'DateTime'</param>
-        <param name="end">To be added: an object of type 'DateTime'</param>
-        <param name="delta">To be added: an object of type 'TimeSpan'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="start" /> parameter becomes the value of the <see cref="P:System.Globalization.DaylightTime.Start" /> property of the new object. The <paramref name="end" /> parameter becomes the value of the <see cref="P:System.Globalization.DaylightTime.End" /> property of the new object. The <paramref name="delta" /> parameter becomes the value of the <see cref="P:System.Globalization.DaylightTime.Delta" /> property of the new object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.DaylightTime" /> class with the specified start, end, and time difference information.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents the date and time when daylight saving time begins. The value must be in local time. </param>
+        <param name="end">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents the date and time when daylight saving time ends. The value must be in local time. </param>
+        <param name="delta">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents the difference between standard time and daylight saving time, in ticks. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Delta">
+      <MemberSignature Language="C#" Value="public TimeSpan Delta { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan Delta" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Delta">
-      <MemberSignature Language="C#" Value="public TimeSpan Delta { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TimeSpan'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the <see cref="P:System.TimeZoneInfo.AdjustmentRule.DaylightDelta" /> property. Generally, the <see cref="T:System.TimeZoneInfo" /> class is a more accurate source of information on time zone adjustments than the <see cref="T:System.TimeZone" /> and <see cref="T:System.Globalization.DaylightTime" /> classes.</para>
+          <para>If the property value is positive, at the start of daylight saving time, the clock time is advanced by the length of time specified by this property. At the end of daylight saving time, the clock time is set back by the length of time specified by this property. If the property value is negative, the clock time is set back at the start of daylight saving time and advanced at the end.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time interval that represents the difference between standard time and daylight saving time.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="End">
       <MemberSignature Language="C#" Value="public DateTime End { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime End" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'DateTime'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the <see cref="P:System.TimeZoneInfo.AdjustmentRule.DateEnd" /> property. Generally, the <see cref="T:System.TimeZoneInfo" /> class is a more accurate source of information on time zone adjustments than the <see cref="T:System.TimeZone" /> and <see cref="T:System.Globalization.DaylightTime" /> classes.</para>
+          <para>When the daylight saving period ends, the clock time is set back to standard time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that represents the date and time when the daylight saving period ends.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Start">
       <MemberSignature Language="C#" Value="public DateTime Start { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime Start" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'DateTime'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the <see cref="P:System.TimeZoneInfo.AdjustmentRule.DateStart" /> property. Generally, the <see cref="T:System.TimeZoneInfo" /> class is a more accurate source of information on time zone adjustments than the <see cref="T:System.TimeZone" /> and <see cref="T:System.Globalization.DaylightTime" /> classes.</para>
+          <para>When the daylight saving period begins, the clock time is advanced by the number of ticks defined by the <see cref="P:System.Globalization.DaylightTime.Delta" /> property to take advantage of the extended daylight hours.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that represents the date and time when the daylight saving period begins.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

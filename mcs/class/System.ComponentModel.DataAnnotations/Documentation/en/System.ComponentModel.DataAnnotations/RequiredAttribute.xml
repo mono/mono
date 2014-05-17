@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="RequiredAttribute" FullName="System.ComponentModel.DataAnnotations.RequiredAttribute">
+  <TypeSignature Language="C#" Value="public class RequiredAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RequiredAttribute extends System.ComponentModel.DataAnnotations.ValidationAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ComponentModel.DataAnnotations.ValidationAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.All, AllowMultiple=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute specifies that when a field on a form is validated, the field must contain a value. A validation exception is raised if the property is null, contains an empty string (""), or contains only white-space characters.</para>
+      <block subset="none" type="note">
+        <para>If the MVC data model or entity partial class contains a field that is annotated with the <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute, but the page does not contain the property, an error is not raised. Validation occurs only for fields that are submitted to the server.</para>
+      </block>
+      <para>A Visual Studio project with source code is available to accompany this topic: <see cref="http://go.microsoft.com/fwlink/?linkid=158686">Download</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a data field value is required.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RequiredAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AllowEmptyStrings">
+      <MemberSignature Language="C#" Value="public bool AllowEmptyStrings { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowEmptyStrings" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you set <see cref="P:System.ComponentModel.DataAnnotations.RequiredAttribute.AllowEmptyStrings" /> to true for a data field, Dynamic Data does not perform validation and transforms the empty string to a null value. This value is then passed to the database. </para>
+          <para>If the database does not allow null values, it raises an error. To avoid this error, you must also set the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.ConvertEmptyStringToNull" /> to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether an empty string is allowed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsValid">
+      <MemberSignature Language="C#" Value="public override bool IsValid (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsValid(object value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is an empty string, the method returns false and a validation error is displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks that the value of the required data field is not empty.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if validation is successful; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data field value to validate.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

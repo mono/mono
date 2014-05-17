@@ -1,58 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebProxyScript" FullName="System.Net.IWebProxyScript">
   <TypeSignature Language="C#" Value="public interface IWebProxyScript" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IWebProxyScript" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base interface to load and execute scripts for automatic proxy detection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes a script.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public bool Load (Uri scriptLocation, string Script, Type helperType);" />
+      <MemberSignature Language="C#" Value="public bool Load (Uri scriptLocation, string script, Type helperType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Load(class System.Uri scriptLocation, string script, class System.Type helperType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="scriptLocation" Type="System.Uri" />
-        <Parameter Name="Script" Type="System.String" />
+        <Parameter Name="script" Type="System.String" />
         <Parameter Name="helperType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="scriptLocation">To be added.</param>
-        <param name="Script">To be added.</param>
-        <param name="helperType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a script.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> indicating whether the script was successfully loaded.</para>
+        </returns>
+        <param name="scriptLocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal only.</param>
+        <param name="script">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal only.</param>
+        <param name="helperType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal only.</param>
       </Docs>
     </Member>
     <Member MemberName="Run">
       <MemberSignature Language="C#" Value="public string Run (string url, string host);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Run(string url, string host) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -62,11 +86,25 @@
         <Parameter Name="host" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added.</param>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Net.HttpWebRequest" /> object is run, it may need to run the WPAD (Web Proxy Automatic Detection) protocol to detect whether a proxy is required for reaching the destination URL. During this process, the system downloads and compiles the PAC (Proxy Auto-Configuration) script in memory and tries to execute the FindProxyForURL function as per the PAC specification.
+</para>
+          <para>When doing so, the system creates an internal application domain inside the application which runs with mimimal permissions and most importantly, it does not grant the UI permission to this new application domain. The evaluation of a proxy and running the FindProxyForURL javascript function happens in the context of this new application domain and during this process the system may need to run several helper functions as per the PAC specification.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs a script.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" />.</para>
+          <para>An internal-only value returned.</para>
+        </returns>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal only.</param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal only.</param>
       </Docs>
     </Member>
   </Members>

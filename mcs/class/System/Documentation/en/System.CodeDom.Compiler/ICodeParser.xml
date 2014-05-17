@@ -1,22 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICodeParser" FullName="System.CodeDom.Compiler.ICodeParser">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ICodeParser" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICodeParser" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Developers of compilers can implement this interface to support code parsing by designers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an interface for parsing code into a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Parse">
       <MemberSignature Language="C#" Value="public System.CodeDom.CodeCompileUnit Parse (System.IO.TextReader codeStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.CodeCompileUnit Parse(class System.IO.TextReader codeStream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeCompileUnit</ReturnType>
       </ReturnValue>
@@ -24,15 +39,18 @@
         <Parameter Name="codeStream" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="codeStream">To be added: an object of type 'IO.TextReader'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CodeDom.CodeCompileUnit'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented in a derived class, compiles the specified text stream into a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeCompileUnit" /> that contains a representation of the parsed code.</para>
+        </returns>
+        <param name="codeStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> that can be used to read the code to be compiled. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

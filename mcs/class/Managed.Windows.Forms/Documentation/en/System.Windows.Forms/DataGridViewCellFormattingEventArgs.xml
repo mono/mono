@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewCellFormattingEventArgs" FullName="System.Windows.Forms.DataGridViewCellFormattingEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewCellFormattingEventArgs : System.Windows.Forms.ConvertEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,23 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event to customize the conversion of a cell value into a format suitable for display or to customize the appearance of a cell depending on its state or value. </para>
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event occurs every time each cell is painted, so you should avoid lengthy processing when handling this event. This event also occurs when the cell <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> is retrieved or its <see cref="M:System.Windows.Forms.DataGridViewCell.GetFormattedValue(System.Object,System.Int32,System.Windows.Forms.DataGridViewCellStyle@,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter,System.Windows.Forms.DataGridViewDataErrorContexts)" /> method is called.</para>
+      <para>When you handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property is initialized with the cell value. If you provide custom conversion from the cell value to the display value, set the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property to the converted value, ensuring that the new value is of the type specified by the cell <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> property. To indicate that no further value formatting is necessary, set the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property to true. </para>
+      <para>When the event handler completes, if the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> is null or is not of the correct type, or the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property is false, the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> is formatted using the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Format" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> properties of the cell style returned by the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.CellStyle" /> property, which is initialized using the cell <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedStyle" /> property.</para>
+      <para>Regardless of the value of the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property, the display properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.CellStyle" /> property are used to render the cell. </para>
+      <para>For more information about custom formatting using the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, see <format type="text/html"><a href="a6e72c70-ce18-425f-828d-d57be6f96ab6">How to: Customize Data Formatting in the Windows Forms DataGridView Control</a></format>.</para>
+      <para>To avoid performance penalties when handling this event, access the cell through the parameters of the event handler rather than accessing the cell directly.</para>
+      <para>To customize the conversion of a formatted, user-specified value into an actual cell value, handle the <see cref="E:System.Windows.Forms.DataGridView.CellParsing" /> event.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event of a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,14 +40,26 @@
         <Parameter Name="cellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="columnIndex">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="desiredType">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="desiredType" /> parameter represents the type that the <paramref name="value" /> parameter should be converted to, and <paramref name="desiredType" /> is assigned the cell's <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> property. For example, if a cell is formatting picture names as bitmaps, <paramref name="value" /> is the <see cref="T:System.String" /> that contains the picture name, and <paramref name="desiredType" /> is a <see cref="T:System.Type" /> representing the <see cref="T:System.Drawing.Bitmap" /> type. </para>
+          <para>If the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event handler does not set the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property to a type that can be displayed by the cell, the cell contents will be formatted using the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Format" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> properties. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewCellFormattingEventArgs" /> class.</para>
+        </summary>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column index of the cell that caused the event.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell that caused the event.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cell's contents.</param>
+        <param name="desiredType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert <paramref name="value" /> to. </param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The style of the cell that caused the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +72,17 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.CellStyle" /> property will change how the cell and its contents are displayed. To avoid performance penalties, use this property to change the cell styles rather than accessing the cell directly. </para>
+          <para>For more information about cell styles, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format></para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of the cell that is being formatted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,10 +95,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.ColumnIndex" /> property to obtain an index into the <see cref="P:System.Windows.Forms.DataGridView.Columns" /> property of a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column index of the cell that is being formatted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +117,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When handling the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, set the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property to true after setting the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property if no further value formatting is required. If the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property value is false when the event handler exits, the formatting will be applied to the value as indicated by the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Format" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> properties of the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> object returned by the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.CellStyle" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the cell value has been successfully formatted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +139,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.RowIndex" /> property to obtain an index into the <see cref="P:System.Windows.Forms.DataGridView.Rows" /> property of a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the row index of the cell that is being formatted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

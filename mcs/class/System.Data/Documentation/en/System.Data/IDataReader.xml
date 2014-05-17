@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataReader" FullName="System.Data.IDataReader">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDataReader : IDisposable, System.Data.IDataRecord" />
   <AssemblyInfo>
@@ -17,8 +18,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>Forward-only result set reader</summary>
-    <remarks>This class provides a forward-only way to go through the results of a query. Although it is less convenient than a DataSet, it is faster.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.IDataReader" /> and <see cref="T:System.Data.IDataRecord" /> interfaces allow an inheriting class to implement a DataReader class, which provides a means of reading one or more forward-only streams of result sets. For more information about DataReader classes, see <format type="text/html"><a href="97AFC121-FB8B-465B-BAB3-6D844420BADB">[&lt;topic://cpcontheadonetdatareader&gt;]</a></format>. </para>
+      <para>An application does not create an instance of the <see cref="T:System.Data.IDataReader" /> interface directly, but creates an instance of a class that inherits <see cref="T:System.Data.IDataReader" />.</para>
+      <para>Classes that inherit <see cref="T:System.Data.IDataReader" /> must implement the inherited members, and typically define additional members to add provider-specific functionality.</para>
+      <para>Changes made to a result set by another process or thread while data is being read may be visible to the user of a class that implements an IDataReader. However, the precise behavior is both provider and timing dependent.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a means of reading one or more forward-only streams of result sets obtained by executing a command at a data source, and is implemented by .NET Framework data providers that access relational databases.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -29,8 +39,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must explicitly call the <see cref="M:System.Data.IDataReader.Close" /> method when you are through using the <see cref="T:System.Data.IDataReader" /> to use the associated <see cref="T:System.Data.IDbConnection" /> for any other purpose.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the <see cref="T:System.Data.IDataReader" /> Object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +60,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The outermost table has a depth of zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the depth of nesting for the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +83,66 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataTable'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The implementation of <see cref="M:System.Data.IDataReader.GetSchemaTable" /> method for the .NET Framework Data Provider for OLE DB maps to the OLE DB IColumnsRowset::GetColumnsRowset method, while implementations for other .NET Framework data providers do not use an OLE DB provider layer. The order in which <see cref="M:System.Data.IDataReader.GetSchemaTable" /> returns metadata about each column in a table, and the DataReader columns that are returned, vary depending on which data provider you use. The following table lists data providers and members that implement <see cref="M:System.Data.IDataReader.GetSchemaTable" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Data Provider </para>
+                </term>
+                <description>
+                  <para>Member </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>.NET Data Provider for ODBC </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Data.Odbc.OdbcDataReader.GetSchemaTable" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>.NET Data Provider for OLE DB </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Data.OleDb.OleDbDataReader.GetSchemaTable" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>.NET Data Provider for Oracle </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Data.OracleClient.OracleDataReader.GetSchemaTable" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>.NET Data Provider for SQL Server </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Data.SqlClient.SqlDataReader.GetSchemaTable" />. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> that describes the column metadata of the <see cref="T:System.Data.IDataReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that describes the column metadata.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +156,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Data.IDataReader.IsClosed" /> and <see cref="P:System.Data.IDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.IDataReader" /> is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data reader is closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,9 +180,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to process multiple results, which can be obtained by executing batch SQL statements.</para>
+          <para>By default, the data reader is positioned on the first result.</para>
+          <para>code reference: IDataReader_NextResult#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the data reader to the next result, when reading the results of batch SQL statements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more rows; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -111,15 +208,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Read the next result</summary>
-        <returns>true if a valid record was read by this invocation of Read()</returns>
-        <remarks>This method allows a nice idiom:
-
-<example><code lang="C#">
-while (SomeDataReader.Read()) {
-  //do something with the data from this row.
-}
-  </code></example></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default position of the <see cref="T:System.Data.IDataReader" /> is prior to the first record. Therefore you must call <see cref="M:System.Data.IDataReader.Read" /> to begin accessing any data.</para>
+          <para>While the data reader is in use, the associated connection is busy serving the <see cref="T:System.Data.IDataReader" />. This is the case until <see cref="M:System.Data.IDataReader.Close" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the <see cref="T:System.Data.IDataReader" /> to the next record.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more rows; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,9 +234,17 @@ while (SomeDataReader.Read()) {
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.IDataReader.RecordsAffected" /> property is not set until all rows are read and you close the <see cref="T:System.Data.IDataReader" />.</para>
+          <para>
+            <see cref="P:System.Data.IDataReader.IsClosed" /> and <see cref="P:System.Data.IDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.IDataReader" /> is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

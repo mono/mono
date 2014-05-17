@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceContext" FullName="System.Web.TraceContext">
   <TypeSignature Language="C#" Value="public sealed class TraceContext" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use this class to append messages to specific trace categories. For example, if you are creating an instance of the <see cref="T:System.Web.UI.WebControls.Calendar" /> class for your application, you might include the trace message "Starting To Render" in a rendering procedure, and "Raising OnChange Event" in an event handler procedure.</para>
+      <para>You can also use the <see cref="T:System.Web.TraceContext" /> class to obtain a set of trace records at the end of request execution for custom processing. For more information, see <format type="text/html"><a href="1552561d-887c-4002-8770-f92662cdf416">ASP.NET Tracing Overview</a></format>.</para>
+      <para>To enable tracing, set the Trace attribute in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive or the <see cref="P:System.Web.TraceContext.IsEnabled" /> property to true. When tracing is enabled, in addition to showing user-provided trace content, the <see cref="T:System.Web.UI.Page" /> class automatically includes performance data, control-tree structure information, and state management content for every request.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Captures and presents execution details about a Web request. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +35,11 @@
       </Parameters>
       <Docs>
         <param name="Context">a <see cref="T:System.Web.HttpContext" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.TraceContext" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,9 +55,19 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this flag to check whether your page or application should output tracing information before it writes anything to the trace log. </para>
+          <para>The value of the <see cref="P:System.Web.TraceContext.IsEnabled" /> property depends on the settings in the <format type="text/html"><a href="7931c942-63c1-47c3-a045-9d9de3cacdbf">trace</a></format> subsection of the system.web configuration section and the value of the trace attribute of the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive. The tracing option set in the page directive takes precedence over the option set in the configuration file. Setting the <see cref="P:System.Web.TraceContext.IsEnabled" /> value programmatically takes precedence over both the page directive attribute and the configuration setting.</para>
+          <block subset="none" type="note">
+            <para>If you set the <see cref="P:System.Web.TraceContext.IsEnabled" /> property to true for an entire application, you must explicitly set this property to false for any page in the application for which you do not want tracing information displayed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether tracing is enabled for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,8 +84,14 @@
         <ReturnType>System.Web.TraceContextEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.TraceContext.TraceFinished" /> event is raised during the EndRequest stage of HTTP request processing. It is raised by a <see cref="T:System.Web.TraceContext" /> object after all request information is gathered, to expose the collection of <see cref="T:System.Web.TraceContextRecord" /> messages to registered <see cref="T:System.Web.TraceContextEventHandler" /> delegates. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raised by the <see cref="T:System.Web.TraceContext" /> object to expose trace messages after all request information is gathered.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TraceMode">
@@ -75,9 +103,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TraceMode'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Trace messages can be sorted in the order they were processed, or alphabetically by user-defined category.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the sorted order in which trace messages should be output to a requesting browser.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,8 +129,14 @@
       </Parameters>
       <Docs>
         <param name="msg">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every time the <see cref="Overload:System.Web.TraceContext.Warn" /> method is called, a <see cref="T:System.Web.TraceContext" /> trace message is added to the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages collection, which is accessible when you handle the <see cref="E:System.Web.TraceContext.TraceFinished" /> event. The message is added with its <see cref="P:System.Web.TraceContextRecord.IsWarning" /> property set to true and its <see cref="P:System.Web.TraceContextRecord.ErrorInfo" /> property set to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a trace message to the trace log. All warnings appear in the log as red text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,10 +154,17 @@
         <Parameter Name="msg" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="category">a <see cref="T:System.String" /></param>
         <param name="msg">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every time the <see cref="Overload:System.Web.TraceContext.Warn" /> method is called, a <see cref="T:System.Web.TraceContext" /> trace message is added to the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages collection, which is accessible when you handle the <see cref="E:System.Web.TraceContext.TraceFinished" /> event. The message is added with its <see cref="P:System.Web.TraceContextRecord.IsWarning" /> property set to true and its <see cref="P:System.Web.TraceContextRecord.ErrorInfo" /> property set to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information to the trace log, including any user-defined categories and trace messages. All warnings appear in the log as red text.</para>
+        </summary>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace category that receives the message. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -136,11 +183,18 @@
         <Parameter Name="error" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="category">a <see cref="T:System.String" /></param>
         <param name="msg">a <see cref="T:System.String" /></param>
         <param name="error">a <see cref="T:System.Exception" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every time the <see cref="Overload:System.Web.TraceContext.Warn" /> method is called, a <see cref="T:System.Web.TraceContext" /> trace message is added to the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages collection, which is accessible when you handle the <see cref="E:System.Web.TraceContext.TraceFinished" /> event. The message is added with its <see cref="P:System.Web.TraceContextRecord.IsWarning" /> property set to true, and the <see cref="P:System.Web.TraceContextRecord.ErrorInfo" /> property is set to the object passed by the <paramref name="errorInfo" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information to the trace log, including any user-defined categories, trace messages, and error information. All warnings appear in the log as red text.</para>
+        </summary>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace category that receives the message. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,8 +212,14 @@
       </Parameters>
       <Docs>
         <param name="msg">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every time the <see cref="Overload:System.Web.TraceContext.Write" /> method is called, a <see cref="T:System.Web.TraceContext" /> trace message is added to the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages collection, which is accessible when you handle the <see cref="E:System.Web.TraceContext.TraceFinished" /> event. The message is added with its <see cref="P:System.Web.TraceContextRecord.IsWarning" /> property set to false and its <see cref="P:System.Web.TraceContextRecord.ErrorInfo" /> property set to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a trace message to the trace log.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -177,10 +237,17 @@
         <Parameter Name="msg" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="category">a <see cref="T:System.String" /></param>
         <param name="msg">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every time the <see cref="Overload:System.Web.TraceContext.Write" /> method is called, a <see cref="T:System.Web.TraceContext" /> trace message is added to the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages collection, which is accessible when you handle the <see cref="E:System.Web.TraceContext.TraceFinished" /> event. The message is added with its <see cref="P:System.Web.TraceContextRecord.IsWarning" /> property set to false and its <see cref="P:System.Web.TraceContextRecord.ErrorInfo" /> property set to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information to the trace log, including a message and any user-defined categories.</para>
+        </summary>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace category that receives the message. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -199,11 +266,18 @@
         <Parameter Name="error" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="category">a <see cref="T:System.String" /></param>
         <param name="msg">a <see cref="T:System.String" /></param>
         <param name="error">a <see cref="T:System.Exception" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every time the <see cref="Overload:System.Web.TraceContext.Write" /> method is called, a <see cref="T:System.Web.TraceContext" /> trace message is added to the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages collection, which is accessible when you handle the <see cref="E:System.Web.TraceContext.TraceFinished" /> event. The message is added with its <see cref="P:System.Web.TraceContextRecord.IsWarning" /> property set to false, and the <see cref="P:System.Web.TraceContextRecord.ErrorInfo" /> property is set to the object passed by the <paramref name="errorInfo" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information to the trace log, including any user-defined categories, trace messages, and error information.</para>
+        </summary>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace category that receives the message. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

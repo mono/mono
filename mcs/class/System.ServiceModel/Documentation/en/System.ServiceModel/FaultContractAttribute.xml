@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="FaultContractAttribute" FullName="System.ServiceModel.FaultContractAttribute">
+  <TypeSignature Language="C#" Value="public sealed class FaultContractAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit FaultContractAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple=true, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Mark an operation with the <see cref="T:System.ServiceModel.FaultContractAttribute" /> attribute to declare one or more specific exception conditions that are added to the Web Service Description Language (WSDL) description of the service operation as explicit SOAP fault messages returned by the operation. </para>
+      <para>In all managed applications, processing errors are represented by <see cref="T:System.Exception" /> objects. In SOAP-based applications such as indigo1 applications, service methods communicate processing error information using SOAP fault messages. Because indigo2 applications execute under both types of error systems, any managed exception information that must be sent to the client must be converted from exceptions into SOAP faults. You can use the default service exception behaviors, or you can explicitly control whether -- and how -- exceptions are mapped to fault messages. For an overview of exceptions and SOAP faults in indigo2 applications, see <format type="text/html"><a href="a9696563-d404-4905-942d-1e0834c26dea">Specifying and Handling Faults in Contracts and Services</a></format>.</para>
+      <para>It is recommended that service operations use the <see cref="T:System.ServiceModel.FaultContractAttribute" /> to formally specify all SOAP faults that a client can expect to receive in the normal course of an operation. It is also recommended that only that information a client must know is returned in a SOAP fault to minimize information disclosure. </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.ServiceModel.FaultContractAttribute.Action" /> property controls the action of the fault message.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.FaultContractAttribute.DetailType" /> property gets the type of the detail object serialized in the fault message.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.FaultContractAttribute.Name" /> and <see cref="P:System.ServiceModel.FaultContractAttribute.Namespace" /> properties control the name and namespace, respectively, of the fault message.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.FaultContractAttribute.HasProtectionLevel" /> indicates whether the fault message has a protection level specified, and if so, the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> property controls that level of protection. </para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para> If a fault message carries information that is sensitive or can lead to security problems, it is strongly recommended that the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> property be set. </para>
+      </block>
+      <list type="bullet">
+        <item>
+          <para>If you set the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> explicitly to either <see cref="F:System.Net.Security.ProtectionLevel.Sign" /> or <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />, then you must use a binding with security enabled using the <see cref="T:System.ServiceModel.SecurityMode" /> property on the binding or an exception is thrown.</para>
+        </item>
+        <item>
+          <para>If you select a binding that enables security and you do not set the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> property anywhere on the contract, all application data will be encrypted and signed.</para>
+        </item>
+        <item>
+          <para>If you select a binding that does not have security enabled (for example, the <see cref="T:System.ServiceModel.BasicHttpBinding" /> has security disabled by default), and the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> is not explicitly set, then none of the application data will be protected.</para>
+        </item>
+      </list>
+      <para>For many scenarios setting <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> to <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" /> for fault messages is sufficient. For more details, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+      <para>To return a specified fault from an operation marked with <see cref="T:System.ServiceModel.FaultContractAttribute" />, throw a <see cref="T:System.ServiceModel.FaultException`1" /> (where the type parameter is the serializable error information) when the managed exception occurs during the operation. indigo2 client applications surface the SOAP fault as the same type as was thrown in the client implementation -- that is, as a <see cref="T:System.ServiceModel.FaultException`1" /> (where the type parameter is the serializable error information). The <see cref="T:System.ServiceModel.FaultContractAttribute" /> can be used only to specify SOAP faults for two-way service operations and for asynchronous operation pairs; one-way operations do not support SOAP faults and therefore do not support <see cref="T:System.ServiceModel.FaultContractAttribute" />. </para>
+      <block subset="none" type="note">
+        <para>You can use any serializable type to convey error information. The only restriction in this version of indigo2 is that types specified in a <see cref="T:System.ServiceModel.FaultContractAttribute" /> must be serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. For the serialization support the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> provides, see <format type="text/html"><a href="3d64837e-0a0c-4cc8-90ff-a5c6f313c63a">Data Contract Serializer</a></format>. </para>
+      </block>
+      <para>For example, to specify that clients can expect a SOAP fault that contains an <see cref="T:System.Int32" />, place that type parameter in the <see cref="T:System.ServiceModel.FaultContractAttribute" /> on your service method.</para>
+      <block subset="none" type="note">
+        <para>The following code examples do not set the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" />, <see cref="P:System.ServiceModel.FaultContractAttribute.Name" />, or <see cref="P:System.ServiceModel.FaultContractAttribute.Namespace" /> properties.</para>
+      </block>
+      <para>code reference: C_FCA#1</para>
+      <para>Then, in your service method, throw a new <see cref="T:System.ServiceModel.FaultException`1" /> where the type parameter is the type that contains the error information (in the above case, a <see cref="T:System.Int32" />). For example:</para>
+      <para>code reference: C_FCA#2</para>
+      <para>The preceding example is very basic; almost any information can be passed using an <see cref="T:System.Int32" /> code, so this detail type is not the most useful. Typically, indigo2 applications specify SOAP faults with detail types specific to the error information requirements of the client. For a more complete example, see the Example section.</para>
+      <block subset="none" type="note">
+        <para>If you specify a <see cref="T:System.ServiceModel.FaultException`1" /> where the type parameter is a <see cref="T:System.String" />, the string value is assigned to the Detail property in the client application; clients cannot retrieve that string by calling the <see cref="M:System.ServiceModel.FaultException`1.ToString" /> method. To have the string value returned when the client application calls <see cref="M:System.Exception.ToString" />, throw a <see cref="T:System.ServiceModel.FaultException" /> exception inside the operation and pass the string to the constructor.</para>
+      </block>
+      <para>To explicitly control the behavior of the application when an exception or <see cref="T:System.ServiceModel.FaultException`1" /> is thrown, implement the <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> interface on an <see cref="T:System.ServiceModel.Description.IServiceBehavior" />, <see cref="T:System.ServiceModel.Description.IContractBehavior" /> or <see cref="T:System.ServiceModel.Description.IEndpointBehavior" /> and assign it to the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.Errorhandlers" /> property. <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> enables you to explicitly control the SOAP fault that is generated and whether to send it back to the client. </para>
+      <para>To facilitate debugging, set the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> to true in code or you can use the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> in an application configuration file. When enabled, the service automatically returns exception information to the caller. These faults appear to the client as <see cref="T:System.ServiceModel.FaultException" /> exceptions. </para>
+      <block subset="none" type="note">
+        <para>Because managed exceptions can expose internal application information, setting <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> or <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> to true can permit indigo2 clients to obtain information about internal service operation exceptions, including personally identifiable or other sensitive information.</para>
+        <para>Therefore, setting <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> or <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> to true is only recommended as a way of temporarily debugging a service application. In addition, the WSDL for a method that returns unhandled managed exceptions in this way does not contain the contract for the <see cref="T:System.ServiceModel.FaultException`1" /> of type <see cref="T:System.String" />. Clients must expect the possibility of an unknown SOAP fault (returned to indigo2 clients as <see cref="T:System.ServiceModel.FaultException" /> objects) to obtain the debugging information properly. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies one or more SOAP faults that are returned when a service operation encounters processing errors.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FaultContractAttribute (Type detailType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type detailType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="detailType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor is typically executed by applying the attribute to a service method and specifying a type as the argument in the attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.FaultContractAttribute" /> class.  </para>
+        </summary>
+        <param name="detailType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serializable type that contains error information for the caller.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public string Action { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Action" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use to control the action of the SOAP fault message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the action of the SOAP fault message that is specified as part of the operation contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DetailType">
+      <MemberSignature Language="C#" Value="public Type DetailType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type DetailType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of a serializable object that contains error information.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasProtectionLevel">
+      <MemberSignature Language="C#" Value="public bool HasProtectionLevel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.FaultContractAttribute.HasProtectionLevel" /> property to specify whether the SOAP fault message must be encrypted, signed, or both. See the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> property for details.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the SOAP fault message has a protection level assigned.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the fault message in Web Services Description Language (WSDL).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace of the SOAP fault.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionLevel">
+      <MemberSignature Language="C#" Value="public System.Net.Security.ProtectionLevel ProtectionLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.ProtectionLevel ProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.FaultDescription.ProtectionLevel" /> property to specify the degree to which the binding must encrypt, sign, or both when sending the SOAP fault. It is strongly recommended that an operation's fault explicitly decide the security protection level requirements on the contract. The default protection level is <see cref="F:System.Net.Security.ProtectionLevel.None" />, meaning that the SOAP fault message you are defining does not require encryption or a digital signature (although your binding may provide this support if it is configured to do so). If a fault message carries information that is sensitive or can lead to security problems, it is strongly recommended that the <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /> property be set to <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />. For more about security issues, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+          <para>The protection behavior at runtime is the combination of the protection-level properties that have a hierarchical structure. Setting the outermost value establishes the default setting for all narrower scopes unless a different value for a narrower scope is explicitly set. In this case, the outer value remains the default for all narrower scopes with the exception of that specifically set. </para>
+          <para>For example, if <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> is set to <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" /> and no other narrower scopes have protection level settings, all messages in an operation contract are encrypted and signed, including fault messages. If, however, one of those operations has the <see cref="T:System.ServiceModel.OperationContractAttribute" /> set to <see cref="F:System.Net.Security.ProtectionLevel.Sign" />, then the messages for that operation are signed but all other messages in the contract are encrypted and signed, including fault messages.</para>
+          <para>The scopes at which these values are set are:</para>
+          <para>
+            <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" />
+          </para>
+          <para>    <see cref="P:System.ServiceModel.OperationContractAttribute.ProtectionLevel" /></para>
+          <para>        <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /></para>
+          <para>        <see cref="P:System.ServiceModel.MessageContractAttribute.ProtectionLevel" /></para>
+          <para>            The <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property on <see cref="T:System.ServiceModel.MessageHeaderAttribute" />.</para>
+          <para>            The <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property on <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" />.</para>
+          <para>When there is no protection level explicitly specified on the contract and the underlying binding supports security (whether at the transport or message level), the effective protection level for the whole contract is <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />. If the binding does not support security (such as <see cref="T:System.ServiceModel.BasicHttpBinding" />), the effective <see cref="T:System.Net.Security.ProtectionLevel" /> is <see cref="F:System.Net.Security.ProtectionLevel.None" /> for the whole contract. The result is that depending upon the endpoint binding, clients can require different message or transport level security protection even when the contract specifies <see cref="F:System.Net.Security.ProtectionLevel.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the level of protection the SOAP fault requires from the binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

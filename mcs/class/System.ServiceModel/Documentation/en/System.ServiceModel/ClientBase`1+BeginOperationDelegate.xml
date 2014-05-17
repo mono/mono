@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ClientBase&lt;TChannel&gt;+BeginOperationDelegate" FullName="System.ServiceModel.ClientBase&lt;TChannel&gt;+BeginOperationDelegate">
+  <TypeSignature Language="C#" Value="protected delegate IAsyncResult ClientBase&lt;TChannel&gt;.BeginOperationDelegate(object[] inValues, AsyncCallback asyncCallback, object state) where TChannel : class;" />
+  <TypeSignature Language="ILAsm" Value=".class nested protected auto ansi sealed ClientBase`1/BeginOperationDelegate&lt;class TChannel&gt; extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TChannel">
+      <Constraints>
+        <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="inValues" Type="System.Object[]" />
+    <Parameter Name="asyncCallback" Type="System.AsyncCallback" />
+    <Parameter Name="state" Type="System.Object" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.IAsyncResult</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="inValues">To be added.</param>
+    <param name="asyncCallback">To be added.</param>
+    <param name="state">To be added.</param>
+    <returns>To be added.</returns>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extend the <see cref="T:System.ServiceModel.ClientBase`1" /> class to create a custom indigo2 client object that can be used to connect to a service. Typically, the indigo2 client base class is extended by a tool such as the <format type="text/html"><a href="1abf3d9f-b420-46f1-b628-df238751f308">ServiceModel Metadata Utility Tool (Svcutil.exe)</a></format> on your behalf. For an example, see the Example section.</para>
+      <para>The <see cref="T:System.ServiceModel.ClientBase`1" /> class can be used quickly and easily by developers who prefer objects to the use of the interfaces and the <see cref="T:System.ServiceModel.ChannelFactory`1" /> class. In all cases this class wraps or exposes the methods and functionality of the <see cref="T:System.ServiceModel.ChannelFactory`1" /> class and the <see cref="T:System.ServiceModel.IClientChannel" /> interface. </para>
+      <para>As when using the <see cref="T:System.ServiceModel.ServiceHost" /> class, you can create the class and modify the endpoint, channel factory, or security information prior to making any calls or calling <see cref="M:System.ServiceModel.ClientBase`1.Open" />. crdefault <format type="text/html"><a href="f60d9bc5-8ade-4471-8ecf-5a07a936c82d">WCF Client Overview</a></format> and <format type="text/html"><a href="d780af9f-73c5-42db-9e52-077a5e4de7fe">Accessing Services Using a WCF Client</a></format>. </para>
+      <para>Special note for Managed C++ users deriving from this class:</para>
+      <list type="bullet">
+        <item>
+          <para>Put your clean-up code in (On)(Begin)Close (and/or OnAbort), not in a destructor.</para>
+        </item>
+        <item>
+          <para>Avoid destructors: they cause the compiler to auto-generate <see cref="T:System.IDisposable" />.</para>
+        </item>
+        <item>
+          <para>Avoid non-reference members: they can cause the compiler to auto-generate <see cref="T:System.IDisposable" />.</para>
+        </item>
+        <item>
+          <para>Avoid finalizers; but if you include one, you should suppress the build warning and call <see cref="M:System.GC.SuppressFinalize(System.Object)" /> and the finalizer itself from (On)(Begin)Close (and/or OnAbort) to emulate what would have been the auto-generated <see cref="T:System.IDisposable" /> behavior.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base implementation used to create indigo1 client objects that can call services.</para>
+    </summary>
+  </Docs>
+</Type>

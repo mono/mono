@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RuntimeCompatibilityAttribute" FullName="System.Runtime.CompilerServices.RuntimeCompatibilityAttribute">
   <TypeSignature Language="C#" Value="public sealed class RuntimeCompatibilityAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit RuntimeCompatibilityAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,41 +17,57 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Some languages, such as C++, allow you to throw exceptions of any type.  Other languages, such as Microsoft C# and Visual Basic, require that every thrown exception be derived from the <see cref="T:System.Exception" /> class.  To maintain compatibility between languages, the common language runtime (CLR) wraps objects that do not derive from <see cref="T:System.Exception" /> in a <see cref="T:System.Runtime.CompilerServices.RuntimeWrappedException" /> object. </para>
+      <para>You can use the <see cref="T:System.Runtime.CompilerServices.RuntimeCompatibilityAttribute" /> class to specify whether exceptions should appear wrapped inside catch blocks and exception filters for an assembly.  Many language compilers, including the Microsoft C# and Visual Basic compilers, apply this attribute by default to specify the wrapping behavior.</para>
+      <para>Note that the runtime still wraps exceptions even if you use the <see cref="T:System.Runtime.CompilerServices.RuntimeCompatibilityAttribute" /> class to specify that you do not want them wrapped.  In this case, exceptions are unwrapped only inside catch blocks or exception filters.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether to wrap exceptions that do not derive from the <see cref="T:System.Exception" /> class with a <see cref="T:System.Runtime.CompilerServices.RuntimeWrappedException" /> object. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public RuntimeCompatibilityAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.RuntimeCompatibilityAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WrapNonExceptionThrows">
-      <MemberSignature Language="C#" Value="public bool WrapNonExceptionThrows { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool WrapNonExceptionThrows { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool WrapNonExceptionThrows" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to wrap exceptions that do not derive from the <see cref="T:System.Exception" /> class with a <see cref="T:System.Runtime.CompilerServices.RuntimeWrappedException" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

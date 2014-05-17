@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaInclude" FullName="System.Xml.Schema.XmlSchemaInclude">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaInclude : System.Xml.Schema.XmlSchemaExternal" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaInclude extends System.Xml.Schema.XmlSchemaExternal" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,45 +15,65 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The included schema document must meet one of the following conditions: </para>
+      <para>The included schema must have the same target namespace as the containing schema document.</para>
+      <para>OR </para>
+      <para>The included schema cannot have a specified targetNamespace; the targetNamespace attribute must be null.</para>
+      <para>XmlSchemaInclude adds all the schema components from included schemas that have the same target namespace (or no specified target namespace) to the containing schema.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the include element from XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. This class is used to include declarations and definitions from an external schema. The included declarations and definitions are then available for processing in the containing schema.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaInclude ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Annotation">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaAnnotation Annotation { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Xml.Schema.XmlSchemaAnnotation</ReturnType>
-      </ReturnValue>
+      <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'XmlSchemaAnnotation'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaInclude" /> class.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Annotation">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaAnnotation Annotation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaAnnotation Annotation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlElement("annotation", Type=typeof(System.Xml.Schema.XmlSchemaAnnotation))</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaAnnotation</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <value>To be added: an object of type 'XmlSchemaAnnotation'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the annotation property.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityRuleSet" FullName="System.Security.SecurityRuleSet">
   <TypeSignature Language="C#" Value="public enum SecurityRuleSet" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SecurityRuleSet extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,12 +10,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration indicates which set of security rules the common language runtime should enforce for an assembly. For example, an assembly that is marked with [SecurityRules(SecurityRuleSet.Level1)] uses the .NET Framework version 2.0 transparency rules, where public security-critical types and members are treated as security-safe-critical outside the assembly. This requires security-critical types and members to perform a link demand for full trust to enforce security-critical behavior when they are accessed by external callers. Typically, level 1 rules should be used only for compatibility, such as for  .NET Framework 2.0 assemblies. By default, .NET Framework 2.0 assemblies become level 2 assemblies when they are recompiled for the net_v40_long. To compile these assemblies as level 1, you must mark them explicitly as level 1. For more information about level 1 behavior, see <format type="text/html"><a href="5fd8f46d-3961-46a7-84af-2eb1f48e75cf">Security-Transparent Code, Level 1</a></format>. For information about level 2 behavior, see <format type="text/html"><a href="4d05610a-0da6-4f08-acea-d54c9d6143c0">Security-Transparent Code, Level 2</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the set of security rules the common language runtime should enforce for an assembly.  </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Level1">
       <MemberSignature Language="C#" Value="Level1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.SecurityRuleSet Level1 = unsigned int8(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -22,11 +31,15 @@
         <ReturnType>System.Security.SecurityRuleSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the runtime will enforce level 1 (.NET Framework version 2.0) transparency rules.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Level2">
       <MemberSignature Language="C#" Value="Level2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.SecurityRuleSet Level2 = unsigned int8(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,11 +48,15 @@
         <ReturnType>System.Security.SecurityRuleSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the runtime will enforce level 2 transparency rules.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.SecurityRuleSet None = unsigned int8(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -48,7 +65,10 @@
         <ReturnType>System.Security.SecurityRuleSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unsupported. Using this value results in a <see cref="T:System.IO.FileLoadException" /> being thrown.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IssuedSecurityTokenHandler" FullName="System.ServiceModel.Security.Tokens.IssuedSecurityTokenHandler">
+  <TypeSignature Language="C#" Value="public delegate void IssuedSecurityTokenHandler(SecurityToken issuedToken, EndpointAddress tokenRequestor);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed IssuedSecurityTokenHandler extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="issuedToken" Type="System.IdentityModel.Tokens.SecurityToken" />
+    <Parameter Name="tokenRequestor" Type="System.ServiceModel.EndpointAddress" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="issuedToken">To be added.</param>
+    <param name="tokenRequestor">To be added.</param>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate points to a method that when implemented will be called by the Authenticators before the token is issued to the client.</para>
+    </summary>
+  </Docs>
+</Type>

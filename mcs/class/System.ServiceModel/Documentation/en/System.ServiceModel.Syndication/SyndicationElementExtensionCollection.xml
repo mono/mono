@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SyndicationElementExtensionCollection" FullName="System.ServiceModel.Syndication.SyndicationElementExtensionCollection">
+  <TypeSignature Language="C#" Value="public sealed class SyndicationElementExtensionCollection : System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationElementExtension&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SyndicationElementExtensionCollection extends System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Syndication.SyndicationElementExtension&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationElementExtension&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.ServiceModel.Syndication.SyndicationElementExtension</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> objects.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object extension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object extension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="extension" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> object to the collection.</para>
+        </summary>
+        <param name="extension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> object to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (System.Xml.XmlReader xmlReader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Xml.XmlReader xmlReader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new syndication element extension to the collection.</para>
+        </summary>
+        <param name="xmlReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read the syndication element extension from.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object dataContractExtension, System.Runtime.Serialization.DataContractSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object dataContractExtension, class System.Runtime.Serialization.DataContractSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dataContractExtension" Type="System.Object" />
+        <Parameter Name="serializer" Type="System.Runtime.Serialization.DataContractSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified object to the collection using the specified data contract serializer.</para>
+        </summary>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the collection.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serializer to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object xmlSerializerExtension, System.Xml.Serialization.XmlSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object xmlSerializerExtension, class System.Xml.Serialization.XmlSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xmlSerializerExtension" Type="System.Object" />
+        <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified object to the collection using the specified XML serializer.</para>
+        </summary>
+        <param name="xmlSerializerExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the collection.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML serializer to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (string outerName, string outerNamespace, object dataContractExtension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(string outerName, string outerNamespace, object dataContractExtension) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="outerName" Type="System.String" />
+        <Parameter Name="outerNamespace" Type="System.String" />
+        <Parameter Name="dataContractExtension" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified object to the collection with the specified outer name and outer namespace.</para>
+        </summary>
+        <param name="outerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outer name.</param>
+        <param name="outerNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outer namespace.</param>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the collection.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (string outerName, string outerNamespace, object dataContractExtension, System.Runtime.Serialization.XmlObjectSerializer dataContractSerializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(string outerName, string outerNamespace, object dataContractExtension, class System.Runtime.Serialization.XmlObjectSerializer dataContractSerializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="outerName" Type="System.String" />
+        <Parameter Name="outerNamespace" Type="System.String" />
+        <Parameter Name="dataContractExtension" Type="System.Object" />
+        <Parameter Name="dataContractSerializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified object to the collection with the specified outer name and outer namespace using the specified data contract serializer.</para>
+        </summary>
+        <param name="outerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outer name.</param>
+        <param name="outerNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outer namespace.</param>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the collection.</param>
+        <param name="dataContractSerializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serializer to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ClearItems">
+      <MemberSignature Language="C#" Value="protected override void ClearItems ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void ClearItems() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetReaderAtElementExtensions">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlReader GetReaderAtElementExtensions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlReader GetReaderAtElementExtensions() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlReader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.XmlReader" /> with the element extensions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> that contains the element extensions.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="InsertItem">
+      <MemberSignature Language="C#" Value="protected override void InsertItem (int index, System.ServiceModel.Syndication.SyndicationElementExtension item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InsertItem(int32 index, class System.ServiceModel.Syndication.SyndicationElementExtension item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationElementExtension" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <param name="item">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadElementExtensions&lt;TExtension&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;TExtension&gt; ReadElementExtensions&lt;TExtension&gt; (string extensionName, string extensionNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ObjectModel.Collection`1&lt;!!TExtension&gt; ReadElementExtensions&lt;TExtension&gt;(string extensionName, string extensionNamespace) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;TExtension&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TExtension" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="extensionName" Type="System.String" />
+        <Parameter Name="extensionNamespace" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the element extensions with the specified name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of element extension objects.</para>
+        </returns>
+        <param name="extensionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element extension.</param>
+        <param name="extensionNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element extension.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to read. </typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadElementExtensions&lt;TExtension&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;TExtension&gt; ReadElementExtensions&lt;TExtension&gt; (string extensionName, string extensionNamespace, System.Runtime.Serialization.XmlObjectSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ObjectModel.Collection`1&lt;!!TExtension&gt; ReadElementExtensions&lt;TExtension&gt;(string extensionName, string extensionNamespace, class System.Runtime.Serialization.XmlObjectSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;TExtension&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TExtension" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="extensionName" Type="System.String" />
+        <Parameter Name="extensionNamespace" Type="System.String" />
+        <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the element extensions with the specified name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of element extension objects.</para>
+        </returns>
+        <param name="extensionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element extension.</param>
+        <param name="extensionNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element extension.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to read.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadElementExtensions&lt;TExtension&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;TExtension&gt; ReadElementExtensions&lt;TExtension&gt; (string extensionName, string extensionNamespace, System.Xml.Serialization.XmlSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ObjectModel.Collection`1&lt;!!TExtension&gt; ReadElementExtensions&lt;TExtension&gt;(string extensionName, string extensionNamespace, class System.Xml.Serialization.XmlSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;TExtension&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TExtension" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="extensionName" Type="System.String" />
+        <Parameter Name="extensionNamespace" Type="System.String" />
+        <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the element extensions with the specified name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of element extension objects.</para>
+        </returns>
+        <param name="extensionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element extension.</param>
+        <param name="extensionNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element extension.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to read.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveItem">
+      <MemberSignature Language="C#" Value="protected override void RemoveItem (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void RemoveItem(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetItem">
+      <MemberSignature Language="C#" Value="protected override void SetItem (int index, System.ServiceModel.Syndication.SyndicationElementExtension item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void SetItem(int32 index, class System.ServiceModel.Syndication.SyndicationElementExtension item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationElementExtension" />
+      </Parameters>
+      <Docs>
+        <param name="index">To be added.</param>
+        <param name="item">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

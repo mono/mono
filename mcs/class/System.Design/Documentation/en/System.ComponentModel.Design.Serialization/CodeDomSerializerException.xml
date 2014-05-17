@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeDomSerializerException" FullName="System.ComponentModel.Design.Serialization.CodeDomSerializerException">
   <TypeSignature Language="C#" Value="public class CodeDomSerializerException : SystemException" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This exception is thrown when the serializer encounters an error. This exception allows the serializer to return information about the location and type of the error.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when line number information is available for a serialization error.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,10 +29,15 @@
         <Parameter Name="linePragma" Type="System.CodeDom.CodeLinePragma" />
       </Parameters>
       <Docs>
-        <param name="ex">To be added.</param>
-        <param name="linePragma">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerException" /> class using the specified exception and line information.</para>
+        </summary>
+        <param name="ex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw. </param>
+        <param name="linePragma">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeLinePragma" /> that indicates where the exception occurred. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,10 +55,15 @@
         <Parameter Name="manager" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
       </Parameters>
       <Docs>
-        <param name="ex">To be added.</param>
-        <param name="manager">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerException" /> class. </para>
+        </summary>
+        <param name="ex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw. </param>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> object from which to extract the context.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,10 +74,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerException" /> class using the specified serialization data and context.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />Stores the data that was being used to serialize or deserialize the object that the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> was serializing or deserializing. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Describes the source and destination of the stream that generated the exception, as well as a means for serialization to retain that context and an additional caller-defined context. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,10 +97,15 @@
         <Parameter Name="linePragma" Type="System.CodeDom.CodeLinePragma" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="linePragma">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerException" /> class using the specified message and line information.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message describing the exception. </param>
+        <param name="linePragma">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeLinePragma" /> that indicates where the exception occurred. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -96,10 +123,15 @@
         <Parameter Name="manager" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="manager">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerException" /> class. </para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message describing the exception. </param>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> object from which to extract the context.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -113,10 +145,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the parameter name and additional exception information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />Stores the data that was being used to serialize or deserialize the object that the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> was serializing or deserializing. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Describes the source and destination of the stream that generated the exception, as well as a means for serialization to retain that context and an additional caller-defined context. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,9 +167,12 @@
         <ReturnType>System.CodeDom.CodeLinePragma</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line information for the error associated with this exception.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDsigC14NWithCommentsTransform" FullName="System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform">
   <TypeSignature Language="C#" Value="public class XmlDsigC14NWithCommentsTransform : System.Security.Cryptography.Xml.XmlDsigC14NTransform" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlDsigC14NWithCommentsTransform extends System.Security.Cryptography.Xml.XmlDsigC14NTransform" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 07 D1 FA 57 C4 AE D9 F0 A3 2E 84 AA 0F AE FD 0D E9 E8 FD 6A EC 8F 87 FB 03 76 6C 83 4C 99 92 1E B2 3B E7 9A D9 D5 DC C1 DD 9A D2 36 13 21 02 90 0B 72 3C F9 80 95 7F C4 E1 77 10 8F C6 07 77 4F 29 E8 32 0E 92 EA 05 EC E4 E8 21 C0 A5 EF E8 F1 64 5C 4C 0C 93 C1 AB 99 28 5D 62 2C AA 65 2C 1D FA D6 3D 74 5D 6F 2D E5 F1 7E 5E AF 0F C4 96 3D 26 1C 8A 12 43 65 18 20 6D C0 93 34 4D 5A D2 93]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
@@ -12,23 +15,39 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Transformation to canonicalize an XML document (including comments).</summary>
-    <remarks>This transform represents the Canonical XML transformation detailled in section 6.5.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class represents the C14N XML canonicalization transform that describes the canonical form of an XML document.  This transform allows a signer to create a digest using the canonical form of an XML document.  A recipient can then verify the digital signature using the same canonical form of the XML document with the same transform.         </para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class when you need to sign an XML document that contains comments.</para>
+      <para>Note that you cannot directly create a new instance of a canonicalization transform class.  To specify a canonicalization transform, pass the Uniform Resource Identifier (URI) that describes the transform to the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethod" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  To acquire a reference to the canonicalization transform, use the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethodObject" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  </para>
+      <para>The URI that describes the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class is defined by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigExcC14NWithCommentsTransformUrl" /> field.  </para>
+      <para>The URI that describes the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class is defined by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NWithCommentsTransformUrl" /> field and the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationWithCommentsUrl" /> field. </para>
+      <para>For more information about the C14N with comments transform, see Sections 6.5 and 6.6.1 of the XMLDSIG specification, which is available from the World Wide Web Consortium (W3C) at www.w3.org/TR/xmldsig-core/. The canonicalization algorithm is defined in the W3C Canonical XML specification, which is available at www.w3.org/TR/xml-c14n.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the C14N XML canonicalization transform for a digital signature as defined by the World Wide Web Consortium (W3C), with comments.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlDsigC14NWithCommentsTransform ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnmanagedMarshal" FullName="System.Reflection.Emit.UnmanagedMarshal">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class UnmanagedMarshal" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit UnmanagedMarshal extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,31 +14,56 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("An alternate API is available: Emit the MarshalAs custom attribute instead.")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The code example shows the workaround for this obsolete type.</para>
+      <para>Marshaling is the process of packaging and unpackaging parameters so remote procedure calls can occur. During marshaling, a field might undergo a format conversion when the format of the managed type is different from the format of the corresponding unmanaged type. For example, you might want to marshal a String type as an unmanaged BSTR. Some format conversions are handled automatically by the runtime. To override the default behavior, you must use the UnmanagedMarshal class to define the format conversion.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the class that describes how to marshal a field from managed to unmanaged code. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BaseType">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType BaseType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.InteropServices.UnmanagedType BaseType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an unmanaged base type. This property is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineByValArray">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineByValArray (int elemCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineByValArray(int32 elemCount) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -44,20 +71,33 @@
         <Parameter Name="elemCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="elemCount">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DefineByValArray method is not a simple native marshal.</para>
+          <para>Only unmanaged marshal constructs can be made using these static constructors.</para>
+          <para>Marshaling an array is a more complex process than marshaling an integer parameter. Array members are copied in a specific order so that the other side can reconstruct the array exactly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a fixed-length array (ByValArray) to marshal to unmanaged code.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
+        <param name="elemCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the fixed-length array. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineByValTStr">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineByValTStr (int elemCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineByValTStr(int32 elemCount) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -65,16 +105,23 @@
         <Parameter Name="elemCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="elemCount">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DefineByValStr method is not a simple native marshal.</para>
+          <para>Only unmanaged marshal constructs can be made using these static constructors.</para>
+          <para>Marshaling an array is a more complex process than marshaling an integer parameter. Array members are copied in a specific order so that the other side can reconstruct the array exactly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a string in a fixed array buffer (ByValTStr) to marshal to unmanaged code.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
+        <param name="elemCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the fixed array buffer. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineCustom">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id);" />
@@ -100,12 +147,17 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="DefineLPArray">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineLPArray (System.Runtime.InteropServices.UnmanagedType elemType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineLPArray(valuetype System.Runtime.InteropServices.UnmanagedType elemType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -113,20 +165,33 @@
         <Parameter Name="elemType" Type="System.Runtime.InteropServices.UnmanagedType" />
       </Parameters>
       <Docs>
-        <param name="elemType">To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DefineLPArray method is not a simple native marshal.</para>
+          <para>Only unmanaged marshal constructs can be made using these static constructors.</para>
+          <para>Marshaling an array is a more complex process than marshaling an integer parameter. Array members are copied in a specific order so that the other side can reconstruct the array exactly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an LPArray to marshal to unmanaged code. The length of an LPArray is determined at runtime by the size of the actual marshaled array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
+        <param name="elemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged type to which to marshal the array. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineSafeArray">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineSafeArray (System.Runtime.InteropServices.UnmanagedType elemType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineSafeArray(valuetype System.Runtime.InteropServices.UnmanagedType elemType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -134,20 +199,33 @@
         <Parameter Name="elemType" Type="System.Runtime.InteropServices.UnmanagedType" />
       </Parameters>
       <Docs>
-        <param name="elemType">To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DefineSafeArray method is not a simple native marshal.</para>
+          <para>Only unmanaged marshal constructs can be made using these static constructors.</para>
+          <para>Marshaling an array is a more complex process than marshaling an integer parameter. Array members are copied in a specific order so that the other side can reconstruct the array exactly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a SafeArray to marshal to unmanaged code.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
+        <param name="elemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base type or the UnmanagedType of each element of the array. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DefineUnmanagedMarshal">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineUnmanagedMarshal (System.Runtime.InteropServices.UnmanagedType unmanagedType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineUnmanagedMarshal(valuetype System.Runtime.InteropServices.UnmanagedType unmanagedType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineUnmanagedMarshal">
-      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineUnmanagedMarshal (System.Runtime.InteropServices.UnmanagedType unmanagedType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -155,75 +233,94 @@
         <Parameter Name="unmanagedType" Type="System.Runtime.InteropServices.UnmanagedType" />
       </Parameters>
       <Docs>
-        <param name="unmanagedType">To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.InteropServices.UnmanagedType" /> passed to this method must be a simple native type. None of the following values may be used: <see cref="F:System.Runtime.InteropServices.UnmanagedType.ByValTStr" />, <see cref="F:System.Runtime.InteropServices.UnmanagedType.SafeArray" />, <see cref="F:System.Runtime.InteropServices.UnmanagedType.ByValArray" />, <see cref="F:System.Runtime.InteropServices.UnmanagedType.LPArray" />, or <see cref="F:System.Runtime.InteropServices.UnmanagedType.CustomMarshaler" />.</para>
+          <para>Only unmanaged marshal constructs can be made using this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a given type that is to be marshaled to unmanaged code.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.UnmanagedMarshal" /> object.</para>
+        </returns>
+        <param name="unmanagedType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged type to which the type is to be marshaled. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ElementCount">
+      <MemberSignature Language="C#" Value="public int ElementCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ElementCount" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ElementCount">
-      <MemberSignature Language="C#" Value="public int ElementCount { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There is an ElementCount only if there is a NativeTypeFixedArray.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a number element. This property is read-only.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetUnmanagedType">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType GetUnmanagedType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.InteropServices.UnmanagedType GetUnmanagedType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetUnmanagedType">
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType GetUnmanagedType { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The GetUnmanagedType property is an accessor function for the native type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an unmanaged type. This property is read-only.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="IIDGuid">
+      <MemberSignature Language="C#" Value="public Guid IIDGuid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Guid IIDGuid" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IIDGuid">
-      <MemberSignature Language="C#" Value="public Guid IIDGuid { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Guid'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns Guid.Empty. This property might be removed in a future release.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a GUID. This property is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Obsolete("An alternate API is available: Emit the MarshalAs custom attribute instead.")</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeGenerationOptions" FullName="System.Xml.Serialization.CodeGenerationOptions">
   <TypeSignature Language="C#" Value="public enum CodeGenerationOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CodeGenerationOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -13,14 +16,40 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A Web Service Description Language (WSDL) file typically describes a class in XML schema language as an xsd:complex type composed of various primitive xsd:complex and xsd:simple types. When generating a .NET Framework class that represents a given xsd:complex type, you must choose how to represent the various primitive types it contains.</para>
+      <para>By default, each primitive is implemented as a field. If you specify the <see cref="F:System.Xml.Serialization.CodeGenerationOptions.GenerateProperties" /> option, each primitive type is instead implemented as a property.</para>
+      <format type="text/html">
+        <h2>Ordering of Serialization Code</h2>
+      </format>
+      <para>The <see cref="F:System.Xml.Serialization.CodeGenerationOptions.GenerateOrder" /> member instructs the code generator to create the serialization code in a specific order as determined by the Order property of the following attributes:</para>
+      <para>
+        <dynamicLink>
+          <keyword>T:System.Xml.Serialization.XmlAnyElementAttribute </keyword>
+          <keyword>T:System.Xml.Serialization.XmlArrayAttribute  </keyword>
+          <keyword>T:System.Xml.Serialization.XmlElementAttribute </keyword>
+        </dynamicLink>
+      </para>
+      <block subset="none" type="note">
+        <para>Once the Order property has been set on one public property or field in a type, it must be applied to all public properties and fields for that type and all inherited types.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies various options to use when generating .NET Framework types for use with an XML Web Service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnableDataBinding">
       <MemberSignature Language="C#" Value="EnableDataBinding" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Serialization.CodeGenerationOptions EnableDataBinding = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlEnum("enableDataBinding")</AttributeName>
@@ -30,16 +59,21 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables data binding.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateNewAsync">
       <MemberSignature Language="C#" Value="GenerateNewAsync" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Serialization.CodeGenerationOptions GenerateNewAsync = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlEnum("newAsync")</AttributeName>
@@ -49,16 +83,21 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates events for the asynchronous invocation of Web methods.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateOldAsync">
       <MemberSignature Language="C#" Value="GenerateOldAsync" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Serialization.CodeGenerationOptions GenerateOldAsync = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlEnum("oldAsync")</AttributeName>
@@ -68,16 +107,21 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates Begin and End methods for the asynchronous invocation of Web methods.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateOrder">
       <MemberSignature Language="C#" Value="GenerateOrder" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Serialization.CodeGenerationOptions GenerateOrder = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlEnum("order")</AttributeName>
@@ -87,16 +131,21 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates explicitly ordered serialization code as specified through the Order property of the <see cref="T:System.Xml.Serialization.XmlAnyElementAttribute" />, <see cref="T:System.Xml.Serialization.XmlArrayAttribute" />, and <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> attributes. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateProperties">
       <MemberSignature Language="C#" Value="GenerateProperties" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Serialization.CodeGenerationOptions GenerateProperties = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlEnum("properties")</AttributeName>
@@ -106,16 +155,21 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents primitive types by properties.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Serialization.CodeGenerationOptions None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
@@ -125,12 +179,12 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents primitive types by fields and primitive types by <see cref="N:System" /> namespace types.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

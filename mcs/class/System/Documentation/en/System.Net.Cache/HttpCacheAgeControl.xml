@@ -1,98 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCacheAgeControl" FullName="System.Net.Cache.HttpCacheAgeControl">
   <TypeSignature Language="C#" Value="public enum HttpCacheAgeControl" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpCacheAgeControl extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by members of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class to configure the time values for cache policies.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the meaning of time values that control caching behavior for resources obtained using <see cref="T:System.Net.HttpWebRequest" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MaxAge">
       <MemberSignature Language="C#" Value="MaxAge" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.HttpCacheAgeControl MaxAge = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Content can be taken from the cache until it is older than the age specified with this value.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxAgeAndMaxStale">
       <MemberSignature Language="C#" Value="MaxAgeAndMaxStale" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.HttpCacheAgeControl MaxAgeAndMaxStale = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> and <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxStale" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxAgeAndMinFresh">
       <MemberSignature Language="C#" Value="MaxAgeAndMinFresh" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.HttpCacheAgeControl MaxAgeAndMinFresh = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> and <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MinFresh" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxStale">
       <MemberSignature Language="C#" Value="MaxStale" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.HttpCacheAgeControl MaxStale = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Content can be taken from the cache after it has expired, until the time specified with this value elapses.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MinFresh">
       <MemberSignature Language="C#" Value="MinFresh" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.HttpCacheAgeControl MinFresh = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Content can be taken from the cache if the time remaining before expiration is greater than or equal to the time specified with this value.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.HttpCacheAgeControl None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For internal use only. The Framework will throw an <see cref="T:System.ArgumentException" /> if you try to use this member.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

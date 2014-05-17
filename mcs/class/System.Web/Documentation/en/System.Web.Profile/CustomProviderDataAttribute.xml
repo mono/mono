@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CustomProviderDataAttribute" FullName="System.Web.Profile.CustomProviderDataAttribute">
   <TypeSignature Language="C#" Value="public sealed class CustomProviderDataAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Profile.CustomProviderDataAttribute" /> class is used to supply a string of data with a profile property to a custom profile provider. The custom data string can be set to any string value and is set using the customProviderData attribute of the <format type="text/html"><a href="d3ea033b-751b-4bdc-8917-a5d44560808e">add</a></format> configuration element for adding profile properties. If the customProviderData attribute is set, then the value is placed in the <see cref="P:System.Configuration.SettingsProperty.Attributes" /> collection for the property and is indexed by the name "CustomProviderData."</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a string of custom data to the provider for a profile property.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +33,18 @@
         <Parameter Name="customProviderData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="customProviderData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Profile.CustomProviderDataAttribute" /> class is used to supply a string of data with a profile property to a custom profile provider. The custom data string can be set to any string value and is set using the customProviderData attribute of the <format type="text/html"><a href="d3ea033b-751b-4bdc-8917-a5d44560808e">add</a></format> configuration element for adding profile properties. If the customProviderData attribute is set, then the value is placed in the <see cref="P:System.Configuration.SettingsProperty.Attributes" /> collection for the property and is indexed by the name "CustomProviderData."</para>
+          <para>This constructor is used the .NET Framework and is not intended to be called from application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Profile.CustomProviderDataAttribute" /> class and specifies a string of custom data.</para>
+        </summary>
+        <param name="customProviderData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string of custom data to supply to the provider.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +57,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Profile.CustomProviderDataAttribute.CustomProviderData" /> property value is set using the customProviderData attribute of the <format type="text/html"><a href="d3ea033b-751b-4bdc-8917-a5d44560808e">add</a></format> configuration element for adding profile properties. The <see cref="P:System.Web.Profile.CustomProviderDataAttribute.CustomProviderData" /> property can be set to any string value to be used by the profile provider for the property. If the customProviderData attribute is set, then the value is placed in the <see cref="P:System.Configuration.SettingsProperty.Attributes" /> collection for the property and is indexed by the name "CustomProviderData."</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string of custom data for the profile property provider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +80,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="P:System.Web.Profile.CustomProviderDataAttribute.CustomProviderData" /> property is null, or an empty string for profile properties of type String.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Web.Profile.CustomProviderDataAttribute.CustomProviderData" /> property is set to the default value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Web.Profile.CustomProviderDataAttribute.CustomProviderData" /> property is set to the default value; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

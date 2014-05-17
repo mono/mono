@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IFormatter" FullName="System.Runtime.Serialization.IFormatter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IFormatter" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFormatter" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,48 +10,82 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface must be implemented by any class identified as a formatter in the <see cref="N:System.Runtime.Serialization" /> architecture.</para>
+      <para>Objects controlling their own serialization can do so by implementing the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface. In order for an object to be serialized, you must mark that object as being serializable. You can do this by applying the serializable attribute to a class. If any object in the graph is not serializable, serialization will fail.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality for formatting serialized objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Binder">
-      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.SerializationBinder Binder { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.SerializationBinder Binder { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.SerializationBinder Binder" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Serialization.SerializationBinder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When trying to resolve a type from information encoded on the stream, the formatter calls the <see cref="M:System.Runtime.Serialization.SerializationBinder.BindToType(System.String,System.String)" /> method on the <see cref="T:System.Runtime.Serialization.SerializationBinder" />. This method resolves these parameters to a <see cref="T:System.Type" /> object. The binder can find a <see cref="T:System.Type" /> at deserialization time that is in a different assembly than it was at serialization time.</para>
+          <para>Setting this property has no effect during serialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.SerializationBinder" /> that performs type lookups during deserialization.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Context">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.StreamingContext Context { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.Serialization.StreamingContext Context" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Context">
-      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.StreamingContext Context { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Serialization.StreamingContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is passed to any object implementing <see cref="T:System.Runtime.Serialization.ISerializable" /> or <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" />. The <see cref="T:System.Runtime.Serialization.StreamingContext" /> indicates the destination (during serialization) or the source (during deserialization) of the data. An object implementing <see cref="T:System.Runtime.Serialization.ISerializable" /> can alter the data that it transmits depending on value of the <see cref="P:System.Runtime.Serialization.IFormatter.Context" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.StreamingContext" /> used for serialization and deserialization.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Deserialize">
+      <MemberSignature Language="C#" Value="public object Deserialize (System.IO.Stream serializationStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Deserialize(class System.IO.Stream serializationStream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Deserialize">
-      <MemberSignature Language="C#" Value="public object Deserialize (System.IO.Stream serializationStream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -57,20 +93,32 @@
         <Parameter Name="serializationStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="serializationStream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Serialization.IFormatter.Deserialize(System.IO.Stream)" /> method reads graph information from the stream and reconstructs a clone of the original graph. The topology of the graph is preserved.</para>
+          <para>The deserialization process allocates an empty object of the appropriate type and repopulates its fields from the data transmitted in the <paramref name="serializationStream" /> stream. It is important to note that no constructor is ever called on the object during deserialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the data on the provided stream and reconstitutes the graph of objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top object of the deserialized graph.</para>
+        </returns>
+        <param name="serializationStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the data to deserialize. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Serialize">
+      <MemberSignature Language="C#" Value="public void Serialize (System.IO.Stream serializationStream, object graph);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Serialize(class System.IO.Stream serializationStream, object graph) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Serialize">
-      <MemberSignature Language="C#" Value="public void Serialize (System.IO.Stream serializationStream, object graph);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -79,39 +127,44 @@
         <Parameter Name="graph" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serializationStream">To be added: an object of type 'IO.Stream'</param>
-        <param name="graph">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Serialization.IFormatter.Serialize(System.IO.Stream,System.Object)" /> method automatically serializes the provided objects, and all objects connected to it, to the provided stream.</para>
+          <para>By default, the serialization process records an object's state by gathering the values of all its fields (public and private). These fields are saved to the stream along with information about the object such as the name qualified by the assembly for its type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes an object, or graph of objects with the given root to the provided stream.</para>
+        </summary>
+        <param name="serializationStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream where the formatter puts the serialized data. This stream can reference a variety of backing stores (such as files, network, memory, and so on). </param>
+        <param name="graph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object, or root of the object graph, to serialize. All child objects of this root object are automatically serialized. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SurrogateSelector">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.ISurrogateSelector SurrogateSelector { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.ISurrogateSelector SurrogateSelector" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SurrogateSelector">
-      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.ISurrogateSelector SurrogateSelector { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Serialization.ISurrogateSelector</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" /> allows the user to specify an object best suited to handle the serialization of a particular object or class of objects. Think of it as an implementation of <see cref="T:System.Runtime.Serialization.ISerializable" /> but provided by a different object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Runtime.Serialization.SurrogateSelector" /> used by the current formatter.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Interfaces />
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

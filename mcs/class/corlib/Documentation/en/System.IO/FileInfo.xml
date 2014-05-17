@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileInfo" FullName="System.IO.FileInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class FileInfo : System.IO.FileSystemInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit FileInfo extends System.IO.FileSystemInfo" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,50 +14,164 @@
     <BaseTypeName>System.IO.FileSystemInfo</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.IO.FileInfo" /> class for typical operations such as copying, moving, renaming, creating, opening, deleting, and appending to files.</para>
+      <para>If you are performing multiple operations on the same file, it can be more efficient to use <see cref="T:System.IO.FileInfo" /> instance methods instead of the corresponding static methods of the <see cref="T:System.IO.File" /> class, because a security check will not always be necessary.</para>
+      <para>Many of the <see cref="T:System.IO.FileInfo" /> methods return other I/O types when you create or open files. You can use these other types to further manipulate a file. For more information, see specific <see cref="T:System.IO.FileInfo" /> members such as <see cref="M:System.IO.FileInfo.Open(System.IO.FileMode)" />, <see cref="M:System.IO.FileInfo.OpenRead" />, <see cref="M:System.IO.FileInfo.OpenText" />, <see cref="M:System.IO.FileInfo.CreateText" />, or <see cref="M:System.IO.FileInfo.Create" />.</para>
+      <para>By default, full read/write access to new files is granted to all users.</para>
+      <para>The following table describes the enumerations that are used to customize the behavior of various <see cref="T:System.IO.FileInfo" /> methods.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Enumeration </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.IO.FileAccess" /> </para>
+          </term>
+          <description>
+            <para>Specifies read and write access to a file. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.IO.FileShare" /> </para>
+          </term>
+          <description>
+            <para>Specifies the level of access permitted for a file that is already in use. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.IO.FileMode" /> </para>
+          </term>
+          <description>
+            <para>Specifies whether the contents of an existing file are preserved or overwritten, and whether requests to create an existing file cause an exception. </para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>In members that accept a path as an input string, that path must be well-formed or an exception is raised. For example, if a path is fully qualified but begins with a space, the path is not trimmed in methods of the class. Therefore, the path is malformed and an exception is raised. Similarly, a path or a combination of paths cannot be fully qualified twice. For example, "c:\temp c:\windows" also raises an exception in most cases. Ensure that your paths are well-formed when using methods that accept a path string.</para>
+      </block>
+      <para>In members that accept a path, the path can refer to a file or just a directory. The specified path can also refer to a relative path or a Universal Naming Convention (UNC) path for a server and share name. For example, all the following are acceptable paths: </para>
+      <list type="bullet">
+        <item>
+          <para>"c:\\MyDir\\MyFile.txt" in C#, or "c:\MyDir\MyFile.txt" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"c:\\MyDir" in C#, or "c:\MyDir" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"MyDir\\MySubdir" in C#, or "MyDir\MySubDir" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"\\\\MyServer\\MyShare" in C#, or "\\MyServer\MyShare" in Visual Basic.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.IO.FileInfo" /> class provides the following properties that enable you to retrieve information about a file. For an example of how to use each property, see the property pages. </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.IO.FileInfo.Directory" /> property retrieves an object that represents the parent directory of a file.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.IO.FileInfo.DirectoryName" /> property retrieves the full path of the parent directory of a file.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.IO.FileInfo.Exists" /> property checks for the presence of a file before operating on it.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.IO.FileInfo.IsReadOnly" /> property retrieves or sets a value that specifies whether a file can be modified.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.IO.FileInfo.Length" /> retrieves the size of a file.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.IO.FileInfo.Name" /> retrieves the name of a file.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties and instance methods for the creation, copying, deletion, moving, and opening of files, and aids in the creation of <see cref="T:System.IO.FileStream" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public FileInfo (string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string fileName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify either the fully qualified or the relative file name, but the security check gets the fully qualified name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.FileInfo" /> class, which acts as a wrapper for a file path.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the new file, or the relative file name. Do not end the path with the directory separator character.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AppendText">
+      <MemberSignature Language="C#" Value="public System.IO.StreamWriter AppendText ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.StreamWriter AppendText() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendText">
-      <MemberSignature Language="C#" Value="public System.IO.StreamWriter AppendText ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.StreamWriter</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'StreamWriter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.IO.StreamWriter" /> that appends text to the file represented by this instance of the <see cref="T:System.IO.FileInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new StreamWriter.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public System.IO.FileInfo CopyTo (string destFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileInfo CopyTo(string destFileName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public System.IO.FileInfo CopyTo (string destFileName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileInfo</ReturnType>
       </ReturnValue>
@@ -63,20 +179,34 @@
         <Parameter Name="destFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="destFileName">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileInfo'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.IO.FileInfo.CopyTo(System.String,System.Boolean)" /> method to allow overwriting of an existing file.</para>
+          <block subset="none" type="note">
+            <para>Whenever possible, avoid using short file names (such as XXXXXX~1.XXX) with this method. If two files have equivalent short file names then this method may fail and raise an exception and/or result in undesirable behavior</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies an existing file to a new file, disallowing the overwriting of an existing file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file with a fully qualified path.</para>
+        </returns>
+        <param name="destFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new file to copy to. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public System.IO.FileInfo CopyTo (string destFileName, bool overwrite);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileInfo CopyTo(string destFileName, bool overwrite) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public System.IO.FileInfo CopyTo (string destFileName, bool overwrite);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileInfo</ReturnType>
       </ReturnValue>
@@ -85,66 +215,88 @@
         <Parameter Name="overwrite" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="destFileName">To be added.</param>
-        <param name="overwrite">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileInfo'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to allow or prevent overwriting of an existing file. Use the <see cref="M:System.IO.FileInfo.CopyTo(System.String)" />  method to prevent overwriting of an existing file by default.</para>
+          <block subset="none" type="note">
+            <para>Whenever possible, avoid using short file names (such as XXXXXX~1.XXX) with this method. If two files have equivalent short file names then this method may fail and raise an exception and/or result in undesirable behavior</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies an existing file to a new file, allowing the overwriting of an existing file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file, or an overwrite of an existing file if <paramref name="overwrite" /> is true. If the file exists and <paramref name="overwrite" /> is false, an <see cref="T:System.IO.IOException" /> is thrown.</para>
+        </returns>
+        <param name="destFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new file to copy to. </param>
+        <param name="overwrite">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to allow an existing file to be overwritten; otherwise, false. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileStream Create() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream Create ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileStream'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, full read/write access to new files is granted to all users.</para>
+          <para>This method is a wrapper for the functionality provided by <see cref="M:System.IO.File.Create(System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="CreateText">
+      <MemberSignature Language="C#" Value="public System.IO.StreamWriter CreateText ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.StreamWriter CreateText() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateText">
-      <MemberSignature Language="C#" Value="public System.IO.StreamWriter CreateText ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.StreamWriter</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'StreamWriter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, full read/write access to new files is granted to all users.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.IO.StreamWriter" /> that writes a new text file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new StreamWriter.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Decrypt">
       <MemberSignature Language="C#" Value="public void Decrypt ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Decrypt() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -154,70 +306,101 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Delete">
-      <MemberSignature Language="C#" Value="public override void Delete ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.FileInfo.Decrypt" /> method allows you to decrypt a file that was encrypted using the <see cref="M:System.IO.FileInfo.Encrypt" /> method.  The <see cref="M:System.IO.FileInfo.Decrypt" /> method can decrypt only files that were encrypted using the current user account. </para>
+          <para>Both the <see cref="M:System.IO.FileInfo.Encrypt" /> method and the <see cref="M:System.IO.FileInfo.Decrypt" /> method use the cryptographic service provider (CSP) installed on the computer and the file encryption keys of the process calling the method.</para>
+          <para>The current file system must be formatted as NTFS and the current operating system must be Microsoft Windows NT or later.   </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts a file that was encrypted by the current account using the <see cref="M:System.IO.FileInfo.Encrypt" /> method.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="public override void Delete ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Delete() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the file does not exist, this method does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Permanently deletes a file.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Directory">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo Directory { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.DirectoryInfo Directory" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.DirectoryInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DirectoryInfo'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the parent directory as a string, use the <see cref="P:System.IO.FileInfo.DirectoryName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of the parent directory.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="DirectoryName">
+      <MemberSignature Language="C#" Value="public string DirectoryName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DirectoryName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DirectoryName">
-      <MemberSignature Language="C#" Value="public string DirectoryName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the parent directory as a <see cref="T:System.IO.DirectoryInfo" /> object, use the <see cref="P:System.IO.FileInfo.Directory" /> property.</para>
+          <para>When first called, <see cref="T:System.IO.FileInfo" /> calls <see cref="M:System.IO.FileSystemInfo.Refresh" /> and caches information about the file. On subsequent calls, you must call <see cref="M:System.IO.FileSystemInfo.Refresh" /> to get the latest copy of the information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representing the directory's full path.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encrypt">
       <MemberSignature Language="C#" Value="public void Encrypt ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Encrypt() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -227,45 +410,86 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.FileInfo.Encrypt" /> method allows you to encrypt a file so that only the account used to call this method can decrypt it.  Use the <see cref="M:System.IO.FileInfo.Decrypt" /> method to decrypt a file encrypted by the <see cref="M:System.IO.FileInfo.Encrypt" /> method. </para>
+          <para>Both the <see cref="M:System.IO.FileInfo.Encrypt" /> method and the <see cref="M:System.IO.FileInfo.Decrypt" /> method use the cryptographic service provider (CSP) installed on the computer and the file encryption keys of the process calling the method.</para>
+          <para>The current file system must be formatted as NTFS and the current operating system must be Microsoft Windows NT or later.   </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts a file so that only the account used to encrypt the file can decrypt it.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="C#" Value="public override bool Exists { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Exists" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When first called, <see cref="T:System.IO.FileInfo" /> calls <see cref="M:System.IO.FileSystemInfo.Refresh" /> and caches information about the file. On subsequent calls, you must call <see cref="M:System.IO.FileSystemInfo.Refresh" /> to get the latest copy of the information.</para>
+          <para>The <see cref="P:System.IO.FileInfo.Exists" /> property returns false if any error occurs while trying to determine if the specified file exists. This can occur in situations that raise exceptions such as passing a file name with invalid characters or too many characters, a failing or missing disk, or if the caller does not have permission to read the file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a file exists.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.FileSecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.FileSecurity GetAccessControl() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.FileSecurity</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.IO.FileInfo.GetAccessControl" /> method to retrieve the access control list (ACL) entries for the current file.</para>
+          <para>An ACL describes individuals and/or groups who have, or do not have, rights to specific actions on the given file. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How to: Add or Remove an Access Control List Entry</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control list (ACL) entries for the file described by the current <see cref="T:System.IO.FileInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control rules for the current file.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.FileSecurity GetAccessControl (System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.FileSecurity GetAccessControl(valuetype System.Security.AccessControl.AccessControlSections includeSections) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAccessControl">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.FileSecurity GetAccessControl (System.Security.AccessControl.AccessControlSections includeSections);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.FileSecurity</ReturnType>
       </ReturnValue>
@@ -273,54 +497,115 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <param name="includeSections">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.IO.FileInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections)" /> method to retrieve the access control list (ACL) entries for the current file.</para>
+          <para>An ACL describes individuals and/or groups who have, or do not have, rights to specific actions on the given file. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How to: Add or Remove an Access Control List Entry</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the specified type of access control list (ACL) entries for the file described by the current <see cref="T:System.IO.FileInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control rules for the current file.     </para>
+        </returns>
+        <param name="includeSections">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> values that specifies which group of access control entries to retrieve. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="C#" Value="public bool IsReadOnly { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.IO.FileInfo.IsReadOnly" /> property to quickly determine or change whether the current file is read only.</para>
+          <para>When first called, <see cref="T:System.IO.FileInfo" /> calls <see cref="M:System.IO.FileSystemInfo.Refresh" /> and caches information about the file. On subsequent calls, you must call <see cref="M:System.IO.FileSystemInfo.Refresh" /> to get the latest copy of the information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines if the current file is read only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Length">
       <MemberSignature Language="C#" Value="public long Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Length" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int64</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Returns the size of the file in bytes.</summary>
-        <value>To be added: an object of type 'long'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'long'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.IO.FileInfo.Length" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileInfo" /> object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" />methods: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size, in bytes, of the current file.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MoveTo">
       <MemberSignature Language="C#" Value="public void MoveTo (string destFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MoveTo(string destFileName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -328,36 +613,52 @@
         <Parameter Name="destFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="destFileName">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method works across disk volumes. For example, the file c:\MyFile.txt can be moved to d:\public and renamed NewFile.txt.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves a specified file to a new location, providing the option to specify a new file name.</para>
+        </summary>
+        <param name="destFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to move the file to, which can specify a different file name. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public override string Name { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When first called, <see cref="T:System.IO.FileInfo" /> calls <see cref="M:System.IO.FileSystemInfo.Refresh" /> and caches information about the file. On subsequent calls, you must call <see cref="M:System.IO.FileSystemInfo.Refresh" /> to get the latest copy of the information.</para>
+          <para>The name of the file includes the file extension.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the file.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream Open (System.IO.FileMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileStream Open(valuetype System.IO.FileMode mode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream Open (System.IO.FileMode mode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -365,20 +666,28 @@
         <Parameter Name="mode" Type="System.IO.FileMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added: an object of type 'FileMode'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a file in the specified mode.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file opened in the specified mode, with read/write access and unshared.</para>
+        </returns>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> constant specifying the mode (for example, Open or Append) in which to open the file. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream Open (System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileStream Open(valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream Open (System.IO.FileMode mode, System.IO.FileAccess access);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -387,21 +696,30 @@
         <Parameter Name="access" Type="System.IO.FileAccess" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added: an object of type 'FileMode'</param>
-        <param name="access">To be added: an object of type 'FileAccess'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a file in the specified mode with read, write, or read/write access.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> object opened in the specified mode and access, and unshared.</para>
+        </returns>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> constant specifying the mode (for example, Open or Append) in which to open the file. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileAccess" /> constant specifying whether to open the file with Read, Write, or ReadWrite file access. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream Open (System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileStream Open(valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream Open (System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -411,91 +729,108 @@
         <Parameter Name="share" Type="System.IO.FileShare" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added: an object of type 'FileMode'</param>
-        <param name="access">To be added: an object of type 'FileAccess'</param>
-        <param name="share">To be added: an object of type 'FileShare'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a file in the specified mode with read, write, or read/write access and the specified sharing option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> object opened with the specified mode, access, and sharing options.</para>
+        </returns>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> constant specifying the mode (for example, Open or Append) in which to open the file. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileAccess" /> constant specifying whether to open the file with Read, Write, or ReadWrite file access. </param>
+        <param name="share">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileShare" /> constant specifying the type of access other FileStream objects have to this file. </param>
       </Docs>
+    </Member>
+    <Member MemberName="OpenRead">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream OpenRead ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileStream OpenRead() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenRead">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream OpenRead ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileStream'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a read-only <see cref="T:System.IO.FileStream" /> object with the <see cref="T:System.IO.FileShare" /> mode set to <see cref="F:System.IO.FileShare.Read" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a read-only <see cref="T:System.IO.FileStream" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new read-only <see cref="T:System.IO.FileStream" /> object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="OpenText">
+      <MemberSignature Language="C#" Value="public System.IO.StreamReader OpenText ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.StreamReader OpenText() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenText">
-      <MemberSignature Language="C#" Value="public System.IO.StreamReader OpenText ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.StreamReader</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'StreamReader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.IO.StreamReader" /> with UTF8 encoding that reads from an existing text file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new StreamReader with UTF8 encoding.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="OpenWrite">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream OpenWrite ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileStream OpenWrite() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenWrite">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream OpenWrite ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileStream'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.FileInfo.OpenWrite" /> method opens a file if one already exists for the file path, or creates a new file if one does not exist. For an existing file, it does not append the new text to the existing text. Instead, it overwrites the existing characters with the new characters. If you overwrite a longer string (such as "This is a test of the OpenWrite method") with a shorter string (like "Second run"), the file will contain a mix of the strings ("Second runtest of the OpenWrite method").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a write-only <see cref="T:System.IO.FileStream" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A write-only unshared <see cref="T:System.IO.FileStream" /> object for a new or existing file.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public System.IO.FileInfo Replace (string destinationFileName, string destinationBackupFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileInfo Replace(string destinationFileName, string destinationBackupFileName) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileInfo</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="destinationFileName" Type="System.String" />
-        <Parameter Name="destinationBackupFileName" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="destinationFileName">To be added.</param>
-        <param name="destinationBackupFileName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -505,10 +840,50 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.FileInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="destinationFileName" Type="System.String" />
+        <Parameter Name="destinationBackupFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.FileInfo.Replace(System.String,System.String)" /> method replaces the contents of a specified file with the contents of the file described by the current <see cref="T:System.IO.FileInfo" /> object.  It also creates a backup of the file that was replaced.  Finally, it returns a new <see cref="T:System.IO.FileInfo" /> object that describes the overwritten file.</para>
+          <block subset="none" type="note">
+            <para>This method will succeed in Windows 2000 environments if the <paramref name="destFileName" /> is read-only and will not raise an exception. Use the <see cref="P:System.IO.FileInfo.IsReadOnly" /> property to check if the destination file is read-only before attempting to replace it.</para>
+          </block>
+          <para>Pass null to the <paramref name="destBackupFileName" /> parameter if you do not want to create a backup of the file being replaced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the contents of a specified file with the file described by the current <see cref="T:System.IO.FileInfo" /> object, deleting the original file, and creating a backup of the replaced file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileInfo" /> object that encapsulates information about the file described by the <paramref name="destFileName" /> parameter.</para>
+        </returns>
+        <param name="destinationFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file to replace with the current file.</param>
+        <param name="destinationBackupFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file with which to create a backup of the file described by the <paramref name="destFileName" /> parameter.</param>
+      </Docs>
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public System.IO.FileInfo Replace (string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileInfo Replace(string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.IO.FileInfo</ReturnType>
       </ReturnValue>
@@ -518,27 +893,39 @@
         <Parameter Name="ignoreMetadataErrors" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="destinationFileName">To be added.</param>
-        <param name="destinationBackupFileName">To be added.</param>
-        <param name="ignoreMetadataErrors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.FileInfo.Replace(System.String,System.String,System.Boolean)" /> method replaces the contents of a specified file with the contents of the file described by the current <see cref="T:System.IO.FileInfo" /> object.  It also creates a backup of the file that was replaced.  Finally, it returns a new <see cref="T:System.IO.FileInfo" /> object that describes the overwritten file.</para>
+          <block subset="none" type="note">
+            <para>This method will succeed in Windows 2000 environments if the <paramref name="destFileName" /> is read-only and will not raise an exception. Use the <see cref="P:System.IO.FileInfo.IsReadOnly" /> property to check if the destination file is read-only before attempting to replace it.</para>
+          </block>
+          <para>Pass null to the <paramref name="destBackupFileName" /> parameter if you do not want to create a backup of the file being replaced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the contents of a specified file with the file described by the current <see cref="T:System.IO.FileInfo" /> object, deleting the original file, and creating a backup of the replaced file.  Also specifies whether to ignore merge errors. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileInfo" /> object that encapsulates information about the file described by the <paramref name="destFileName" /> parameter.</para>
+        </returns>
+        <param name="destinationFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file to replace with the current file.</param>
+        <param name="destinationBackupFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file with which to create a backup of the file described by the <paramref name="destFileName" /> parameter.</param>
+        <param name="ignoreMetadataErrors">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore merge errors (such as attributes and ACLs) from the replaced file to the replacement file; otherwise false. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.Security.AccessControl.FileSecurity fileSecurity) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="SetAccessControl">
-      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.FileSecurity fileSecurity);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -546,38 +933,70 @@
         <Parameter Name="fileSecurity" Type="System.Security.AccessControl.FileSecurity" />
       </Parameters>
       <Docs>
-        <param name="fileSecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> method applies access control list (ACL) entries to the current file that represents the noninherited ACL list. </para>
+          <para>Use the <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> method whenever you need to add or remove ACL entries from a file.  </para>
+          <block subset="none" type="note">
+            <para>The ACL specified for the <paramref name="fileSecurity" /> parameter replaces the existing ACL for the file. To add permissions for a new user, use the <see cref="Overload:System.IO.Directory.GetAccessControl" /> method to obtain the existing ACL, modify it, and then use <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> to apply it back to the file.</para>
+          </block>
+          <para>An ACL describes individuals and/or groups who have, or do not have, rights to specific actions on the given file. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How to: Add or Remove an Access Control List Entry</a></format>.</para>
+          <para>The <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> method persists only <see cref="T:System.Security.AccessControl.FileSecurity" /> objects that have been modified after object creation.  If a <see cref="T:System.Security.AccessControl.FileSecurity" /> object has not been modified, it will not be persisted to a file.  Therefore, it is not possible to retrieve a <see cref="T:System.Security.AccessControl.FileSecurity" /> object from one file and reapply the same object to another file.</para>
+          <para>To copy ACL information from one file to another:</para>
+          <list type="ordered">
+            <item>
+              <para>Use the <see cref="Overload:System.IO.FileInfo.GetAccessControl" /> method to retrieve the <see cref="T:System.Security.AccessControl.FileSecurity" /> object from the source file.</para>
+            </item>
+            <item>
+              <para>Create a new <see cref="T:System.Security.AccessControl.FileSecurity" /> object for the destination file.</para>
+            </item>
+            <item>
+              <para>Use the <see cref="M:System.Security.AccessControl.ObjectSecurity.GetSecurityDescriptorBinaryForm" /> or <see cref="M:System.Security.AccessControl.ObjectSecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections)" /> method of the source <see cref="T:System.Security.AccessControl.FileSecurity" /> object to retrieve the ACL information.</para>
+            </item>
+            <item>
+              <para>Use the <see cref="M:System.Security.AccessControl.ObjectSecurity.SetSecurityDescriptorBinaryForm(System.Byte[])" /> or <see cref="M:System.Security.AccessControl.ObjectSecurity.SetSecurityDescriptorSddlForm(System.String)" /> method to copy the information retrieved in step 3 to the destination <see cref="T:System.Security.AccessControl.FileSecurity" /> object.</para>
+            </item>
+            <item>
+              <para>Set the destination <see cref="T:System.Security.AccessControl.FileSecurity" /> object to the destination file using the <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> method. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies access control list (ACL) entries described by a <see cref="T:System.Security.AccessControl.FileSecurity" /> object to the file described by the current <see cref="T:System.IO.FileInfo" /> object.</para>
+        </summary>
+        <param name="fileSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.AccessControl.FileSecurity" /> object that describes an access control list (ACL) entry to apply to the current file.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by the <see cref="M:System.IO.FileInfo.ToString" /> method represents path that was passed to the constructor.  When you create a <see cref="T:System.IO.FileInfo" /> object using the constructors, the <see cref="M:System.IO.FileInfo.ToString" /> method returns the fully qualified path.  However, there are cases where the string returned by the <see cref="M:System.IO.FileInfo.ToString" /> method does not represent the fully qualified path.  For example, when you create a <see cref="T:System.IO.FileInfo" /> object using the <see cref="Overload:System.IO.DirectoryInfo.GetFiles" /> method, the <see cref="M:System.IO.FileInfo.ToString" /> method does not represent the fully qualified path.      </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the path as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the path.</para>
+        </returns>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

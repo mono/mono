@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceEndpointCollection" FullName="System.ServiceModel.Description.ServiceEndpointCollection">
+  <TypeSignature Language="C#" Value="public class ServiceEndpointCollection : System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceEndpointCollection extends System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.ServiceModel.Description.ServiceEndpoint</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This collection of endpoints for a service is used by the metadata API to manage services with multiple endpoints. <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> is returned, for example, by the <see cref="P:System.ServiceModel.Description.ServiceDescription.Endpoints" /> property and by the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportAllEndpoints" /> method when creating service endpoints from WSDL port types. </para>
+      <para>The collection provides the functionality to <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.Find" /> the endpoints of a particular type, that have a specific name or address, or to <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> of the endpoints for a service that meet a specified contract type or name criteria.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection that contains the endpoints for a service.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Find">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint Find (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint Find(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This <see cref="M:System.ServiceModel.Description.ServiceEndpointCollection.Find(System.Type)" /> overload is specific to the indigo1 programming model. It looks at the <see cref="P:System.ServiceModel.Description.ContractDescription.ContractType" /> property for each endpoint. The <see cref="P:System.ServiceModel.Description.ContractDescription.ContractType" /> may be null if the <see cref="T:System.ServiceModel.Description.ContractDescription" /> was not created from the indigo2 programming model (types with *Contract attributes). </para>
+          <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the first service endpoint found that satisfies the specified contract type from the collection of service endpoints.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> of the specified contract type or null if none was found.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Find">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint Find (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint Find(class System.Uri uri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="uri">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a service endpoint with a specified address from the collection of service endpoints.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> of the specified address or null if none was found.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Find">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint Find (System.Xml.XmlQualifiedName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint Find(class System.Xml.XmlQualifiedName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a service endpoint with a specified namespace and contract name from the collection of service endpoints.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> with the specified namespace and contract name or null if none was found.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Find">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint Find (Type contractType, System.Xml.XmlQualifiedName bindingName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint Find(class System.Type contractType, class System.Xml.XmlQualifiedName bindingName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contractType" Type="System.Type" />
+        <Parameter Name="bindingName" Type="System.Xml.XmlQualifiedName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a service endpoint of a specified contract type and with a specified binding name and namespace from the collection of service endpoints.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> of the specified contract type and binding name and namespace or null if none was found.</para>
+        </returns>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the service endpoint.</param>
+        <param name="bindingName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> for the binding of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Find">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint Find (System.Xml.XmlQualifiedName contractName, System.Xml.XmlQualifiedName bindingName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint Find(class System.Xml.XmlQualifiedName contractName, class System.Xml.XmlQualifiedName bindingName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.Xml.XmlQualifiedName" />
+        <Parameter Name="bindingName" Type="System.Xml.XmlQualifiedName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are potentially multiple endpoints that could satisfy the criteria. The method returns the first one encountered in the collection. If you need to find all of the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that satisfy the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.FindAll" /> methods instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the first service endpoint with the specified contract name and namespace and binding name and namespace from the collection of service endpoints.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> with the specified binding and contract names and namespaces.</para>
+        </returns>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> for the contract of the service.</param>
+        <param name="bindingName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> for the binding of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FindAll">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; FindAll (Type contractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; FindAll(class System.Type contractType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contractType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you only need to find the first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that satisfies the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.Find" /> methods instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of all the service endpoints for a specified type of service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that contains service endpoints of the specified type or the empty collection if none is found.</para>
+        </returns>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the service endpoint.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FindAll">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; FindAll (System.Xml.XmlQualifiedName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; FindAll(class System.Xml.XmlQualifiedName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you only need to find the first <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that satisfies the specified criteria, use one of the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.Find" /> methods instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of all the service endpoints for a specified service name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> that contains service endpoints with the specified contract name and namespace or the empty collection if none is found.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="InsertItem">
+      <MemberSignature Language="C#" Value="protected override void InsertItem (int index, System.ServiceModel.Description.ServiceEndpoint item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InsertItem(int32 index, class System.ServiceModel.Description.ServiceEndpoint item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="item" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the virtual <see cref="M:System.Collections.ObjectModel.Collection`1.InsertItem(System.Int32,`0)" /> method defined in the base class and is provided to do input validation that ensures null values are not inserted into the collection. It is not intended to be called by users.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an item into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which the item should be inserted.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> item to insert at the specified <paramref name="index" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetItem">
+      <MemberSignature Language="C#" Value="protected override void SetItem (int index, System.ServiceModel.Description.ServiceEndpoint item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void SetItem(int32 index, class System.ServiceModel.Description.ServiceEndpoint item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="item" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the virtual <see cref="M:System.Collections.ObjectModel.Collection`1.SetItem(System.Int32,`0)" /> method defined in the base class and is provided to do input validation that ensures null values are not inserted into the collection. It is not intended to be called by users.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the element in the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the element to replace.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value for <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> item at the specified <paramref name="index" />.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

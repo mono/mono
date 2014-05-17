@@ -279,9 +279,19 @@ namespace Mono.CSharp
 			ig.BeginCatchBlock (type.GetMetaInfo ());
 		}
 
+		public void BeginFilterHandler ()
+		{
+			ig.BeginCatchBlock (null);
+		}
+
 		public void BeginExceptionBlock ()
 		{
 			ig.BeginExceptionBlock ();
+		}
+
+		public void BeginExceptionFilterBlock ()
+		{
+			ig.BeginExceptFilterBlock ();
 		}
 
 		public void BeginFinallyBlock ()
@@ -370,7 +380,7 @@ namespace Mono.CSharp
 		//
 		// Creates temporary field in current async storey
 		//
-		public FieldExpr GetTemporaryField (TypeSpec type)
+		public StackFieldExpr GetTemporaryField (TypeSpec type)
 		{
 			var f = AsyncTaskStorey.AddCapturedLocalVariable (type);
 			var fexpr = new StackFieldExpr (f);
@@ -968,10 +978,6 @@ namespace Mono.CSharp
 
 		public void Emit (EmitContext ec, MethodSpec method, Arguments Arguments, Location loc)
 		{
-			// Speed up the check by not doing it on not allowed targets
-			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (ec.MemberContext))
-				return;
-
 			EmitPredefined (ec, method, Arguments, loc);
 		}
 

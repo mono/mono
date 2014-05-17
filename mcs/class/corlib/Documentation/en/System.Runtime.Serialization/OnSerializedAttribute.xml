@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OnSerializedAttribute" FullName="System.Runtime.Serialization.OnSerializedAttribute">
   <TypeSignature Language="C#" Value="public sealed class OnSerializedAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit OnSerializedAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,24 +20,40 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Runtime.Serialization.OnSerializedAttribute" /> to manipulate the object after serialization has occurred. </para>
+      <para>To use the <see cref="T:System.Runtime.Serialization.OnSerializedAttribute" />, the method must contain a <see cref="T:System.Runtime.Serialization.StreamingContext" /> parameter. The attribute marks the method to be called by the serialization infrastructure and the <see cref="T:System.Runtime.Serialization.StreamingContext" />  provides additional data about the type of serialization taking place.  The usage is shown in the following code:</para>
+      <para>code reference: System.Runtime.Serialization.OnSerialization#3</para>
+      <block subset="none" type="note">
+        <para>In your code, you can use the word OnSerialized instead of the longer <see cref="T:System.Runtime.Serialization.OnSerializedAttribute" />.</para>
+      </block>
+      <code />
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When applied to a method, specifies that the method is called after serialization of an object in an object graph. The order of serialization relative to other objects in the graph is non-deterministic.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public OnSerializedAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.OnSerializedAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

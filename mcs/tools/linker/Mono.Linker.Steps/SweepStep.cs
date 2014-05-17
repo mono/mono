@@ -37,6 +37,7 @@ namespace Mono.Linker.Steps {
 	public class SweepStep : BaseStep {
 
 		AssemblyDefinition [] assemblies;
+		HashSet<AssemblyDefinition> resolvedTypeReferences;
 
 		protected override void Process ()
 		{
@@ -93,6 +94,9 @@ namespace Mono.Linker.Steps {
 
 		void SweepReferences (AssemblyDefinition assembly, AssemblyDefinition target)
 		{
+			if (assembly == target)
+				return;
+
 			var references = assembly.MainModule.AssemblyReferences;
 			for (int i = 0; i < references.Count; i++) {
 				var reference = references [i];
@@ -102,12 +106,51 @@ namespace Mono.Linker.Steps {
 				references.RemoveAt (i);
 				// Removing the reference does not mean it will be saved back to disk!
 				// That depends on the AssemblyAction set for the `assembly`
-				if (Annotations.GetAction (assembly) == AssemblyAction.Copy) {
+				switch (Annotations.GetAction (assembly)) {
+				case AssemblyAction.Copy:
 					// Copy means even if "unlinked" we still want that assembly to be saved back 
 					// to disk (OutputStep) without the (removed) reference
 					Annotations.SetAction (assembly, AssemblyAction.Save);
+					ResolveAllTypeReferences (assembly);
+					break;
+
+				case AssemblyAction.Save:
+				case AssemblyAction.Link:
+					ResolveAllTypeReferences (assembly);
+					break;
 				}
 				return;
+			}
+		}
+
+		void ResolveAllTypeReferences (AssemblyDefinition assembly)
+		{
+			if (resolvedTypeReferences == null)
+				resolvedTypeReferences = new HashSet<AssemblyDefinition> ();
+			if (resolvedTypeReferences.Contains (assembly))
+				return;
+			resolvedTypeReferences.Add (assembly);
+
+			var hash = new Dictionary<TypeReference,IMetadataScope> ();
+
+			foreach (TypeReference tr in assembly.MainModule.GetTypeReferences ()) {
+				if (hash.ContainsKey (tr))
+					continue;
+				var td = tr.Resolve ();
+				IMetadataScope scope = tr.Scope;
+				// at this stage reference might include things that can't be resolved
+				// and if it is (resolved) it needs to be kept only if marked (#16213)
+				if ((td != null) && Annotations.IsMarked (td))
+					scope = assembly.MainModule.Import (td).Scope;
+				hash.Add (tr, scope);
+			}
+
+			// Resolve everything first before updating scopes.
+			// If we set the scope to null, then calling Resolve() on any of its
+			// nested types would crash.
+
+			foreach (var e in hash) {
+				e.Key.Scope = e.Value;
 			}
 		}
 

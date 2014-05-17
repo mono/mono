@@ -2,8 +2,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,37 +28,54 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Microsoft.Build.Execution;
 
 namespace Microsoft.Build.Evaluation
 {
-        public class Toolset
-        {
-                public Toolset (string toolsVersion, string toolsPath,
-                                ProjectCollection projectCollection, string msbuildOverrideTasksPath)
-                {
-                        throw new NotImplementedException ();
-                }
+	public class Toolset
+	{
+		public Toolset (string toolsVersion, string toolsPath,
+				ProjectCollection projectCollection, string msbuildOverrideTasksPath)
+			: this (toolsVersion, toolsPath, null, projectCollection, msbuildOverrideTasksPath)
+		{
+		}
 
-                public Toolset (string toolsVersion, string toolsPath,
-                                IDictionary<string, string> buildProperties, ProjectCollection projectCollection,
-                                string msbuildOverrideTasksPath)
-                {
-                        throw new NotImplementedException ();
-                }
+		public Toolset (string toolsVersion, string toolsPath,
+				IDictionary<string, string> buildProperties, ProjectCollection projectCollection,
+				string msbuildOverrideTasksPath)
+			: this (toolsVersion, toolsPath, buildProperties, projectCollection, null, msbuildOverrideTasksPath)
+		{
+		}
 
-                public IDictionary<string, ProjectPropertyInstance> Properties {
-                        get { throw new NotImplementedException (); }
-                }
+#if NET_4_5
+		public
+#endif
+		Toolset (string toolsVersion, string toolsPath, IDictionary<string, string> buildProperties,
+			ProjectCollection projectCollection, IDictionary<string, SubToolset> subToolsets,
+			string msbuildOverrideTasksPath)
+		{
+			ToolsVersion = toolsVersion;
+			ToolsPath = toolsPath;
+			Properties = 
+				buildProperties == null ?
+				new Dictionary<string, ProjectPropertyInstance> () :
+				buildProperties.Select (p => new ProjectPropertyInstance (p.Key, true, p.Value)).ToDictionary (e => e.Name);
+#if NET_4_5
+			SubToolsets = subToolsets ?? new Dictionary<string, SubToolset> ();
+#endif
+		}
 
-                public string ToolsPath {
-                        get { throw new NotImplementedException (); }
-                }
+#if NET_4_5
+		public string DefaultSubToolsetVersion { get; private set; }
+		public IDictionary<string, SubToolset> SubToolsets { get; private set; }
+#endif
 
-                public string ToolsVersion {
-                        get { throw new NotImplementedException (); }
-                }
-        }
+		public IDictionary<string, ProjectPropertyInstance> Properties { get; private set; }
+
+		public string ToolsPath { get; private set; }
+
+		public string ToolsVersion { get; private set; }
+	}
 }
 

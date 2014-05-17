@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecurityTokenReferenceStyle" FullName="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle">
+  <TypeSignature Language="C#" Value="public enum SecurityTokenReferenceStyle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SecurityTokenReferenceStyle extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration sets the desired referencing style that is used to generate security token references (STR) to the security tokens from the signature and encryption elements in the message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="External">
+      <MemberSignature Language="C#" Value="External" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle External = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The generated STR will reference the token as if it were not attached to the message itself.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Internal">
+      <MemberSignature Language="C#" Value="Internal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle Internal = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The generated STR will reference the token as if it were included in the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

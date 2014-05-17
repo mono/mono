@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetworkAddressChangedEventHandler" FullName="System.Net.NetworkInformation.NetworkAddressChangedEventHandler">
   <TypeSignature Language="C#" Value="public delegate void NetworkAddressChangedEventHandler(object sender, EventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed NetworkAddressChangedEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -17,8 +20,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate handles <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged" /> events raised by the <see cref="T:System.Net.NetworkInformation.NetworkChange" /> class. For detailed information on receiving notification for network interface address change events, see the <see cref="T:System.Net.NetworkInformation.NetworkChange" /> class overview documentation </para>
+      <para>The <see cref="E:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged" /> event is supported on Windows 2000 and later.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>References one or more methods to be called when the address of a network interface changes.</para>
+    </summary>
   </Docs>
 </Type>

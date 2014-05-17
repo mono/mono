@@ -1,28 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataObject" FullName="System.Runtime.InteropServices.ComTypes.IDataObject">
   <TypeSignature Language="C#" Value="public interface IDataObject" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDataObject" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.Guid("0000010e-0000-0000-C000-000000000046")</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.Guid("0000010e-0000-0000-C000-000000000046")</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about the IDataObject interface, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IDataObject interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DAdvise">
       <MemberSignature Language="C#" Value="public int DAdvise (ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 DAdvise(valuetype System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, valuetype System.Runtime.InteropServices.ComTypes.ADVF advf, class System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, int32 connection) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -45,9 +57,11 @@
     </Member>
     <Member MemberName="DUnadvise">
       <MemberSignature Language="C#" Value="public void DUnadvise (int connection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DUnadvise(int32 connection) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -56,16 +70,65 @@
         <Parameter Name="connection" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="connection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about IDataObject::DUnAdvise, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Destroys a notification connection that had been previously established.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method supports the following return values:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK</para>
+              </term>
+              <description>
+                <para>The specified connection was successfully deleted.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OLE_E_NOCONNECTION</para>
+              </term>
+              <description>
+                <para>The specified connection is not valid.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OLE_E_ADVISENOTSUPPORTED</para>
+              </term>
+              <description>
+                <para>This <see cref="T:System.Runtime.InteropServices.ComTypes.IDataObject" /> implementation does not support notification.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="connection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A DWORD token that specifies the connection to remove. Use the value returned by <see cref="M:System.Runtime.InteropServices.ComTypes.IDataObject.DAdvise(System.Runtime.InteropServices.ComTypes.FORMATETC@,System.Runtime.InteropServices.ComTypes.ADVF,System.Runtime.InteropServices.ComTypes.IAdviseSink,System.Int32@)" /> when the connection was originally established.</param>
       </Docs>
     </Member>
     <Member MemberName="EnumDAdvise">
       <MemberSignature Language="C#" Value="public int EnumDAdvise (out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA enumAdvise);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 EnumDAdvise(class System.Runtime.InteropServices.ComTypes.IEnumSTATDATA enumAdvise) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -82,9 +145,11 @@
     </Member>
     <Member MemberName="EnumFormatEtc">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.IEnumFORMATETC EnumFormatEtc (System.Runtime.InteropServices.ComTypes.DATADIR direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.InteropServices.ComTypes.IEnumFORMATETC EnumFormatEtc(valuetype System.Runtime.InteropServices.ComTypes.DATADIR direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.IEnumFORMATETC</ReturnType>
@@ -93,17 +158,65 @@
         <Parameter Name="direction" Type="System.Runtime.InteropServices.ComTypes.DATADIR" />
       </Parameters>
       <Docs>
-        <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about IDataObject::EnumFormatEtc, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object for enumerating the <see cref="T:System.Runtime.InteropServices.ComTypes.FORMATETC" /> structures for a data object. These structures are used in calls to <see cref="M:System.Runtime.InteropServices.ComTypes.IDataObject.GetData(System.Runtime.InteropServices.ComTypes.FORMATETC@,System.Runtime.InteropServices.ComTypes.STGMEDIUM@)" /> or <see cref="M:System.Runtime.InteropServices.ComTypes.IDataObject.SetData(System.Runtime.InteropServices.ComTypes.FORMATETC@,System.Runtime.InteropServices.ComTypes.STGMEDIUM@,System.Boolean)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method supports the standard return values E_INVALIDARG and E_OUTOFMEMORY, as well as the following:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK</para>
+              </term>
+              <description>
+                <para>The enumerator object was successfully created.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_NOTIMPL</para>
+              </term>
+              <description>
+                <para>The direction specified by the <paramref name="direction" /> parameter is not supported.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OLE_S_USEREG</para>
+              </term>
+              <description>
+                <para>Requests that OLE enumerate the formats from the registry.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.InteropServices.ComTypes.DATADIR" /> values that specifies the direction of the data.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCanonicalFormatEtc">
       <MemberSignature Language="C#" Value="public int GetCanonicalFormatEtc (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, out System.Runtime.InteropServices.ComTypes.FORMATETC formatOut);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetCanonicalFormatEtc(valuetype System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, valuetype System.Runtime.InteropServices.ComTypes.FORMATETC formatOut) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -122,9 +235,11 @@
     </Member>
     <Member MemberName="GetData">
       <MemberSignature Language="C#" Value="public void GetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, out System.Runtime.InteropServices.ComTypes.STGMEDIUM medium);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetData(valuetype System.Runtime.InteropServices.ComTypes.FORMATETC format, valuetype System.Runtime.InteropServices.ComTypes.STGMEDIUM medium) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -142,9 +257,11 @@
     </Member>
     <Member MemberName="GetDataHere">
       <MemberSignature Language="C#" Value="public void GetDataHere (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetDataHere(valuetype System.Runtime.InteropServices.ComTypes.FORMATETC format, valuetype System.Runtime.InteropServices.ComTypes.STGMEDIUM medium) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -162,9 +279,11 @@
     </Member>
     <Member MemberName="QueryGetData">
       <MemberSignature Language="C#" Value="public int QueryGetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 QueryGetData(valuetype System.Runtime.InteropServices.ComTypes.FORMATETC format) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -181,9 +300,11 @@
     </Member>
     <Member MemberName="SetData">
       <MemberSignature Language="C#" Value="public void SetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium, bool release);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetData(valuetype System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, valuetype System.Runtime.InteropServices.ComTypes.STGMEDIUM medium, bool release) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>

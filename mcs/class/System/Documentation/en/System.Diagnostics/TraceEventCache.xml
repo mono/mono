@@ -1,118 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceEventCache" FullName="System.Diagnostics.TraceEventCache">
   <TypeSignature Language="C#" Value="public class TraceEventCache" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TraceEventCache extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Diagnostics.TraceEventCache" /> class, designed as a performance optimization for trace listener calls, is of interest only to developers creating custom trace listeners. </para>
+      </block>
+      <para>The <see cref="T:System.Diagnostics.TraceEventCache" /> class is used as a parameter in tracing methods to accurately identify the source of a trace event. Examples of methods that use <see cref="T:System.Diagnostics.TraceEventCache" /> are <see cref="M:System.Diagnostics.TraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String)" />   and <see cref="M:System.Diagnostics.TraceFilter.ShouldTrace(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[],System.Object,System.Object[])" />. The <see cref="P:System.Diagnostics.TraceEventCache.LogicalOperationStack" /> property contains data that can be used to correlate the trace with related traces.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides trace event data specific to a thread and a process.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TraceEventCache ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.TraceEventCache" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Callstack">
       <MemberSignature Language="C#" Value="public string Callstack { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Callstack" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.TraceEventCache.Callstack" /> property gets the call stack from the <see cref="P:System.Environment.StackTrace" /> property of the <see cref="T:System.Environment" /> class. The property value lists method calls in reverse chronological order. That is, the most recent method call is described first. One line of stack trace information is listed for each method call on the stack. For more information, see <see cref="P:System.Environment.StackTrace" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the call stack for the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DateTime">
       <MemberSignature Language="C#" Value="public DateTime DateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime DateTime" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first time the property is accessed in an instance of the <see cref="T:System.Diagnostics.TraceEventCache" /> class, the current time is returned. Subsequent queries of this property in that instance return that same <see cref="T:System.DateTime" /> value, allowing it to be used as a timestamp.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the date and time at which the event trace occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LogicalOperationStack">
       <MemberSignature Language="C#" Value="public System.Collections.Stack LogicalOperationStack { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Stack LogicalOperationStack" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Stack</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The correlation data is stored as an object in the call context with the name "System.Diagnostics.Trace.CorrelationManagerSlot". The <see cref="T:System.Diagnostics.CorrelationManager" /> class provides methods used to store a logical operation identity in a thread-bound context and automatically tag each trace event generated by the thread with the stored identity. The <see cref="T:System.Diagnostics.CorrelationManager" /> is accessed through the <see cref="P:System.Diagnostics.Trace.CorrelationManager" /> property. Each call to the <see cref="M:System.Diagnostics.CorrelationManager.StartLogicalOperation" /> method pushes a new logical operation identity onto the stack. Each call to the <see cref="M:System.Diagnostics.CorrelationManager.StopLogicalOperation" /> method pops a logical operation identity from the stack</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the correlation data, contained in a stack. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessId">
       <MemberSignature Language="C#" Value="public int ProcessId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ProcessId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Until the process terminates, the process identifier uniquely identifies the process throughout the system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier of the current process.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ThreadId">
       <MemberSignature Language="C#" Value="public string ThreadId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ThreadId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread identifier is the value of the <see cref="P:System.Threading.Thread.ManagedThreadId" /> property formatted as a string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique identifier for the current managed thread.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Timestamp">
       <MemberSignature Language="C#" Value="public long Timestamp { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Timestamp" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The get accessor calls the <see cref="M:System.Diagnostics.Stopwatch.GetTimestamp" /> method to get the timestamp. If the <see cref="T:System.Diagnostics.Stopwatch" /> class uses a high-resolution performance counter, <see cref="M:System.Diagnostics.Stopwatch.GetTimestamp" /> returns the current value of that counter. If the <see cref="T:System.Diagnostics.Stopwatch" /> class uses the system timer, <see cref="M:System.Diagnostics.Stopwatch.GetTimestamp" /> returns the <see cref="P:System.DateTime.Ticks" /> property of <see cref="P:System.DateTime.Now" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current number of ticks in the timer mechanism.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

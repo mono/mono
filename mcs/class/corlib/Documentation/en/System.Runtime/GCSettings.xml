@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GCSettings" FullName="System.Runtime.GCSettings">
   <TypeSignature Language="C#" Value="public static class GCSettings" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit GCSettings extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,12 +12,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="P:System.Runtime.GCSettings.IsServerGC" /> property to determine whether server garbage collection is enabled for the current process.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the garbage collection settings for the current process. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IsServerGC">
       <MemberSignature Language="C#" Value="public static bool IsServerGC { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsServerGC" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -25,26 +34,32 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For information about server garbage collection, see the "Workstation and Server Garbage Collection" section in <format type="text/html"><a href="67c5a20d-1be1-4ea7-8a9a-92b0b08658d2">Fundamentals of Garbage Collection</a></format>. </para>
+          <para>If server garbage collection is not enabled, workstation garbage collection is in effect (with or without concurrent collection). Server garbage collection is available only on multiprocessor computers.</para>
+          <para>An unmanaged host can request server garbage collection, and the host request overrides configuration file settings. If the host does not specify the type of garbage collection, you can use a configuration file setting to specify server garbage collection. This setting is valid only in the application configuration file, not in the machine configuration file (see <format type="text/html"><a href="86bd26d3-737e-4484-9782-19b17f34cd1f">Configuration Files</a></format>). The following example shows the contents of a sample application configuration file that enables server garbage collection.</para>
+          <code>&lt;configuration&gt;
+  &lt;runtime&gt;
+    &lt;gcServer enabled="true" /&gt;
+  &lt;/runtime&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether server garbage collection is enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LatencyMode">
-      <MemberSignature Language="C#" Value="public static System.Runtime.GCLatencyMode LatencyMode { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Runtime.GCLatencyMode LatencyMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Runtime.GCLatencyMode LatencyMode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Runtime.GCLatencyMode</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <Attributes>
         <Attribute>
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
@@ -53,6 +68,21 @@
           <AttributeName>set: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Runtime.GCLatencyMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can reduce the level of intrusiveness of garbage collection in your application by setting the <see cref="T:System.Runtime.GCLatencyMode" /> to <see cref="F:System.Runtime.GCLatencyMode.LowLatency" /> during critical operations. After such operations are completed, return to a higher latency mode so that more objects can be reclaimed to increase memory. </para>
+          <para>See <format type="text/html"><a href="96278bb7-6eab-4612-8594-ceebfc887d81">Latency Modes</a></format> for a discussion of how the runtime configuration settings for garbage collection affect the default value of the <see cref="T:System.Runtime.GCLatencyMode" /> enumeration. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current latency mode for garbage collection.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

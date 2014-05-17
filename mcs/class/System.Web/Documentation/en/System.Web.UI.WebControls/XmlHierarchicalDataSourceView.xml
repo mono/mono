@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlHierarchicalDataSourceView" FullName="System.Web.UI.WebControls.XmlHierarchicalDataSourceView">
   <TypeSignature Language="C#" Value="public class XmlHierarchicalDataSourceView : System.Web.UI.HierarchicalDataSourceView" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control can present its underlying data in both tabular and hierarchical format to Web server controls that bind to it. Controls such as <see cref="T:System.Web.UI.WebControls.GridView" /> or <see cref="T:System.Web.UI.WebControls.DropDownList" /> use the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> to bind to XML data and present it in list or tabular form, while controls that derive from the <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> class, such as <see cref="T:System.Web.UI.WebControls.TreeView" />, bind to XML data and present it in hierarchical form.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> creates each view type internally through different code paths. If the <see cref="M:System.Web.UI.IDataSource.GetView(System.String)" /> method is called on the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control, an <see cref="T:System.Web.UI.WebControls.XmlDataSourceView" /> object is created by the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control. If the <see cref="M:System.Web.UI.WebControls.XmlDataSource.GetHierarchicalView(System.String)" /> method is called, an <see cref="T:System.Web.UI.WebControls.XmlHierarchicalDataSourceView" /> object is created. The <see cref="T:System.Web.UI.WebControls.XmlDataSourceView" /> class is provided for Web server controls that derive from <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> and bind to lists and tabular data, while the <see cref="T:System.Web.UI.WebControls.XmlHierarchicalDataSourceView" /> is provided for Web server controls that derive from <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> and bind to hierarchical data. Internally, the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> and <see cref="T:System.Web.UI.WebControls.CompositeDataBoundControl" /> classes call the <see cref="Overload:System.Web.UI.WebControls.XmlDataSourceView.Select" /> method of <see cref="T:System.Web.UI.WebControls.XmlDataSourceView" /> object view to retrieve data from a data source, while a class derived from <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> calls the <see cref="M:System.Web.UI.WebControls.XmlHierarchicalDataSourceView.Select" /> method.</para>
+      <para>Like all <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> helper objects, the <see cref="T:System.Web.UI.WebControls.XmlHierarchicalDataSourceView" /> defines the operations that the data source can perform with the underlying data. Because the <see cref="T:System.Web.UI.WebControls.XmlHierarchicalDataSourceView" /> class only overrides the <see cref="M:System.Web.UI.WebControls.XmlHierarchicalDataSourceView.Select" /> method, the associated <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control does not support sort expressions or execute, delete, or update operations. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a data view on an XML node or collection of XML nodes for an <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Select">
@@ -22,10 +31,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> that is returned by <see cref="M:System.Web.UI.HierarchicalDataSourceView.Select" /> is an <see cref="T:System.Xml.XmlNodeList" /> and can be used like any <see cref="T:System.Collections.IEnumerable" /> collection. Call the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method to get an <see cref="T:System.Collections.IEnumerator" /> and iterate through the collection of <see cref="T:System.Xml.XmlNode" /> nodes, or use foreach (in C#) or For Each (Visual Basic).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the data items from the underlying data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of data items based on the hierarchical level of the current view.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

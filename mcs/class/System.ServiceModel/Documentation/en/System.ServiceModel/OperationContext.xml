@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="OperationContext" FullName="System.ServiceModel.OperationContext">
+  <TypeSignature Language="C#" Value="public sealed class OperationContext : System.ServiceModel.IExtensibleObject&lt;System.ServiceModel.OperationContext&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit OperationContext extends System.Object implements class System.ServiceModel.IExtensibleObject`1&lt;class System.ServiceModel.OperationContext&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.IExtensibleObject&lt;System.ServiceModel.OperationContext&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.OperationContext" /> from within a service operation to access the current operation execution environment. In particular, the operation context is used to access callback channels in duplex services, to store extra state data across portions of the operations, and to access incoming message headers and properties as well as add outgoing message headers and properties.</para>
+      <para>For more information about using extensions to store state data, see <format type="text/html"><a href="bc88cefc-31fb-428e-9447-6d20a7d452af">Extensible Objects</a></format>.</para>
+      <para>The <see cref="T:System.ServiceModel.OperationContext" /> has the following properties and methods.</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.Current" /> property returns the <see cref="T:System.ServiceModel.OperationContext" /> object representing the current execution context.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.ServiceSecurityContext" /> property returns the security environment under which the method executes.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.EndpointDispatcher" /> property gets the operation's <see cref="T:System.ServiceModel.Dispatcher.EndpointDispatcher" />.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.Extensions" /> property returns an extension collection for the current <see cref="T:System.ServiceModel.OperationContext" />.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.Host" /> property returns the <see cref="T:System.ServiceModel.ServiceHostBase" /> object that manages the service.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.HasSupportingTokens" /> property returns a value that indicates whether the method has supporting tokens, if so, the <see cref="P:System.ServiceModel.OperationContext.SupportingTokens" /> property gets them.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.IncomingMessageHeaders" />, <see cref="P:System.ServiceModel.OperationContext.IncomingMessageProperties" />, and <see cref="P:System.ServiceModel.OperationContext.IncomingMessageVersion" /> properties get these items from the incoming message.</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.ServiceModel.OperationContext.OperationCompleted" /> event is fired when the operation has completed.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.OutgoingMessageHeaders" /> and <see cref="P:System.ServiceModel.OperationContext.OutgoingMessageProperties" /> properties get these items for the outbound message.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.RequestContext" /> property returns the <see cref="T:System.ServiceModel.Channels.RequestContext" /> implementation for the method.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.InstanceContext" /> property returns the <see cref="T:System.ServiceModel.InstanceContext" /> associated with the operation.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.OperationContext.SessionId" /> property returns the session identifier for the current channel and object.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.OperationContext.GetCallbackChannel``1" /> method returns a callback channel to the caller in the case of duplex communication.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.OperationContext.SetTransactionComplete" /> method commits the current transaction.</para>
+        </item>
+      </list>
+      <para />
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the execution context of a service method.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OperationContext (System.ServiceModel.IContextChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.IContextChannel channel) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="channel" Type="System.ServiceModel.IContextChannel" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.OperationContext.#ctor(System.ServiceModel.IContextChannel)" /> constructor to create a new operation context within the scope of which the proxy is associated in order to modify outbound items such as headers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.OperationContext" /> class that uses the specified <see cref="T:System.ServiceModel.IContextChannel" /> in a client application. </para>
+        </summary>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.IContextChannel" /> used to create a new client <see cref="T:System.ServiceModel.OperationContext" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Channel">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.IContextChannel Channel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.IContextChannel Channel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.IContextChannel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the channel associated with the current <see cref="T:System.ServiceModel.OperationContext" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Current">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.OperationContext Current { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.OperationContext Current" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.OperationContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.OperationContext.Current" /> property to obtain the execution and message context for the current method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the execution context for the current thread.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndpointDispatcher">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.EndpointDispatcher EndpointDispatcher { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.EndpointDispatcher EndpointDispatcher" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.EndpointDispatcher</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the endpoint dispatcher for the endpoint to inspect or modify.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Extensions">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.IExtensionCollection&lt;System.ServiceModel.OperationContext&gt; Extensions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.IExtensionCollection`1&lt;class System.ServiceModel.OperationContext&gt; Extensions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.IExtensionCollection&lt;System.ServiceModel.OperationContext&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.OperationContext.Extensions" /> property to obtain a collection of all extensions of the <see cref="T:System.ServiceModel.OperationContext" /> used to modify the context or add custom state. For more information about extensions, see <format type="text/html"><a href="bc88cefc-31fb-428e-9447-6d20a7d452af">Extensible Objects</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of service extensions from the current message context.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCallbackChannel&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetCallbackChannel&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetCallbackChannel&lt;T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.ServiceModel.OperationContext.GetCallbackChannel``1" /> property to obtain a channel that you can use to call operations on the client instance that called the service. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a channel to the client instance that called the current operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel to the client instance that called the operation of the type specified in the <see cref="P:System.ServiceModel.ServiceContractAttribute.CallbackContract" /> property.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel used to call back to the client.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="HasSupportingTokens">
+      <MemberSignature Language="C#" Value="public bool HasSupportingTokens { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasSupportingTokens" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the incoming message has supporting tokens.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Host">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ServiceHostBase Host { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.ServiceHostBase Host" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceHostBase</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.ServiceHost" /> for the current service object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncomingMessageHeaders">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageHeaders IncomingMessageHeaders { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageHeaders IncomingMessageHeaders" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageHeaders</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to inspect or modify the request headers that arrive at a service operation or reply headers that arrive at a client proxy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the incoming message headers for the <see cref="T:System.ServiceModel.OperationContext" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncomingMessageProperties">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageProperties IncomingMessageProperties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageProperties IncomingMessageProperties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageProperties</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to inspect or modify the message properties for a request message in a service operation or a reply message in a client proxy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message properties for the incoming message in the <see cref="T:System.ServiceModel.OperationContext" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncomingMessageVersion">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageVersion IncomingMessageVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageVersion IncomingMessageVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to inspect the SOAP version of the request message that arrives at a service operation or the SOAP version of the reply message that arrives at a client proxy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the incoming SOAP message version for the <see cref="T:System.ServiceModel.OperationContext" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InstanceContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.InstanceContext InstanceContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.InstanceContext InstanceContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.InstanceContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.OperationContext.InstanceContext" /> property to access the run-time object that manages the current service object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.InstanceContext" /> object that manages the current service instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsUserContext">
+      <MemberSignature Language="C#" Value="public bool IsUserContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsUserContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is intended for system use and should not be called by users.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OperationCompleted">
+      <MemberSignature Language="C#" Value="public event EventHandler OperationCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler OperationCompleted" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="E:System.ServiceModel.OperationContext.OperationCompleted" /> event to dispose parameters or a return value if you set <see cref="P:System.ServiceModel.OperationBehaviorAttribute.AutoDisposeParameters" /> to false. Normally you set <see cref="P:System.ServiceModel.OperationBehaviorAttribute.AutoDisposeParameters" /> to false to prevent indigo2 from calling <see cref="M:System.IDisposable.Dispose" /> on the parameter and return value objects.  However, if some parameters need to be preserved while others need to be disposed, this event is the best place to dispose those parameters.</para>
+          <para>Also, with duplex bindings, this event can be used to send a request on the callback channel after the reply for the current operation is sent.</para>
+          <block subset="none" type="note">
+            <para>If a caller is listening for the <see cref="E:System.ServiceModel.OperationContext.OperationCompleted" /> event for an <see cref="P:System.ServiceModel.OperationContractAttribute.IsTerminating" /> operation, it is possible to block when the response is received. The proper way to handle this is to schedule work on another thread when <see cref="E:System.ServiceModel.OperationContext.OperationCompleted" /> is raised and then immediately return from that event handler.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the operation has completed. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OutgoingMessageHeaders">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageHeaders OutgoingMessageHeaders { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageHeaders OutgoingMessageHeaders" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageHeaders</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to add reply headers that are sent by a service operation or request headers that are sent by a indigo2 client object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the outgoing message headers for the active <see cref="T:System.ServiceModel.OperationContext" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OutgoingMessageProperties">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.MessageProperties OutgoingMessageProperties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageProperties OutgoingMessageProperties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageProperties</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to add message properties for a reply message from a service operation or message properties for a request message from a client proxy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message properties for the outbound message in the active <see cref="T:System.ServiceModel.OperationContext" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RequestContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.RequestContext RequestContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.RequestContext RequestContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.RequestContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One-way operations are do not have a request context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.Channels.RequestContext" /> implementation for this method.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceSecurityContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ServiceSecurityContext ServiceSecurityContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.ServiceSecurityContext ServiceSecurityContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceSecurityContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> within which this method executes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SessionId">
+      <MemberSignature Language="C#" Value="public string SessionId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SessionId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.String" /> used to identify the current session.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetTransactionComplete">
+      <MemberSignature Language="C#" Value="public void SetTransactionComplete ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetTransactionComplete() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is only useful in operations that set <see cref="P:System.ServiceModel.OperationBehaviorAttribute.TransactionAutoComplete" /> to false. Typically, services do this on some but not all operations. When <see cref="P:System.ServiceModel.OperationBehaviorAttribute.TransactionAutoComplete" /> is false the transaction completes automatically. Use <see cref="M:System.ServiceModel.OperationContext.SetTransactionComplete" /> in cases where it is not possible to determine at design-time whether an operation needs to complete the transaction.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits the currently executing transaction.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportingTokens">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.ICollection&lt;System.ServiceModel.Security.SupportingTokenSpecification&gt; SupportingTokens { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.ICollection`1&lt;class System.ServiceModel.Security.SupportingTokenSpecification&gt; SupportingTokens" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Security.SupportingTokenSpecification&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Collections.Generic.ICollection`1" /> of type <see cref="T:System.IdentityModel.Tokens.SecurityToken" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

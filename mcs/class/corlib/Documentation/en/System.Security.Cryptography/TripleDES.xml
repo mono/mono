@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TripleDES" FullName="System.Security.Cryptography.TripleDES">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class TripleDES : System.Security.Cryptography.SymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TripleDES extends System.Security.Cryptography.SymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,47 +15,126 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Abtract base class for all implementations of Triple DES.</summary>
-    <remarks>NIST FIPS PUB 46-3: Data Encryption Standard (http://csrc.nist.gov/publications/fips/fips46-3/fips46-3.pdf).</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Security.Cryptography.TripleDES" /> uses three successive iterations of the <see cref="T:System.Security.Cryptography.DES" /> algorithm. It can use either two or three 56-bit keys.</para>
+      <block subset="none" type="note">
+        <para>A newer symmetric encryption algorithm, Advanced Encryption Standard (AES), is available. Consider using the <see cref="T:System.Security.Cryptography.Aes" /> class and its derived classes instead of the <see cref="T:System.Security.Cryptography.TripleDES" /> class. Use <see cref="T:System.Security.Cryptography.TripleDES" /> only for compatibility with legacy applications and data.</para>
+      </block>
+      <para>This algorithm supports key lengths from 128 bits to 192 bits in increments of 64 bits.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class for Triple Data Encryption Standard algorithms from which all <see cref="T:System.Security.Cryptography.TripleDES" /> implementations must derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TripleDES ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code will create a new instance of a derived class.</para>
+          <para>This method initializes the protected fields of the <see cref="T:System.Security.Cryptography.SymmetricAlgorithm" /> class to the default values listed in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Field </para>
+                </term>
+                <description>
+                  <para>Default Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.KeySizeValue" /> </para>
+              </term>
+              <description>
+                <para>192 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.BlockSizeValue" /> </para>
+              </term>
+              <description>
+                <para>64 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.FeedbackSizeValue" /> </para>
+              </term>
+              <description>
+                <para>64 </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.TripleDES" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.TripleDES Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.TripleDES Create() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.TripleDES</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Create an instance of the default TripleDES implementation.</summary>
-        <returns>To be added: an object of type 'TripleDES'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Security.Cryptography.TripleDES" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a cryptographic object to perform the <see cref="T:System.Security.Cryptography.TripleDES" /> algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a cryptographic object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.TripleDES Create (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.TripleDES Create(string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.TripleDES Create (string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.TripleDES</ReturnType>
       </ReturnValue>
@@ -61,20 +142,28 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>Create an instance of the specified TripleDES implementation.</summary>
-        <returns>To be added: an object of type 'TripleDES'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a cryptographic object to perform the specified implementation of the <see cref="T:System.Security.Cryptography.TripleDES" /> algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a cryptographic object.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.TripleDES" /> to use. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsWeakKey">
+      <MemberSignature Language="C#" Value="public static bool IsWeakKey (byte[] rgbKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsWeakKey(unsigned int8[] rgbKey) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsWeakKey">
-      <MemberSignature Language="C#" Value="public static bool IsWeakKey (byte[] rgbKey);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -82,38 +171,46 @@
         <Parameter Name="rgbKey" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Weak keys are keys that result in ciphers that are easy to break. If text is encrypted with a weak key, encrypting the resulting cipher again with the same weak key returns the original text. In 128-bit mode, if the first 64 bits are the same as the last 64 bits, the key is weak. In 192-bit mode, if the first 64 bits are the same as the second 64 bits or if the second 64 bits are the same as the last 64 bits, the key is weak.</para>
+          <para>Attempting to set a weak key results in a <see cref="T:System.Security.Cryptography.CryptographicException" />. When <see cref="M:System.Security.Cryptography.TripleDESCryptoServiceProvider.GenerateKey" /> is called to create a random key, a weak key will never be returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is weak.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key is weak; otherwise, false.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to test for weakness. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Key">
+      <MemberSignature Language="C#" Value="public override byte[] Key { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Key" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Key">
-      <MemberSignature Language="C#" Value="public override byte[] Key { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This algorithm supports key lengths from 128 bits to 192 bits in increments of 64 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the secret key for the <see cref="T:System.Security.Cryptography.TripleDES" /> algorithm.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

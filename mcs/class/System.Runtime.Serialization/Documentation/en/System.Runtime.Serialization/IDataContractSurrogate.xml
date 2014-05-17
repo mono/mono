@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IDataContractSurrogate" FullName="System.Runtime.Serialization.IDataContractSurrogate">
+  <TypeSignature Language="C#" Value="public interface IDataContractSurrogate" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDataContractSurrogate" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> when using the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> if you need to do one of the following: substitute one type or object for another, or to dynamically generate schema variations. For a sample application, see <format type="text/html"><a href="b0188f3c-00a9-4cf0-a887-a2284c8fb014">DataContract Surrogate Sample</a></format>. For more information about data contracts, see <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Using Data Contracts</a></format>.</para>
+      <para>At run time, you can find the specific <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> for any operation in a service by using the <see cref="T:System.ServiceModel.Description.OperationDescription" /> to find the <see cref="T:System.ServiceModel.Description.DataContractSerializerOperationBehavior" /> instance. For more information about implementing the interface to create a surrogate, see <format type="text/html"><a href="8c31134c-46c5-4ed7-94af-bab0ac0dfce5">Data Contract Surrogates</a></format>.</para>
+      <para>You can also use the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to affect the import and export of XML schemas when you are using the <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> and <see cref="T:System.Runtime.Serialization.XsdDataContractImporter" /> classes. You can do so by assigning the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to the <see cref="P:System.Runtime.Serialization.ExportOptions.DataContractSurrogate" /> property of the <see cref="T:System.Runtime.Serialization.ExportOptions" /> class, or to the <see cref="P:System.Runtime.Serialization.ImportOptions.DataContractSurrogate" /> property of the <see cref="T:System.Runtime.Serialization.ImportOptions" /> class.  For more information, see <format type="text/html"><a href="0da32b50-ccd9-463a-844c-7fe803d3bf44">Schema Import and Export</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the methods needed to substitute one type for another by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> during serialization, deserialization, and export and import of XML schema documents (XSD). </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetCustomDataToExport">
+      <MemberSignature Language="C#" Value="public object GetCustomDataToExport (System.Reflection.MemberInfo memberInfo, Type dataContractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetCustomDataToExport(class System.Reflection.MemberInfo memberInfo, class System.Type dataContractType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="memberInfo" Type="System.Reflection.MemberInfo" />
+        <Parameter Name="dataContractType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During schema export operations, inserts annotations into the schema for non-null return values. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the annotation to be inserted into the XML schema definition. </para>
+        </returns>
+        <param name="memberInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.MemberInfo" /> that describes the member. </param>
+        <param name="dataContractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" />. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomDataToExport">
+      <MemberSignature Language="C#" Value="public object GetCustomDataToExport (Type clrType, Type dataContractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetCustomDataToExport(class System.Type clrType, class System.Type dataContractType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clrType" Type="System.Type" />
+        <Parameter Name="dataContractType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During schema export operations, inserts annotations into the schema for non-null return values. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the annotation to be inserted into the XML schema definition. </para>
+        </returns>
+        <param name="clrType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The CLR type to be replaced. </param>
+        <param name="dataContractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data contract type to be annotated. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDataContractType">
+      <MemberSignature Language="C#" Value="public Type GetDataContractType (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetDataContractType(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During serialization, deserialization, and schema import and export, returns a data contract type that substitutes the specified type. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> to substitute for the <paramref name="type" /> value. This type must be serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. For example, it must be marked with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute or other mechanisms that the serializer recognizes.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The CLR type <see cref="T:System.Type" /> to substitute. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeserializedObject">
+      <MemberSignature Language="C#" Value="public object GetDeserializedObject (object obj, Type targetType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetDeserializedObject(object obj, class System.Type targetType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="targetType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a simple implementation, use an if…then…else control structure to test whether the <paramref name="obj" /> value is of the surrogated type. If so, transform it as necessary and return the substituted object. The substituted object can be a new instance or the same <paramref name="obj" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During deserialization, returns an object that is a substitute for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The substituted deserialized object. This object must be of a type that is serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. For example, it must be marked with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute or other mechanisms that the serializer recognizes.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The deserialized object to be substituted.</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that the substituted object should be assigned to. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetKnownCustomDataTypes">
+      <MemberSignature Language="C#" Value="public void GetKnownCustomDataTypes (System.Collections.ObjectModel.Collection&lt;Type&gt; customDataTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetKnownCustomDataTypes(class System.Collections.ObjectModel.Collection`1&lt;class System.Type&gt; customDataTypes) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="customDataTypes" Type="System.Collections.ObjectModel.Collection&lt;System.Type&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is required during schema export or schema import only if annotations are inserted into the schema using the <see cref="Overload:System.Runtime.Serialization.IDataContractSurrogate.GetCustomDataToExport" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the collection of known types to use for serialization and deserialization of the custom data objects. </para>
+        </summary>
+        <param name="customDataTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.Collection`1" />  of <see cref="T:System.Type" /> to add known types to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetObjectToSerialize">
+      <MemberSignature Language="C#" Value="public object GetObjectToSerialize (object obj, Type targetType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetObjectToSerialize(object obj, class System.Type targetType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="targetType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method must not return null because on deserialization the data will be cast to type <see cref="T:System.Object" /> and an <see cref="T:System.InvalidCastException" /> is thrown.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During serialization, returns an object that substitutes the specified object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The substituted object that will be serialized. The object must be serializable by the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. For example, it must be marked with the <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute or other mechanisms that the serializer recognizes.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to substitute. </param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that the substituted object should be assigned to.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetReferencedTypeOnImport">
+      <MemberSignature Language="C#" Value="public Type GetReferencedTypeOnImport (string typeName, string typeNamespace, object customData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetReferencedTypeOnImport(string typeName, string typeNamespace, object customData) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typeName" Type="System.String" />
+        <Parameter Name="typeNamespace" Type="System.String" />
+        <Parameter Name="customData" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null should be returned if a CLR type does not exist for representing the schema type. This will cause a new type to be generated during schema import.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During schema import, returns the type referenced by the schema.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> to use for the referenced type.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type in schema.</param>
+        <param name="typeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the type in schema.</param>
+        <param name="customData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents the annotation inserted into the XML schema definition, which is data that can be used for finding the referenced type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ProcessImportedType">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeDeclaration ProcessImportedType (System.CodeDom.CodeTypeDeclaration typeDeclaration, System.CodeDom.CodeCompileUnit compileUnit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.CodeTypeDeclaration ProcessImportedType(class System.CodeDom.CodeTypeDeclaration typeDeclaration, class System.CodeDom.CodeCompileUnit compileUnit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeTypeDeclaration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typeDeclaration" Type="System.CodeDom.CodeTypeDeclaration" />
+        <Parameter Name="compileUnit" Type="System.CodeDom.CodeCompileUnit" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The input <see cref="T:System.CodeDom.CodeTypeDeclaration" /> or other information in the <see cref="T:System.CodeDom.CodeCompileUnit" /> can be modified by the user in this method. If null is returned, it will cause the type to not be generated. If a new <see cref="T:System.CodeDom.CodeTypeDeclaration" /> is returned, it will replace the original type generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the type that has been generated from the imported schema.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeTypeDeclaration" /> that contains the processed type.</para>
+        </returns>
+        <param name="typeDeclaration">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeDeclaration" /> to process that represents the type declaration generated during schema import.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> that contains the other code generated during schema import.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

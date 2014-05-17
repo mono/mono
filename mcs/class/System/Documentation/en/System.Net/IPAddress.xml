@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPAddress" FullName="System.Net.IPAddress" FullNameSP="System_Net_IPAddress" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable IPAddress extends System.Object" />
   <TypeSignature Language="C#" Value="public class IPAddress" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit IPAddress extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +10,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -15,199 +18,155 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para>Represents an Internet Protocol (IP) address.</para>
-    </summary>
     <remarks>
-      <para>An instance of the <see cref="T:System.Net.IPAddress" /> class contains the
-   value of an address on an IP
-   network. This address is stored internally as a <see cref="T:System.Int64" qualify="true" />
-   
-   in network-byte-order.</para>
-      <para>
-        <block subset="none" type="note">
-   
-   Different conventions are in use
-   for ordering bytes within multi-byte data types. All IP address values must be sent over the network in
-   network-byte-order. Network-byte-order puts the most significant byte first (also known
-   as big-endian order). On the host, the ordering of bytes
-   is platform-specific and this ordering is referred to as host-byte-order.</block>
-      </para>
-      <para>The IP address can be represented as four numbers in the range
-   0-255 separated by periods (for example, "192.168.1.2"), known as dotted-quad notation. </para>
-      <block subset="none" type="note">
-        <para> The address space is fragmented into
-      different types determined by bits 31-28 as shown in the following table.</para>
-        <list type="table">
-          <listheader>
-            <term> Bits 31-28</term>
-            <description>Address type</description>
-            <description>Address range</description>
-          </listheader>
-          <item>
-            <term> 0xxx</term>
-            <description>class A </description>
-            <description>0.0.0.0-127.255.255.255</description>
-          </item>
-          <item>
-            <term> 10xx</term>
-            <description>class B</description>
-            <description>128.0.0.0-191.255.255.255</description>
-          </item>
-          <item>
-            <term> 110x</term>
-            <description>class C</description>
-            <description>192.0.0.0-223.255.255.255</description>
-          </item>
-          <item>
-            <term> 1110</term>
-            <description>multicast</description>
-            <description>224.0.0.0-239.255.255.255</description>
-          </item>
-          <item>
-            <term> 1111</term>
-            <description>reserved</description>
-            <description>240.0.0.0-255.255.255.255</description>
-          </item>
-        </list>
-      </block>
-      <para>Instances of the <see cref="T:System.Net.IPAddress" /> class are provided for common IP address values as shown in the
-following table.</para>
-      <para>
-        <list type="table">
-          <listheader>
-            <term>Field</term>
-            <description>IP
-         Address</description>
-          </listheader>
-          <item>
-            <term> Any</term>
-            <description>0.0.0.0</description>
-          </item>
-          <item>
-            <term> Broadcast</term>
-            <description>255.255.255.255</description>
-          </item>
-          <item>
-            <term> Loopback</term>
-            <description>127.0.0.1</description>
-          </item>
-          <item>
-            <term> None</term>
-            <description>255.255.255.255</description>
-          </item>
-        </list>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.IPAddress" /> class contains the address of a computer on an IP network.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an Internet Protocol (IP) address.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public IPAddress (byte[] address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] address) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="address" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.IPAddress" /> is created with the <see cref="P:System.Net.IPAddress.Address" /> property set to <paramref name="address" />.</para>
+          <para>If the length of <paramref name="address" /> is 4, <see cref="M:System.Net.IPAddress.#ctor(System.Byte[])" /> constructs an IPv4 address; otherwise, an IPv6 address with a scope of 0 is constructed.</para>
+          <para>The <see cref="T:System.Byte" /> array is assumed to be in network byte order with the most significant byte first in index position 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.IPAddress" /> class with the address specified as a <see cref="T:System.Byte" /> array.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array value of the IP address. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 newAddress)" />
-      <MemberSignature Language="C#" Value="public IPAddress (long addr);" />
+      <MemberSignature Language="C#" Value="public IPAddress (long newAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 newAddress) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
-        <Parameter Name="addr" Type="System.Int64" />
+        <Parameter Name="newAddress" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="addr">A <see cref="T:System.Int64" /> containing the IP address in host-byte-order. </param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPAddress" />
-class.</para>
-        </summary>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="newAddress" /> is less than 0 or greater than 0x00000000FFFFFFFF.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.IPAddress" /> instance is created with the <see cref="P:System.Net.IPAddress.Address" /> property set to <paramref name="newAddress" />.</para>
+          <para>The <see cref="T:System.Int64" /> value is assumed to be in network byte order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.IPAddress" /> class with the address specified as an <see cref="T:System.Int64" />.</para>
+        </summary>
+        <param name="newAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The long value of the IP address. For example, the value 0x2414188f in big-endian format would be the IP address "143.24.20.36". </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public IPAddress (byte[] address, long scopeId);" />
+      <MemberSignature Language="C#" Value="public IPAddress (byte[] address, long scopeid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] address, int64 scopeid) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="address" Type="System.Byte[]" />
-        <Parameter Name="scopeId" Type="System.Int64" />
-      </Parameters>
-      <Docs>
-        <param name="address">To be added.</param>
-        <param name="scopeId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="address" Type="System.Byte[]" />
+        <Parameter Name="scopeid" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor instantiates an IPv6 address. The <paramref name="scopeid" /> identifies a network interface in the case of a link-local address. The scope is valid only for link-local and site-local addresses.</para>
+          <para>The <see cref="T:System.Byte" /> array is assumed to be in network byte order with the most significant byte first in index position 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.IPAddress" /> class with the address specified as a <see cref="T:System.Byte" /> array and the specified scope identifier.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array value of the IP address. </param>
+        <param name="scopeid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The long value of the scope identifier. </param>
+      </Docs>
     </Member>
     <Member MemberName="Address">
       <MemberSignature Language="ILASM" Value=".property int64 Address { public hidebysig specialname instance int64 get_Address() public hidebysig specialname instance void set_Address(int64 value) }" />
-      <MemberSignature Language="C#" Value="public long Address { set; get; }" />
+      <MemberSignature Language="C#" Value="public long Address { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Address" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int64</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Gets or sets an Internet Protocol (IP) address.</para>
-        </summary>
-        <value>
-          <para>A <see cref="T:System.Int64" /> containing
-   the IP address in host-byte-order.</para>
-        </value>
-        <remarks>
-          <block subset="none" type="note">
-            <para>To convert <see cref="P:System.Net.IPAddress.Address" />
-   to dotted-quad notation, use the <see cref="M:System.Net.IPAddress.ToString" />
-   method.</para>
-            <para>Values greater than 0x00000000FFFFFFFF  are permitted for IPv6 extensibility.</para>
-          </block>
-        </remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">The value specified in a set operation is less than 0.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("This property is obsolete. Use GetAddressBytes.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <value>
+          <para>A <see cref="T:System.Int64" /> containing
+   the IP address in host-byte-order.</para>
+        </value>
+        <exception cref="T:System.ArgumentOutOfRangeException">The value specified in a set operation is less than 0.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is obsolete. Use <see cref="M:System.Net.IPAddress.GetAddressBytes" />.</para>
+          <para>To convert <see cref="P:System.Net.IPAddress.Address" /> to dotted-quad notation, use the <see cref="M:System.Net.IPAddress.ToString" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Internet Protocol (IP) address.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="AddressFamily">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Net.Sockets.AddressFamily AddressFamily { public hidebysig specialname instance valuetype System.Net.Sockets.AddressFamily get_AddressFamily() }" />
       <MemberSignature Language="C#" Value="public System.Net.Sockets.AddressFamily AddressFamily { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.AddressFamily AddressFamily" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the address family.</para>
-        </summary>
         <value>
           <para>
             <see cref="F:System.Net.Sockets.AddressFamily.InterNetwork" /> 
@@ -216,153 +175,165 @@ class.</para>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the address family of the IP address.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Any">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Any" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Any;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress Any" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Indicates that the protocol will
-      select which address to use. </para>
-        </summary>
         <remarks>
-          <para>This field is read-only.</para>
-          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x0000000000000000) and represents the address
-   0.0.0.0.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.Socket.Bind(System.Net.EndPoint)" /> method uses the <see cref="F:System.Net.IPAddress.Any" /> field to indicate that a <see cref="T:System.Net.Sockets.Socket" /> instance must listen for client activity on all network interfaces.</para>
+          <para>The <see cref="F:System.Net.IPAddress.Any" /> field is equivalent to 0.0.0.0 in dotted-quad notation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an IP address that indicates that the server must listen for client activity on all network interfaces. This field is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Broadcast">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Broadcast" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Broadcast;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress Broadcast" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Provides the IP broadcast address.</para>
-        </summary>
         <remarks>
-          <para>This field is read-only.</para>
-          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x00000000FFFFFFFF) and represents the address 255.255.255.255.</para>
-          <para>This value is used to simultaneously address every host on the network.</para>
-          <block subset="none" type="note">
-            <para>Multiple fields are defined for this IP address based on prior
-      art. This field is identical to <see cref="F:System.Net.IPAddress.None" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Net.IPAddress.Broadcast" /> field is equivalent to 255.255.255.255 in dotted-quad notation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the IP broadcast address. This field is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object comparand)" />
-      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object comparand) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="other" Type="System.Object" />
+        <Parameter Name="comparand" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">A <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.IPAddress.Equals(System.Object)" /> method compares the current <see cref="T:System.Net.IPAddress" /> instance with the <paramref name="comparand" /> parameter and returns true if the two instances contain the same IP address.</para>
+        </remarks>
         <summary>
-          <para>Determines whether the current instance and the
-      specified <see cref="T:System.Object" />
-      represent the same IP address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two IP addresses.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="comparand" /> is an instance of the <see cref="T:System.Net.IPAddress" /> class
-   and has the same <see cref="P:System.Net.IPAddress.Address" /> property value
-   as the current instance; otherwise
-<see langword="false" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two addresses are equal; otherwise, false.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method
-         overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
-          </block>
-        </remarks>
+        <param name="comparand">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> instance to compare to the current instance. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAddressBytes">
       <MemberSignature Language="C#" Value="public byte[] GetAddressBytes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetAddressBytes() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a copy of the <see cref="T:System.Net.IPAddress" /> as an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.IPAddress.GetHashCode" /> method returns a hash code of the IP address. This value can be used as a key in hash tables.</para>
+        </remarks>
         <summary>
-          <para>Generates a hash code for the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash value for an IP address.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the hash code for the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
         </returns>
-        <remarks>
-          <para>The algorithm used to generate the hash code is
-         unspecified.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Object.GetHashCode" qualify="true" />.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostToNetworkOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 HostToNetworkOrder(int16 host)" />
       <MemberSignature Language="C#" Value="public static short HostToNetworkOrder (short host);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 HostToNetworkOrder(int16 host) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -370,30 +341,34 @@ containing the hash code for the current instance.</para>
         <Parameter Name="host" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="host">A <see cref="T:System.Int16" /> in host-byte-order.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
+          <para>The <see cref="M:System.Net.IPAddress.HostToNetworkOrder(System.Int64)" /> method converts multibyte integer values that are stored on the host system from the byte order used by the host to the byte order used by the network.</para>
+        </remarks>
         <summary>
-          <para>Converts a <see cref="T:System.Int16" /> from host-byte-order to network-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a short value from host byte order to network byte order.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int16" />
-in network-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A short value, expressed in network byte order.</para>
         </returns>
-        <remarks>
-          <para>This method performs conversions on systems where the host-byte-order differs 
-      from network-byte-order. On systems where this is not the case, this method does
-      nothing.</para>
-        </remarks>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in host byte order. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostToNetworkOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 HostToNetworkOrder(int32 host)" />
       <MemberSignature Language="C#" Value="public static int HostToNetworkOrder (int host);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 HostToNetworkOrder(int32 host) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -401,30 +376,34 @@ in network-byte-order.</para>
         <Parameter Name="host" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="host">A <see cref="T:System.Int32" /> in host-byte-order.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
+          <para>The <see cref="M:System.Net.IPAddress.HostToNetworkOrder(System.Int64)" /> method converts multibyte integer values that are stored on the host system from the byte order used by the host to the byte order used by the network.</para>
+        </remarks>
         <summary>
-          <para>Converts a <see cref="T:System.Int32" /> from host-byte-order to network-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an integer value from host byte order to network byte order.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int32" />
-in network-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value, expressed in network byte order.</para>
         </returns>
-        <remarks>
-          <para>This method performs conversions on systems where the host-byte-order differs 
-      from network-byte-order. On systems where this is not the case, this method does
-      nothing.</para>
-        </remarks>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in host byte order. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostToNetworkOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 HostToNetworkOrder(int64 host)" />
       <MemberSignature Language="C#" Value="public static long HostToNetworkOrder (long host);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 HostToNetworkOrder(int64 host) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -432,179 +411,246 @@ in network-byte-order.</para>
         <Parameter Name="host" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="host">A <see cref="T:System.Int64" /> in host-byte-order.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
+          <para>The <see cref="M:System.Net.IPAddress.HostToNetworkOrder(System.Int64)" /> method converts multibyte integer values that are stored on the host system from the byte order used by the host to the byte order used by the network.</para>
+        </remarks>
         <summary>
-          <para> Converts a <see cref="T:System.Int64" /> from host-byte-order to network-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a long value from host byte order to network byte order.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int64" /> in network-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long value, expressed in network byte order.</para>
         </returns>
-        <remarks>
-          <para>This method performs conversions on systems where the host-byte-order differs 
-      from network-byte-order. On systems where this is not the case, this method does
-      nothing.</para>
-        </remarks>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in host byte order. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6Any">
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6Any;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress IPv6Any" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Net.IPAddress.IPv6Any" /> field is equivalent to 0:0:0:0:0:0:0:0 in colon-hexadecimal notation, or to :: in compact notation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.Socket.Bind(System.Net.EndPoint)" /> method uses the <see cref="F:System.Net.IPAddress.IPv6Any" /> field to indicate that a <see cref="T:System.Net.Sockets.Socket" /> must listen for client activity on all network interfaces.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6Loopback">
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6Loopback;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress IPv6Loopback" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Net.IPAddress.IPv6Loopback" /> field is equivalent to 0:0:0:0:0:0:0:1 in colon-hexadecimal notation, or to ::1 in compact notation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the IP loopback address. This property is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6None">
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6None;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress IPv6None" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.Socket.Bind(System.Net.EndPoint)" /> method uses the <see cref="F:System.Net.IPAddress.IPv6None" /> field to indicate that a <see cref="T:System.Net.Sockets.Socket" /> must not listen for client activity. The <see cref="F:System.Net.IPAddress.IPv6None" /> field is equivalent to 0:0:0:0:0:0:0:0 in colon-hexadecimal notation, or to ::0 in compact notation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an IP address that indicates that no network interface should be used. This property is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsIPv6LinkLocal">
       <MemberSignature Language="C#" Value="public bool IsIPv6LinkLocal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6LinkLocal" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the address is an IPv6 link local address.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsIPv6Multicast">
       <MemberSignature Language="C#" Value="public bool IsIPv6Multicast { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6Multicast" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the address is an IPv6 multicast global address.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsIPv6SiteLocal">
       <MemberSignature Language="C#" Value="public bool IsIPv6SiteLocal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6SiteLocal" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the address is an IPv6 site local address.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsIPv6Teredo">
+      <MemberSignature Language="C#" Value="public bool IsIPv6Teredo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6Teredo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Teredo address is an IPv6 address with the prefix of 2001::/32. Teredo addresses can be returned through normal DNS name resolution or enumerated as an IPv6 address assigned to a local interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the address is an IPv6 Teredo address.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLoopback">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLoopback(class System.Net.IPAddress address)" />
-      <MemberSignature Language="C#" Value="public static bool IsLoopback (System.Net.IPAddress addr);" />
+      <MemberSignature Language="C#" Value="public static bool IsLoopback (System.Net.IPAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsLoopback(class System.Net.IPAddress address) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="addr" Type="System.Net.IPAddress" />
+        <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <param name="addr"> A <see cref="T:System.Net.IPAddress" /> containing the IP address to check.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.IPAddress.IsLoopback(System.Net.IPAddress)" /> method compares <paramref name="address" /> to <see cref="F:System.Net.IPAddress.Loopback" /> and returns true if the two IP addresses are the same.</para>
+          <para>In the case of IPv4, that the <see cref="M:System.Net.IPAddress.IsLoopback(System.Net.IPAddress)" /> method returns true for any IP address of the form 127.X.Y.Z (where X, Y, and Z are in the range 0-255), not just <see cref="F:System.Net.IPAddress.Loopback" /> (127.0.0.1).</para>
+        </remarks>
         <summary>
-          <para> Returns a <see cref="T:System.Boolean" /> that indicates whether the specified IP address is a loopback address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified IP address is the loopback address.</para>
         </summary>
         <returns>
-          <para>
-            <see langword="true " />if
-<paramref name="address " /> is a loopback address; otherwise
-<see langword="false" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="address" /> is the loopback address; otherwise, false.</para>
         </returns>
-        <remarks>
-          <para> All IP addresses of the form 127.X.Y.Z, where X, Y, and Z are
-      in the range 0-255, are forwarded to the IP loopback address 127.0.0.1.
-      The <see cref="F:System.Net.IPAddress.Loopback" /> address is
-      used to specify the address of the local computer. </para>
-        </remarks>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP address. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Loopback">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Loopback" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Loopback;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress Loopback" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Provides the IP loopback
-      address.</para>
-        </summary>
         <remarks>
-          <para>This field is read-only.</para>
-          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x000000000100007F) and represents the address
-   127.0.0.1.</para>
-          <para> The loopback address is used to specify the address of the local computer.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Net.IPAddress.Loopback" /> field is equivalent to 127.0.0.1 in dotted-quad notation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the IP loopback address. This field is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NetworkToHostOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 NetworkToHostOrder(int16 network)" />
       <MemberSignature Language="C#" Value="public static short NetworkToHostOrder (short network);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 NetworkToHostOrder(int16 network) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -612,30 +658,34 @@ in network-byte-order.</para>
         <Parameter Name="network" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="network">A <see cref="T:System.Int16" /> in network-byte-order.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
+          <para>The <see cref="M:System.Net.IPAddress.NetworkToHostOrder(System.Int64)" /> method converts multibyte integer values that are stored on the host system from the byte order used by the network to the byte order used by the host.</para>
+        </remarks>
         <summary>
-          <para>Converts a <see cref="T:System.Int16" qualify="true" /> from network-byte-order to host-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a short value from network byte order to host byte order.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int16" />
-in host-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A short value, expressed in host byte order.</para>
         </returns>
-        <remarks>
-          <para>This method performs conversions on systems where the host-byte-order differs 
-      from network-byte-order. On systems where this is not the case, this method does
-      nothing.</para>
-        </remarks>
+        <param name="network">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in network byte order. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NetworkToHostOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 NetworkToHostOrder(int32 network)" />
       <MemberSignature Language="C#" Value="public static int NetworkToHostOrder (int network);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 NetworkToHostOrder(int32 network) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -643,29 +693,34 @@ in host-byte-order.</para>
         <Parameter Name="network" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="network">A <see cref="T:System.Int32" /> in network-byte-order.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
+          <para>The <see cref="M:System.Net.IPAddress.NetworkToHostOrder(System.Int64)" /> method converts multibyte integer values that are stored on the host system from the byte order used by the network to the byte order used by the host.</para>
+        </remarks>
         <summary>
-          <para>Converts a <see cref="T:System.Int32" qualify="true" /> from network-byte-order to host-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an integer value from network byte order to host byte order.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int32" /> in host-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value, expressed in host byte order.</para>
         </returns>
-        <remarks>
-          <para>This method performs conversions on systems where the host-byte-order differs 
-      from network-byte-order. On systems where this is not the case, this method does
-      nothing.</para>
-        </remarks>
+        <param name="network">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in network byte order. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NetworkToHostOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 NetworkToHostOrder(int64 network)" />
       <MemberSignature Language="C#" Value="public static long NetworkToHostOrder (long network);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 NetworkToHostOrder(int64 network) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -673,57 +728,60 @@ in host-byte-order.</para>
         <Parameter Name="network" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="network">A <see cref="T:System.Int64" /> in network-byte-order.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
+          <para>The <see cref="M:System.Net.IPAddress.NetworkToHostOrder(System.Int64)" /> method converts multibyte integer values that are stored on the host system from the byte order used by the network to the byte order used by the host.</para>
+        </remarks>
         <summary>
-          <para>Converts a <see cref="T:System.Int64" qualify="true" /> from network-byte-order to host-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a long value from network byte order to host byte order.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int64" /> in host-byte-order.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long value, expressed in host byte order.</para>
         </returns>
-        <remarks>
-          <para>This method performs conversions on systems where the host-byte-order differs 
-      from network-byte-order. On systems where this is not the case, this method does
-      nothing.</para>
-        </remarks>
+        <param name="network">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in network byte order. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress None" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress None;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress None" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Provides the IP address that indicates
-      that no network interface should be used.</para>
-        </summary>
         <remarks>
-          <para>This field is read-only.</para>
-          <para> This is equivalent to <see cref="!:System.Net.IPAddress.IPAddress" /> (0x00000000FFFFFFFF) and represents the address 255.255.255.255.</para>
-          <block subset="none" type="note">
-            <para>Multiple fields are defined for this IP address based on prior
-      art. This field is identical to <see cref="F:System.Net.IPAddress.Broadcast" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.Socket.Bind(System.Net.EndPoint)" /> method uses the <see cref="F:System.Net.IPAddress.None" /> field to indicate that a <see cref="T:System.Net.Sockets.Socket" /> must not listen for client activity. The <see cref="F:System.Net.IPAddress.None" /> field is equivalent to 255.255.255.255 in dotted-quad notation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an IP address that indicates that no network interface should be used. This field is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPAddress Parse(string ipString)" />
       <MemberSignature Language="C#" Value="public static System.Net.IPAddress Parse (string ipString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.IPAddress Parse(string ipString) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -731,83 +789,151 @@ in host-byte-order.</para>
         <Parameter Name="ipString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ipString">A <see cref="T:System.String" /> in dotted-quad notation containing the IP address to convert.</param>
-        <summary>
-          <para> Converts a <see cref="T:System.String" /> representation of an IP address in dotted-quad notation, to a <see cref="T:System.Net.IPAddress" /> instance.</para>
-        </summary>
-        <returns>
-          <para>A new <see cref="T:System.Net.IPAddress" /> instance that represents the address specified in <paramref name="ipString" />.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>An example of a string in dotted-quad notation is "127.0.0.1".</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="ipString " />is <see langword="null" />.</exception>
         <exception cref="T:System.FormatException">
           <paramref name="ipString " />is not a valid IP address.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The static <see cref="M:System.Net.IPAddress.Parse(System.String)" /> method creates an <see cref="T:System.Net.IPAddress" /> instance from an IP address expressed in dotted-quad notation for IPv4 and in colon-hexadecimal notation for IPv6.</para>
+          <para>The number of parts (each part is separated by a period) in <paramref name="ipString" /> determines how the IP address is constructed. A one part address is stored directly in the network address. A two part address, convenient for specifying a class A address, puts the leading part in the first byte and the trailing part in the right-most three bytes of the network address. A three part address, convenient for specifying a class B address, puts the first part in the first byte, the second part in the second byte, and the final part in the right-most two bytes of the network address. For example:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Number of parts and example <paramref name="ipString" /></para>
+                </term>
+                <description>
+                  <para>IPv4 address for IPAddress</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 -- "65536"</para>
+              </term>
+              <description>
+                <para>0.0.255.255</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 -- "20.2"</para>
+              </term>
+              <description>
+                <para>20.0.0.2</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 -- "20.65535"</para>
+              </term>
+              <description>
+                <para>20.0.255.255</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3 -- "128.1.2"</para>
+              </term>
+              <description>
+                <para>128.1.0.2</para>
+              </description>
+            </item>
+          </list>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an IP address string to an <see cref="T:System.Net.IPAddress" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPAddress" /> instance.</para>
+        </returns>
+        <param name="ipString">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains an IP address in dotted-quad notation for IPv4 and in colon-hexadecimal notation for IPv6. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ScopeId">
+      <MemberSignature Language="C#" Value="public long ScopeId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ScopeId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ScopeId">
-      <MemberSignature Language="C#" Value="public long ScopeId { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The meaning of <see cref="P:System.Net.IPAddress.ScopeId" /> changes depending on the context in which it is used.</para>
+          <list type="bullet">
+            <item>
+              <para>Link-local address. On a host with multiple interfaces connected to separate links, the same link-local address can be assigned to multiple interfaces. To eliminate this ambiguity, a scope identifier is used to specify the interface over which messages are exchanged.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Link-local addresses, identified by the Format Prefix (FP) FE80, are used by nodes when communicating with neighboring nodes on the same link.</para>
+          </block>
+          <list type="bullet">
+            <item>
+              <para>Site-local addresses. A host can be connected to multiple sites. In this case, a scope identifier is used to indicate a specific site to communicate with.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Site-local addresses, identified by the Format Prefix (FP) FEC0, are used by nodes when communicating on private intranets.</para>
+          </block>
+          <para>The notation that is used to specify the <paramref name="ScopeId" /> with an address is Address%ScopeId. For example, FE80::5EFE:192.168.41.30%2.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the IPv6 address scope identifier.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.IPAddress.ToString" /> method converts the IP address that is stored in the <see cref="P:System.Net.IPAddress.Address" /> property to either IPv4 dotted-quad or IPv6 colon-hexadecimal notation.</para>
+        </remarks>
         <summary>
-          <para> Returns a <see cref="T:System.String" /> representation of the value of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an Internet address to its standard notation.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.String" /> representation of 
-   the current instance. The returned string is an IP address expressed in dotted-quad notation (for example, "192.168.1.2").</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the IP address in either IPv4 dotted-quad or in IPv6 colon-hexadecimal notation.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>The <see cref="M:System.Net.IPAddress.ToString" /> method converts the IP address stored in the <see cref="P:System.Net.IPAddress.Address" /> property of the current instance to
-      a <see cref="T:System.String" qualify="true" />
-      containing
-      
-      the address in dotted-quad notation (for example, "192.168.1.2"). </para>
-            <para>This method overrides <see cref="M:System.Object.ToString" qualify="true" />.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryParse">
       <MemberSignature Language="C#" Value="public static bool TryParse (string ipString, out System.Net.IPAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string ipString, class System.Net.IPAddress address) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>

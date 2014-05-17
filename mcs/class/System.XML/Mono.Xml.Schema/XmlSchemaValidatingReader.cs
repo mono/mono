@@ -125,7 +125,7 @@ namespace Mono.Xml.Schema
 				schemas,
 				nsResolver,
 				options);
-			if (reader.BaseURI != String.Empty)
+			if (reader.BaseURI != String.Empty && Uri.IsWellFormedUriString(reader.BaseURI, UriKind.Absolute))
 				v.SourceUri = new Uri (reader.BaseURI);
 
 			readerLineInfo = reader as IXmlLineInfo;

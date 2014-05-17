@@ -25,8 +25,6 @@
 #include "mini.h"
 #include "mini-x86.h"
 
-static guint8* nullified_class_init_trampoline;
-
 /*
  * mono_arch_get_unbox_trampoline:
  * @m: method pointer
@@ -239,6 +237,7 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 {
 	guint8 buf [16];
 	gboolean can_write = mono_breakpoint_clean_code (NULL, code, 6, buf, sizeof (buf));
+	gpointer tramp = mini_get_nullified_class_init_trampoline ();
 
 	if (!can_write)
 		return;
@@ -273,7 +272,7 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 			//VALGRIND_DISCARD_TRANSLATIONS (code, 8);
 		}
 #elif defined(__native_client_codegen__)
-		mono_arch_patch_callsite (code, code + 5, nullified_class_init_trampoline);
+		mono_arch_patch_callsite (code, code + 5, tramp);
 #endif
 	} else if (code [0] == 0x90 || code [0] == 0xeb) {
 		/* Already changed by another thread */
@@ -285,21 +284,12 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 		vtable_slot = get_vcall_slot_addr (code + 5, regs);
 		g_assert (vtable_slot);
 
-		*vtable_slot = nullified_class_init_trampoline;
+		*vtable_slot = tramp;
 	} else {
 			printf ("Invalid trampoline sequence: %x %x %x %x %x %x %x\n", code [0], code [1], code [2], code [3],
 				code [4], code [5], code [6]);
 			g_assert_not_reached ();
 		}
-}
-
-void
-mono_arch_nullify_plt_entry (guint8 *code, mgreg_t *regs)
-{
-	if (mono_aot_only && !nullified_class_init_trampoline)
-		nullified_class_init_trampoline = mono_aot_get_trampoline ("nullified_class_init_trampoline");
-
-	mono_arch_patch_plt_entry (code, NULL, regs, nullified_class_init_trampoline);
 }
 
 guchar*
@@ -543,11 +533,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		g_free (tramp_name);
 	}
 
-	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT) {
-		/* Initialize the nullified class init trampoline used in the AOT case */
-		nullified_class_init_trampoline = mono_arch_get_nullified_class_init_trampoline (NULL);
-	}
-
 	return buf;
 }
 
@@ -566,9 +551,6 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 
 	if (info)
 		*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
-
-	if (mono_jit_map_is_enabled ())
-		mono_emit_jit_tramp (buf, code - buf, "nullified_class_init_trampoline");
 
 	return buf;
 }
@@ -873,7 +855,15 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		x86_branch8 (code, X86_CC_Z, -1, 1);
 
 		/* load MonoInternalThread* into EDX */
-		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		if (aot) {
+			/* load_aotconst () puts the result into EAX */
+			x86_mov_reg_reg (code, X86_EDX, X86_EAX, sizeof (mgreg_t));
+			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_TLS_OFFSET, GINT_TO_POINTER (TLS_KEY_THREAD));
+			code = mono_x86_emit_tls_get_reg (code, X86_EAX, X86_EAX);
+			x86_xchg_reg_reg (code, X86_EAX, X86_EDX, sizeof (mgreg_t));
+		} else {
+			code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		}
 		/* load TID into EDX */
 		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, tid), 4);
 
@@ -1006,7 +996,15 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 
 		/* next case: synchronization is not null */
 		/* load MonoInternalThread* into EDX */
-		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		if (aot) {
+			/* load_aotconst () puts the result into EAX */
+			x86_mov_reg_reg (code, X86_EDX, X86_EAX, sizeof (mgreg_t));
+			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_TLS_OFFSET, GINT_TO_POINTER (TLS_KEY_THREAD));
+			code = mono_x86_emit_tls_get_reg (code, X86_EAX, X86_EAX);
+			x86_xchg_reg_reg (code, X86_EAX, X86_EDX, sizeof (mgreg_t));
+		} else {
+			code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		}
 		/* load TID into EDX */
 		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, tid), 4);
 		/* is synchronization->owner == TID */
@@ -1093,48 +1091,57 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 	x86_call_code (code, (guint8*)func);
 }
 
-static void
-handler_block_trampoline_helper (gpointer *ptr)
+static gpointer
+handler_block_trampoline_helper (void)
 {
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
-	*ptr = jit_tls->handler_block_return_address;
+	return jit_tls->handler_block_return_address;
 }
 
 gpointer
-mono_arch_create_handler_block_trampoline (void)
+mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *tramp = mono_get_trampoline_code (MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD);
 	guint8 *code, *buf;
 	int tramp_size = 64;
+	MonoJumpInfo *ji = NULL;
+	GSList *unwind_ops = NULL;
+
+	g_assert (!aot);
+
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
 	/*
 	This trampoline restore the call chain of the handler block then jumps into the code that deals with it.
 	*/
 
+	/*
+	 * We are in a method frame after the call emitted by OP_CALL_HANDLER.
+	 */
+
 	if (mono_get_jit_tls_offset () != -1) {
 		code = mono_x86_emit_tls_get (code, X86_EAX, mono_get_jit_tls_offset ());
 		x86_mov_reg_membase (code, X86_EAX, X86_EAX, G_STRUCT_OFFSET (MonoJitTlsData, handler_block_return_address), 4);
-		/*simulate a call*/
-		/*Fix stack alignment*/
-		x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x8);
-		x86_push_reg (code, X86_EAX);
-		x86_jump_code (code, tramp);
 	} else {
 		/*Slow path uses a c helper*/
-		x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x8);
-		x86_push_reg (code, X86_ESP);
-		x86_push_imm (code, tramp);
-		x86_jump_code (code, handler_block_trampoline_helper);
+		x86_call_code (code, handler_block_trampoline_helper);
 	}
+	/* Simulate a call */
+	/*Fix stack alignment*/
+	x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x4);
+	/* This is the address the trampoline will return to */
+	x86_push_reg (code, X86_EAX);
+	/* Dummy trampoline argument, since we call the generic trampoline directly */
+	x86_push_imm (code, 0);
+	x86_jump_code (code, tramp);
 
 	nacl_global_codeman_validate (&buf, tramp_size, &code);
 
 	mono_arch_flush_icache (buf, code - buf);
 	g_assert (code - buf <= tramp_size);
 
-	if (mono_jit_map_is_enabled ())
-		mono_emit_jit_tramp (buf, code - buf, "handler_block_trampoline");
+	if (info)
+		*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }
@@ -1143,7 +1150,7 @@ guint8*
 mono_arch_get_call_target (guint8 *code)
 {
 	if (code [-5] == 0xe8) {
-		guint32 disp = *(guint32*)(code - 4);
+		gint32 disp = *(gint32*)(code - 4);
 		guint8 *target = code + disp;
 
 		return target;
@@ -1183,7 +1190,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	return start;
 }
 
-#if defined(MONOTOUCH) || defined(MONO_EXTENSIONS)
+#if defined(ENABLE_GSHAREDVT)
 
 #include "../../../mono-extensions/mono/mini/tramp-x86-gsharedvt.c"
 

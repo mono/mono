@@ -47,7 +47,7 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 		protected MethodSpec spec;
 
-		public MethodCore (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
+		protected MethodCore (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 			MemberName name, Attributes attrs, ParametersCompiled parameters)
 			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
@@ -204,6 +204,8 @@ namespace Mono.CSharp {
 
 		TypeSpec[] targs;
 		TypeParameterSpec[] constraints;
+
+		public static readonly MethodSpec Excluded = new MethodSpec (MemberKind.Method, InternalType.FakeInternalType, null, null, ParametersCompiled.EmptyReadOnlyParameters, 0);
 
 		public MethodSpec (MemberKind kind, TypeSpec declaringType, IMethodDefinition details, TypeSpec returnType,
 			AParametersCollection parameters, Modifiers modifiers)
@@ -685,6 +687,8 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (MethodBuilder);
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
+			if ((ModFlags & Modifiers.DEBUGGER_STEP_THROUGH) != 0)
+				Module.PredefinedAttributes.DebuggerStepThrough.EmitAttribute (MethodBuilder);
 
 			if (ReturnType.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
@@ -1232,7 +1236,7 @@ namespace Mono.CSharp {
 					}
 
 					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, null, Location);
-					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+					ModFlags |= Modifiers.DEBUGGER_STEP_THROUGH;
 				}
 
 				if (Compiler.Settings.WriteMetadataOnly)
@@ -1403,7 +1407,7 @@ namespace Mono.CSharp {
 		Arguments argument_list;
 		MethodSpec base_ctor;
 
-		public ConstructorInitializer (Arguments argument_list, Location loc)
+		protected ConstructorInitializer (Arguments argument_list, Location loc)
 		{
 			this.argument_list = argument_list;
 			this.loc = loc;
@@ -1462,7 +1466,7 @@ namespace Mono.CSharp {
 				} else {
 					//
 					// It is legal to have "this" initializers that take no arguments
-					// in structs, they are just no-ops.
+					// in structs
 					//
 					// struct D { public D (int a) : this () {}
 					//
@@ -1483,9 +1487,17 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			// It can be null for static initializers
-			if (base_ctor == null)
+			//
+			// It can be null for struct initializers or System.Object
+			//
+			if (base_ctor == null) {
+				if (type == ec.BuiltinTypes.Object)
+					return;
+
+				ec.Emit (OpCodes.Ldarg_0);
+				ec.Emit (OpCodes.Initobj, type);
 				return;
+			}
 			
 			var call = new CallEmitter ();
 			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
@@ -1495,6 +1507,12 @@ namespace Mono.CSharp {
 		public override void EmitStatement (EmitContext ec)
 		{
 			Emit (ec);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (argument_list != null)
+				argument_list.FlowAnalysis (fc);
 		}
 	}
 
@@ -1506,8 +1524,8 @@ namespace Mono.CSharp {
 	}
 
 	class GeneratedBaseInitializer: ConstructorBaseInitializer {
-		public GeneratedBaseInitializer (Location loc):
-			base (null, loc)
+		public GeneratedBaseInitializer (Location loc, Arguments arguments)
+			: base (arguments, loc)
 		{
 		}
 	}
@@ -1566,6 +1584,8 @@ namespace Mono.CSharp {
 		        return false;
 		    }
 		}
+
+		public bool IsPrimaryConstructor { get; set; }
 
 		
 		MethodBase IMethodDefinition.Metadata {
@@ -1655,6 +1675,16 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
+			if (Parent.PrimaryConstructorParameters != null && !IsPrimaryConstructor) {
+				if (Parent.Kind == MemberKind.Struct) {
+					Report.Error (9009, Location, "`{0}': Structs with primary constructor cannot have explicit constructor",
+						GetSignatureForError ());
+				} else if (Initializer == null || Initializer is ConstructorBaseInitializer) {
+					Report.Error (9002, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
+						GetSignatureForError ());
+				}
+			}
+
 			var ca = ModifiersExtensions.MethodAttr (ModFlags) | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName;
 
 			ConstructorBuilder = Parent.TypeBuilder.DefineConstructor (
@@ -1726,7 +1756,7 @@ namespace Mono.CSharp {
 							//
 							block.AddThisVariable (bc);
 						} else if (Parent.PartialContainer.Kind == MemberKind.Class) {
-							Initializer = new GeneratedBaseInitializer (Location);
+							Initializer = new GeneratedBaseInitializer (Location, null);
 						}
 					}
 
@@ -1740,7 +1770,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (block.Resolve (null, bc, this)) {
+				if (block.Resolve (bc, this)) {
 					debug_builder = Parent.CreateMethodSymbolEntry ();
 					EmitContext ec = new EmitContext (this, ConstructorBuilder.GetILGenerator (), bc.ReturnType, debug_builder);
 					ec.With (EmitContext.Options.ConstructorScope, true);
@@ -1957,7 +1987,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 				} else {
-					if (implementing != null) {
+					if (implementing != null && !optional) {
 						if (!method.IsAccessor) {
 							if (implementing.IsAccessor) {
 								container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
@@ -2129,7 +2159,7 @@ namespace Mono.CSharp {
 			ToplevelBlock block = method.Block;
 			if (block != null) {
 				BlockContext bc = new BlockContext (method, block, method.ReturnType);
-				if (block.Resolve (null, bc, method)) {
+				if (block.Resolve (bc, method)) {
 					debug_builder = member.Parent.CreateMethodSymbolEntry ();
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator (), debug_builder);
 
@@ -2265,7 +2295,7 @@ namespace Mono.CSharp {
 
 		ReturnParameter return_attributes;
 
-		public AbstractPropertyEventMethod (InterfaceMemberBase member, string prefix, Attributes attrs, Location loc)
+		protected AbstractPropertyEventMethod (InterfaceMemberBase member, string prefix, Attributes attrs, Location loc)
 			: base (member.Parent, SetupName (prefix, member, loc), attrs)
 		{
 			this.prefix = prefix;
@@ -2436,6 +2466,11 @@ namespace Mono.CSharp {
 		public override bool IsClsComplianceRequired()
 		{
 			return false;
+		}
+
+		public void PrepareEmit ()
+		{
+			method_data.DefineMethodBuilder (Parent.PartialContainer, ParameterInfo);
 		}
 
 		public override void WriteDebugSymbol (MonoSymbolFile file)

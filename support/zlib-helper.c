@@ -183,7 +183,6 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 			n = stream->func (stream->buffer, BUFFER_SIZE, stream->gchandle);
 			if (n <= 0) {
 				stream->eof = TRUE;
-				break;
 			}
 			zs->next_in = stream->buffer;
 			zs->avail_in = n;

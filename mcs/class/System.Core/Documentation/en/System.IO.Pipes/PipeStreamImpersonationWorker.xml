@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PipeStreamImpersonationWorker" FullName="System.IO.Pipes.PipeStreamImpersonationWorker">
+  <TypeSignature Language="C#" Value="public delegate void PipeStreamImpersonationWorker();" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PipeStreamImpersonationWorker extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters />
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this delegate to specify a method to call when impersonating the client. The connecting client's permissions are applied to the remote server. For example, if the connecting client tries to request the contents of a file on the server, the client can request only files that it has sufficient permissions to open.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method to call as the client.</para>
+    </summary>
+  </Docs>
+</Type>

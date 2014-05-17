@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExceptionHandlingClauseOptions" FullName="System.Reflection.ExceptionHandlingClauseOptions">
   <TypeSignature Language="C#" Value="public enum ExceptionHandlingClauseOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ExceptionHandlingClauseOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,70 +19,95 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To examine the exception-handling clauses in a method, obtain a <see cref="T:System.Reflection.MethodInfo" /> object and call the <see cref="M:System.Reflection.MethodBase.GetMethodBody" /> method to obtain the method body. Use the <see cref="P:System.Reflection.MethodBody.ExceptionHandlingClauses" /> property to obtain a list of <see cref="T:System.Reflection.ExceptionHandlingClause" /> objects.</para>
+      <block subset="none" type="note">
+        <para>Working with exception-handling clauses requires a thorough understanding of metadata and Microsoft intermediate language (MSIL) instruction formats. Information can be found in the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics" and "Partition III: CIL Instruction Set". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies kinds of exception-handling clauses.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Clause">
       <MemberSignature Language="C#" Value="Clause" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ExceptionHandlingClauseOptions Clause = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The clause accepts all exceptions that derive from a specified type.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Fault">
       <MemberSignature Language="C#" Value="Fault" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ExceptionHandlingClauseOptions Fault = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The clause is executed if an exception occurs, but not on completion of normal control flow.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Filter">
       <MemberSignature Language="C#" Value="Filter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ExceptionHandlingClauseOptions Filter = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The clause contains user-specified instructions that determine whether the exception should be ignored (that is, whether normal execution should resume), be handled by the associated handler, or be passed on to the next clause.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Finally">
       <MemberSignature Language="C#" Value="Finally" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ExceptionHandlingClauseOptions Finally = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ExceptionHandlingClauseOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The clause is executed whenever the try block exits, whether through normal control flow or because of an unhandled exception.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

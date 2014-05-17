@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Security.Authentication.ExtendedProtection">
+  <Docs>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Security.Authentication.ExtendedProtection" /> namespace provides support for authentication using extended protection for applications. </para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The design of Integrated Windows Authentication (IWA) allows for some credential challenge responses to be universal, meaning they can be re-used or forwarded. If this particular design feature is not needed then the challenge responses should be constructed with, at minimum, target specific information and, at best, also some channel specific information. Services can then provide extended protection to ensure that credential challenge responses contain service specific information (a Service Provider Name or SPN) and, if necessary, channel specific information (a channel binding token or CBT). With this information in the credential exchanges, services are able to better protect against malicious use of credential challenge responses that might have been improperly obtained. </para>
+    </remarks>
+  </Docs>
+</Namespace>

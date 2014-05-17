@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessagePropertyDescription" FullName="System.ServiceModel.Description.MessagePropertyDescription">
+  <TypeSignature Language="C#" Value="public class MessagePropertyDescription : System.ServiceModel.Description.MessagePartDescription" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessagePropertyDescription extends System.ServiceModel.Description.MessagePartDescription" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Description.MessagePartDescription</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" /> class represents message properties specified in a message contract by the use of the <see cref="T:System.ServiceModel.MessagePropertyAttribute" />. Message properties are used to place information on the message that can be used by other objects further on in the message pipeline but that are not serialized with the message.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a message property specified by the <see cref="T:System.ServiceModel.MessagePropertyAttribute" />. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessagePropertyDescription (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" /> class.  </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

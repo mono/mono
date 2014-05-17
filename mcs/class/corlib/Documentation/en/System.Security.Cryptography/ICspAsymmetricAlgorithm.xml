@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICspAsymmetricAlgorithm" FullName="System.Security.Cryptography.ICspAsymmetricAlgorithm">
   <TypeSignature Language="C#" Value="public interface ICspAsymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICspAsymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -12,31 +14,49 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Classes that extend the <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> class should implement the <see cref="T:System.Security.Cryptography.ICspAsymmetricAlgorithm" /> interface to enumerate key container information using a <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object, and to import and export Microsoft Cryptographic API (CAPI)–compatible key blobs. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods that allow an <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> class to enumerate key container information, and import and export Microsoft Cryptographic API (CAPI)–compatible key blobs.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CspKeyContainerInfo">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.CspKeyContainerInfo CspKeyContainerInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.CspKeyContainerInfo CspKeyContainerInfo" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.CspKeyContainerInfo</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CspKeyContainerInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object specifies whether the key is exportable, and provides the key container name, information about the provider, and other information.    </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object that describes additional information about a cryptographic key pair.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ExportCspBlob">
       <MemberSignature Language="C#" Value="public byte[] ExportCspBlob (bool includePrivateParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] ExportCspBlob(bool includePrivateParameters) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -44,20 +64,31 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="includePrivateParameters">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.ICspAsymmetricAlgorithm.ExportCspBlob(System.Boolean)" /> method returns a blob that contains key information that is compatible with the unmanaged Microsoft Cryptographic API (CAPI).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports a blob that contains the key information associated with an <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object.  </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the key information associated with an <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object.</para>
+        </returns>
+        <param name="includePrivateParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include the private key; otherwise, false.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ImportCspBlob">
+      <MemberSignature Language="C#" Value="public void ImportCspBlob (byte[] rawData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ImportCspBlob(unsigned int8[] rawData) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ImportCspBlob">
-      <MemberSignature Language="C#" Value="public void ImportCspBlob (byte[] rawData);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -65,15 +96,18 @@
         <Parameter Name="rawData" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rawData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.ICspAsymmetricAlgorithm.ImportCspBlob(System.Byte[])" /> method initializes the key data of an <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object using a blob that is compatible with the unmanaged Microsoft Cryptographic API (CAPI).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports a blob that represents asymmetric key information.  </para>
+        </summary>
+        <param name="rawData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents an asymmetric key blob.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

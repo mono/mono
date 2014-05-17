@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IInputSessionShutdown" FullName="System.ServiceModel.Dispatcher.IInputSessionShutdown">
+  <TypeSignature Language="C#" Value="public interface IInputSessionShutdown" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IInputSessionShutdown" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Dispatcher.IInputSessionShutdown" /> interface inside a duplex session to send outbound messages prior to closing the session. For example, if a client closes a session the service can implement <see cref="M:System.ServiceModel.Dispatcher.IInputSessionShutdown.DoneReceiving(System.ServiceModel.IDuplexContextChannel)" /> to be notified prior to the shutdown, enabling the service to send one notification message prior to returning. The client receives the notification prior to the acknowledgment that the client can close the channel.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract that must be implemented to shut down an input session.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ChannelFaulted">
+      <MemberSignature Language="C#" Value="public void ChannelFaulted (System.ServiceModel.IDuplexContextChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ChannelFaulted(class System.ServiceModel.IDuplexContextChannel channel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="channel" Type="System.ServiceModel.IDuplexContextChannel" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Dispatcher.IInputSessionShutdown.ChannelFaulted(System.ServiceModel.IDuplexContextChannel)" /> method to perform some custom behavior when a channel has faulted. Typically, the channel is aborted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the channel has faulted.</para>
+        </summary>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.IDuplexContextChannel" /> that has faulted.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DoneReceiving">
+      <MemberSignature Language="C#" Value="public void DoneReceiving (System.ServiceModel.IDuplexContextChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DoneReceiving(class System.ServiceModel.IDuplexContextChannel channel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="channel" Type="System.ServiceModel.IDuplexContextChannel" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates when the client channel is done receiving messages as part of the duplex message exchange.</para>
+        </summary>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.IDuplexSessionChannel" /> that is done receiving.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataSourceUpdateMode" FullName="System.Windows.Forms.DataSourceUpdateMode">
   <TypeSignature Language="C#" Value="public enum DataSourceUpdateMode" />
   <AssemblyInfo>
@@ -8,9 +9,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a control is bound to a data source using a <see cref="T:System.Windows.Forms.Binding" /> object, you can specify when an update to the data source will occur using the <see cref="T:System.Windows.Forms.DataSourceUpdateMode" /> enumeration.</para>
+      <para>When the update mode is <see cref="F:System.Windows.Forms.DataSourceUpdateMode.Never" />, you can force the data source to be updated by using the <see cref="M:System.Windows.Forms.Binding.WriteValue" /> method.</para>
+      <block subset="none" type="note">
+        <para>Even when the update mode is set to <see cref="F:System.Windows.Forms.DataSourceUpdateMode.Never" />, the data source will be updated when the binding is first created, so at that least one update will always occur.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies when a data source is updated when changes occur in the bound control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Never">
@@ -20,8 +31,11 @@
         <ReturnType>System.Windows.Forms.DataSourceUpdateMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data source is never updated and values entered into the control are not parsed, validated or re-formatted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +48,11 @@
         <ReturnType>System.Windows.Forms.DataSourceUpdateMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data source is updated whenever the value of the control property changes. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +65,15 @@
         <ReturnType>System.Windows.Forms.DataSourceUpdateMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After validation, the value in the control property will also be re-formatted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data source is updated when the control property is validated, </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

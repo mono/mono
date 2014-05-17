@@ -3,7 +3,6 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Mvc.dll
-LIBRARY_USE_INTERMEDIATE_FILE = yes
 LIBRARY_COMPAT = yes
 
 RESX_DIST =  System.Web.Mvc/Resources/MvcResources.resx

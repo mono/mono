@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DSAParameters" FullName="System.Security.Cryptography.DSAParameters">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct DSAParameters" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit DSAParameters extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,122 +14,168 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>DSA Parameters.</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the typical parameters for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Counter">
       <MemberSignature Language="C#" Value="public int Counter;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 Counter" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Counter for the primes generation.</summary>
         <remarks>It is possible to verify the primes p and q by using this parameter.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the counter for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="G">
       <MemberSignature Language="C#" Value="public byte[] G;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] G" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>The numbers P, Q and G may be shared for a group of users.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>The numbers P, Q and G may be shared for a group of users.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the G parameter for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="J">
       <MemberSignature Language="C#" Value="public byte[] J;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] J" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the J parameter for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="P">
       <MemberSignature Language="C#" Value="public byte[] P;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] P" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>A prime modulus.</summary>
-        <remarks>The numbers P, Q and G may be shared for a group of users.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>P must be a prime number between 64 and 128 bytes long.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the P parameter for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Q">
       <MemberSignature Language="C#" Value="public byte[] Q;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Q" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>A prime divisor of (p - 1).</summary>
-        <remarks>The numbers P, Q and G may be shared for a group of users.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Q must be a 160-bit prime factor of P - 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the Q parameter for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Seed">
       <MemberSignature Language="C#" Value="public byte[] Seed;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Seed" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Seed for the primes generation.</summary>
-        <remarks>It is possible to verify the primes p and q by using this parameter.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="X">
-      <MemberSignature Language="C#" Value="public byte[] X;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The private key.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The seed is the base number used for the generation of pseudo-random numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the seed for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="X">
+      <MemberSignature Language="C#" Value="public byte[] X;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] X" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <remarks>
           <para>
 X is a random 160 bits number (20 bytes). It's size doesn't vary with the length of the public key (512-1024 bits).
@@ -136,34 +184,32 @@ X is a random 160 bits number (20 bytes). It's size doesn't vary with the length
 While this structure has the <see cref="T:System.SerializableAttribute" /> attribute the private key, X, is marked as <see cref="T:System.NonSerializesAttribute" /> so it's content cannot be divulged using serialization.
 </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the X parameter for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Y">
+      <MemberSignature Language="C#" Value="public byte[] Y;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Y" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Y">
-      <MemberSignature Language="C#" Value="public byte[] Y;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The public key.</summary>
         <remarks>The public key, Y = G^X mod P.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the Y parameter for the <see cref="T:System.Security.Cryptography.DSA" /> algorithm.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Activator" FullName="System.Activator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class Activator : System.Runtime.InteropServices._Activator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Activator extends System.Object implements class System.Runtime.InteropServices._Activator" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,19 +18,44 @@
       <InterfaceName>System.Runtime.InteropServices._Activator</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._Activator))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>This lets you create instances of an object given the <see cref="T:System.Type" /> of that object.</summary>
-    <remarks>To use this do:
-
-
-<example><code lang="C#">
-    Form f = (Form) Activator.CreateInstance (typeof (Form));
-  </code></example></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method creates an instance of a type defined in an assembly by invoking the constructor that best matches the specified arguments. If no arguments are specified, the constructor that takes no parameters, that is, the default constructor, is invoked.</para>
+      <para>You must have sufficient permission to search for and call a constructor; otherwise, an exception is thrown. By default, only public constructors are considered during the search for a constructor. If no constructor or default constructor can be found, an exception is thrown.</para>
+      <para>A binder parameter specifies an object that searches an assembly for a suitable constructor. You can specify your own binder and search criteria. If no binder is specified, a default binder is used. For more information, see the <see cref="T:System.Reflection.Binder" /> and <see cref="T:System.Reflection.BindingFlags" /> classes.</para>
+      <para>An evidence parameter affects the security policy and permissions for the constructor. For more information, see the <see cref="T:System.Security.Policy.Evidence" /> class.</para>
+      <para>An instance of a type can be created at a local or remote site. If the type is created remotely, an activation attribute parameter specifies the URI of the remote site. The call to create the instance might pass through intermediary sites before it reaches the remote site. Other activation attributes can modify the environment, or context, in which the call operates at the remote and intermediary sites.</para>
+      <para>If the instance is created locally, a reference to that object is returned. If the instance is created remotely, a reference to a proxy is returned. The remote object is manipulated through the proxy as if it were a local object.</para>
+      <para>The <see cref="M:System.Activator.GetObject(System.Type,System.String)" /> method creates a proxy to a currently running remote object, server-activated well-known object, or XML Web service. You can specify the connection medium, that is, the channel. For more information, see the <see cref="T:System.Runtime.Remoting.Channels.ChannelServices" /> class.</para>
+      <para>Assemblies contain type definitions. The <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method creates an instance of a type from a currently running assembly. The <see cref="M:System.Activator.CreateInstanceFrom(System.String,System.String)" /> method creates an instance from a file that contains an assembly. The <see cref="M:System.Activator.CreateComInstanceFrom(System.String,System.String)" /> method creates an instance of a COM object from a file that contains an assembly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains methods to create types of objects locally or remotely, or obtain references to existing remote objects. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateComInstanceFrom">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateComInstanceFrom(string assemblyName, string typeName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -37,21 +64,39 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>A <see cref="T:System.Runtime.InteropServices.ComVisibleAttribute" /> attribute with a value of true must be applied either explicitly or by default to the COM type so the <see cref="M:System.Activator.CreateComInstanceFrom(System.String,System.String)" /> method can create an instance of that type; otherwise, <see cref="T:System.TypeLoadException" /> is thrown.</para>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to create nonpublic types if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the COM object whose name is specified, using the named assembly file and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateComInstanceFrom">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateComInstanceFrom(string assemblyName, string typeName, unsigned int8[] hashValue, valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateComInstanceFrom">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -62,22 +107,37 @@
         <Parameter Name="hashAlgorithm" Type="System.Configuration.Assemblies.AssemblyHashAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="hashValue">To be added.</param>
-        <param name="hashAlgorithm">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>A <see cref="T:System.Runtime.InteropServices.ComVisibleAttribute" /> attribute with a value of true must be applied either explicitly or by default to the COM type so the <see cref="M:System.Activator.CreateComInstanceFrom(System.String,System.String)" /> method can create an instance of that type; otherwise, <see cref="T:System.TypeLoadException" /> is thrown.</para>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to create nonpublic types if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the COM object whose name is specified, using the named assembly file and the default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
+        <param name="hashValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the computed hash code. </param>
+        <param name="hashAlgorithm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash algorithm used for hashing files and generating the strong name. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (ActivationContext activationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(class System.ActivationContext activationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,15 +150,32 @@
         <Parameter Name="activationContext" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="activationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>The activation context is used during manifest-based activation to set up the domain policy and to provide an application-based security model. The <see cref="T:System.ActivationContext" /> class contains an <see cref="T:System.ApplicationIdentity" /> object that provides access to the application manifest. For more information, see the <see cref="T:System.Security.Policy.ApplicationSecurityManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type designated by the specified <see cref="T:System.ActivationContext" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created object.</para>
+        </returns>
+        <param name="activationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An activation context object that specifies the object to create.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static object CreateInstance (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateInstance(class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -106,19 +183,29 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">The <see cref="T:System.Type" /> to create an instance of.</param>
-        <summary>Create an instance of a <see cref="T:System.Type" />, provided that it has a constructor that takes no parameters.</summary>
-        <returns>An instance of the relevant <see cref="T:System.Type" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor to be invoked must be accessible.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access nonpublic types if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type using that type's default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (ActivationContext activationContext, string[] activationCustomData);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(class System.ActivationContext activationContext, string[] activationCustomData) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,16 +219,34 @@
         <Parameter Name="activationCustomData" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="activationContext">To be added.</param>
-        <param name="activationCustomData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>The activation context is used during manifest-based activation to set up the domain policy and to provide an application-based security model. The <see cref="T:System.ActivationContext" /> class contains an <see cref="T:System.ApplicationIdentity" /> object that provides access to the application manifest. For more information, see the <see cref="T:System.Security.Policy.ApplicationSecurityManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type that is designated by the specified <see cref="T:System.ActivationContext" /> object and activated with the specified custom activation data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created object.</para>
+        </returns>
+        <param name="activationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An activation context object that specifies the object to create.</param>
+        <param name="activationCustomData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of Unicode strings that contain custom activation data.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (string assemblyName, string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(string assemblyName, string typeName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -150,21 +255,48 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
+          <para>
+            <paramref name="assemblyName" /> can be either of the following: </para>
+          <list type="bullet">
+            <item>
+              <para>The simple name of an assembly, without its path or file extension. For example, you would specify TypeExtensions for an assembly whose path and name are .\bin\TypeExtensions.dll. </para>
+            </item>
+            <item>
+              <para>The full name of a signed assembly, which consists of its simple name, version, culture, and public key token; for example, "TypeExtensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=181869f2f7435b51". </para>
+            </item>
+          </list>
+          <para>For more information on how the common language runtime identifies and loads assemblies, see <format type="text/html"><a href="772ac6f4-64d2-4cfb-92fd-58096dcd6c34">How the Runtime Locates Assemblies</a></format>. For information on using the application configuration file to define assembly locations, see <format type="text/html"><a href="1cb92bd7-6bab-44cf-8fd3-36303ce84fea">Specifying an Assembly's Location</a></format>. If <paramref name="assemblyName" /> is found, it is loaded in the default context. </para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to create nonpublic types if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly and default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. For more information, see the Remarks section. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the preferred type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, bool nonPublic);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateInstance(class System.Type type, bool nonPublic) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, bool nonPublic);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -173,21 +305,36 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="nonPublic">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access nonpublic types and members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types and members is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type using that type's default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
+        <param name="nonPublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if a public or nonpublic default constructor can match; false if only a public default constructor can match. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateInstance(class System.Type type, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, object[] args);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -202,20 +349,31 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="type">The <see cref="T:System.Type" /> to create an instance of.</param>
-        <param name="args">The parameters to pass to the type's constructor.</param>
-        <summary>Create an instance of a given <see cref="T:System.Type" />, providing a list of parameters to pass to the constructor.</summary>
-        <returns>The created instance of the <see cref="T:System.Type" />.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor to be invoked must be accessible and must provide the most specific match with the specified argument list.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access nonpublic types if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(class System.AppDomain domain, string assemblyName, string typeName) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,17 +388,39 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="domain">To be added.</param>
-        <param name="assemblyName">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Activator.CreateInstance(System.AppDomain,System.String,System.String)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
+          <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
+          <block subset="none" type="note">
+            <para>This method uses <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> to require the immediate caller to have full trust. For important limitations on using the LinkDemand member, see <format type="text/html"><a href="1AB877F2-70F4-4E0D-8116-943999DFE8F5">[&lt;topic://cpcondemandvslinkdemand&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly and default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="domain">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the preferred type. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(string assemblyName, string typeName, object[] activationAttributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -250,22 +430,40 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <param name="activationAttributes">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to create nonpublic types if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the nonpublic types is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly and default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the preferred type. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, object[] args, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateInstance(class System.Type type, object[] args, object[] activationAttributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -275,22 +473,40 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <param name="activationAttributes">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor to be invoked must be accessible and must provide the most specific match with the specified argument list.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access nonpublic types if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateInstance(class System.Type type, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -302,24 +518,43 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="bindingAttr">To be added: an object of type 'Reflection.BindingFlags'</param>
-        <param name="binder">To be added: an object of type 'Reflection.Binder'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <param name="culture">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor to be invoked must provide the most specific match with the specified argument list under the constraints of the specified binder and binding attributes.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access nonpublic types and members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types and members is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="type" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="type" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="type" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateInstance(class System.Type type, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public static object CreateInstance (Type type, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -332,24 +567,40 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="bindingAttr">To be added: an object of type 'Reflection.BindingFlags'</param>
-        <param name="binder">To be added: an object of type 'Reflection.Binder'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <param name="culture">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <param name="activationAttributes">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor to be invoked must provide the most specific match with the specified argument list under the constraints of the specified binder and binding attributes.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access nonpublic types and members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the nonpublic types and members is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the specified type using the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="type" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="type" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="type" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(string assemblyName, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -368,21 +619,44 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="activationAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to create nonpublic types and members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types and members is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(class System.AppDomain domain, string assemblyName, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -402,23 +676,57 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="domain">To be added.</param>
-        <param name="assemblyName">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="activationAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Activator.CreateInstance(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
+          <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <block subset="none" type="note">
+            <para>This method uses <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> to require the immediate caller to have full trust. For important limitations on using the LinkDemand member, see <format type="text/html"><a href="1AB877F2-70F4-4E0D-8116-943999DFE8F5">[&lt;topic://cpcondemandvslinkdemand&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="domain">
+          <attribution license="cc4" from="Microsoft" modified="false" />The domain where the type named <paramref name="typeName" /> is created.</param>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(string assemblyName, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes, class System.Security.Policy.Evidence securityInfo) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -434,21 +742,48 @@
         <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <param name="ignoreCase">To be added: an object of type 'bool'</param>
-        <param name="bindingAttr">To be added: an object of type 'Reflection.BindingFlags'</param>
-        <param name="binder">To be added: an object of type 'Reflection.Binder'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <param name="culture">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <param name="activationAttributes">To be added: an object of type 'object []'</param>
-        <param name="securityInfo">To be added: an object of type 'Security.Policy.Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to create nonpublic types and members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the assembly that contains the nonpublic types and members is restricted to the caller’s grant set or to a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
+        <param name="securityInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information used to make security policy decisions and grant code permissions. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstance(class System.AppDomain domain, string assemblyName, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes, class System.Security.Policy.Evidence securityAttributes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -457,14 +792,6 @@
           <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -481,51 +808,89 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="domain">To be added.</param>
-        <param name="assemblyName">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="activationAttributes">To be added.</param>
-        <param name="securityAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Activator.CreateInstance(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
+          <para>Use <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> to unwrap the return value.</para>
+          <block subset="none" type="note">
+            <para>This method uses <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> to require the immediate caller to have full trust. For important limitations on using the LinkDemand member, see <format type="text/html"><a href="1AB877F2-70F4-4E0D-8116-943999DFE8F5">[&lt;topic://cpcondemandvslinkdemand&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="domain">
+          <attribution license="cc4" from="Microsoft" modified="false" />The domain where the type named <paramref name="typeName" /> is created.</param>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly where the type named <paramref name="typeName" /> is sought. If <paramref name="assemblyName" /> is null, the executing assembly is searched. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
+        <param name="securityAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information used to make security policy decisions and grant code permissions. </param>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="CreateInstance&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T CreateInstance&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T CreateInstance&lt;T&gt;() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>T</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
       <TypeParameters>
         <TypeParameter Name="T" />
       </TypeParameters>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Activator.CreateInstance``1" /> generic method is used by compilers to implement the instantiation of types specified by type parameters. For example, in the following generic method, the implementation of new T() (gcnew T() in C++) uses the <see cref="M:System.Activator.CreateInstance``1" /> generic method. </para>
+          <para>code reference: System.Activation.CreateInstance~~1#1</para>
+          <para>In general, there is no use for the <see cref="M:System.Activator.CreateInstance``1" /> in application code, because the type must be known at compile time. If the type is known at compile time, normal instantiation syntax can be used (new operator in C#, New in Visual Basic, gcnew in C++). </para>
+          <para>There are no overloads of the <see cref="M:System.Activator.CreateInstance``1" /> generic method that take argument lists, because the non-generic overloads of <see cref="M:System.Activator.CreateInstance(System.ActivationContext)" /> already provide late-bound constructor resolution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type designated by the specified generic type parameter, using the parameterless constructor .</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly created object.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to create.</typeparam>
+      </Docs>
     </Member>
     <Member MemberName="CreateInstanceFrom">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(string assemblyFile, string typeName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -534,20 +899,28 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyFile">The path name of the assembly to load from disk.</param>
-        <param name="typeName">The name of the <see cref="T:System.Type" /> to load from the assembly.</param>
-        <summary>Create a <see cref="T:System.Type" /> and instantiate it.</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
-        <remarks>This is equivalent to doing Activator.CreateInstance(Assembly.LoadFrom(assemblyFile).GetType(typeName))</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly file and default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstanceFrom">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(class System.AppDomain domain, string assemblyFile, string typeName) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -562,17 +935,40 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="domain">To be added.</param>
-        <param name="assemblyFile">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Activator.CreateInstanceFrom(System.AppDomain,System.String,System.String)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <block subset="none" type="note">
+            <para>This method uses <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> to require the immediate caller to have full trust. For important limitations on using the LinkDemand member, see <format type="text/html"><a href="1AB877F2-70F4-4E0D-8116-943999DFE8F5">[&lt;topic://cpcondemandvslinkdemand&gt;]</a></format>.</para>
+          </block>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly file and default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="domain">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstanceFrom">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(string assemblyFile, string typeName, object[] activationAttributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -582,21 +978,31 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="assemblyFile">To be added: an object of type 'string'</param>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <param name="activationAttributes">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly file and default constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstanceFrom">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(string assemblyFile, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -615,21 +1021,41 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="assemblyFile">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="activationAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly file and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstanceFrom">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(class System.AppDomain domain, string assemblyFile, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -649,23 +1075,55 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="domain">To be added.</param>
-        <param name="assemblyFile">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="activationAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Activator.CreateInstanceFrom(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions sections of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly file and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="domain">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstanceFrom">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(string assemblyFile, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes, class System.Security.Policy.Evidence securityInfo) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -681,21 +1139,45 @@
         <Parameter Name="securityInfo" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="assemblyFile">To be added: an object of type 'string'</param>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <param name="ignoreCase">To be added: an object of type 'bool'</param>
-        <param name="bindingAttr">To be added: an object of type 'Reflection.BindingFlags'</param>
-        <param name="binder">To be added: an object of type 'Reflection.Binder'</param>
-        <param name="args">To be added: an object of type 'object []'</param>
-        <param name="culture">To be added: an object of type 'Globalization.CultureInfo'</param>
-        <param name="activationAttributes">To be added: an object of type 'object []'</param>
-        <param name="securityInfo">To be added: an object of type 'Security.Policy.Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified, using the named assembly file and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
+        <param name="securityInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information used to make security policy decisions and grant code permissions. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstanceFrom">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(class System.AppDomain domain, string assemblyFile, string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes, class System.Security.Policy.Evidence securityAttributes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -704,14 +1186,6 @@
           <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="CreateInstanceFrom">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes, System.Security.Policy.Evidence securityAttributes);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -728,29 +1202,55 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="domain">To be added.</param>
-        <param name="assemblyFile">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="activationAttributes">To be added.</param>
-        <param name="securityAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Activator.CreateInstanceFrom(System.AppDomain,System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> when a host needs to execute code in an application domain that has restricted security permissions.</para>
+          <para>Use the <see cref="M:System.Runtime.Remoting.ObjectHandle.Unwrap" /> method to unwrap the return value.</para>
+          <para>The <paramref name="activationAttributes" /> parameter is related to client-activated objects; see <format type="text/html"><a href="4a791494-c18a-4711-a5c1-4ab0e49a8f1a">Client Activation</a></format>.</para>
+          <block subset="none" type="note">
+            <para>This method uses <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> to require the immediate caller to have full trust. For important limitations on using the LinkDemand member, see <format type="text/html"><a href="1AB877F2-70F4-4E0D-8116-943999DFE8F5">[&lt;topic://cpcondemandvslinkdemand&gt;]</a></format>.</para>
+          </block>
+          <para>For information about other exceptions that can be thrown by invoked methods, see the Exceptions section of the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> and <see cref="M:System.Activator.CreateInstance(System.Type,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the type whose name is specified in the specified remote domain, using the named assembly file and the constructor that best matches the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A handle that must be unwrapped to access the newly created instance.</para>
+        </returns>
+        <param name="domain">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote domain where the type named <paramref name="typeName" /> is created.</param>
+        <param name="assemblyFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a file that contains an assembly where the type named <paramref name="typeName" /> is sought. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the preferred type. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the search for <paramref name="typeName" /> is not case-sensitive; false to specify that the search is case-sensitive. </param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of zero or more bit flags that affect the search for the <paramref name="typeName" /> constructor. If <paramref name="bindingAttr" /> is zero, a case-sensitive search for public constructors is conducted. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that uses <paramref name="bindingAttr" /> and <paramref name="args" /> to seek and identify the <paramref name="typeName" /> constructor. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Culture-specific information that governs the coercion of <paramref name="args" /> to the formal types declared for the <paramref name="typeName" /> constructor. If <paramref name="culture" /> is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
+        <param name="activationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of one or more attributes that can participate in activation. This is typically an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object.  </param>
+        <param name="securityAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information used to make security policy decisions and grant code permissions. </param>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetObject">
       <MemberSignature Language="C#" Value="public static object GetObject (Type type, string url);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetObject(class System.Type type, string url) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -759,21 +1259,33 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="url">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the proxy to send messages to the remote object. No messages are sent over the network until a method is called on the proxy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy for the well-known object indicated by the specified type and URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy that points to an endpoint served by the requested well-known object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the well-known object to which you want to connect. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the well-known object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetObject">
+      <MemberSignature Language="C#" Value="public static object GetObject (Type type, string url, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetObject(class System.Type type, string url, object state) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObject">
-      <MemberSignature Language="C#" Value="public static object GetObject (Type type, string url, object state);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -783,22 +1295,36 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="state">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the proxy to send messages to the remote object. No messages are sent over the network until a method is called on the proxy.</para>
+          <para>The <paramref name="state" /> parameter communicates information to the channel, and is passed to the <see cref="M:System.Runtime.Remoting.Channels.IChannelSender.CreateMessageSink(System.String,System.Object,System.String@)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a proxy for the well-known object indicated by the specified type, URL, and channel data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A proxy that points to an endpoint served by the requested well-known object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the well-known object to which you want to connect. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the well-known object. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />Channel-specific data or null. </param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Activator.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _Activator.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Activator.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Activator.GetIDsOfNames">
-      <MemberSignature Language="C#" Value="void _Activator.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -818,15 +1344,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Activator.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _Activator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Activator.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Activator.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _Activator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -836,21 +1363,31 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to access managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that receives a pointer to the requested type information object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Activator.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _Activator.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Activator.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Activator.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _Activator.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -862,15 +1399,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Activator.Invoke">
+      <MemberSignature Language="C#" Value="void _Activator.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Activator.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Activator.Invoke">
-      <MemberSignature Language="C#" Value="void _Activator.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -896,22 +1434,6 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._Activator))</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

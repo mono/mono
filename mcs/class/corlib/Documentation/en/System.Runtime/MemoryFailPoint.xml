@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemoryFailPoint" FullName="System.Runtime.MemoryFailPoint">
   <TypeSignature Language="C#" Value="public sealed class MemoryFailPoint : System.Runtime.ConstrainedExecution.CriticalFinalizerObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MemoryFailPoint extends System.Runtime.ConstrainedExecution.CriticalFinalizerObject implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,12 +16,29 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>This class is intended for use in advanced development.</para>
+      </block>
+      <para>Creating an instance of the <see cref="T:System.Runtime.MemoryFailPoint" /> class creates a memory gate. A memory gate checks for sufficient resources before initiating an activity that requires a large amount of memory. Failing the check results in an <see cref="T:System.InsufficientMemoryException" /> exception being thrown. This exception prevents an operation from being started and reduces the possibility of failure due to lack of resources. This enables you decrease performance in an effort to avoid an <see cref="T:System.OutOfMemoryException" /> exception and any state corruption that may result from improper handling of the exception in arbitrary locations in your code.  </para>
+      <para>By throwing an <see cref="T:System.InsufficientMemoryException" /> exception, an application can distinguish between an estimate that an operation will not be able to complete and  a partially completed operation that may have corrupted the application state. This allows an application to reduce the frequency of a pessimistic escalation policy, which may require unloading the current <see cref="T:System.AppDomain" /> or recycling the process.</para>
+      <para>
+        <see cref="T:System.Runtime.MemoryFailPoint" /> checks to see whether sufficient memory and consecutive virtual address space are available in all garbage collection heaps, and may increase the size of the swap file.  <see cref="T:System.Runtime.MemoryFailPoint" /> makes no guarantees regarding the long-term availability of the memory during the lifetime of the gate, but callers should always use the <see cref="M:System.Runtime.MemoryFailPoint.Dispose" /> method to ensure that resources associated with <see cref="T:System.Runtime.MemoryFailPoint" /> are released.</para>
+      <para>To use a memory gate, you must create a <see cref="T:System.Runtime.MemoryFailPoint" /> object and specify the number of megabytes (MB) of memory that the next operation is expected to use. If enough memory is not available, an <see cref="T:System.InsufficientMemoryException" /> exception is thrown.</para>
+      <para>The parameter of the constructor must be a positive integer. A negative value raises an <see cref="T:System.ArgumentOutOfRangeException" /> exception.</para>
+      <para>
+        <see cref="T:System.Runtime.MemoryFailPoint" /> operates at a granularity of 16 MB. Any values smaller than 16 MB are treated as 16 MB, and other values are treated as the next largest multiple of 16 MB.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Checks for sufficient memory resources before executing an operation. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MemoryFailPoint (int sizeInMegabytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 sizeInMegabytes) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -29,13 +48,21 @@
         <Parameter Name="sizeInMegabytes" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="sizeInMegabytes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The amount of memory used by your application to process a work item can be determined empirically.  To estimate the amount of memory your application needs to process a request, consider using the <see cref="M:System.GC.GetTotalMemory(System.Boolean)" /> method to determine the amount of memory available before and after calling the method that processes the work item. See the <see cref="T:System.Runtime.MemoryFailPoint" /> class for a code example that dynamically determines the value for the <paramref name="sizeInMegabytes" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.MemoryFailPoint" /> class, specifying the amount of memory required for successful execution. </para>
+        </summary>
+        <param name="sizeInMegabytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The required memory size, in megabytes. This must be a positive value.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,12 +73,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Runtime.MemoryFailPoint.Dispose" /> when you are finished using the <see cref="T:System.Runtime.MemoryFailPoint" />. The <see cref="M:System.Runtime.MemoryFailPoint.Dispose" /> method leaves the <see cref="T:System.Runtime.MemoryFailPoint" /> in an unusable state. After calling <see cref="T:System.Runtime.MemoryFailPoint" />, you must release all references to the <see cref="T:System.Runtime.MemoryFailPoint" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Runtime.MemoryFailPoint" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Runtime.MemoryFailPoint.Dispose" /> before you release your last reference to the <see cref="T:System.Runtime.MemoryFailPoint" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Runtime.MemoryFailPoint" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Runtime.MemoryFailPoint" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~MemoryFailPoint ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

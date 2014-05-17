@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HandledEventHandler" FullName="System.ComponentModel.HandledEventHandler">
   <TypeSignature Language="C#" Value="public delegate void HandledEventHandler(object sender, HandledEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HandledEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -17,8 +20,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate is available for use with your own events when the <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> property provides sufficient event data. The event handler can set the <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> property to true if all necessary processing has been completed in the handler. </para>
+      <para>Typically, events that require this functionality will also require additional event data, and will use a class that derives from <see cref="T:System.ComponentModel.HandledEventArgs" /> along with a corresponding, similarly-named delegate type. For example, the <see cref="E:System.Windows.Forms.DataGridView.RowPrePaint" /> event uses the <see cref="T:System.Windows.Forms.DataGridViewRowPrePaintEventArgs" /> event-data type and the <see cref="T:System.Windows.Forms.DataGridViewRowPrePaintEventHandler" /> delegate type. Because delegates are not inherited, the <see cref="T:System.ComponentModel.HandledEventHandler" /> is rarely used. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a method that can handle events which may or may not require further processing after the event handler has returned.</para>
+    </summary>
   </Docs>
 </Type>

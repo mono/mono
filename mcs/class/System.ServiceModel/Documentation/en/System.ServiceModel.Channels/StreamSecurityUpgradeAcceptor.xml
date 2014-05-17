@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="StreamSecurityUpgradeAcceptor" FullName="System.ServiceModel.Channels.StreamSecurityUpgradeAcceptor">
+  <TypeSignature Language="C#" Value="public abstract class StreamSecurityUpgradeAcceptor : System.ServiceModel.Channels.StreamUpgradeAcceptor" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit StreamSecurityUpgradeAcceptor extends System.ServiceModel.Channels.StreamUpgradeAcceptor" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.StreamUpgradeAcceptor</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used with <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeInitiator" /> and <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeProvider" /> to implement a security stream upgrade.  </para>
+      <para>For a detailed description of the upgrade process, see <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To implement a custom security upgrade acceptor, inherit from this abstract base class.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected StreamSecurityUpgradeAcceptor ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamSecurityUpgradeAcceptor" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRemoteSecurity">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Security.SecurityMessageProperty GetRemoteSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Security.SecurityMessageProperty GetRemoteSecurity() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityMessageProperty</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This information is useful for implementing a stream-level authentication mechanism based on the identities provided in the security context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security message property provided on the stream for performing custom security negotiation based on the information provided in the security context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

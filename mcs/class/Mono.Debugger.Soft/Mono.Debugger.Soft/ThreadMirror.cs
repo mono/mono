@@ -7,6 +7,7 @@ namespace Mono.Debugger.Soft
 	public class ThreadMirror : ObjectMirror
 	{
 		string name;
+		ThreadInfo info;
 
 		internal ThreadMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
@@ -53,8 +54,8 @@ namespace Mono.Debugger.Soft
 
 		public bool IsThreadPoolThread {
 			get {
-				ThreadInfo info = vm.conn.Thread_GetInfo (id);
-
+				if (info == null)
+					info = vm.conn.Thread_GetInfo (id);
 				return info.is_thread_pool;
 			}
 		}
@@ -90,6 +91,29 @@ namespace Mono.Debugger.Soft
 		 */
 		public static bool NativeTransitions {
 			get; set;
+		}
+
+		/*
+		 * Set the location where execution will return when this thread is
+		 * resumed.
+		 * Throws:
+		 * ArgumentException - if L doesn't refer to a location in the
+		 * current method of this thread.
+		 * NotSupportedException - if continuing at L is not supported
+		 * for any other reason.
+		 * Since protocol version 29.
+		 */
+		public void SetIP (Location loc) {
+			if (loc == null)
+				throw new ArgumentNullException ("loc");
+			try {
+				vm.conn.Thread_SetIP (id, loc.Method.Id, loc.ILOffset);
+			} catch (CommandException ex) {
+				if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
+					throw new ArgumentException ("loc doesn't refer to a location in the current method of this thread.", "loc");
+				else
+					throw;
+			}
 		}
     }
 }

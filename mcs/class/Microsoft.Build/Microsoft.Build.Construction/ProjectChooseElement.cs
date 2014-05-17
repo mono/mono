@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Build.Exceptions;
 using Microsoft.Build.Internal;
 
@@ -54,8 +55,9 @@ namespace Microsoft.Build.Construction
                 internal override string XmlName {
                         get { return "Choose"; }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
+                        var name = reader.LocalName;
                         switch (name) {
                         case "Otherwise":
                                 var other = ContainingProject.CreateOtherwiseElement ();

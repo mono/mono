@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AuthenticateEventArgs" FullName="System.Web.UI.WebControls.AuthenticateEventArgs">
   <TypeSignature Language="C#" Value="public class AuthenticateEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.AuthenticateEventArgs" /> class provides the data needed for the <see cref="E:System.Web.UI.WebControls.Login.Authenticate" /> event. Custom authentication schemes for a Web site use the <see cref="P:System.Web.UI.WebControls.AuthenticateEventArgs.Authenticated" /> property to  indicate whether a user's login attempt succeeded.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.Login.Authenticate" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.AuthenticateEventArgs" /> class with the <see cref="P:System.Web.UI.WebControls.AuthenticateEventArgs.Authenticated" /> property set to false.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +44,14 @@
         <Parameter Name="authenticated" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="authenticated">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.AuthenticateEventArgs" /> class.</para>
+        </summary>
+        <param name="authenticated">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the user is authenticated; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +64,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.AuthenticateEventArgs.Authenticated" /> property in custom authentication schemes implemented in the <see cref="E:System.Web.UI.WebControls.Login.Authenticate" /> event handler to indicate the success or failure of the user's login attempt.</para>
+          <para>Setting the <see cref="P:System.Web.UI.WebControls.AuthenticateEventArgs.Authenticated" /> property to false indicates that the Web site user has not presented valid credentials and the <see cref="T:System.Web.UI.WebControls.Login" /> control should raise the <see cref="E:System.Web.UI.WebControls.Login.LoginError" /> event in addition to displaying text that indicates the login attempt was not successful. The <see cref="E:System.Web.UI.WebControls.Login.LoginError" /> event enables the page developer to have additional processes or action occur when user authentication is not successful. Setting <see cref="P:System.Web.UI.WebControls.AuthenticateEventArgs.Authenticated" /> to true indicates that the user has presented valid credentials and the <see cref="T:System.Web.UI.WebControls.Login" /> control should raise the <see cref="E:System.Web.UI.WebControls.Login.LoggedIn" /> event and redirect the user back to the current page or to the page indicated by <see cref="P:System.Web.UI.WebControls.Login.DestinationPageUrl" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a user's authentication attempt succeeded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

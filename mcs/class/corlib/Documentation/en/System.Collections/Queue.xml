@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Queue" FullName="System.Collections.Queue">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class Queue : ICloneable, System.Collections.ICollection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Queue extends System.Object implements class System.Collections.ICollection, class System.Collections.IEnumerable, class System.ICloneable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -19,371 +21,6 @@
       <InterfaceName>System.ICloneable</InterfaceName>
     </Interface>
   </Interfaces>
-  <Docs>
-    <summary>A first in, first out collection of objects.</summary>
-    <remarks>
-      <block subset="none" type="note">
-        <para>
-          <see cref="T:System.Collections.Queue" /> is not thread-safe until it has been synchronized via the <see cref="M:System.Collections.Queue.Synchronized" /> function call.
-  </para>
-      </block>
-    </remarks>
-  </Docs>
-  <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Queue ();" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>Creates an empty queue</summary>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Queue (System.Collections.ICollection col);" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="col" Type="System.Collections.ICollection" />
-      </Parameters>
-      <Docs>
-        <param name="col">To be added: an object of type 'ICollection'</param>
-        <summary>Creates a queue from another collection</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Queue (int capacity);" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="capacity" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="capacity">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Queue (int capacity, float growFactor);" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="capacity" Type="System.Int32" />
-        <Parameter Name="growFactor" Type="System.Single" />
-      </Parameters>
-      <Docs>
-        <param name="capacity">To be added.</param>
-        <param name="growFactor">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clear">
-      <MemberSignature Language="C#" Value="public virtual void Clear ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Removes all items from the <see cref="T:System.Collections.Queue" /></summary>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clone">
-      <MemberSignature Language="C#" Value="public virtual object Clone ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Makes a copy of the <see cref="T:System.Collections.Queue" /></summary>
-        <returns>A copy of the <see cref="T:System.Collections.Queue" /> as a <see cref="T:System.Object" /></returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>
-	The <see cref="T:System.Collections.Queue" /> returned is completely independent of the <see cref="T:System.Collections.Queue" /> it was created from.  This means doing a <see cref="M:System.Collections.Queue.Enqueue" /> on the copy does not <see cref="M:System.Collections.Queue.Enqueue" /> on the original <see cref="T:System.Collections.Queue" />.
-  </para>
-          </block>
-        </remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Contains">
-      <MemberSignature Language="C#" Value="public virtual bool Contains (object obj);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="obj">The <see cref="T:System.Object" /> to check for in the <see cref="T:System.Collections.Queue" /></param>
-        <summary>Find whether a <see cref="T:System.Object" /> is in a <see cref="T:System.Collections.Queue" /></summary>
-        <returns>Returns true if found and false if not found.</returns>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array, int index);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="array" Type="System.Array" />
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="array">A <see cref="T:System.Array" /> to copy the conents of the <see cref="T:System.Collections.Queue" /> to</param>
-        <param name="index">A <see cref="T:System.Integer" /> of the index in the <see cref="T:System.Array" /> to start copying the <see cref="T:System.Collections.Queue" /> to</param>
-        <summary>Copies a portion of <see cref="T:System.Collections.Queue" /> to a <see cref="T:System.Array" /> at a particular index.</summary>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Number of elements in the <see cref="T:System.Collections.Queue" /></summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>This is 'read-only'</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dequeue">
-      <MemberSignature Language="C#" Value="public virtual object Dequeue ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Removes an item from the <see cref="T:System.Collections.Queue" /></summary>
-        <returns>The first <see cref="T:System.Object" /> in the <see cref="T:System.Collections.Queue" /></returns>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Enqueue">
-      <MemberSignature Language="C#" Value="public virtual void Enqueue (object obj);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="obj">The <see cref="T:System.Object" /> to add to the <see cref="T:System.Collections.Queue" /></param>
-        <summary>Adds an item to the <see cref="T:System.Collections.Queue" /></summary>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public virtual System.Collections.IEnumerator GetEnumerator ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IEnumerator</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IEnumerator'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsSynchronized">
-      <MemberSignature Language="C#" Value="public virtual bool IsSynchronized { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>A synchronized <see cref="T:System.Collections.Queue" /> is thread-safe.  To obtain a synchronized Queue, you can call the <see cref="M:System.Collections.Queue.Synchronized" /> method<block subset="none" type="note">.
-            <para>This is 'read-only'.
-  </para></block></remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Peek">
-      <MemberSignature Language="C#" Value="public virtual object Peek ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Synchronized">
-      <MemberSignature Language="C#" Value="public static System.Collections.Queue Synchronized (System.Collections.Queue queue);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.Queue</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="queue" Type="System.Collections.Queue" />
-      </Parameters>
-      <Docs>
-        <param name="queue">The <see cref="T:System.Collections.Queue" /> to make a thread-safe version of</param>
-        <summary>Makes a thread-safe queue.</summary>
-        <returns>The thread-safe version of the <see cref="T:System.Collections.Queue" /> passed in.</returns>
-        <remarks>
-          <example>
-            <code lang="C#">
-	using System.Collections;
-
-	Queue NonThreadSafeQueue = new Queue();
-	Queue ThreadSafeQueue = Queue.Synchronized(NonThreadSafeQueue);
-	
-  </code>
-          </example>
-          <block subset="none" type="note">
-            <para>
-	A Queue can be tested for thread-safeness through the <see cref="M:System.Collections.Queue.IsSynchronized" /> property.
-  </para>
-          </block>
-        </remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SyncRoot">
-      <MemberSignature Language="C#" Value="public virtual object SyncRoot { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToArray">
-      <MemberSignature Language="C#" Value="public virtual object[] ToArray ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Converts a <see cref="T:System.Collections.Queue" /> to a <see cref="T:System.Array" /></summary>
-        <returns>Returns a <see cref="T:System.Array" /> with the same items as the <see cref="T:System.Collections.Queue" /></returns>
-        <remarks>The <see cref="T:System.Collections.Queue" /> is not changed.  The first item in the <see cref="T:System.Array" /> is the oldest item in the <see cref="T:System.Collections.Queue" /></remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="TrimToSize">
-      <MemberSignature Language="C#" Value="public virtual void TrimToSize ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Diagnostics.DebuggerDisplay("Count={Count}")</AttributeName>
@@ -395,4 +32,549 @@
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Queues are useful for storing messages in the order they were received for sequential processing. This class implements a queue as a circular array. Objects stored in a <see cref="T:System.Collections.Queue" /> are inserted at one end and removed from the other.</para>
+      <para>The capacity of a <see cref="T:System.Collections.Queue" /> is the number of elements the <see cref="T:System.Collections.Queue" /> can hold. As elements are added to a <see cref="T:System.Collections.Queue" />, the capacity is automatically increased as required through reallocation.  The capacity can be decreased by calling <see cref="M:System.Collections.Queue.TrimToSize" />.</para>
+      <para>The growth factor is the number by which the current capacity is multiplied when a greater capacity is required.  The growth factor is determined when the <see cref="T:System.Collections.Queue" /> is constructed. The default growth factor is 2.0. The capacity of the <see cref="T:System.Collections.Queue" /> will always increase by at least a minimum of four, regardless of the growth factor. For example, a <see cref="T:System.Collections.Queue" /> with a growth factor of 1.0 will always increase in capacity by four when a greater capacity is required.</para>
+      <para>
+        <see cref="T:System.Collections.Queue" /> accepts null as a valid value and allows duplicate elements.</para>
+      <para>For the generic version of this collection, see <see cref="T:System.Collections.Generic.Queue`1" /></para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a first-in, first-out collection of objects.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Queue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The capacity of a <see cref="T:System.Collections.Queue" /> is the number of elements the <see cref="T:System.Collections.Queue" /> can hold.  As elements are added to a <see cref="T:System.Collections.Queue" />, the capacity is automatically increased as required through reallocation.  The capacity can be decreased by calling <see cref="M:System.Collections.Queue.TrimToSize" />.</para>
+          <para>The growth factor is the number by which the current capacity is multiplied when a greater capacity is required.  The growth factor is determined when the <see cref="T:System.Collections.Queue" /> is constructed.</para>
+          <para>This constructor is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Queue" /> class that is empty, has the default initial capacity, and uses the default growth factor.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Queue (System.Collections.ICollection col);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.ICollection col) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="col" Type="System.Collections.ICollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The capacity of a <see cref="T:System.Collections.Queue" /> is the number of elements the <see cref="T:System.Collections.Queue" /> can hold.  As elements are added to a <see cref="T:System.Collections.Queue" />, the capacity is automatically increased as required through reallocation.  The capacity can be decreased by calling <see cref="M:System.Collections.Queue.TrimToSize" />.</para>
+          <para>The growth factor is the number by which the current capacity is multiplied when a greater capacity is required.  The growth factor is determined when the <see cref="T:System.Collections.Queue" /> is constructed.</para>
+          <para>The elements are copied onto the <see cref="T:System.Collections.Queue" /> in the same order they are read by the <see cref="T:System.Collections.IEnumerator" /> of the <see cref="T:System.Collections.ICollection" />.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements in <paramref name="col" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Queue" /> class that contains elements copied from the specified collection, has the same initial capacity as the number of elements copied, and uses the default growth factor.</para>
+        </summary>
+        <param name="col">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.ICollection" /> to copy elements from. </param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Queue (int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The capacity of a <see cref="T:System.Collections.Queue" /> is the number of elements the <see cref="T:System.Collections.Queue" /> can hold.  As elements are added to a <see cref="T:System.Collections.Queue" />, the capacity is automatically increased as required through reallocation.  The capacity can be decreased by calling <see cref="M:System.Collections.Queue.TrimToSize" />.</para>
+          <para>The growth factor is the number by which the current capacity is multiplied when a greater capacity is required.  The growth factor is determined when the <see cref="T:System.Collections.Queue" /> is constructed.</para>
+          <para>If the size of the collection can be estimated, specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Queue" />.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="capacity" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Queue" /> class that is empty, has the specified initial capacity, and uses the default growth factor.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial number of elements that the <see cref="T:System.Collections.Queue" /> can contain. </param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Queue (int capacity, float growFactor);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, float32 growFactor) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="growFactor" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The capacity of a <see cref="T:System.Collections.Queue" /> is the number of elements the <see cref="T:System.Collections.Queue" /> can hold.  As elements are added to a <see cref="T:System.Collections.Queue" />, the capacity is automatically increased as required through reallocation.  The capacity can be decreased by calling <see cref="M:System.Collections.Queue.TrimToSize" />.</para>
+          <para>The growth factor is the number by which the current capacity is multiplied when a greater capacity is required.  The growth factor is determined when the <see cref="T:System.Collections.Queue" /> is constructed. The capacity of the <see cref="T:System.Collections.Queue" /> will always increase by a minimum value, regardless of the growth factor; a growth factor of 1.0 will not prevent the <see cref="T:System.Collections.Queue" /> from increasing in size.</para>
+          <para>If the size of the collection can be estimated, specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Queue" />.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="capacity" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Queue" /> class that is empty, has the specified initial capacity, and uses the specified growth factor.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial number of elements that the <see cref="T:System.Collections.Queue" /> can contain. </param>
+        <param name="growFactor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which the capacity of the <see cref="T:System.Collections.Queue" /> is expanded. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public virtual void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Collections.Queue.Count" /> is set to zero, and references to other objects from elements of the collection are also released.</para>
+          <para>The capacity remains unchanged. To reset the capacity of the <see cref="T:System.Collections.Queue" />, call <see cref="M:System.Collections.Queue.TrimToSize" />. Trimming an empty <see cref="T:System.Collections.Queue" /> sets the capacity of the <see cref="T:System.Collections.Queue" /> to the default capacity.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Queue.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all objects from the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public virtual object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but it does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
+          <para>In contrast, a deep copy of a collection copies the elements and everything directly or indirectly referenced by the elements.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Queue.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a shallow copy of the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public virtual bool Contains (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Contains(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method determines equality by calling <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>This method performs a linear search; therefore, this method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Queue.Count" />.</para>
+          <para>Starting with the .NET Framework 2.0, this method uses the collection’s objects’ <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods on <paramref name="obj" /> to determine whether <paramref name="item" /> exists. In the earlier versions of the .NET Framework, this determination was made by using the <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods of the <paramref name="obj" /> parameter on the objects in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an element is in the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is found in the <see cref="T:System.Collections.Queue" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.Queue" />. The value can be null. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(class System.Array array, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Array" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements are copied to the <see cref="T:System.Array" /> in the same order in which the enumerator iterates through the <see cref="T:System.Collections.Queue" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Queue.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Collections.Queue" /> elements to an existing one-dimensional <see cref="T:System.Array" />, starting at the specified array index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.Queue" />. The <see cref="T:System.Array" /> must have zero-based indexing. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The capacity of a <see cref="T:System.Collections.Queue" /> is the number of elements that the <see cref="T:System.Collections.Queue" /> can store. <see cref="P:System.Collections.Queue.Count" /> is the number of elements that are actually in the <see cref="T:System.Collections.Queue" />.</para>
+          <para>The capacity of a <see cref="T:System.Collections.Queue" /> is always greater than or equal to <see cref="P:System.Collections.Queue.Count" />. If <see cref="P:System.Collections.Queue.Count" /> exceeds the capacity while adding elements, the capacity is automatically increased by reallocating the internal array before copying the old elements and adding the new elements. The new capacity is determined by multiplying the current capacity by the growth factor, which is determined when the <see cref="T:System.Collections.Queue" /> is constructed. The capacity of the <see cref="T:System.Collections.Queue" /> will always increase by a minimum value, regardless of the growth factor; a growth factor of 1.0 will not prevent the <see cref="T:System.Collections.Queue" /> from increasing in size.</para>
+          <para>The capacity can be decreased by calling <see cref="M:System.Collections.Queue.TrimToSize" />.</para>
+          <para>Retrieving the value of this property is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dequeue">
+      <MemberSignature Language="C#" Value="public virtual object Dequeue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Dequeue() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Collections.Queue.Peek" /> method, but <see cref="M:System.Collections.Queue.Peek" /> does not modify the <see cref="T:System.Collections.Queue" />.</para>
+          <para>null can be added to the <see cref="T:System.Collections.Queue" /> as a value. To distinguish between a null value and the end of the <see cref="T:System.Collections.Queue" />, check the <see cref="P:System.Collections.Queue.Count" /> property or catch the <see cref="T:System.InvalidOperationException" />, which is thrown when the <see cref="T:System.Collections.Queue" /> is empty.</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes and returns the object at the beginning of the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that is removed from the beginning of the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Enqueue">
+      <MemberSignature Language="C#" Value="public virtual void Enqueue (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Enqueue(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The capacity of a <see cref="T:System.Collections.Queue" /> is the number of elements the <see cref="T:System.Collections.Queue" /> can hold.  As elements are added to a <see cref="T:System.Collections.Queue" />, the capacity is automatically increased as required through reallocation.  The capacity can be decreased by calling <see cref="M:System.Collections.Queue.TrimToSize" />.</para>
+          <para>The growth factor is the number by which the current capacity is multiplied when a greater capacity is required.  The growth factor is determined when the <see cref="T:System.Collections.Queue" /> is constructed. The capacity of the <see cref="T:System.Collections.Queue" /> will always increase by a minimum value, regardless of the growth factor; a growth factor of 1.0 will not prevent the <see cref="T:System.Collections.Queue" /> from increasing in size.</para>
+          <para>If <see cref="P:System.Collections.Queue.Count" /> is less than the capacity of the internal array, this method is an O(1) operation. If the internal array needs to be reallocated to accommodate the new element, this method becomes an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Queue.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an object to the end of the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the <see cref="T:System.Collections.Queue" />. The value can be null. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IEnumerator GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
+          <para>Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.</para>
+          <para>Initially, the enumerator is positioned before the first element in the collection. <see cref="M:System.Collections.IEnumerator.Reset" /> also brings the enumerator back to this position.  At this position, <see cref="P:System.Collections.IEnumerator.Current" /> is undefined. Therefore, you must call <see cref="M:System.Collections.IEnumerator.MoveNext" /> to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.IEnumerator.Current" />.</para>
+          <para>
+            <see cref="P:System.Collections.IEnumerator.Current" /> returns the same object until either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.IEnumerator.Current" /> to the next element.</para>
+          <para>If <see cref="M:System.Collections.IEnumerator.MoveNext" /> passes the end of the collection, the enumerator is positioned after the last element in the collection and <see cref="M:System.Collections.IEnumerator.MoveNext" /> returns false. When the enumerator is at this position, subsequent calls to <see cref="M:System.Collections.IEnumerator.MoveNext" /> also return false. If the last call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> returned false, <see cref="P:System.Collections.IEnumerator.Current" /> is undefined. To set <see cref="P:System.Collections.IEnumerator.Current" /> to the first element of the collection again, you can call <see cref="M:System.Collections.IEnumerator.Reset" /> followed by <see cref="M:System.Collections.IEnumerator.MoveNext" />.</para>
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and its behavior is undefined.</para>
+          <para>The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread-safe procedure.  To guarantee thread safety during enumeration, you can lock the collection during the entire enumeration.  To allow the collection to be accessed by multiple threads for reading and writing, you must implement your own synchronization.</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="C#" Value="public virtual bool IsSynchronized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSynchronized" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To guarantee the thread safety of the <see cref="T:System.Collections.Queue" />, all operations must be done through the wrapper returned by the <see cref="M:System.Collections.Queue.Synchronized(System.Collections.Queue)" /> method.</para>
+          <para>Enumerating through a collection is intrinsically not a thread-safe procedure. Even when a collection is synchronized, other threads can still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the <see cref="T:System.Collections.Queue" /> is synchronized (thread safe).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Peek">
+      <MemberSignature Language="C#" Value="public virtual object Peek ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Peek() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Collections.Queue.Dequeue" /> method, but <see cref="M:System.Collections.Queue.Peek" /> does not modify the <see cref="T:System.Collections.Queue" />.</para>
+          <para>null can be added to the <see cref="T:System.Collections.Queue" /> as a value. To distinguish between a null value and the end of the <see cref="T:System.Collections.Queue" />, check the <see cref="P:System.Collections.Queue.Count" /> property or catch the <see cref="T:System.InvalidOperationException" />, which is thrown when the <see cref="T:System.Collections.Queue" /> is empty.</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the object at the beginning of the <see cref="T:System.Collections.Queue" /> without removing it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object at the beginning of the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="C#" Value="public static System.Collections.Queue Synchronized (System.Collections.Queue queue);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Queue Synchronized(class System.Collections.Queue queue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Queue</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="queue" Type="System.Collections.Queue" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To guarantee the thread safety of the <see cref="T:System.Collections.Queue" />, all operations must be done through this wrapper only.</para>
+          <para>Enumerating through a collection is intrinsically not a thread-safe procedure. Even when a collection is synchronized, other threads can still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Collections.Queue" /> wrapper that is synchronized (thread safe).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Queue" /> wrapper that is synchronized (thread safe).</para>
+        </returns>
+        <param name="queue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Queue" /> to synchronize. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="C#" Value="public virtual object SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'object'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create a synchronized version of the <see cref="T:System.Collections.Queue" />, use the <see cref="M:System.Collections.Queue.Synchronized(System.Collections.Queue)" /> method. However, derived classes can provide their own synchronized version of the <see cref="T:System.Collections.Queue" /> using the <see cref="P:System.Collections.Queue.SyncRoot" /> property. The synchronizing code must perform operations on the <see cref="P:System.Collections.Queue.SyncRoot" /> of the <see cref="T:System.Collections.Queue" />, not directly on the <see cref="T:System.Collections.Queue" />. This ensures proper operation of collections that are derived from other objects. Specifically, it maintains proper synchronization with other threads that might be simultaneously modifying the <see cref="T:System.Collections.Queue" /> object.</para>
+          <para>Enumerating through a collection is intrinsically not a thread-safe procedure. Even when a collection is synchronized, other threads can still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToArray">
+      <MemberSignature Language="C#" Value="public virtual object[] ToArray ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object[] ToArray() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Queue" /> is not modified. The order of the elements in the new array is the same as the order of the elements from the beginning of the <see cref="T:System.Collections.Queue" /> to its end.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Queue.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Collections.Queue" /> elements to a new array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new array containing elements copied from the <see cref="T:System.Collections.Queue" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TrimToSize">
+      <MemberSignature Language="C#" Value="public virtual void TrimToSize ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void TrimToSize() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to minimize a queue's memory overhead if no new elements will be added to the queue.</para>
+          <para>To reset a <see cref="T:System.Collections.Queue" /> to its initial state, call the <see cref="M:System.Collections.Queue.Clear" /> method before calling <see cref="M:System.Collections.Queue.TrimToSize" />. Trimming an empty <see cref="T:System.Collections.Queue" /> sets the capacity of the <see cref="T:System.Collections.Queue" /> to the default capacity.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Queue.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the capacity to the actual number of elements in the <see cref="T:System.Collections.Queue" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Security.Authentication.ExtendedProtection.Configuration">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Security.Authentication.ExtendedProtection.Configuration" /> namespace provides support for configuration of authentication using extended protection for applications.</para>
+    </summary>
+  </Docs>
+</Namespace>

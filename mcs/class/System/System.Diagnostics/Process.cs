@@ -170,6 +170,8 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Handle for this process.")]
 		public IntPtr Handle {
 			get {
+				if (process_handle == IntPtr.Zero)
+					throw new InvalidOperationException ("No process is associated with this object.");
 				return(process_handle);
 			}
 		}
@@ -918,8 +920,7 @@ namespace System.Diagnostics {
 								  IntPtr stderr,
 								  ref ProcInfo proc_info);
 
-		private static bool Start_shell (ProcessStartInfo startInfo,
-						 Process process)
+		private static bool Start_shell (ProcessStartInfo startInfo, Process process)
 		{
 			ProcInfo proc_info=new ProcInfo();
 			bool ret;
@@ -948,9 +949,7 @@ namespace System.Diagnostics {
 
 			process.process_handle = proc_info.process_handle;
 			process.pid = proc_info.pid;
-
 			process.StartExitCallbackIfNeeded ();
-
 			return(ret);
 		}
 
@@ -1161,7 +1160,7 @@ namespace System.Diagnostics {
 			
 			if (startInfo.UseShellExecute) {
 				if (!String.IsNullOrEmpty (startInfo.UserName))
-					throw new InvalidOperationException ("UserShellExecute must be false if an explicit UserName is specified when starting a process");
+					throw new InvalidOperationException ("UseShellExecute must be false if an explicit UserName is specified when starting a process");
 				return (Start_shell (startInfo, process));
 			} else {
 				return (Start_noshell (startInfo, process));
@@ -1182,9 +1181,9 @@ namespace System.Diagnostics {
 			if (startInfo == null)
 				throw new ArgumentNullException ("startInfo");
 
-			Process process=new Process();
+			Process process = new Process();
 			process.StartInfo = startInfo;
-			if (Start_common(startInfo, process))
+			if (Start_common(startInfo, process) && process.process_handle != IntPtr.Zero)
 				return process;
 			return null;
 		}
@@ -1232,6 +1231,10 @@ namespace System.Diagnostics {
 			int ms = milliseconds;
 			if (ms == int.MaxValue)
 				ms = -1;
+
+			if (process_handle == IntPtr.Zero)
+				throw new InvalidOperationException ("No process is associated with this object.");
+
 
 			DateTime start = DateTime.UtcNow;
 			if (async_output != null && !async_output.IsCompleted) {
@@ -1517,8 +1520,8 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute(false)] 
 		public void CancelErrorRead ()
 		{
-			if (process_handle == IntPtr.Zero || output_stream == null || StartInfo.RedirectStandardOutput == false)
-				throw new InvalidOperationException ("Standard output has not been redirected or process has not been started.");
+			if (process_handle == IntPtr.Zero || error_stream == null || StartInfo.RedirectStandardError == false)
+				throw new InvalidOperationException ("Standard error has not been redirected or process has not been started.");
 
 			if ((async_mode & AsyncModes.SyncOutput) != 0)
 				throw new InvalidOperationException ("OutputStream is not enabled for asynchronous read operations.");
@@ -1566,6 +1569,21 @@ namespace System.Diagnostics {
 							async_output.Close ();
 						if (async_error != null)
 							async_error.Close ();
+
+						if (input_stream != null) {
+							input_stream.Close();
+							input_stream = null;
+						}
+
+						if (output_stream != null) {
+							output_stream.Close();
+							output_stream = null;
+						}
+
+						if (error_stream != null) {
+							error_stream.Close();
+							error_stream = null;
+						}
 					}
 				}
 				
@@ -1575,21 +1593,6 @@ namespace System.Diagnostics {
 					if(process_handle!=IntPtr.Zero) {
 						Process_free_internal(process_handle);
 						process_handle=IntPtr.Zero;
-					}
-
-					if (input_stream != null) {
-						input_stream.Close();
-						input_stream = null;
-					}
-
-					if (output_stream != null) {
-						output_stream.Close();
-						output_stream = null;
-					}
-
-					if (error_stream != null) {
-						error_stream.Close();
-						error_stream = null;
 					}
 				}
 			}

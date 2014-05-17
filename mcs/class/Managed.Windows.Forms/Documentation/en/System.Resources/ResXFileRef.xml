@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResXFileRef" FullName="System.Resources.ResXFileRef">
   <TypeSignature Language="C#" Value="public class ResXFileRef" />
   <AssemblyInfo>
@@ -15,8 +16,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Resources.ResXFileRef" /> class is used to include references to files in an XML resource (.resx) file. A <see cref="T:System.Resources.ResXFileRef" /> object represents a link to an external resource in an XML resource (.resx) file. You add the <see cref="T:System.Resources.ResXFileRef" /> object to a .resx file by calling the <see cref="M:System.Resources.ResXResourceWriter.AddResource(System.Resources.ResXDataNode)" /> method. </para>
+      <para>In a data entry in a .resx file, the type is <see cref="T:System.Resources.ResXFileRef" />, and the value is the path location on disk. When the resource manager deserializes the object, the <see cref="T:System.Resources.ResXFileRef" /> performs the I/O to get the file. The following is an example of a .resx file. </para>
+      <code> &lt;data name="iconclip" type="System.Resources.ResXFileRef, System.Windows.Forms"&gt;
+  &lt;value&gt;lookout.bmp;System.Drawing.Bitmap, System.Drawing&lt;/value&gt;
+ &lt;/data&gt;
+ &lt;data name="mailbackground" type="System.Resources.ResXFileRef, System.Windows.Forms"&gt;
+  &lt;value&gt;mailbackground.bmp;System.Drawing.Bitmap, System.Drawing&lt;/value&gt;
+ &lt;/data&gt;
+ &lt;data name="xplogo" type="System.Resources.ResXFileRef, System.Windows.Forms"&gt;
+  &lt;value&gt;xplogo.png;System.Drawing.Bitmap, System.Drawing&lt;/value&gt;
+ &lt;/data&gt;</code>
+      <para>To add a <see cref="T:System.Resources.ResXFileRef" /> object to a .resx file programmatically, you call the <see cref="M:System.Resources.ResXDataNode.#ctor(System.String,System.Resources.ResXFileRef)" /> constructor to instantiate a <see cref="T:System.Resources.ResXDataNode" /> object. You then pass this <see cref="T:System.Resources.ResXDataNode" /> object to the <see cref="M:System.Resources.ResXResourceWriter.AddResource(System.Resources.ResXDataNode)" /> method. </para>
+      <para>When you compile a .resx file with <format type="text/html"><a href="8ef159de-b660-4bec-9213-c3fbc4d1c6f4">Resgen.exe (Resource File Generator)</a></format>, the resources specified in the .resx file are embedded in the resulting document resource file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a link to an external resource.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,10 +46,18 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type referred to by the <paramref name="typeName" /> parameter must support a public constructor that accepts a <see cref="T:System.IO.Stream" /> object as a parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Resources.ResXFileRef" /> class that references the specified file.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to reference. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the resource that is referenced. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,11 +76,20 @@
         <Parameter Name="textFileEncoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="typeName">To be added.</param>
-        <param name="textFileEncoding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type referred to by the <paramref name="typeName" /> parameter must support a public constructor that accepts a <see cref="T:System.IO.Stream" /> object as a parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXFileRef" /> class that references the specified file. </para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to reference. </param>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type name of the resource that is referenced. </param>
+        <param name="textFileEncoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding used in the referenced file.</param>
       </Docs>
     </Member>
     <Member MemberName="FileName">
@@ -66,9 +102,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file name specified in the current <see cref="Overload:System.Resources.ResXFileRef.#ctor" /> constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextFileEncoding">
@@ -81,9 +120,12 @@
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the encoding specified in the current <see cref="Overload:System.Resources.ResXFileRef.#ctor" /> constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -94,9 +136,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text representation of the current <see cref="T:System.Resources.ResXFileRef" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that consists of the concatenated text representations of the parameters specified in the current <see cref="Overload:System.Resources.ResXFileRef.#ctor" /> constructor.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -113,9 +161,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type name specified in the current <see cref="Overload:System.Resources.ResXFileRef.#ctor" /> constructor. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

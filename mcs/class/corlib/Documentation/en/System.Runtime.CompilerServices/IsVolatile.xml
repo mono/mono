@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsVolatile" FullName="System.Runtime.CompilerServices.IsVolatile" FullNameSP="System_Runtime_CompilerServices_IsVolatile" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed IsVolatile extends System.Object" />
   <TypeSignature Language="C#" Value="public static class IsVolatile" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit IsVolatile extends System.Object" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,32 +16,35 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>
-      <para>Marks a location in the memory store as volatile.</para>
-    </summary>
-    <remarks>
-      <para>
-        <see cref="T:System.Runtime.CompilerServices.IsVolatile" /> is a class used only in custom modifiers of method signatures to indicate that a location in the memory store (see "The Memory Store" in Partition I) is "volatile".</para>
-      <para>When used as a required modifier, any compiler that successfully imports metadata that describes a memory location as "volatile" is required to use <see langword="volatile." /> 
-prefixed instructions to access such locations. Examples of such locations are volatile fields, volatile targets of pointers, and volatile elements of arrays.</para>
-      <block subset="none" type="note">
-        <para>For most languages, it is recommended that the notion of "volatile" be attached to locations using language syntax instead of custom modifiers.</para>
-        <para>The types in 
-   <see langword="System.Runtime.CompilerServices" /> are intended primarily for use by
-      compilers, not application programmers. They allow compilers to easily
-      implement certain language features that are not directly visible to
-      programmers.</para>
-      </block>
-      <para>For more information on custom modifiers, see
-   Partition II of the CLI Specification.</para>
-    </remarks>
-  </Docs>
-  <Members />
-  <TypeExcluded>0</TypeExcluded>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>IsVolatile is used only in custom modifiers of method signatures to indicate that the field it marks is volatile. Any compiler that imports metadata with one or more fields marked as volatile must use instructions prefixed with volatile. to access such fields.</para>
+      <para>The classes in <see cref="N:System.Runtime.CompilerServices" /> are for compiler writers' use only.</para>
+      <para>Compilers emit custom modifiers within metadata to change the way that the just-in-time (JIT) compiler handles values when the default behavior is not appropriate.  When the JIT compiler encounters a custom modifier, it handles the value in the way that the modifier specifies.  Compilers can apply custom modifiers to methods, parameters, and return values.  The JIT compiler must respond to required modifiers but can ignore optional modifiers.  A C++ compiler could emit a custom modifier to describe how a byte should be treated in cases where the JIT compiler treats bytes in a manner that is not compatible with C++ by default. </para>
+      <para>You can emit custom modifiers into metadata using one of the following techniques:</para>
+      <list type="bullet">
+        <item>
+          <para>Using methods in the <see cref="T:System.Reflection.Emit.TypeBuilder" /> class such as <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineMethod" />, <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineField" />, <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineConstructor" />, and <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineProperty" />.</para>
+        </item>
+        <item>
+          <para>Generating a Microsoft intermediate language (MSIL) instruction file that contains calls to modopt and modreq, and assembling the file with the <format type="text/html"><a href="4ca3a4f0-4400-47ce-8936-8e219961c76f">MSIL Assembler (Ilasm.exe)</a></format>.</para>
+        </item>
+        <item>
+          <para>Using the unmanaged reflection API.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks a field as volatile. This class cannot be inherited.</para>
+    </summary>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
 </Type>

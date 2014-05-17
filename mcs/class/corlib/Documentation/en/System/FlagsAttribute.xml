@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FlagsAttribute" FullName="System.FlagsAttribute" FullNameSP="System_FlagsAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable FlagsAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public class FlagsAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit FlagsAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,23 +25,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Indicates that the <see cref="T:System.Enum" /> targeted by the current attribute is declared as a bit-field.</para>
-    </summary>
-    <remarks>
-      <para> The <see cref="T:System.FlagsAttribute" /> class provides the consumer of a <see cref="T:System.Enum" /> the information that the
-   enumeration is to be used as a bit-field. Additionally, when formatting a <see cref="T:System.Enum" />, using the <see cref="T:System.FlagsAttribute" /> causes a value that is a bitwise OR combination of
-   multiple fields to print correctly.</para>
-      <block subset="none" type="note">
-        <para> Bit-fields are generally used for lists of
-      elements that might occur in combination; whereas enumeration constants are
-      generally used for lists of mutually exclusive elements. Therefore, bit-fields
-      are designed to be combined with the bitwise OR operator to generate unnamed
-      values, whereas enumerated constants are not. Languages
-      vary in their usage of bit-fields compared to enumeration constants.</para>
-        <para>This attribute can only be applied to enumerations.</para>
-      </block>
-    </remarks>
     <example>
       <para> The following example demonstrates the use of
       <see cref="T:System.FlagsAttribute" /> on the formatting of a
@@ -84,27 +69,75 @@ public class enumFormat {
         <para>Color: 3</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Bit fields are generally used for lists of elements that might occur in combination, whereas enumeration constants are generally used for lists of mutually exclusive elements. Therefore, bit fields are designed to be combined with a bitwise OR operation to generate unnamed values, whereas enumerated constants are not. Languages vary in their use of bit fields compared to enumeration constants.</para>
+      <format type="text/html">
+        <h2>Attributes of the FlagsAttribute</h2>
+      </format>
+      <para>
+        <see cref="T:System.AttributeUsageAttribute" /> is applied to this class, and its <see cref="P:System.AttributeUsageAttribute.Inherited" /> property specifies false. This attribute can only be applied to enumerations.</para>
+      <format type="text/html">
+        <h2>Guidelines for FlagsAttribute and Enum</h2>
+      </format>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="T:System.FlagsAttribute" /> custom attribute for an enumeration only if a bitwise operation (AND, OR, EXCLUSIVE OR) is to be performed on a numeric value. </para>
+        </item>
+        <item>
+          <para>Define enumeration constants in powers of two, that is, 1, 2, 4, 8, and so on. This means the individual flags in combined enumeration constants do not overlap. </para>
+        </item>
+        <item>
+          <para>Consider creating an enumerated constant for commonly used flag combinations. For example, if you have an enumeration used for file I/O operations that contains the enumerated constants Read = 1 and Write = 2, consider creating the enumerated constant ReadWrite = Read OR Write, which combines the Read and Write flags. In addition, the bitwise OR operation used to combine the flags might be considered an advanced concept in some circumstances that should not be required for simple tasks.</para>
+        </item>
+        <item>
+          <para>Use caution if you define a negative number as a flag enumerated constant because many flag positions might be set to 1, which might make your code confusing and encourage coding errors.</para>
+        </item>
+        <item>
+          <para>A convenient way to test whether a flag is set in a numeric value is to perform a bitwise AND operation between the numeric value and the flag enumerated constant, which sets all bits in the numeric value to zero that do not correspond to the flag, then test whether the result of that operation is equal to the flag enumerated constant.</para>
+        </item>
+        <item>
+          <para>Use None as the name of the flag enumerated constant whose value is zero. You cannot use the None enumerated constant in a bitwise AND operation to test for a flag because the result is always zero. However, you can perform a logical, not a bitwise, comparison between the numeric value and the None enumerated constant to determine whether any bits in the numeric value are set. </para>
+          <para>If you create a value enumeration instead of a flags enumeration, it is still worthwhile to create a None enumerated constant. The reason is that by default the memory used for the enumeration is initialized to zero by the common language runtime. Consequently, if you do not define a constant whose value is zero, the enumeration will contain an illegal value when it is created. </para>
+          <para>If there is an obvious default case your application needs to represent, consider using an enumerated constant whose value is zero to represent the default. If there is no default case, consider using an enumerated constant whose value is zero that means the case that is not represented by any of the other enumerated constants. </para>
+        </item>
+        <item>
+          <para>Do not define an enumeration value solely to mirror the state of the enumeration itself. For example, do not define an enumerated constant that merely marks the end of the enumeration. If you need to determine the last value of the enumeration, check for that value explicitly. In addition, you can perform a range check for the first and last enumerated constant if all values within the range are valid. </para>
+        </item>
+        <item>
+          <para>Do not specify enumerated constants that are reserved for future use.</para>
+        </item>
+        <item>
+          <para>When you define a method or property that takes an enumerated constant as a value, consider validating the value. The reason is that you can cast a numeric value to the enumeration type even if that numeric value is not defined in the enumeration.  </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that an enumeration can be treated as a bit field; that is, a set of flags.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public FlagsAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.FlagsAttribute" /> class.
- </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.FlagsAttribute" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

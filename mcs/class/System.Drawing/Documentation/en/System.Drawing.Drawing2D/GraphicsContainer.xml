@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GraphicsContainer" FullName="System.Drawing.Drawing2D.GraphicsContainer">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class GraphicsContainer : MarshalByRefObject" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the internal data of a graphics container. This class is used when saving the state of a <see cref="T:System.Drawing.Graphics" /> object using the <see cref="M:System.Drawing.Graphics.BeginContainer" /> and <see cref="M:System.Drawing.Graphics.EndContainer(System.Drawing.Drawing2D.GraphicsContainer)" /> methods. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

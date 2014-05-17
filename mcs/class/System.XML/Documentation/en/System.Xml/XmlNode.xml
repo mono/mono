@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlNode" FullName="System.Xml.XmlNode">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XmlNode : ICloneable, System.Collections.IEnumerable, System.Xml.XPath.IXPathNavigable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlNode extends System.Object implements class System.Collections.IEnumerable, class System.ICloneable, class System.Xml.XPath.IXPathNavigable" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -22,13 +25,28 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>A node in an Xml document. Nodes may be of any of the types in the <see cref="T:System.Xml.XmlNodeType" /> enumeration.</summary>
-    <remarks>To create new nodes, use the Create methods of <see cref="T:System.Xml.XmlDocument" />.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class implements the W3C Document Object Model (DOM) Level 1 Core and the Core DOM Level 2. The DOM is an in-memory (cache) tree representation of an XML document. XmlNode is the base class in the .NET implementation of the DOM. It supports XPath selections and provides editing capabilities. The <see cref="T:System.Xml.XmlDocument" /> class extends XmlNode and represents an XML document. You can use XmlDocument to load and save XML data. It also includes methods for node creation. See <format type="text/html"><a href="B5E52844-4820-47C0-A61D-DE2DA33E9F54">[&lt;topic://cpconXMLDocumentObjectModelDOM&gt;]</a></format> for more information.</para>
+      <block subset="none" type="note">
+        <para>Exceptions raised as a result of using the <see cref="T:System.Xml.XmlNode" /> class, such as the <see cref="T:System.Xml.XmlException" /> class may contain sensitive information that should not be exposed in untrusted scenarios. Exceptions should be properly handled so that this sensitive information is not exposed in untrusted scenarios.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a single node in the XML document. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AppendChild">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode AppendChild (System.Xml.XmlNode newChild);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode AppendChild(class System.Xml.XmlNode newChild) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -36,84 +54,474 @@
         <Parameter Name="newChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="newChild">The node to add as a child.</param>
-        <summary>Add a given node as a child of this one.</summary>
-        <returns>The child node.</returns>
-        <remarks>If the <paramref name="newChild" /> is already a child of some node, then that relationship will be destroyed by this operation.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="newChild" /> is already in the tree, it is removed from its original position and added to its target position. For more information about inserting nodes, see <format type="text/html"><a href="891e54f5-54f6-4bb4-b624-9d1b6a1f1216">Inserting Nodes into an XML Document</a></format>.</para>
+          <para>If the node being inserted was created from another document, you can use <see cref="M:System.Xml.XmlDocument.ImportNode(System.Xml.XmlNode,System.Boolean)" /> to import the node to the current document. The imported node can then be inserted into the current document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified node to the end of the list of child nodes, of this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node added.</para>
+        </returns>
+        <param name="newChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The node to add. All the contents of the node to be added are moved into the specified location. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Attributes">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlAttributeCollection Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlAttributeCollection Attributes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlAttributeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The Xml attributes on this node.</summary>
         <value>A collection of attributes.</value>
         <remarks>None.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.XmlAttributeCollection" /> containing the attributes of this node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BaseURI">
       <MemberSignature Language="C#" Value="public virtual string BaseURI { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BaseURI" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The base URI of the node.</summary>
         <value>The base URI of the node, or an empty string if the node has no base URI.</value>
-        <remarks>The base URI is the URI of the document containing the node.  The base URI is set when the document containing this node is loaded.  It cannot be modified.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A networked XML document is comprised of chunks of data aggregated using various W3C standard inclusion mechanisms and therefore contains nodes that come from different places. The BaseURI tells you where these nodes came from.</para>
+          <para>The value of this property varies depending on the node type. For example, Document nodes return the location of the <see cref="T:System.Xml.XmlDocument" /> object. Nodes which are child nodes of external EntityReference nodes return the location of the entity itself. For example, consider the following XML document: </para>
+          <code> &lt;!DOCTYPE item [
+ &lt;!ENTITY xyz SYSTEM "a/b.xml"&gt;
+ ]&gt;
+ &lt;item num='123'&gt;&amp;xyz;&lt;/item&gt;</code>
+          <para>where the external entity a/b.xml contains the XML text: &lt;test&gt;123&lt;/test&gt;.</para>
+          <para>If the document is loaded from http://server/mydata.xml, BaseURI returns the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>NodeType </para>
+                </term>
+                <description>
+                  <para>Name </para>
+                </description>
+                <description>
+                  <para>BaseURI </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>num </para>
+              </description>
+              <description>
+                <para>http://server/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Document </para>
+              </term>
+              <description>
+                <para>#document </para>
+              </description>
+              <description>
+                <para>http://server/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentType </para>
+              </term>
+              <description>
+                <para>item </para>
+              </description>
+              <description>
+                <para>http://server/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Entity </para>
+              </term>
+              <description>
+                <para>xyz </para>
+              </description>
+              <description>
+                <para>http://server/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Element </para>
+              </term>
+              <description>
+                <para>item </para>
+              </description>
+              <description>
+                <para>http://server/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>EntityReference </para>
+              </term>
+              <description>
+                <para>xyz </para>
+              </description>
+              <description>
+                <para>http://server/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Element </para>
+              </term>
+              <description>
+                <para>test </para>
+              </description>
+              <description>
+                <para>http://server/a/b.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text </para>
+              </term>
+              <description>
+                <para>#text </para>
+              </description>
+              <description>
+                <para>http://server/a/b.xml </para>
+              </description>
+            </item>
+          </list>
+          <para>BaseURI looks for entity reference boundaries, so if entities are expanded this information is not preserved and this property returns the location of the XmlDocument object in all cases.</para>
+          <para>As a second example, given the following XML document: </para>
+          <code> &lt;!DOCTYPE Mydata SYSTEM "http://localhost/doctype.dtd"&gt;
+ &lt;baa&gt;&amp;xyz;&lt;/baa&gt;</code>
+          <para>where the DTD file contains the following: </para>
+          <code> &lt;!ENTITY xyz &lt;E1&gt;My Data&lt;/E1&gt;
+ &lt;!ELEMENT baa #PCDATA&gt;
+ &lt;!ATTLIST baa attr1 "woof"&gt;</code>
+          <para>If the XML document is loaded from http://localhost/mydata.xml, BaseURI returns the following for each of the nodes: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>NodeType </para>
+                </term>
+                <description>
+                  <para>Name </para>
+                </description>
+                <description>
+                  <para>BaseURI </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Document </para>
+              </term>
+              <description>
+                <para>#document </para>
+              </description>
+              <description>
+                <para>http://localhost/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentType </para>
+              </term>
+              <description>
+                <para>Mydata </para>
+              </description>
+              <description>
+                <para>http://localhost/mydata.xml </para>
+                <para>The <see cref="P:System.Xml.XmlDocumentType.SystemId" /> or <see cref="P:System.Xml.XmlDocumentType.PublicId" /> properties can be used to identify where the DTD file was loaded from. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Element </para>
+              </term>
+              <description>
+                <para>baa </para>
+              </description>
+              <description>
+                <para>http://localhost/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Entity </para>
+              </term>
+              <description>
+                <para>xyz </para>
+              </description>
+              <description>
+                <para>http://localhost/doctype.dtd </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>EntityReference </para>
+              </term>
+              <description>
+                <para>xyz </para>
+              </description>
+              <description>
+                <para>http://localhost/mydata.xml </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>woof </para>
+              </description>
+              <description>
+                <para>http://localhost/mydata.xml </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The base URI of a default attribute is the same as the base URI of the element to which they belong.</para>
+          </block>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base URI of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ChildNodes">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNodeList ChildNodes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNodeList ChildNodes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The children of this node.</summary>
         <value>The children of this node.</value>
         <remarks>A node's children are an ordered list of nodes.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the child nodes of the node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Creates a deep copy of this node.</summary>
-        <returns>A new node cloned from this node in which all descendents of the node are copies of their counterpart descendents in the original node.</returns>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cloning an <see cref="T:System.Xml.XmlElement" /> copies all attributes and their values, including those generated by the XML processor to represent defaulted attributes. This method recursively clones the node and the subtree underneath it.</para>
+          <para>Clone is equivalent to calling CloneNode(true).</para>
+          <para>The following table describes the specific behavior for each <see cref="T:System.Xml.XmlNodeType" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>XmlNodeType </para>
+                </term>
+                <description>
+                  <para>Clone </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>Clones the attribute node, including child nodes. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CData </para>
+              </term>
+              <description>
+                <para>Clones the CData node, including its data content. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Comment </para>
+              </term>
+              <description>
+                <para>Clones the comment node, including its text content. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Document </para>
+              </term>
+              <description>
+                <para>Clones the document node, including any child nodes. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentFragment </para>
+              </term>
+              <description>
+                <para>Clones the document fragment node, including any child nodes. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentType </para>
+              </term>
+              <description>
+                <para>Clones the document type node. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Element </para>
+              </term>
+              <description>
+                <para>Clones the element node, its attributes, and any child nodes. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Entity </para>
+              </term>
+              <description>
+                <para>Entity nodes cannot be cloned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>EntityReference </para>
+              </term>
+              <description>
+                <para>Clones the entity reference node. The replacement text is not included. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Notation </para>
+              </term>
+              <description>
+                <para>Notation nodes cannot be cloned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProcessingInstruction </para>
+              </term>
+              <description>
+                <para>Clones the processing instruction node, including its target and data. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SignificantWhitespace </para>
+              </term>
+              <description>
+                <para>Clones the significant white space node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text </para>
+              </term>
+              <description>
+                <para>Clones the text node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Whitespace </para>
+              </term>
+              <description>
+                <para>Clones the white space node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XmlDeclaration </para>
+              </term>
+              <description>
+                <para>Clones the XmlDeclaration node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>All other node types. </para>
+              </term>
+              <description>
+                <para>These node types cannot be cloned. </para>
+              </description>
+            </item>
+          </list>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplicate of this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned node.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CloneNode">
       <MemberSignature Language="C#" Value="public abstract System.Xml.XmlNode CloneNode (bool deep);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode CloneNode(bool deep) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -121,69 +529,302 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="deep">True to create a deep clone, or false to create a shallow clone.</param>
-        <summary>Creates a clone of the node.</summary>
-        <returns>A clone of the node.</returns>
-        <remarks>If <paramref name="deep" /> is true, all descendents of the new node are copies of their counterpart descendents in the original node.  Otherwise, the children of the cloned node are the same objects as the children of the original.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method serves as a copy constructor for nodes. The duplicate node has no parent (<see cref="P:System.Xml.XmlNode.ParentNode" /> returns null).</para>
+          <para>The following table describes the specific behavior for each <see cref="T:System.Xml.XmlNodeType" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>XmlNodeType </para>
+                </term>
+                <description>
+                  <para>CloneNode(true) </para>
+                </description>
+                <description>
+                  <para>CloneNode(false) </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Attribute </para>
+              </term>
+              <description>
+                <para>Clones the attribute node, including child nodes. </para>
+              </description>
+              <description>
+                <para>Clones the attribute node, including child nodes. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CData </para>
+              </term>
+              <description>
+                <para>Clones the CData node, including its data content. </para>
+              </description>
+              <description>
+                <para>Clones the CData node, including its data content. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Comment </para>
+              </term>
+              <description>
+                <para>Clones the comment node, including its text content. </para>
+              </description>
+              <description>
+                <para>Clones the comment node, including its text content. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Document </para>
+              </term>
+              <description>
+                <para>Clones the document node, including any child nodes. </para>
+              </description>
+              <description>
+                <para>Clones the document node. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentFragment </para>
+              </term>
+              <description>
+                <para>Clones the document fragment node, including any child nodes. </para>
+              </description>
+              <description>
+                <para>Clones the document fragment node. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DocumentType </para>
+              </term>
+              <description>
+                <para>Clones the document type node. </para>
+              </description>
+              <description>
+                <para>Clones the document type node. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Element </para>
+              </term>
+              <description>
+                <para>Clones the element node, its attributes, and any child nodes. </para>
+              </description>
+              <description>
+                <para>Clones the element node and its attributes, including any default attributes. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Entity </para>
+              </term>
+              <description>
+                <para>Entity nodes cannot be cloned. </para>
+              </description>
+              <description>
+                <para>Entity nodes cannot be cloned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>EntityReference </para>
+              </term>
+              <description>
+                <para>Clones the entity reference node. The replacement text is not included. </para>
+              </description>
+              <description>
+                <para>Clones the entity reference node. The replacement text is not included. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Notation </para>
+              </term>
+              <description>
+                <para>Notation nodes cannot be cloned. </para>
+              </description>
+              <description>
+                <para>Notation nodes cannot be cloned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProcessingInstruction </para>
+              </term>
+              <description>
+                <para>Clones the processing instruction node, including its target and data. </para>
+              </description>
+              <description>
+                <para>Clones the processing instruction node, including its target and data. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SignificantWhitespace </para>
+              </term>
+              <description>
+                <para>Clones the significant white space node, including its data value. </para>
+              </description>
+              <description>
+                <para>Clones the significant white space node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Text </para>
+              </term>
+              <description>
+                <para>Clones the text node, including its data value. </para>
+              </description>
+              <description>
+                <para>Clones the text node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Whitespace </para>
+              </term>
+              <description>
+                <para>Clones the white space node, including its data value. </para>
+              </description>
+              <description>
+                <para>Clones the white space node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XmlDeclaration </para>
+              </term>
+              <description>
+                <para>Clones the XmlDeclaration node, including its data value. </para>
+              </description>
+              <description>
+                <para>Clones the XmlDeclaration node, including its data value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>All other node types. </para>
+              </term>
+              <description>
+                <para>These node types cannot be cloned. </para>
+              </description>
+              <description>
+                <para>These node types cannot be cloned. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplicate of the node, when overridden in a derived class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned node.</para>
+        </returns>
+        <param name="deep">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateNavigator">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XPath.XPathNavigator CreateNavigator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XPath.XPathNavigator CreateNavigator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Creates an <see cref="T:System.Xml.XPath.XPathNavigator" /> located at the node.</summary>
-        <returns>An <see cref="T:System.Xml.XPath.XPathNavigator" /> located at the node.</returns>
-        <remarks>The XPathNavigator can be used to perform XPath operations at the node.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XPathNavigator provides read-only, random access to data. Because it is optimized for XSLT transformations, it provides performance benefits when used as an input mechanism to the <see cref="M:System.Xml.Xsl.XslTransform.Transform(System.Xml.XPath.XPathNavigator,System.Xml.Xsl.XsltArgumentList,System.Xml.XmlResolver)" /> method.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Xml.XPath.XPathNavigator" /> for navigating this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XPathNavigator object used to navigate the node. The XPathNavigator is positioned on the node from which the method was called. It is not positioned on the root of the document.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FirstChild">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode FirstChild { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNode FirstChild" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The first child of this node.</summary>
         <value>The first child of the node, or null if the node has no children.</value>
         <remarks>None.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first child of the node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.IEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Gets an enumerator over the children of the node.</summary>
-        <returns>An enumerator over the children of this node.</returns>
-        <remarks>This is equivalent to calling ChildNodes.GetEnumerator().</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides support for the “for each” style iteration over the nodes in the XmlNode.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get an enumerator that iterates through the child nodes in the current node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the child nodes in the current node.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetNamespaceOfPrefix">
       <MemberSignature Language="C#" Value="public virtual string GetNamespaceOfPrefix (string prefix);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetNamespaceOfPrefix(string prefix) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -191,19 +832,31 @@
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">A namespace prefix.</param>
-        <summary>Gets the URI associated with the given namespace prefix.</summary>
-        <returns>The namespace URI corresponding to the prefix, or the empty string if no namespace corresponds to the prefix.</returns>
-        <remarks>The attributes of this node and its ancestors are traversed until an xmlns:<paramref name="prefix" /> attribute is found.  The value of that attribute is returned.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Looks up the closest xmlns declaration for the given prefix that is in scope for the current node and returns the namespace URI in the declaration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI of the specified prefix.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you want to find. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPrefixOfNamespace">
       <MemberSignature Language="C#" Value="public virtual string GetPrefixOfNamespace (string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetPrefixOfNamespace(string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -211,72 +864,111 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="namespaceURI">A namespace URI.</param>
-        <summary>Gets the prefix associated with the given namespace.</summary>
-        <returns>The prefix corresponding to the namespace URI, or the empty string if no prefix corresponds to the URI.</returns>
-        <remarks>The attributes of this node and its ancestors are traversed until an xmlns: attribute is found whose value is <paramref name="namespaceURI" />.  The local name of the attribute is returned.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Looks up the closest xmlns declaration for the given namespace URI that is in scope for the current node and returns the prefix defined in that declaration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The prefix for the specified namespace URI.</para>
+        </returns>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI whose prefix you want to find. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasChildNodes">
       <MemberSignature Language="C#" Value="public virtual bool HasChildNodes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasChildNodes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Determines whether or not this node has children.</summary>
         <value>True if the node has children, otherwise false.</value>
         <remarks>None.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this node has any child nodes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InnerText">
-      <MemberSignature Language="C#" Value="public virtual string InnerText { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string InnerText { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string InnerText" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Gets or sets a textual value for this node.</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>The value of this property is a concatenation of all of the text nodes that are descendents of this node.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InnerXml">
-      <MemberSignature Language="C#" Value="public virtual string InnerXml { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Gets or sets the contents of the node as an Xml string.</summary>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property replaces all the child nodes with the parsed contents of the given string.</para>
+          <para>For leaf nodes, InnerText returns the same content as the <see cref="P:System.Xml.XmlNode.Value" /> property.</para>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the concatenated values of the node and all its child nodes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InnerXml">
+      <MemberSignature Language="C#" Value="public virtual string InnerXml { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string InnerXml" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
         <value>
           <para>The contents of the node as an Xml string.  When getting the value of this property, InnerXml returns the same string that <see cref="M:System.Xml.XmlNode.WriteContentTo" /> would write to an <see cref="T:System.Xml.XmlTextWriter" />.</para>
           <para>When setting the value of this property, the value is parsed as Xml, and the current children of the node are replaced by the nodes parsed from the string.</para>
         </value>
-        <remarks>Setting this property is only valid for nodes which are not read-only and can have children.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempting to set this property from a node that cannot have child nodes, for example a Text node, throws an exception. Otherwise, setting InnerXml replaces the child nodes, of the node, with the parsed contents of the given string. The parsing is done in the current namespace context.</para>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+          <block subset="none" type="note">
+            <para>InnerXml is not an efficient way to modify the DOM. There may be performance issues when replacing complex nodes. It is more efficient to construct nodes and use methods such as InsertBefore, InsertAfter, AppendChild, and RemoveChild to modify the Xml document.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the markup representing only the child nodes of this node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InsertAfter">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode InsertAfter (System.Xml.XmlNode newChild, System.Xml.XmlNode refChild);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode InsertAfter(class System.Xml.XmlNode newChild, class System.Xml.XmlNode refChild) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -285,21 +977,35 @@
         <Parameter Name="refChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="newChild">The node to insert.</param>
-        <param name="refChild">The node after which the new node is placed.</param>
-        <summary>Inserts a node after one of this node's children.</summary>
-        <returns>The inserted node.</returns>
         <remarks>
-          <paramref name="refChild" /> must be one of this node's children.</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="refChild" /> is null, insert <paramref name="newChild" /> at the beginning of the list of child nodes. All the contents of the <paramref name="newChild" /> are inserted, in the same order, after <paramref name="refChild" />. If the <paramref name="newChild" /> is already in the tree, it is removed from its original position and added to its target position. For more information about inserting nodes, see <format type="text/html"><a href="891e54f5-54f6-4bb4-b624-9d1b6a1f1216">Inserting Nodes into an XML Document</a></format>.</para>
+          <para>If the node being inserted was created from another document, you can use <see cref="M:System.Xml.XmlDocument.ImportNode(System.Xml.XmlNode,System.Boolean)" /> to import the node to the current document. The imported node can then be inserted into the current document.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified node immediately after the specified reference node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node being inserted.</para>
+        </returns>
+        <param name="newChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNode to insert. </param>
+        <param name="refChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNode that is the reference node. The <paramref name="newNode" /> is placed after the <paramref name="refNode" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InsertBefore">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode InsertBefore (System.Xml.XmlNode newChild, System.Xml.XmlNode refChild);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode InsertBefore(class System.Xml.XmlNode newChild, class System.Xml.XmlNode refChild) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -308,37 +1014,59 @@
         <Parameter Name="refChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="newChild">The node to insert.</param>
-        <param name="refChild">The node before which the new node is placed.</param>
-        <summary>Inserts a node before one of this node's children.</summary>
-        <returns>The inserted node.</returns>
         <remarks>
-          <paramref name="refChild" /> must be one of this node's children.</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="refChild" /> is null, insert <paramref name="newChild" /> at the end of the list of child nodes. All the contents of the <paramref name="newChild" /> are inserted, in the same order, before <paramref name="refChild" />. If the <paramref name="newChild" /> is already in the tree, it is removed from its original position and added to its target position. For more information about inserting nodes, see <format type="text/html"><a href="891e54f5-54f6-4bb4-b624-9d1b6a1f1216">Inserting Nodes into an XML Document</a></format>.</para>
+          <para>If the node being inserted was created from another document, you can use <see cref="M:System.Xml.XmlDocument.ImportNode(System.Xml.XmlNode,System.Boolean)" /> to import the node to the current document. The imported node can then be inserted into the current document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified node immediately before the specified reference node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node being inserted.</para>
+        </returns>
+        <param name="newChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNode to insert. </param>
+        <param name="refChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNode that is the reference node. The <paramref name="newChild" /> is placed before this node. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsReadOnly">
       <MemberSignature Language="C#" Value="public virtual bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Whether the node is read-only.</summary>
         <value>Whether the node is read-only.</value>
-        <remarks>A read-only node's set of children cannot be modified.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only node is one whose properties, attributes, or child nodes cannot be changed. You can remove a read-only node from the tree and insert it somewhere else. For example, Entity nodes are always read-only.</para>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the node is read-only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement this[string name] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlElement Item(string)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -351,14 +1079,16 @@
         <value>The child element whose <see cref="P:System.Xml.XmlNode.Name" /> is <paramref name="name" />, or null if no child element has that name.</value>
         <remarks>None.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement this[string localname, string ns] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlElement Item(string, string)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -373,193 +1103,270 @@
         <value>The child element whose <see cref="P:System.Xml.XmlNode.LocalName" /> is <paramref name="localname" /> and <see cref="P:System.Xml.XmlNode.NamespaceURI" /> is <paramref name="ns" />, or null if no child element has that name.</value>
         <remarks>None.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastChild">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode LastChild { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNode LastChild" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The last child of this node.</summary>
         <value>The last child of this node, or null if the node has no children.</value>
         <remarks>None.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last child of the node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LocalName">
       <MemberSignature Language="C#" Value="public abstract string LocalName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LocalName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The local name of the node.</summary>
         <value>The local name of the node.  For nodes with qualified names, the local name is the portion of the name after the colon.</value>
-        <remarks>The local name of the node is the name of the node when its <see cref="P:System.Xml.XmlNode.NamespaceURI" /> is disregarded.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the node does not have a prefix, LocalName is the same as <see cref="P:System.Xml.XmlNode.Name" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local name of the node, when overridden in a derived class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public abstract string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The fully qualified name of the node.</summary>
         <value>The fully qualified name of the node.</value>
         <remarks>This is a string consisting of both the <see cref="P:System.Xml.XmlNode.Prefix" /> and the <see cref="P:System.Xml.XmlNode.LocalName" /> of the node, separated by a ':' character.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the qualified name of the node, when overridden in a derived class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NamespaceURI">
       <MemberSignature Language="C#" Value="public virtual string NamespaceURI { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NamespaceURI" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The Xml namespace of the node.</summary>
         <value>The URI of the namespace of the node.</value>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the namespace URI specified at creation time. For example, NamespaceURI is urn:samples for the element &lt;bk:book xmlns:bk= "urn:samples"&gt; </para>
+          <para>An attribute does not inherit its namespace from the element it is attached to. If an attribute is not explicitly given a namespace, it simply has no namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace URI of this node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NextSibling">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode NextSibling { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNode NextSibling" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The next sibling of the node.</summary>
         <value>The next node that follows this one, or null if this is the last node in its parent's children.</value>
         <remarks>The node after this one in the <see cref="P:System.Xml.XmlNode.ParentNode" />'s <see cref="P:System.Xml.XmlNode.ChildNodes" /> collection.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node immediately following this node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeType">
       <MemberSignature Language="C#" Value="public abstract System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlNodeType NodeType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The type of the node.</summary>
         <value>A value from <see cref="T:System.Xml.XmlNodeType" /> that indicates the type of this node.</value>
-        <remarks>You can also check the type of this node using the is operator.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property never returns the XmlNodeType EndElement, EndEntity or None.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the current node, when overridden in a derived class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Normalize">
       <MemberSignature Language="C#" Value="public virtual void Normalize ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Normalize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to ensure that the DOM view of a document is the same as if it were saved and re-loaded, and is useful when operations (such as XPointer lookups) that depend on a particular document tree structure are to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Puts all XmlText nodes in the full depth of the sub-tree underneath this XmlNode into a "normal" form where only markup (that is, tags, comments, processing instructions, CDATA sections, and entity references) separates XmlText nodes, that is, there are no adjacent XmlText nodes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OuterXml">
       <MemberSignature Language="C#" Value="public virtual string OuterXml { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string OuterXml" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets a string representation of the node.</summary>
         <value>A string representing this node.  If the node is an element, the start and end tags are included.</value>
         <remarks>
-          <para>OuterXml returns the same string that <see cref="M:System.Xml.XmlNode.WriteTo" /> would write to an <see cref="T:System.Xml.XmlTextWriter" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the markup containing this node and all its child nodes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OwnerDocument">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocument OwnerDocument { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlDocument OwnerDocument" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlDocument</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The document of which this node is a part.</summary>
         <value>The <see cref="T:System.Xml.XmlDocument" /> that owns this node.</value>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When adding nodes to the current node, use the <see cref="T:System.Xml.XmlDocument" /> returned by the <see cref="P:System.Xml.XmlNode.OwnerDocument" /> property to create the node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlDocument" /> to which this node belongs.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ParentNode">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode ParentNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNode ParentNode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The parent of this node.</summary>
         <value>The node that this node is a child of, or null if this is an <see cref="T:System.Xml.XmlDocument" /> or the node is not contained in a document tree.</value>
         <remarks>None.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent of this node (for nodes that can have parents).</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Prefix">
+      <MemberSignature Language="C#" Value="public virtual string Prefix { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Prefix" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Prefix">
-      <MemberSignature Language="C#" Value="public virtual string Prefix { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The prefixed used as shorthand for the <see cref="P:System.Xml.XmlNode.NamespaceUri" /> for this node.</summary>
         <value>The prefix of the node, or the empty string if the node has no prefix.</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property, when permitted, changes the <see cref="P:System.Xml.XmlNode.Name" /> property, which holds the qualified name, on Element and Attribute nodes. Setting this property on node types that cannot have a prefix (such as Text, Comment, EntityReference, CDATA, ProcessingInstruction, Document, and DocumentFragment) has no effect. Changing the prefix of an attribute that is known to have a default value, does not make a new attribute with the default value and the original prefix appear, since the namespace URI and local name do not change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace prefix of this node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PrependChild">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode PrependChild (System.Xml.XmlNode newChild);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode PrependChild(class System.Xml.XmlNode newChild) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -567,51 +1374,79 @@
         <Parameter Name="newChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="newChild">The node to insert.</param>
-        <summary>Inserts a node as the first child of this node.</summary>
-        <returns>The child node.</returns>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="newChild" /> is already in the tree, it is removed from its original position and added to its target position. For more information about inserting nodes, see <format type="text/html"><a href="891e54f5-54f6-4bb4-b624-9d1b6a1f1216">Inserting Nodes into an XML Document</a></format>.</para>
+          <para>If the node being inserted was created from another document, you can use <see cref="M:System.Xml.XmlDocument.ImportNode(System.Xml.XmlNode,System.Boolean)" /> to import the node to the current document. The imported node can then be inserted into the current document.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified node to the beginning of the list of child nodes for this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node added.</para>
+        </returns>
+        <param name="newChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The node to add. All the contents of the node to be added are moved into the specified location.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PreviousSibling">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode PreviousSibling { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNode PreviousSibling" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The previous sibling of the node.</summary>
         <value>The node that comes before this one, or null if this is the first node in its parent's children.</value>
         <remarks>The node before this one in the <see cref="P:System.Xml.XmlNode.ParentNode" />'s <see cref="P:System.Xml.XmlNode.ChildNodes" /> collection.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node immediately preceding this node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAll">
       <MemberSignature Language="C#" Value="public virtual void RemoveAll ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveAll() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Removes all of the children of the node.</summary>
-        <remarks>All of the children of the node, including attributes, are detached from the document.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a removed attribute is known to have a default value, an attribute immediately appears containing the default value and, if applicable, the corresponding namespace URI, local name, and prefix.</para>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the child nodes and/or attributes of the current node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveChild">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode RemoveChild (System.Xml.XmlNode oldChild);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode RemoveChild(class System.Xml.XmlNode oldChild) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -619,19 +1454,28 @@
         <Parameter Name="oldChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="oldChild">The child to remove.</param>
-        <summary>Remove a child node.</summary>
-        <returns>The removed node.</returns>
         <remarks>None.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes specified child node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node removed.</para>
+        </returns>
+        <param name="oldChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The node being removed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReplaceChild">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode ReplaceChild (System.Xml.XmlNode newChild, System.Xml.XmlNode oldChild);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode ReplaceChild(class System.Xml.XmlNode newChild, class System.Xml.XmlNode oldChild) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -640,36 +1484,58 @@
         <Parameter Name="oldChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="newChild">The child node to be added in.</param>
-        <param name="oldChild">The child node replaced by the new node.</param>
-        <summary>Replace a child node.</summary>
-        <returns>The removed child.</returns>
-        <remarks>None.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="newChild" /> is already in the tree, it is first removed.</para>
+          <para>If the <paramref name="newChild" /> was created from another document, you can use <see cref="M:System.Xml.XmlDocument.ImportNode(System.Xml.XmlNode,System.Boolean)" /> to import the node to the current document. The imported node can then be passed to the ReplaceChild method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the child node <paramref name="oldChild" /> with <paramref name="newChild" /> node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node replaced.</para>
+        </returns>
+        <param name="newChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new node to put in the child list. </param>
+        <param name="oldChild">
+          <attribution license="cc4" from="Microsoft" modified="false" />The node being replaced in the list. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SchemaInfo">
       <MemberSignature Language="C#" Value="public virtual System.Xml.Schema.IXmlSchemaInfo SchemaInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.IXmlSchemaInfo SchemaInfo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.XmlNode.SchemaInfo" /> property is set when this node is validatied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post schema validation infoset that has been assigned to this node as a result of schema validation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectNodes">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNodeList SelectNodes (string xpath);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlNodeList SelectNodes(string xpath) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeList</ReturnType>
       </ReturnValue>
@@ -677,26 +1543,47 @@
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xpath">The XPath expression.</param>
-        <summary>Run an XPath expression against this node.</summary>
-        <returns>The nodes selected by the expression.</returns>
         <remarks>
-          <para>
-	It compiles the argument XPath expression and evaluates it against this node and returns resulting nodes that match the expression as <see cref="T:System.Xml.XmlNodeList" />.
-	</para>
-          <para>
-	With this method namespaces cannot be considered. To select nodes which have namespace URI, use <see cref="M:System.Xml.XmlNode.SelectNodes(string,System.Xml.XmlNamespaceManager)" /> instead.
-	</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XPath expression requires namespace resolution, you must use the SelectNodes overload which takes an <see cref="T:System.Xml.XmlNamespaceManager" /> as its argument. The XmlNamespaceManager is used to resolve namespaces.</para>
+          <block subset="none" type="note">
+            <para>If the XPath expression does not include a prefix, it is assumed that the namespace URI is the empty namespace. If your XML includes a default namespace, you must still use the XmlNamespaceManager and add a prefix and namespace URI to it; otherwise, you will not get any nodes selected. For more information, see <format type="text/html"><a href="8e4450dc-56b3-472b-b467-32f5694f83ad">Select Nodes Using XPath Navigation</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para> A common issue when formulating XPath expressions is how to include a single quote (') or double quote (") in the expression. If you have to search for a value that includes a single quote, you must enclose the string in double quotes. If you need to search for a value that includes a double quote, you must enclose the string in single quotes.</para>
+          </block>
+          <para>For example, suppose you have the following XML: </para>
+          <code> &lt;bookstore&gt;
+   &lt;book&gt;
+     &lt;title&gt;&amp;apos;Emma&amp;apos;&lt;/title&gt;
+   &lt;/book&gt;
+ &lt;/bookstore&gt;</code>
+          <para>The following Visual Basic code selects an element that contains single quotes: </para>
+          <code> nodeList = root.SelectNodes("//book[contains(title,""'Emma'"")]")</code>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+          <para>The <see cref="T:System.Xml.XmlNodeList" /> object returned by this method will be valid while the underlying document remains unchanged. If the underlying document changes, unexpected results may be returned (no exception will be thrown).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects a list of nodes matching the XPath expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNodeList" /> containing a collection of nodes matching the XPath query.</para>
+        </returns>
+        <param name="xpath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectNodes">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNodeList SelectNodes (string xpath, System.Xml.XmlNamespaceManager nsmgr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlNodeList SelectNodes(string xpath, class System.Xml.XmlNamespaceManager nsmgr) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeList</ReturnType>
       </ReturnValue>
@@ -705,27 +1592,61 @@
         <Parameter Name="nsmgr" Type="System.Xml.XmlNamespaceManager" />
       </Parameters>
       <Docs>
-        <param name="xpath">The XPath expression.</param>
-        <param name="nsmgr">The context in which to evaluate the expression, or null.</param>
-        <summary>Run an XPath expression against this node within a given context.</summary>
-        <returns>The nodes selected by the expression.</returns>
         <remarks>
-          <para>
-	It compiles the argument XPath expression and evaluates it against this node and returns resulting nodes that match the expression as <see cref="T:System.Xml.XmlNodeList" />.
-	</para>
-          <para>
-	The argument XPath expression is compiled with the argument <paramref name="nsmgr" />. That is, the namespace prefixes used in <paramref name="xpath" /> have nothing to do with the actual <see cref="P:System.Xml.XmlNode.Prefix" /> property values in the tree. It is the namespace URIs stored in <paramref name="nsmgr" /> which are significant.
-	</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XPath expressions can include namespaces. Namespace resolution is supported using the XmlNamespaceManager. If the XPath expression includes a prefix, the prefix and namespace URI pair must be added to the XmlNamespaceManager.</para>
+          <block subset="none" type="note">
+            <para>If the XPath expression does not include a prefix, it is assumed that the namespace URI is the empty namespace. If your XML includes a default namespace, you must still add a prefix and namespace URI to the XmlNamespaceManager; otherwise, you will not get any nodes selected. For more information, see <format type="text/html"><a href="8e4450dc-56b3-472b-b467-32f5694f83ad">Select Nodes Using XPath Navigation</a></format>.</para>
+          </block>
+          <para>For example, if you had the following XML: </para>
+          <code> &lt;bookstore xmlns="http://www.lucernepublishing.com"&gt;
+  &lt;book&gt;
+    &lt;title&gt;Pride And Prejudice&lt;/title&gt;
+  &lt;/book&gt;
+ &lt;/bookstore&gt;</code>
+          <para>The following C# code selects all book nodes: </para>
+          <code> XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+ nsmgr.AddNamespace("ab", "http://www.lucernepublishing.com");
+ XmlNodeList nodelist = doc.SelectNodes("//ab:book", nsmgr);</code>
+          <block subset="none" type="note">
+            <para> A common issue when formulating XPath expressions is how to include a single quote (') or double quote (") in the expression. If you have to search for a value that includes a single quote, you must enclose the string in double quotes. If you need to search for a value that includes a double quote, you must enclose the string in single quotes.</para>
+          </block>
+          <para>For example, suppose you have the following XML: </para>
+          <code> &lt;bookstore xmlns="http://www.lucernepublishing.com"&gt;
+   &lt;book&gt;
+     &lt;title&gt;&amp;apos;Emma&amp;apos;&lt;/title&gt;
+   &lt;/book&gt;
+ &lt;/bookstore&gt;</code>
+          <para>The following Visual Basic code selects an element that contains single quotes: </para>
+          <code> Dim nsmgr As XmlNamespaceManager = New XmlNamespaceManager(doc.NameTable)
+ nsmgr.AddNamespace("ab", "http://www.lucernepublishing.com")
+ nodeList = root.SelectNodes("//ab:book[contains(ab:title,""'Emma'"")]", nsmgr)</code>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+          <para>The <see cref="T:System.Xml.XmlNodeList" /> object returned by this method will be valid while the underlying document remains unchanged. If the underlying document changes, unexpected results may be returned (no exception will be thrown).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects a list of nodes matching the XPath expression. Any prefixes found in the XPath expression are resolved using the supplied <see cref="T:System.Xml.XmlNamespaceManager" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNodeList" /> containing a collection of nodes matching the XPath query.</para>
+        </returns>
+        <param name="xpath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression. </param>
+        <param name="nsmgr">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceManager" /> to use for resolving namespaces for prefixes in the XPath expression. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectSingleNode">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNode SelectSingleNode (string xpath);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlNode SelectSingleNode(string xpath) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -733,26 +1654,46 @@
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xpath">The XPath expression.</param>
-        <summary>Run an XPath expression against this node, returning the first matching node.</summary>
-        <returns>The first node that matches the expression, or null if no node matches the expression.</returns>
         <remarks>
-          <para>
-	It compiles the argument XPath expression and evaluates it against this node and returns resulting nodes that match the expression as <see cref="T:System.Xml.XmlNodeList" />.
-	</para>
-          <para>
-	With this method namespaces cannot be considered. To select nodes which have namespace URI, use <see cref="M:System.Xml.XmlNode.SelectNodes(string,System.Xml.XmlNamespaceManager)" /> instead.
-	</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XPath expression requires namespace resolution, you must use the SelectSingleNode overload which takes an <see cref="T:System.Xml.XmlNamespaceManager" /> as its argument. The XmlNamespaceManager is used to resolve namespaces.</para>
+          <block subset="none" type="note">
+            <para>If the XPath expression does not include a prefix, it is assumed that the namespace URI is the empty namespace. If your XML includes a default namespace, you must still use the XmlNamespaceManager and add a prefix and namespace URI to it; otherwise, you will not get a selected node. For more information, see <format type="text/html"><a href="8e4450dc-56b3-472b-b467-32f5694f83ad">Select Nodes Using XPath Navigation</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para> A common issue when formulating XPath expressions is how to include a single quote (') or double quote (") in the expression. If you have to search for a value that includes a single quote, you must enclose the string in double quotes. If you need to search for a value that includes a double quote, you must enclose the string in single quotes.</para>
+          </block>
+          <para>For example, suppose you have the following XML: </para>
+          <code> &lt;bookstore&gt;
+   &lt;book&gt;
+     &lt;title&gt;&amp;apos;Emma&amp;apos;&lt;/title&gt;
+   &lt;/book&gt;
+ &lt;/bookstore&gt;</code>
+          <para>The following Visual Basic code selects an element that contains single quotes: </para>
+          <code> book = root.SelectSingleNode("descendant::book[title=""'Emma'""]")</code>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the first XmlNode that matches the XPath expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first XmlNode that matches the XPath query or null if no matching node is found. The XmlNode should not be expected to be connected "live" to the XML document. That is, changes that appear in the XML document may not appear in the XmlNode, and vice versa.</para>
+        </returns>
+        <param name="xpath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectSingleNode">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNode SelectSingleNode (string xpath, System.Xml.XmlNamespaceManager nsmgr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlNode SelectSingleNode(string xpath, class System.Xml.XmlNamespaceManager nsmgr) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -761,27 +1702,60 @@
         <Parameter Name="nsmgr" Type="System.Xml.XmlNamespaceManager" />
       </Parameters>
       <Docs>
-        <param name="xpath">The XPath expression.</param>
-        <param name="nsmgr">The context in which to evaluate the expression, or null.</param>
-        <summary>Run an XPath expression against this node in a given context, returning the first matching node.</summary>
-        <returns>The first node that matches the expression, or null if no node matches the expression.</returns>
         <remarks>
-          <para>
-	It compiles the argument XPath expression and evaluates it against this node and returns the first node of resulting nodes that match the expression as <see cref="T:System.Xml.XmlNode" />.
-	</para>
-          <para>
-	The argument XPath expression is compiled with the argument <paramref name="nsmgr" />. That is, the namespace prefixes used in <paramref name="xpath" /> have nothing to do with the actual <see cref="P:System.Xml.XmlNode.Prefix" /> property values in the tree. It is the namespace URIs stored in <paramref name="nsmgr" /> which are significant.
-	</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XPath expressions can include namespaces. Namespace resolution is supported using the XmlNamespaceManager. If the XPath expression includes a prefix, the prefix and namespace URI pair must be added to the XmlNamespaceManager.</para>
+          <block subset="none" type="note">
+            <para>If the XPath expression does not include a prefix, it is assumed that the namespace URI is the empty namespace. If your XML includes a default namespace, you must still add a prefix and namespace URI to the XmlNamespaceManager; otherwise, you will not get a node selected. For more information, see <format type="text/html"><a href="8e4450dc-56b3-472b-b467-32f5694f83ad">Select Nodes Using XPath Navigation</a></format>.</para>
+          </block>
+          <para>For example, if you had the following XML: </para>
+          <code> &lt;bookstore xmlns="http://www.lucernepublishing.com"&gt;
+  &lt;book&gt;
+    &lt;title&gt;Pride And Prejudice&lt;/title&gt;
+  &lt;/book&gt;
+ &lt;/bookstore&gt;</code>
+          <para>The following C# code selects the first book node: </para>
+          <code> XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+ nsmgr.AddNamespace("ab", "http://www.lucernepublishing.com");
+ XmlNode book = doc.SelectSingleNode("//ab:book", nsmgr);</code>
+          <block subset="none" type="note">
+            <para> A common issue when formulating XPath expressions is how to include a single quote (') or double quote (") in the expression. If you have to search for a value that includes a single quote, you must enclose the string in double quotes. If you need to search for a value that includes a double quote, you must enclose the string in single quotes.</para>
+          </block>
+          <para>For example, suppose you have the following XML: </para>
+          <code> &lt;bookstore xmlns="http://www.lucernepublishing.com"&gt;
+   &lt;book&gt;
+     &lt;title&gt;&amp;apos;Emma&amp;apos;&lt;/title&gt;
+   &lt;/book&gt;
+ &lt;/bookstore&gt;</code>
+          <para>The following Visual Basic code selects an element that contains single quotes: </para>
+          <code> Dim nsmgr As XmlNamespaceManager = New XmlNamespaceManager(doc.NameTable)
+ nsmgr.AddNamespace("ab", "http://www.lucernepublishing.com")
+ book = root.SelectSingleNode("descendant::ab:book[ab:title=""'Emma'""]", nsmgr)</code>
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the first XmlNode that matches the XPath expression. Any prefixes found in the XPath expression are resolved using the supplied <see cref="T:System.Xml.XmlNamespaceManager" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first XmlNode that matches the XPath query or null if no matching node is found. The XmlNode should not be expected to be connected "live" to the XML document. That is, changes that appear in the XML document may not appear in the XmlNode, and vice versa.</para>
+        </returns>
+        <param name="xpath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression. </param>
+        <param name="nsmgr">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceManager" /> to use for resolving namespaces for prefixes in the XPath expression. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Supports">
       <MemberSignature Language="C#" Value="public virtual bool Supports (string feature, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Supports(string feature, string version) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -790,74 +1764,139 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="feature">The feature name to test.</param>
-        <param name="version">The feature version to test.</param>
-        <summary>Tests whether the node supports certain DOM features.</summary>
-        <returns>Whether the feature/version pair is supported by the node.</returns>
         <remarks>
           <para>This method currently returns true only when <paramref name="feature" /> is "xml" and <paramref name="version" /> is "1.0" or "2.0". This is the equivalent behavior that W3C Document Object Model Level 2 expects. However, it does not mean that this document object model really conforms to the W3C standard. Actually it does not conform to the standard.
 	</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests if the DOM implementation implements a specific feature.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is implemented in the specified version; otherwise, false. The following table describes the combinations that return true.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Feature </para>
+                </term>
+                <description>
+                  <para>Version </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>XML </para>
+              </term>
+              <description>
+                <para>1.0 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XML </para>
+              </term>
+              <description>
+                <para>2.0 </para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="feature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The package name of the feature to test. This name is not case-sensitive. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version number of the package name to test. If the version is not specified (null), supporting any version of the feature causes the method to return true. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlNode" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.XmlNode.GetEnumerator" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator for the collection.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
       <MemberSignature Language="C#" Value="object ICloneable.Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.ICloneable.Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlNode" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.XmlNode.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the node from which it is called.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public virtual string Value { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public virtual string Value { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The value of the node. This depends on it's <see cref="P:System.Xml.XmlNode.NodeType" />.</summary>
         <value>The value of this node, or null if the node does not have a value.</value>
         <remarks>Attribute values, processing instruction values, and other node values are returned by this property.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteContentTo">
       <MemberSignature Language="C#" Value="public abstract void WriteContentTo (System.Xml.XmlWriter w);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteContentTo(class System.Xml.XmlWriter w) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -865,20 +1904,27 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">The writer to write the nodes to.</param>
-        <summary>Writes the child nodes of this node to an <see cref="T:System.Xml.XmlWriter" />.</summary>
         <remarks>
-	This method is used to write its content nodes to the parameter <see cref="T:System.Xml.XmlWriter" />. It does not write this node itself. For example, if this node is an element, the start and end tags are not written.
-	</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM). It is functionally equivalent to the <see cref="P:System.Xml.XmlNode.InnerXml" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves all the child nodes of the node to the specified <see cref="T:System.Xml.XmlWriter" />, when overridden in a derived class.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteTo">
       <MemberSignature Language="C#" Value="public abstract void WriteTo (System.Xml.XmlWriter w);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteTo(class System.Xml.XmlWriter w) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -886,16 +1932,17 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">The writer to write the nodes to.</param>
-        <summary>Writes the node and its children to an <see cref="T:System.Xml.XmlWriter" />.</summary>
         <remarks>
-	This method is used to write this node itself and its content nodes to the parameter <see cref="T:System.Xml.XmlWriter" />.
-	</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM). It is functionally equivalent to the <see cref="P:System.Xml.XmlNode.OuterXml" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the current node to the specified <see cref="T:System.Xml.XmlWriter" />, when overridden in a derived class.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

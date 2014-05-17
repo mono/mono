@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DuplexChannelFactory&lt;TChannel&gt;" FullName="System.ServiceModel.DuplexChannelFactory&lt;TChannel&gt;">
+  <TypeSignature Language="C#" Value="public class DuplexChannelFactory&lt;TChannel&gt; : System.ServiceModel.ChannelFactory&lt;TChannel&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DuplexChannelFactory`1&lt;TChannel&gt; extends System.ServiceModel.ChannelFactory`1&lt;!TChannel&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TChannel" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ServiceModel.ChannelFactory&lt;TChannel&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="TChannel">TChannel</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="TChannel">To be added.</typeparam>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A duplex channel allows clients and servers to communicate with each other independently so that either can initiate calls to the other. A duplex service can send messages to the client endpoint, providing event-like behavior. Duplex communication occurs when a client establishes a session with a service and provides the service with a channel on which the service can send messages back to the client. The various <see cref="Overload:System.ServiceModel.DuplexChannelFactory`1.CreateChannel" /> methods are used to create these duplex channels. The duplex message pattern is one of three message patterns available to indigo1 services. The other two message patterns are one-way and request-reply.</para>
+      <para>For a general discussion of duplex services that allow clients to connect back to the service, see <format type="text/html"><a href="396b875a-d203-4ebe-a3a1-6a330d962e95">Duplex Services</a></format>. For an outline and discussion of the steps involved in writing a indigo1 client application using a channel factory, see <format type="text/html"><a href="d48f01b5-582b-4c8b-b547-8adddae7e371">How to: Use the ChannelFactory</a></format>. For a procedure describing how to create a indigo1 client in a client class that implements the callback interface to access a service that uses a duplex messaging pattern, see <format type="text/html"><a href="746a9d64-f21c-426c-b85d-972e916ec6c5">How to: Access Services with a Duplex Contract</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the means to create and manage duplex channels of different types that are used by clients to send and receive messages to and from service endpoints.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (object callbackInstance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object callbackInstance) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callbackInstance">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass an object that implements the callback contract for the target service programmatically rather than by using an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (System.ServiceModel.InstanceContext callbackInstance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.InstanceContext callbackInstance) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified instance context.</para>
+        </summary>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (Type callbackInstanceType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type callbackInstanceType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstanceType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified type of callback instance.</para>
+        </summary>
+        <param name="callbackInstanceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that provides the callback instance that the client uses to listen for messages from the connected service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (object callbackInstance, System.ServiceModel.Channels.Binding binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object callbackInstance, class System.ServiceModel.Channels.Binding binding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.Object" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+      </Parameters>
+      <Docs>
+        <param name="callbackInstance">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass an instance context object that implements the callback contract for the target service and to pass the binding information programmatically rather than by using an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified binding.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (object callbackInstance, System.ServiceModel.Description.ServiceEndpoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object callbackInstance, class System.ServiceModel.Description.ServiceEndpoint endpoint) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.Object" />
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <param name="callbackInstance">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass a service object that implements the callback contract for the target service and to pass the service endpoint information programmatically rather than using an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified endpoint.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to which channels produced by the factory connect.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (object callbackInstance, string endpointConfigurationName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object callbackInstance, string endpointConfigurationName) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.Object" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="callbackInstance">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass a service object that implements the callback contract for the target service and determine the target endpoint information from the client application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified configuration.</para>
+        </summary>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration name used for the endpoint.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.Channels.Binding binding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass an instance context object that implements the callback contract for the target service and to pass the binding information programmatically rather than by using an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with a context that implements the callback contract and a specified binding.</para>
+        </summary>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Description.ServiceEndpoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.Description.ServiceEndpoint endpoint) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass an instance context object that implements the callback contract for the target service and to pass the endpoint information programmatically rather than by using an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified endpoint.</para>
+        </summary>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> to which channels produced by the factory connect.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass an instance context object that implements the callback contract for the target service and to determine the target endpoint information from the client application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified configuration.</para>
+        </summary>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used for the endpoint configuration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (Type callbackInstanceType, System.ServiceModel.Channels.Binding binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type callbackInstanceType, class System.ServiceModel.Channels.Binding binding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstanceType" Type="System.Type" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified type of callback instance and binding.</para>
+        </summary>
+        <param name="callbackInstanceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that provides the callback instance that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (Type callbackInstanceType, System.ServiceModel.Description.ServiceEndpoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type callbackInstanceType, class System.ServiceModel.Description.ServiceEndpoint endpoint) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstanceType" Type="System.Type" />
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified type of callback instance and service endpoint.</para>
+        </summary>
+        <param name="callbackInstanceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that provides the callback instance that the client uses to listen for messages from the connected service.</param>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> for the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (Type callbackInstanceType, string endpointConfigurationName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type callbackInstanceType, string endpointConfigurationName) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstanceType" Type="System.Type" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified type of callback instance and configuration.</para>
+        </summary>
+        <param name="callbackInstanceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that provides the callback instance that the client uses to listen for messages from the connected service.</param>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used for the endpoint configuration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (object callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object callbackInstance, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.EndpointAddress remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.Object" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <param name="callbackInstance">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass a service object that implements the callback contract for the target service and pass in the binding and address information programmatically rather than using an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified binding and endpoint address.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (object callbackInstance, System.ServiceModel.Channels.Binding binding, string remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object callbackInstance, class System.ServiceModel.Channels.Binding binding, string remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.Object" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="remoteAddress" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="callbackInstance">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified callback object, binding, and remote address.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote address that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (object callbackInstance, string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object callbackInstance, string endpointConfigurationName, class System.ServiceModel.EndpointAddress remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.Object" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <param name="callbackInstance">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass a service object that implements the callback contract for the target service, pass in the address information programmatically, and determine the remaining target endpoint information from the client application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract, and a specified configuration and endpoint address.</para>
+        </summary>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used for the endpoint configuration.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.EndpointAddress remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass an instance context object that implements the callback contract for the target service and to pass in the binding and address information programmatically rather than using an application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified binding and endpoint address.</para>
+        </summary>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, string remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.Channels.Binding binding, string remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="remoteAddress" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified instance context, binding, and remote address.</para>
+        </summary>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote address that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, class System.ServiceModel.EndpointAddress remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to pass an instance context object that implements the callback contract for the target service address information programmatically, pass in the address information programmatically, and determine the remaining target endpoint information from the client application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with an object that implements the callback contract and a specified configuration and endpoint address.</para>
+        </summary>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used for the endpoint configuration.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (Type callbackInstanceType, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type callbackInstanceType, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.EndpointAddress remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstanceType" Type="System.Type" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with specified type of callback instance, binding, and remote address.</para>
+        </summary>
+        <param name="callbackInstanceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that provides the callback instance that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (Type callbackInstanceType, System.ServiceModel.Channels.Binding binding, string remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type callbackInstanceType, class System.ServiceModel.Channels.Binding binding, string remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstanceType" Type="System.Type" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="remoteAddress" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with the specified type of callback instance, binding, and remote address.</para>
+        </summary>
+        <param name="callbackInstanceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that provides the callback instance that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote address that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DuplexChannelFactory (Type callbackInstanceType, string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type callbackInstanceType, string endpointConfigurationName, class System.ServiceModel.EndpointAddress remoteAddress) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callbackInstanceType" Type="System.Type" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+        <Parameter Name="remoteAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DuplexChannelFactory`1" /> class with the specified type of callback instance, configuration, and remote address.</para>
+        </summary>
+        <param name="callbackInstanceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that provides the callback instance that the client uses to listen for messages from the connected service.</param>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used for the endpoint configuration.</param>
+        <param name="remoteAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public TChannel CreateChannel (System.ServiceModel.InstanceContext callbackInstance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !TChannel CreateChannel(class System.ServiceModel.InstanceContext callbackInstance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplex channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public static TChannel CreateChannel (object callbackObject, string endpointConfigurationName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !TChannel CreateChannel(object callbackObject, string endpointConfigurationName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackObject" Type="System.Object" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used for the endpoint configuration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public override TChannel CreateChannel (System.ServiceModel.EndpointAddress address, Uri via);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance !TChannel CreateChannel(class System.ServiceModel.EndpointAddress address, class System.Uri via) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="via" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplex channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+        <param name="via">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which the message is sent.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public TChannel CreateChannel (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.EndpointAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !TChannel CreateChannel(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.EndpointAddress address) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplex channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public static TChannel CreateChannel (System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !TChannel CreateChannel(class System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="endpointConfigurationName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="endpointConfigurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used for the endpoint configuration.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public static TChannel CreateChannel (object callbackObject, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress endpointAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !TChannel CreateChannel(object callbackObject, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.EndpointAddress endpointAddress) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackObject" Type="System.Object" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="endpointAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="endpointAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public static TChannel CreateChannel (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress endpointAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !TChannel CreateChannel(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.EndpointAddress endpointAddress) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="endpointAddress" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="endpointAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public virtual TChannel CreateChannel (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.EndpointAddress address, Uri via);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !TChannel CreateChannel(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.EndpointAddress address, class System.Uri via) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="via" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+        <param name="via">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which the message is sent.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public static TChannel CreateChannel (object callbackObject, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress endpointAddress, Uri via);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !TChannel CreateChannel(object callbackObject, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.EndpointAddress endpointAddress, class System.Uri via) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackObject" Type="System.Object" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="endpointAddress" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="via" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="endpointAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+        <param name="via">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which the message is sent.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public static TChannel CreateChannel (System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress endpointAddress, Uri via);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !TChannel CreateChannel(class System.ServiceModel.InstanceContext callbackInstance, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.EndpointAddress endpointAddress, class System.Uri via) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callbackInstance" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="endpointAddress" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="via" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplex channel between a service and a callback instance on the client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" />, the generic parameter for the factory, between the client and service.</para>
+        </returns>
+        <param name="callbackInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> that the client uses to listen for messages from the connected service.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to connect to the service by channels produced by the factory.</param>
+        <param name="endpointAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+        <param name="via">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which the message is sent.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

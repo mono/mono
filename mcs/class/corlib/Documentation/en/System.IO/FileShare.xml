@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileShare" FullName="System.IO.FileShare" FullNameSP="System_IO_FileShare" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable FileShare extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum FileShare" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileShare extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -21,147 +23,153 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Specifies the level of
-      access permitted for a file that is already in use.</para>
-    </summary>
     <remarks>
-      <para>This enumeration is used to specify the way
-      in which multiple threads access the same file. The level of access is set by the
-      first thread that requests access to the file. For example, if a thread opens a
-      file and specifies <see langword="FileShare.Read" />,
-      other
-      threads are permitted to open the file for reading but not for writing.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For an example of creating a file and writing text to a file, see <format type="text/html"><a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a></format>. For an example of reading text from a file, see <format type="text/html"><a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a></format>. For an example of reading from and writing to a binary file, see <format type="text/html"><a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a></format>.</para>
+      <para>A typical use of this enumeration is to define whether two processes can simultaneously read from the same file. For example, if a file is opened and <see cref="F:System.IO.FileShare.Read" /> is specified, other users can open the file for reading but not for writing.</para>
+      <para>A <see cref="T:System.IO.FileShare" /> parameter is specified in some of the constructors for <see cref="T:System.IO.FileStream" />, <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFileStream" />, and in some of the Open methods of <see cref="T:System.IO.File" /> and <see cref="T:System.IO.FileInfo" /> to control how a file is opened.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains constants for controlling the kind of access other <see cref="T:System.IO.FileStream" /> objects can have to the same file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="Delete" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileShare Delete = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileShare</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Inheritable">
-      <MemberSignature Language="C#" Value="Inheritable" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileShare</ReturnType>
       </ReturnValue>
-      <MemberValue>Inheritable</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows subsequent deleting of a file.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Inheritable">
+      <MemberSignature Language="C#" Value="Inheritable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileShare Inheritable = int32(16)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileShare</ReturnType>
+      </ReturnValue>
+      <MemberValue>Inheritable</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Makes the file handle inheritable by child processes. This is not directly supported by Win32.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileShare None = 0x0" />
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileShare None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileShare</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the file cannot be accessed by
-      additional threads.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Declines sharing of the current file. Any request to open the file (by this process or another process) will fail until the file is closed.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileShare Read = 0x1" />
+      <MemberSignature Language="C#" Value="Read" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileShare Read = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Read">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileShare Read = 0x1" />
-      <MemberSignature Language="C#" Value="Read" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileShare</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Read</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that additional threads can
-      share read access to the file. This value does not determine whether such
-      access is granted, however.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows subsequent opening of the file for reading. If this flag is not specified, any request to open the file for reading (by this process or another process) will fail until the file is closed. However, even if this flag is specified, additional permissions might still be needed to access the file.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadWrite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileShare ReadWrite = Read | Write" />
+      <MemberSignature Language="C#" Value="ReadWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileShare ReadWrite = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadWrite">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileShare ReadWrite = Read | Write" />
-      <MemberSignature Language="C#" Value="ReadWrite" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileShare</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>ReadWrite</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that additional threads can
-      share read and/or write access to the file. This value does not determine whether
-      such access is granted, however.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows subsequent opening of the file for reading or writing. If this flag is not specified, any request to open the file for reading or writing (by this process or another process) will fail until the file is closed. However, even if this flag is specified, additional permissions might still be needed to access the file.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileShare Write = 0x2" />
+      <MemberSignature Language="C#" Value="Write" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileShare Write = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileShare Write = 0x2" />
-      <MemberSignature Language="C#" Value="Write" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileShare</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Write</MemberValue>
       <Docs>
-        <summary>
-          <para> 
-      Specifies that additional threads can share write access to the file. This value does
-      not determine whether such access is granted, however.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows subsequent opening of the file for writing. If this flag is not specified, any request to open the file for writing (by this process or another process) will fail until the file is closed. However, even if this flag is specified, additional permissions might still be needed to access the file.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

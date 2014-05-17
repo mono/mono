@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGrid" FullName="System.Windows.Forms.DataGrid">
   <TypeSignature Language="C#" Value="public class DataGrid : System.Windows.Forms.Control, System.ComponentModel.ISupportInitialize, System.Windows.Forms.IDataGridEditingService" />
   <AssemblyInfo>
@@ -37,8 +38,135 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGrid" /> displays Web-like links to child tables. You can click on a link to navigate to the child table. When a child table is displayed, a back button appears in the caption that can be clicked to navigate back to the parent table. The data from the parent rows is displayed below the caption and above the column headers. You can hide the parent row information by clicking the button to the right of the back button.</para>
+      <para>To display a table in the <see cref="T:System.Windows.Forms.DataGrid" /> at run time, use the <see cref="M:System.Windows.Forms.DataGrid.SetDataBinding(System.Object,System.String)" /> method to set the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> and <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> properties to a valid data source. The following data sources are valid: </para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="T:System.Data.DataTable" /> </para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Data.DataView" /> </para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Data.DataSet" /> </para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Data.DataViewManager" /> </para>
+        </item>
+        <item>
+          <para>A single dimension array </para>
+        </item>
+        <item>
+          <para>Any component that implements the <see cref="T:System.ComponentModel.IListSource" /> interface </para>
+        </item>
+        <item>
+          <para>Any component that implements the <see cref="T:System.Collections.IList" /> interface </para>
+        </item>
+      </list>
+      <para>For more information about the <see cref="T:System.Data.DataSet" /> class, see <format type="text/html"><a href="6D4C4B69-8919-4224-8A65-6CCA1C61B48F">[&lt;topic://cpconCreatingUsingDataSets&gt;]</a></format>.</para>
+      <para>You can create a grid that enables users to edit data but prevents them from adding new rows by using a <see cref="T:System.Data.DataView" /> as the data source and setting the <see cref="P:System.Data.DataView.AllowNew" /> property to false.</para>
+      <para>Data sources are further managed by <see cref="T:System.Windows.Forms.BindingManagerBase" /> objects. For each table in a data source, a <see cref="T:System.Windows.Forms.BindingManagerBase" /> can be returned from the form's <see cref="T:System.Windows.Forms.BindingContext" />. For example, you can determine the number of rows contained by a data source by returning the associated <see cref="T:System.Windows.Forms.BindingManagerBase" /> object's <see cref="P:System.Windows.Forms.BindingManagerBase.Count" /> property.</para>
+      <para>To validate data, use the underlying objects that represent data and their events. For example, if the data comes from a <see cref="T:System.Data.DataTable" /> in a <see cref="T:System.Data.DataSet" />, use the <see cref="E:System.Data.DataTable.ColumnChanging" /> and <see cref="E:System.Data.DataTable.RowChanging" /> events.</para>
+      <block subset="none" type="note">
+        <para>Because the number of columns can be customized (by adding or deleting members of the <see cref="T:System.Windows.Forms.GridColumnStylesCollection" />) and the rows can be sorted by column, the <see cref="P:System.Windows.Forms.DataGridCell.RowNumber" /> and <see cref="P:System.Windows.Forms.DataGridCell.ColumnNumber" /> property values cannot be guaranteed to correspond to <see cref="T:System.Data.DataRow" /> and <see cref="T:System.Data.DataColumn" /> indexes in a <see cref="T:System.Data.DataTable" />. Therefore you should avoid using those properties in the <see cref="E:System.Windows.Forms.Control.Validating" /> event to validate data.</para>
+      </block>
+      <para>To determine which cell is selected, use the <see cref="P:System.Windows.Forms.DataGrid.CurrentCell" /> property. Change the value of any cell by using the <see cref="P:System.Windows.Forms.DataGrid.Item(System.Int32,System.Int32)" /> property, which can take either the row and column indexes of the cell, or a single <see cref="T:System.Windows.Forms.DataGridCell" />. Monitor the <see cref="E:System.Windows.Forms.DataGrid.CurrentCellChanged" /> event to detect when the user selects another cell.</para>
+      <para>To determine which part of the control the user clicked, use the <see cref="M:System.Windows.Forms.DataGrid.HitTest(System.Int32,System.Int32)" /> method in the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event. The <see cref="M:System.Windows.Forms.DataGrid.HitTest(System.Int32,System.Int32)" /> method returns a <see cref="T:System.Windows.Forms.DataGrid.HitTestInfo" /> object, which contains the row and column of a clicked area.</para>
+      <para>To manage the appearance of the control at run time, several properties for setting the color and caption attributes are available, including the <see cref="P:System.Windows.Forms.DataGrid.CaptionForeColor" />, <see cref="P:System.Windows.Forms.DataGrid.CaptionBackColor" />, <see cref="P:System.Windows.Forms.DataGrid.CaptionFont" />, and so on.</para>
+      <para>The appearance of the displayed grid (or grids) can be further modified by creating <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects and adding them to the <see cref="T:System.Windows.Forms.GridTableStylesCollection" />, which is accessed through the <see cref="P:System.Windows.Forms.DataGrid.TableStyles" /> property. For example, if the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> is set to a <see cref="T:System.Data.DataSet" /> containing three <see cref="T:System.Data.DataTable" /> objects, you can add three <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects to the collection, one for each table. To synchronize each <see cref="T:System.Windows.Forms.DataGridTableStyle" /> object with a <see cref="T:System.Data.DataTable" />, set the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> of the <see cref="T:System.Windows.Forms.DataGridTableStyle" /> to the <see cref="P:System.Data.DataTable.TableName" /> of the <see cref="T:System.Data.DataTable" />. For more information about binding to an array of objects, see the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> property.</para>
+      <para>To create a customized view of a table, create an instance of a <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> or <see cref="T:System.Windows.Forms.DataGridBoolColumn" /> class and add the object to the <see cref="T:System.Windows.Forms.GridTableStylesCollection" /> accessed through the <see cref="P:System.Windows.Forms.DataGrid.TableStyles" /> property. Both classes inherit from <see cref="T:System.Windows.Forms.DataGridColumnStyle" />. For each column style, set the <see cref="P:System.Windows.Forms.DataGridColumnStyle.MappingName" /> to the <see cref="P:System.Data.DataColumn.ColumnName" /> of a column that you want to show in the grid. To hide a column, set its <see cref="P:System.Windows.Forms.DataGridColumnStyle.MappingName" /> to something other than a valid <see cref="P:System.Data.DataColumn.ColumnName" />.</para>
+      <para>To format the text of a column, set the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.Format" /> property of the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> to one of the values found in <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Types</a></format> and <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom DateTime Format Strings</a></format>.</para>
+      <para>To bind the <see cref="T:System.Windows.Forms.DataGrid" /> to a strongly typed array of objects, the object type must contain public properties. To create a <see cref="T:System.Windows.Forms.DataGridTableStyle" /> that displays the array, set the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> property to <paramref name="typename[]" /> where <paramref name="typename" /> is replaced by the name of the object type. Also note that the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> property is case-sensitive; the type name must be matched exactly. See the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> property for an example.</para>
+      <para>You can also bind the <see cref="T:System.Windows.Forms.DataGrid" /> to an <see cref="T:System.Collections.ArrayList" />. A feature of the <see cref="T:System.Collections.ArrayList" /> is that it can contain objects of multiple types, but the <see cref="T:System.Windows.Forms.DataGrid" /> can only bind to such a list when all items in the list are of the same type as the first item. This means that all objects must either be of the same type, or they must inherit from the same class as the first item in the list. For example, if the first item in a list is a <see cref="T:System.Windows.Forms.Control" />, the second item could be a <see cref="T:System.Windows.Forms.TextBox" /> (which inherits from <see cref="T:System.Windows.Forms.Control" />). If, on the other hand, the first item is a <see cref="T:System.Windows.Forms.TextBox" />, the second object cannot be a <see cref="T:System.Windows.Forms.Control" />. Further, the <see cref="T:System.Collections.ArrayList" /> must have items in it when it is bound. An empty <see cref="T:System.Collections.ArrayList" /> will result in an empty grid. In addition, the objects in the <see cref="T:System.Collections.ArrayList" /> must contain public properties. When binding to an <see cref="T:System.Collections.ArrayList" />, set the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> of the <see cref="T:System.Windows.Forms.DataGridTableStyle" /> to "ArrayList" (the type name).</para>
+      <para>For each <see cref="T:System.Windows.Forms.DataGridTableStyle" />, you can set color and caption attributes that override the settings for the <see cref="T:System.Windows.Forms.DataGrid" /> control. However, if those properties are not set, the settings for the control are used by default. The following properties can be overridden by <see cref="T:System.Windows.Forms.DataGridTableStyle" /> properties: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.AllowSorting" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.AlternatingBackColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.BackColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.ColumnHeadersVisible" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.ForeColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.GridLineColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.GridLineStyle" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.HeaderBackColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.HeaderFont" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.HeaderForeColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.LinkColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.PreferredColumnWidth" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.PreferredRowHeight" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.ReadOnly" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.RowHeadersVisible" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.RowHeaderWidth" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.SelectionBackColor" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridTableStyle.SelectionForeColor" /> </para>
+        </item>
+      </list>
+      <para>To customize the appearance of individual columns, add <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects to the <see cref="T:System.Windows.Forms.GridColumnStylesCollection" />, which is accessed through the <see cref="P:System.Windows.Forms.DataGridTableStyle.GridColumnStyles" /> property of each <see cref="T:System.Windows.Forms.DataGridTableStyle" />. To synchronize each <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> with a <see cref="T:System.Data.DataColumn" /> in the <see cref="T:System.Data.DataTable" />, set the <see cref="P:System.Windows.Forms.DataGridColumnStyle.MappingName" /> to the <see cref="P:System.Data.DataColumn.ColumnName" /> of a <see cref="T:System.Data.DataColumn" />. When constructing a <see cref="T:System.Windows.Forms.DataGridColumnStyle" />, you can also set a formatting string that specifies how the column displays data. For example, you can specify that the column use a short-date format to display dates contained in the table.</para>
+      <block subset="none" type="note">
+        <para>Always create <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects and add them to the <see cref="T:System.Windows.Forms.GridColumnStylesCollection" /> before adding <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects to the <see cref="T:System.Windows.Forms.GridTableStylesCollection" />. When you add an empty <see cref="T:System.Windows.Forms.DataGridTableStyle" /> with a valid <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> value to the collection, <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects are automatically generated for you. Consequently, an exception will be thrown if you try to add new <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects with duplicate <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> values to the <see cref="T:System.Windows.Forms.GridColumnStylesCollection" />.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control replaces and adds functionality to the <see cref="T:System.Windows.Forms.DataGrid" /> control; however, the <see cref="T:System.Windows.Forms.DataGrid" /> control is retained for both backward compatibility and future use, if you choose. For more information, see <format type="text/html"><a href="d412c786-140e-4210-8a56-a68467530a55">Differences Between the Windows Forms DataGridView and DataGrid Controls</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays ADO.NET data in a scrollable grid. The <see cref="T:System.Windows.Forms.DataGridView" /> control replaces and adds functionality to the <see cref="T:System.Windows.Forms.DataGrid" /> control; however, the <see cref="T:System.Windows.Forms.DataGrid" /> control is retained for both backward compatibility and future use, if you choose. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -46,8 +174,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To populate a newly created <see cref="T:System.Windows.Forms.DataGrid" /> control, set the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> property to a valid source, such as a <see cref="T:System.Data.DataView" />, <see cref="T:System.Data.DataSet" />, or <see cref="T:System.Data.DataViewManager" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGrid" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +200,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set to false, links to child tables are not shown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether navigation is allowed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,8 +222,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.DataGrid.AllowNavigation" /> property is set to false, then no links to child tables are shown.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.AllowNavigation" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -102,9 +249,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is overridden by the <see cref="P:System.Windows.Forms.DataGridTableStyle.AllowSorting" /> property if there is a <see cref="T:System.Windows.Forms.DataGridTableStyle" /> currently in effect for the control. </para>
+          <para>If sorting is allowed, clicking on a column header will sort the table data by that column.</para>
+          <para>You can also sort using an expression for a <see cref="T:System.Data.DataColumn" />. See <see cref="P:System.Data.DataColumn.Expression" /> for details on creating a sort expression.</para>
+          <para>If the <see cref="T:System.Windows.Forms.DataGrid" /> is bound to a <see cref="T:System.Data.DataView" />, you can set a custom sort for the table using the <see cref="T:System.Data.DataView" /> class's <see cref="P:System.Data.DataView.Sort" /> property. Similarly, if the <see cref="T:System.Windows.Forms.DataGrid" /> is bound to a <see cref="T:System.Data.DataViewManager" />, each table in the <see cref="T:System.Data.DataViewManager" /> can have a custom sort by setting the <see cref="P:System.Data.DataViewManager.DataViewSettings" /> class's <see cref="P:System.Data.DataViewSetting.Sort" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the grid can be resorted by clicking on a column header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -118,9 +274,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, both the <see cref="P:System.Windows.Forms.DataGrid.BackColor" /> and the <see cref="P:System.Windows.Forms.DataGrid.AlternatingBackColor" /> properties are set to the same color. Setting the <see cref="P:System.Windows.Forms.DataGrid.BackColor" /> property affects only even-numbered rows, while setting the <see cref="P:System.Windows.Forms.DataGrid.AlternatingBackColor" /> affects only odd-numbered rows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of odd-numbered rows of the grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,8 +296,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Back button becomes visible when a child table is displayed. Clicking the button will cause the grid to display the parent table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the Back button on a child table is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,9 +317,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Whereas the <see cref="P:System.Windows.Forms.DataGrid.BackColor" /> property determines the color of rows in the grid, the <see cref="P:System.Windows.Forms.DataGrid.BackgroundColor" /> determines the color of the nonrow area, which is only visible when the grid is scrolled to the bottom, or if only a few rows are contained in the grid.</para>
+          <para>By default, both the <see cref="P:System.Windows.Forms.DataGrid.BackColor" /> and the <see cref="P:System.Windows.Forms.DataGrid.AlternatingBackColor" /> properties are set to the same color. Setting the <see cref="P:System.Windows.Forms.DataGrid.BackColor" /> property affects only even-numbered rows, while setting the <see cref="P:System.Windows.Forms.DataGrid.AlternatingBackColor" /> affects only odd-numbered rows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of even-numbered rows of the grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,9 +340,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGrid.BackgroundColor" /> determines the color of the nonrow area of the grid, which is only visible when no table is displayed by the <see cref="T:System.Windows.Forms.DataGrid" />, or if the grid is scrolled to the bottom, or if only a few rows are contained in the grid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color of the non-row area of the grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,8 +362,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.BackgroundColor" /> has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -204,9 +391,12 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -228,8 +418,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGrid.BackgroundImage" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.DataGrid.BackgroundImageChanged" /> event to detect the change. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DataGrid.BackgroundImage" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -254,9 +450,12 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -277,8 +476,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGrid.BackgroundImageLayout" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.DataGrid.BackgroundImageLayoutChanged" /> event to detect the change. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DataGrid.BackgroundImageLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginEdit">
@@ -292,11 +497,22 @@
         <Parameter Name="rowNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="gridColumn">To be added.</param>
-        <param name="rowNumber">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The grid will deny edit requests if the user already started typing into a cell. In that case, the <see cref="M:System.Windows.Forms.DataGrid.BeginEdit(System.Windows.Forms.DataGridColumnStyle,System.Int32)" /> method will return false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to put the grid into a state where editing is allowed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method is successful; otherwise, false.</para>
+        </returns>
+        <param name="gridColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> to edit. </param>
+        <param name="rowNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row to edit. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -311,8 +527,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Visual Studio design environment uses this method to start the initialization of a component that is used on a form or used by another component. The <see cref="M:System.Windows.Forms.DataGrid.EndInit" /> method ends the initialization. Using the <see cref="M:System.Windows.Forms.DataGrid.BeginInit" /> and <see cref="M:System.Windows.Forms.DataGrid.EndInit" /> methods prevents the control from being used before it is fully initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the initialization of a <see cref="T:System.Windows.Forms.DataGrid" /> that is used on a form or used by another component. The initialization occurs at run time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -334,9 +556,12 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the grid's border style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -350,8 +575,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Possible values include None, FixedSingle, and Fixed3D.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.BorderStyle" /> has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -366,8 +597,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels the current edit operation and rolls back all changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -381,9 +615,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the caption area.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -405,9 +642,15 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Font" /> encapsulates a Windows font and provides the methods for manipulating that font.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font of the grid's caption.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -421,9 +664,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the caption area.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -445,9 +691,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the grid's window caption.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -466,9 +715,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Windows.Forms.DataGrid.CaptionVisible" /> is false, the <ui>Back</ui> button, <ui>ParentRow</ui> button, and caption will not be seen. Because navigation is limited, links to child tables will also not be visible and <see cref="P:System.Windows.Forms.DataGrid.AllowNavigation" /> will be set to None.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the grid's caption is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -482,8 +737,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.CaptionVisible" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -500,9 +761,16 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="row">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.DataGrid.IsExpanded(System.Int32)" /> method to determine if a row is expanded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collapses child relations, if any exist for all rows, or for a specified row.</para>
+        </summary>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row to collapse. If set to -1, all rows are collapsed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -521,9 +789,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the column headers of a table are visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -544,9 +815,16 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called, the <see cref="M:System.Windows.Forms.IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(System.Windows.Forms.Control)" /> method enables the <see cref="T:System.Windows.Forms.DataGrid" /> control to show a pencil in the row header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs the <see cref="T:System.Windows.Forms.DataGrid" /> control when the user begins to edit the column at the specified location.</para>
+        </summary>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that defines the location of the edited column. </param>
       </Docs>
     </Member>
     <Member MemberName="ColumnStartedEditing">
@@ -563,9 +841,16 @@
         <Parameter Name="editingControl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="editingControl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called, the <see cref="M:System.Windows.Forms.IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(System.Windows.Forms.Control)" /> method enables the <see cref="T:System.Windows.Forms.DataGrid" /> control to show a pencil in the row header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs the <see cref="T:System.Windows.Forms.DataGrid" /> control when the user begins to edit a column using the specified control.</para>
+        </summary>
+        <param name="editingControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> used to edit the column. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateAccessibilityInstance">
@@ -576,9 +861,34 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived classes should not call the base class's <see cref="M:System.Windows.Forms.Control.CreateAccessibilityInstance" /> method.</para>
+          <para>Only the following properties of the <see cref="T:System.Windows.Forms.AccessibleObject" /> should be set: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Windows.Forms.AccessibleObject.Role" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Windows.Forms.AccessibleObject.Description" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Windows.Forms.AccessibleObject.Name" /> </para>
+            </item>
+          </list>
+          <para>All other properties are handled by the <see cref="T:System.Windows.Forms.DataGrid" /> itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a new instance of the accessibility object for this control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Control.ControlAccessibleObject" /> for this control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -595,10 +905,17 @@
         <Parameter Name="prop" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> with the specified <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Windows.Forms.DataGridColumnStyle" />.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to use for creating the grid column style. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -616,11 +933,19 @@
         <Parameter Name="isDefault" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <param name="isDefault">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> using the specified <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Windows.Forms.DataGridColumnStyle" />.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to use for creating the grid column style. </param>
+        <param name="isDefault">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to set the column style as the default; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -642,9 +967,15 @@
         <ReturnType>System.Windows.Forms.DataGridCell</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGrid.CurrentCell" /> property will cause the grid to scroll and show the cell if it is not already visible.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets which cell has the focus. Not available at design time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -658,8 +989,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To determine the current cell, use the <see cref="P:System.Windows.Forms.DataGrid.CurrentCell" /> property.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.CurrentCell" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -681,9 +1019,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGrid.CurrentRowIndex" /> property to a value other than its current value scrolls the control so that the specified row is in view.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGrid.CurrentRowIndex" /> property enables you to iterate through a parent table's rows even if you are viewing the child table rows. For example, if you are viewing a child table, incrementing the <see cref="P:System.Windows.Forms.DataGrid.CurrentRowIndex" /> will cause the <see cref="T:System.Windows.Forms.DataGrid" /> to display the next set of records in the child table that are linked to the parent table. </para>
+          <para>If the user is viewing a parent table, or a table with no child relations, then the property returns the zero-based index of the current row.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets index of the row that currently has focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -705,9 +1051,12 @@
         <ReturnType>System.Windows.Forms.Cursor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -729,8 +1078,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGrid.Cursor" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.DataGrid.CursorChanged" /> event to detect the change. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DataGrid.Cursor" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -752,9 +1107,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> contains multiple sources of data, you should set the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> to one of the sources. For example, if the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> is a <see cref="T:System.Data.DataSet" /> or <see cref="T:System.Data.DataViewManager" /> that contains three tables named Customers, Orders, and OrderDetails, you must specify one of the tables to bind to. If the <see cref="T:System.Data.DataSet" /> or <see cref="T:System.Data.DataViewManager" /> contains only one <see cref="T:System.Data.DataTable" />, you should set the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> to the <see cref="P:System.Data.DataTable.TableName" /> of that <see cref="T:System.Data.DataTable" />.</para>
+          <para>If the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> is set to a <see cref="T:System.Data.DataSet" /> that contains <see cref="T:System.Data.DataRelation" /> objects, parent tables will appear with a plus sign (+) in each row header. Clicking the plus sign causes a node to appear that contains links to child tables. For example, if a <see cref="T:System.Data.DataSet" /> contains two <see cref="T:System.Data.DataTable" /> objects named Customers and Orders, setting the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> to the Customers table causes the <see cref="T:System.Windows.Forms.DataGrid" /> to display a parent table with a plus sign visible on each row header. If the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> is set to Orders, however, the row headers will be blank.</para>
+          <para>If the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> is a <see cref="T:System.Data.DataTable" />, <see cref="T:System.Data.DataView" />, collection, or array, setting the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> property throws an exception.</para>
+          <block subset="none" type="note">
+            <para>At run time, you must use the <see cref="M:System.Windows.Forms.DataGrid.SetDataBinding(System.Object,System.String)" /> method to reset the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> property. However, the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> property alone can be reset at any time to a valid table name.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the specific list in a <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> for which the <see cref="T:System.Windows.Forms.DataGrid" /> control displays a grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -779,9 +1145,42 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At run time, use the <see cref="M:System.Windows.Forms.DataGrid.SetDataBinding(System.Object,System.String)" /> method to set the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> and <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> properties.</para>
+          <para>The following data sources are valid: </para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="T:System.Data.DataTable" /> </para>
+            </item>
+            <item>
+              <para>A <see cref="T:System.Data.DataView" /> </para>
+            </item>
+            <item>
+              <para>A <see cref="T:System.Data.DataSet" /> </para>
+            </item>
+            <item>
+              <para>A <see cref="T:System.Data.DataViewManager" /> </para>
+            </item>
+            <item>
+              <para>Any component that implements the <see cref="T:System.ComponentModel.IListSource" /> interface </para>
+            </item>
+            <item>
+              <para>Any component that implements the <see cref="T:System.Collections.IList" /> interface </para>
+            </item>
+          </list>
+          <para>See the <see cref="T:System.Windows.Forms.Binding" /> class overview for more information on data sources.</para>
+          <para>If the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> reference contains more than one table, you must set the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> property a string that specifies the table to bind to. For example, if the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> is a <see cref="T:System.Data.DataSet" /> or <see cref="T:System.Data.DataViewManager" /> that contains three tables named Customers, Orders, and OrderDetails, you must specify the table to bind to.</para>
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> to an object that does not implement the <see cref="T:System.Collections.IList" /> interface or an <see cref="T:System.ComponentModel.IListSource" /> will cause the grid to throw an exception.</para>
+          <para>You can create a grid that enables users to edit data but prevents them from adding new rows by using a <see cref="T:System.Data.DataView" /> as the data source and setting the <see cref="M:System.Data.DataView.AddNew" /> property to false.</para>
+          <para>To bind the <see cref="T:System.Windows.Forms.DataGrid" /> to a strongly typed array of objects, the object type must contain public properties. To create a <see cref="T:System.Windows.Forms.DataGridTableStyle" /> that displays the array, set the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> property to <paramref name="typename" /> where <paramref name="typename" /> is replaced by the name of the object type. Also note that the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> property is case-sensitive; the type name must be matched exactly. See the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> property for an example.</para>
+          <para>You can also bind the <see cref="T:System.Windows.Forms.DataGrid" /> to an <see cref="T:System.Collections.ArrayList" />. A feature of the <see cref="T:System.Collections.ArrayList" /> is that it can contain objects of multiple types, but the <see cref="T:System.Windows.Forms.DataGrid" /> can only bind to such a list when all items in the list are of the same type as the first item. This means that all objects must either be of the same type, or they must inherit from the same class as the first item in the list. For example, if the first item in a list is a <see cref="T:System.Windows.Forms.Control" />, the second item could be a <see cref="T:System.Windows.Forms.TextBox" /> (which inherits from <see cref="T:System.Windows.Forms.Control" />). If, on the other hand, the first item is a <see cref="T:System.Windows.Forms.TextBox" />, the second object cannot be a <see cref="T:System.Windows.Forms.Control" />. Further, the <see cref="T:System.Collections.ArrayList" /> must have items in it when it is bound. An empty <see cref="T:System.Collections.ArrayList" /> will result in an empty grid. In addition, the objects in the <see cref="T:System.Collections.ArrayList" /> must contain public properties. When binding to an <see cref="T:System.Collections.ArrayList" />, set the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> of the <see cref="T:System.Windows.Forms.DataGridTableStyle" /> to "ArrayList" (the type name).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data source that the grid is displaying data for.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -795,8 +1194,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.DataGrid.DataSourceChanged" /> event occurs when the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> value changes, or when the <see cref="T:System.Windows.Forms.BindingContext" /> of the <see cref="T:System.Windows.Forms.DataGrid" /> changes.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> property value has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -810,9 +1216,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -829,9 +1238,16 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.DataGrid.Dispose(System.Boolean)" /> when you are finished using the <see cref="T:System.Windows.Forms.DataGrid" />. The <see cref="M:System.Windows.Forms.DataGrid.Dispose(System.Boolean)" /> method leaves the <see cref="T:System.Windows.Forms.DataGrid" /> in an unusable state. After calling <see cref="M:System.Windows.Forms.DataGrid.Dispose(System.Boolean)" />, you must release all references to the <see cref="T:System.Windows.Forms.DataGrid" /> so the memory it was occupying can be reclaimed by garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes of the resources (other than memory) used by the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -850,12 +1266,24 @@
         <Parameter Name="shouldAbort" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="gridColumn">To be added.</param>
-        <param name="rowNumber">To be added.</param>
-        <param name="shouldAbort">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.EndEdit(System.Windows.Forms.DataGridColumnStyle,System.Int32,System.Boolean)" /> method returns false if the user is not editing (typing into) a cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests an end to an edit operation taking place on the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the editing operation ceases; otherwise, false.</para>
+        </returns>
+        <param name="gridColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> to cease editing. </param>
+        <param name="rowNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row to cease editing. </param>
+        <param name="shouldAbort">
+          <attribution license="cc4" from="Microsoft" modified="false" />Set to true if the current operation should be stopped. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -870,8 +1298,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Visual Studio design environment uses this method to end the initialization of a component that is used on a form or used by another component. The <see cref="M:System.Windows.Forms.DataGrid.BeginInit" /> method starts the initialization. Using the <see cref="M:System.Windows.Forms.DataGrid.BeginInit" /> and <see cref="M:System.Windows.Forms.DataGrid.EndInit" /> methods prevents the control from being used before it is fully initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the initialization of a <see cref="T:System.Windows.Forms.DataGrid" /> that is used on a form or used by another component. The initialization occurs at run time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -888,9 +1322,13 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="row">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays child relations, if any exist, for all rows or a specific row.</para>
+        </summary>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row to expand. If set to -1, all rows are expanded. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -909,9 +1347,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A column is considered visible even if it is partially concealed.</para>
+          <para>If a particular column is not visible, set the <see cref="P:System.Windows.Forms.DataGrid.CurrentCell" /> property to the cell that should be visible.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the first visible column in a grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -930,9 +1375,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the grid displays in flat mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -946,8 +1394,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.FlatMode" /> has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -961,9 +1415,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color (typically the color of the text) property of the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -980,10 +1437,17 @@
         <Parameter Name="dgc" Type="System.Windows.Forms.DataGridCell" />
       </Parameters>
       <Docs>
-        <param name="dgc">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Rectangle" /> of the cell specified by <see cref="T:System.Windows.Forms.DataGridCell" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that defines the current cell's corners.</para>
+        </returns>
+        <param name="dgc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridCell" /> to look up. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1001,11 +1465,22 @@
         <Parameter Name="col" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="row">To be added.</param>
-        <param name="col">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve the cell bounds for the currently selected cell, use <see cref="M:System.Windows.Forms.DataGrid.GetCurrentCellBounds" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Rectangle" /> of the cell specified by row and column number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that defines the current cell's corners.</para>
+        </returns>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the cell's row. </param>
+        <param name="col">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the cell's column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1020,9 +1495,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve the cell bounds for a cell other than the current cell, use <see cref="Overload:System.Windows.Forms.DataGrid.GetCellBounds" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Drawing.Rectangle" /> that specifies the four corners of the selected cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that defines the current cell's corners.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1037,9 +1521,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string that is the delimiter between columns when row contents are copied to the Clipboard.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string value "\t", which represents a tab used to separate columns in a row. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1057,10 +1547,15 @@
         <Parameter Name="se" Type="System.Windows.Forms.ScrollEventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="se">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Listens for the scroll event of the horizontal scroll bar.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains data about the control. </param>
+        <param name="se">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ScrollEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1074,9 +1569,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No grid line is displayed if the <see cref="P:System.Windows.Forms.DataGrid.GridLineStyle" /> property is set to DataGridLineStyle.None.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color of the grid lines.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1095,9 +1596,12 @@
         <ReturnType>System.Windows.Forms.DataGridLineStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line style of the grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1115,10 +1619,15 @@
         <Parameter Name="se" Type="System.Windows.Forms.ScrollEventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="se">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Listens for the scroll event of the vertical scroll bar.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains data about the control. </param>
+        <param name="se">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ScrollEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1132,9 +1641,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of all row and column headers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1148,9 +1660,15 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method only if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" />, or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font used for column headers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1164,9 +1682,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of headers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1183,10 +1704,21 @@
         <Parameter Name="position" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGrid.HitTestInfo" />, in conjunction with the <see cref="M:System.Windows.Forms.DataGrid.HitTest(System.Int32,System.Int32)" /> method of the <see cref="T:System.Windows.Forms.DataGrid" /> control, is used to determine which part of a <see cref="T:System.Windows.Forms.DataGrid" /> control the user has clicked. The <see cref="T:System.Windows.Forms.DataGrid.HitTestInfo" /> contains the row, column, and part of the grid that was clicked. Additionally, the <see cref="P:System.Windows.Forms.DataGrid.HitTestInfo.Type" /> property returns a <see cref="T:System.Windows.Forms.DataGrid.HitTestType" /> enumeration.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.HitTest(System.Int32,System.Int32)" /> method takes an x and y argument supplied by the <see cref="T:System.Windows.Forms.DataGrid" /> control's <see cref="E:System.Windows.Forms.Control.DragDrop" />, <see cref="E:System.Windows.Forms.Control.DragEnter" />, <see cref="E:System.Windows.Forms.Control.DragOver" />, <see cref="E:System.Windows.Forms.Control.MouseDown" />, <see cref="E:System.Windows.Forms.Control.MouseMove" />, <see cref="E:System.Windows.Forms.Control.MouseUp" /> and <see cref="E:System.Windows.Forms.Control.MouseWheel" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information, such as row and column number of a clicked point on the grid, about the grid using a specific <see cref="T:System.Drawing.Point" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGrid.HitTestInfo" /> that contains specific information about the grid.</para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that represents single x,y coordinate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1204,11 +1736,23 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGrid.HitTestInfo" />, in conjunction with the <see cref="M:System.Windows.Forms.DataGrid.HitTest(System.Int32,System.Int32)" /> method of the <see cref="T:System.Windows.Forms.DataGrid" /> control, is used to determine which part of a <see cref="T:System.Windows.Forms.DataGrid" /> control the user has clicked. The <see cref="T:System.Windows.Forms.DataGrid.HitTestInfo" /> contains the row, column, and part of the grid that was clicked. Additionally, the <see cref="P:System.Windows.Forms.DataGrid.HitTestInfo.Type" /> property returns a <see cref="T:System.Windows.Forms.DataGrid.HitTestType" /> enumeration.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.HitTest(System.Int32,System.Int32)" /> method takes an x and y argument supplied by the <see cref="T:System.Windows.Forms.DataGrid" /> control's <see cref="E:System.Windows.Forms.Control.DragDrop" />, <see cref="E:System.Windows.Forms.Control.DragEnter" />, <see cref="E:System.Windows.Forms.Control.DragOver" />, <see cref="E:System.Windows.Forms.Control.MouseDown" />, <see cref="E:System.Windows.Forms.Control.MouseMove" />, <see cref="E:System.Windows.Forms.Control.MouseUp" /> and <see cref="E:System.Windows.Forms.Control.MouseWheel" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information, such as row and column number of a clicked point on the grid, using the x and y coordinate passed to the method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGrid.HitTestInfo" /> that contains information about the clicked part of the grid.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The horizontal position of the coordinate. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical position of the coordinate. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1222,9 +1766,12 @@
         <ReturnType>System.Windows.Forms.ScrollBar</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the horizontal scroll bar for the grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1241,10 +1788,17 @@
         <Parameter Name="rowNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowNumber">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the node of a specified row is expanded or collapsed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the node is expanded; otherwise, false.</para>
+        </returns>
+        <param name="rowNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row in question. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1261,10 +1815,20 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="row">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method with the <see cref="M:System.Windows.Forms.DataGrid.Select(System.Int32)" />, <see cref="M:System.Windows.Forms.DataGrid.UnSelect(System.Int32)" />, and <see cref="M:System.Windows.Forms.DataGrid.ResetSelection" /> methods to manipulate the selection state of a particular row. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a specified row is selected.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row is selected; otherwise, false.</para>
+        </returns>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row you are interested in. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1320,9 +1884,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method only if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" />, or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color of the text that you can click to navigate to a child table.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1344,9 +1914,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1372,9 +1945,12 @@
         <ReturnType>System.Windows.Forms.CurrencyManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.CurrencyManager" /> for this <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Navigate">
@@ -1384,8 +1960,15 @@
         <ReturnType>System.Windows.Forms.NavigateEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="E:System.Windows.Forms.DataGrid.Navigate" /> event to reset individual column properties, such as width, as appropriate to the table.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user navigates to a new table.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1400,8 +1983,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the grid has no parent rows, no change occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Navigates back to the table previously displayed in the grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1419,10 +2008,15 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="rowNumber">To be added.</param>
-        <param name="relationName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Navigates to the table specified by row and relation name.</para>
+        </summary>
+        <param name="rowNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row to navigate to. </param>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the child relation to navigate to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1439,9 +2033,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.AllowNavigationChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1459,10 +2057,15 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Listens for the caption's back button clicked event.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains data about the control. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains data about the event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1479,9 +2082,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnBackColorChanged(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.BackColorChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1498,9 +2109,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.BackgroundColorChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1517,9 +2132,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnBindingContextChanged(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.BindingContextChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1536,9 +2159,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.BorderStyleChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1555,9 +2182,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.CaptionVisibleChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1574,9 +2205,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.CurrentCellChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1593,9 +2228,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnDataSourceChanged(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.DataSourceChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1612,9 +2255,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Enter" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1631,9 +2278,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.FlatModeChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1650,9 +2301,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnFontChanged(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1669,9 +2328,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnForeColorChanged(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.ForeColorChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1688,9 +2355,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnHandleCreated(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="M:System.Windows.Forms.Control.CreateHandle" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1707,9 +2382,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnHandleDestroyed(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="M:System.Windows.Forms.Control.DestroyHandle" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> containing the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1726,9 +2409,17 @@
         <Parameter Name="ke" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="ke">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyDown" /> event.</para>
+        </summary>
+        <param name="ke">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that provides data about the <see cref="M:System.Windows.Forms.Control.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1745,9 +2436,17 @@
         <Parameter Name="kpe" Type="System.Windows.Forms.KeyPressEventArgs" />
       </Parameters>
       <Docs>
-        <param name="kpe">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event.</para>
+        </summary>
+        <param name="kpe">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that contains data about the <see cref="M:System.Windows.Forms.Control.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)" /> event </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1764,9 +2463,17 @@
         <Parameter Name="levent" Type="System.Windows.Forms.LayoutEventArgs" />
       </Parameters>
       <Docs>
-        <param name="levent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnLayout(System.Windows.Forms.LayoutEventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Layout" /> event, which repositions controls and updates scroll bars.</para>
+        </summary>
+        <param name="levent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.LayoutEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1783,9 +2490,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnLeave(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Leave" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1802,9 +2517,16 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For an overview, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains data about the <see cref="M:System.Windows.Forms.Control.OnMouseDown(System.Windows.Forms.MouseEventArgs)" /> event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1821,9 +2543,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For an overview, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the <see cref="E:System.Windows.Forms.Control.MouseLeave" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains data about the <see cref="M:System.Windows.Forms.Control.OnMouseLeave(System.EventArgs)" /> event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1840,9 +2569,16 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For an overview, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseMove" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains data about the <see cref="M:System.Windows.Forms.Control.OnMouseMove(System.Windows.Forms.MouseEventArgs)" /> event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1859,9 +2595,16 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For an overview, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseUp" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains data about the <see cref="M:System.Windows.Forms.Control.OnMouseUp(System.Windows.Forms.MouseEventArgs)" /> event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1878,9 +2621,16 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For an overview, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseWheel" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains data about the <see cref="M:System.Windows.Forms.Control.OnMouseUp(System.Windows.Forms.MouseEventArgs)" /> event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1897,9 +2647,13 @@
         <Parameter Name="e" Type="System.Windows.Forms.NavigateEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.Navigate" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.NavigateEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1916,9 +2670,16 @@
         <Parameter Name="pe" Type="System.Windows.Forms.PaintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="pe">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For an overview, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Paint" /> event.</para>
+        </summary>
+        <param name="pe">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.PaintEventArgs" /> which contains data about the event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1935,9 +2696,16 @@
         <Parameter Name="ebe" Type="System.Windows.Forms.PaintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="ebe">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Windows.Forms.DataGrid" /> is a complex control, this override is implemented to have no action. Therefore, calling this method will have no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides <see cref="M:System.Windows.Forms.Control.OnPaintBackground(System.Windows.Forms.PaintEventArgs)" /> to prevent painting the background of the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
+        <param name="ebe">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains information about the control to paint. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1954,9 +2722,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnParentRowsLabelStyleChanged(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.ParentRowsLabelStyleChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1973,9 +2749,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.ParentRowsVisibleChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1992,9 +2772,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGrid.OnReadOnlyChanged(System.EventArgs)" /> method also enables derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.ReadOnlyChanged" /> event </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2011,9 +2799,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For an overview, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Resize" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2030,9 +2825,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.RowHeaderClick" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2049,9 +2848,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.Scroll" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2069,10 +2872,15 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DataGrid.ShowParentDetailsButtonClick" /> event.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2086,9 +2894,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of parent rows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2102,9 +2913,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of parent rows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2126,9 +2940,12 @@
         <ReturnType>System.Windows.Forms.DataGridParentRowsLabelStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the way parent row labels are displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2142,8 +2959,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the label style of the parent row is changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2162,9 +2985,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the parent rows of a table are visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2178,8 +3004,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.ParentRowsVisible" /> property value changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2201,9 +3033,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property before resetting the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> and <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> properties (either separately, or through the <see cref="M:System.Windows.Forms.DataGrid.SetDataBinding(System.Object,System.String)" /> method), or the property will have no effect.</para>
+          <para>The property cannot be set to a value less than 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default width of the grid columns in pixels.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2217,9 +3056,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property before resetting the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> and <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> properties (either separately, or through the <see cref="M:System.Windows.Forms.DataGrid.SetDataBinding(System.Object,System.String)" /> method), or the property will have no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the preferred row height for the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2236,10 +3081,20 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method overrides the <see cref="M:System.Windows.Forms.Control.ProcessDialogKey(System.Windows.Forms.Keys)" /> method to implement keyboard navigation of the grid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether a key should be processed further.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, the key should be processed; otherwise, false.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Keys" /> that contains data about the pressed key. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2256,10 +3111,17 @@
         <Parameter Name="ke" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="ke">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes keys for grid navigation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the key was processed; otherwise false.</para>
+        </returns>
+        <param name="ke">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains data about the key up or key down event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2296,10 +3158,17 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the Tab key should be processed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the TAB key should be processed; otherwise, false.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Keys" /> that contains data about which the pressed key. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2318,9 +3187,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In read-only mode, the grid can be scrolled, nodes can be expanded or collapsed, and so on. However, no additions, edits, or deletes can take place.</para>
+          <para>The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> also has a <see cref="P:System.Windows.Forms.DataGridColumnStyle.ReadOnly" /> property that can be set to true to prevent data from being edited, on a column-by-column basis.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGrid.ReadOnly" /> can be set to true if you want to prohibit the user from editing the data directly in the <see cref="T:System.Windows.Forms.DataGrid" />. For example, you might want to let users to see all columns in a table, but allow them to edit specific fields only through <see cref="T:System.Windows.Forms.TextBox" /> controls on a different form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the grid is in read-only mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2334,8 +3211,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DataGrid.ReadOnly" /> property value changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2350,8 +3233,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeAlternatingBackColor" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.AlternatingBackColor" /> property to its default color.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2366,8 +3255,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.BackColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2382,8 +3277,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.ForeColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2398,8 +3299,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeGridLineColor" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.GridLineColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2414,8 +3321,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeHeaderBackColor" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.HeaderBackColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2430,8 +3343,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeHeaderFont" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.HeaderFont" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2446,8 +3365,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeHeaderForeColor" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.HeaderForeColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2462,8 +3387,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.LinkColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2478,8 +3409,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeLinkHoverColor" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.LinkHoverColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2494,8 +3431,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method with the <see cref="M:System.Windows.Forms.DataGrid.IsSelected(System.Int32)" />, <see cref="M:System.Windows.Forms.DataGrid.Select(System.Int32)" />, and <see cref="M:System.Windows.Forms.DataGrid.UnSelect(System.Int32)" /> methods to manipulate the selection state of a particular row. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Turns off selection for all rows that are selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2510,8 +3453,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeSelectionBackColor" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.SelectionBackColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2526,8 +3475,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />. You can use the <see cref="M:System.Windows.Forms.DataGrid.ShouldSerializeSelectionForeColor" /> method to determine whether the property value has changed from its default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.DataGrid.SelectionForeColor" /> property to its default value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2545,8 +3500,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a row header is clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RowHeadersVisible">
@@ -2561,9 +3522,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether row headers are visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2582,9 +3546,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of row headers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2598,8 +3565,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user scrolls the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2616,9 +3586,16 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="row">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method with the <see cref="M:System.Windows.Forms.DataGrid.IsSelected(System.Int32)" />, <see cref="M:System.Windows.Forms.DataGrid.UnSelect(System.Int32)" />, and <see cref="M:System.Windows.Forms.DataGrid.ResetSelection" /> methods to manipulate the selection state of a particular row. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects a specified row.</para>
+        </summary>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row to select. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2632,9 +3609,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of selected rows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2648,9 +3631,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or set the foreground color of selected rows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2668,10 +3654,20 @@
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <param name="dataMember">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must use the <see cref="M:System.Windows.Forms.DataGrid.SetDataBinding(System.Object,System.String)" /> method at run time to reset the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> property.</para>
+          <para>See the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> property for more details about setting a valid data source.</para>
+          <para>You can create a grid that enables users to edit data but prevents them from adding new rows by using a <see cref="T:System.Data.DataView" /> as the data source and setting the <see cref="P:System.Data.DataView.AllowNew" /> property to false. When the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> is a <see cref="T:System.Data.DataView" /> or <see cref="T:System.Data.DataTable" />, set the <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> and <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> properties at run time.</para>
+        </summary>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source for the <see cref="T:System.Windows.Forms.DataGrid" /> control. </param>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Windows.Forms.DataGrid.DataMember" /> string that specifies the table to bind to within the object returned by the <see cref="P:System.Windows.Forms.DataGrid.DataSource" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2686,9 +3682,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.AlternatingBackColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2703,9 +3708,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.BackgroundColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2720,9 +3734,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method only if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" />, or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.DataGrid.CaptionBackColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has been changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2737,9 +3760,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method only if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" />, or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.DataGrid.CaptionForeColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has been changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2754,9 +3786,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.GridLineColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2771,9 +3812,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.HeaderBackColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2788,9 +3838,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.HeaderFont" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2805,9 +3864,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.HeaderForeColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2822,9 +3890,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.LinkHoverColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2839,9 +3916,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method only if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" />, or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.ParentRowsBackColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has been changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2856,9 +3942,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method only if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" />, or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.ParentRowsForeColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has been changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2873,9 +3968,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.PreferredRowHeight" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2890,9 +3994,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.SelectionBackColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2907,9 +4020,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically use this method if you are either creating a designer for the <see cref="T:System.Windows.Forms.DataGrid" /> or creating your own control incorporating the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="P:System.Windows.Forms.DataGrid.SelectionForeColor" /> property should be persisted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property value has changed from its default; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2923,8 +4045,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the ShowParentDetails button is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2957,9 +4082,13 @@
         <Parameter Name="site" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds or removes the <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects from the container that is associated with the <see cref="T:System.Windows.Forms.DataGrid" />.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add the <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects to a container; false to remove them.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2981,9 +4110,36 @@
         <ReturnType>System.Windows.Forms.GridTableStylesCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="T:System.Windows.Forms.GridTableStylesCollection" /> retrieved through the <see cref="P:System.Windows.Forms.DataGrid.TableStyles" /> property to create customized views of each table displayed by the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+          <para>By default, the collection returned by <see cref="P:System.Windows.Forms.DataGrid.TableStyles" /> property does not contain any <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects. To create a set of customized views: </para>
+          <list type="ordered">
+            <item>
+              <para>Create a <see cref="T:System.Windows.Forms.DataGridTableStyle" />.</para>
+            </item>
+            <item>
+              <para>Set the <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> of the grid table object to the <see cref="P:System.Data.DataTable.TableName" /> of the <see cref="T:System.Data.DataTable" />.</para>
+            </item>
+            <item>
+              <para>Add <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects, one for each grid column you want to show, to the <see cref="T:System.Windows.Forms.GridColumnStylesCollection" /> returned by the <see cref="P:System.Windows.Forms.DataGridTableStyle.GridColumnStyles" /> property.</para>
+            </item>
+            <item>
+              <para>Set the <see cref="P:System.Windows.Forms.DataGridColumnStyle.MappingName" /> of each <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> to the <see cref="P:System.Data.DataColumn.ColumnName" /> of a <see cref="T:System.Data.DataColumn" />.</para>
+            </item>
+            <item>
+              <para>Add the <see cref="T:System.Windows.Forms.DataGridTableStyle" /> object to the collection returned by <see cref="P:System.Windows.Forms.DataGrid.TableStyles" /> property.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Always create <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects and add them to the <see cref="T:System.Windows.Forms.GridColumnStylesCollection" /> before adding <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects to the <see cref="T:System.Windows.Forms.GridTableStylesCollection" />. When you add an empty <see cref="T:System.Windows.Forms.DataGridTableStyle" /> with a valid <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> value to the collection, <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects are automatically generated for you. Consequently, an exception will be thrown if you try to add new <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> objects with duplicate <see cref="P:System.Windows.Forms.DataGridTableStyle.MappingName" /> values to the <see cref="T:System.Windows.Forms.GridColumnStylesCollection" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects for the grid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3011,9 +4167,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is not meaningful for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3035,8 +4194,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGrid.Text" /> property is not meaningful for this control, although you can change its value and handle the <see cref="E:System.Windows.Forms.DataGrid.TextChanged" /> event to detect the change. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DataGrid.Text" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3053,9 +4218,16 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="row">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method with the <see cref="M:System.Windows.Forms.DataGrid.IsSelected(System.Int32)" />, <see cref="M:System.Windows.Forms.DataGrid.Select(System.Int32)" />, and <see cref="M:System.Windows.Forms.DataGrid.ResetSelection" /> methods to manipulate the selection state of a particular row. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unselects a specified row.</para>
+        </summary>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row to deselect. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3077,9 +4249,12 @@
         <ReturnType>System.Windows.Forms.ScrollBar</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the vertical scroll bar of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3098,9 +4273,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of visible columns can change depending on their width. For example, if a default width for all columns is set, but the width of a new column is set twice as large, the number of visible columns can be reduced by at least one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of visible columns.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3119,9 +4300,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of visible rows can be changed at run time if the user is allowed to resize the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

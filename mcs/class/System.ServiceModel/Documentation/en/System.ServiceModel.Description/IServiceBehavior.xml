@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IServiceBehavior" FullName="System.ServiceModel.Description.IServiceBehavior">
+  <TypeSignature Language="C#" Value="public interface IServiceBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IServiceBehavior" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> to modify, examine, or extend some aspect of service-wide execution at the application level:  </para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="M:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to change run-time property values or insert custom extension objects such as error handlers, message or parameter interceptors, security extensions, and other custom extension objects.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.ServiceModel.Description.IServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to examine the description before indigo1 constructs the executing service to confirm that it can execute properly.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method to pass to a binding element the custom information for the service so that it can support the service correctly.</para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> objects can make use of any of these methods, but often only one is important; in such cases the unused methods can return without a value.</para>
+      <block subset="none" type="note">
+        <para>All of the <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> methods pass <see cref="T:System.ServiceModel.Description.ServiceDescription" /> and <see cref="T:System.ServiceModel.ServiceHostBase" /> objects as a parameters. The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> parameter is for examination only; if you modify these objects the execution behavior is undefined.</para>
+      </block>
+      <para>To perform the customization task for which it is intended, the <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> object must be added to the <see cref="P:System.ServiceModel.Description.ServiceDescription.Behaviors" /> property prior to the construction of the service runtime. There are three ways to do this:</para>
+      <list type="bullet">
+        <item>
+          <para>Programmatically add the custom service behavior to the <see cref="P:System.ServiceModel.Description.ServiceDescription.Behaviors" /> property prior to the point where the <see cref="M:System.ServiceModel.ICommunicationObject.Open" /> method is called on the <see cref="T:System.ServiceModel.ServiceHost" /> object.</para>
+        </item>
+        <item>
+          <para>Create a custom attribute that implements <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> and use it to mark service classes that are to be modified. When a <see cref="T:System.ServiceModel.ServiceHost" /> object is constructed, indigo2 uses reflection to discover the attributes on the service type. If any attributes implement <see cref="T:System.ServiceModel.Description.IServiceBehavior" />, they are added to the behaviors collection on <see cref="T:System.ServiceModel.Description.ServiceDescription" />. </para>
+        </item>
+        <item>
+          <para>Extend the <see cref="T:System.ServiceModel.Configuration.BehaviorExtensionElement" /> class to support the specification of the behavior in an application or machine configuration file. See the Example section for more information. </para>
+        </item>
+      </list>
+      <para>Examples of service behaviors in indigo2 include the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> attribute, the <see cref="T:System.ServiceModel.Description.ServiceThrottlingBehavior" />, the <see cref="T:System.ServiceModel.Description.ServiceDebugBehavior" /> and the <see cref="T:System.ServiceModel.Description.ServiceMetadataBehavior" /> behavior.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a mechanism to modify or insert custom extensions across an entire service, including the <see cref="T:System.ServiceModel.ServiceHostBase" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AddBindingParameters">
+      <MemberSignature Language="C#" Value="public void AddBindingParameters (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase, System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddBindingParameters(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase, class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+        <Parameter Name="endpoints" Type="System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <param name="description">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method to add custom data objects to the <paramref name="parameters" /> collection that binding elements can use to acquire extra information to enable them to support the contract.</para>
+          <para>This method is called once for each listen URI. For example, if a service has four endpoints, and two of them have the same listen URI, then this method gets called three times. The reason is that the <paramref name="bindingParameters" /> target each channel stack and there is one channel stack for each listen URI. Because each call receives those endpoints at that listen URI, two calls each get a single <see cref="T:System.ServiceModel.Description.ServiceEndpoint" />, and one call gets a collection of two <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects.</para>
+          <block subset="none" type="note">
+            <para>All of the <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> methods pass <see cref="T:System.ServiceModel.Description.ServiceDescription" /> and <see cref="T:System.ServiceModel.ServiceHostBase" /> objects as a parameters. The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> parameter is for examination and insertion of customizations only; if you otherwise modify these objects the execution behavior is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the ability to pass custom data to binding elements to support the contract implementation.</para>
+        </summary>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host of the service.</param>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service endpoints.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="public void ApplyDispatchBehavior (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ApplyDispatchBehavior(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <param name="description">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to inspect or modify the <see cref="T:System.ServiceModel.ServiceHostBase" /> object that is being constructed in order to support some custom execution scenario.</para>
+          <block subset="none" type="note">
+            <para>All of the <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> methods pass <see cref="T:System.ServiceModel.Description.ServiceDescription" /> and <see cref="T:System.ServiceModel.ServiceHostBase" /> objects as a parameters. The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> parameter is for examination and insertion of customizations only; if you otherwise modify these objects the execution behavior is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the ability to change run-time property values or insert custom extension objects such as error handlers, message or parameter interceptors, security extensions, and other custom extension objects.</para>
+        </summary>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host that is currently being built.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public void Validate (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Validate(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <param name="description">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.IServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to confirm whether the current service can execute properly according to your scenario.</para>
+          <block subset="none" type="note">
+            <para>All of the <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> methods pass <see cref="T:System.ServiceModel.Description.ServiceDescription" /> and <see cref="T:System.ServiceModel.ServiceHostBase" /> objects as a parameters. The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> parameter is for examination and insertion of customizations only; if you otherwise modify these objects the execution behavior is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the ability to inspect the service host and the service description to confirm that the service can run successfully.</para>
+        </summary>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host that is currently being constructed.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

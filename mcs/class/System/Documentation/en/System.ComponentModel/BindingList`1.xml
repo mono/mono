@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BindingList&lt;T&gt;" FullName="System.ComponentModel.BindingList&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class BindingList&lt;T&gt; : System.Collections.ObjectModel.Collection&lt;T&gt;, System.ComponentModel.IBindingList, System.ComponentModel.ICancelAddNew, System.ComponentModel.IRaiseItemChangedEvents" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit BindingList`1&lt;T&gt; extends System.Collections.ObjectModel.Collection`1&lt;!T&gt; implements class System.Collections.ICollection, class System.Collections.IEnumerable, class System.Collections.IList, class System.ComponentModel.IBindingList, class System.ComponentModel.ICancelAddNew, class System.ComponentModel.IRaiseItemChangedEvents" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
     <TypeParameter Name="T" />
@@ -10,7 +13,7 @@
   <Base>
     <BaseTypeName>System.Collections.ObjectModel.Collection&lt;T&gt;</BaseTypeName>
     <BaseTypeArguments>
-      <BaseTypeArgument TypeParamName="T">T</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!0">T</BaseTypeArgument>
     </BaseTypeArguments>
   </Base>
   <Interfaces>
@@ -26,27 +29,96 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class can be used as a base class to create a two-way data-binding mechanism. <see cref="T:System.ComponentModel.BindingList`1" /> provides a concrete, generic implementation of the <see cref="T:System.ComponentModel.IBindingList" /> interface. This is an alternative to implementing the complete <see cref="T:System.ComponentModel.IBindingList" /> interface, which can be difficult because of the subtle interaction between <see cref="T:System.ComponentModel.IBindingList" />, <see cref="T:System.ComponentModel.IEditableObject" />, and the associated <see cref="T:System.Windows.Forms.CurrencyManager" />. However, the typical solutions programmer will use a class that provides data binding functionality, such as <see cref="T:System.Windows.Forms.BindingSource" />, instead of directly using <see cref="T:System.ComponentModel.BindingList`1" />.</para>
+      <para>
+        <see cref="T:System.ComponentModel.BindingList`1" /> supports factory-created instances through the extensible <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method. (This same type of extensibility is also found in other classes, such as <see cref="T:System.Windows.Forms.BindingSource" />) In addition, since this class implements the <see cref="T:System.ComponentModel.ICancelAddNew" /> interface, it enables transactional commits or rollbacks of the new item through the <see cref="M:System.ComponentModel.BindingList`1.EndNew(System.Int32)" /> and <see cref="M:System.ComponentModel.BindingList`1.CancelNew(System.Int32)" /> methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a generic collection that supports data binding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BindingList ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of <see cref="T:System.ComponentModel.BindingList`1" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ComponentModel.BindingList`1.AllowEdit" />
+                </para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ComponentModel.BindingList`1.AllowNew" />
+                </para>
+              </term>
+              <description>
+                <para>true if the list type has a default constructor; otherwise, false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ComponentModel.BindingList`1.AllowRemove" />
+                </para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.ComponentModel.BindingList`1.RaiseListChangedEvents" /> </para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.BindingList`1" /> class using default values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BindingList (System.Collections.Generic.IList&lt;T&gt; list);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IList`1&lt;!T&gt; list) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="list" Type="System.Collections.Generic.IList&lt;T&gt;" />
@@ -59,100 +131,179 @@
     </Member>
     <Member MemberName="AddingNew">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.AddingNewEventHandler AddingNew;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.AddingNewEventHandler AddingNew" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.AddingNewEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event occurs before a new object is added to the collection represented by the <see cref="P:System.Collections.ObjectModel.Collection`1.Items" /> property. This event is raised after the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method is called, but before the new item is created and added to the internal list. By handling this event, the programmer can provide custom item creation and insertion behavior without being forced to derive from the <see cref="T:System.ComponentModel.BindingList`1" /> class. </para>
+          <para>For more information about supplying custom new item functionality, see the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method. For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before an item is added to the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddNew">
       <MemberSignature Language="C#" Value="public T AddNew ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !T AddNew() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method adds a new item to the collection represented by the <see cref="P:System.Collections.ObjectModel.Collection`1.Items" /> property. To add a new item, the following logic is used:</para>
+          <list type="ordered">
+            <item>
+              <para>The <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event is automatically raised.</para>
+              <para>This event can be programmatically handled to construct a new custom item. This is accomplished in the event handler by setting the <see cref="P:System.ComponentModel.AddingNewEventArgs.NewObject" /> property of the <see cref="T:System.ComponentModel.AddingNewEventArgs" /> parameter to the new item.</para>
+              <para>Otherwise, the new item is automatically created through its public default constructor.</para>
+            </item>
+            <item>
+              <para>The position of the new item is tracked, but it is not added to the list until one of the following conditions are met:</para>
+              <list type="bullet">
+                <item>
+                  <para>The item is explicitly committed by a call to <see cref="M:System.ComponentModel.BindingList`1.EndNew(System.Int32)" />.</para>
+                </item>
+                <item>
+                  <para>The item is implicitly committed by some other operation that changed the contents of the list, such as an insertion or removal of an item.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>In contrast, calling the <see cref="M:System.ComponentModel.BindingList`1.CancelNew(System.Int32)" /> method before the item is committed will cause the new item to be discarded.</para>
+          <para>This method raises the <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event when the new item is committed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new item to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item added to the list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AddNewCore">
       <MemberSignature Language="C#" Value="protected virtual object AddNewCore ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance object AddNewCore() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BindingList`1.AddNewCore" /> method adds a new item to the collection represented by the <see cref="P:System.Collections.ObjectModel.Collection`1.Items" /> property. <see cref="M:System.ComponentModel.BindingList`1.AddNewCore" /> raises the <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event. This allows you to add a new item by setting the <see cref="P:System.ComponentModel.AddingNewEventArgs.NewObject" /> property of the <see cref="T:System.ComponentModel.AddingNewEventArgs" /> parameter to the new item. Otherwise, the new item is automatically created through its public default constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new item to the end of the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item that was added to the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllowEdit">
-      <MemberSignature Language="C#" Value="public bool AllowEdit { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AllowEdit { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowEdit" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.BindingList`1.AllowEdit" /> property is typically used by other components to determine if editing of items in the list is allowed. When <see cref="P:System.ComponentModel.BindingList`1.AllowEdit" /> is set to a new value, a <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event of type <see cref="F:System.ComponentModel.ListChangedType.Reset" /> will occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether items in the list can be edited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowNew">
-      <MemberSignature Language="C#" Value="public bool AllowNew { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AllowNew { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowNew" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.BindingList`1.AllowNew" /> property is typically used by other components to determine if the creation of new items is allowed. <see cref="P:System.ComponentModel.BindingList`1.AllowNew" /> defaults to true if the type contained in the list has a default constructor or the <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event is handled. If the <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event is not handled or the list type does not have a default constructor, then <see cref="P:System.ComponentModel.BindingList`1.AllowNew" /> defaults to false.</para>
+          <para>If <see cref="P:System.ComponentModel.BindingList`1.AllowNew" /> is explicitly set, the set value will always be used by bound objects to determine if new items can be added to the list. Whether <see cref="P:System.ComponentModel.BindingList`1.AllowNew" /> is true or false, new items can be added by explicitly calling <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> if the list type has a default constructor or the <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event is handled. In addition, setting <see cref="P:System.ComponentModel.BindingList`1.AllowNew" /> causes a <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event of type <see cref="F:System.ComponentModel.ListChangedType.Reset" /> to occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether you can add items to the list using the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowRemove">
-      <MemberSignature Language="C#" Value="public bool AllowRemove { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AllowRemove { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowRemove" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.BindingList`1.AllowRemove" /> property is typically used by other components to determine if the removal of items is allowed.</para>
+          <para>When <see cref="P:System.ComponentModel.BindingList`1.AllowRemove" /> is set to a new value, a <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event of type <see cref="F:System.ComponentModel.ListChangedType.Reset" /> occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether you can remove items from the collection. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplySortCore">
       <MemberSignature Language="C#" Value="protected virtual void ApplySortCore (System.ComponentModel.PropertyDescriptor prop, System.ComponentModel.ListSortDirection direction);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void ApplySortCore(class System.ComponentModel.PropertyDescriptor prop, valuetype System.ComponentModel.ListSortDirection direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -162,17 +313,39 @@
         <Parameter Name="direction" Type="System.ComponentModel.ListSortDirection" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of sorting, so <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> always throws a <see cref="T:System.NotSupportedException" /> by default. To enable sorting, derive from <see cref="T:System.ComponentModel.BindingList`1" /> and perform the following tasks:</para>
+          <list type="bullet">
+            <item>
+              <para>Override <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> and implement sorting, raising the <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event when sorting is complete.</para>
+            </item>
+            <item>
+              <para>Override <see cref="M:System.ComponentModel.BindingList`1.RemoveSortCore" /> and implement sort removal.</para>
+            </item>
+            <item>
+              <para>Override <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> and set <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> to true.</para>
+            </item>
+          </list>
+          <para>In addition, you may want to implement the supplemental <see cref="P:System.ComponentModel.BindingList`1.SortDirectionCore" /> and <see cref="P:System.ComponentModel.BindingList`1.SortPropertyCore" /> sorting properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the items if overridden in a derived class; otherwise, throws a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that specifies the property to sort on.</param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.ListSortDirection" />  values.</param>
       </Docs>
     </Member>
     <Member MemberName="CancelNew">
       <MemberSignature Language="C#" Value="public virtual void CancelNew (int itemIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CancelNew(int32 itemIndex) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -181,31 +354,51 @@
         <Parameter Name="itemIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="itemIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BindingList`1.CancelNew(System.Int32)" /> method rolls back a pending new item that was added through the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method, but has not yet been committed.</para>
+          <para>For more information about adding and committing new items, see the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards a pending new item.</para>
+        </summary>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the of the new item to be added </param>
       </Docs>
     </Member>
     <Member MemberName="ClearItems">
       <MemberSignature Language="C#" Value="protected override void ClearItems ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void ClearItems() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BindingList`1.ClearItems" /> method removes all the items from the collection represented by the <see cref="P:System.Collections.ObjectModel.Collection`1.Items" /> property. </para>
+          <para>
+            <see cref="M:System.ComponentModel.BindingList`1.ClearItems" /> calls the <see cref="M:System.ComponentModel.BindingList`1.EndNew(System.Int32)" /> method before clearing out the collection and raises the <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event after it has been cleared.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all elements from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndNew">
       <MemberSignature Language="C#" Value="public virtual void EndNew (int itemIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndNew(int32 itemIndex) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -214,16 +407,26 @@
         <Parameter Name="itemIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="itemIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BindingList`1.EndNew(System.Int32)" /> method commits a pending new item that was added through the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method. If there is no new item waiting to be committed, then this method does nothing.</para>
+          <para>For more information about adding and committing new items, see the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits a pending new item to the collection.</para>
+        </summary>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the new item to be added.</param>
       </Docs>
     </Member>
     <Member MemberName="FindCore">
       <MemberSignature Language="C#" Value="protected virtual int FindCore (System.ComponentModel.PropertyDescriptor prop, object key);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance int32 FindCore(class System.ComponentModel.PropertyDescriptor prop, object key) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -233,18 +436,39 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of searching, and so <see cref="M:System.ComponentModel.BindingList`1.FindCore(System.ComponentModel.PropertyDescriptor,System.Object)" /> always throws a <see cref="T:System.NotSupportedException" /> by default. To enable searching, derive from <see cref="T:System.ComponentModel.BindingList`1" /> and perform the following tasks:</para>
+          <list type="bullet">
+            <item>
+              <para>Override <see cref="P:System.ComponentModel.BindingList`1.SupportsSearchingCore" /> to set the <see cref="P:System.ComponentModel.BindingList`1.SupportsSearchingCore" /> property to true.</para>
+            </item>
+            <item>
+              <para>Override <see cref="M:System.ComponentModel.BindingList`1.FindCore(System.ComponentModel.PropertyDescriptor,System.Object)" /> to implement the find algorithm.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the index of the item that has the specified property descriptor with the specified value, if searching is implemented in a derived class; otherwise, a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item that matches the property descriptor and contains the specified value.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to search for.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of <paramref name="property" /> to match.</param>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
       <MemberSignature Language="C#" Value="protected override void InsertItem (int index, T item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InsertItem(int32 index, !T item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -262,38 +486,71 @@
     </Member>
     <Member MemberName="IsSortedCore">
       <MemberSignature Language="C#" Value="protected virtual bool IsSortedCore { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSortedCore" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of sorting, so <see cref="P:System.ComponentModel.BindingList`1.IsSortedCore" /> always returns false by default. </para>
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of sorting. To enable sorting, derive a class from <see cref="T:System.ComponentModel.BindingList`1" /> and:</para>
+          <list type="bullet">
+            <item>
+              <para>Override <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> and implement sorting raising the <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event when sorting is complete.</para>
+            </item>
+            <item>
+              <para>Override <see cref="M:System.ComponentModel.BindingList`1.RemoveSortCore" /> and implement sort removal.</para>
+            </item>
+            <item>
+              <para>Override <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> and set <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> to true.</para>
+            </item>
+          </list>
+          <para>In addition, you may want to implement the supplemental <see cref="P:System.ComponentModel.BindingList`1.SortDirectionCore" /> and <see cref="P:System.ComponentModel.BindingList`1.SortPropertyCore" />s sorting properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the list is sorted. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListChanged">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.ListChangedEventHandler ListChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.ListChangedEventHandler ListChanged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ListChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> notifications for item value changes are only raised if the list item type implements the <see cref="T:System.ComponentModel.INotifyPropertyChanged" /> interface.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the list or an item in the list changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnAddingNew">
       <MemberSignature Language="C#" Value="protected virtual void OnAddingNew (System.ComponentModel.AddingNewEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnAddingNew(class System.ComponentModel.AddingNewEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -302,16 +559,27 @@
         <Parameter Name="e" Type="System.ComponentModel.AddingNewEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event and the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method allow custom-created items to be added to the list.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.BindingList`1.OnAddingNew(System.ComponentModel.AddingNewEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.AddingNewEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnListChanged">
       <MemberSignature Language="C#" Value="protected virtual void OnListChanged (System.ComponentModel.ListChangedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnListChanged(class System.ComponentModel.ListChangedEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -320,31 +588,48 @@
         <Parameter Name="e" Type="System.ComponentModel.ListChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.BindingList`1.OnListChanged(System.ComponentModel.ListChangedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ListChangedEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="RaiseListChangedEvents">
-      <MemberSignature Language="C#" Value="public bool RaiseListChangedEvents { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool RaiseListChangedEvents { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RaiseListChangedEvents" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ComponentModel.BindingList`1.RaiseListChangedEvents" /> property to false if you wish to suppress <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> events from occurring on the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether adding or removing items within the list raises <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> events.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">
       <MemberSignature Language="C#" Value="protected override void RemoveItem (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void RemoveItem(int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -353,46 +638,71 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event of type <see cref="F:System.ComponentModel.ListChangedType.ItemDeleted" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveSortCore">
       <MemberSignature Language="C#" Value="protected virtual void RemoveSortCore ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void RemoveSortCore() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of sorting, so <see cref="M:System.ComponentModel.BindingList`1.RemoveSortCore" /> always throws a <see cref="T:System.NotSupportedException" /> by default. For more information about sorting, see the <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes any sort applied with <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> if sorting is implemented in a derived class; otherwise, raises <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetBindings">
       <MemberSignature Language="C#" Value="public void ResetBindings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResetBindings() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.ComponentModel.BindingList`1" /> is bound to Windows Forms controls, the <see cref="M:System.ComponentModel.BindingList`1.ResetBindings" /> method causes a refresh of all controls bound to the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event of type <see cref="F:System.ComponentModel.ListChangedType.Reset" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetItem">
       <MemberSignature Language="C#" Value="public void ResetItem (int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResetItem(int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -401,16 +711,25 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.ComponentModel.BindingList`1" /> is bound to Windows Forms controls, the <see cref="M:System.ComponentModel.BindingList`1.ResetItem(System.Int32)" /> method causes a refresh of controls bound to the item at the specified position.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> event of type <see cref="F:System.ComponentModel.ListChangedType.ItemChanged" /> for the item at the specified position.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based index of the item to be reset.</param>
       </Docs>
     </Member>
     <Member MemberName="SetItem">
       <MemberSignature Language="C#" Value="protected override void SetItem (int index, T item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void SetItem(int32 index, !T item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -428,84 +747,143 @@
     </Member>
     <Member MemberName="SortDirectionCore">
       <MemberSignature Language="C#" Value="protected virtual System.ComponentModel.ListSortDirection SortDirectionCore { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ComponentModel.ListSortDirection SortDirectionCore" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ListSortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of sorting, so <see cref="P:System.ComponentModel.BindingList`1.SortDirectionCore" /> always returns <see cref="F:System.ComponentModel.ListSortDirection.Ascending" /> by default. For more information about sorting, see the <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the direction the list is sorted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SortPropertyCore">
       <MemberSignature Language="C#" Value="protected virtual System.ComponentModel.PropertyDescriptor SortPropertyCore { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.PropertyDescriptor SortPropertyCore" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ComponentModel.BindingList`1.SortPropertyCore" /> returns null by default because the <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of sorting. To enable sorting, derive a class from <see cref="T:System.ComponentModel.BindingList`1" /> and:</para>
+          <list type="bullet">
+            <item>
+              <para>Override <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> and implement sorting.</para>
+            </item>
+            <item>
+              <para>Override <see cref="M:System.ComponentModel.BindingList`1.RemoveSortCore" /> and implement sort removal.</para>
+            </item>
+            <item>
+              <para>Override <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> and set <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> to true.</para>
+            </item>
+            <item>
+              <para>Optionally, override the <see cref="P:System.ComponentModel.BindingList`1.SortPropertyCore" /> to return the <see cref="T:System.ComponentModel.PropertyDescriptor" /> used for sorting.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the property descriptor that is used for sorting the list if sorting is implemented in a derived class; otherwise, returns null. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsChangeNotificationCore">
       <MemberSignature Language="C#" Value="protected virtual bool SupportsChangeNotificationCore { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsChangeNotificationCore" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ComponentModel.BindingList`1.SupportsChangeNotificationCore" /> provides the implementation for <see cref="P:System.ComponentModel.IBindingList.SupportsChangeNotification" />. You can derive a class from <see cref="T:System.ComponentModel.BindingList`1" /> and override the default value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> events are enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsSearchingCore">
       <MemberSignature Language="C#" Value="protected virtual bool SupportsSearchingCore { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsSearchingCore" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of searching, so <see cref="P:System.ComponentModel.BindingList`1.SupportsSearchingCore" /> always returns false by default. For more information about implementing searching, see the <see cref="M:System.ComponentModel.BindingList`1.System#ComponentModel#IBindingList#Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the list supports searching.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsSortingCore">
       <MemberSignature Language="C#" Value="protected virtual bool SupportsSortingCore { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsSortingCore" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> property indicates whether the <see cref="T:System.ComponentModel.BindingList`1" /> supports sorting with the <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> method.</para>
+          <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of sorting, so <see cref="P:System.ComponentModel.BindingList`1.SupportsSortingCore" /> always returns false by default. For more information about implementing sorting, see the <see cref="M:System.ComponentModel.BindingList`1.ApplySortCore(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the list supports sorting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AddIndex">
       <MemberSignature Language="C#" Value="void IBindingList.AddIndex (System.ComponentModel.PropertyDescriptor index);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ComponentModel.IBindingList.AddIndex(class System.ComponentModel.PropertyDescriptor index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -515,76 +893,115 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base implementation of this method does nothing. If this functionality is desired, a derived class must implement it.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.AddIndex(System.ComponentModel.PropertyDescriptor)" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AddNew">
       <MemberSignature Language="C#" Value="object IBindingList.AddNew ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.ComponentModel.IBindingList.AddNew() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+          <para>This implementation calls <see cref="M:System.ComponentModel.BindingList`1.AddNewCore" /> to add a new item to the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new item to the list. For more information, see <see cref="M:System.ComponentModel.IBindingList.AddNew" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item added to the list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AllowEdit">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IBindingList.AllowEdit { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IBindingList.AllowEdit" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.BindingList`1.AllowEdit" /> property is typically used by other components to determine if editing of items in the list is allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether items in the list can be edited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AllowNew">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IBindingList.AllowNew { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IBindingList.AllowNew" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether new items can be added to the list using the <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AllowRemove">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IBindingList.AllowRemove { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IBindingList.AllowRemove" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether items can be removed from the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.ApplySort">
       <MemberSignature Language="C#" Value="void IBindingList.ApplySort (System.ComponentModel.PropertyDescriptor property, System.ComponentModel.ListSortDirection direction);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ComponentModel.IBindingList.ApplySort(class System.ComponentModel.PropertyDescriptor property, valuetype System.ComponentModel.ListSortDirection direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -595,16 +1012,25 @@
       </Parameters>
       <Docs>
         <param name="property">To be added.</param>
-        <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the list based on a <see cref="T:System.ComponentModel.PropertyDescriptor" /> and a <see cref="T:System.ComponentModel.ListSortDirection" />. For a complete description of this member, see <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)" />. </para>
+        </summary>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.ListSortDirection" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.Find">
       <MemberSignature Language="C#" Value="int IBindingList.Find (System.ComponentModel.PropertyDescriptor property, object key);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.ComponentModel.IBindingList.Find(class System.ComponentModel.PropertyDescriptor property, object key) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -615,32 +1041,52 @@
       </Parameters>
       <Docs>
         <param name="property">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor" /> .</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the <paramref name="property" /> parameter to search for.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.IsSorted">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IBindingList.IsSorted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IBindingList.IsSorted" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.IsSorted" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.RemoveIndex">
       <MemberSignature Language="C#" Value="void IBindingList.RemoveIndex (System.ComponentModel.PropertyDescriptor property);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ComponentModel.IBindingList.RemoveIndex(class System.ComponentModel.PropertyDescriptor property) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -650,113 +1096,177 @@
       </Parameters>
       <Docs>
         <param name="property">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base implementation of this method does nothing. If this functionality is desired, a derived class must implement it.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.RemoveIndex(System.ComponentModel.PropertyDescriptor)" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.RemoveSort">
       <MemberSignature Language="C#" Value="void IBindingList.RemoveSort ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ComponentModel.IBindingList.RemoveSort() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.RemoveSort" /></para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SortDirection">
       <MemberSignature Language="C#" Value="System.ComponentModel.ListSortDirection System.ComponentModel.IBindingList.SortDirection { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ComponentModel.ListSortDirection System.ComponentModel.IBindingList.SortDirection" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ListSortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SortDirection" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SortProperty">
       <MemberSignature Language="C#" Value="System.ComponentModel.PropertyDescriptor System.ComponentModel.IBindingList.SortProperty { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.PropertyDescriptor System.ComponentModel.IBindingList.SortProperty" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SortProperty" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SupportsChangeNotification">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IBindingList.SupportsChangeNotification { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IBindingList.SupportsChangeNotification" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SupportsChangeNotification" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SupportsSearching">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IBindingList.SupportsSearching { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IBindingList.SupportsSearching" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SupportsSearching" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.SupportsSorting">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IBindingList.SupportsSorting { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IBindingList.SupportsSorting" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IRaiseItemChangedEvents.RaisesItemChangedEvents">
       <MemberSignature Language="C#" Value="bool System.ComponentModel.IRaiseItemChangedEvents.RaisesItemChangedEvents { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.ComponentModel.IRaiseItemChangedEvents.RaisesItemChangedEvents" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ComponentModel.BindingList`1.System#ComponentModel#IRaiseItemChangedEvents#RaisesItemChangedEvents" /> checks the list type to see if it implements the <see cref="T:System.ComponentModel.INotifyPropertyChanged" /> interface to indicate that it raises <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> events of <see cref="F:System.ComponentModel.ListChangedType.ItemChanged" /> when property values are changed on individual list items. This member cannot be overridden in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether item property value changes raise <see cref="E:System.ComponentModel.BindingList`1.ListChanged" /> events of type <see cref="F:System.ComponentModel.ListChangedType.ItemChanged" />. This member cannot be overridden in a derived class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IMessageProperty" FullName="System.ServiceModel.Channels.IMessageProperty">
+  <TypeSignature Language="C#" Value="public interface IMessageProperty" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageProperty" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can implement this interface to create a message property, and attach it to the message during runtime.</para>
+      <para>If an object that implements this interface is added to <see cref="P:System.ServiceModel.Channels.Message.Properties" />, it is added by value instead of by reference. After this, users of this message instance's message properties can copy this object to other messages by cloning, instead of sharing a single object across all messages. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an interface that you can implement to describe a set of properties for a message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateCopy">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.IMessageProperty CreateCopy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.IMessageProperty CreateCopy() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IMessageProperty</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called whenever an implementor of this interface is created. This happens when an object that implements this interface is added to <see cref="P:System.ServiceModel.Channels.Message.Properties" /> as a custom property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.IMessageProperty" /> object that is a copy of the current instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

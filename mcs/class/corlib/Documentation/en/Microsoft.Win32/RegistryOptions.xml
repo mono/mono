@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegistryOptions" FullName="Microsoft.Win32.RegistryOptions">
   <TypeSignature Language="C#" Value="public enum RegistryOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed RegistryOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -13,12 +15,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can create a registry key that is available only in memory and that will not be persisted when the computer is restarted. This is known as a volatile key. You can specify that you want to create a volatile or non-volatile key by using the <see cref="Overload:Microsoft.Win32.RegistryKey.CreateSubKey" /> method overloads that take an <paramref name="options" /> parameter. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies options to use when creating a registry key.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Microsoft.Win32.RegistryOptions None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,11 +36,15 @@
         <ReturnType>Microsoft.Win32.RegistryOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A non-volatile key. This is the default.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Volatile">
       <MemberSignature Language="C#" Value="Volatile" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Microsoft.Win32.RegistryOptions Volatile = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -40,7 +53,10 @@
         <ReturnType>Microsoft.Win32.RegistryOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A volatile key. The information is stored in memory and is not preserved when the corresponding registry hive is unloaded.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

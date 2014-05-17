@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TransportContext" FullName="System.Net.TransportContext">
+  <TypeSignature Language="C#" Value="public abstract class TransportContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TransportContext extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.TransportContext" /> class is used with classes in the <see cref="N:System.Security.Authentication.ExtendedProtection" /> namespace to provide support for authentication using extended protection for applications.</para>
+      <para>The design of integrated Windows authentication allows for some credential challenge responses to be universal, meaning they can be re-used or forwarded. If this particular design feature is not needed then the challenge responses should be constructed with, at minimum, target specific information and, at best, also some channel specific information. Services can then provide extended protection to ensure that credential challenge responses contain service specific information (a Service Provider Name or SPN) and, if necessary, channel specific information (a channel binding token or CBT). With this information in the credential exchanges, services are able to better protect against malicious use of credential challenge responses that might have been improperly obtained.</para>
+      <para>
+        <see cref="T:System.Net.HttpWebRequest" /> is the only class derived from <see cref="T:System.Net.WebRequest" /> class that can potentially use IWA. The <see cref="T:System.Net.FtpWebRequest" /> class does only FTP clear text authentication. The <see cref="T:System.Net.FileWebRequest" /> class doesn't perform any authentication.</para>
+      <para>There are several ways an application may get a <see cref="T:System.Net.TransportContext" /> instance. An application that uses <see cref="T:System.Net.Security.SslStream" /> can get the <see cref="T:System.Net.TransportContext" /> using the <see cref="P:System.Net.Security.SslStream.TransportContext" /> property. An application that uses <see cref="T:System.Net.HttpWebRequest" /> can get a <see cref="T:System.Net.TransportContext" /> using the <see cref="M:System.Net.HttpWebRequest.GetRequestStream(System.Net.TransportContext@)" /> or <see cref="M:System.Net.HttpWebRequest.EndGetRequestStream(System.IAsyncResult,System.Net.TransportContext@)" /> methods. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.TransportContext" /> class provides additional context about the underlying transport layer.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected TransportContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Net.TransportContext" /> class</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetChannelBinding">
+      <MemberSignature Language="C#" Value="public abstract System.Security.Authentication.ExtendedProtection.ChannelBinding GetChannelBinding (System.Security.Authentication.ExtendedProtection.ChannelBindingKind kind);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.Authentication.ExtendedProtection.ChannelBinding GetChannelBinding(valuetype System.Security.Authentication.ExtendedProtection.ChannelBindingKind kind) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ChannelBinding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="kind" Type="System.Security.Authentication.ExtendedProtection.ChannelBindingKind" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The possible values for the <paramref name="kind" /> parameter are <see cref="F:System.Security.Authentication.ExtendedProtection.ChannelBindingKind.Endpoint" /> or <see cref="F:System.Security.Authentication.ExtendedProtection.ChannelBindingKind.Unique" />. </para>
+          <para>If an application attempts to retrieve the channel binding token (CBT) from the <see cref="P:System.Net.HttpListenerRequest.TransportContext" /> property using the <see cref="M:System.Net.TransportContext.GetChannelBinding(System.Security.Authentication.ExtendedProtection.ChannelBindingKind)" /> method and the <see cref="T:System.Security.Authentication.ExtendedProtection.ChannelBindingKind" /> is not <see cref="F:System.Security.Authentication.ExtendedProtection.ChannelBindingKind.Endpoint" />, then the <see cref="T:System.Net.HttpListenerRequest" /> will throw <see cref="T:System.NotSupportedException" />. The <see cref="T:System.Net.HttpListenerRequest" /> overrides the <see cref="M:System.Net.TransportContext.GetChannelBinding(System.Security.Authentication.ExtendedProtection.ChannelBindingKind)" /> method with an internal implementation</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the requested channel binding. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested <see cref="T:System.Security.Authentication.ExtendedProtection.ChannelBinding" />, or null if the channel binding is not supported by the current transport or by the operating system.</para>
+        </returns>
+        <param name="kind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel binding to retrieve.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

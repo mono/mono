@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CultureTypes" FullName="System.Globalization.CultureTypes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum CultureTypes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CultureTypes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -20,37 +22,43 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These culture type values are returned by the <see cref="P:System.Globalization.CultureInfo.CultureTypes" /> property, and also serve as a filter that limits the cultures returned by the <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" /> method. For more information on cultures, see <see cref="T:System.Globalization.CultureInfo" />.</para>
+      <para>Generally, your application should enumerate all cultures, using the <see cref="F:System.Globalization.CultureTypes.AllCultures" /> value. This allows enumeration of custom cultures, as well as the other culture types.</para>
+      <para>Note that the <see cref="F:System.Globalization.CultureTypes.FrameworkCultures" /> and <see cref="F:System.Globalization.CultureTypes.WindowsOnlyCultures" /> members have been deprecated. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the types of culture lists that can be retrieved using the <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllCultures">
       <MemberSignature Language="C#" Value="AllCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes AllCultures = int32(7)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CultureTypes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureTypes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All cultures that ship with the .NET Framework, including neutral and specific cultures, cultures installed in the Windows operating system, and custom cultures created by the user.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="FrameworkCultures">
       <MemberSignature Language="C#" Value="FrameworkCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes FrameworkCultures = int32(64)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CultureTypes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -60,98 +68,129 @@
           <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is deprecated; using this value with <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" />  returns neutral and specific cultures shipped with the previous .NET Framework.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="InstalledWin32Cultures">
       <MemberSignature Language="C#" Value="InstalledWin32Cultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes InstalledWin32Cultures = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CultureTypes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureTypes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All cultures that are installed in the Windows operating system. Note that not all cultures supported by the .NET Framework are installed in the operating system.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NeutralCultures">
       <MemberSignature Language="C#" Value="NeutralCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes NeutralCultures = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CultureTypes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureTypes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures can have any user-specified name, not just a two-letter code.</para>
+          <para>The invariant culture is included in the array of cultures returned by the <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" /> method that specifies this value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cultures that are associated with a language but are not specific to a country/region. The names of .NET Framework cultures consist of the lowercase two-letter code derived from ISO 639-1. For example: "en" (English) is a neutral culture. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ReplacementCultures">
       <MemberSignature Language="C#" Value="ReplacementCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes ReplacementCultures = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CultureTypes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpecificCultures">
-      <MemberSignature Language="C#" Value="SpecificCultures" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
-      <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures created by the user that replace cultures shipped with the .NET Framework.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SpecificCultures">
+      <MemberSignature Language="C#" Value="SpecificCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes SpecificCultures = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UserCustomCulture">
-      <MemberSignature Language="C#" Value="UserCustomCulture" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
+      <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures can have any user-specified name, not just a standard-compliant name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cultures that are specific to a country/region. The names of these cultures follow RFC 4646 (Windows Vista and later). The format is "&lt;languagecode2&gt;-&lt;country/regioncode2&gt;", where &lt;languagecode2&gt; is a lowercase two-letter code derived from ISO 639-1 and &lt;country/regioncode2&gt; is an uppercase two-letter code derived from ISO 3166. For example, "en-US" for English (United States) is a specific culture.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="UserCustomCulture">
+      <MemberSignature Language="C#" Value="UserCustomCulture" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes UserCustomCulture = int32(8)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WindowsOnlyCultures">
-      <MemberSignature Language="C#" Value="WindowsOnlyCultures" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures created by the user.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="WindowsOnlyCultures">
+      <MemberSignature Language="C#" Value="WindowsOnlyCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes WindowsOnlyCultures = int32(32)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -161,6 +200,16 @@
           <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is deprecated; the default behavior is set to return an empty list for backward compatibility reasons.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

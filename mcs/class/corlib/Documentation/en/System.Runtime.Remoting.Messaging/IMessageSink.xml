@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMessageSink" FullName="System.Runtime.Remoting.Messaging.IMessageSink">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IMessageSink" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageSink" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,14 +10,35 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a method call is made on the proxy, the remoting infrastructure provides the necessary support for passing the arguments to the actual object across the remoting boundaries, calling the actual object method with the arguments, and returning the results back to the client of the proxy object.</para>
+      <para>A remote method call is a message that goes from the client end to the server end and possibly back again. As it crosses remoting boundaries on the way, the remote method call passes through a chain of IMessageSink objects. Each sink in the chain receives the message object, performs a specific operation, and delegates to the next sink in the chain. The proxy object contains a reference to the first IMessageSink it needs to use to start off the chain.</para>
+      <para>For asynchronous calls, at the time of delegation, each sink provides a reply sink (another IMessageSink) that will be called by the next sink when the reply is on its way back.</para>
+      <para>Different types of sinks perform different operations, depending on the type of message object received. For example, one sink could cause a lock to be taken, another could enforce call security, another could perform flow call control and reliability services, and yet another could transport the call to a different <see cref="T:System.AppDomain" />, process, or computer. Two or more message sinks in the chain can interact with each other in regard to each specific action.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface for a message sink.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AsyncProcessMessage">
       <MemberSignature Language="C#" Value="public System.Runtime.Remoting.Messaging.IMessageCtrl AsyncProcessMessage (System.Runtime.Remoting.Messaging.IMessage msg, System.Runtime.Remoting.Messaging.IMessageSink replySink);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.Messaging.IMessageCtrl AsyncProcessMessage(class System.Runtime.Remoting.Messaging.IMessage msg, class System.Runtime.Remoting.Messaging.IMessageSink replySink) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessageCtrl</ReturnType>
       </ReturnValue>
@@ -24,38 +47,54 @@
         <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'IMessage'</param>
-        <param name="replySink">To be added: an object of type 'IMessageSink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IMessageCtrl'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is invoked on the message sink by the remoting infrastructure or by a previous sink for asynchronous messages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously processes the given message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> interface that provides a way to control asynchronous messages after they have been dispatched.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to process. </param>
+        <param name="replySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reply sink for the reply message. </param>
       </Docs>
+    </Member>
+    <Member MemberName="NextSink">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.Messaging.IMessageSink NextSink { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Remoting.Messaging.IMessageSink NextSink" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NextSink">
-      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.Messaging.IMessageSink NextSink { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessageSink</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IMessageSink'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next message sink in the sink chain.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SyncProcessMessage">
+      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.Messaging.IMessage SyncProcessMessage (System.Runtime.Remoting.Messaging.IMessage msg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.Messaging.IMessage SyncProcessMessage(class System.Runtime.Remoting.Messaging.IMessage msg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SyncProcessMessage">
-      <MemberSignature Language="C#" Value="public System.Runtime.Remoting.Messaging.IMessage SyncProcessMessage (System.Runtime.Remoting.Messaging.IMessage msg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Messaging.IMessage</ReturnType>
       </ReturnValue>
@@ -63,22 +102,21 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'IMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IMessage'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Messaging.IMessageSink.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> method is invoked on the message sink by the remoting infrastructure or by a previous sink for synchronous messages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronously processes the given message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reply message in response to the request.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to process. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Interfaces />
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

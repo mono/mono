@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityPermissionAttribute" FullName="System.Security.Permissions.SecurityPermissionAttribute" FullNameSP="System_Security_Permissions_SecurityPermissionAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable SecurityPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <TypeSignature Language="C#" Value="public sealed class SecurityPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit SecurityPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,23 +25,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Used to apply a security action and a set of
-      security permissions to program code.</para>
-    </summary>
-    <remarks>
-      <block subset="none" type="note">
-        <para>The security permissions are defined in the <see cref="T:System.Security.Permissions.SecurityPermissionFlag" /> enumeration and are specified using
-      the <see cref="P:System.Security.Permissions.SecurityPermissionAttribute.Flags" /> property. </para>
-        <para> The security information declared by a
-      security attribute is stored in the metadata of the attribute target, and is accessed by
-      the system at run-time. Security attributes are used for
-      declarative security only. For imperative security, use the corresponding
-      permission class, <see cref="T:System.Security.Permissions.SecurityPermission" />.</para>
-        <para>The allowable <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> targets are
-   determined by the <see cref="T:System.Security.Permissions.SecurityAction" /> passed to the constructor.</para>
-      </block>
-    </remarks>
     <example>
       <para> In the following example, the attribute target is
       an assembly. The attribute declares that the
@@ -50,260 +35,312 @@
    </c>
       </para>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The scope of the declaration that is allowed depends on the <see cref="T:System.Security.Permissions.SecurityAction" /> that is used.</para>
+      <para>The security information declared by a security attribute is stored in the metadata of the attribute target and is accessed by the system at run time. Security attributes are used only for declarative security. For imperative security, use the corresponding permission class.</para>
+      <para>When you use the <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> class, follow the security action with the permission(s) that are being requested. Each security permission that can be requested, as defined in the <see cref="T:System.Security.Permissions.SecurityPermissionFlag" /> enumeration, has a corresponding property in the <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> class. For example, to demand the ability to access unmanaged code, follow the demand statement with the property setting that is being requested, as follows: SecurityPermissionAttribute(SecurityAction.Demand, UnmanagedCode=true).</para>
+      <block subset="none" type="note">
+        <para>An exception to the equivalence between the <see cref="T:System.Security.Permissions.SecurityPermissionFlag" /> enumeration and the <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> properties is that the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.AllFlags" /> enumeration value is represented by the <see cref="P:System.Security.Permissions.SecurityAttribute.Unrestricted" /> property (inherited from the <see cref="T:System.Security.Permissions.SecurityAttribute" /> class). To demand all security permissions, specify Unrestricted=true.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows security actions for <see cref="T:System.Security.Permissions.SecurityPermission" /> to be applied to code using declarative security. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action)" />
       <MemberSignature Language="C#" Value="public SecurityPermissionAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action"> A <see cref="T:System.Security.Permissions.SecurityAction" /> value.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> class
- with the specified <see cref="T:System.Security.Permissions.SecurityAction" /> value.</para>
-        </summary>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Assertion">
-      <MemberSignature Language="C#" Value="public bool Assertion { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Assertion { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Assertion" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to assert that all this code's callers have the requisite permission for the operation is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BindingRedirects">
-      <MemberSignature Language="C#" Value="public bool BindingRedirects { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool BindingRedirects { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool BindingRedirects" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This permission allows redirection of .NET Framework assemblies that have been unified, as well as other assemblies found outside the .NET Framework.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether code has permission to perform binding redirection in the application configuration file.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ControlAppDomain">
-      <MemberSignature Language="C#" Value="public bool ControlAppDomain { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ControlAppDomain { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ControlAppDomain" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to manipulate <see cref="T:System.AppDomain" /> is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ControlDomainPolicy">
-      <MemberSignature Language="C#" Value="public bool ControlDomainPolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ControlDomainPolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ControlDomainPolicy" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to alter or manipulate domain security policy is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ControlEvidence">
-      <MemberSignature Language="C#" Value="public bool ControlEvidence { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ControlEvidence { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ControlEvidence" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to alter or manipulate evidence is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ControlPolicy">
-      <MemberSignature Language="C#" Value="public bool ControlPolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ControlPolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ControlPolicy" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to view and manipulate security policy is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ControlPrincipal">
-      <MemberSignature Language="C#" Value="public bool ControlPrincipal { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ControlPrincipal { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ControlPrincipal" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="1A7F35B0-F858-43A9-B9E4-241A8C046263">[&lt;topic://cpconprincipal&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to manipulate the current principal is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ControlThread">
-      <MemberSignature Language="C#" Value="public bool ControlThread { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ControlThread { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ControlThread" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <see cref="T:System.Threading.Thread" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to manipulate threads is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreatePermission">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission CreatePermission()" />
       <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission CreatePermission() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should only be called by the security system, never by application code.</para>
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. Declarative security data in metadata is created from the permission that this method returns that corresponds to this attribute.</para>
+        </remarks>
         <summary>
-          <para>Returns a new <see cref="T:System.Security.Permissions.SecurityPermission" /> object
-   that contains the security information of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Security.Permissions.SecurityPermission" />.</para>
         </summary>
         <returns>
-          <para>A new <see cref="T:System.Security.Permissions.SecurityPermission" /> object
-   with the security information of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.SecurityPermission" /> that corresponds to this attribute.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>Applications typically do not call this method; it is intended for use by the
-         system.</para>
-            <para>The security information declared by a security attribute is stored in the
-         metadata of the attribute target, and is accessed by the system at run-time. The
-         system uses the object returned by this method to convert the security
-         information of the current instance into the form stored in metadata.</para>
-            <para>This method overrides <see cref="M:System.Security.Permissions.SecurityAttribute.CreatePermission" />.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Execution">
+      <MemberSignature Language="C#" Value="public bool Execution { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Execution" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Execution">
-      <MemberSignature Language="C#" Value="public bool Execution { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A demand for <see cref="F:System.Security.Permissions.SecurityPermissionFlag.Execution" /> permission at the assembly level is ignored. If an assembly has the right to execute, <see cref="F:System.Security.Permissions.SecurityPermissionFlag.Execution" /> permission is automatically granted, and setting the <see cref="P:System.Security.Permissions.SecurityPermissionAttribute.Execution" /> property to either true or false has no effect. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to execute code is declared.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Flags">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Security.Permissions.SecurityPermissionFlag Flags { public hidebysig specialname instance valuetype System.Security.Permissions.SecurityPermissionFlag get_Flags() public hidebysig specialname instance void set_Flags(valuetype System.Security.Permissions.SecurityPermissionFlag value) }" />
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.SecurityPermissionFlag Flags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Permissions.SecurityPermissionFlag Flags" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Flags">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.Security.Permissions.SecurityPermissionFlag Flags { public hidebysig specialname instance valuetype System.Security.Permissions.SecurityPermissionFlag get_Flags() public hidebysig specialname instance void set_Flags(valuetype System.Security.Permissions.SecurityPermissionFlag value) }" />
-      <MemberSignature Language="C#" Value="public System.Security.Permissions.SecurityPermissionFlag Flags { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.SecurityPermissionFlag</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets values that define the
- permissions declared by the current instance.</para>
-        </summary>
         <value>
           <para> One or more <see cref="T:System.Security.Permissions.SecurityPermissionFlag" /> values.
  To specify multiple values in a set operation,
  use the bitwise OR operator.</para>
         </value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets all permission flags comprising the <see cref="T:System.Security.Permissions.SecurityPermission" /> permissions.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Infrastructure">
-      <MemberSignature Language="C#" Value="public bool Infrastructure { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Infrastructure { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Infrastructure" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -314,74 +351,107 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether code can plug into the common language runtime infrastructure, such as adding Remoting Context Sinks, Envoy Sinks and Dynamic Sinks.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RemotingConfiguration">
-      <MemberSignature Language="C#" Value="public bool RemotingConfiguration { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool RemotingConfiguration { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RemotingConfiguration" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether code can configure remoting types and channels.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SerializationFormatter">
-      <MemberSignature Language="C#" Value="public bool SerializationFormatter { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SerializationFormatter { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SerializationFormatter" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether code can use a serialization formatter to serialize or deserialize an object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SkipVerification">
-      <MemberSignature Language="C#" Value="public bool SkipVerification { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SkipVerification { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SkipVerification" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This is a powerful permission that should be granted only to highly trusted code.</para>
+          </block>
+          <para>For information on the use of <see cref="P:System.Security.Permissions.SecurityPermissionAttribute.SkipVerification" />, see <format type="text/html"><a href="095CD1F6-D8DB-4C0E-BCE2-83CCB34DD5DC">[&lt;topic://cpcontypesafetysecurity&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to bypass code verification is declared.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="UnmanagedCode">
-      <MemberSignature Language="C#" Value="public bool UnmanagedCode { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool UnmanagedCode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UnmanagedCode" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether permission to call unmanaged code is declared.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

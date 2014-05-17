@@ -271,7 +271,12 @@ namespace MonoTests.System.Linq
 				int [] first = Enumerable.Range (1, 10000).ToArray ();
 				int [] second = Enumerable.Range (323, 757).ToArray ();
 
-				AreEquivalent (first, first.AsReallyParallel ().Union (second.AsParallel ()));
+				var expected = first;
+				var actual = first.AsReallyParallel ().Union (second.AsParallel ()).ToArray ();
+				// Work around quadratic behavior in NUnitLite's CollectionTally class
+				Array.Sort (expected);
+				Array.Sort (actual);
+				AreEquivalent (expected, actual);
 			});
 		}
 
@@ -675,14 +680,18 @@ namespace MonoTests.System.Linq
 			ParallelTestHelper.Repeat (() => {
 				ParallelQuery<int> async_res1 = ParallelEnumerable.Range(0, 10000);
 				ParallelQuery<int> async_res2 = ParallelEnumerable.Repeat(1, 10000).Zip(async_res1, (e1, e2) => e1 + e2);
-				
+
 				int[] expected = Enumerable.Range (1, 10000).ToArray ();
-				AreEquivalent(expected, Enumerable.ToArray (async_res2));
+				var actual = Enumerable.ToArray (async_res2);
+				// Work around quadratic behavior in NUnitLite's CollectionTally class
+				Array.Sort (expected);
+				Array.Sort (actual);
+				AreEquivalent(expected, actual);
 			});
 		}
 		
 		[Test]
-		public void RangeTestCase ()
+		public void Range ()
 		{
 			ParallelTestHelper.Repeat (() => {
 				IEnumerable<int> sync  = Enumerable.Range(1, 1000);
@@ -691,7 +700,18 @@ namespace MonoTests.System.Linq
 				AreEquivalent (sync, async_res);
 			});
 		}
-		
+	
+		[Test]
+		public void Range_StartOffset ()
+		{
+			ParallelTestHelper.Repeat (() => {
+				IEnumerable<int> sync  = Enumerable.Range (30, 10);
+				IEnumerable<int> async_res = ParallelEnumerable.Range (30, 10);
+				
+				AreEquivalent (sync, async_res);
+			});
+		}
+
 		[Test]
 		public void RepeatTestCase ()
 		{

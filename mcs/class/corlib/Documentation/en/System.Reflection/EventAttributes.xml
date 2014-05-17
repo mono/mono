@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventAttributes" FullName="System.Reflection.EventAttributes" FullNameSP="System_Reflection_EventAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable EventAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum EventAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed EventAttributes extends System.Enum" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,116 +14,6 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>
-      <para> Specifies the attributes
-      of an event.
-      </para>
-    </summary>
-    <remarks>
-      <para>
-        <SPAN>This enumeration is used by
-      the <see cref="P:System.Reflection.EventInfo.Attributes" />
-      property.</SPAN>
-      </para>
-    </remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="None">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.EventAttributes None = 0" />
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.EventAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>None</MemberValue>
-      <Docs>
-        <summary>
-          <para>
-       Specifies that the event has
-       no attributes.
-    </para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReservedMask">
-      <MemberSignature Language="C#" Value="ReservedMask" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.EventAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>ReservedMask</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="RTSpecialName">
-      <MemberSignature Language="C#" Value="RTSpecialName" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.EventAttributes</ReturnType>
-      </ReturnValue>
-      <MemberValue>ReservedMask</MemberValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpecialName">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.EventAttributes SpecialName = 512" />
-      <MemberSignature Language="C#" Value="SpecialName" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.EventAttributes</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <MemberValue>SpecialName</MemberValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the event is treated in a special way by some tools.
-      </para>
-          <block subset="none" type="note">
-            <para> 
-         There are currently
-         no event names that are required to be marked as special names. This functionality is provided for extensions,
-         future standardization, and to increase consistency between the declaration of fields
-         and methods.</para>
-            <para>For more information on special names, see Partition I of the CLI
-         Specification.</para>
-            <para> For more information on <see langword="SpecialName" /> , see Partition II of the
-      CLI Specification.</para>
-          </block>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
-  <TypeExcluded>0</TypeExcluded>
   <Attributes>
     <Attribute>
       <AttributeName>System.Flags</AttributeName>
@@ -130,4 +22,108 @@
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>EventAttributes values may be combined using the bitwise OR operation to get the appropriate combination.</para>
+      <para>These enums are defined in the corhdr.h file and are a combination of bits and enumerators.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the attributes of an event.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.EventAttributes None = 0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.EventAttributes None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.EventAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the event has no attributes.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReservedMask">
+      <MemberSignature Language="C#" Value="ReservedMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.EventAttributes ReservedMask = int32(1024)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.EventAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReservedMask</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a reserved flag for common language runtime use only.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RTSpecialName">
+      <MemberSignature Language="C#" Value="RTSpecialName" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.EventAttributes RTSpecialName = int32(1024)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.EventAttributes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReservedMask</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the common language runtime should check name encoding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SpecialName">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.EventAttributes SpecialName = 512" />
+      <MemberSignature Language="C#" Value="SpecialName" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.EventAttributes SpecialName = int32(512)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.EventAttributes</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>SpecialName</MemberValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the event is special in a way described by the name.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+  </Members>
+  <TypeExcluded>0</TypeExcluded>
 </Type>

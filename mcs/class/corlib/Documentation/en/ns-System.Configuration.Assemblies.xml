@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Configuration.Assemblies" FullName="System.Configuration.Assemblies" FullNameSP="System.Configuration.Assemblies" Maintainer="Mono">
   <Docs>
-    <summary>
-        To be added.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Configuration.Assemblies" /> namespace contains classes that are used to configure an assembly.</para>
+    </summary>
   </Docs>
 </Namespace>

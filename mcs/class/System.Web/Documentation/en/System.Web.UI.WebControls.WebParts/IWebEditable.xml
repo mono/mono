@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebEditable" FullName="System.Web.UI.WebControls.WebParts.IWebEditable">
   <TypeSignature Language="C#" Value="public interface IWebEditable" />
   <AssemblyInfo>
@@ -6,9 +7,17 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.IWebEditable" /> interface enables you to associate custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls with a server control--such as a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control, a user control, or a custom server control. The <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls are contained with an <see cref="T:System.Web.UI.WebControls.WebParts.EditorZone" /> control, and this zone with its editing controls provides end users with a user interface (UI) for modifying properties, appearance, and behavior on the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.IWebEditable" /> interface includes two exposed members. The <see cref="P:System.Web.UI.WebControls.WebParts.IWebEditable.WebBrowsableObject" /> property provides a way for <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to get a reference to the associated server control. The <see cref="M:System.Web.UI.WebControls.WebParts.IWebEditable.CreateEditorParts" /> method is used to create an instance of each custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control associated with a server control, and return them as a collection.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.IWebEditable" /> interface is already implemented on the base <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> class, although by default this implementation does not associate any custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls with the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> class. To associate a derived <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control with custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls, you can override the <see cref="M:System.Web.UI.WebControls.WebParts.IWebEditable.CreateEditorParts" /> method. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for developers to specify custom editing controls that are associated with a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateEditorParts">
@@ -19,10 +28,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.IWebEditable.CreateEditorParts" /> method enables you to create a collection of all the custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls associated with your custom control, <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control, or user control, and return them as an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object. The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control takes the collection and creates instances of all the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls whenever the server control enters edit mode.</para>
+          <para>Typically you implement this method in a custom <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control by overriding its <see cref="M:System.Web.UI.WebControls.WebParts.WebPart.CreateEditorParts" /> method. In the method, you create instances of the custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls you want to associate with your controls, add them to an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object, and then return that object. The collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls is then assigned to the <see cref="P:System.Web.UI.WebControls.WebParts.EditorZoneBase.EditorParts" /> property of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zone. </para>
+          <block subset="none" type="note">
+            <para>Any <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> that is added to the collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls in an implementation of the <see cref="M:System.Web.UI.WebControls.WebParts.IWebEditable.CreateEditorParts" /> method must have a value assigned to its ID property, otherwise an exception will be thrown when the collection is assigned to the <see cref="P:System.Web.UI.WebControls.WebParts.EditorZoneBase.EditorParts" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls associated with a server control that implements the <see cref="T:System.Web.UI.WebControls.WebParts.IWebEditable" /> interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> that contains the collection of custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls associated with a server control. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,10 +57,17 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebParts.IWebEditable.WebBrowsableObject" /> property provides a way for <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to get a reference to the server controls they are associated with. </para>
+          <para>Although the property itself is read-only, the object reference that it returns enables <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to change values in the server control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control, user control, or custom control that will be edited by <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

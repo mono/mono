@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CalendarWeekRule" FullName="System.Globalization.CalendarWeekRule">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum CalendarWeekRule" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CalendarWeekRule extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,66 +13,453 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="FirstDay">
-      <MemberSignature Language="C#" Value="FirstDay" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="FirstFourDayWeek">
-      <MemberSignature Language="C#" Value="FirstFourDayWeek" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="FirstFullWeek">
-      <MemberSignature Language="C#" Value="FirstFullWeek" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A member of the <see cref="T:System.Globalization.CalendarWeekRule" /> enumeration is returned by the <see cref="P:System.Globalization.DateTimeFormatInfo.CalendarWeekRule" /> property and is used by the culture's current calendar to determine the calendar week rule. The enumeration value is also used as a parameter to the <see cref="M:System.Globalization.Calendar.GetWeekOfYear(System.DateTime,System.Globalization.CalendarWeekRule,System.DayOfWeek)" /> method. </para>
+      <para>Calendar week rules depend on the <see cref="T:System.DayOfWeek" /> value that indicates the first day of the week in addition to depending on a <see cref="T:System.Globalization.CalendarWeekRule" /> value. The <see cref="P:System.Globalization.DateTimeFormatInfo.FirstDayOfWeek" /> property provides the default value for a culture, but any <see cref="T:System.DayOfWeek" /> value can be specified as the first day of the week in the <see cref="M:System.Globalization.Calendar.GetWeekOfYear(System.DateTime,System.Globalization.CalendarWeekRule,System.DayOfWeek)" /> method.</para>
+      <para>The first week based on the <see cref="F:System.Globalization.CalendarWeekRule.FirstDay" /> value can have one to seven days. The first week based on the <see cref="F:System.Globalization.CalendarWeekRule.FirstFullWeek" /> value always has seven days. The first week based on the <see cref="F:System.Globalization.CalendarWeekRule.FirstFourDayWeek" /> value can have four to seven days.</para>
+      <para>For example, in the Gregorian calendar, suppose that the first day of the year (January 1) falls on a Tuesday and the designated first day of the week is Sunday. Selecting <see cref="F:System.Globalization.CalendarWeekRule.FirstFullWeek" /> defines the first Sunday (January 6) as the beginning of the first week of the year. The first five days of the year are considered part of the last week of the previous year. In contrast, selecting <see cref="F:System.Globalization.CalendarWeekRule.FirstFourDayWeek" /> defines the first day of the year (January 1) as the beginning of the first week of the year because there are more than four days from January 1 to the day before the following Sunday. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Date </para>
+            </term>
+            <description>
+              <para>FirstDay </para>
+            </description>
+            <description>
+              <para>FirstFullWeek </para>
+            </description>
+            <description>
+              <para>FirstFourDayWeek </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Dec 31 Mon </para>
+          </term>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 1 Tue </para>
+          </term>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 2 Wed </para>
+          </term>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 3 Thu </para>
+          </term>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 4 Fri </para>
+          </term>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 5 Sat </para>
+          </term>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 6 Sun </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 7 Mon </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 8 Tue </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 9 Wed </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 10 Thu </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 11 Fri </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 12 Sat </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 2 </para>
+          </description>
+        </item>
+      </list>
+      <para>Suppose the first day of the year (January 1) falls on a Friday and the designated first day of the week is Sunday. Selecting <see cref="F:System.Globalization.CalendarWeekRule.FirstFourDayWeek" /> defines the first Sunday (January 3) as the beginning of the first week of the year because there are fewer than four days from January 1 to the day before the following Sunday.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Date </para>
+            </term>
+            <description>
+              <para>FirstDay </para>
+            </description>
+            <description>
+              <para>FirstFullWeek </para>
+            </description>
+            <description>
+              <para>FirstFourDayWeek </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Dec 31 Thu </para>
+          </term>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 1 Fri </para>
+          </term>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 2 Sat </para>
+          </term>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+          <description>
+            <para>Last week of the previous year </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 3 Sun </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 4 Mon </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 5 Tue </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 6 Wed </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 7 Thu </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 8 Fri </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Jan 9 Sat </para>
+          </term>
+          <description>
+            <para>Week 2 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+          <description>
+            <para>Week 1 </para>
+          </description>
+        </item>
+      </list>
+      <para>The following example illustrates how the <see cref="T:System.Globalization.CalendarWeekRule" /> and <see cref="T:System.DayOfWeek" /> values are used together to determine how weeks are assigned. In the Gregorian calendar, the first day of the year (January 1) in 2013 falls on a Tuesday. If the designated first day of the week is Sunday, the first Sunday (January 6) is the first day of the first week of the year, and Saturday (January 5) belongs to the fifty-third week of the previous year. Changing the calendar week rule to <see cref="F:System.Globalization.CalendarWeekRule.FirstFourDayWeek" /> defines Tuesday (January 1) as the beginning of the first week of the year, because there are more than four days between Tuesday, January 1, and Sunday, January 6. Using this rule, January 5 belongs to the first week of the year. For 2010, a year in which January 1 falls on a Friday, applying the <see cref="F:System.Globalization.CalendarWeekRule.FirstFourDayWeek" /> rule with <see cref="F:System.DayOfWeek.Sunday" /> as the first day of the week makes Sunday, January 3 the beginning of the first week of the year, because the first week in 2010 that has more than four days is January 3 through 9. </para>
+      <para>code reference: System.Globalization.CalendarWeekRule#1</para>
+      <block subset="none" type="note">
+        <para>This does not map exactly to ISO 8601. The differences are discussed in the blog entry <see cref="http://go.microsoft.com/fwlink/?LinkId=160851">ISO 8601 Week of Year format in Microsoft .Net</see>.</para>
+      </block>
+      <para>Each <see cref="T:System.Globalization.CultureInfo" /> object supports a set of calendars. The <see cref="P:System.Globalization.CultureInfo.Calendar" /> property returns the default calendar for the culture, and the <see cref="P:System.Globalization.CultureInfo.OptionalCalendars" /> property returns an array containing all the calendars supported by the culture. To change the calendar used by a <see cref="T:System.Globalization.CultureInfo" />, the application should set the <see cref="P:System.Globalization.DateTimeFormatInfo.Calendar" /> property of <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" /> to a new <see cref="T:System.Globalization.Calendar" />.</para>
+      <para />
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines different rules for determining the first week of the year.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="FirstDay">
+      <MemberSignature Language="C#" Value="FirstDay" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarWeekRule FirstDay = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the first week of the year starts on the first day of the year and ends before the following designated first day of the week. The value is 0.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FirstFourDayWeek">
+      <MemberSignature Language="C#" Value="FirstFourDayWeek" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarWeekRule FirstFourDayWeek = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the first week of the year is the first week with four or more days before the designated first day of the week. The value is 2.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FirstFullWeek">
+      <MemberSignature Language="C#" Value="FirstFullWeek" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarWeekRule FirstFullWeek = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the first week of the year begins on the first occurrence of the designated first day of the week on or after the first day of the year. The value is 1.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

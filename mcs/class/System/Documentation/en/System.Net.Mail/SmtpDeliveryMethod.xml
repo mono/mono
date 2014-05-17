@@ -1,59 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SmtpDeliveryMethod" FullName="System.Net.Mail.SmtpDeliveryMethod">
   <TypeSignature Language="C#" Value="public enum SmtpDeliveryMethod" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SmtpDeliveryMethod extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Net.Mail.SmtpDeliveryMethod" /> enumeration as a parameter to the <see cref="P:System.Net.Mail.SmtpClient.DeliveryMethod" /> property to specify the delivery method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how email messages are delivered.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Network">
       <MemberSignature Language="C#" Value="Network" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Mail.SmtpDeliveryMethod Network = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Mail.SmtpDeliveryMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Email is sent through the network to an SMTP server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PickupDirectoryFromIis">
       <MemberSignature Language="C#" Value="PickupDirectoryFromIis" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Mail.SmtpDeliveryMethod PickupDirectoryFromIis = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Mail.SmtpDeliveryMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Email is copied to the pickup directory used by a local Internet Information Services (IIS) for delivery.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SpecifiedPickupDirectory">
       <MemberSignature Language="C#" Value="SpecifiedPickupDirectory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Mail.SmtpDeliveryMethod SpecifiedPickupDirectory = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Mail.SmtpDeliveryMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Email is copied to the directory specified by the <see cref="P:System.Net.Mail.SmtpClient.PickupDirectoryLocation" /> property for delivery by an external application.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IteratorStateMachineAttribute" FullName="System.Runtime.CompilerServices.IteratorStateMachineAttribute">
+  <TypeSignature Language="C#" Value="public sealed class IteratorStateMachineAttribute : System.Runtime.CompilerServices.StateMachineAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit IteratorStateMachineAttribute extends System.Runtime.CompilerServices.StateMachineAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Runtime.CompilerServices.StateMachineAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You shouldn't apply the <unmanagedCodeEntityReference>IteratorStateMachine</unmanagedCodeEntityReference> attribute to methods in your code. For methods in Visual Basic that have the <format type="text/html"><a href="69cb0b04-ac87-49d0-bcfe-810c0d60daff">Iterator (Visual Basic)</a></format> modifier, the compiler will apply the <unmanagedCodeEntityReference>IteratorStateMachine</unmanagedCodeEntityReference> attribute in the IL that it emits.</para>
+      <para>When a method (MethodName) in Visual Basic has the Iterator modifier, the compiler emits IL that includes a state machine structure. That structure contains the code in the method. That IL also contains a stub method (MethodName) that calls into the state machine. The compiler adds the <unmanagedCodeEntityReference>IteratorStateMachine</unmanagedCodeEntityReference> attribute to the stub method so that tools can identify the corresponding state machine. Details of the emitted IL might change in future releases of the compilers.</para>
+      <para>An iterator method performs a custom iteration over a collection by using the Yield (Visual Basic) statement to return each element one at a time. For more information, see <format type="text/html"><a href="f45331db-d595-46ec-9142-551d3d1eb1a7">Iterators (C# and Visual Basic)</a></format>.</para>
+      <block subset="none" type="note">
+        <para>You can't use <unmanagedCodeEntityReference>IteratorStateMachineAttribute</unmanagedCodeEntityReference> to test whether a method is an iterator method in C#.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether a method in Visual Basic is marked with the Iterator modifier.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IteratorStateMachineAttribute (Type stateMachineType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type stateMachineType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stateMachineType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.IteratorStateMachineAttribute" /> class.</para>
+        </summary>
+        <param name="stateMachineType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type object for the underlying state machine type that's used to implement a state machine method.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

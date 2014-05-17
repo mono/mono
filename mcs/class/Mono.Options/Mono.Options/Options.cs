@@ -1135,7 +1135,7 @@ namespace Mono.Options
 					if (i == 0)
 						return false;
 					throw new OptionException (string.Format (localizer (
-									"Cannot bundle unregistered option '{0}'."), opt), opt);
+									"Cannot use unregistered option '{0}' in bundle '{1}'."), rn, f + n), null);
 				}
 				p = this [rn];
 				switch (p.OptionValueType) {

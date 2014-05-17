@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComparer&lt;T&gt;" FullName="System.Collections.Generic.IComparer&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IComparer&lt;in T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IComparer`1&lt;- T&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,16 +17,28 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>
-      <para>Provides a mechanism to customize comparison in sort ordering of a generic collection.</para>
-    </summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is used with the <see cref="Overload:System.Collections.Generic.List`1.Sort" /> and <see cref="Overload:System.Collections.Generic.List`1.BinarySearch" /> methods. It provides a way to customize the sort order of a collection. Classes that implement this interface include the <see cref="T:System.Collections.Generic.SortedDictionary`2" /> and <see cref="T:System.Collections.Generic.SortedList`2" /> generic classes.</para>
+      <para>The default implementation of this interface is the <see cref="T:System.Collections.Generic.Comparer`1" /> class. The <see cref="T:System.StringComparer" /> class implements this interface for type <see cref="T:System.String" />.</para>
+      <para>This interface supports ordering comparisons. That is, when the <see cref="M:System.Collections.Generic.Comparer`1.Compare(`0,`0)" /> method returns 0, it means that two objects sort the same. Implementation of exact equality comparisons is provided by the <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> generic interface. </para>
+      <para>We recommend that you derive from the <see cref="T:System.Collections.Generic.Comparer`1" /> class instead of implementing the <see cref="T:System.Collections.Generic.IComparer`1" /> interface, because the <see cref="T:System.Collections.Generic.Comparer`1" /> class provides an explicit interface implementation of the <see cref="M:System.Collections.Generic.Comparer`1.System#Collections#IComparer#Compare(System.Object,System.Object)" /> method and the <see cref="P:System.Collections.Generic.Comparer`1.Default" /> property that gets the default comparer for the object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a method that a type implements to compare two objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public int Compare (T x, T y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Compare(!T x, !T y) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -88,10 +102,6 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

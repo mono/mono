@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WriteOnlyArrayAttribute" FullName="System.Runtime.InteropServices.WindowsRuntime.WriteOnlyArrayAttribute">
+  <TypeSignature Language="C#" Value="public sealed class WriteOnlyArrayAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit WriteOnlyArrayAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple=false, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If an array parameter in your wrt component is passed by value (ByVal in Visual Basic), you must apply one of the following attributes to it: </para>
+      <list type="bullet">
+        <item>
+          <para>Apply the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.ReadOnlyArrayAttribute" /> attribute if you intend the contents of the array to be used for input only. </para>
+        </item>
+        <item>
+          <para>Apply the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.WriteOnlyArrayAttribute" /> attribute if you intend the contents of the array to be used for output only (that is, the method sets the contents of the array but does not read them).</para>
+        </item>
+      </list>
+      <para>Applying both attributes to a parameter causes an error. For more information, including the standard pattern for making changes to an array, see <see cref="http://go.microsoft.com/fwlink/?LinkId=251026">Passing arrays to a Windows Runtime component</see> in the Windows Dev Center.</para>
+      <block subset="none" type="note">
+        <para>Parameters that have the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.WriteOnlyArrayAttribute" /> attribute behave differently depending on whether the caller is written in native code or managed code. If the caller is native code (JavaScript or cppwrt), the called method can't make any assumptions about the contents of the original array. For example, the array the method receives might not be initialized, or might contain default values. The method is expected to set the values of all the elements in the array. </para>
+        <para>If the caller is managed code, the caller's original array is passed to the called method, as it would be in any method call in the .NET Framework. Array contents are mutable in managed code, so the method can selectively read and change those values. This is important to remember because it affects unit tests written for a wrt component. If the tests are written in managed code, the contents of an array will appear to be mutable during testing, and the results are likely to be different if the method is called from native code later. </para>
+      </block>
+      <para>Applying this attribute to an out parameter or to a parameter that has the <see cref="T:System.Runtime.InteropServices.InAttribute" /> attribute causes an error when the module is exported. Applying the attribute to a parameter that has the <see cref="T:System.Runtime.InteropServices.OutAttribute" /> attribute causes an error unless the parameter also has the Visual Basic ByRef modifier. In that case, the attribute is redundant but allowed. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When applied to an array parameter in a wrt component, specifies that the contents of an array that is passed to that parameter are used only for output. The caller does not guarantee that the contents are initialized, and the called method should not read the contents. See the Remarks section for important information about callers that are written using managed code.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WriteOnlyArrayAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.WriteOnlyArrayAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

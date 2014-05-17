@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CancellationToken" FullName="System.Threading.CancellationToken">
   <TypeSignature Language="C#" Value="public struct CancellationToken" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit CancellationToken extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,13 +10,25 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerDisplay("IsCancellationRequested = {IsCancellationRequested}")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information and code examples see <format type="text/html"><a href="eea11fe5-d8b0-4314-bb5d-8a58166fb1c3">Cancellation</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Propagates notification that operations should be canceled.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CancellationToken (bool canceled);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool canceled) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -23,13 +37,22 @@
         <Parameter Name="canceled" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="canceled">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tokens created with this constructor will remain in the canceled state specified by the <paramref name="canceled" /> parameter. If <paramref name="canceled" /> is false, both <see cref="P:System.Threading.CancellationToken.CanBeCanceled" /> and <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> will be false.</para>
+          <para> If <paramref name="canceled" /> is true, both <see cref="P:System.Threading.CancellationToken.CanBeCanceled" /> and <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> will be true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Threading.CancellationToken" />.</para>
+        </summary>
+        <param name="canceled">
+          <attribution license="cc4" from="Microsoft" modified="false" />The canceled state for the token.</param>
       </Docs>
     </Member>
     <Member MemberName="CanBeCanceled">
       <MemberSignature Language="C#" Value="public bool CanBeCanceled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanBeCanceled" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -38,13 +61,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If CanBeCanceled returns false, it is guaranteed that the token will never transition into a canceled state, meaning that <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> will never return true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether this token is capable of being in the canceled state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object other) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -53,17 +83,25 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current <see cref="T:System.Threading.CancellationToken" /> instance is equal to the specified <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if <paramref name="other" /> is a <see cref="T:System.Threading.CancellationToken" /> and if the two instances are equal; otherwise, false. Two tokens are equal if they are associated with the same <see cref="T:System.Threading.CancellationTokenSource" /> or if they were both constructed from public CancellationToken constructors and their <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> values are equal.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The other object to which to compare this instance.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (System.Threading.CancellationToken other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(valuetype System.Threading.CancellationToken other) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -75,14 +113,22 @@
         <Parameter Name="other" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current <see cref="T:System.Threading.CancellationToken" /> instance is equal to the specified token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the instances are equal; otherwise, false. Two tokens are equal if they are associated with the same <see cref="T:System.Threading.CancellationTokenSource" /> or if they were both constructed from public CancellationToken constructors and their <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> values are equal.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The other <see cref="T:System.Threading.CancellationToken" /> to which to compare this instance.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -92,13 +138,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for a <see cref="T:System.Threading.CancellationToken" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Threading.CancellationToken" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsCancellationRequested">
       <MemberSignature Language="C#" Value="public bool IsCancellationRequested { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCancellationRequested" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -107,13 +160,23 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> This property indicates whether cancellation has been requested for this token, either through the token initially being constructed in a canceled state, or through calling <see cref="M:System.Threading.CancellationTokenSource.Cancel" /> on the token's associated <see cref="T:System.Threading.CancellationTokenSource" />.</para>
+          <para>  If this property is true, it only guarantees that cancellation has been requested. </para>
+          <para> It does not guarantee that every registered handler has finished executing, nor that cancellation requests have finished propagating to all registered handlers. Additional synchronization may be required, particularly in situations where related objects are being canceled concurrently.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether cancellation has been requested for this token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="public static System.Threading.CancellationToken None { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Threading.CancellationToken None" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -122,13 +185,20 @@
         <ReturnType>System.Threading.CancellationToken</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationToken" /> value returned by this property will be non-cancelable by default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an empty CancellationToken value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
-      <MemberSignature Language="C#" Value="public static bool op_Equality (System.Threading.CancellationToken lhs, System.Threading.CancellationToken rhs);" />
+      <MemberSignature Language="C#" Value="public static bool op_Equality (System.Threading.CancellationToken left, System.Threading.CancellationToken right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Threading.CancellationToken left, valuetype System.Threading.CancellationToken right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -137,19 +207,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="lhs" Type="System.Threading.CancellationToken" />
-        <Parameter Name="rhs" Type="System.Threading.CancellationToken" />
+        <Parameter Name="left" Type="System.Threading.CancellationToken" />
+        <Parameter Name="right" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="lhs">To be added.</param>
-        <param name="rhs">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.Threading.CancellationToken" /> instances are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the instances are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first instance.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second instance.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
-      <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Threading.CancellationToken lhs, System.Threading.CancellationToken rhs);" />
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Threading.CancellationToken left, System.Threading.CancellationToken right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Threading.CancellationToken left, valuetype System.Threading.CancellationToken right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -158,19 +237,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="lhs" Type="System.Threading.CancellationToken" />
-        <Parameter Name="rhs" Type="System.Threading.CancellationToken" />
+        <Parameter Name="left" Type="System.Threading.CancellationToken" />
+        <Parameter Name="right" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="lhs">To be added.</param>
-        <param name="rhs">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.Threading.CancellationToken" /> instances are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the instances are not equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first instance.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second instance.</param>
       </Docs>
     </Member>
     <Member MemberName="Register">
       <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action callback) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -182,14 +270,27 @@
         <Parameter Name="callback" Type="System.Action" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propagated out of this method call.</para>
+          <para>  The current <see cref="T:System.Threading.ExecutionContext" />, if one exists, will be captured along with the delegate and will be used when executing it.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
       </Docs>
     </Member>
     <Member MemberName="Register">
       <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action callback, bool useSynchronizationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -202,15 +303,29 @@
         <Parameter Name="useSynchronizationContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="useSynchronizationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propogated out of this method call.</para>
+          <para>  The current <see cref="T:System.Threading.ExecutionContext" />, if one exists, will be captured along with the delegate and will be used when executing it.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
+        <param name="useSynchronizationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether to capture the current <see cref="T:System.Threading.SynchronizationContext" /> and use it when invoking the <paramref name="callback" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Register">
       <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action&lt;object&gt; callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action`1&lt;object&gt; callback, object state) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -223,15 +338,29 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propogated out of this method call.</para>
+          <para>  The current <see cref="T:System.Threading.ExecutionContext" />, if one exists, will be captured along with the delegate and will be used when executing it.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state to pass to the <paramref name="callback" /> when the delegate is invoked. This may be null.</param>
       </Docs>
     </Member>
     <Member MemberName="Register">
       <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action&lt;object&gt; callback, object state, bool useSynchronizationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action`1&lt;object&gt; callback, object state, bool useSynchronizationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -245,16 +374,31 @@
         <Parameter Name="useSynchronizationContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="useSynchronizationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propogated out of this method call.</para>
+          <para>  The current <see cref="T:System.Threading.ExecutionContext" />, if one exists, will be captured along with the delegate and will be used when executing it.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state to pass to the <paramref name="callback" /> when the delegate is invoked. This may be null.</param>
+        <param name="useSynchronizationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether to capture the current <see cref="T:System.Threading.SynchronizationContext" /> and use it when invoking the <paramref name="callback" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ThrowIfCancellationRequested">
       <MemberSignature Language="C#" Value="public void ThrowIfCancellationRequested ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ThrowIfCancellationRequested() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -264,12 +408,25 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides functionality equivalent to:</para>
+          <para>C#</para>
+          <code>    if (token.IsCancellationRequested) 
+        throw new OperationCanceledException(token);</code>
+          <code>    If token.IsCancellationRequested Then
+        Throw New OperationCanceledException(token)
+    End If</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.OperationCanceledException" /> if this token has had cancellation requested.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WaitHandle">
       <MemberSignature Language="C#" Value="public System.Threading.WaitHandle WaitHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.WaitHandle WaitHandle" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -278,9 +435,15 @@
         <ReturnType>System.Threading.WaitHandle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Accessing this property causes a <see cref="T:System.Threading.WaitHandle" /> to be instantiated. It is preferable to only use this property when necessary, and to then dispose the associated <see cref="T:System.Threading.CancellationTokenSource" /> instance at the earliest opportunity (disposing the source will dispose of this allocated handle). The handle should not be closed or disposed directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Threading.WaitHandle" /> that is signaled when the token is canceled.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

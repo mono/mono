@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileSecurity" FullName="System.Security.AccessControl.FileSecurity">
   <TypeSignature Language="C#" Value="public sealed class FileSecurity : System.Security.AccessControl.FileSystemSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit FileSecurity extends System.Security.AccessControl.FileSystemSecurity" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,43 +12,73 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.AccessControl.FileSecurity" /> class specifies the access rights for a system file and how access attempts are audited.  This class represents access and audit rights as a set of rules. Each access rule is represented by a <see cref="T:System.Security.AccessControl.FileSystemAccessRule" /> object, while each audit rule is represented by a <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> object.</para>
+      <para>The <see cref="T:System.Security.AccessControl.FileSecurity" /> class is an abstraction of the underlying Microsoft Windows file security system. In this system, each file has a discretionary access control list (DACL), which controls access to the file, and a system access control list (SACL), which specifies the access control attempts that are audited.  The <see cref="T:System.Security.AccessControl.FileSystemAccessRule" /> and <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> classes are abstractions of the access control entries (ACEs) that comprise DACLs and SACLs.      </para>
+      <para>The <see cref="T:System.Security.AccessControl.FileSecurity" /> class hides many of the details of DACLs and SACLs; you do not have to worry about ACE ordering or null DACLS.</para>
+      <para>Use the <see cref="T:System.Security.AccessControl.FileSecurity" /> class to retrieve, add, or change the access rules that represent the DACL and SACL of a file.</para>
+      <para>To persist new or changed access or audit rules to a file, use the <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> method. To retrieve access or audit rules from an existing file, use the <see cref="M:System.IO.FileInfo.GetAccessControl" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the access control and audit security for a file. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public FileSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor when you want to create an empty <see cref="T:System.Security.AccessControl.FileSecurity" /> object that is not based on an existing file.  You can then populate the object with access control information and apply it to a file.  </para>
+          <para>You can add access or audit rules to the <see cref="T:System.Security.AccessControl.FileSecurity" /> object using the <see cref="M:System.Security.AccessControl.FileSystemSecurity.AddAccessRule(System.Security.AccessControl.FileSystemAccessRule)" /> method. You can remove access or audit rules using the <see cref="M:System.Security.AccessControl.FileSystemSecurity.RemoveAccessRule(System.Security.AccessControl.FileSystemAccessRule)" /> method.  </para>
+          <para>To persist new or changed access or audit rules to a file, use the <see cref="M:System.IO.File.SetAccessControl(System.String,System.Security.AccessControl.FileSecurity)" /> or <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> method.  To retrieve access or audit rules from an existing file, use the <see cref="M:System.IO.File.GetAccessControl(System.String,System.Security.AccessControl.AccessControlSections)" /> or <see cref="M:System.IO.FileInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.FileSecurity" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public FileSecurity (string fileName, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string fileName, valuetype System.Security.AccessControl.AccessControlSections includeSections) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="fileName" Type="System.String" />
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="includeSections">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor retrieves the access control information for the specified file and then creates a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates that information.  You can then inspect, add, or delete the access control information for the specified file.    </para>
+          <para>You can add access or audit rules to the <see cref="T:System.Security.AccessControl.FileSecurity" /> object using the <see cref="M:System.Security.AccessControl.FileSystemSecurity.AddAccessRule(System.Security.AccessControl.FileSystemAccessRule)" /> method. You can remove access or audit rules using the <see cref="M:System.Security.AccessControl.FileSystemSecurity.RemoveAccessRule(System.Security.AccessControl.FileSystemAccessRule)" /> method.  </para>
+          <para>To persist new or changed access or audit rules to a file, use the <see cref="M:System.IO.File.SetAccessControl(System.String,System.Security.AccessControl.FileSecurity)" /> or <see cref="M:System.IO.FileInfo.SetAccessControl(System.Security.AccessControl.FileSecurity)" /> method.  To retrieve access or audit rules from an existing file, use the <see cref="M:System.IO.File.GetAccessControl(System.String,System.Security.AccessControl.AccessControlSections)" /> or <see cref="M:System.IO.FileInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.FileSecurity" /> class from a specified file using the specified values of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> enumeration.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location of a file to create a <see cref="T:System.Security.AccessControl.FileSecurity" /> object from.</param>
+        <param name="includeSections">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> values that specifies the type of access control list (ACL) information to retrieve. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

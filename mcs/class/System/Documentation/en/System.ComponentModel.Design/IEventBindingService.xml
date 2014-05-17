@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IEventBindingService" FullName="System.ComponentModel.Design.IEventBindingService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IEventBindingService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEventBindingService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
@@ -15,13 +18,27 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The event binding service provides a way to link an event handler with a component event from designer code.</para>
+      <para>To link an event handler with a component event using the <see cref="T:System.ComponentModel.Design.IEventBindingService" />, you must first obtain an <see cref="T:System.ComponentModel.EventDescriptor" /> for the event of the component you intend to link. The <see cref="T:System.ComponentModel.Design.IEventBindingService" /> provides methods that can convert an <see cref="T:System.ComponentModel.EventDescriptor" /> to a <see cref="T:System.ComponentModel.PropertyDescriptor" /> which you can use to configure the event with an event handler method name.</para>
+      <para>The <see cref="T:System.ComponentModel.TypeDescriptor" /> object provides a <see cref="M:System.ComponentModel.TypeDescriptor.GetEvents(System.Type)" /> method that you can use to obtain an <see cref="T:System.ComponentModel.EventDescriptorCollection" /> containing <see cref="T:System.ComponentModel.EventDescriptor" /> objects for each event of a component. The <see cref="M:System.ComponentModel.Design.IEventBindingService.GetEventProperty(System.ComponentModel.EventDescriptor)" /> and <see cref="M:System.ComponentModel.Design.IEventBindingService.GetEventProperties(System.ComponentModel.EventDescriptorCollection)" /> methods of the <see cref="T:System.ComponentModel.Design.IEventBindingService" /> return a <see cref="T:System.ComponentModel.PropertyDescriptor" /> for each <see cref="T:System.ComponentModel.EventDescriptor" /> passed to either method. Each <see cref="T:System.ComponentModel.PropertyDescriptor" /> returned from <see cref="M:System.ComponentModel.Design.IEventBindingService.GetEventProperty(System.ComponentModel.EventDescriptor)" /> or <see cref="M:System.ComponentModel.Design.IEventBindingService.GetEventProperties(System.ComponentModel.EventDescriptorCollection)" /> has a property type of string. You can set this string to a value that indicates the name of the event-handler method to link the event with using the <see cref="M:System.ComponentModel.PropertyDescriptor.SetValue(System.Object,System.Object)" /> method of the <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a service for registering event handlers for component events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateUniqueMethodName">
       <MemberSignature Language="C#" Value="public string CreateUniqueMethodName (System.ComponentModel.IComponent component, System.ComponentModel.EventDescriptor e);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string CreateUniqueMethodName(class System.ComponentModel.IComponent component, class System.ComponentModel.EventDescriptor e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -30,20 +47,33 @@
         <Parameter Name="e" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <param name="e">To be added: an object of type 'ComponentModel.EventDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a name that is unique from any other method name in the user's source code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a unique name for an event-handler method for the specified component and event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The recommended name for the event-handler method for this event.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component instance the event is connected to. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event to create a name for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCompatibleMethods">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection GetCompatibleMethods (System.ComponentModel.EventDescriptor e);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ICollection GetCompatibleMethods(class System.ComponentModel.EventDescriptor e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
@@ -51,19 +81,31 @@
         <Parameter Name="e" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'ComponentModel.EventDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.ICollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each string in the collection is the name of a method that has a method signature compatible with the specified event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of event-handler methods that have a method signature compatible with the specified event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of strings.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event to get the compatible event-handler methods for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvent">
       <MemberSignature Language="C#" Value="public System.ComponentModel.EventDescriptor GetEvent (System.ComponentModel.PropertyDescriptor property);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.EventDescriptor GetEvent(class System.ComponentModel.PropertyDescriptor property) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -71,19 +113,28 @@
         <Parameter Name="property" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="property">To be added: an object of type 'ComponentModel.PropertyDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ComponentModel.EventDescriptor'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.ComponentModel.EventDescriptor" /> for the event that the specified property descriptor represents, if it represents an event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> for the event that the property represents, or null if the property does not represent an event.</para>
+        </returns>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property that represents an event. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEventProperties">
       <MemberSignature Language="C#" Value="public System.ComponentModel.PropertyDescriptorCollection GetEventProperties (System.ComponentModel.EventDescriptorCollection events);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.PropertyDescriptorCollection GetEventProperties(class System.ComponentModel.EventDescriptorCollection events) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -91,19 +142,31 @@
         <Parameter Name="events" Type="System.ComponentModel.EventDescriptorCollection" />
       </Parameters>
       <Docs>
-        <param name="events">To be added: an object of type 'ComponentModel.EventDescriptorCollection'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ComponentModel.PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each returned <see cref="T:System.ComponentModel.PropertyDescriptor" /> has a <see cref="P:System.ComponentModel.PropertyDescriptor.PropertyType" /> of string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a set of event descriptors to a set of property descriptors.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects that describe the event set.</para>
+        </returns>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events to convert to properties. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEventProperty">
       <MemberSignature Language="C#" Value="public System.ComponentModel.PropertyDescriptor GetEventProperty (System.ComponentModel.EventDescriptor e);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.PropertyDescriptor GetEventProperty(class System.ComponentModel.EventDescriptor e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
@@ -111,36 +174,59 @@
         <Parameter Name="e" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'ComponentModel.EventDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ComponentModel.PropertyDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.ComponentModel.PropertyDescriptor" /> has a <see cref="P:System.ComponentModel.PropertyDescriptor.PropertyType" /> of string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a single event descriptor to a property descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that describes the event.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event to convert. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShowCode">
       <MemberSignature Language="C#" Value="public bool ShowCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ShowCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method displays the code editor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the user code for the designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the code is displayed; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShowCode">
       <MemberSignature Language="C#" Value="public bool ShowCode (int lineNumber);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ShowCode(int32 lineNumber) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -148,19 +234,31 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="lineNumber">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method displays the code editor and positions the cursor on the specified line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the user code for the designer at the specified line.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the code is displayed; otherwise, false.</para>
+        </returns>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line number to place the caret on. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShowCode">
       <MemberSignature Language="C#" Value="public bool ShowCode (System.ComponentModel.IComponent component, System.ComponentModel.EventDescriptor e);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ShowCode(class System.ComponentModel.IComponent component, class System.ComponentModel.EventDescriptor e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -169,16 +267,23 @@
         <Parameter Name="e" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <param name="e">To be added: an object of type 'ComponentModel.EventDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method displays the code editor and positions the cursor on the line that the specified event is declared on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the user code for the specified event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the code is displayed; otherwise, false.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that the event is connected to. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event to display. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

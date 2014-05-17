@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AttributeUsageAttribute" FullName="System.AttributeUsageAttribute" FullNameSP="System_AttributeUsageAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable AttributeUsageAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class AttributeUsageAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit AttributeUsageAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,76 +25,89 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Specifies the behavior of
-      a custom attribute when that attribute is defined.</para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note"> Custom attributes
-      can be applied to various application ("target") elements, such as classes,
-      parameters, and structures (see <see cref="T:System.AttributeTargets" /> for the full list). The <see cref="T:System.AttributeUsageAttribute" />
-      class contains three properties that govern custom attribute behavior: the kinds
-      of application elements the attribute can be associated with; whether the
-      attribute can or cannot be inherited by derived elements; and whether multiple
-      instances of the attribute can or cannot be allowed on the
-      same target element. </block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you are defining your own attribute class, you can control the manner in which it is used by placing an <see cref="T:System.AttributeUsageAttribute" /> on your attribute class. The indicated attribute class must derive from <see cref="T:System.Attribute" />, either directly or indirectly.</para>
+      <para>Attribute classes have positional and named parameters. Each public constructor for an attribute class defines a valid sequence of positional parameters for that class. Named parameters are defined by the non-static, public, and read-write fields or properties of the attribute class.</para>
+      <para>The three properties of <see cref="T:System.AttributeUsageAttribute" /> are set by defining the following parameters: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.AttributeUsageAttribute.ValidOn" /> </para>
+        </item>
+      </list>
+      <para>This positional parameter specifies the program elements that the indicated attribute can be placed on. The set of all possible elements that you can place an attribute on is listed in the <see cref="T:System.AttributeTargets" /> enumeration. You can combine several <see cref="T:System.AttributeTargets" /> values using a bitwise OR operation to get the desired combination of valid program elements.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> </para>
+        </item>
+      </list>
+      <para>This named parameter specifies whether the indicated attribute can be specified more than once for a given program element.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.AttributeUsageAttribute.Inherited" /> </para>
+        </item>
+      </list>
+      <para>This named parameter specifies whether the indicated attribute can be inherited by derived classes and overriding members.</para>
+      <para>For more information about using attributes, see <see cref="T:System.Attribute" /> and <format type="text/html"><a href="30386922-1E00-4602-9EBF-526B271A8B87">[&lt;topic://cpconExtendingMetadataUsingAttributes&gt;]</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the usage of another attribute class. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.AttributeTargets validOn)" />
       <MemberSignature Language="C#" Value="public AttributeUsageAttribute (AttributeTargets validOn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.AttributeTargets validOn) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="validOn" Type="System.AttributeTargets" />
-      </Parameters>
-      <Docs>
-        <param name="validOn">The set of application elements to which the attribute will be applied. When indicating multiple application elements, <paramref name="validOn" /> is a bitwise OR combination of <see cref="T:System.AttributeTargets" /> enumeration values.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.AttributeUsageAttribute" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>The new instance will be constructed with the specified
-      value of <paramref name="validOn" /> and the properties <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> and <see cref="P:System.AttributeUsageAttribute.Inherited" /> set to their default values (<see langword="false" /> and
-   <see langword="true" />
-   respectively).</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="validOn" Type="System.AttributeTargets" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can combine several <see cref="T:System.AttributeTargets" /> values using a bitwise OR operation to get the desired combination of valid program elements.</para>
+          <para>For default property values, see the <see cref="P:System.AttributeUsageAttribute.ValidOn" />, <see cref="P:System.AttributeUsageAttribute.AllowMultiple" />, and <see cref="P:System.AttributeUsageAttribute.Inherited" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.AttributeUsageAttribute" /> class with the specified list of <see cref="T:System.AttributeTargets" />, the <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> value, and the <see cref="P:System.AttributeUsageAttribute.Inherited" /> value.</para>
+        </summary>
+        <param name="validOn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The set of values combined using a bitwise OR operation to indicate which program elements are valid. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="AllowMultiple">
       <MemberSignature Language="ILASM" Value=".property bool AllowMultiple { public hidebysig specialname instance bool get_AllowMultiple() public hidebysig specialname instance void set_AllowMultiple(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool AllowMultiple { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AllowMultiple { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowMultiple" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets a value indicating whether more than one instance of a specified attribute is permitted to be applied
-      to any given program element.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates more than one instance of the
    attribute is permitted to be applied; otherwise, <see langword="false" />. The
    default is <see langword="false" />.</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="note"> It is expected that compilers will
-      validate this property; this property is not validated during execution.</block>
-          </para>
-        </remarks>
         <example>
           <para>
             <see langword="Example #1:" />
@@ -146,27 +161,32 @@ class JohnsClass {
           <para>This should throw an error similar to:</para>
           <para>error CS0579: Duplicate 'Author' attribute</para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An attribute that can be specified more than once for a program element is called a multi-use attribute. An attribute that can be specified only once is called a single-use attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value indicating whether more than one instance of the indicated attribute can be specified for a single program element.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Inherited">
+      <MemberSignature Language="ILASM" Value=".property bool Inherited { public hidebysig specialname instance bool get_Inherited() public hidebysig specialname instance void set_Inherited(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool Inherited { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Inherited" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Inherited">
-      <MemberSignature Language="ILASM" Value=".property bool Inherited { public hidebysig specialname instance bool get_Inherited() public hidebysig specialname instance void set_Inherited(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool Inherited { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets a <see cref="T:System.Boolean" qualify="true" /> value indicating whether the attribute can be inherited by
-   subclasses of the class to which the attribute is applied.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> indicates the attribute is inherited by subclasses;
@@ -181,26 +201,28 @@ class JohnsClass {
       ancestor class. There is nothing for the compiler to validate at compile
       time.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value indicating whether the indicated attribute can be inherited by derived classes and overriding members.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ValidOn">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.AttributeTargets ValidOn { public hidebysig specialname instance valuetype System.AttributeTargets get_ValidOn() }" />
+      <MemberSignature Language="C#" Value="public AttributeTargets ValidOn { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.AttributeTargets ValidOn" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ValidOn">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.AttributeTargets ValidOn { public hidebysig specialname instance valuetype System.AttributeTargets get_ValidOn() }" />
-      <MemberSignature Language="C#" Value="public AttributeTargets ValidOn { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.AttributeTargets</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the set of values sent to the <see cref="T:System.AttributeUsageAttribute" /> constructor that indicate to which targets the custom attribute can be applied.</para>
-        </summary>
         <value>
           <para> One or more of the <see cref="T:System.AttributeTargets" /> 
 values sent to the constructor, combined by a bitwise OR operation.</para>
@@ -208,13 +230,12 @@ values sent to the constructor, combined by a bitwise OR operation.</para>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of values identifying which program elements that the indicated attribute can be applied to.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

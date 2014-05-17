@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SocketAsyncEventArgs" FullName="System.Net.Sockets.SocketAsyncEventArgs">
   <TypeSignature Language="C#" Value="public class SocketAsyncEventArgs : EventArgs, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SocketAsyncEventArgs extends System.EventArgs implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.EventArgs</BaseTypeName>
@@ -13,176 +16,379 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> class is part of a set of enhancements to the <see cref="T:System.Net.Sockets.Socket" /> class that provide an alternative asynchronous pattern that can be used by specialized high-performance socket applications. This class was specifically designed for network server applications that require high performance. An application can use the enhanced asynchronous pattern exclusively or only in targeted hot areas (for example, when receiving large amounts of data).</para>
+      <para>The main feature of these enhancements is the avoidance of the repeated allocation and synchronization of objects during high-volume asynchronous socket I/O. The Begin/End design pattern currently implemented by the <see cref="T:System.Net.Sockets.Socket" /> class requires a <see cref="T:System.IAsyncResult" /> object be allocated for each asynchronous socket operation. </para>
+      <para>In the new <see cref="T:System.Net.Sockets.Socket" /> class enhancements, asynchronous socket operations are described by reusable <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> objects allocated and maintained by the application. High-performance socket applications know best the amount of overlapped socket operations that must be sustained. The application can create as many of the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> objects that it needs. For example, if a server application needs to have 15 socket accept operations outstanding at all times to support incoming client connection rates, it can allocate 15 reusable <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> objects for that purpose. </para>
+      <para>The pattern for performing an asynchronous socket operation with this class consists of the following steps:</para>
+      <list type="ordered">
+        <item>
+          <para>Allocate a new <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> context object, or get a free one from an application pool.</para>
+        </item>
+        <item>
+          <para>Set properties on the context object to the operation about to be performed (the completion callback method, the data buffer, the offset into the buffer, and the maximum amount of data to transfer, for example). </para>
+        </item>
+        <item>
+          <para>Call the appropriate socket method (xxxAsync) to initiate the asynchronous operation. </para>
+        </item>
+        <item>
+          <para>If the asynchronous socket method (xxxAsync) returns true, in the callback, query the context properties for completion status.</para>
+        </item>
+        <item>
+          <para>If the asynchronous socket method (xxxAsync) returns false, the operation completed synchronously. The context properties may be queried for the operation result.</para>
+        </item>
+        <item>
+          <para>Reuse the context for another operation, put it back in the pool, or discard it.</para>
+        </item>
+      </list>
+      <para>The lifetime of the new asynchronous socket operation context object is determined by references by the application code and asynchronous I/O references. It is not necessary for the application to retain a reference to an asynchronous socket operation context object after it is submitted as a parameter to one of the asynchronous socket operation methods. It will remain referenced until the completion callback returns. However it is advantageous for the application to retain the reference to the context so that it can be reused for a future asynchronous socket operation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an asynchronous socket operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SocketAsyncEventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After calling this constructor all properties will have their default values:</para>
+          <list type="bullet">
+            <item>
+              <para>Object references will be null</para>
+            </item>
+            <item>
+              <para>Properties that return an integer will return zero.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.LastOperation" /> property will be equal to <see cref="F:System.Net.Sockets.SocketAsyncOperation.None" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsFlags" /> property will be equal to <see cref="F:System.Net.Sockets.TransmitFileOptions.UseDefaultWorkerThread" />, which specifies no flags will be used.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SocketFlags" /> property will be equal to <see cref="F:System.Net.Sockets.SocketAsyncOperation.None" />.</para>
+            </item>
+          </list>
+          <para>The caller must set the appropriate properties prior to passing the object to the appropriate asynchronous socket (xxxAsync) method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an empty <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AcceptSocket">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.Socket AcceptSocket { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.Socket AcceptSocket { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Sockets.Socket AcceptSocket" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.Socket</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used to provide an already created <see cref="T:System.Net.Sockets.Socket" /> that will be used for an asynchronous socket accept operation. Upon completion of the accept operation, it is the socket representing the accepted connection. If not supplied (set to null) before calling the <see cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method, a new socket will be created automatically and be accessible in the completion callback with this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the socket to use or the socket created for accepting a connection with an asynchronous socket method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Buffer">
       <MemberSignature Language="C#" Value="public byte[] Buffer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Buffer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets the data buffer currently associated with the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance. To set the buffer, the <see cref="Overload:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer" /> method must be used.</para>
+          <para>This property is used with the <see cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, and <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data buffer to use with an asynchronous socket method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BufferList">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; BufferList { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; BufferList { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; BufferList" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used with the <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> and <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods. </para>
+          <para>This property is used to provide multiple buffers of data to be sent or to provide multiple buffers in which to store received data for an asynchronous socket operation that can send or receive data. Multiple buffers using the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> property are supported by the <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> and <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods.</para>
+          <para>If the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> property is set to a non-null value, the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> property must be null and is ignored by the <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> and <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods. </para>
+          <para>If the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> was set to a non-null value and an attempt is made to set the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> property to a non-null value, an exception is thrown.</para>
+          <para>If the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> property is set to a non-null value, the <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> and <see cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods will throw an <see cref="T:System.ArgumentException" />.</para>
+          <para>The <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> parameter is ignored by the <see cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> and <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an array of data buffers to use with an asynchronous socket method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BytesTransferred">
       <MemberSignature Language="C#" Value="public int BytesTransferred { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BytesTransferred" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides the number of bytes transferred in an asynchronous socket operation that can receive or send data. If zero is returned from a read operation, the remote end has closed the connection.</para>
+          <para>This property is set by all asynchronous socket operations except the <see cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of bytes transferred in the socket operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Completed">
       <MemberSignature Language="C#" Value="public event EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt; Completed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Net.Sockets.SocketAsyncEventArgs&gt; Completed" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event provides a way for client applications to complete an asynchronous socket operation. An event handler should be attached to the event within a <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance when an asynchronous socket operation is initiated, otherwise the application will not be able to determine when the operation completes. </para>
+          <para>The completion callback delegates referenced by the <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event contains program logic to finish processing the asynchronous socket operation for the client.</para>
+          <para>When the event is signaled, the application uses the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object parameter to obtain the status of the completed asynchronous socket operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event used to complete an asynchronous operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectByNameError">
+      <MemberSignature Language="C#" Value="public Exception ConnectByNameError { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Exception ConnectByNameError" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Exception</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the case of a connection failure when a <see cref="T:System.Net.DnsEndPoint" /> was specified for the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint" /> property, the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError" /> property will contain the exception that indicates the detailed cause of the socket error. </para>
+          <para>When an <see cref="T:System.Net.IPEndPoint" /> was specified for the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint" /> property and a connection failure occurs, the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError" /> property will be a null reference. </para>
+          <para>The <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SocketError" /> property is always set in the case of a connection failure. The <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError" /> property contains more information about the failure if it was a failure connecting to a <see cref="T:System.Net.DnsEndPoint" />. If an application is only interested in whether the connect operation succeeded or failed, then the application only needs to check the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SocketError" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception in the case of a connection failure when a <see cref="T:System.Net.DnsEndPoint" /> was used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set by calling the <see cref="Overload:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer" /> method. </para>
+          <para>This property is used with the <see cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, and <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum amount of data, in bytes, to send or receive in an asynchronous operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisconnectReuseSocket">
-      <MemberSignature Language="C#" Value="public bool DisconnectReuseSocket { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisconnectReuseSocket { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisconnectReuseSocket" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used to alter the behavior of <see cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method. If true, a socket disconnected by the <see cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method can be reused after disconnect completion in subsequent socket accept or connect operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies if socket can be reused after a disconnect operation.</para>
+        </summary>
       </Docs>
     </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~SocketAsyncEventArgs ();" />
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> references. This method invokes the Dispose() method of each referenced object.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance and optionally disposes of the managed resources.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~SocketAsyncEventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> class finalizer closes the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> and free resources associated with the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees resources used by the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LastOperation">
       <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketAsyncOperation LastOperation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketAsyncOperation LastOperation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property describes the asynchronous socket operation that was most recently completed using this <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object. The value of this property will be <see cref="F:System.Net.Sockets.SocketAsyncOperation.None" /> until the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance is used to begin an asynchronous socket operation. The property will then be set to the type of operation being performed in the methods that take the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> as a parameter. This property more easily facilitates using a single completion callback delegate for multiple kinds of asynchronous socket operations.</para>
+          <para>This property remains valid in a <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance until the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance is used for another asynchronous socket (xxxAsync) operation.</para>
+          <para>This property is set by all asynchronous socket (xxxAsync) methods.</para>
+          <para>Calling an asynchronous socket method (xxxAsync) on the <see cref="T:System.Net.Sockets.Socket" /> class sets this property value. This property is intended for use with the SocketAsyncCallback completion routine implemented by the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of socket operation most recently performed with this context object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Offset">
       <MemberSignature Language="C#" Value="public int Offset { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Offset" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property describes the starting byte offset of data in the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> property. This value is set by calling the <see cref="Overload:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer" /> method.</para>
+          <para>This property does not apply to the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> property. </para>
+          <para>This property is used with the <see cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, and <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the offset, in bytes, into the data buffer referenced by the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnCompleted">
       <MemberSignature Language="C#" Value="protected virtual void OnCompleted (System.Net.Sockets.SocketAsyncEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnCompleted(class System.Net.Sockets.SocketAsyncEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -191,91 +397,152 @@
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not callable by user code. This method gets called by the internals of the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object when the current operation is complete. This method is used with all asynchronous socket (xxxAsync) methods.</para>
+          <para>An application that creates a class inheriting from <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> can override this method to hook into this completion notification and clean up any resources that it allocated for the operation. The default implementation just raises the <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event.</para>
+          <para>This method is used to hook up an event handler to be used as the completion callback for a subsequent asynchronous socket operation. The caller must implement at least one callback delegate inherited from this method prior to starting an asynchronous socket operation using one of the asynchronous (xxxAsync) methods on the <see cref="T:System.Net.Sockets.Socket" /> class.</para>
+          <para>The caller's <see cref="M:System.Net.Sockets.SocketAsyncEventArgs.OnCompleted(System.Net.Sockets.SocketAsyncEventArgs)" /> method provides a way for client applications to complete an asynchronous socket operation. A callback delegate must be implemented when an asynchronous socket operation is initiated. The completion callback delegate(s) inherited from the <see cref="M:System.Net.Sockets.SocketAsyncEventArgs.OnCompleted(System.Net.Sockets.SocketAsyncEventArgs)" /> method must contain program logic to finish processing the asynchronous socket operation for the client.</para>
+          <para>When an asynchronous operation is signaled, the application uses the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object parameter to obtain status of the completed asynchronous socket operation. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a method that is called when an asynchronous operation completes.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event that is signaled.</param>
       </Docs>
     </Member>
     <Member MemberName="ReceiveMessageFromPacketInfo">
       <MemberSignature Language="C#" Value="public System.Net.Sockets.IPPacketInformation ReceiveMessageFromPacketInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.IPPacketInformation ReceiveMessageFromPacketInfo" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IPPacketInformation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides information about a packet received using the <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+          <para>This property is used with the <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the IP address and interface of a received packet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoteEndPoint">
-      <MemberSignature Language="C#" Value="public System.Net.EndPoint RemoteEndPoint { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.EndPoint RemoteEndPoint { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.EndPoint RemoteEndPoint" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.EndPoint</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the remote endpoint. This property can specify the remote endpoint to which to connect using the <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method. This property can specify the remote endpoint to which to send data using <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method. This property can specify the remote endpoint from which data was received using the <see cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> or <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods.</para>
+          <para>This remote endpoint specified by this property can include an IPv4 or IPv6 address. </para>
+          <para>This property is used with the <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, or <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the remote IP endpoint for an asynchronous operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendPacketsElements">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.SendPacketsElement[] SendPacketsElements { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SendPacketsElement[] SendPacketsElements { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Sockets.SendPacketsElement[] SendPacketsElements" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SendPacketsElement[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array of buffers can represent a file or files in memory or a set of memory data buffers. This property is used with the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an array of buffers to be sent for an asynchronous operation used by the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendPacketsFlags">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.TransmitFileOptions SendPacketsFlags { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.TransmitFileOptions SendPacketsFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.TransmitFileOptions SendPacketsFlags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the <see cref="T:System.Net.Sockets.TransmitFileOptions" /> that are used by the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a bitwise combination of <see cref="T:System.Net.Sockets.TransmitFileOptions" /> values for an asynchronous operation used by the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendPacketsSendSize">
-      <MemberSignature Language="C#" Value="public int SendPacketsSendSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public int SendPacketsSendSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SendPacketsSendSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("unused property")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to zero to let the sockets layer select a default send size. Setting this property to 0xFFFFFFFF enables the caller to control the size and content of each send request, achieved by using the <see cref="P:System.Net.Sockets.SendPacketsElement.EndOfPacket" /> property. This capability is useful for message protocols that place limitations on the size of individual send requests.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size, in bytes, of the data block used in the send operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetBuffer">
       <MemberSignature Language="C#" Value="public void SetBuffer (int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetBuffer(int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -285,17 +552,29 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="offset" /> and <paramref name="count" /> parameters can't be negative numbers. The combination of the <paramref name="offset" /> and <paramref name="count" /> parameters must be in bounds of the buffer array in the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> property.</para>
+          <para>This method sets the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Count" /> property to the <paramref name="count" /> parameter and the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Offset" /> property to the <paramref name="offset" /> parameter. If the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> property is null, this method ignores the <paramref name="offset" /> and <paramref name="count" /> parameters and sets the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Offset" /> and <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Count" /> properties to 0.</para>
+          <para>This method does not change the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the data buffer to use with an asynchronous socket method.</para>
+        </summary>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset, in bytes, in the data buffer where the operation starts.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum amount of data, in bytes, to send or receive in the buffer.</param>
       </Docs>
     </Member>
     <Member MemberName="SetBuffer">
       <MemberSignature Language="C#" Value="public void SetBuffer (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetBuffer(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -306,41 +585,69 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="offset" /> and <paramref name="count" /> parameters can't be negative numbers. The combination of the <paramref name="offset" /> and <paramref name="count" /> parameters must be in bounds of the data array in the <paramref name="buffer" /> parameter.</para>
+          <para>This method sets the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> property to the <paramref name="buffer" /> parameter, the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Count" /> property to the <paramref name="count" /> parameter, and the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Offset" /> property to the <paramref name="offset" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the data buffer to use with an asynchronous socket method.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data buffer to use with an asynchronous socket method.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset, in bytes, in the data buffer where the operation starts.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum amount of data, in bytes, to send or receive in the buffer.</param>
       </Docs>
     </Member>
     <Member MemberName="SocketError">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketError SocketError { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketError SocketError { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketError SocketError" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketError</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides the completion status of an asynchronous socket operation. A value of <see cref="F:System.Net.Sockets.SocketError.Success" /> indicates successful completion of an operation. This property is primarily used in an application’s event handler routine.</para>
+          <para>This property is used with all of the asynchronous socket (xxxAsync) methods. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the result of the asynchronous socket operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SocketFlags">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketFlags SocketFlags { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketFlags SocketFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketFlags SocketFlags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property specifies the bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> to be used for an asynchronous socket operation.</para>
+          <para>This property is used with the <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />, and <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the results of an asynchronous socket operation or sets the behavior of an asynchronous operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
@@ -359,18 +666,27 @@
       </Docs>
     </Member>
     <Member MemberName="UserToken">
-      <MemberSignature Language="C#" Value="public object UserToken { set; get; }" />
+      <MemberSignature Language="C#" Value="public object UserToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object UserToken" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used by an application to associate an application state object with the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object. Primarily, this property is a way for an application to pass state to the application’s event handler (for example, the asynchronous operation completion method).</para>
+          <para>This property is used with all of the asynchronous socket (xxxAsync) methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a user or application object associated with this asynchronous socket operation.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

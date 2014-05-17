@@ -1,45 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompressionMode" FullName="System.IO.Compression.CompressionMode">
   <TypeSignature Language="C#" Value="public enum CompressionMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CompressionMode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with the <see cref="T:System.IO.Compression.GZipStream" /> and <see cref="T:System.IO.Compression.DeflateStream" /> classes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para> Specifies whether to compress or decompress the underlying stream.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Compress">
       <MemberSignature Language="C#" Value="Compress" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Compression.CompressionMode Compress = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Compression.CompressionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compresses the underlying stream.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Decompress">
       <MemberSignature Language="C#" Value="Decompress" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Compression.CompressionMode Decompress = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Compression.CompressionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decompresses the underlying stream.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

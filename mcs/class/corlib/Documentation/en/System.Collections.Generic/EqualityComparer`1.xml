@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EqualityComparer&lt;T&gt;" FullName="System.Collections.Generic.EqualityComparer&lt;T&gt;">
   <TypeSignature Language="C#" Value="public abstract class EqualityComparer&lt;T&gt; : System.Collections.Generic.IEqualityComparer&lt;T&gt;, System.Collections.IEqualityComparer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable EqualityComparer`1&lt;T&gt; extends System.Object implements class System.Collections.Generic.IEqualityComparer`1&lt;!T&gt;, class System.Collections.IEqualityComparer" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,45 +23,69 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Derive from this class to provide a custom implementation of the <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> generic interface for use with collection classes such as the <see cref="T:System.Collections.Generic.Dictionary`2" /> generic class, or with methods such as <see cref="M:System.Collections.Generic.List`1.Sort(System.Int32,System.Int32,System.Collections.Generic.IComparer{`0})" />.</para>
+      <para>The <see cref="P:System.Collections.Generic.EqualityComparer`1.Default" /> property checks whether type <paramref name="T" /> implements the <see cref="T:System.IEquatable`1" /> generic interface and, if so, returns an <see cref="T:System.Collections.Generic.EqualityComparer`1" /> that contains the implantation of the <see cref="M:System.IEquatable`1.Equals(`0)" /> method. Otherwise, it returns an <see cref="T:System.Collections.Generic.EqualityComparer`1" />, as provided by <paramref name="T" />.</para>
+      <para>We recommend that you derive from the <see cref="T:System.Collections.Generic.EqualityComparer`1" /> class instead of implementing the <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> interface, because the <see cref="T:System.Collections.Generic.EqualityComparer`1" /> class tests for equality using the <see cref="M:System.IEquatable`1.Equals(`0)" /> method instead of the <see cref="M:System.Object.Equals(System.Object)" /> method. This is consistent with the Contains, IndexOf, LastIndexOf, and Remove methods of the <see cref="T:System.Collections.Generic.Dictionary`2" /> class and other generic collections.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for implementations of the <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> generic interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected EqualityComparer ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Generic.EqualityComparer`1" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="public static System.Collections.Generic.EqualityComparer&lt;T&gt; Default { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.Generic.EqualityComparer`1&lt;!T&gt; Default" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.EqualityComparer&lt;T&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Collections.Generic.EqualityComparer`1.Default" /> property checks whether type <paramref name="T" /> implements the <see cref="T:System.IEquatable`1" /> interface and, if so, returns an <see cref="T:System.Collections.Generic.EqualityComparer`1" /> that uses that implementation. Otherwise, it returns an <see cref="T:System.Collections.Generic.EqualityComparer`1" /> that uses the overrides of <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.Object.GetHashCode" /> provided by <paramref name="T" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a default equality comparer for the type specified by the generic argument.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public abstract bool Equals (T x, T y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(!T x, !T y) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public abstract bool Equals (T x, T y);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -75,14 +101,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public abstract int GetHashCode (T obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode(!T obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public abstract int GetHashCode (T obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -96,14 +123,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEqualityComparer.Equals">
+      <MemberSignature Language="C#" Value="bool IEqualityComparer.Equals (object x, object y);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.IEqualityComparer.Equals(object x, object y) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEqualityComparer.Equals">
-      <MemberSignature Language="C#" Value="bool IEqualityComparer.Equals (object x, object y);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -112,21 +140,34 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a wrapper for the <see cref="M:System.Collections.Generic.EqualityComparer`1.Equals(`0,`0)" /> method, so <paramref name="obj" /> must be cast to the type specified by the generic argument <paramref name="T" /> of the current instance. If it cannot be cast to <paramref name="T" />, an <see cref="T:System.ArgumentException" /> is thrown.</para>
+          <para>Comparing null is allowed and does not generate an exception. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEqualityComparer.GetHashCode">
+      <MemberSignature Language="C#" Value="int IEqualityComparer.GetHashCode (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IEqualityComparer.GetHashCode(object obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEqualityComparer.GetHashCode">
-      <MemberSignature Language="C#" Value="int IEqualityComparer.GetHashCode (object obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -134,16 +175,22 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a wrapper for the <see cref="M:System.Collections.Generic.EqualityComparer`1.GetHashCode(`0)" /> method, so <paramref name="obj" /> must be a type that can be cast to the type specified by the generic type argument <paramref name="T" /> of the current instance. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the specified object.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which a hash code is to be returned.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

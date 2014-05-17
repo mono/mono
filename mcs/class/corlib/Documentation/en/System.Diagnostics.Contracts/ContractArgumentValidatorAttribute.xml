@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ContractArgumentValidatorAttribute" FullName="System.Diagnostics.Contracts.ContractArgumentValidatorAttribute">
+  <TypeSignature Language="C#" Value="public sealed class ContractArgumentValidatorAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractArgumentValidatorAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If your code uses explicit if-then-throw code to validate parameters, you may be employing helper methods that perform checks and throw particular exceptions on failure, as shown in the following example.</para>
+      <code>static class ValidationHelper 
+{
+public static void NotNull(object argument, string parameterName) 
+{
+if (argument == null) throw new ArgumentNullException(parameterName, ...);
+}
+}
+...
+public void MyMethod(string value) 
+{
+ValidationHelper .NotNull(value , "value");
+...
+}
+</code>
+      <para>In this example, MyMethod has an elective precondition specifying that the parameter value should not be null. To enable the contract tools to recognize that the call to ValidationHelper.NotNull represents a contract, you can mark the called method with the ContractArgumentValidator attribute. The EndContractBlock() call should be used to enable the tools to extract the proper specifications for document generation and static checking, as follows.</para>
+      <code>static class ValidationHelper {
+[ContractArgumentValidator]
+public static void NotNull(object argument, string parameterName) {
+if (argument == null) throw new ArgumentNullException(parameterName, ...);
+Contract.EndContractBlock();
+...
+}
+}
+</code>
+      <para>In addition to if-then-throw statements, the contract section of contract validator methods may contain calls to other contract validator methods. However, no other contracts (such as <see cref="M:System.Diagnostics.Contracts.Contract.Requires(System.Boolean)" />, or <see cref="M:System.Diagnostics.Contracts.Contract.Ensures(System.Boolean)" />) are allowed. Code that follows the EndContractBlock() call is ignored by all contract tools.The following example shows a range argument validator written in terms of an existing NotNull validator method.</para>
+      <code>static class ValidationHelper 
+{
+[ContractArgumentValidator]
+public static void NotNull(object argument, string parameterName) 
+{ ... }
+[ContractArgumentValidator]
+public static void InRange(object[] array , int index , string arrayName, string indexName) {
+ValidationHelper .NotNull(array , arrayName);
+if (index &lt; 0) throw new ArgumentOutOfRangeException(indexName, ...);
+if (index &gt;= array.Length) throw new ArgumentOutOfRangeException(indexName, ...);
+Contract.EndContractBlock();
+...
+}
+...
+public void MyMethod(int[] data, int position ) 
+{
+ValidationHelper .InRange(data, position , "data", " position ");
+...
+}
+</code>
+      <para>From a specification point of view, the method MyMethod has the following three contracts:</para>
+      <code>Contract.Requires&lt;ArgumentNullException&gt;(data != null);
+Contract.Requires&lt;ArgumentOutOfRangeException&gt;(position &gt;= 0);
+Contract.Requires&lt;ArgumentOutOfRangeException&gt;(position &lt; data.Length);
+</code>
+      <para>In standard methods, calls to contract validator methods can be freely mixed with other contracts such as <see cref="M:System.Diagnostics.Contracts.Contract.Ensures(System.Boolean)" /> or <see cref="M:System.Diagnostics.Contracts.Contract.Requires(System.Boolean)" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables the factoring of legacy if-then-throw code into separate methods for reuse, and provides full control over thrown exceptions and arguments.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ContractArgumentValidatorAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.ContractArgumentValidatorAttribute" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

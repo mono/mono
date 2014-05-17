@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ReceiveErrorHandling" FullName="System.ServiceModel.ReceiveErrorHandling">
+  <TypeSignature Language="C#" Value="public enum ReceiveErrorHandling" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ReceiveErrorHandling extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A poison message is a message that fails repeated attempts to deliver to the application. This is applicable only when using a Message Queuing (MSMQ)-based binding. The default value is Fault, which faults the listener and therefore the ServiceHost. In the case where the service was to fault because of a poison message, a <see cref="T:System.ServiceModel.MsmqPoisonMessageException" /> is thrown. The exception contains the LookupId of the MSMQ message that can be used to move the message out of the way using System.Messaging API. Certain values of the <see cref="T:System.ServiceModel.ReceiveErrorHandling" /> enumeration such as Reject and Move are only available on wv. You control poison message handling by setting the <see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.ReceiveErrorHandling" /> property to one of the values of this enumeration. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An enumeration that specifies handling for a poison message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Drop">
+      <MemberSignature Language="C#" Value="Drop" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.ReceiveErrorHandling Drop = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ReceiveErrorHandling</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applicable platforms: wxp, ws2003, and wv.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This option drops the poison message. The message never gets delivered to the application. If the message's TTL had already expired at this point, then the message may appear in the sender's Dead Letter Queue. If not, the message does not appear anywhere. This option indicates that the user does not really care if the message is lost.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Fault">
+      <MemberSignature Language="C#" Value="Fault" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.ReceiveErrorHandling Fault = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ReceiveErrorHandling</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applicable platforms: Windows XP, Windows Server 2003, and Windows Vista.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This option sends a fault to the listener that caused the ServiceHost to fault. The message must be removed from the application queue by some external mechanism before the application can continue to process messages from the queue. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Move">
+      <MemberSignature Language="C#" Value="Move" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.ReceiveErrorHandling Move = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ReceiveErrorHandling</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applicable platforms: wv only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This moves the poison message to a Poison Message Queue for later processing by a poison message handling application. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Reject">
+      <MemberSignature Language="C#" Value="Reject" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.ReceiveErrorHandling Reject = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ReceiveErrorHandling</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applicable platforms: wv only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This instructs MSMQ to send a negative acknowledgement back to the sending queue manager that the message cannot be received by the application. The message is placed in the sending queue manager's Dead Letter Queue. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

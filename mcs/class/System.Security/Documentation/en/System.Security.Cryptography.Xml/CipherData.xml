@@ -1,116 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CipherData" FullName="System.Security.Cryptography.Xml.CipherData">
   <TypeSignature Language="C#" Value="public sealed class CipherData" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CipherData extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class represents the &lt;CipherData&gt; element in XML encryption. It is a required element that provides the encrypted data. It must either contain the encrypted data as base64-encoded text of the &lt;CipherValue&gt; element, or provide a reference to an external location containing the encrypted data using the &lt;CipherReference&gt; element.</para>
+      <para>In many cases, you do not need to directly create a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class.  The <see cref="P:System.Security.Cryptography.Xml.SignedXml.EncryptedXml" />, <see cref="T:System.Security.Cryptography.Xml.EncryptedData" />, and <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> classes create instances for you.</para>
+      <block subset="none" type="note">
+        <para>A <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object can have either a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> property or a <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property, but not both. A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if both are assigned to a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;CipherData&gt; element in XML encryption. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CipherData ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object that represents the &lt;CipherData&gt; element in XML encryption. The &lt;CipherData&gt; element is a required element in XML encryption.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CipherData (byte[] cipherValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] cipherValue) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="cipherValue" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="cipherValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object that represents the &lt;CipherData&gt; element in XML encryption. The constructor assigns the <paramref name="cipherValue" /> value to the <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property as the actual encrypted data.</para>
+          <block subset="none" type="note">
+            <para>The &lt;CipherData&gt; element can have either a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> or a <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> child element, but not both. A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if both are assigned to a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class using a byte array as the <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> value.</para>
+        </summary>
+        <param name="cipherValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encrypted data to use for the &lt;CipherValue&gt; element.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CipherData (System.Security.Cryptography.Xml.CipherReference cipherReference);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Cryptography.Xml.CipherReference cipherReference) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="cipherReference" Type="System.Security.Cryptography.Xml.CipherReference" />
       </Parameters>
       <Docs>
-        <param name="cipherReference">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object that represents the &lt;CipherData&gt; element in XML encryption and assigns the <paramref name="cipherReference" /> value to the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> property. The <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object represents the &lt;CipherReference&gt; element, which provides the location of the encrypted data. </para>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object can have either a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> property or a <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property, but not both. A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if both are assigned to a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> class using a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object.</para>
+        </summary>
+        <param name="cipherReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object to use.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CipherReference">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.CipherReference CipherReference { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.CipherReference CipherReference { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.Xml.CipherReference CipherReference" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Xml.CipherReference</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The &lt;CipherReference&gt; element identifies a source which, when processed, yields the encrypted data. For more information about this element, see <see cref="T:System.Security.Cryptography.Xml.CipherReference" />.</para>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object can have either a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> property or a <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> property, but not both. A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if both are assigned to a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the &lt;CipherReference&gt; element.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CipherValue">
-      <MemberSignature Language="C#" Value="public byte[] CipherValue { set; get; }" />
+      <MemberSignature Language="C#" Value="public byte[] CipherValue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] CipherValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value is encrypted data.</para>
+          <block subset="none" type="note">
+            <para>The &lt;CipherData&gt; element can have either a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> or a <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> child element, but not both. A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if both are assigned to a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the &lt;CipherValue&gt; element.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetXml">
       <MemberSignature Language="C#" Value="public System.Xml.XmlElement GetXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlElement GetXml() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to output XML for a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML values for the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlElement" /> object that represents the XML information for the <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LoadXml">
       <MemberSignature Language="C#" Value="public void LoadXml (System.Xml.XmlElement value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void LoadXml(class System.Xml.XmlElement value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -118,14 +201,18 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.CipherData.LoadXml(System.Xml.XmlElement)" /> method overwrites existing XML elements with the <paramref name="value" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads XML data from an <see cref="T:System.Xml.XmlElement" /> into a <see cref="T:System.Security.Cryptography.Xml.CipherData" /> object.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlElement" /> that represents the XML data to load.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Hashtable" FullName="System.Collections.Hashtable" FullNameSP="System_Collections_Hashtable" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable Hashtable extends System.Object implements System.ICloneable, System.Collections.ICollection, System.Collections.IDictionary, System.Collections.IEnumerable" />
   <TypeSignature Language="C#" Value="public class Hashtable : ICloneable, System.Collections.IDictionary, System.Runtime.Serialization.IDeserializationCallback, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Hashtable extends System.Object implements class System.Collections.ICollection, class System.Collections.IDictionary, class System.Collections.IEnumerable, class System.ICloneable, class System.Runtime.Serialization.IDeserializationCallback, class System.Runtime.Serialization.ISerializable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -39,49 +41,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Represents a hash table.</para>
-    </summary>
-    <remarks>
-      <para> A <see cref="T:System.Collections.Hashtable" /> represents a
-   dictionary with a constant lookup time that contains entries of associated keys
-   and values. The type of each entry in a <see cref="T:System.Collections.Hashtable" /> is <see cref="T:System.Collections.DictionaryEntry" />. A statement that exposes each element in the
-   collection is required to iterate over this type. <block subset="none" type="note">See
-   example.</block></para>
-      <para>Objects used as keys in a <see cref="T:System.Collections.Hashtable" /> are required
-to either implement both <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> or neither. Furthermore, for a particular key, these methods are required to produce the same results when called with
-the same parameters while that key exists in a particular <see cref="T:System.Collections.Hashtable" /> . Keys cannot be mutated while they are
-used in the table.</para>
-      <para> Every key in a <see cref="T:System.Collections.Hashtable" /> is required to be unique compared to every other key
-in the table. An object that implements <see cref="T:System.Collections.IComparer" /> can determine whether two keys are unequal.
-The default comparer for a key is the key's implementation of
-<see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
-      <para>Each value in a <see cref="T:System.Collections.Hashtable" /> is required to provide its own hash function, which
-can be accessed by calling <see cref="M:System.Collections.Hashtable.GetHash(System.Object)" />. Alternatively, if an object that implements
-<see cref="T:System.Collections.IHashCodeProvider" /> is 
-passed to a <see cref="T:System.Collections.Hashtable" /> constructor, the custom hash
-function provided by that object is used for every value in the table.</para>
-      <block subset="none" type="note">
-        <para> The default capacity (i.e. the default number of entries that can be contained) of a <see cref="T:System.Collections.Hashtable" /> is
-   zero.</para>
-        <para> When an entry is added to the <see cref="T:System.Collections.Hashtable" />, the entry is placed
-into a bucket based on the hash code obtained from the <see cref="T:System.Collections.IHashCodeProvider" /> implementation of the table, or
-the <see cref="M:System.Object.GetHashCode" /> if no
-specific <see cref="T:System.Collections.IHashCodeProvider" />
-was provided. Subsequent lookups of
-the key use the hash code of the key to search in only one particular bucket,
-substantially reducing the number of key comparisons required to find an entry.</para>
-        <para>As entries are added to a <see cref="T:System.Collections.Hashtable" />, and the maximum capacity of the table is
-reached, the number of buckets in the table is automatically increased to the
-smallest prime number that is larger than twice the current number of
-buckets.</para>
-        <para>A <see cref="T:System.Collections.Hashtable" /> can
-safely support
-one writer and multiple readers concurrently. To support multiple writers,
-all operations
-are required to be done through the wrapper returned by the <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" /> method.</para>
-      </block>
-    </remarks>
     <example>
       <para> The following example shows
       how to iterate over the elements of a <see cref="T:System.Collections.Hashtable" />.</para>
@@ -91,167 +50,239 @@ are required to be done through the wrapper returned by the <see cref="M:System.
          myHashtable)</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each element is a key/value pair stored in a <see cref="T:System.Collections.DictionaryEntry" /> object. A key cannot be null, but a value can be.</para>
+      <para>The objects used as keys by a <see cref="T:System.Collections.Hashtable" /> are required to override the <see cref="M:System.Object.GetHashCode" /> method (or the <see cref="T:System.Collections.IHashCodeProvider" /> interface) and the <see cref="M:System.Object.Equals(System.Object)" /> method (or the <see cref="T:System.Collections.IComparer" /> interface). The implementation of both methods and interfaces must handle case sensitivity the same way; otherwise, the <see cref="T:System.Collections.Hashtable" /> might behave incorrectly. For example, when creating a <see cref="T:System.Collections.Hashtable" />, you must use the <see cref="T:System.Collections.CaseInsensitiveHashCodeProvider" /> class (or any case-insensitive <see cref="T:System.Collections.IHashCodeProvider" /> implementation) with the <see cref="T:System.Collections.CaseInsensitiveComparer" /> class (or any case-insensitive <see cref="T:System.Collections.IComparer" /> implementation).</para>
+      <para>Furthermore, these methods must produce the same results when called with the same parameters while the key exists in the <see cref="T:System.Collections.Hashtable" />. An alternative is to use a <see cref="T:System.Collections.Hashtable" /> constructor with an <see cref="T:System.Collections.IEqualityComparer" /> parameter. If key equality were simply reference equality, the inherited implementation of <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> would suffice.</para>
+      <para>Key objects must be immutable as long as they are used as keys in the <see cref="T:System.Collections.Hashtable" />.</para>
+      <para>When an element is added to the <see cref="T:System.Collections.Hashtable" />, the element is placed into a bucket based on the hash code of the key. Subsequent lookups of the key use the hash code of the key to search in only one particular bucket, thus substantially reducing the number of key comparisons required to find an element.</para>
+      <para>The load factor of a <see cref="T:System.Collections.Hashtable" /> determines the maximum ratio of elements to buckets. Smaller load factors cause faster average lookup times at the cost of increased memory consumption. The default load factor of 1.0 generally provides the best balance between speed and size. A different load factor can also be specified when the <see cref="T:System.Collections.Hashtable" /> is created.</para>
+      <para>As elements are added to a <see cref="T:System.Collections.Hashtable" />, the actual load factor of the <see cref="T:System.Collections.Hashtable" /> increases. When the actual load factor reaches the specified load factor, the number of buckets in the <see cref="T:System.Collections.Hashtable" /> is automatically increased to the smallest prime number that is larger than twice the current number of <see cref="T:System.Collections.Hashtable" /> buckets.</para>
+      <para>Each key object in the <see cref="T:System.Collections.Hashtable" /> must provide its own hash function, which can be accessed by calling <see cref="M:System.Collections.Hashtable.GetHash(System.Object)" />. However, any object implementing <see cref="T:System.Collections.IHashCodeProvider" /> can be passed to a <see cref="T:System.Collections.Hashtable" /> constructor, and that hash function is used for all objects in the table.</para>
+      <para>The capacity of a <see cref="T:System.Collections.Hashtable" /> is the number of elements the <see cref="T:System.Collections.Hashtable" /> can hold. As elements are added to a <see cref="T:System.Collections.Hashtable" />, the capacity is automatically increased as required through reallocation.</para>
+      <para>For very large <see cref="T:System.Collections.Hashtable" /> objects, you can increase the maximum capacity to 2 billion elements on a 64-bit system by setting the enabled attribute of the <format type="text/html"><a href="5c7ea24a-39ac-4e5f-83b7-b9f9a1b556ab">gcAllowVeryLargeObjects</a></format> configuration element to true in the run-time environment.</para>
+      <para>The foreach statement of the C# language (For Each in Visual Basic) requires the type of each element in the collection. Since each element of the <see cref="T:System.Collections.Hashtable" /> is a key/value pair, the element type is not the type of the key or the type of the value. Instead, the element type is <see cref="T:System.Collections.DictionaryEntry" />. For example:</para>
+      <para>code reference: System.Collections.Hashtable_ClassExample#01</para>
+      <para>The foreach statement is a wrapper around the enumerator, which only allows reading from, not writing to, the collection.</para>
+      <para>Because serializing and deserializing an enumerator for a <see cref="T:System.Collections.Hashtable" /> can cause the elements to become reordered, it is not possible to continue enumeration without calling the <see cref="M:System.Collections.IEnumerator.Reset" /> method. </para>
+      <block subset="none" type="note">
+        <para>Because keys can be inherited and their behavior changed, their absolute uniqueness cannot be guaranteed by comparisons using the <see cref="M:System.Type.Equals(System.Object)" /> method. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of key/value pairs that are organized based on the hash code of the key.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public Hashtable ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>The new instance is initialized with the default
- capacity, <see cref="T:System.Collections.IHashCodeProvider" />, and <see cref="T:System.Collections.IComparer" />.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash table's capacity is used to calculate the optimal number of hash table buckets based on the load factor. Capacity is automatically increased as required.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" /> object. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>This constructor is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the default initial capacity, load factor, hash code provider, and comparer.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.IDictionary d)" />
       <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IDictionary d) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="d" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="d">The <see cref="T:System.Collections.IDictionary" /> used to initialize the elements of the new instance.</param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class using
-   the values of the specified <see cref="T:System.Collections.IDictionary" />.</para>
-        </summary>
-        <remarks>
-          <para>The initial capacity of the new instance is set to the
-      number of entries in <paramref name="d" />. The new instance is initialized with the default
-   <see cref="T:System.Collections.IHashCodeProvider" /> and <see cref="T:System.Collections.IComparer" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="d" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial capacity is set to the number of elements in the source dictionary. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" /> object. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The elements of the new <see cref="T:System.Collections.Hashtable" /> are sorted in the same order in which the enumerator iterates through the <see cref="T:System.Collections.IDictionary" /> object.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements in the <paramref name="d" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class by copying the elements from the specified dictionary to the new <see cref="T:System.Collections.Hashtable" /> object. The new <see cref="T:System.Collections.Hashtable" /> object has an initial capacity equal to the number of elements copied, and uses the default load factor, hash code provider, and comparer.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> object to copy to a new <see cref="T:System.Collections.Hashtable" /> object. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IEqualityComparer equalityComparer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash table's capacity is used to calculate the optimal number of hash table buckets based on the load factor. Capacity is automatically increased as required.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> object includes both the hash code provider and the comparer. If an <see cref="T:System.Collections.IEqualityComparer" /> is used in the <see cref="T:System.Collections.Hashtable" /> constructor, the objects used as keys in the <see cref="T:System.Collections.Hashtable" /> object are not required to override the <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> methods.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> enables scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>This constructor is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the default initial capacity and load factor, and the specified <see cref="T:System.Collections.IEqualityComparer" /> object.</para>
+        </summary>
+        <param name="equalityComparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEqualityComparer" /> object that defines the hash code provider and the comparer to use with the <see cref="T:System.Collections.Hashtable" /> object.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IEqualityComparer equalityComparer);" />
-      <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
-      </Parameters>
-      <Docs>
-        <param name="equalityComparer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
-      <MemberSignature Language="C#" Value="public Hashtable (int capacity);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="capacity">A <see cref="T:System.Int32" /> that specifies the minimum number of entries that the new <see cref="T:System.Collections.Hashtable" /> instance can initially contain. </param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" />
-class with the specified initial capacity.</para>
-        </summary>
-        <remarks>
-          <para>The new instance is initialized with the default <see cref="T:System.Collections.IHashCodeProvider" /> and <see cref="T:System.Collections.IComparer" />.</para>
-          <para>The number of entries that the new instance can contain can be greater than <paramref name="capacity" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="capacity" /> &lt; 0. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Hashtable" /> object. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="capacity" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the specified initial capacity, and the default load factor, hash code provider, and comparer.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The approximate number of elements that the <see cref="T:System.Collections.Hashtable" /> object can initially contain. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IDictionary d, class System.Collections.IEqualityComparer equalityComparer) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="d" Type="System.Collections.IDictionary" />
         <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="equalityComparer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial capacity is set to the number of elements in the source dictionary. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> object includes both the hash code provider and the comparer. If an <see cref="T:System.Collections.IEqualityComparer" /> is used in the <see cref="T:System.Collections.Hashtable" /> constructor, the objects used as keys in the <see cref="T:System.Collections.Hashtable" /> object are not required to override the <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> methods.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> enables scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>The elements of the new <see cref="T:System.Collections.Hashtable" /> are sorted in the same order in which the enumerator iterates through the <see cref="T:System.Collections.IDictionary" /> object.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements in the <paramref name="d" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class by copying the elements from the specified dictionary to a new <see cref="T:System.Collections.Hashtable" /> object. The new <see cref="T:System.Collections.Hashtable" /> object has an initial capacity equal to the number of elements copied, and uses the default load factor and the specified <see cref="T:System.Collections.IEqualityComparer" /> object.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> object to copy to a new <see cref="T:System.Collections.Hashtable" /> object.</param>
+        <param name="equalityComparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEqualityComparer" /> object that defines the hash code provider and the comparer to use with the <see cref="T:System.Collections.Hashtable" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, float loadFactor);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IDictionary d, float32 loadFactor) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="d" Type="System.Collections.IDictionary" />
-        <Parameter Name="loadFactor" Type="System.Single" />
-      </Parameters>
-      <Docs>
-        <param name="d">To be added.</param>
-        <param name="loadFactor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial capacity is set to the number of elements in the source dictionary. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption. A load factor of 1.0 is the best balance between speed and size.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" /> object. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The elements of the new <see cref="T:System.Collections.Hashtable" /> are sorted in the same order in which the enumerator iterates through the <see cref="T:System.Collections.IDictionary" /> object.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements in the <paramref name="d" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class by copying the elements from the specified dictionary to the new <see cref="T:System.Collections.Hashtable" /> object. The new <see cref="T:System.Collections.Hashtable" /> object has an initial capacity equal to the number of elements copied, and uses the specified load factor, and the default hash code provider and comparer.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> object to copy to a new <see cref="T:System.Collections.Hashtable" /> object.</param>
+        <param name="loadFactor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A number in the range from 0.1 through 1.0 that is multiplied by the default value which provides the best performance. The result is the maximum ratio of elements to buckets.</param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer)" />
       <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
-        <Parameter Name="comparer" Type="System.Collections.IComparer" />
-      </Parameters>
-      <Docs>
-        <param name="hcp">
-          <para>The <see cref="T:System.Collections.IHashCodeProvider" /> that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />; or, <see langword="null" /> to use the default hash code provider.</para>
-        </param>
-        <param name="comparer">
-          <para>The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys are equal; or, <see langword="null" /> to use the default comparer.</para>
-        </param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class with the specified <see cref="T:System.Collections.IHashCodeProvider" /> and the specified <see cref="T:System.Collections.IComparer" />.</para>
-        </summary>
-        <remarks>
-          <para>The new instance is initialized with the default capacity.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -262,94 +293,140 @@ class with the specified initial capacity.</para>
           <AttributeName>System.Obsolete("Please use Hashtable(IEqualityComparer) instead")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash table's capacity is used to calculate the optimal number of hash table buckets based on the load factor. Capacity is automatically increased as required.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" /> object. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The custom hash code provider and the custom comparer enable scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>This constructor is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the default initial capacity and load factor, and the specified hash code provider and comparer.</para>
+        </summary>
+        <param name="hcp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IHashCodeProvider" /> object that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" /> object.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IComparer" /> object to use to determine whether two keys are equal.</param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Hashtable (int capacity, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, class System.Collections.IEqualityComparer equalityComparer) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
         <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="capacity">To be added.</param>
-        <param name="equalityComparer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Hashtable" /> object. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> object includes both the hash code provider and the comparer. If an <see cref="T:System.Collections.IEqualityComparer" /> is used in the <see cref="T:System.Collections.Hashtable" /> constructor, the objects used as keys in the <see cref="T:System.Collections.Hashtable" /> are not required to override the <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> methods.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> enables scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <paramref name="capacity" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the specified initial capacity and <see cref="T:System.Collections.IEqualityComparer" />, and the default load factor.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The approximate number of elements that the <see cref="T:System.Collections.Hashtable" /> object can initially contain. </param>
+        <param name="equalityComparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEqualityComparer" /> object that defines the hash code provider and the comparer to use with the <see cref="T:System.Collections.Hashtable" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Hashtable (int capacity, float loadFactor);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, float32 loadFactor) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
         <Parameter Name="loadFactor" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="capacity">To be added.</param>
-        <param name="loadFactor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Hashtable" /> object. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption. A load factor of 1.0 is the best balance between speed and size.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <paramref name="capacity" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the specified initial capacity and load factor, and the default hash code provider and comparer.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The approximate number of elements that the <see cref="T:System.Collections.Hashtable" /> object can initially contain. </param>
+        <param name="loadFactor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A number in the range from 0.1 through 1.0 that is multiplied by the default value which provides the best performance. The result is the maximum ratio of elements to buckets. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Hashtable (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected Hashtable (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash table's capacity is used to calculate the optimal number of hash table buckets based on the load factor. Capacity is automatically increased as required.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" /> object. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+          <para>Because serializing and deserializing an enumerator for a <see cref="T:System.Collections.Hashtable" /> can cause the elements to become reordered, it is not possible to continue enumeration without calling the <see cref="M:System.Collections.IEnumerator.Reset" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class that is serializable using the specified <see cref="T:System.Runtime.Serialization.SerializationInfo" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" /> objects.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object containing the information required to serialize the <see cref="T:System.Collections.Hashtable" /> object.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> object containing the source and destination of the serialized stream associated with the <see cref="T:System.Collections.Hashtable" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Collections.IDictionary d, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer)" />
       <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IDictionary d, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="d" Type="System.Collections.IDictionary" />
-        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
-        <Parameter Name="comparer" Type="System.Collections.IComparer" />
-      </Parameters>
-      <Docs>
-        <param name="d">The <see cref="T:System.Collections.IDictionary" /> used to initialize the elements of the new instance.</param>
-        <param name="hcp">
-          <para>The <see cref="T:System.Collections.IHashCodeProvider" /> that supplies the hash codes for all keys in the new instance; or, <see langword="null" /> to use the default hash code provider.</para>
-        </param>
-        <param name="comparer">
-          <para>The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys are equal in the new instance, or <see langword="null" /> to use the default comparer.</para>
-        </param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class
-   using the values of the specified <see cref="T:System.Collections.IDictionary" />, the specified <see cref="T:System.Collections.IHashCodeProvider" />, and the specified <see cref="T:System.Collections.IComparer" />.</para>
-        </summary>
-        <remarks>
-          <para>The initial capacity of the new
-      instance is set to the number of entries in <paramref name="d" />.</para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="d" /> is <see langword="null" />. </exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -360,53 +437,83 @@ class with the specified initial capacity.</para>
           <AttributeName>System.Obsolete("Please use Hashtable(IDictionary, IEqualityComparer) instead")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="d" /> is <see langword="null" />. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial capacity is set to the number of elements in the source dictionary. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" /> object. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The custom hash code provider and the custom comparer enable scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>The elements of the new <see cref="T:System.Collections.Hashtable" /> are sorted in the same order in which the enumerator iterates through the <see cref="T:System.Collections.IDictionary" /> object.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements in the <paramref name="d" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class by copying the elements from the specified dictionary to the new <see cref="T:System.Collections.Hashtable" /> object. The new <see cref="T:System.Collections.Hashtable" /> object has an initial capacity equal to the number of elements copied, and uses the default load factor, and the specified hash code provider and comparer. This API is obsolete. For an alternative, see <see cref="M:System.Collections.Hashtable.#ctor(System.Collections.IDictionary,System.Collections.IEqualityComparer)" />.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> object to copy to a new <see cref="T:System.Collections.Hashtable" /> object.</param>
+        <param name="hcp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IHashCodeProvider" /> object that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IComparer" /> object to use to determine whether two keys are equal.</param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, float loadFactor, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IDictionary d, float32 loadFactor, class System.Collections.IEqualityComparer equalityComparer) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="d" Type="System.Collections.IDictionary" />
         <Parameter Name="loadFactor" Type="System.Single" />
         <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="loadFactor">To be added.</param>
-        <param name="equalityComparer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial capacity is set to the number of elements in the source dictionary. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption. A load factor of 1.0 is the best balance between speed and size.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> object includes both the hash code provider and the comparer. If an <see cref="T:System.Collections.IEqualityComparer" /> is used in the <see cref="T:System.Collections.Hashtable" /> constructor, the objects used as keys in the <see cref="T:System.Collections.Hashtable" /> object are not required to override the <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> methods.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> enables scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>The elements of the new <see cref="T:System.Collections.Hashtable" /> are sorted in the same order in which the enumerator iterates through the <see cref="T:System.Collections.IDictionary" /> object.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements in the <paramref name="d" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class by copying the elements from the specified dictionary to the new <see cref="T:System.Collections.Hashtable" /> object. The new <see cref="T:System.Collections.Hashtable" /> object has an initial capacity equal to the number of elements copied, and uses the specified load factor and <see cref="T:System.Collections.IEqualityComparer" /> object.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> object to copy to a new <see cref="T:System.Collections.Hashtable" /> object.</param>
+        <param name="loadFactor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A number in the range from 0.1 through 1.0 that is multiplied by the default value which provides the best performance. The result is the maximum ratio of elements to buckets.</param>
+        <param name="equalityComparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEqualityComparer" /> object that defines the hash code provider and the comparer to use with the <see cref="T:System.Collections.Hashtable" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer)" />
       <MemberSignature Language="C#" Value="public Hashtable (int capacity, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="capacity" Type="System.Int32" />
-        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
-        <Parameter Name="comparer" Type="System.Collections.IComparer" />
-      </Parameters>
-      <Docs>
-        <param name="capacity">A <see cref="T:System.Int32" /> that specifies the minimum number of entries that the new <see cref="T:System.Collections.Hashtable" /> instance can initially contain. </param>
-        <param name="hcp">
-          <para>The <see cref="T:System.Collections.IHashCodeProvider" /> that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />; or, <see langword="null" /> to use the default hash code provider.</para>
-        </param>
-        <param name="comparer">
-          <para>The <see cref="T:System.Collections.IComparer" /> to use to determine whether two keys are equal, or <see langword="null" /> to use the default comparer.</para>
-        </param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class with the specified initial capacity, the specified
-<see cref="T:System.Collections.IHashCodeProvider" />, and the specified <see cref="T:System.Collections.IComparer" />.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -417,45 +524,78 @@ class with the specified initial capacity.</para>
           <AttributeName>System.Obsolete("Please use Hashtable(int, IEqualityComparer) instead")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Hashtable" /> object. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The custom hash code provider and the custom comparer enable scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <paramref name="capacity" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the specified initial capacity, hash code provider, comparer, and the default load factor.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The approximate number of elements that the <see cref="T:System.Collections.Hashtable" /> object can initially contain. </param>
+        <param name="hcp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IHashCodeProvider" /> object that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IComparer" /> object to use to determine whether two keys are equal.</param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Hashtable (int capacity, float loadFactor, System.Collections.IEqualityComparer equalityComparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, float32 loadFactor, class System.Collections.IEqualityComparer equalityComparer) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
         <Parameter Name="loadFactor" Type="System.Single" />
         <Parameter Name="equalityComparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="capacity">To be added.</param>
-        <param name="loadFactor">To be added.</param>
-        <param name="equalityComparer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Hashtable" /> object. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption. A load factor of 1.0 is the best balance between speed and size.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> object includes both the hash code provider and the comparer. If an <see cref="T:System.Collections.IEqualityComparer" /> is used in the <see cref="T:System.Collections.Hashtable" /> constructor, the objects used as keys in the <see cref="T:System.Collections.Hashtable" /> are not required to override the <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> methods.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> enables scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <paramref name="capacity" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the specified initial capacity, load factor, and <see cref="T:System.Collections.IEqualityComparer" /> object.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The approximate number of elements that the <see cref="T:System.Collections.Hashtable" /> object can initially contain. </param>
+        <param name="loadFactor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A number in the range from 0.1 through 1.0 that is multiplied by the default value which provides the best performance. The result is the maximum ratio of elements to buckets.</param>
+        <param name="equalityComparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEqualityComparer" /> object that defines the hash code provider and the comparer to use with the <see cref="T:System.Collections.Hashtable" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Hashtable (System.Collections.IDictionary d, float loadFactor, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.IDictionary d, float32 loadFactor, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="d" Type="System.Collections.IDictionary" />
-        <Parameter Name="loadFactor" Type="System.Single" />
-        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
-        <Parameter Name="comparer" Type="System.Collections.IComparer" />
-      </Parameters>
-      <Docs>
-        <param name="d">To be added.</param>
-        <param name="loadFactor">To be added.</param>
-        <param name="hcp">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -466,24 +606,42 @@ class with the specified initial capacity.</para>
           <AttributeName>System.Obsolete("Please use Hashtable(IDictionary, float, IEqualityComparer) instead")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Hashtable (int capacity, float loadFactor, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
-        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="d" Type="System.Collections.IDictionary" />
         <Parameter Name="loadFactor" Type="System.Single" />
         <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <param name="capacity">To be added.</param>
-        <param name="loadFactor">To be added.</param>
-        <param name="hcp">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial capacity is set to the number of elements in the source dictionary. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption. A load factor of 1.0 is the best balance between speed and size.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" /> object. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The custom hash code provider and the custom comparer enable scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>The elements of the new <see cref="T:System.Collections.Hashtable" /> are sorted in the same order in which the enumerator iterates through the <see cref="T:System.Collections.IDictionary" /> object.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements in the <paramref name="d" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Hashtable" /> class by copying the elements from the specified dictionary to the new <see cref="T:System.Collections.Hashtable" /> object. The new <see cref="T:System.Collections.Hashtable" /> object has an initial capacity equal to the number of elements copied, and uses the specified load factor, hash code provider, and comparer.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> object to copy to a new <see cref="T:System.Collections.Hashtable" /> object.</param>
+        <param name="loadFactor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A number in the range from 0.1 through 1.0 that is multiplied by the default value which provides the best performance. The result is the maximum ratio of elements to buckets.</param>
+        <param name="hcp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IHashCodeProvider" /> object that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IComparer" /> object to use to determine whether two keys are equal.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Hashtable (int capacity, float loadFactor, System.Collections.IHashCodeProvider hcp, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, float32 loadFactor, class System.Collections.IHashCodeProvider hcp, class System.Collections.IComparer comparer) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -494,11 +652,47 @@ class with the specified initial capacity.</para>
           <AttributeName>System.Obsolete("Please use Hashtable(int, float, IEqualityComparer) instead")</AttributeName>
         </Attribute>
       </Attributes>
+      <Parameters>
+        <Parameter Name="capacity" Type="System.Int32" />
+        <Parameter Name="loadFactor" Type="System.Single" />
+        <Parameter Name="hcp" Type="System.Collections.IHashCodeProvider" />
+        <Parameter Name="comparer" Type="System.Collections.IComparer" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying the initial capacity eliminates the need to perform a number of resizing operations while adding elements to the <see cref="T:System.Collections.Hashtable" /> object. Capacity is automatically increased as required based on the load factor.</para>
+          <para>The load factor is the maximum ratio of elements to buckets. A smaller load factor means faster lookup at the cost of increased memory consumption. A load factor of 1.0 is the best balance between speed and size.</para>
+          <para>When the actual load factor reaches the specified load factor, the number of buckets is automatically increased to the smallest prime number that is larger than twice the current number of buckets.</para>
+          <para>The hash code provider dispenses hash codes for keys in the <see cref="T:System.Collections.Hashtable" />. The default hash code provider is the key's implementation of <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>The comparer determines whether two keys are equal. Every key in a <see cref="T:System.Collections.Hashtable" /> must be unique. The default comparer is the key's implementation of <see cref="M:System.Object.Equals(System.Object)" />.</para>
+          <para>The custom hash code provider and the custom comparer enable scenarios such as doing lookups with case-insensitive strings.</para>
+          <para>This constructor is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <paramref name="capacity" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Collections.Hashtable" /> class using the specified initial capacity, load factor, hash code provider, and comparer.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The approximate number of elements that the <see cref="T:System.Collections.Hashtable" /> object can initially contain. </param>
+        <param name="loadFactor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A number in the range from 0.1 through 1.0 that is multiplied by the default value which provides the best performance. The result is the maximum ratio of elements to buckets.</param>
+        <param name="hcp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IHashCodeProvider" /> object that supplies the hash codes for all keys in the <see cref="T:System.Collections.Hashtable" />.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IComparer" /> object to use to determine whether two keys are equal.</param>
+      </Docs>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Add(object key, object value)" />
       <MemberSignature Language="C#" Value="public virtual void Add (object key, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Add(object key, object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -507,13 +701,6 @@ class with the specified initial capacity.</para>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">The key of the entry to add.</param>
-        <param name="value">The value of the entry to add.</param>
-        <summary>
-          <para>Adds an entry with the specified key and value into the
-      current instance.</para>
-        </summary>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="key" /> is <see langword="null" />.</para>
@@ -524,47 +711,29 @@ class with the specified initial capacity.</para>
         <exception cref="T:System.NotSupportedException">
           <para>The current instance is read-only or has a fixed size.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A key cannot be null, but a value can be.</para>
+          <para>An object that has no correlation between its state and its hash code value should typically not be used as the key. For example, String objects are better than StringBuilder objects for use as keys.</para>
+          <para>You can also use the <see cref="P:System.Collections.Hashtable.Item(System.Object)" /> property to add new elements by setting the value of a key that does not exist in the <see cref="T:System.Collections.Hashtable" />; for example, myCollection["myNonexistentKey"] = myValue. However, if the specified key already exists in the <see cref="T:System.Collections.Hashtable" />, setting the <see cref="P:System.Collections.Hashtable.Item(System.Object)" /> property overwrites the old value. In contrast, the <see cref="M:System.Collections.Hashtable.Add(System.Object,System.Object)" /> method does not modify existing elements.</para>
+          <para>If <see cref="P:System.Collections.Hashtable.Count" /> is less than the capacity of the <see cref="T:System.Collections.Hashtable" />, this method is an O(1) operation. If the capacity needs to be increased to accommodate the new element, this method becomes an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element with the specified key and value into the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key of the element to add. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the element to add. The value can be null. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Clear()" />
       <MemberSignature Language="C#" Value="public virtual void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Removes all entries from the current instance.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is implemented to support
-      the <see cref="T:System.Collections.IDictionary" /> interface.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <block subset="none" type="default">
-            <para>The value of each key and value in the current instance is set to
-      <see langword="null" />. The <see cref="P:System.Collections.Hashtable.Count" /> property of the current instance 
-         is set to zero. The capacity of the current instance remains
-         unchanged.</para>
-            <para>If the current instance is empty, it remains unchanged and no exception is
-         thrown.</para>
-          </block>
-        </remarks>
-        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -575,58 +744,62 @@ class with the specified initial capacity.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <exception cref="T:System.NotSupportedException">The current instance is read-only.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Collections.Hashtable.Count" /> is set to zero, and references to other objects from elements of the collection are also released. The capacity remains unchanged.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all elements from the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual object Clone()" />
       <MemberSignature Language="C#" Value="public virtual object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Creates a <see cref="T:System.Object" />
-that is a copy of the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Object" />
-that is a copy of the current instance.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.ICloneable" /> interface.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described
-   above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This method creates a new <see cref="T:System.Collections.Hashtable" /> instance is initialized with the same count,
-<see cref="T:System.Collections.IHashCodeProvider" /> implementation, and <see cref="T:System.Collections.IComparer" /> implementation 
-as the current instance. The references to the objects contained by the current
-instance are copied to the new instance.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but it does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
+          <para>In contrast, a deep copy of a collection copies the elements and everything directly or indirectly referenced by the elements.</para>
+          <para>The <see cref="T:System.Collections.Hashtable" /> clone has the same count, the same capacity, the same <see cref="T:System.Collections.IHashCodeProvider" /> implementation, and the same <see cref="T:System.Collections.IComparer" /> implementation as the original <see cref="T:System.Collections.Hashtable" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a shallow copy of the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.Hashtable" />.</para>
+        </returns>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="comparer">
-      <MemberSignature Language="C#" Value="protected System.Collections.IComparer comparer { set; get; }" />
+      <MemberSignature Language="C#" Value="protected System.Collections.IComparer comparer { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IComparer comparer" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -637,11 +810,31 @@ instance are copied to the new instance.</block>
           <AttributeName>System.Obsolete("Please use EqualityComparer property.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.IComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieving the value of this property is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Collections.IComparer" /> to use for the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Contains">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Contains(object key)" />
       <MemberSignature Language="C#" Value="public virtual bool Contains (object key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Contains(object key) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -649,46 +842,38 @@ instance are copied to the new instance.</block>
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">The key to locate in the current instance.</param>
-        <summary>
-          <para> Determines whether the current instance contains the specified key.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" />
-if the current instance contains <paramref name="key" />; otherwise, <see langword="false" />.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is implemented to support the <see cref="T:System.Collections.IDictionary" /> 
-interface.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">
- This method is equivalent to <see cref="M:System.Collections.Hashtable.ContainsKey(System.Object)" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="note"> 
- For the default implementation, this method has a constant (O(1)) lookup time.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key" /> is <see langword="null" />. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Collections.Hashtable.Contains(System.Object)" /> implements <see cref="M:System.Collections.IDictionary.Contains(System.Object)" />. It behaves exactly as <see cref="M:System.Collections.Hashtable.ContainsKey(System.Object)" />.</para>
+          <para>This method is an O(1) operation.</para>
+          <para>Starting with the .NET Framework 2.0, this method uses the collection’s objects’ <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods on <paramref name="item" /> to determine whether item exists. In the earlier versions of the .NET Framework, this determination was made by using the <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods of the <paramref name="item" /> parameter on the objects in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Collections.Hashtable" /> contains a specific key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Hashtable" /> contains an element with the specified key; otherwise, false.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.Hashtable" />. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContainsKey">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool ContainsKey(object key)" />
       <MemberSignature Language="C#" Value="public virtual bool ContainsKey (object key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ContainsKey(object key) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -696,43 +881,37 @@ interface.</block>
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">The key of the entry to locate in the current instance.</param>
-        <summary>
-          <para>Determines whether the current instance contains an entry with the specified key.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if
- the current instance contains an entry with <paramref name="key" />; otherwise, <see langword="false" />.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">
- This method uses <see cref="M:System.Collections.Hashtable.KeyEquals(System.Object,System.Object)" /> to compare <paramref name="key" /> to the keys in the current instance.
- </block>
-          </para>
-          <para>
-            <block subset="none" type="note">For the default implementation, this method has a constant (O(1)) lookup
- time.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key" /> is <see langword="null" />. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method behaves exactly as <see cref="M:System.Collections.Hashtable.Contains(System.Object)" />.</para>
+          <para>This method is an O(1) operation.</para>
+          <para>Starting with the .NET Framework 2.0, this method uses the collection’s objects’ <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods on <paramref name="item" /> to determine whether item exists. In the earlier versions of the .NET Framework, this determination was made by using the <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods of the <paramref name="item" /> parameter on the objects in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Collections.Hashtable" /> contains a specific key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Hashtable" /> contains an element with the specified key; otherwise, false.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.Hashtable" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ContainsValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool ContainsValue(object value)" />
+      <MemberSignature Language="C#" Value="public virtual bool ContainsValue (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ContainsValue(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ContainsValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool ContainsValue(object value)" />
-      <MemberSignature Language="C#" Value="public virtual bool ContainsValue (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -740,44 +919,35 @@ interface.</block>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">The value to locate in the current instance.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The values of the elements of the <see cref="T:System.Collections.Hashtable" /> are compared to the specified value using the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+          <para>This method performs a linear search; therefore, this method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+          <para>Starting with the .NET Framework 2.0, this method uses the collection’s objects’ <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods on <paramref name="item" /> to determine whether item exists. In the earlier versions of the .NET Framework, this determination was made by using the <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods of the <paramref name="item" /> parameter on the objects in the collection.</para>
+        </remarks>
         <summary>
-          <para>Determines whether the current instance contains an entry with the specified value.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Collections.Hashtable" /> contains a specific value.</para>
         </summary>
         <returns>
-          <para>
-            <see langword="true" />
-if the current instance contains an
-entry with <paramref name="value" />; otherwise, <see langword="false" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Hashtable" /> contains an element with the specified <paramref name="value" />; otherwise, false.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is implemented to support 
- the <see cref="T:System.Collections.IDictionary" /> interface.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This method is equivalent to <see cref="M:System.Collections.Hashtable.ContainsKey(System.Object)" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="note">For the default implementation, this method has a constant (O(1)) lookup 
- time.</block>
-          </para>
-        </remarks>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to locate in the <see cref="T:System.Collections.Hashtable" />. The value can be null. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array, int32 arrayIndex)" />
+      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array, int arrayIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(class System.Array array, int32 arrayIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array, int32 arrayIndex)" />
-      <MemberSignature Language="C#" Value="public virtual void CopyTo (Array array, int arrayIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -786,25 +956,6 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
         <Parameter Name="arrayIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">The one-dimensional, zero-indexed <see cref="T:System.Array" /> that is the destination of the objects copied from the current instance.</param>
-        <param name="arrayIndex">A <see cref="T:System.Int32" /> that specifies the zero-based index in <paramref name="array" /> at which copying begins. This value is between 0 and <paramref name="array" />.Length minus the <see cref="P:System.Collections.Hashtable.Count" /> of the current instance, inclusive.</param>
-        <summary>
-          <para>Copies the entries of the current instance to a
-      one-dimensional <see cref="T:System.Array" /> starting at the specified index.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Collections.DictionaryEntry" /> elements in the current instance are copied to the <see cref="T:System.Array" /> in the same order in which they are contained the
-   current instance. If <see cref="T:System.Collections.DictionaryEntry" /> is not
-   assignment-compatible with the type of <paramref name="array" />, a <see cref="T:System.InvalidCastException" />
-   is thrown. If an exception is thrown
-   while copying, the state of the current instance is undefined.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -817,104 +968,129 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
             <paramref name="arrayIndex" /> &gt; <paramref name="array" />.Length - The <see cref="P:System.Collections.Hashtable.Count" /> of the current instance.</para>
         </exception>
         <exception cref="T:System.InvalidCastException">The type of the current instance is not assignment-compatible with the type of <paramref name="array" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements are copied to the <see cref="T:System.Array" /> in the same order in which the enumerator iterates through the <see cref="T:System.Collections.Hashtable" />.</para>
+          <para>To copy only the keys in the <see cref="T:System.Collections.Hashtable" />, use Hashtable.Keys.CopyTo.</para>
+          <para>To copy only the values in the <see cref="T:System.Collections.Hashtable" />, use Hashtable.Values.CopyTo.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Collections.Hashtable" /> elements to a one-dimensional <see cref="T:System.Array" /> instance at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the <see cref="T:System.Collections.DictionaryEntry" /> objects copied from <see cref="T:System.Collections.Hashtable" />. The <see cref="T:System.Array" /> must have zero-based indexing. </param>
+        <param name="arrayIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="ILASM" Value=".property int32 Count { public hidebysig virtual specialname int32 get_Count() }" />
+      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Count">
-      <MemberSignature Language="ILASM" Value=".property int32 Count { public hidebysig virtual specialname int32 get_Count() }" />
-      <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the number of key-and-value pairs contained in the
-      current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> that specifies the number of key-and-value pairs contained in the
    current instance.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieving the value of this property is an O(1) operation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of key/value pairs contained in the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="EqualityComparer">
+      <MemberSignature Language="C#" Value="protected System.Collections.IEqualityComparer EqualityComparer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IEqualityComparer EqualityComparer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEqualityComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.IEqualityComparer" /> includes both the comparer and the hash code provider. If an <see cref="T:System.Collections.IEqualityComparer" /> is used in the <see cref="T:System.Collections.Hashtable" /> constructor, the objects used as keys in the <see cref="T:System.Collections.Hashtable" /> are not required to override the <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Object.Equals(System.Object)" /> methods.</para>
+          <para>Retrieving the value of this property is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Collections.IEqualityComparer" /> to use for the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IDictionaryEnumerator GetEnumerator()" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.IDictionaryEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IDictionaryEnumerator GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EqualityComparer">
-      <MemberSignature Language="C#" Value="protected System.Collections.IEqualityComparer EqualityComparer { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IEqualityComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEnumerator">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IDictionaryEnumerator GetEnumerator()" />
-      <MemberSignature Language="C#" Value="public virtual System.Collections.IDictionaryEnumerator GetEnumerator ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.IDictionaryEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>[Visual Basic, C#]</para>
+          <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
+          <para>Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.</para>
+          <para>Initially, the enumerator is positioned before the first element in the collection. <see cref="M:System.Collections.IEnumerator.Reset" /> also brings the enumerator back to this position.  At this position, <see cref="P:System.Collections.IEnumerator.Current" /> is undefined. Therefore, you must call <see cref="M:System.Collections.IEnumerator.MoveNext" /> to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.IEnumerator.Current" />.</para>
+          <para>
+            <see cref="P:System.Collections.IEnumerator.Current" /> returns the same object until either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.IEnumerator.Current" /> to the next element.</para>
+          <para>If <see cref="M:System.Collections.IEnumerator.MoveNext" /> passes the end of the collection, the enumerator is positioned after the last element in the collection and <see cref="M:System.Collections.IEnumerator.MoveNext" /> returns false. When the enumerator is at this position, subsequent calls to <see cref="M:System.Collections.IEnumerator.MoveNext" /> also return false. If the last call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> returned false, <see cref="P:System.Collections.IEnumerator.Current" /> is undefined. To set <see cref="P:System.Collections.IEnumerator.Current" /> to the first element of the collection again, you can call <see cref="M:System.Collections.IEnumerator.Reset" /> followed by <see cref="M:System.Collections.IEnumerator.MoveNext" />.</para>
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and its behavior is undefined.</para>
+          <para>The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread safe procedure.  To guarantee thread safety during enumeration, you can lock the collection during the entire enumeration.  To allow the collection to be accessed by multiple threads for reading and writing, you must implement your own synchronization.</para>
+          <para>This method is an O(1) operation.</para>
+          <para>Because serializing and deserializing an enumerator for a <see cref="T:System.Collections.Hashtable" /> can cause the elements to become reordered, it is not possible to continue enumeration without calling the <see cref="M:System.Collections.IEnumerator.Reset" /> method.</para>
+        </remarks>
         <summary>
-          <para> Returns a <see cref="T:System.Collections.IDictionaryEnumerator" /> for the
-   current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> that iterates through the <see cref="T:System.Collections.Hashtable" />.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Collections.IDictionaryEnumerator" /> for the current
-   instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> for the <see cref="T:System.Collections.Hashtable" />.</para>
         </returns>
-        <remarks>
-          <para>If the current instance is modified
-      while an enumeration is in progress, a call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="P:System.Collections.IEnumerator.Reset" /> throws <see cref="T:System.InvalidOperationException" />. </para>
-          <block subset="none" type="note">
-            <para>For detailed information regarding the use of an enumerator, see <see cref="T:System.Collections.IEnumerator" />.</para>
-            <para>This property is implemented to support the <see cref="T:System.Collections.IList" /> interface.</para>
-          </block>
-          <para>
-            <block subset="none" type="behaviors">As described
-   above.</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetHash">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual int32 GetHash(object key)" />
+      <MemberSignature Language="C#" Value="protected virtual int GetHash (object key);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance int32 GetHash(object key) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHash">
-      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual int32 GetHash(object key)" />
-      <MemberSignature Language="C#" Value="protected virtual int GetHash (object key);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -922,39 +1098,35 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">The <see cref="T:System.Object" /> whose hash code is to be generated.</param>
-        <summary>
-          <para>Generates a hash code for the specified key in the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for <paramref name="key" />.</para>
-        </returns>
-        <remarks>
-          <para>This method is accessible only through this class or a derived class.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">If the current instance was instantiated with a specific <see cref="T:System.Collections.IHashCodeProvider" /> implementation, this method uses that hash
-   code provider; otherwise, it uses the <see cref="M:System.Object.GetHashCode" qualify="true" /> implementation of
-<paramref name="key" />
-.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key" /> is <see langword="null" />. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the hash table was created with a specific <see cref="T:System.Collections.IHashCodeProvider" /> implementation, this method uses that hash code provider; otherwise, it uses the <see cref="M:System.Object.GetHashCode" /> implementation of <paramref name="key" />.</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the specified key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for <paramref name="key" />.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which a hash code is to be returned. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -963,28 +1135,24 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface and returns the data needed to serialize the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object containing the information required to serialize the <see cref="T:System.Collections.Hashtable" />. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> object containing the source and destination of the serialized stream associated with the <see cref="T:System.Collections.Hashtable" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="hcp">
-      <MemberSignature Language="C#" Value="protected System.Collections.IHashCodeProvider hcp { set; get; }" />
+      <MemberSignature Language="C#" Value="protected System.Collections.IHashCodeProvider hcp { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IHashCodeProvider hcp" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IHashCodeProvider</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -995,17 +1163,36 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
           <AttributeName>System.Obsolete("Please use EqualityComparer property.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.IHashCodeProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieving the value of this property is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that can dispense hash codes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsFixedSize">
       <MemberSignature Language="ILASM" Value=".property bool IsFixedSize { public hidebysig virtual specialname bool get_IsFixedSize() }" />
       <MemberSignature Language="C#" Value="public virtual bool IsFixedSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFixedSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Implemented to support the <see cref="T:System.Collections.IDictionary" /> interface. [Note: For more information, see <see cref="M:System.Collections.IDictionary.IsFixedSize" />.]</summary>
         <value>
           <para>
             <see langword="true" /> if the
@@ -1013,43 +1200,33 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
 <see langword="false" />. </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="note">Elements can be modified in, but not
-      added to or removed from a <see cref="T:System.Collections.Hashtable" /> with a fixed size.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The default
-      value of this property is <see langword="false" /> .</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override
-      this property, setting it to <see langword=" true" />
-      , to prevent addition or removal of entries in the current instance.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection with a fixed size does not allow the addition or removal of elements after the collection is created, but it allows the modification of existing elements.</para>
+          <para>A collection with a fixed size is simply a collection with a wrapper that prevents adding and removing elements; therefore, if changes are made to the underlying collection, including the addition or removal of elements, the fixed-size collection reflects those changes.</para>
+          <para>Retrieving the value of this property is an O(1) operation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Collections.Hashtable" /> has a fixed size.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig virtual specialname bool get_IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig virtual specialname bool get_IsReadOnly() }" />
-      <MemberSignature Language="C#" Value="public virtual bool IsReadOnly { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Implemented to support the <see cref="T:System.Collections.IDictionary" /> interface. [Note: For more information, see <see cref="M:System.Collections.IDictionary.IsReadOnly" />.]</summary>
         <value>
           <para>
             <see langword="true" /> if the
@@ -1057,44 +1234,33 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
 <see langword="false" />. </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="note">Elements cannot be modified in, added
-      to, or removed from a <see cref="T:System.Collections.Hashtable" /> that is read-only.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The default
-      value of this property is <see langword=" false" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override
-      this property, setting it to <see langword=" true" /> , in
-      order to prevent the addition, removal, or modification of
-      entries in the current instance.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that is read-only does not allow the addition, removal, or modification of elements after the collection is created.</para>
+          <para>A collection that is read-only is simply a collection with a wrapper that prevents modifying the collection; therefore, if changes are made to the underlying collection, the read-only collection reflects those changes.</para>
+          <para>Retrieving the value of this property is an O(1) operation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Collections.Hashtable" /> is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="ILASM" Value=".property bool IsSynchronized { public hidebysig virtual specialname bool get_IsSynchronized() }" />
+      <MemberSignature Language="C#" Value="public virtual bool IsSynchronized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSynchronized" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsSynchronized">
-      <MemberSignature Language="ILASM" Value=".property bool IsSynchronized { public hidebysig virtual specialname bool get_IsSynchronized() }" />
-      <MemberSignature Language="C#" Value="public virtual bool IsSynchronized { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Implemented to support the <see cref="T:System.Collections.ICollection" /> interface. [Note: For more information, see <see cref="M:System.Collections.ICollection.IsSynchronized" />.]</summary>
         <value>
           <para>
             <see langword="true" /> if access to
@@ -1102,41 +1268,29 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
    (thread-safe); otherwise, <see langword="false" />. </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <block subset="none" type="note">
-            <para>This property is implemented to support the <see cref="T:System.Collections.ICollection" />
-   interface.</para>
-            <para>For more information regarding synchronization of access to a <see cref="T:System.Collections.Hashtable" /> ,
-see <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" /> .</para>
-          </block>
-          <para>
-            <block subset="none" type="behaviors">As described
-   above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The default
-   value of this property is <see langword=" false" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override
-   this property, setting it to <see langword=" true" />
-   , if thread-safety can be guaranteed for
-   the current instance. In order to obtain this safety, use <see cref="P:System.Collections.Hashtable.SyncRoot" /> or <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" />
-   .</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Hashtable" />  can support one writer and multiple readers concurrently. To support multiple writers, all operations must be done through the wrapper returned by the <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" /> method.</para>
+          <para>Enumerating through a collection is intrinsically not a thread safe procedure. Even when a collection is synchronized, other threads can still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+          <para>The following code example shows how to lock the collection using the <see cref="P:System.Collections.Hashtable.SyncRoot" /> during the entire enumeration:</para>
+          <para>code reference: Classic Hashtable.IsSynchronized Example#2</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the <see cref="T:System.Collections.Hashtable" /> is synchronized (thread safe).</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property object Item[object key] { public hidebysig virtual specialname object get_Item(object key) public hidebysig virtual specialname void set_Item(object key, object value) }" />
+      <MemberSignature Language="C#" Value="public virtual object this[object key] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Item(object)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Item">
-      <MemberSignature Language="ILASM" Value=".property object Item[object key] { public hidebysig virtual specialname object get_Item(object key) public hidebysig virtual specialname void set_Item(object key, object value) }" />
-      <MemberSignature Language="C#" Value="public virtual object this[object key] { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1182,16 +1336,17 @@ see <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Ha
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="KeyEquals">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual bool KeyEquals(object item, object key)" />
+      <MemberSignature Language="C#" Value="protected virtual bool KeyEquals (object item, object key);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool KeyEquals(object item, object key) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="KeyEquals">
-      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual bool KeyEquals(object item, object key)" />
-      <MemberSignature Language="C#" Value="protected virtual bool KeyEquals (object item, object key);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1200,30 +1355,6 @@ see <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Ha
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="item">The <see cref="T:System.Object" /> to compare with <paramref name="key" />.</param>
-        <param name="key">The key in the current instance to compare with <paramref name="item" />.</param>
-        <summary>
-          <para>Determines whether the specified <see cref="T:System.Object" /> and the specified key in the
-   current instance represent the same value.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="item" /> and <paramref name="key" /> represent the
-   same value; otherwise,
-<see langword="false" />. </para>
-        </returns>
-        <remarks>
-          <para>This method is accessible only through this class or a derived class.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">If the
-      current instance was initialized with a specified <see cref="T:System.Collections.IComparer" /> implementation, this method uses that
-      implementation to perform the comparison; otherwise, the <see cref="M:System.Object.Equals(System.Object)" /> implementation of <paramref name="item" /> is used.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="item" /> is <see langword="null" />. </para>
@@ -1231,53 +1362,66 @@ see <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Ha
           <para>
             <paramref name="key" /> is <see langword="null" />. </para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the hash table was created with a specific <see cref="T:System.Collections.IComparer" /> implementation, this method uses that comparer; that is, <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> (<paramref name="item" />, <paramref name="key" />). Otherwise, it uses item.Equals(key).</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares a specific <see cref="T:System.Object" /> with a specific key in the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="item" /> and <paramref name="key" /> are equal; otherwise, false.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with <paramref name="key" />. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key in the <see cref="T:System.Collections.Hashtable" /> to compare with <paramref name="item" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Keys">
+      <MemberSignature Language="ILASM" Value=".property class System.Collections.ICollection Keys { public hidebysig virtual specialname class System.Collections.ICollection get_Keys() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.ICollection Keys { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ICollection Keys" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Keys">
-      <MemberSignature Language="ILASM" Value=".property class System.Collections.ICollection Keys { public hidebysig virtual specialname class System.Collections.ICollection get_Keys() }" />
-      <MemberSignature Language="C#" Value="public virtual System.Collections.ICollection Keys { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Implemented to support the <see cref="T:System.Collections.IDictionary" /> interface. [Note: For more information, see <see cref="M:System.Collections.IDictionary.Keys" />.]</summary>
         <value>
           <para>A <see cref="T:System.Collections.ICollection" /> containing the keys of the current instance.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <block subset="none" type="default">
-            <para>The order of the keys in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is
-      the same order as the associated values in the <see cref="T:System.Collections.ICollection" />
-      returned by the <see cref="P:System.Collections.Hashtable.Values" /> method.</para>
-            <para> The returned <see cref="T:System.Collections.ICollection" /> is a reference to the current instance, not
-   a static copy. Therefore, changes to the current instance continue to be
-   reflected in the <see cref="T:System.Collections.ICollection" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of the keys in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is the same order as the associated values in the <see cref="T:System.Collections.ICollection" /> returned by the <see cref="P:System.Collections.Hashtable.Values" /> method.</para>
+          <para>The returned <see cref="T:System.Collections.ICollection" /> is not a static copy; instead, the <see cref="T:System.Collections.ICollection" /> refers back to the keys in the original <see cref="T:System.Collections.Hashtable" />. Therefore, changes to the <see cref="T:System.Collections.Hashtable" /> continue to be reflected in the <see cref="T:System.Collections.ICollection" />.</para>
+          <para>Retrieving the value of this property is an O(1) operation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> containing the keys in the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OnDeserialization">
+      <MemberSignature Language="C#" Value="public virtual void OnDeserialization (object sender);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void OnDeserialization(object sender) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OnDeserialization">
-      <MemberSignature Language="C#" Value="public virtual void OnDeserialization (object sender);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1285,58 +1429,24 @@ see <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Ha
         <Parameter Name="sender" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.Hashtable.Count" />.</para>
+          <para>Because serializing and deserializing an enumerator for a <see cref="T:System.Collections.Hashtable" /> can cause the elements to become reordered, it is not possible to continue enumeration without calling the <see cref="M:System.Collections.IEnumerator.Reset" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface and raises the deserialization event when the deserialization is complete.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the deserialization event. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Remove(object key)" />
       <MemberSignature Language="C#" Value="public virtual void Remove (object key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Remove(object key) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="key" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="key">The key of the entry to remove.</param>
-        <summary>
-          <para>Removes the entry with the specified key from the
-      current instance.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method is implemented to support
-      the <see cref="T:System.Collections.IDictionary" /> interface.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described
-   above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This method uses the <see cref="M:System.Object.Equals(System.Object)" /> implementation of
-<paramref name="key" /> to locate it in the current instance. If <paramref name="key" /> is 
-found in the current instance, the values of both <paramref name="key" /> and its
-associated value are set to <see langword="null" />. If <paramref name="key" /> is not
-found in the
-current instance, no exception is thrown and the current
-instance remains unchanged.</block>
-          </para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="key" /> is <see langword="null" />. </exception>
-        <exception cref="T:System.NotSupportedException">
-          <para>The current instance is read-only or has a fixed size.</para>
-        </exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1347,11 +1457,42 @@ instance remains unchanged.</block>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="key" /> is <see langword="null" />. </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>The current instance is read-only or has a fixed size.</para>
+        </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Collections.Hashtable" /> does not contain an element with the specified key, the <see cref="T:System.Collections.Hashtable" /> remains unchanged. No exception is thrown.</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the element with the specified key from the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key of the element to remove. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Synchronized">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.Hashtable Synchronized(class System.Collections.Hashtable table)" />
       <MemberSignature Language="C#" Value="public static System.Collections.Hashtable Synchronized (System.Collections.Hashtable table);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Hashtable Synchronized(class System.Collections.Hashtable table) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Hashtable</ReturnType>
       </ReturnValue>
@@ -1359,144 +1500,130 @@ instance remains unchanged.</block>
         <Parameter Name="table" Type="System.Collections.Hashtable" />
       </Parameters>
       <Docs>
-        <param name="table">The <see cref="T:System.Collections.Hashtable" /> to synchronize.</param>
-        <summary>
-          <para>Returns a synchronized (thread-safe) wrapper for the specified <see cref="T:System.Collections.Hashtable" />.</para>
-        </summary>
-        <returns>
-          <para>A synchronized (thread-safe) wrapper for <paramref name="table" />.</para>
-        </returns>
-        <remarks>
-          <para>This method returns a new <see cref="T:System.Collections.Hashtable" /> instance that contains values equal to the
-   values of <paramref name="table" /> , and provides synchronized access to those values.</para>
-          <para>If more than one thread is to write to a <see cref="T:System.Collections.Hashtable" /> concurrently, all
-write
-operations are required to be done through this wrapper.</para>
-          <para>
-            <block subset="none" type="note">A <see cref="T:System.Collections.Hashtable" /> can safely support one
-writer and multiple readers concurrently.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="table" /> is <see langword="null" />. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" /> method is thread safe for multiple readers and writers. Furthermore, the synchronized wrapper ensures that there is only one writer writing at a time.</para>
+          <para>Enumerating through a collection is intrinsically not a thread-safe procedure. Even when a collection is synchronized, other threads can still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+          <para>The following code example shows how to lock the collection using the <see cref="P:System.Collections.Hashtable.SyncRoot" /> during the entire enumeration: </para>
+          <para>code reference: Classic Hashtable.IsSynchronized Example#2</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a synchronized (thread-safe) wrapper for the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A synchronized (thread-safe) wrapper for the <see cref="T:System.Collections.Hashtable" />.</para>
+        </returns>
+        <param name="table">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Hashtable" /> to synchronize. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="ILASM" Value=".property object SyncRoot { public hidebysig virtual specialname object get_SyncRoot() }" />
+      <MemberSignature Language="C#" Value="public virtual object SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SyncRoot">
-      <MemberSignature Language="ILASM" Value=".property object SyncRoot { public hidebysig virtual specialname object get_SyncRoot() }" />
-      <MemberSignature Language="C#" Value="public virtual object SyncRoot { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Object" /> that can be used to synchronize access to
-   the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Object" /> that can be used to synchronize access to the
    current instance.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>A thread is required to perform synchronized operations only on the <see cref="P:System.Collections.Hashtable.SyncRoot" /> of a <see cref="T:System.Collections.Hashtable" />, not directly on
-   the table itself. This maintains proper synchronization with any other threads
-   concurrently modifying the table.</para>
-          <para>
-            <block subset="none" type="note">This property is implemented to support
-   the <see cref="T:System.Collections.ICollection" /> interface.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described
-   above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This method returns a reference to
-   the current instance.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override this property to return an object on which to lock when
-   implementing a collection that wraps another collection (using a subset of it, for
-   example). This is useful when providing synchronized access through two or more
-   wrapper collections to the same underlying collection. Typically, this property returns a
-   reference to the current instance.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this property to obtain a <see cref="T:System.Object" /> that can be used to synchronize access to the current
-instance.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create a synchronized version of the <see cref="T:System.Collections.Hashtable" />, use the <see cref="M:System.Collections.Hashtable.Synchronized(System.Collections.Hashtable)" /> method. However, derived classes can provide their own synchronized version of the <see cref="T:System.Collections.Hashtable" /> using the <see cref="P:System.Collections.Hashtable.SyncRoot" />  property. The synchronizing code must perform operations on the <see cref="P:System.Collections.Hashtable.SyncRoot" /> of the <see cref="T:System.Collections.Hashtable" />, not directly on the <see cref="T:System.Collections.Hashtable" /> . This ensures proper operation of collections that are derived from other objects. Specifically, it maintains proper synchronization with other threads that might be simultaneously modifying the <see cref="T:System.Collections.Hashtable" /> object.</para>
+          <para>Enumerating through a collection is intrinsically not a thread safe procedure. Even when a collection is synchronized, other threads can still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+          <para>The following code example shows how to lock the collection using the <see cref="P:System.Collections.Hashtable.SyncRoot" /> during the entire enumeration:</para>
+          <para>code reference: Classic Hashtable.IsSynchronized Example#2</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
-      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Implemented to support the <see cref="T:System.Collections.IEnumerable" /> interface. [Note: For more information, see <see cref="M:System.Collections.IEnumerable.GetEnumerator" />.]</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>[Visual Basic, C#]</para>
+          <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
+          <para>Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.</para>
+          <para>Initially, the enumerator is positioned before the first element in the collection. <see cref="M:System.Collections.IEnumerator.Reset" /> also brings the enumerator back to this position. At this position, calling <see cref="P:System.Collections.IEnumerator.Current" /> throws an exception. Therefore, you must call <see cref="M:System.Collections.IEnumerator.MoveNext" /> to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.IEnumerator.Current" />.</para>
+          <para>
+            <see cref="P:System.Collections.IEnumerator.Current" /> returns the same object until either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.IEnumerator.Current" /> to the next element.</para>
+          <para>If <see cref="M:System.Collections.IEnumerator.MoveNext" /> passes the end of the collection, the enumerator is positioned after the last element in the collection and <see cref="M:System.Collections.IEnumerator.MoveNext" /> returns false. When the enumerator is at this position, subsequent calls to <see cref="M:System.Collections.IEnumerator.MoveNext" /> also return false. If the last call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> returned false, calling <see cref="P:System.Collections.IEnumerator.Current" /> throws an exception. To set <see cref="P:System.Collections.IEnumerator.Current" /> to the first element of the collection again, you can call <see cref="M:System.Collections.IEnumerator.Reset" /> followed by <see cref="M:System.Collections.IEnumerator.MoveNext" />.</para>
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator can be invalidated and the next call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> throws an <see cref="T:System.InvalidOperationException" />. If the collection is modified between <see cref="M:System.Collections.IEnumerator.MoveNext" /> and <see cref="P:System.Collections.IEnumerator.Current" />, <see cref="P:System.Collections.IEnumerator.Current" /> returns the element that it is set to, even if the enumerator is already invalidated.</para>
+          <para>The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread safe procedure. Even when a collection is synchronized, other threads can still modify the collection, which causes the enumerator to throw an exception. To guarantee thread safety during enumeration, you can either lock the collection during the entire enumeration or catch the exceptions resulting from changes made by other threads.</para>
+          <para>This method is an O(1) operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Values">
+      <MemberSignature Language="ILASM" Value=".property class System.Collections.ICollection Values { public hidebysig virtual specialname class System.Collections.ICollection get_Values() }" />
+      <MemberSignature Language="C#" Value="public virtual System.Collections.ICollection Values { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ICollection Values" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Values">
-      <MemberSignature Language="ILASM" Value=".property class System.Collections.ICollection Values { public hidebysig virtual specialname class System.Collections.ICollection get_Values() }" />
-      <MemberSignature Language="C#" Value="public virtual System.Collections.ICollection Values { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Collections.ICollection" /> containing the values of the current
-   instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Collections.ICollection" /> containing the values of the current
    instance.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <block subset="none" type="default">
-            <para>The order of the values in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is
-      the same order as the associated keys in the <see cref="T:System.Collections.ICollection" /> returned by the <see cref="P:System.Collections.Hashtable.Keys" /> method.</para>
-            <para> The returned <see cref="T:System.Collections.ICollection" /> is a reference to the current instance, not
-   a static copy. Therefore, changes to the current instance continue to be
-   reflected in the <see cref="T:System.Collections.ICollection" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of the values in the <see cref="T:System.Collections.ICollection" /> is unspecified, but it is the same order as the associated keys in the <see cref="T:System.Collections.ICollection" /> returned by the <see cref="P:System.Collections.Hashtable.Keys" /> method.</para>
+          <para>The returned <see cref="T:System.Collections.ICollection" /> is not a static copy; instead, the <see cref="T:System.Collections.ICollection" /> refers back to the values in the original <see cref="T:System.Collections.Hashtable" />. Therefore, changes to the <see cref="T:System.Collections.Hashtable" /> continue to be reflected in the <see cref="T:System.Collections.ICollection" />.</para>
+          <para>Retrieving the value of this property is an O(1) operation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> containing the values in the <see cref="T:System.Collections.Hashtable" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

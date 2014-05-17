@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeAccessSecurityAttribute" FullName="System.Security.Permissions.CodeAccessSecurityAttribute" FullNameSP="System_Security_Permissions_CodeAccessSecurityAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable CodeAccessSecurityAttribute extends System.Security.Permissions.SecurityAttribute" />
   <TypeSignature Language="C#" Value="public abstract class CodeAccessSecurityAttribute : System.Security.Permissions.SecurityAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit CodeAccessSecurityAttribute extends System.Security.Permissions.SecurityAttribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,47 +25,47 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> This is the base class for code access security
-      attributes.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para> The types that derive from <see cref="T:System.Security.Permissions.CodeAccessSecurityAttribute" /> are 
-      used to secure access
-      to resources or securable operations.</para>
-        <para> The security information declared by a security attribute is stored
-      in the metadata of the attribute target, and is accessed by the system
-      at run-time. Security attributes are used for declarative security only. Use the
-      corresponding permission class derived from <see cref="T:System.Security.CodeAccessPermission" />
-      for imperative security.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This attribute class associates a <see cref="T:System.Security.Permissions.SecurityAction" />, for example, Demand, with a custom security attribute.</para>
+      <para>The types that derive from <see cref="T:System.Security.Permissions.CodeAccessSecurityAttribute" /> are used to help restrict access to resources or securable operations.</para>
+      <para>The security information declared by a security attribute is stored in the metadata of the attribute target and is accessed by the system at run time. Security attributes are used only for declarative security. Use the corresponding permission class derived from <see cref="T:System.Security.CodeAccessPermission" /> for imperative security.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the base attribute class for code access security.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action)" />
       <MemberSignature Language="C#" Value="protected CodeAccessSecurityAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
-      </Parameters>
-      <Docs>
-        <param name="action">A <see cref="T:System.Security.Permissions.SecurityAction" /> value.</param>
-        <summary>
-          <para> Constructs and initializes a new instance of <see cref="T:System.Security.Permissions.CodeAccessSecurityAttribute" /> with the specified <see cref="T:System.Security.Permissions.SecurityAction" /> value.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
+      </Parameters>
+      <Docs>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of this class. You must inherit from this class to make use of its functionality.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Permissions.CodeAccessSecurityAttribute" /> with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

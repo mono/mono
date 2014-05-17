@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="LockRecursionPolicy" FullName="System.Threading.LockRecursionPolicy">
+  <TypeSignature Language="C#" Value="public enum LockRecursionPolicy" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed LockRecursionPolicy extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The default recursion policy depends on the type of lock. For the default policy and the precise behavior of lock recursion for any given lock type, see the documentation for the type. For example, the <see cref="T:System.Threading.ReaderWriterLockSlim" /> class does not allow a thread to enter the lock in write mode if it already entered the lock in read mode, regardless of the lock policy setting, in order to reduce the chance of deadlocks. </para>
+      <para>Currently only one lock uses this enumeration:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Threading.ReaderWriterLockSlim" />. For more information, see the <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a lock can be entered multiple times by the same thread.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="NoRecursion">
+      <MemberSignature Language="C#" Value="NoRecursion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.LockRecursionPolicy NoRecursion = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.LockRecursionPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a thread tries to enter a lock recursively, an exception is thrown. Some classes may allow certain recursions when this setting is in effect. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsRecursion">
+      <MemberSignature Language="C#" Value="SupportsRecursion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.LockRecursionPolicy SupportsRecursion = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.LockRecursionPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread can enter a lock recursively. Some classes may restrict this capability. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

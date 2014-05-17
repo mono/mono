@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SymLanguageType" FullName="System.Diagnostics.SymbolStore.SymLanguageType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SymLanguageType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SymLanguageType extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,228 +14,279 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SymLanguageType ();" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Basic">
-      <MemberSignature Language="C#" Value="public static readonly Guid Basic;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="C">
-      <MemberSignature Language="C#" Value="public static readonly Guid C;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Cobol">
-      <MemberSignature Language="C#" Value="public static readonly Guid Cobol;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="CPlusPlus">
-      <MemberSignature Language="C#" Value="public static readonly Guid CPlusPlus;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="CSharp">
-      <MemberSignature Language="C#" Value="public static readonly Guid CSharp;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ILAssembly">
-      <MemberSignature Language="C#" Value="public static readonly Guid ILAssembly;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Java">
-      <MemberSignature Language="C#" Value="public static readonly Guid Java;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="JScript">
-      <MemberSignature Language="C#" Value="public static readonly Guid JScript;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="MCPlusPlus">
-      <MemberSignature Language="C#" Value="public static readonly Guid MCPlusPlus;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Pascal">
-      <MemberSignature Language="C#" Value="public static readonly Guid Pascal;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SMC">
-      <MemberSignature Language="C#" Value="public static readonly Guid SMC;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Guid</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds the public GUIDs for language types to be used with the symbol store.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SymLanguageType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SymbolStore.SymLanguageType" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Basic">
+      <MemberSignature Language="C#" Value="public static readonly Guid Basic;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid Basic" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Basic language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="C">
+      <MemberSignature Language="C#" Value="public static readonly Guid C;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid C" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Cobol">
+      <MemberSignature Language="C#" Value="public static readonly Guid Cobol;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid Cobol" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Cobol language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CPlusPlus">
+      <MemberSignature Language="C#" Value="public static readonly Guid CPlusPlus;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid CPlusPlus" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C++ language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CSharp">
+      <MemberSignature Language="C#" Value="public static readonly Guid CSharp;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid CSharp" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C# language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ILAssembly">
+      <MemberSignature Language="C#" Value="public static readonly Guid ILAssembly;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid ILAssembly" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the ILAssembly language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Java">
+      <MemberSignature Language="C#" Value="public static readonly Guid Java;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid Java" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Java language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="JScript">
+      <MemberSignature Language="C#" Value="public static readonly Guid JScript;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid JScript" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the JScript language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MCPlusPlus">
+      <MemberSignature Language="C#" Value="public static readonly Guid MCPlusPlus;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid MCPlusPlus" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C++ language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Pascal">
+      <MemberSignature Language="C#" Value="public static readonly Guid Pascal;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid Pascal" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Pascal language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SMC">
+      <MemberSignature Language="C#" Value="public static readonly Guid SMC;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Guid SMC" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the SMC language type to be used with the symbol store.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

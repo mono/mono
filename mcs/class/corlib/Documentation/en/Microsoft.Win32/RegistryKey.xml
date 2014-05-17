@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegistryKey" FullName="Microsoft.Win32.RegistryKey">
   <TypeSignature Language="C#" Value="public sealed class RegistryKey : MarshalByRefObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RegistryKey extends System.MarshalByRefObject implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -14,67 +16,93 @@
       <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>A registry directory containing keys and values.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To get an instance of <see cref="T:Microsoft.Win32.RegistryKey" />, use one of the static members of the <see cref="T:Microsoft.Win32.Registry" /> class.</para>
+      <para>The registry acts as a central repository of information for the operating system and the applications on a computer. The registry is organized in a hierarchical format, based on a logical ordering of the elements stored within it (please see <see cref="T:Microsoft.Win32.Registry" /> for the base-level items in this hierarchy). When storing information in the registry, select the appropriate location based on the type of information being stored. Be sure to avoid destroying information created by other applications, because this can cause those applications to exhibit unexpected behavior, and can also have an adverse effect upon your own application.</para>
+      <para>Registry keys are the base unit of organization in the registry, and can be compared to folders in File Explorer. A particular key can have subkeys, just as a folder can have subfolders. Each key can be deleted, as long as the user has the appropriate permissions to do so, and the key is not a base key or at the level directly under the base keys. Each key can also have multiple values associated with it (a value can be compared to a file), which are used to store the information — for example, information about an application installed on the computer. Each value holds one particular piece of information, which can be retrieved or updated when required. For instance, you can create a <see cref="T:Microsoft.Win32.RegistryKey" /> for your company, under the key HKEY_LOCAL_MACHINE\Software, and then a subkey for each application that your company creates. Each subkey holds the information specific to that application, such as color settings, screen location and size, or recognized file extensions.</para>
+      <para>Note that information stored in the registry is available to other applications and users, and therefore should not be used to store security data or critical application information.</para>
+      <block subset="none" type="note">
+        <para>Do not expose <see cref="T:Microsoft.Win32.RegistryKey" /> objects in such a way that a malicious program could create thousands of meaningless subkeys or key/value pairs. For example, do not allow callers to enter arbitrary keys or values.</para>
+      </block>
+      <para>Starting in the net_v40_long, the length of a registry key is no longer limited to 255 characters.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a key-level node in the Windows registry. This class is a registry encapsulation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method on system keys will have no effect, because system keys are never closed.</para>
+          <para>This method does nothing if you call it on an instance of RegistryKey that is already closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the key and flushes it to disk if its contents have been modified.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSubKey">
       <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey CreateSubKey (string subkey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey CreateSubKey(string subkey) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="subkey" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="subkey">The subkey.</param>
-        <summary>Creates the given subkey.  </summary>
-        <returns>The newly created key.</returns>
-        <remarks>The subkey is case insensitive.  Mono internally transforms the subkey into a lowercase version to ensure portability.  This might have the undesired side effect that the returned value will be lowercase when enumerating keys.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateSubKey">
-      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey CreateSubKey (string subkey, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="subkey" Type="System.String" />
-        <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
       </Parameters>
       <Docs>
-        <param name="subkey">To be added.</param>
-        <param name="permissionCheck">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to perform this action, the user must have permission at this level and below in the registry hierarchy.</para>
+          <block subset="none" type="note">
+            <para>Do not expose <see cref="T:Microsoft.Win32.RegistryKey" /> objects in such a way that a malicious program could create thousands of meaningless subkeys or key/value pairs. For example, do not allow callers to enter arbitrary keys or values.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new subkey or opens an existing subkey for write access.  </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed. If a zero-length string is specified for <paramref name="subkey" />, the current <see cref="T:Microsoft.Win32.RegistryKey" /> object is returned.</para>
+        </returns>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. This string is not case-sensitive.</param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateSubKey">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey CreateSubKey (string subkey, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey CreateSubKey(string subkey, valuetype Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -84,10 +112,91 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subkey" Type="System.String" />
+        <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to perform this action, the user must have permission at this level and below in the registry hierarchy.</para>
+          <block subset="none" type="note">
+            <para>Do not expose <see cref="T:Microsoft.Win32.RegistryKey" /> objects in such a way that a malicious program could create thousands of meaningless subkeys or key/value pairs. For example, do not allow callers to enter arbitrary keys or values.</para>
+          </block>
+          <para>In order to use the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String)" /> method, you must have an instance of the <see cref="T:Microsoft.Win32.RegistryKey" /> class. To get an instance of <see cref="T:Microsoft.Win32.RegistryKey" />, use one of the static members of the <see cref="T:Microsoft.Win32.Registry" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new subkey or opens an existing subkey for write access, using the specified permission check option. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed. If a zero-length string is specified for <paramref name="subkey" />, the current <see cref="T:Microsoft.Win32.RegistryKey" /> object is returned.</para>
+        </returns>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. This string is not case-sensitive.</param>
+        <param name="permissionCheck">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the key is opened for read or read/write access.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateSubKey">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey CreateSubKey (string subkey, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, Microsoft.Win32.RegistryOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey CreateSubKey(string subkey, valuetype Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, valuetype Microsoft.Win32.RegistryOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subkey" Type="System.String" />
+        <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
+        <Parameter Name="options" Type="Microsoft.Win32.RegistryOptions" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the current <see cref="T:Microsoft.Win32.RegistryKey" /> object, specify an empty string ("") for <paramref name="subkey" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a subkey or opens a subkey for write access, using the specified permission check and registry options. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed.</para>
+        </returns>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. </param>
+        <param name="permissionCheck">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the key is opened for read or read/write access.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The registry option to use; for example, that creates a volatile key. </param>
+      </Docs>
     </Member>
     <Member MemberName="CreateSubKey">
       <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey CreateSubKey (string subkey, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, System.Security.AccessControl.RegistrySecurity registrySecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey CreateSubKey(string subkey, valuetype Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, class System.Security.AccessControl.RegistrySecurity registrySecurity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
@@ -97,14 +206,582 @@
         <Parameter Name="registrySecurity" Type="System.Security.AccessControl.RegistrySecurity" />
       </Parameters>
       <Docs>
-        <param name="subkey">To be added.</param>
-        <param name="permissionCheck">To be added.</param>
-        <param name="registrySecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck,System.Security.AccessControl.RegistrySecurity)" /> method creates a registry key that has the access control specified by the <paramref name="registrySecurity" /> parameter. The <see cref="T:Microsoft.Win32.RegistryKey" /> object that is returned represents the registry key, but that object is not restricted by the access control specified in the <paramref name="registrySecurity" /> parameter.</para>
+          <para>If <paramref name="permissionCheck" /> is <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree" />, the key is opened for read/write access. If <paramref name="permissionCheck" /> is <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadSubTree" />, the key is opened for read access.</para>
+          <para>For backward compatibility, the key is opened for reading and writing if <paramref name="permissionCheck" /> is <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.Default" /> and the parent key also has <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.Default" />. If the parent key has any other setting, read/write status is controlled by the parent key's setting.</para>
+          <para>In order to perform this action, the user must have permissions at this level and below in the registry hierarchy.</para>
+          <block subset="none" type="note">
+            <para>Do not expose <see cref="T:Microsoft.Win32.RegistryKey" /> objects in such a way that a malicious program could create thousands of meaningless subkeys or key/value pairs. For example, do not allow callers to enter arbitrary keys or values.</para>
+          </block>
+          <para>In order to use the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String)" /> method, you must have an instance of the <see cref="T:Microsoft.Win32.RegistryKey" /> class. To get an instance of <see cref="T:Microsoft.Win32.RegistryKey" />, use one of the static members of the <see cref="T:Microsoft.Win32.Registry" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new subkey or opens an existing subkey for write access, using the specified permission check option and registry security. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed. If a zero-length string is specified for <paramref name="subkey" />, the current <see cref="T:Microsoft.Win32.RegistryKey" /> object is returned.</para>
+        </returns>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. This string is not case-sensitive.</param>
+        <param name="permissionCheck">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the key is opened for read or read/write access.</param>
+        <param name="registrySecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access control security for the new key.</param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateSubKey">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey CreateSubKey (string subkey, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, Microsoft.Win32.RegistryOptions registryOptions, System.Security.AccessControl.RegistrySecurity registrySecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey CreateSubKey(string subkey, valuetype Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, valuetype Microsoft.Win32.RegistryOptions registryOptions, class System.Security.AccessControl.RegistrySecurity registrySecurity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subkey" Type="System.String" />
+        <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
+        <Parameter Name="registryOptions" Type="Microsoft.Win32.RegistryOptions" />
+        <Parameter Name="registrySecurity" Type="System.Security.AccessControl.RegistrySecurity" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To obtain the current <see cref="T:Microsoft.Win32.RegistryKey" /> object, specify an empty string ("") for <paramref name="subkey" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a subkey or opens a subkey for write access, using the specified permission check option, registry option, and registry security.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed.  </para>
+        </returns>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open.</param>
+        <param name="permissionCheck">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the key is opened for read or read/write access.</param>
+        <param name="registryOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The registry option to use.</param>
+        <param name="registrySecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access control security for the new subkey. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteSubKey">
+      <MemberSignature Language="C#" Value="public void DeleteSubKey (string subkey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteSubKey(string subkey) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subkey" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To delete child subkeys, use <see cref="M:Microsoft.Win32.RegistryKey.DeleteSubKeyTree(System.String)" />.</para>
+          <para>Use caution when deleting registry keys.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the specified subkey. </para>
+        </summary>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the subkey to delete. This string is not case-sensitive.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteSubKey">
+      <MemberSignature Language="C#" Value="public void DeleteSubKey (string subkey, bool throwOnMissingSubKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteSubKey(string subkey, bool throwOnMissingSubKey) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subkey" Type="System.String" />
+        <Parameter Name="throwOnMissingSubKey" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To delete child subkeys, use <see cref="M:Microsoft.Win32.RegistryKey.DeleteSubKeyTree(System.String)" />.</para>
+          <para>Use caution when deleting registry keys.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the specified subkey, and specifies whether an exception is raised if the subkey is not found. </para>
+        </summary>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the subkey to delete. This string is not case-sensitive.</param>
+        <param name="throwOnMissingSubKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether an exception should be raised if the specified subkey cannot be found. If this argument is true and the specified subkey does not exist, an exception is raised. If this argument is false and the specified subkey does not exist, no action is taken. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteSubKeyTree">
+      <MemberSignature Language="C#" Value="public void DeleteSubKeyTree (string subkey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteSubKeyTree(string subkey) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subkey" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must have appropriate permissions to delete the subkey and its tree.</para>
+          <block subset="none" type="note">
+            <para>Deleting a particular key will remove all entries below the key in the tree. No warning will be provided. If you want to delete a subkey only when it has no child subkeys, use the <see cref="M:Microsoft.Win32.RegistryKey.DeleteSubKey(System.String)" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes a subkey and any child subkeys recursively. </para>
+        </summary>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The subkey to delete. This string is not case-sensitive.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteSubKeyTree">
+      <MemberSignature Language="C#" Value="public void DeleteSubKeyTree (string subkey, bool throwOnMissingSubKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteSubKeyTree(string subkey, bool throwOnMissingSubKey) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subkey" Type="System.String" />
+        <Parameter Name="throwOnMissingSubKey" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the specified subkey and any child subkeys recursively, and specifies whether an exception is raised if the subkey is not found. </para>
+        </summary>
+        <param name="subkey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the subkey to delete. This string is not case-sensitive.</param>
+        <param name="throwOnMissingSubKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether an exception should be raised if the specified subkey cannot be found. If this argument is true and the specified subkey does not exist, an exception is raised. If this argument is false and the specified subkey does not exist, no action is taken.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteValue">
+      <MemberSignature Language="C#" Value="public void DeleteValue (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteValue(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On Windows 95, Windows 98, Windows 98 Second Edition, and Windows Millennium Edition, specifying an empty string for the <paramref name="name" /> parameter does not delete the default value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the specified value from this key.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to delete. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteValue">
+      <MemberSignature Language="C#" Value="public void DeleteValue (string name, bool throwOnMissingValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteValue(string name, bool throwOnMissingValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="throwOnMissingValue" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="throwOnMissingValue" /> is false, there is no way to tell if the deletion was successful, without subsequently trying to access the value just deleted. Therefore, use caution when deleting values from the registry in this manner.</para>
+          <para>On Windows 95, Windows 98, Windows 98 Second Edition, and Windows Millennium Edition, specifying an empty string for the <paramref name="name" /> parameter does not delete the default value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the specified value from this key, and specifies whether an exception is raised if the value is not found.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to delete. </param>
+        <param name="throwOnMissingValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether an exception should be raised if the specified value cannot be found. If this argument is true and the specified value does not exist, an exception is raised. If this argument is false and the specified value does not exist, no action is taken. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:Microsoft.Win32.RegistryKey" />. The Dispose method leaves the <see cref="T:Microsoft.Win32.RegistryKey" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:Microsoft.Win32.RegistryKey" /> so the garbage collector can reclaim the memory that the <see cref="T:Microsoft.Win32.RegistryKey" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:Microsoft.Win32.RegistryKey" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:Microsoft.Win32.RegistryKey" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:Microsoft.Win32.RegistryKey" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~RegistryKey ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Flush() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is not necessary to call Flush to write out changes to a key. Registry changes are flushed to disk when the registry uses its lazy flusher. Lazy flushing occurs automatically and regularly after a system-specified time interval. Registry changes are also flushed to disk at system shutdown.</para>
+          <para>Unlike <see cref="M:Microsoft.Win32.RegistryKey.Close" />, the Flush function returns only when all the data has been written to the registry. </para>
+          <para>The Flush function might also write out parts of or all of the other keys. Calling this function excessively can have a negative effect on an application's performance.</para>
+          <para>An application should only call Flush if it must be absolute certain that registry changes are recorded to disk. In general, Flush rarely, if ever, need be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes all the attributes of the specified open registry key into the registry.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FromHandle">
+      <MemberSignature Language="C#" Value="public static Microsoft.Win32.RegistryKey FromHandle (Microsoft.Win32.SafeHandles.SafeRegistryHandle handle);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Microsoft.Win32.RegistryKey FromHandle(class Microsoft.Win32.SafeHandles.SafeRegistryHandle handle) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="Microsoft.Win32.SafeHandles.SafeRegistryHandle" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a registry key from a specified handle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A registry key.</para>
+        </returns>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to the registry key.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FromHandle">
+      <MemberSignature Language="C#" Value="public static Microsoft.Win32.RegistryKey FromHandle (Microsoft.Win32.SafeHandles.SafeRegistryHandle handle, Microsoft.Win32.RegistryView view);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Microsoft.Win32.RegistryKey FromHandle(class Microsoft.Win32.SafeHandles.SafeRegistryHandle handle, valuetype Microsoft.Win32.RegistryView view) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="Microsoft.Win32.SafeHandles.SafeRegistryHandle" />
+        <Parameter Name="view" Type="Microsoft.Win32.RegistryView" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="view" /> parameter for this method is used in subsequent operations, such as opening subkeys. </para>
+          <para>If <paramref name="view" /> is <see cref="F:Microsoft.Win32.RegistryView.Registry64" /> but the machine is running a 32-bit operating system, the returned key will use the <see cref="F:Microsoft.Win32.RegistryView.Registry32" /> view.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a registry key from a specified handle and registry view setting. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A registry key.</para>
+        </returns>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to the registry key.</param>
+        <param name="view">
+          <attribution license="cc4" from="Microsoft" modified="false" />The registry view to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.RegistrySecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.RegistrySecurity GetAccessControl() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.RegistrySecurity</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overload is equivalent to calling the <see cref="M:Microsoft.Win32.RegistryKey.GetAccessControl(System.Security.AccessControl.AccessControlSections)" /> method overload with the bitwise combination of the following flags: <see cref="F:System.Security.AccessControl.AccessControlSections.Access" />, <see cref="F:System.Security.AccessControl.AccessControlSections.Owner" />, and <see cref="F:System.Security.AccessControl.AccessControlSections.Group" />. You can use that overload to search for other permissions. </para>
+          <para>The user must have <see cref="F:System.Security.AccessControl.RegistryRights.ReadPermissions" /> rights to call this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the access control security for the current registry key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that describes the access control permissions on the registry key represented by the current <see cref="T:Microsoft.Win32.RegistryKey" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.RegistrySecurity GetAccessControl (System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.RegistrySecurity GetAccessControl(valuetype System.Security.AccessControl.AccessControlSections includeSections) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.RegistrySecurity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To request the access permissions currently granted to users, specify the bitwise combination of the following flags: <see cref="F:System.Security.AccessControl.AccessControlSections.Access" />, <see cref="F:System.Security.AccessControl.AccessControlSections.Owner" />, and <see cref="F:System.Security.AccessControl.AccessControlSections.Group" />. Alternatively, you can use the <see cref="M:Microsoft.Win32.RegistryKey.GetAccessControl" /> method overload, which specifies exactly that combination of values. </para>
+          <para>The user must have <see cref="F:System.Security.AccessControl.RegistryRights.ReadPermissions" /> rights to call this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified sections of the access control security for the current registry key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that describes the access control permissions on the registry key represented by the current <see cref="T:Microsoft.Win32.RegistryKey" />.</para>
+        </returns>
+        <param name="includeSections">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that specifies the type of security information to get. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSubKeyNames">
+      <MemberSignature Language="C#" Value="public string[] GetSubKeyNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetSubKeyNames() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not recursively find names. It returns the names on the base level from which it was called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of strings that contains all the subkey names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings that contains the names of the subkeys for the current key.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>A registry key can have one value that is not associated with any name. When this unnamed value is displayed in the registry editor, the string "(Default)" appears instead of a name. To retrieve this unnamed value, specify either null or the empty string ("") for <paramref name="name" />.</para>
+          </block>
+          <para>When the <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String)" /> method retrieves expandable string values (<see cref="F:Microsoft.Win32.RegistryValueKind.ExpandString" />), it expands environment strings using data from the local environment. To retrieve expandable string values from the registry on a remote computer, use the <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String,System.Object,Microsoft.Win32.RegistryValueOptions)" /> method overload to specify that you do not want environment strings expanded.</para>
+          <block subset="none" type="note">
+            <para>If a value containing expandable references to environment variables has been stored as a string (<see cref="F:Microsoft.Win32.RegistryValueKind.String" />), rather than as an expandable string (<see cref="F:Microsoft.Win32.RegistryValueKind.ExpandString" />), <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String)" /> does not expand it. You can expand such a string after it has been retrieved by calling the <see cref="M:System.Environment.ExpandEnvironmentVariables(System.String)" /> method.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The recommended way to retrieve data from the <see cref="F:Microsoft.Win32.Registry.PerformanceData" /> key is to use the <see cref="T:System.Diagnostics.PerformanceCounter" /> class rather than the <see cref="Overload:Microsoft.Win32.RegistryKey.GetValue" /> method.</para>
+            <para>
+              <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String)" /> does not support reading values of type REG_NONE or REG_LINK.  In both cases, the default value (null) is returned instead of the actual value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value associated with the specified name. Returns null if the name/value pair does not exist in the registry.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with <paramref name="name" />, or null if <paramref name="name" /> is not found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. This string is not case-sensitive.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (string name, object defaultValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(string name, object defaultValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="defaultValue" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this overload of <see cref="Overload:Microsoft.Win32.RegistryKey.GetValue" /> to handle the case where a name does not exist yet — for example, the first time your application is run. Whenever you call this overload, use the <paramref name="defaultValue" /> parameter to specify the value to return if <paramref name="name" /> does not exist.</para>
+          <block subset="none" type="note">
+            <para>A registry key can have one value that is not associated with any name. When this unnamed value is displayed in the registry editor, the string "(Default)" appears instead of a name. To retrieve this unnamed value, specify either null or the empty string ("") for <paramref name="name" />.</para>
+          </block>
+          <para>When the <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String)" /> method retrieves expandable string values (<see cref="F:Microsoft.Win32.RegistryValueKind.ExpandString" />), it expands environment strings using data from the local environment. To retrieve expandable string values from the registry on a remote computer, use the <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String,System.Object,Microsoft.Win32.RegistryValueOptions)" /> overload to specify that you do not want environment strings expanded.</para>
+          <block subset="none" type="note">
+            <para>If a value containing expandable references to environment variables has been stored as a string (<see cref="F:Microsoft.Win32.RegistryValueKind.String" />), rather than as an expandable string (<see cref="F:Microsoft.Win32.RegistryValueKind.ExpandString" />), the <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String)" /> method does not expand it. You can expand such a string after it has been retrieved by calling the <see cref="M:System.Environment.ExpandEnvironmentVariables(System.String)" /> method.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The recommended way to retrieve data from the <see cref="F:Microsoft.Win32.Registry.PerformanceData" /> key is to use the <see cref="T:System.Diagnostics.PerformanceCounter" /> class rather than the <see cref="Overload:Microsoft.Win32.RegistryKey.GetValue" /> method.</para>
+            <para>
+              <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String,System.Object)" /> does not support reading values of type REG_NONE or REG_LINK.  In both cases, the default value (null) is returned instead of the actual value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value associated with the specified name. If the name is not found, returns the default value that you provide.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with <paramref name="name" />, with any embedded environment variables left unexpanded, or <paramref name="defaultValue" /> if <paramref name="name" /> is not found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. This string is not case-sensitive.</param>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to return if <paramref name="name" /> does not exist. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (string name, object defaultValue, Microsoft.Win32.RegistryValueOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(string name, object defaultValue, valuetype Microsoft.Win32.RegistryValueOptions options) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -114,249 +791,6 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="DeleteSubKey">
-      <MemberSignature Language="C#" Value="public void DeleteSubKey (string subkey);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="subkey" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="subkey">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeleteSubKey">
-      <MemberSignature Language="C#" Value="public void DeleteSubKey (string subkey, bool throwOnMissingSubKey);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="subkey" Type="System.String" />
-        <Parameter Name="throwOnMissingSubKey" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="subkey">To be added.</param>
-        <param name="throwOnMissingSubKey">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeleteSubKeyTree">
-      <MemberSignature Language="C#" Value="public void DeleteSubKeyTree (string subkey);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="subkey" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="subkey">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeleteValue">
-      <MemberSignature Language="C#" Value="public void DeleteValue (string name);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeleteValue">
-      <MemberSignature Language="C#" Value="public void DeleteValue (string name, bool throwOnMissingValue);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-        <Parameter Name="throwOnMissingValue" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="name">To be added.</param>
-        <param name="throwOnMissingValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~RegistryKey ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Flush">
-      <MemberSignature Language="C#" Value="public void Flush ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Ensures that all changes done to this RegistryKey are stored on disk.</summary>
-        <remarks>Mono will save any changes done to the RegistryKey after a certain period of time (to batch multiple changes to the registry on a single write operation), but users might want to use Flush to ensure that the data is written at that point in time.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAccessControl">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.RegistrySecurity GetAccessControl ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.RegistrySecurity</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAccessControl">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.RegistrySecurity GetAccessControl (System.Security.AccessControl.AccessControlSections includeSections);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.AccessControl.RegistrySecurity</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
-      </Parameters>
-      <Docs>
-        <param name="includeSections">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSubKeyNames">
-      <MemberSignature Language="C#" Value="public string[] GetSubKeyNames ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (string name);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="name">The name of the key to lookup in the RegistryKey.</param>
-        <summary>Retrieves the value stored for the given key.</summary>
-        <returns>The value stored, or null if the given key does not exist on the Registrykey.</returns>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (string name, object defaultValue);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-        <Parameter Name="defaultValue" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="name">The name of the key in the RegistryKey.</param>
-        <param name="defaultValue">If a value has not been set on the RegistryKey for this value, a value to return.</param>
-        <summary>Retrives the value stored for the given key, or returns a default value if not found.</summary>
-        <returns>The value associated with the key on the RegistryKey or the default value if not found.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (string name, object defaultValue, Microsoft.Win32.RegistryValueOptions options);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -366,14 +800,37 @@
         <Parameter Name="options" Type="Microsoft.Win32.RegistryValueOptions" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="defaultValue">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this overload to specify special processing of the retrieved value. For example, you can specify <see cref="F:Microsoft.Win32.RegistryValueOptions.DoNotExpandEnvironmentNames" /> when retrieving a registry value of type <see cref="F:Microsoft.Win32.RegistryValueKind.ExpandString" /> to retrieve the string without expanding embedded environment variables.</para>
+          <para>Use the <paramref name="defaultValue" /> parameter to specify the value to return if <paramref name="name" /> does not exist.</para>
+          <block subset="none" type="note">
+            <para>A registry key can have one value that is not associated with any name. When this unnamed value is displayed in the registry editor, the string "(Default)" appears instead of a name. To retrieve this unnamed value, specify either null or the empty string ("") for <paramref name="name" />.</para>
+            <para>
+              <see cref="M:Microsoft.Win32.RegistryKey.GetValue(System.String,System.Object,Microsoft.Win32.RegistryValueOptions)" /> does not support reading values of type REG_NONE or REG_LINK.  In both cases, the default value (null) is returned instead of the actual value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value associated with the specified name and retrieval options. If the name is not found, returns the default value that you provide.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with <paramref name="name" />, processed according to the specified <paramref name="options" />, or <paramref name="defaultValue" /> if <paramref name="name" /> is not found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. This string is not case-sensitive.</param>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to return if <paramref name="name" /> does not exist. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies optional processing of the retrieved value.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetValueKind">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryValueKind GetValueKind (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype Microsoft.Win32.RegistryValueKind GetValueKind(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -383,10 +840,6 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetValueKind">
-      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryValueKind GetValueKind (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.RegistryValueKind</ReturnType>
       </ReturnValue>
@@ -394,14 +847,60 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>A registry key can have one value that is not associated with any name. When this unnamed value is displayed in the registry editor, the string "(Default)" appears instead of a name. To retrieve the registry data type of this unnamed value, specify either null or the empty string ("") for <paramref name="name" />.</para>
+          </block>
+          <para>For a description of supported registry data types, please see the <see cref="T:Microsoft.Win32.RegistryValueKind" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the registry data type of the value associated with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The registry data type of the value associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value whose registry data type is to be retrieved. This string is not case-sensitive.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetValueNames">
+      <MemberSignature Language="C#" Value="public string[] GetValueNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetValueNames() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no value names for the key are found, an empty array is returned.</para>
+          <para>A registry key can have a default value — that is, a name/value pair in which the name is the empty string (""). If a default value has been set for a registry key, the array returned by the <see cref="M:Microsoft.Win32.RegistryKey.GetValueNames" /> method includes the empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of strings that contains all the value names associated with this key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings that contains the value names for the current key.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.SafeHandles.SafeRegistryHandle Handle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Microsoft.Win32.SafeHandles.SafeRegistryHandle Handle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
@@ -409,45 +908,86 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetValueNames">
-      <MemberSignature Language="C#" Value="public string[] GetValueNames ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
+        <ReturnType>Microsoft.Win32.SafeHandles.SafeRegistryHandle</ReturnType>
       </ReturnValue>
-      <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:Microsoft.Win32.SafeHandles.SafeRegistryHandle" /> object that represents the registry key that the current <see cref="T:Microsoft.Win32.RegistryKey" /> object encapsulates.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The full name for this RegistryKey.</summary>
         <value />
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the key includes the absolute path of this key in the registry, always starting at a base key, for example, HKEY_LOCAL_MACHINE.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the name of the key.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="OpenBaseKey">
+      <MemberSignature Language="C#" Value="public static Microsoft.Win32.RegistryKey OpenBaseKey (Microsoft.Win32.RegistryHive hKey, Microsoft.Win32.RegistryView view);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Microsoft.Win32.RegistryKey OpenBaseKey(valuetype Microsoft.Win32.RegistryHive hKey, valuetype Microsoft.Win32.RegistryView view) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hKey" Type="Microsoft.Win32.RegistryHive" />
+        <Parameter Name="view" Type="Microsoft.Win32.RegistryView" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a new <see cref="T:Microsoft.Win32.RegistryKey" /> that represents the requested key on the local machine with the specified view.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested registry key.</para>
+        </returns>
+        <param name="hKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HKEY to open.</param>
+        <param name="view">
+          <attribution license="cc4" from="Microsoft" modified="false" />The registry view to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenRemoteBaseKey">
+      <MemberSignature Language="C#" Value="public static Microsoft.Win32.RegistryKey OpenRemoteBaseKey (Microsoft.Win32.RegistryHive hKey, string machineName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Microsoft.Win32.RegistryKey OpenRemoteBaseKey(valuetype Microsoft.Win32.RegistryHive hKey, string machineName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenRemoteBaseKey">
-      <MemberSignature Language="C#" Value="public static Microsoft.Win32.RegistryKey OpenRemoteBaseKey (Microsoft.Win32.RegistryHive hKey, string machineName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
@@ -456,57 +996,106 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="hKey">To be added.</param>
-        <param name="machineName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local machine registry is opened if <paramref name="machineName" /> is <see cref="F:System.String.Empty" />. The requested key must be a root key on the remote machine, and is identified by the appropriate <see cref="T:Microsoft.Win32.RegistryHive" /> value.</para>
+          <para>In order for a key to be opened remotely, both the server and client machines must be running the remote registry service, and have remote administration enabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a new <see cref="T:Microsoft.Win32.RegistryKey" /> that represents the requested key on a remote machine.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested registry key.</para>
+        </returns>
+        <param name="hKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HKEY to open, from the <see cref="T:Microsoft.Win32.RegistryHive" /> enumeration. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote machine. </param>
       </Docs>
+    </Member>
+    <Member MemberName="OpenRemoteBaseKey">
+      <MemberSignature Language="C#" Value="public static Microsoft.Win32.RegistryKey OpenRemoteBaseKey (Microsoft.Win32.RegistryHive hKey, string machineName, Microsoft.Win32.RegistryView view);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Microsoft.Win32.RegistryKey OpenRemoteBaseKey(valuetype Microsoft.Win32.RegistryHive hKey, string machineName, valuetype Microsoft.Win32.RegistryView view) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hKey" Type="Microsoft.Win32.RegistryHive" />
+        <Parameter Name="machineName" Type="System.String" />
+        <Parameter Name="view" Type="Microsoft.Win32.RegistryView" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local machine registry is opened if <paramref name="machineName" /> is <see cref="F:System.String.Empty" />. The requested key must be a root key on the remote machine, and is identified by the appropriate <see cref="T:Microsoft.Win32.RegistryHive" /> value.</para>
+          <para>In order for a key to be opened remotely, both the server and client machines must be running the remote registry service, and have remote administration enabled. </para>
+          <para>On the 64-bit versions of Windows, portions of the registry are stored separately for 32-bit and 64-bit applications. There is a 32-bit view for 32-bit applications and a 64-bit view for 64-bit applications. If <paramref name="view" /> is <see cref="F:Microsoft.Win32.RegistryView.Registry64" /> but the remote machine is running a 32-bit operating system, the returned key will use the <see cref="F:Microsoft.Win32.RegistryView.Registry32" /> view. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a new registry key that represents the requested key on a remote machine with the specified view.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested registry key.</para>
+        </returns>
+        <param name="hKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HKEY to open from the <see cref="T:Microsoft.Win32.RegistryHive" /> enumeration.. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The remote machine.</param>
+        <param name="view">
+          <attribution license="cc4" from="Microsoft" modified="false" />The registry view to use.</param>
+      </Docs>
     </Member>
     <Member MemberName="OpenSubKey">
       <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey OpenSubKey (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey OpenSubKey(string name) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenSubKey">
-      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey OpenSubKey (string name, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
-        <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="permissionCheck">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must open a key before it can be manipulated with other methods and properties. To modify a key, you must open it with an overload of the <see cref="Overload:Microsoft.Win32.RegistryKey.OpenSubKey" /> method that allows you to specify write access, such as the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck)" /> overload or the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,System.Boolean)" /> overload.</para>
+          <para>If the specified subkey cannot be found, then null is returned.</para>
+          <para>In order to use the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String)" /> method, you must have an instance of <see cref="T:Microsoft.Win32.RegistryKey" />. To get an instance of <see cref="T:Microsoft.Win32.RegistryKey" />, use the one of the static members of the <see cref="T:Microsoft.Win32.Registry" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a subkey as read-only.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to open as read-only. </param>
       </Docs>
+    </Member>
+    <Member MemberName="OpenSubKey">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey OpenSubKey (string name, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey OpenSubKey(string name, valuetype Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -516,10 +1105,44 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than throwing an exception, this method returns null if the requested key does not exist.</para>
+          <para>If <paramref name="permissionCheck" /> is <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree" />, the key is opened for reading and writing; if <paramref name="permissionCheck" /> is <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadSubTree" /> or <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.Default" />, the key is opened for reading unless the parent key was opened with <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree" />.</para>
+          <para>In order to use the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String)" /> method, you must have an instance of the <see cref="T:Microsoft.Win32.RegistryKey" /> class. To get an instance of <see cref="T:Microsoft.Win32.RegistryKey" />, use one of the static members of the <see cref="T:Microsoft.Win32.Registry" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the specified subkey for read or read/write access.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open.</param>
+        <param name="permissionCheck">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the key is opened for read or read/write access.</param>
+      </Docs>
     </Member>
     <Member MemberName="OpenSubKey">
       <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey OpenSubKey (string name, bool writable);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey OpenSubKey(string name, bool writable) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
@@ -528,21 +1151,39 @@
         <Parameter Name="writable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="writable">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the requested key does not exist, this method returns null instead of throwing an exception.</para>
+          <para>If <paramref name="writable" /> is true, the key will be opened for reading and writing, otherwise, the key will be opened as read-only.</para>
+          <para>In order to use the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String)" /> method, you must have an instance of the <see cref="T:Microsoft.Win32.RegistryKey" /> method. To get an instance of <see cref="T:Microsoft.Win32.RegistryKey" />, use one of the static members of the <see cref="T:Microsoft.Win32.Registry" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a specified subkey, and specifies whether write access is to be applied to the key. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name or path of the subkey to open. </param>
+        <param name="writable">
+          <attribution license="cc4" from="Microsoft" modified="false" />Set to true if you need write access to the key. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OpenSubKey">
       <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryKey OpenSubKey (string name, Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, System.Security.AccessControl.RegistryRights rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Microsoft.Win32.RegistryKey OpenSubKey(string name, valuetype Microsoft.Win32.RegistryKeyPermissionCheck permissionCheck, valuetype System.Security.AccessControl.RegistryRights rights) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.RegistryKey</ReturnType>
       </ReturnValue>
@@ -552,14 +1193,110 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.RegistryRights" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="permissionCheck">To be added.</param>
-        <param name="rights">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rather than throwing an exception, this method returns null if the requested key does not exist.</para>
+          <para>If <paramref name="permissionCheck" /> is <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree" />, the key is opened for reading and writing; if <paramref name="permissionCheck" /> is <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadSubTree" /> or <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.Default" />, the key is opened for reading unless the parent key was opened with <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadWriteSubTree" />.</para>
+          <para>The access specified for <paramref name="permissionCheck" /> takes precedence over the access specified for <paramref name="rights" />. For example, if you specify <see cref="F:Microsoft.Win32.RegistryKeyPermissionCheck.ReadSubTree" /> for <paramref name="permissionCheck" /> and <see cref="F:System.Security.AccessControl.RegistryRights.WriteKey" /> for <paramref name="rights" />, an attempt to write to the subkey throws an exception.</para>
+          <para>In order to use the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String)" /> method, you must have an instance of the <see cref="T:Microsoft.Win32.RegistryKey" /> class. To get an instance of <see cref="T:Microsoft.Win32.RegistryKey" />, use one of the static members of the <see cref="T:Microsoft.Win32.Registry" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the specified subkey for read or read/write access, requesting the specified access rights.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open.</param>
+        <param name="permissionCheck">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the key is opened for read or read/write access.</param>
+        <param name="rights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that specifies the desired security access.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.RegistrySecurity registrySecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.Security.AccessControl.RegistrySecurity registrySecurity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="registrySecurity" Type="System.Security.AccessControl.RegistrySecurity" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To modify permissions for a registry key, use the <see cref="Overload:Microsoft.Win32.RegistryKey.GetAccessControl" /> method to obtain a <see cref="T:System.Security.AccessControl.RegistrySecurity" /> object representing the existing Windows access control security, modify that <see cref="T:System.Security.AccessControl.RegistrySecurity" /> object, and then use the <see cref="M:Microsoft.Win32.RegistryKey.SetAccessControl(System.Security.AccessControl.RegistrySecurity)" /> method to update security for the key.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Security.AccessControl.RegistrySecurity" /> object specified for <paramref name="registrySecurity" /> replaces the existing security for the registry key. To add permissions for a new user, use the <see cref="Overload:Microsoft.Win32.RegistryKey.GetAccessControl" /> method to obtain the existing access control security, and then modify it.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies Windows access control security to an existing registry key.</para>
+        </summary>
+        <param name="registrySecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access control security to apply to the current subkey. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="C#" Value="public void SetValue (string name, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(string name, object value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because many values can be stored in each key in the registry, you must use the <paramref name="name" /> parameter to specify the particular value you want to set.</para>
+          <block subset="none" type="note">
+            <para>A registry key can have one value that is not associated with any name. When this unnamed value is displayed in the registry editor, the string "(Default)" appears instead of a name. To set this unnamed value, specify either null or the empty string ("") for <paramref name="name" />.</para>
+          </block>
+          <para>In order to set values in a key, you must open the key with write access. After you have opened a key with write access, you can change any of the name/value pairs in that key.</para>
+          <para>If the specified <paramref name="name" /> does not exist in the key, it is created and the associated value is set to <paramref name="value" />.</para>
+          <para>This overload of <see cref="Overload:Microsoft.Win32.RegistryKey.SetValue" /> stores 64-bit integers as strings (<see cref="F:Microsoft.Win32.RegistryValueKind.String" />). To store 64-bit numbers as <see cref="F:Microsoft.Win32.RegistryValueKind.QWord" /> values, use the <see cref="M:Microsoft.Win32.RegistryKey.SetValue(System.String,System.Object,Microsoft.Win32.RegistryValueKind)" /> overload that specifies <see cref="T:Microsoft.Win32.RegistryValueKind" />.</para>
+          <para>This overload of <see cref="Overload:Microsoft.Win32.RegistryKey.SetValue" /> stores all string values as <see cref="F:Microsoft.Win32.RegistryValueKind.String" />, even if they contain expandable references to environment variables. To save string values as expandable strings (<see cref="F:Microsoft.Win32.RegistryValueKind.ExpandString" />), use the <see cref="M:Microsoft.Win32.RegistryKey.SetValue(System.String,System.Object,Microsoft.Win32.RegistryValueKind)" /> overload that specifies <see cref="T:Microsoft.Win32.RegistryValueKind" />.</para>
+          <para>Numeric types other than 32-bit integers are stored as strings by this method overload. Enumeration elements are stored as strings containing the element names.</para>
+          <block subset="none" type="note">
+            <para>Do not expose <see cref="T:Microsoft.Win32.RegistryKey" /> objects in such a way that a malicious program could create thousands of meaningless subkeys or key/value pairs. For example, do not allow callers to enter arbitrary keys or values.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>On Windows 98 and Windows Millennium Edition the registry is not Unicode, and not all Unicode characters are valid for all code pages. A Unicode character that is invalid for the current code page is replaced by the best available match. No exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified name/value pair.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to store. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be stored. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="C#" Value="public void SetValue (string name, object value, Microsoft.Win32.RegistryValueKind valueKind);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(string name, object value, valuetype Microsoft.Win32.RegistryValueKind valueKind) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -569,52 +1306,6 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SetAccessControl">
-      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.RegistrySecurity registrySecurity);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="registrySecurity" Type="System.Security.AccessControl.RegistrySecurity" />
-      </Parameters>
-      <Docs>
-        <param name="registrySecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (string name, object value);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-        <Parameter Name="value" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="name">The key to the value being stored.</param>
-        <param name="value">The value to store.  Only int, string, byte arrays (byte[]) and string arrays (string[]) can be stored.</param>
-        <summary>Stores a value that can be looked up by name.</summary>
-        <remarks />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (string name, object value, Microsoft.Win32.RegistryValueKind valueKind);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -624,39 +1315,64 @@
         <Parameter Name="valueKind" Type="Microsoft.Win32.RegistryValueKind" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="valueKind">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because many values can be stored in each key in the registry, you must use the <paramref name="name" /> parameter to specify the particular value you want to set.</para>
+          <block subset="none" type="note">
+            <para>A registry key can have one value that is not associated with any name. When this unnamed value is displayed in the registry editor, the string "(Default)" appears instead of a name. To set this unnamed value, specify either null or the empty string ("") for <paramref name="name" />.</para>
+          </block>
+          <para>In order to set values in a key, you must open the key with write access. After you have opened a key with write access, you can change any of the name/value pairs in that key.</para>
+          <para>If the specified <paramref name="name" /> does not exist in the key, it is created, and the associated value is set to <paramref name="value" />.</para>
+          <block subset="none" type="note">
+            <para>Specifying the registry data type <see cref="F:Microsoft.Win32.RegistryValueKind.Unknown" /> is the same as using the <see cref="M:Microsoft.Win32.RegistryKey.SetValue(System.String,System.Object)" /> overload.</para>
+          </block>
+          <para>If the type of the specified <paramref name="value" /> does not match the specified <paramref name="valueKind" />, and the data cannot be converted, <see cref="T:System.ArgumentException" /> is thrown. For example, you can store a <see cref="T:System.Int64" /> as a <see cref="F:Microsoft.Win32.RegistryValueKind.DWord" />, but only if its value is less than the maximum value of a <see cref="T:System.Int32" />. You cannot store a single string value as a <see cref="F:Microsoft.Win32.RegistryValueKind.MultiString" />.</para>
+          <block subset="none" type="note">
+            <para>If boxed values are passed for <see cref="F:Microsoft.Win32.RegistryValueKind.DWord" /> or <see cref="F:Microsoft.Win32.RegistryValueKind.QWord" />, the conversion is done using the invariant culture.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Do not expose <see cref="T:Microsoft.Win32.RegistryKey" /> objects in such a way that a malicious program could create thousands of meaningless subkeys or key/value pairs. For example, do not allow callers to enter arbitrary keys or values.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>On Windows 98 and Windows Millennium Edition the registry is not Unicode, and not all Unicode characters are valid for all code pages. A Unicode character that is invalid for the current code page is replaced by the best available match. No exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of a name/value pair in the registry key, using the specified registry data type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to be stored. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be stored. </param>
+        <param name="valueKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The registry data type to use when storing the data. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="SubKeyCount">
       <MemberSignature Language="C#" Value="public int SubKeyCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SubKeyCount" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>The number of subkeys under this RegistryKey.</summary>
-        <value />
-        <remarks />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property does not recursively count names. It only returns the count of names on the base level from which it was called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the count of subkeys of the current key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
@@ -666,54 +1382,99 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:Microsoft.Win32.RegistryKey" /> instance is cast to an <see cref="T:System.IDisposable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:Microsoft.Win32.RegistryKey" />. </para>
+        </summary>
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value includes the registry path of the specified key and the hexadecimal value for the key. The registry path includes the absolute root of the specified key, always starts at one of the base keys for the registry, for example, HKEY_LOCAL_MACHINE.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a string representation of this key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the key. If the specified key is invalid (cannot be found) then null is returned.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ValueCount">
+      <MemberSignature Language="C#" Value="public int ValueCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ValueCount" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ValueCount">
-      <MemberSignature Language="C#" Value="public int ValueCount { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The number of values stored on this RegistryKey.</summary>
         <value />
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each registry key has a default value that is not associated with any name. This unnamed value can be set by using the <see cref="Overload:Microsoft.Win32.RegistryKey.SetValue" /> method and specifying either null or the empty string ("") for <paramref name="name" />. If the default value has never been set, it does not contribute to the total count returned by the <see cref="P:Microsoft.Win32.RegistryKey.ValueCount" /> property; once it has been set, however, it is always counted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the count of values in the key.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="View">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.RegistryView View { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Microsoft.Win32.RegistryView View" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.RegistryView</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On the 64-bit versions of Windows, portions of the registry are stored separately for 32-bit and 64-bit applications. There is a 32-bit view for 32-bit applications and a 64-bit view for 64-bit applications.</para>
+          <para>Do not assume that the view always corresponds to the actual view of the <see cref="T:Microsoft.Win32.RegistryKey" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the view that was used to create the registry key. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

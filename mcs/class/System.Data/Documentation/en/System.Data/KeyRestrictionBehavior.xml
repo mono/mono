@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyRestrictionBehavior" FullName="System.Data.KeyRestrictionBehavior">
   <TypeSignature Language="C#" Value="public enum KeyRestrictionBehavior" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a list of connection string parameters identified by the KeyRestrictions property that are either allowed or not allowed.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllowOnly">
@@ -20,7 +24,10 @@
         <ReturnType>System.Data.KeyRestrictionBehavior</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Default. Identifies the only additional connection string parameters that are allowed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,7 +41,10 @@
         <ReturnType>System.Data.KeyRestrictionBehavior</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies additional connection string parameters that are not allowed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

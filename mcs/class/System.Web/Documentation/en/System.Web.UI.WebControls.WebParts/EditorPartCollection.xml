@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EditorPartCollection" FullName="System.Web.UI.WebControls.WebParts.EditorPartCollection">
   <TypeSignature Language="C#" Value="public sealed class EditorPartCollection : System.Collections.ReadOnlyCollectionBase" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> class is a read-only collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls, typically used by an <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zone to track the set of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls contained by the zone.</para>
+      <para>When a Web Parts page enters edit mode, and a user selects a control to edit, the editing process begins. The zone creates a new <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object consisting of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls contained by the zone. At various phases in the editing process, the zone accesses the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object to save or retrieve property values between the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls in the collection and the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control currently being edited. </para>
+      <para>You can create an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> collection of controls for your own programmatic use if, for example, you need to perform some mass operation on a set of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls. Even though the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object is read-only, you can make programmatic changes to the properties of the underlying controls referenced in the collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls used for editing the properties, layout, appearance, and behavior of <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,16 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor" /> constructor initializes an empty instance of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> class. This overload of the constructor is used internally by the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZone" /> class in its <see cref="M:System.Web.UI.WebControls.WebParts.EditorZone.CreateEditorParts" /> method to create an empty collection object. The zone then creates instances of all the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls declared in the child zone template, and uses an internal method to add them to the collection.</para>
+          <para>You cannot use this overload of the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor" /> constructor to create a new instance of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> and add <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to it. You must use one of the other overloads for the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor" /> constructor instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an empty new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +50,20 @@
         <Parameter Name="editorParts" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="editorParts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor(System.Collections.ICollection)" /> constructor initializes an instance of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> class and passes in a collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls. This is one overload of the <see cref="Overload:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor" /> constructor that you can use to create a new <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object and add <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to it. </para>
+          <para>Even though the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> instance created by the constructor is read-only, you can still access the individual <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls in the collection programmatically and call their properties and methods.</para>
+          <para>One common scenario for using the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor(System.Collections.ICollection)" /> constructor would be if you want to perform some batch operation on an entire set of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls, such as changing the content, appearance, or position of a related group of them.</para>
+          <para>Another common scenario for using the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor(System.Collections.ICollection)" /> constructor is developing custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls that you want to associate with a server control, so that users can edit custom properties on your control. In this scenario, your server control must implement the <see cref="T:System.Web.UI.WebControls.WebParts.IWebEditable" /> interface, and as part of that task, it must implement the <see cref="M:System.Web.UI.WebControls.WebParts.IWebEditable.CreateEditorParts" /> method. In that method, to enable the custom <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to edit your server control, you must add the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to an <see cref="T:System.Collections.ICollection" /> instance, such as an <see cref="T:System.Collections.ArrayList" /> object. Then you can pass the collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls to the <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.#ctor(System.Web.UI.WebControls.WebParts.EditorPartCollection,System.Collections.ICollection)" /> constructor to create a new <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object, which the <see cref="T:System.Web.UI.WebControls.WebParts.EditorZoneBase" /> zone uses to set up all the controls and begin the editing process.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> class by passing in an <see cref="T:System.Collections.ICollection" /> collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls.</para>
+        </summary>
+        <param name="editorParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,11 +77,16 @@
         <Parameter Name="editorParts" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="existingEditorParts">To be added.</param>
-        <param name="editorParts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> class by passing in an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> collection of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls, and an <see cref="T:System.Collections.ICollection" /> collection of additional <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls.</para>
+        </summary>
+        <param name="existingEditorParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> of existing <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls in a zone. </param>
+        <param name="editorParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls not in a zone, but created programmatically. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,11 +102,21 @@
         <Parameter Name="editorPart" Type="System.Web.UI.WebControls.WebParts.EditorPart" />
       </Parameters>
       <Docs>
-        <param name="editorPart">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.Contains(System.Web.UI.WebControls.WebParts.EditorPart)" /> method determines whether a specific <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control is already in the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether a particular control is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value that indicates whether the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> is in the collection.</para>
+        </returns>
+        <param name="editorPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> being tested for its status as a member of the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,11 +133,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.CopyTo(System.Web.UI.WebControls.WebParts.EditorPart[],System.Int32)" /> method is useful when you want to create a custom array that can contain the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls in the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> object, a subset of those controls, or a superset of those controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the collection to an array of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> to contain the copied collection of controls. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting point in the array at which to place the collection contents. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,9 +158,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.EditorPartCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A static, read-only, empty instance of <see cref="T:System.Web.UI.WebControls.WebParts.EditorPartCollection" /> reduces memory usage in cases where you want an empty collection instance to return the proper object type from a method or to compare the instance with another object, but you do not need to add members to the instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>References a static, read-only, empty instance of the collection. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -127,11 +182,21 @@
         <Parameter Name="editorPart" Type="System.Web.UI.WebControls.WebParts.EditorPart" />
       </Parameters>
       <Docs>
-        <param name="editorPart">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.EditorPartCollection.IndexOf(System.Web.UI.WebControls.WebParts.EditorPart)" /> method is useful if you have multiple <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> controls on a Web Parts page, and you need to locate a particular control in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the position of a particular member of the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that corresponds to the index of an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control in the collection.</para>
+        </returns>
+        <param name="editorPart">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> that is a member of the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,6 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.ComponentModel.Design">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.ComponentModel.Design" /> namespace contains classes that developers can use to build custom design-time behavior for components and user interfaces for configuring components at design time. The design time environment provides systems that enable developers to arrange components and configure their properties. Some components may require specific design-time only behavior to function properly in a design time environment. It may also be valuable to provide custom user interfaces which assist developers in configuring components or the values of complex data types. The classes and interfaces defined within this namespace can be used to build design-time behavior for components, access design-time services, and implement customized design-time configuration interfaces.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The classes in this namespace include: </para>
+      <list type="bullet">
+        <item>
+          <para>A basic <see cref="T:System.ComponentModel.Design.IDesigner" /> interface that you can use to customize design-time behavior for specific types of components.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> class that provides a more sophisticated designer base class which implements the <see cref="T:System.ComponentModel.Design.IDesigner" />, <see cref="T:System.IDisposable" />, and <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interfaces.</para>
+        </item>
+        <item>
+          <para>Designer interfaces and services that enable a designer to support additional functionality, including:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IComponentChangeService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IDesignerEventService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IDesignerFilter" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IDesignerHost" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IDesignerOptionService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IDictionaryService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IEventBindingService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IExtenderListService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IExtenderProviderService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IHelpService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IInheritanceService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IMenuCommandService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IReferenceService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IResourceService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IRootDesigner" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.ISelectionService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.IServiceContainer" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.ITypeResolutionService" />
+              </para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>Classes that can be used to customize design-time license context management and serialization: <see cref="T:System.ComponentModel.Design.DesigntimeLicenseContext" /> and <see cref="T:System.ComponentModel.Design.DesigntimeLicenseContextSerializer" />.</para>
+        </item>
+        <item>
+          <para>Simple collection editors that can be extended: <see cref="T:System.ComponentModel.Design.ArrayEditor" /> and <see cref="T:System.ComponentModel.Design.CollectionEditor" />.</para>
+        </item>
+      </list>
+    </remarks>
   </Docs>
 </Namespace>

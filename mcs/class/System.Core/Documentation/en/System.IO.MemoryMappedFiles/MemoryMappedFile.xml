@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MemoryMappedFile" FullName="System.IO.MemoryMappedFiles.MemoryMappedFile">
+  <TypeSignature Language="C#" Value="public class MemoryMappedFile : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MemoryMappedFile extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A memory-mapped file maps the contents of a file to an application’s logical address space. Memory-mapped files enable programmers to work with extremely large files because memory can be managed concurrently, and they allow complete, random access to a file without the need for seeking. Memory-mapped files can also be shared across multiple processes.</para>
+      <para>The <see cref="Overload:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateFromFile" /> methods create a memory-mapped file from a specified path or a <see cref="T:System.IO.FileStream" /> of an existing file on disk. Changes are automatically propagated to disk when the file is unmapped. </para>
+      <para>The <see cref="Overload:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateNew" /> methods create a memory-mapped file that is not mapped to an existing file on disk; and are suitable for creating shared memory for interprocess communication (IPC).  </para>
+      <para>A memory-mapped file is associated with a name. </para>
+      <para>You can create multiple views of the memory-mapped file, including views of parts of the file. You can map the same part of a file to more than one address to create concurrent memory. For two views to remain concurrent, they have to be created from the same memory-mapped file. Creating two file mappings of the same file with two views does not provide concurrency.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a memory-mapped file. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile(string path) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file from a file on disk.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to file to map.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile (string path, System.IO.FileMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile(string path, valuetype System.IO.FileMode mode) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="mode" /> parameter pertains to the source file on disk. You can use only the <see cref="F:System.IO.FileMode.Open" /> enumeration value to create the memory-mapped file from the source file on disk.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified access mode from a file on disk. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified access mode.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to file to map.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />Access mode; must be <see cref="F:System.IO.FileMode.Open" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile (string path, System.IO.FileMode mode, string mapName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile(string path, valuetype System.IO.FileMode mode, string mapName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="mapName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="mode" /> parameter pertains to the source file on disk. You can use only the <see cref="F:System.IO.FileMode.Open" /> enumeration value to create the memory-mapped file from the source file on disk.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified access mode and name from a file on disk.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name and access mode.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to map.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />Access mode; must be <see cref="F:System.IO.FileMode.Open" />.</param>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile (string path, System.IO.FileMode mode, string mapName, long capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile(string path, valuetype System.IO.FileMode mode, string mapName, int64 capacity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="mode" /> parameter pertains to the source file on disk. </para>
+          <para>If <paramref name="capacity" /> is larger than the size of the file on disk, the file on disk is increased to match the specified capacity even if no data is written to the memory-mapped file. To prevent this from occurring, specify 0 (zero) for the default capacity, which will internally set <paramref name="capacity" /> to the size of the file on disk.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified access mode, name, and capacity from a file on disk.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to map.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />Access mode; can be any of the <see cref="T:System.IO.FileMode" /> enumeration values except <see cref="F:System.IO.FileMode.Append" />.</param>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file. </param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file. Specify 0 to set the capacity to the size of the file on disk.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile (string path, System.IO.FileMode mode, string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile(string path, valuetype System.IO.FileMode mode, string mapName, int64 capacity, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="mode" /> parameter pertains to the source file on disk. </para>
+          <para>If <paramref name="capacity" /> is larger than the size of the file on disk, the file on disk is increased to match the specified capacity even if no data is written to the memory-mapped file. To prevent this from occurring, specify 0 (zero) for the default capacity, which will internally set <paramref name="capacity" /> to the size of the file on disk.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified access mode, name, capacity, and access type from a file on disk.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to map.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />Access mode; can be any of the <see cref="T:System.IO.FileMode" /> enumeration values except <see cref="F:System.IO.FileMode.Append" />.</param>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file. </param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file. Specify 0 to set the capacity to the size of the file on disk.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile (System.IO.FileStream fileStream, string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity, System.IO.HandleInheritability inheritability, bool leaveOpen);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateFromFile(class System.IO.FileStream fileStream, string mapName, int64 capacity, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, class System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity, valuetype System.IO.HandleInheritability inheritability, bool leaveOpen) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("memoryMappedFileSecurity is currently ignored")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileStream" Type="System.IO.FileStream" />
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+        <Parameter Name="memoryMappedFileSecurity" Type="System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" />
+        <Parameter Name="inheritability" Type="System.IO.HandleInheritability" />
+        <Parameter Name="leaveOpen" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="capacity" /> is larger than the size of the file on disk, the file on disk is increased to match the specified capacity even if no data is written to the memory-mapped file. To prevent this from occurring, specify 0 (zero) for the default capacity, which will internally set <paramref name="capacity" /> to the size of the file on disk.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified name, capacity, access type, security permissions, inheritability, and disposal requirement from a file on disk. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="fileStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <paramref name="fileStream" /> to the file to map.</param>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file. Specify 0 to set the capacity to the size of the file on disk.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />.</param>
+        <param name="memoryMappedFileSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The permissions that can be granted for file access and operations on memory-mapped files.</param>
+        <param name="inheritability">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether a handle to the memory-mapped file can be inherited by a child process. The default is <see cref="F:System.IO.HandleInheritability.None" />.</param>
+        <param name="leaveOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to not dispose <paramref name="fileStream" /> after the <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFile" /> is closed; false to dispose <paramref name="fileStream" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNew">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateNew (string mapName, long capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateNew(string mapName, int64 capacity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("CreateNew requires that mapName be a file name on Unix")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified capacity in system memory. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name and capacity.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNew">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateNew (string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateNew(string mapName, int64 capacity, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("CreateNew requires that mapName be a file name on Unix")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified capacity and access type in system memory. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateNew">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateNew (string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity, System.IO.HandleInheritability inheritability);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateNew(string mapName, int64 capacity, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, class System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity, valuetype System.IO.HandleInheritability inheritability) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("CreateNew requires that mapName be a file name on Unix; options and memoryMappedFileSecurity are ignored")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+        <Parameter Name="options" Type="System.IO.MemoryMappedFiles.MemoryMappedFileOptions" />
+        <Parameter Name="memoryMappedFileSecurity" Type="System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" />
+        <Parameter Name="inheritability" Type="System.IO.HandleInheritability" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a memory-mapped file that has the specified capacity, access type, memory allocation, security permissions, and inheritability in system memory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that specifies memory allocation options for the memory-mapped file.</param>
+        <param name="memoryMappedFileSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The permissions that can be granted for file access and operations on memory-mapped files.</param>
+        <param name="inheritability">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether a handle to the memory-mapped file can be inherited by a child process. The default is <see cref="F:System.IO.HandleInheritability.None" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateOrOpen">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateOrOpen (string mapName, long capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateOrOpen(string mapName, int64 capacity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("CreateOrOpen requires that mapName be a file name on Unix")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create or open a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates or opens a memory-mapped file that has the specified capacity in system memory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name and size.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateOrOpen">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateOrOpen (string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateOrOpen(string mapName, int64 capacity, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("CreateOrOpen requires that mapName be a file name on Unix")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create or open a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates or opens a memory-mapped file that has the specified capacity and access type in system memory. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateOrOpen">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile CreateOrOpen (string mapName, long capacity, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity, System.IO.HandleInheritability inheritability);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile CreateOrOpen(string mapName, int64 capacity, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileOptions options, class System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity, valuetype System.IO.HandleInheritability inheritability) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="capacity" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+        <Parameter Name="options" Type="System.IO.MemoryMappedFiles.MemoryMappedFileOptions" />
+        <Parameter Name="memoryMappedFileSecurity" Type="System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" />
+        <Parameter Name="inheritability" Type="System.IO.HandleInheritability" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create or open a memory-mapped file that is not persisted (that is, not associated with a file on disk), which you can use to share data between processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates or opens a memory-mapped file that has the specified capacity, access type, memory allocation, security permissions, and inheritability in system memory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to assign to the memory-mapped file.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size, in bytes, to allocate to the memory-mapped file.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that specifies memory allocation options for the memory-mapped file.</param>
+        <param name="memoryMappedFileSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The permissions that can be granted for file access and operations on memory-mapped files.</param>
+        <param name="inheritability">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether a handle to the memory-mapped file can be inherited by a child process. The default is <see cref="F:System.IO.HandleInheritability.None" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateViewAccessor">
+      <MemberSignature Language="C#" Value="public System.IO.MemoryMappedFiles.MemoryMappedViewAccessor CreateViewAccessor ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.MemoryMappedFiles.MemoryMappedViewAccessor CreateViewAccessor() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedViewAccessor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the view returned by this method for random access to a memory-mapped file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedViewAccessor" /> that maps to a view of the memory-mapped file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A randomly accessible block of memory.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateViewAccessor">
+      <MemberSignature Language="C#" Value="public System.IO.MemoryMappedFiles.MemoryMappedViewAccessor CreateViewAccessor (long offset, long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.MemoryMappedFiles.MemoryMappedViewAccessor CreateViewAccessor(int64 offset, int64 size) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedViewAccessor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the view returned by this method for random access to a memory-mapped file.</para>
+          <para>To create a complete view of the memory-mapped file, specify 0 (zero) for the <paramref name="size" /> parameter. If you do this, the size of the view might be smaller or larger than the size of the source file on disk. This is because views are provided in units of system pages, and the size of the view is rounded up to the next system page size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedViewAccessor" /> that maps to a view of the memory-mapped file, and that has the specified offset and size.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A randomly accessible block of memory.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the view. Specify 0 (zero) to create a view that starts at <paramref name="offset" /> and ends approximately at the end of the memory-mapped file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateViewAccessor">
+      <MemberSignature Language="C#" Value="public System.IO.MemoryMappedFiles.MemoryMappedViewAccessor CreateViewAccessor (long offset, long size, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.MemoryMappedFiles.MemoryMappedViewAccessor CreateViewAccessor(int64 offset, int64 size, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedViewAccessor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="size" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the view returned by this method for random access to a memory-mapped file.</para>
+          <para>To create a complete view of the memory-mapped file, specify 0 (zero) for the <paramref name="size" /> parameter. If you do this, the size of the view might be smaller or larger than the size of the source file on disk. This is because views are provided in units of system pages, and the size of the view is rounded up to the next system page size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedViewAccessor" /> that maps to a view of the memory-mapped file, and that has the specified offset, size, and access restrictions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A randomly accessible block of memory.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the view. Specify 0 (zero) to create a view that starts at <paramref name="offset" /> and ends approximately at the end of the memory-mapped file.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateViewStream">
+      <MemberSignature Language="C#" Value="public System.IO.MemoryMappedFiles.MemoryMappedViewStream CreateViewStream ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.MemoryMappedFiles.MemoryMappedViewStream CreateViewStream() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedViewStream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the stream returned by this method for sequential access to a memory-mapped file, such as for inter-process communications. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a stream that maps to a view of the memory-mapped file.  </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream of memory.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateViewStream">
+      <MemberSignature Language="C#" Value="public System.IO.MemoryMappedFiles.MemoryMappedViewStream CreateViewStream (long offset, long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.MemoryMappedFiles.MemoryMappedViewStream CreateViewStream(int64 offset, int64 size) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedViewStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the stream returned by this method for sequential access to a memory-mapped file, such as for inter-process communications.</para>
+          <para>To create a complete view of the memory-mapped file, specify 0 (zero) for the <paramref name="size" /> parameter. If you do this, the size of the view might be smaller or larger than the size of the source file on disk. This is because views are provided in units of system pages, and the size of the view is rounded up to the next system page size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a stream that maps to a view of the memory-mapped file, and that has the specified offset and size.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream of memory that has the specified offset and size.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the view. Specify 0 (zero) to create a view that starts at <paramref name="offset" /> and ends approximately at the end of the memory-mapped file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateViewStream">
+      <MemberSignature Language="C#" Value="public System.IO.MemoryMappedFiles.MemoryMappedViewStream CreateViewStream (long offset, long size, System.IO.MemoryMappedFiles.MemoryMappedFileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.MemoryMappedFiles.MemoryMappedViewStream CreateViewStream(int64 offset, int64 size, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileAccess access) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedViewStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int64" />
+        <Parameter Name="size" Type="System.Int64" />
+        <Parameter Name="access" Type="System.IO.MemoryMappedFiles.MemoryMappedFileAccess" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the stream returned by this method for sequential access to a memory-mapped file, such as for inter-process communications.</para>
+          <para>To create a complete view of the memory-mapped file, specify 0 (zero) for the <paramref name="size" /> parameter. If you do this, the size of the view might be smaller or larger than the size of the source file on disk. This is because views are provided in units of system pages, and the size of the view is rounded up to the next system page size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a stream that maps to a view of the memory-mapped file, and that has the specified offset, size, and access type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream of memory that has the specified characteristics.</para>
+        </returns>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte at which to start the view.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the view. Specify 0 (zero) to create a view that starts at <paramref name="offset" /> and ends approximately at the end of the memory-mapped file.</param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of access allowed to the memory-mapped file. The default is <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileAccess.ReadWrite" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFile" />. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFile" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.IO.MemoryMappedFiles.MemoryMappedFileSecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.MemoryMappedFiles.MemoryMappedFileSecurity GetAccessControl() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileSecurity</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the access control to the memory-mapped file resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The permissions that can be granted for file access and operations on memory-mapped files.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile OpenExisting (string mapName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile OpenExisting(string mapName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The memory-mapped file can be either a persisted memory-mapped file (associated with a file on disk) or non persisted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens an existing memory-mapped file that has the specified name in system memory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified name. </para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the memory-mapped file to open.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile OpenExisting (string mapName, System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile OpenExisting(string mapName, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="desiredAccessRights" Type="System.IO.MemoryMappedFiles.MemoryMappedFileRights" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens an existing memory-mapped file that has the specified name and access rights in system memory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the memory-mapped file to open.</param>
+        <param name="desiredAccessRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the access rights to apply to the memory-mapped file.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.IO.MemoryMappedFiles.MemoryMappedFile OpenExisting (string mapName, System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights, System.IO.HandleInheritability inheritability);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.MemoryMappedFiles.MemoryMappedFile OpenExisting(string mapName, valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights desiredAccessRights, valuetype System.IO.HandleInheritability inheritability) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mapName" Type="System.String" />
+        <Parameter Name="desiredAccessRights" Type="System.IO.MemoryMappedFiles.MemoryMappedFileRights" />
+        <Parameter Name="inheritability" Type="System.IO.HandleInheritability" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens an existing memory-mapped file that has the specified name, access rights, and inheritability in system memory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A memory-mapped file that has the specified characteristics.</para>
+        </returns>
+        <param name="mapName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the memory-mapped file to open.</param>
+        <param name="desiredAccessRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the access rights to apply to the memory-mapped file.</param>
+        <param name="inheritability">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether a handle to the memory-mapped file can be inherited by a child process. The default is <see cref="F:System.IO.HandleInheritability.None" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SafeMemoryMappedFileHandle">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.SafeHandles.SafeMemoryMappedFileHandle SafeMemoryMappedFileHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Microsoft.Win32.SafeHandles.SafeMemoryMappedFileHandle SafeMemoryMappedFileHandle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SafeHandles.SafeMemoryMappedFileHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file handle of a memory-mapped file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.IO.MemoryMappedFiles.MemoryMappedFileSecurity memoryMappedFileSecurity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="memoryMappedFileSecurity" Type="System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the access control to the memory-mapped file resource.</para>
+        </summary>
+        <param name="memoryMappedFileSecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The permissions that can be granted for file access and operations on memory-mapped files.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

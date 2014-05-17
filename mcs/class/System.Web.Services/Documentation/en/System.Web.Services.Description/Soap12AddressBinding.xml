@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Soap12AddressBinding" FullName="System.Web.Services.Description.Soap12AddressBinding">
   <TypeSignature Language="C#" Value="public sealed class Soap12AddressBinding : System.Web.Services.Description.SoapAddressBinding" />
   <AssemblyInfo>
@@ -14,9 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about specifying protocols for XML Web services, see <format type="text/html"><a href="01DFC27C-C68E-4910-A0AA-5E4C2A766B0C">[&lt;topic://cpconbuildingaspnetwebservices&gt;]</a></format>. For more information about Web Services Description Language (WSDL), see the specification at http://www.w3.org/TR/wsdl/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a service description format extension applied to a <see cref="T:System.Web.Services.Description.Port" /> when an XML Web service supports the SOAP protocol version 1.2. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +31,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.Soap12AddressBinding" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

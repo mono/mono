@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceDebugBehavior" FullName="System.ServiceModel.Description.ServiceDebugBehavior">
+  <TypeSignature Language="C#" Value="public class ServiceDebugBehavior : System.ServiceModel.Description.IServiceBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceDebugBehavior extends System.Object implements class System.ServiceModel.Description.IServiceBehavior" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Description.IServiceBehavior</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.ServiceDebugBehavior" /> properties from a configuration file or programmatically to enable the flow of managed exception information to the client for debugging purposes as well as the publication of HTML information files for users browsing the service in Web browsers.</para>
+      <para>Set the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> property to true to instruct indigo2 to return managed exception information in SOAP faults to clients for debugging purposes. </para>
+      <block subset="none" type="note">
+        <para>Returning managed exception information to clients can be a security risk because exception details expose information about the internal service implementation that could be used by unauthorized clients. In addition, although the <see cref="T:System.ServiceModel.Description.ServiceDebugBehavior" /> properties can also be set programmatically, it can be easy to forget to disable <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> when deploying. </para>
+      </block>
+      <para>Because of the security issues involved, it is strongly recommended that:</para>
+      <list type="bullet">
+        <item>
+          <para>You use an application configuration file to set the value of the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> property to true.</para>
+        </item>
+        <item>
+          <para>You only do so only in controlled debugging scenarios.</para>
+        </item>
+      </list>
+      <para>crabout the security issues related to managed exception information, see <format type="text/html"><a href="a9696563-d404-4905-942d-1e0834c26dea">Specifying and Handling Faults in Contracts and Services</a></format>.</para>
+      <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageEnabled" /> and <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageEnabled" /> properties instruct the service to publish HTML help files when the service is viewed using an HTML browser.</para>
+      <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageUrl" /> and <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> properties control the location of the HTML help page that is viewed.</para>
+      <para>To enable or disable one of the <see cref="T:System.ServiceModel.Description.ServiceDebugBehavior" /> features using a configuration file:</para>
+      <list type="ordered">
+        <item>
+          <para>Add a behaviorConfiguration attribute to the <format type="text/html"><a href="13123dd6-c4a9-4a04-a984-df184b851788">&lt;service&gt;</a></format> element for your indigo2 service. Endpoint behaviors are configured on <format type="text/html"><a href="13aa23b7-2f08-4add-8dbf-a99f8127c017">&lt;endpoint&gt;</a></format> elements; service behaviors on <format type="text/html"><a href="13123dd6-c4a9-4a04-a984-df184b851788">&lt;service&gt;</a></format> elements.</para>
+        </item>
+        <item>
+          <para>Add to or create a <format type="text/html"><a href="5aed9062-cc36-4b72-b9dd-a3018b8ffafc">&lt;serviceBehaviors&gt;</a></format> section and add a <format type="text/html"><a href="b90ca3bc-3c22-4174-b903-e3a39898bd27">&lt;behavior&gt;</a></format> element to that with the name that matches the behaviorConfiguration attribute value from step 1. Endpoint behaviors are configured using an <format type="text/html"><a href="fb851947-e8dd-4f8c-8323-26fae90b09c3">&lt;endpointBehaviors&gt;</a></format> element; service behaviors are configured using a <format type="text/html"><a href="5aed9062-cc36-4b72-b9dd-a3018b8ffafc">&lt;serviceBehaviors&gt;</a></format> element.</para>
+        </item>
+        <item>
+          <para>Add a <format type="text/html"><a href="6d7ea986-f232-49fe-842c-f934d9966889">&lt;serviceDebug&gt;</a></format> element to the <format type="text/html"><a href="b90ca3bc-3c22-4174-b903-e3a39898bd27">&lt;behavior&gt;</a></format> element from step 2 and enable or disable the various properties appropriate to your scenario. </para>
+        </item>
+      </list>
+      <para>For a specific example, see the Example section.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables debugging and help information features for a indigo1 service.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceDebugBehavior ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor creates a <see cref="T:System.ServiceModel.Description.ServiceDebugBehavior" /> object with the following defaults:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> property is false.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageEnabled" /> property is true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageEnabled" /> property is true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageUrl" /> property is the base address of the service that supports HTTP requests.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> is the base address of the service that supports HTTPS requests.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceDebugBehavior" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpHelpPageBinding">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Binding HttpHelpPageBinding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.Binding HttpHelpPageBinding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Binding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets high-level access to the definition of a binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpHelpPageEnabled">
+      <MemberSignature Language="C#" Value="public bool HttpHelpPageEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HttpHelpPageEnabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageEnabled" /> property to false to disable the publication of an HTML help page visible to HTML browsers.</para>
+          <para>To ensure the HTML help page is published at the location controlled by the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property, you must set this property to true and then one of the following conditions must also be true:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property is an absolute address that supports the HTTP protocol scheme. </para>
+            </item>
+            <item>
+              <para>There is a base address for the service that supports the HTTP protocol scheme.</para>
+            </item>
+          </list>
+          <para>Although an exception is thrown if an absolute address that does not support the HTTP protocol scheme is assigned to the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property, any other scenario in which neither of the preceding criteria is met results in no exception and no HTML help page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that controls whether indigo1 publishes an HTML help page at the address controlled by the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageUrl" /> property.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpHelpPageUrl">
+      <MemberSignature Language="C#" Value="public Uri HttpHelpPageUrl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri HttpHelpPageUrl" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageUrl" /> property to enable the use of a custom HTML help file that is returned from an HTTP/Get request such as that of an HTML browser. The location of the HTML help file is resolved as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If the value of this property is a relative address, then the location of the HTML help file is the value of the service base address that supports HTTP requests plus this property value.</para>
+            </item>
+            <item>
+              <para>If the value of this property is an absolute address and supports HTTP requests, then the location of the HTML help file is the value of this property. </para>
+            </item>
+            <item>
+              <para>If the value of this property is absolute but does not support HTTP requests, an exception is thrown. </para>
+            </item>
+          </list>
+          <para>This property is applied only in the case that the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpHelpPageEnabled" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location at which the HTML help file is published.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpsHelpPageBinding">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Binding HttpsHelpPageBinding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.Binding HttpsHelpPageBinding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Binding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets high-level access to the definition of a binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpsHelpPageEnabled">
+      <MemberSignature Language="C#" Value="public bool HttpsHelpPageEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HttpsHelpPageEnabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageEnabled" /> property to false to disable the publication of an HTML help page visible to HTML browsers. </para>
+          <para>To ensure the HTML help page is published at the location controlled by the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property, you must set this property to true and then one of the following conditions must also be true:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property is an absolute address that supports the HTTPS protocol scheme. </para>
+            </item>
+            <item>
+              <para>There is a base address for the service that supports the HTTPS protocol scheme.</para>
+            </item>
+          </list>
+          <para>Although an exception is thrown if an absolute address that does not support the HTTPS protocol scheme is assigned to the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property, any other scenario in which neither of the preceding criteria is met results in no exception and no HTML help page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether indigo1 returns an HTML help file over HTTPS at the address controlled by the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpsHelpPageUrl">
+      <MemberSignature Language="C#" Value="public Uri HttpsHelpPageUrl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri HttpsHelpPageUrl" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageUrl" /> property to enable the use of a custom HTML help file that is returned from an HTTPS/Get request such as that of an HTML browser.</para>
+          <para>The location of the HTML help file is resolved as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If the value of this property is a relative address, then the location of the HTML help file is the value of the service base address that supports HTTPS requests plus this property value.</para>
+            </item>
+            <item>
+              <para>If the value of this property is an absolute address and supports HTTPS requests, then the location of the HTML help file is the value of this property. </para>
+            </item>
+            <item>
+              <para>If the value of this property is absolute but does not support HTTPS requests, an exception is thrown.</para>
+            </item>
+          </list>
+          <para>This property is applied only in the case that the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.HttpsHelpPageEnabled" /> property is true. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location at which an HTML file is published for retrieval using HTTPS.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeExceptionDetailInFaults">
+      <MemberSignature Language="C#" Value="public bool IncludeExceptionDetailInFaults { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeExceptionDetailInFaults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> property to true to instruct indigo2 to return managed exception information to the client in SOAP faults to ease debugging.</para>
+          <block subset="none" type="note">
+            <para>Returning managed exception information to clients can be a security risk because exception details expose information about the internal service implementation that could be used by unauthorized clients. In addition, although the <see cref="T:System.ServiceModel.Description.ServiceDebugBehavior" /> properties can also be set programmatically, it can be easy to forget to disable <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> when deploying. </para>
+          </block>
+          <para>Because of the security issues involved, it is strongly recommended that:</para>
+          <list type="bullet">
+            <item>
+              <para>You use an application configuration file to set the value of the <see cref="P:System.ServiceModel.Description.ServiceDebugBehavior.IncludeExceptionDetailInFaults" /> property to true.</para>
+            </item>
+            <item>
+              <para>You only do so only in controlled debugging scenarios.</para>
+            </item>
+          </list>
+          <para>crdefault <format type="text/html"><a href="a9696563-d404-4905-942d-1e0834c26dea">Specifying and Handling Faults in Contracts and Services</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to include managed exception information in the detail of SOAP faults returned to the client for debugging purposes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.AddBindingParameters">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.AddBindingParameters (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase, System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase, class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+        <Parameter Name="endpoints" Type="System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Modifies the bindings to support the behavior. crdefault the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method to support the behavior.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host.</param>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoints for the service.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding parameters that support modifying the bindings.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.ApplyDispatchBehavior (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to support the behavior.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.Validate">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.Validate (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.Validate(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method to support the behavior.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

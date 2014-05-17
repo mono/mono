@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebExceptionStatus" FullName="System.Net.WebExceptionStatus" FullNameSP="System_Net_WebExceptionStatus" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable WebExceptionStatus extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum WebExceptionStatus" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WebExceptionStatus extends System.Enum" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,39 +10,50 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Defines status codes for the <see cref="T:System.Net.WebException" /> class.
- </para>
-    </summary>
     <remarks>
-      <para>This enumeration defines the status
- codes assigned to the <see cref="P:System.Net.WebException.Status" />
- property.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.WebExceptionStatus" /> enumeration defines the status codes assigned to the <see cref="P:System.Net.WebException.Status" /> property.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines status codes for the <see cref="T:System.Net.WebException" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CacheEntryNotFound">
       <MemberSignature Language="C#" Value="CacheEntryNotFound" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus CacheEntryNotFound = int32(18)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified cache entry was not found.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectFailure = 2" />
       <MemberSignature Language="C#" Value="ConnectFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectFailure = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -48,20 +61,22 @@
       <MemberValue>ConnectFailure</MemberValue>
       <Docs>
         <summary>
-          <para> The remote service point could not be contacted at the transport level.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The remote service point could not be contacted at the transport level.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConnectionClosed">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectionClosed = 8" />
       <MemberSignature Language="C#" Value="ConnectionClosed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectionClosed = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -69,21 +84,22 @@
       <MemberValue>ConnectionClosed</MemberValue>
       <Docs>
         <summary>
-          <para>
-       The connection was prematurely closed.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection was prematurely closed.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KeepAliveFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus KeepAliveFailure = 12" />
       <MemberSignature Language="C#" Value="KeepAliveFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus KeepAliveFailure = int32(12)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -91,36 +107,43 @@
       <MemberValue>KeepAliveFailure</MemberValue>
       <Docs>
         <summary>
-          <para>The connection for a request that specifies the Keep-alive 
-      header was closed unexpectedly.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection for a request that specifies the Keep-alive header was closed unexpectedly.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MessageLengthLimitExceeded">
       <MemberSignature Language="C#" Value="MessageLengthLimitExceeded" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus MessageLengthLimitExceeded = int32(17)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <MemberValue>MessageLengthLimitExceeded</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message was received that exceeded the specified limit when sending a request or receiving a response from the server.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NameResolutionFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus NameResolutionFailure = 1" />
       <MemberSignature Language="C#" Value="NameResolutionFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus NameResolutionFailure = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -128,21 +151,22 @@
       <MemberValue>NameResolutionFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       The name resolver service could not resolve the host name.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name resolver service could not resolve the host name.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Pending">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus Pending = 13" />
       <MemberSignature Language="C#" Value="Pending" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus Pending = int32(13)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -150,19 +174,22 @@
       <MemberValue>Pending</MemberValue>
       <Docs>
         <summary>
-          <para> An internal asynchronous request is pending.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An internal asynchronous request is pending.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PipelineFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus PipelineFailure = 5" />
       <MemberSignature Language="C#" Value="PipelineFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus PipelineFailure = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -170,20 +197,22 @@
       <MemberValue>PipelineFailure</MemberValue>
       <Docs>
         <summary>
-          <para>The request was submitted as a pipeline request, but the 
-      connection was dropped before the respective response was received.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The request was a piplined request and the connection was closed before the response was received.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProtocolError">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProtocolError = 7" />
       <MemberSignature Language="C#" Value="ProtocolError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProtocolError = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -191,26 +220,22 @@
       <MemberValue>ProtocolError</MemberValue>
       <Docs>
         <summary>
-          <para> 
- The response received from the server was complete
- but indicated a protocol-level error.
- </para>
-          <para>
-            <block subset="none" type="note">For example, an HTTP protocol error such 
- as 401 Access Denied would use this status. </block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The response received from the server was complete but indicated a protocol-level error. For example, an HTTP protocol error such as 401 Access Denied would use this status.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProxyNameResolutionFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProxyNameResolutionFailure = 15" />
       <MemberSignature Language="C#" Value="ProxyNameResolutionFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProxyNameResolutionFailure = int32(15)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -218,19 +243,22 @@
       <MemberValue>ProxyNameResolutionFailure</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The name resolver service could not resolve the proxy host name.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReceiveFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ReceiveFailure = 3" />
       <MemberSignature Language="C#" Value="ReceiveFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ReceiveFailure = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -238,21 +266,22 @@
       <MemberValue>ReceiveFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       A complete response was not received from the remote server.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A complete response was not received from the remote server.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RequestCanceled">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestCanceled = 6" />
       <MemberSignature Language="C#" Value="RequestCanceled" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestCanceled = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -260,46 +289,58 @@
       <MemberValue>RequestCanceled</MemberValue>
       <Docs>
         <summary>
-          <para> The request was canceled or the <see cref="M:System.Net.WebRequest.Abort" qualify="true" /> method was called.
-   </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The request was canceled, the <see cref="M:System.Net.WebRequest.Abort" /> method was called, or an unclassifiable error occurred. This is the default value for <see cref="P:System.Net.WebException.Status" />.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RequestProhibitedByCachePolicy">
       <MemberSignature Language="C#" Value="RequestProhibitedByCachePolicy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestProhibitedByCachePolicy = int32(19)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The request was not permitted by the cache policy. In general, this occurs when a request is not cacheable and the effective policy prohibits sending the request to the server. You might receive this status if a request method implies the presence of a request body, a request method requires direct interaction with the server, or a request contains a conditional header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestProhibitedByProxy">
       <MemberSignature Language="C#" Value="RequestProhibitedByProxy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestProhibitedByProxy = int32(20)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This request was not permitted by the proxy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecureChannelFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus SecureChannelFailure = 10" />
       <MemberSignature Language="C#" Value="SecureChannelFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus SecureChannelFailure = int32(10)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -307,21 +348,22 @@
       <MemberValue>SecureChannelFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       An error occurred in a secure channel link.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An error occurred while establishing a connection using SSL.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus SendFailure = 4" />
       <MemberSignature Language="C#" Value="SendFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus SendFailure = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -329,21 +371,22 @@
       <MemberValue>SendFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       A complete request could not be sent to the remote server.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A complete request could not be sent to the remote server.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ServerProtocolViolation">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ServerProtocolViolation = 11" />
       <MemberSignature Language="C#" Value="ServerProtocolViolation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ServerProtocolViolation = int32(11)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -351,19 +394,22 @@
       <MemberValue>ServerProtocolViolation</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The server response was not a valid HTTP response.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Success">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus Success = 0" />
       <MemberSignature Language="C#" Value="Success" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus Success = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -371,20 +417,22 @@
       <MemberValue>Success</MemberValue>
       <Docs>
         <summary>
-          <para> No error was encountered.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No error was encountered.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Timeout">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus Timeout = 14" />
       <MemberSignature Language="C#" Value="Timeout" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus Timeout = int32(14)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -392,19 +440,22 @@
       <MemberValue>Timeout</MemberValue>
       <Docs>
         <summary>
-          <para>No response was received during the timeout period for a request.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No response was received during the time-out period for a request.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TrustFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus TrustFailure = 9" />
       <MemberSignature Language="C#" Value="TrustFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus TrustFailure = int32(9)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -412,38 +463,32 @@
       <MemberValue>TrustFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       A server certificate could not be validated.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A server certificate could not be validated.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UnknownError">
       <MemberSignature Language="C#" Value="UnknownError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus UnknownError = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <MemberValue>UnknownError</MemberValue>
       <Docs>
-        <summary>
-          <para>An exception of unknown type has occurred.</para>
-          <para>
-            <block subset="none" type="note">This is the default value for
- <see cref="P:System.Net.WebException.Status" /> . </block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception of unknown type has occurred.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

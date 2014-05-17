@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="OperationDescription" FullName="System.ServiceModel.Description.OperationDescription">
+  <TypeSignature Language="C#" Value="public class OperationDescription" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit OperationDescription extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerDisplay("Name={name}, IsInitiating={isInitiating}, IsTerminating={isTerminating}")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A indigo1 contract is a collection of operations that specifies what the endpoint communicates to the outside world. Each operation is a message exchange. For example, a request message and an associated reply message forming a request/reply message exchange. </para>
+      <para>A <see cref="T:System.ServiceModel.Description.ContractDescription" /> object is used to describe contracts and their operations. Within a <see cref="T:System.ServiceModel.Description.ContractDescription" />, each contract operation has a corresponding <see cref="T:System.ServiceModel.Description.OperationDescription" /> that describes aspects of the operation, such as whether the operation is one-way or request/reply. Each <see cref="T:System.ServiceModel.Description.OperationDescription" /> also describes the messages that make up the operation using a collection of <see cref="T:System.ServiceModel.Description.MessageDescription" /> objects. <see cref="T:System.ServiceModel.Description.ContractDescription" /> contains a reference to an interface that defines the contract using the programming model. This interface is marked with <see cref="T:System.ServiceModel.ServiceContractAttribute" />, and its methods that correspond to endpoint operations are marked with <see cref="T:System.ServiceModel.OperationContractAttribute" />. </para>
+      <para>Many of the properties on <see cref="T:System.ServiceModel.Description.OperationDescription" /> have corresponding properties in the indigo2 programming model on <see cref="T:System.ServiceModel.OperationContractAttribute" />, for example, <see cref="P:System.ServiceModel.OperationContractAttribute.IsTerminating" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the description of a contract operation that provides a description of the messages that make up the operation.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OperationDescription (string name, System.ServiceModel.Description.ContractDescription declaringContract);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.ServiceModel.Description.ContractDescription declaringContract) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="declaringContract" Type="System.ServiceModel.Description.ContractDescription" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.OperationDescription" /> class with a specified name and contract description.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the operation description.</param>
+        <param name="declaringContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ContractDescription" /> used to initialize the operation description.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo BeginMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo BeginMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the begin method of the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Behaviors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IOperationBehavior&gt; Behaviors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.KeyedByTypeCollection`1&lt;class System.ServiceModel.Description.IOperationBehavior&gt; Behaviors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IOperationBehavior&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> interface is implemented to modify, examine, or extend some aspect of operation-wide execution at the application level for either client or service applications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the operation behaviors associated with the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaringContract">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ContractDescription DeclaringContract { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.ContractDescription DeclaringContract" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ContractDescription</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the contract to which the operation belongs.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo EndMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo EndMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the end method of the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Faults">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.FaultDescriptionCollection Faults { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.FaultDescriptionCollection Faults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.FaultDescriptionCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the descriptions of the faults associated with the operation description.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasProtectionLevel">
+      <MemberSignature Language="C#" Value="public bool HasProtectionLevel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.ServiceModel.Description.OperationDescription.ProtectionLevel" /> is set, the <see cref="P:System.ServiceModel.Description.OperationDescription.HasProtectionLevel" /> property is set to true.</para>
+          <para>
+            <see cref="P:System.ServiceModel.Description.OperationDescription.HasProtectionLevel" /> corresponds to the <see cref="P:System.ServiceModel.OperationContractAttribute.HasProtectionLevel" /> property in the indigo1 programming model.</para>
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationDescription.HasProtectionLevel" /> property to indicate that a specific protection level is required by the messages of this operation. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the operation has had a protection level set.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsInitiating">
+      <MemberSignature Language="C#" Value="public bool IsInitiating { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInitiating" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.OperationContractAttribute.IsInitiating" /> property controls whether an operation can be the first operation called when a session is created. </para>
+          <block subset="none" type="note">
+            <para>The value of <see cref="P:System.ServiceModel.ServiceContractAttribute.SessionMode" /> must be true and the binding used must support sessions for the <see cref="P:System.ServiceModel.OperationContractAttribute.IsInitiating" /> property to work properly. </para>
+          </block>
+          <para>The default is true, which means that an operation can be the first one called on a channel. Subsequent calls to the initiating method have no effect, other than to call the method. No other sessions are created.</para>
+          <para>Typically, you set <see cref="P:System.ServiceModel.OperationContractAttribute.IsInitiating" /> to false to force clients to call another method on the service before they can invoke this one. </para>
+          <para>
+            <see cref="P:System.ServiceModel.Description.OperationDescription.IsInitiating" /> corresponds to the <see cref="P:System.ServiceModel.OperationContractAttribute.IsInitiating" /> property in the indigo1 programming model.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the method implements an operation that can initiate a session on the server (if such a session exists). </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsOneWay">
+      <MemberSignature Language="C#" Value="public bool IsOneWay { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsOneWay" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationDescription.IsOneWay" /> property to indicate that an operation does not return a reply message. This type of operation is useful for notifications or event-style communication, especially in two-way communication. </para>
+          <para>If the <see cref="P:System.ServiceModel.Description.OperationDescription.IsOneWay" /> property is set to false (the default), even methods that return void result in a reply message. In this case, the infrastructure creates and sends an empty message to indicate to the caller that the method has returned.</para>
+          <para>
+            <see cref="P:System.ServiceModel.Description.OperationDescription.IsTerminating" /> corresponds to the <see cref="P:System.ServiceModel.OperationContractAttribute.IsOneWay" /> property in the indigo1 programming model.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether an operation returns a reply message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsTerminating">
+      <MemberSignature Language="C#" Value="public bool IsTerminating { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsTerminating" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationDescription.IsTerminating" /> property to indicate that calling a service operation terminates the communication session. </para>
+          <para>
+            <see cref="P:System.ServiceModel.Description.OperationDescription.IsTerminating" /> corresponds to the <see cref="P:System.ServiceModel.OperationContractAttribute.IsTerminating" /> property in the indigo1 programming model.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the service operation causes the server to close the session after the reply message, if any, is sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KnownTypes">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;Type&gt; KnownTypes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.Type&gt; KnownTypes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.Type&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <newTerm>known types</newTerm> are types which may be present in an object graph when serialization or deserialization occurs. For more information about known types, see <format type="text/html"><a href="1a0baea1-27b7-470d-9136-5bbad86c4337">Data Contract Known Types</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the known types associated with the operation description.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Messages">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.MessageDescriptionCollection Messages { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.MessageDescriptionCollection Messages" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MessageDescriptionCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the descriptions of the messages that make up the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.OperationDescription.Name" /> property overrides the &lt;operation&gt; element name in WSDL. The default operation name is the name of the implementing method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the operation description.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OperationBehaviors">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.KeyedCollection&lt;Type,System.ServiceModel.Description.IOperationBehavior&gt; OperationBehaviors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.KeyedCollection`2&lt;class System.Type, class System.ServiceModel.Description.IOperationBehavior&gt; OperationBehaviors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.KeyedCollection&lt;System.Type,System.ServiceModel.Description.IOperationBehavior&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the set of behaviors for the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionLevel">
+      <MemberSignature Language="C#" Value="public System.Net.Security.ProtectionLevel ProtectionLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.ProtectionLevel ProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.OperationDescription.ProtectionLevel" /> property controls whether the messages of an operation must be encrypted, signed, or both. The value set here is the default value for all messages specified for this operation unless a narrower scope overrides this value.</para>
+          <para>
+            <see cref="P:System.ServiceModel.Description.OperationDescription.ProtectionLevel" /> corresponds to the <see cref="P:System.ServiceModel.OperationContractAttribute.ProtectionLevel" /> property in the indigo1 programming model.</para>
+          <para>When the <see cref="P:System.ServiceModel.Description.OperationDescription.ProtectionLevel" /> is set, the <see cref="P:System.ServiceModel.Description.OperationDescription.HasProtectionLevel" /> property is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the protection level for the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SyncMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo SyncMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo SyncMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the service synchronization method of the operation description.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TaskMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo TaskMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo TaskMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the method used for the task operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectManager" FullName="System.Runtime.Serialization.ObjectManager">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ObjectManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ObjectManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,51 +14,82 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>During deserialization, the <see cref="T:System.Runtime.Serialization.Formatter" /> queries the <see cref="T:System.Runtime.Serialization.ObjectManager" /> to determine whether a reference to an object in the serialized stream refers to an object that has already been deserialized (a backward reference), or to an object that has not yet been deserialized (a forward reference). If the reference in the serialized stream is a forward reference, then the <see cref="T:System.Runtime.Serialization.Formatter" /> can register a fixup with the <see cref="T:System.Runtime.Serialization.ObjectManager" />. If the reference in the serialized stream is a backward reference, the <see cref="T:System.Runtime.Serialization.Formatter" /> immediately completes the reference. Fixup refers to the process of finalizing object references not already completed during the object deserialization process. After the required object has been deserialized, the <see cref="T:System.Runtime.Serialization.ObjectManager" /> will complete the reference.</para>
+      <para>The <see cref="T:System.Runtime.Serialization.ObjectManager" /> follows a set of rules that dictate the fixup order. All objects that implement <see cref="T:System.Runtime.Serialization.ISerializable" /> or have a <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" /> can expect to have all the objects that they transmitted through <see cref="T:System.Runtime.Serialization.SerializationInfo" /> available when the object tree is deserialized. However, a parent object cannot presume that all its child objects will be fully completed when it is fully deserialized. All child objects will be present but not all the grandchild objects will necessarily be present. If an object needs to take certain actions that depend on executing code on its child objects, it can delay these actions, implement the <see cref="T:System.Runtime.Serialization.IDeserializationCallback" /> interface, and execute the code only when it is called back on this interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Keeps track of objects as they are deserialized.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ObjectManager (System.Runtime.Serialization.ISurrogateSelector selector, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.ISurrogateSelector selector, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="selector" Type="System.Runtime.Serialization.ISurrogateSelector" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="selector">To be added: an object of type 'ISurrogateSelector'</param>
-        <param name="context">To be added: an object of type 'StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.ObjectManager" /> class.</para>
+        </summary>
+        <param name="selector">
+          <attribution license="cc4" from="Microsoft" modified="false" />The surrogate selector to use. The <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> determines the correct surrogate to use when deserializing objects of a given type. At deserialization time, the surrogate selector creates a new instance of the object from the information transmitted on the stream. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The streaming context. The <see cref="T:System.Runtime.Serialization.StreamingContext" /> is not used by ObjectManager, but is passed as a parameter to any objects implementing <see cref="T:System.Runtime.Serialization.ISerializable" /> or having a <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" />. These objects can take specific actions depending on the source of the information to deserialize. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DoFixups">
+      <MemberSignature Language="C#" Value="public virtual void DoFixups ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DoFixups() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DoFixups">
-      <MemberSignature Language="C#" Value="public virtual void DoFixups ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fixups are carried out by any appropriate surrogate, the object itself (if it implements <see cref="T:System.Runtime.Serialization.ISerializable" />), or the default implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs all the recorded fixups.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetObject">
+      <MemberSignature Language="C#" Value="public virtual object GetObject (long objectID);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetObject(int64 objectID) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObject">
-      <MemberSignature Language="C#" Value="public virtual object GetObject (long objectID);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -64,37 +97,51 @@
         <Parameter Name="objectID" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="objectID">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object can be registered and issued an object ID with a call to the <see cref="M:System.Runtime.Serialization.ObjectManager.RegisterObject(System.Object,System.Int64)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the object with the specified object ID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object with the specified object ID if it has been previously stored or null if no such object has been registered.</para>
+        </returns>
+        <param name="objectID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the requested object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RaiseDeserializationEvent">
+      <MemberSignature Language="C#" Value="public virtual void RaiseDeserializationEvent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RaiseDeserializationEvent() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RaiseDeserializationEvent">
-      <MemberSignature Language="C#" Value="public virtual void RaiseDeserializationEvent ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the deserialization event to any registered object that implements <see cref="T:System.Runtime.Serialization.IDeserializationCallback" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RaiseOnDeserializingEvent">
       <MemberSignature Language="C#" Value="public void RaiseOnDeserializingEvent (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RaiseOnDeserializingEvent(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -102,19 +149,25 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the method marked with the <see cref="T:System.Runtime.Serialization.OnDeserializingAttribute" />.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the type that contains the method to be invoked.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RecordArrayElementFixup">
       <MemberSignature Language="C#" Value="public virtual void RecordArrayElementFixup (long arrayToBeFixed, int index, long objectRequired);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RecordArrayElementFixup(int64 arrayToBeFixed, int32 index, int64 objectRequired) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -124,21 +177,31 @@
         <Parameter Name="objectRequired" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="arrayToBeFixed">To be added: an object of type 'long'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="objectRequired">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fixup is for a specified element of a specified array. The value used during the fixup process is provided in the <paramref name="objectRequired" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Records a fixup for one element in an array.</para>
+        </summary>
+        <param name="arrayToBeFixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the array used to record a fixup. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within <paramref name="arrayFixup" /> that a fixup is requested for. </param>
+        <param name="objectRequired">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object that the current array element will point to after fixup is completed. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RecordArrayElementFixup">
+      <MemberSignature Language="C#" Value="public virtual void RecordArrayElementFixup (long arrayToBeFixed, int[] indices, long objectRequired);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RecordArrayElementFixup(int64 arrayToBeFixed, int32[] indices, int64 objectRequired) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RecordArrayElementFixup">
-      <MemberSignature Language="C#" Value="public virtual void RecordArrayElementFixup (long arrayToBeFixed, int[] indices, long objectRequired);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -148,21 +211,31 @@
         <Parameter Name="objectRequired" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="arrayToBeFixed">To be added: an object of type 'long'</param>
-        <param name="indices">To be added: an object of type 'int []'</param>
-        <param name="objectRequired">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fixup is for specified elements of a specified array. The value used during the fixup process is provided in the <paramref name="objectRequired" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Records fixups for the specified elements in an array, to be executed later.</para>
+        </summary>
+        <param name="arrayToBeFixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the array used to record a fixup. </param>
+        <param name="indices">
+          <attribution license="cc4" from="Microsoft" modified="false" />The indexes within the multidimensional array that a fixup is requested for. </param>
+        <param name="objectRequired">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object the array elements will point to after fixup is completed. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RecordDelayedFixup">
+      <MemberSignature Language="C#" Value="public virtual void RecordDelayedFixup (long objectToBeFixed, string memberName, long objectRequired);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RecordDelayedFixup(int64 objectToBeFixed, string memberName, int64 objectRequired) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RecordDelayedFixup">
-      <MemberSignature Language="C#" Value="public virtual void RecordDelayedFixup (long objectToBeFixed, string memberName, long objectRequired);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -172,21 +245,31 @@
         <Parameter Name="objectRequired" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="objectToBeFixed">To be added: an object of type 'long'</param>
-        <param name="memberName">To be added: an object of type 'string'</param>
-        <param name="objectRequired">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fixup is for a specified member of a specified object. The value to be used during the fixup process is provided as the <paramref name="objectRequired" /> argument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Records a fixup for an object member, to be executed later.</para>
+        </summary>
+        <param name="objectToBeFixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object that needs the reference to <paramref name="objectRequired" />. </param>
+        <param name="memberName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member name of <paramref name="objectToBeFixed" /> where the fixup will be performed. </param>
+        <param name="objectRequired">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object required by <paramref name="objectToBeFixed" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RecordFixup">
+      <MemberSignature Language="C#" Value="public virtual void RecordFixup (long objectToBeFixed, System.Reflection.MemberInfo member, long objectRequired);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RecordFixup(int64 objectToBeFixed, class System.Reflection.MemberInfo member, int64 objectRequired) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RecordFixup">
-      <MemberSignature Language="C#" Value="public virtual void RecordFixup (long objectToBeFixed, System.Reflection.MemberInfo member, long objectRequired);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -196,21 +279,31 @@
         <Parameter Name="objectRequired" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="objectToBeFixed">To be added: an object of type 'long'</param>
-        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
-        <param name="objectRequired">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fixup is for a specified member of a specified object. The value to be used during the fixup process is provided as the <paramref name="objectRequired" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Records a fixup for a member of an object, to be executed later.</para>
+        </summary>
+        <param name="objectToBeFixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object that needs the reference to the <paramref name="objectRequired" /> object. </param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member of <paramref name="objectToBeFixed" /> where the fixup will be performed. </param>
+        <param name="objectRequired">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object required by <paramref name="objectToBeFixed" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public virtual void RegisterObject (object obj, long objectID);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RegisterObject(object obj, int64 objectID) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterObject">
-      <MemberSignature Language="C#" Value="public virtual void RegisterObject (object obj, long objectID);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -219,20 +312,30 @@
         <Parameter Name="objectID" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="objectID">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Runtime.Serialization.ObjectManager" /> retains information about both the object and its ID. Later during deserialization, <see cref="M:System.Runtime.Serialization.ObjectManager.GetObject(System.Int64)" /> can be used to determine whether a particular object ID has already been deserialized, or whether it is a forward reference to an object that has not yet been deserialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object as it is deserialized, associating it with <paramref name="objectID" />.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register. </param>
+        <param name="objectID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object to register. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RegisterObject(object obj, int64 objectID, class System.Runtime.Serialization.SerializationInfo info) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterObject">
-      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -242,21 +345,32 @@
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="objectID">To be added: an object of type 'long'</param>
-        <param name="info">To be added: an object of type 'SerializationInfo'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Runtime.Serialization.ObjectManager" /> retains the information about both the object and its ID. Later during deserialization, you can use <see cref="M:System.Runtime.Serialization.ObjectManager.GetObject(System.Int64)" /> to discover whether a particular object ID has already been deserialized, or if it is a forward reference to an object that has not yet been deserialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an object as it is deserialized, associating it with <paramref name="objectID" />, and recording the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> used with it.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register. </param>
+        <param name="objectID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object to register. </param>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> used if <paramref name="obj" /> implements <see cref="T:System.Runtime.Serialization.ISerializable" /> or has a <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" />. <paramref name="info" /> will be completed with any required fixup information and then passed to the required object when that object is completed. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info, long idOfContainingObj, System.Reflection.MemberInfo member);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RegisterObject(object obj, int64 objectID, class System.Runtime.Serialization.SerializationInfo info, int64 idOfContainingObj, class System.Reflection.MemberInfo member) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterObject">
-      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info, long idOfContainingObj, System.Reflection.MemberInfo member);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -268,23 +382,37 @@
         <Parameter Name="member" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="objectID">To be added: an object of type 'long'</param>
-        <param name="info">To be added: an object of type 'SerializationInfo'</param>
-        <param name="idOfContainingObj">To be added: an object of type 'long'</param>
-        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You need to provide the <paramref name="member" /> and <paramref name="idOfContainingObj" /> parameters if <paramref name="obj" /> is a <see cref="T:System.ValueType" /> because of the way fixups are performed on <see cref="T:System.ValueType" /> objects. The space to store the information for a <see cref="T:System.ValueType" /> is allocated inline with its containing object. However, when the <see cref="T:System.ValueType" /> is boxed to be registered with the <see cref="T:System.Runtime.Serialization.ObjectManager" />, it loses the connection with its containing object. To guarantee that fixups occur in the instance of the <see cref="T:System.ValueType" /> stored in the containing object and not in the boxed instance, the <see cref="T:System.Runtime.Serialization.ObjectManager" /> retains some additional information.</para>
+          <para>
+            <see cref="T:System.Runtime.Serialization.ObjectManager" /> retains information about both the object and its ID. Later during deserialization, <see cref="M:System.Runtime.Serialization.ObjectManager.GetObject(System.Int64)" /> can be used to discover whether a particular object ID has already been deserialized, or whether it is a forward reference to an object not yet deserialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a member of an object as it is deserialized, associating it with <paramref name="objectID" />, and recording the <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register. </param>
+        <param name="objectID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object to register. </param>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> used if <paramref name="obj" /> implements <see cref="T:System.Runtime.Serialization.ISerializable" /> or has a <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" />. <paramref name="info" /> will be completed with any required fixup information and then passed to the required object when that object is completed. </param>
+        <param name="idOfContainingObj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object that contains <paramref name="obj" />. This parameter is required only if <paramref name="obj" /> is a value type. </param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The field in the containing object where <paramref name="obj" /> exists. This parameter has meaning only if <paramref name="obj" /> is a value type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterObject">
+      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info, long idOfContainingObj, System.Reflection.MemberInfo member, int[] arrayIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RegisterObject(object obj, int64 objectID, class System.Runtime.Serialization.SerializationInfo info, int64 idOfContainingObj, class System.Reflection.MemberInfo member, int32[] arrayIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterObject">
-      <MemberSignature Language="C#" Value="public void RegisterObject (object obj, long objectID, System.Runtime.Serialization.SerializationInfo info, long idOfContainingObj, System.Reflection.MemberInfo member, int[] arrayIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -297,25 +425,29 @@
         <Parameter Name="arrayIndex" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="objectID">To be added: an object of type 'long'</param>
-        <param name="info">To be added: an object of type 'SerializationInfo'</param>
-        <param name="idOfContainingObj">To be added: an object of type 'long'</param>
-        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
-        <param name="arrayIndex">To be added: an object of type 'int []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You need to provide the <paramref name="member" /> and <paramref name="idOfContainingObj" /> parameters if <paramref name="obj" /> is a <see cref="T:System.ValueType" /> because of the way fixups are performed on <see cref="T:System.ValueType" /> objects. The space to store the information for a <see cref="T:System.ValueType" /> is allocated inline with its containing object. However, when the <see cref="T:System.ValueType" /> is boxed to be registered with the <see cref="T:System.Runtime.Serialization.ObjectManager" />, it loses the connection with its containing object. To guarantee that fixups occur in the instance of the <see cref="T:System.ValueType" /> stored in the containing object and not in the boxed instance, the <see cref="T:System.Runtime.Serialization.ObjectManager" /> retains some additional information.</para>
+          <para>
+            <see cref="T:System.Runtime.Serialization.ObjectManager" /> retains information about both the object and its ID. Later during deserialization, <see cref="M:System.Runtime.Serialization.ObjectManager.GetObject(System.Int64)" /> can be used to discover whether a particular object ID has already been deserialized, or whether it is a forward reference to an object not yet deserialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a member of an array contained in an object while it is deserialized, associating it with <paramref name="objectID" />, and recording the <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register. </param>
+        <param name="objectID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object to register. </param>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> used if <paramref name="obj" /> implements <see cref="T:System.Runtime.Serialization.ISerializable" /> or has a <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" />. <paramref name="info" /> will be completed with any required fixup information and then passed to the required object when that object is completed. </param>
+        <param name="idOfContainingObj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the object that contains <paramref name="obj" />. This parameter is required only if <paramref name="obj" /> is a value type. </param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The field in the containing object where <paramref name="obj" /> exists. This parameter has meaning only if <paramref name="obj" /> is a value type. </param>
+        <param name="arrayIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />If <paramref name="obj" /> is a <see cref="T:System.ValueType" /> and a member of an array, <paramref name="arrayIndex" /> contains the index within that array where <paramref name="obj" /> exists. <paramref name="arrayIndex" /> is ignored if <paramref name="obj" /> is not both a <see cref="T:System.ValueType" /> and a member of an array. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

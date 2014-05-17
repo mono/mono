@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StringFormat" FullName="System.Drawing.StringFormat">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class StringFormat : MarshalByRefObject, ICloneable, IDisposable" />
   <AssemblyInfo>
@@ -20,8 +21,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Many common formats are provided through the <see cref="T:System.Drawing.StringFormatFlags" /> enumeration. <see cref="T:System.Drawing.StringFormat" /> objects can be changed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates text layout information (such as alignment, orientation and tab stops) display manipulations (such as ellipsis insertion and national digit substitution) and OpenType features. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,46 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Drawing.StringFormat" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>FormatFlags</para>
+              </term>
+              <description>
+                <para>0 (no flags are set)</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.HotkeyPrefix" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Text.HotkeyPrefix.None" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +91,13 @@
         <Parameter Name="format" Type="System.Drawing.StringFormat" />
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'StringFormat'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.StringFormat" /> object from the specified existing <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.StringFormat" /> object from which to initialize the new <see cref="T:System.Drawing.StringFormat" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,9 +112,13 @@
         <Parameter Name="options" Type="System.Drawing.StringFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'StringFormatFlags'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.StringFormat" /> object with the specified <see cref="T:System.Drawing.StringFormatFlags" /> enumeration.</para>
+        </summary>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.StringFormatFlags" /> enumeration for the new <see cref="T:System.Drawing.StringFormat" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,10 +134,15 @@
         <Parameter Name="language" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'StringFormatFlags'</param>
-        <param name="language">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.StringFormat" /> object with the specified <see cref="T:System.Drawing.StringFormatFlags" /> enumeration and language.</para>
+        </summary>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.StringFormatFlags" /> enumeration for the new <see cref="T:System.Drawing.StringFormat" /> object. </param>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates the language of the text. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -100,9 +158,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StringAlignment'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="P:System.Drawing.StringFormat.LineAlignment" /> to specify the vertical alignment of the string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets horizontal alignment of the string..</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -117,9 +181,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.StringFormat" /> object this method creates.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,9 +203,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the language that is used when local digits are substituted for western digits.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,9 +222,12 @@
         <ReturnType>System.Drawing.StringDigitSubstitute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StringDigitSubstitute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the method to be used for digit substitution.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -166,8 +242,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Drawing.StringFormat.Dispose" /> allows the resources used by this <see cref="T:System.Drawing.StringFormat" /> object to be reallocated for other purposes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -199,9 +285,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StringFormatFlags'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Drawing.StringFormatFlags" /> enumeration that contains formatting information.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -215,9 +304,102 @@
         <ReturnType>System.Drawing.StringFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StringFormat'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for a generic default instance of the <see cref="T:System.Drawing.StringFormat" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.FormatFlags" /> </para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.Alignment" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringAlignment.Near" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.LineAlignment" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringAlignment.Near" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.Trimming" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringTrimming.Character" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.HotkeyPrefix" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Text.HotkeyPrefix.None" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.DigitSubstitutionMethod" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringDigitSubstitute.User" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.DigitSubstitutionLanguage" /> </para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+          </list>
+          <para>If you make changes to the <see cref="T:System.Drawing.StringFormat" /> object returned from the <see cref="P:System.Drawing.StringFormat.GenericDefault" /> property, these changes persist, and future calls to the <see cref="P:System.Drawing.StringFormat.GenericDefault" /> property reflects these changes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a generic default <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,9 +413,100 @@
         <ReturnType>System.Drawing.StringFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StringFormat'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for a generic typographic instance of the <see cref="T:System.Drawing.StringFormat" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.FormatFlags" /> </para>
+              </term>
+              <description>
+                <para>24580 (<see cref="F:System.Drawing.StringFormatFlags.NoClip" />, <see cref="F:System.Drawing.StringFormatFlags.FitBlackBox" /> and <see cref="F:System.Drawing.StringFormatFlags.LineLimit" />.)</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.Alignment" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringAlignment.Near" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.LineAlignment" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringAlignment.Near" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.Trimming" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringTrimming.None" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.HotkeyPrefix" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.Text.HotkeyPrefix.None" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.DigitSubstitutionMethod" /> </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Drawing.StringDigitSubstitute.User" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Drawing.StringFormat.DigitSubstitutionLanguage" /> </para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a generic typographic <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -269,9 +542,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Text.HotkeyPrefix'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a graphical user interface, a hot key is the underlined letter in a word (usually combined with another key, such as the Alt key) that you can press on the keyboard to activate the functionality that the word represents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Drawing.Text.HotkeyPrefix" /> object for this <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -287,9 +566,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StringAlignment'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="P:System.Drawing.StringFormat.Alignment" /> to specify the horizontal alignment of the string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the vertical alignment of the string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -307,10 +592,19 @@
         <Parameter Name="substitute" Type="System.Drawing.StringDigitSubstitute" />
       </Parameters>
       <Docs>
-        <param name="language">To be added: an object of type 'int'</param>
-        <param name="substitute">To be added: an object of type 'StringDigitSubstitute'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the language and method to be used when local digits are substituted for western digits.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />A National Language Support (NLS) language identifier that identifies the language that will be used when local digits are substituted for western digits. You can pass the <see cref="P:System.Globalization.CultureInfo.LCID" /> property of a <see cref="T:System.Globalization.CultureInfo" /> object as the NLS language identifier. For example, suppose you create a <see cref="T:System.Globalization.CultureInfo" /> object by passing the string "ar-EG" to a <see cref="T:System.Globalization.CultureInfo" /> constructor. If you pass the <see cref="P:System.Globalization.CultureInfo.LCID" /> property of that <see cref="T:System.Globalization.CultureInfo" /> object along with <see cref="F:System.Drawing.StringDigitSubstitute.Traditional" /> to the <see cref="M:System.Drawing.StringFormat.SetDigitSubstitution(System.Int32,System.Drawing.StringDigitSubstitute)" /> method, then Arabic-Indic digits will be substituted for western digits at display time. </param>
+        <param name="substitute">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element of the <see cref="T:System.Drawing.StringDigitSubstitute" /> enumeration that specifies how digits are displayed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -327,9 +621,20 @@
         <Parameter Name="ranges" Type="System.Drawing.CharacterRange[]" />
       </Parameters>
       <Docs>
-        <param name="ranges">To be added: an object of type 'CharacterRange []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting more than 32 character ranges is not allowed and will cause an <see cref="T:System.OverflowException" /> .</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an array of <see cref="T:System.Drawing.CharacterRange" /> structures that represent the ranges of characters measured by a call to the <see cref="M:System.Drawing.Graphics.MeasureCharacterRanges(System.String,System.Drawing.Font,System.Drawing.RectangleF,System.Drawing.StringFormat)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="ranges">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.CharacterRange" /> structures that specifies the ranges of characters measured by a call to the <see cref="M:System.Drawing.Graphics.MeasureCharacterRanges(System.String,System.Drawing.Font,System.Drawing.RectangleF,System.Drawing.StringFormat)" /> method. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -347,10 +652,18 @@
         <Parameter Name="tabStops" Type="System.Single[]" />
       </Parameters>
       <Docs>
-        <param name="firstTabOffset">To be added: an object of type 'float'</param>
-        <param name="tabStops">To be added: an object of type 'float []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each tab-stop offset in the <paramref name="tabStops" /> array, except the first one, is relative to the previous one. The first tab-stop offset is relative to the initial offset position specified by <paramref name="firstTabOffset" />. For example, if the initial offset position is 8 and the first tab-stop offset is 50, then the first tab stop is at position 58. If the initial offset position is zero, then the first tab-stop offset is relative to position 0, the string origin.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets tab stops for this <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
+        <param name="firstTabOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of spaces between the beginning of a line of text and the first tab stop. </param>
+        <param name="tabStops">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of distances between tab stops in the units specified by the <see cref="P:System.Drawing.Graphics.PageUnit" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -365,9 +678,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the value of the <see cref="P:System.Drawing.StringFormat.FormatFlags" /> property is converted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Drawing.StringFormat" /> object to a human-readable string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of this <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -383,9 +705,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StringTrimming'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Drawing.StringTrimming" /> enumeration for this <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

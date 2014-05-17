@@ -1,4 +1,4 @@
-thisdir = class/System.Web.Http.WebHost	
+thisdir = class/System.Web.Http.WebHost
 SUBDIRS = 
 include ../../build/rules.make
 

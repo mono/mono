@@ -265,6 +265,12 @@ instructs the Mono runtime to start debugging in server mode, where Mono
 actively waits for the debugger front end to connect to the Mono process.  
 Mono will print out to stdout the IP address and port where it is listening.
 .TP
+.I setpgid=[y/n]
+If set to yes, Mono will call \fBsetpgid(0, 0)\fB on startup, if that function
+is available on the system. This is useful for ensuring that signals delivered
+to a process that is executing the debuggee are not propagated to the debuggee,
+e.g. when Ctrl-C sends \fBSIGINT\fB to the \fBsdb\fB tool.
+.TP
 .I suspend=[y/n]
 Defaults to yes, with the default option Mono will suspend the vm on startup 
 until it connects successfully to a debugger front end.  If you set it to 'n', in 
@@ -931,11 +937,11 @@ Override the automatic cpu detection mechanism. Currently used only on arm.
 The format of the value is as follows:
 .nf
 
-	"armvV [thumb]"
+	"armvV [thumb[2]]"
 
 .fi
 where V is the architecture number 4, 5, 6, 7 and the options can be currently be
-"thunb". Example:
+"thumb" or "thumb2". Example:
 .nf
 
 	MONO_CPU_ARCH="armv4 thumb" mono ...
@@ -1350,6 +1356,8 @@ loader in subtle ways.
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
 .Sp
+Relative paths are resolved based on the launch-time current directory.
+.Sp
 Alternative solutions to MONO_PATH include: installing libraries into
 the Global Assembly Cache (see gacutil(1)) or having the dependent
 libraries side-by-side with the main executable.
@@ -1411,9 +1419,9 @@ small embedded systems.
 The default is 180 seconds.
 .TP
 \fBMONO_THREADS_PER_CPU\fR
-The maximum number of threads in the general threadpool will be
-20 + (MONO_THREADS_PER_CPU * number of CPUs). The default value for this
-variable is 10.
+The minimum number of threads in the general threadpool will be 
+MONO_THREADS_PER_CPU * number of CPUs. The default value for this
+variable is 1.
 .TP
 \fBMONO_XMLSERIALIZER_THS\fR
 Controls the threshold for the XmlSerializer to produce a custom
@@ -1528,6 +1536,12 @@ after a SIGSEGV or SIGABRT in unmanaged code.
 This option will suspend the program when a native SIGSEGV is received.
 This is useful for debugging crashes which do not happen under gdb,
 since a live process contains more information than a core file.
+.TP
+\fBcheck-pinvoke-callconv\fR
+This option causes the runtime to check for calling convention
+mismatches when using pinvoke, i.e. mixing cdecl/stdcall. It only
+works on windows. If a mismatch is detected, an
+ExecutionEngineException is thrown.
 .ne
 .RE
 .TP
@@ -1632,6 +1646,12 @@ method.
 \fBMONO_VERBOSE_HWCAP\fR
 If set, makes the JIT output information about detected CPU features
 (such as SSE, CMOV, FCMOV, etc) to stdout.
+.TP
+\fBMONO_CONSERVATIVE_HWCAP\fR
+If set, the JIT will not perform any hardware capability detection. This
+may be useful to pinpoint the cause of JIT issues. This is the default
+when Mono is built as an AOT cross compiler, so that the generated code
+will run on most hardware.
 .SH VALGRIND
 If you want to use Valgrind, you will find the file `mono.supp'
 useful, it contains the suppressions for the GC which trigger

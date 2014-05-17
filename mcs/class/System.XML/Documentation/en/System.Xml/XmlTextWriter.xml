@@ -1,12 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlTextWriter" FullName="System.Xml.XmlTextWriter" FullNameSP="System_Xml_XmlTextWriter" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public XmlTextWriter extends System.Xml.XmlWriter" />
   <TypeSignature Language="C#" Value="public class XmlTextWriter : System.Xml.XmlWriter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlTextWriter extends System.Xml.XmlWriter" />
   <MemberOfLibrary>XML</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -14,40 +17,6 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Represents a writer that provides a fast, non-cached, forward-only way
-      of generating streams or files containing XML data that conforms to the
-      W3C Extensible Markup Language (XML) 1.0 and the Namespaces in XML
-      recommendations.
-      </para>
-    </summary>
-    <remarks>
-      <para> This class maintains a namespace stack corresponding to 
-      all the namespaces defined in the current element stack. Namespaces can be
-      declared manually to override the current namespace declaration. Prefixes can be
-      specified to associate with a namespace. If there are multiple namespace declarations mapping different prefixes to the
-      same namespace URI, this class walks the stack of namespace declarations backwards
-      and picks the closest one.</para>
-      <para> If namespace conflicts occur inside an element, this
-      class resolves the conflict by generating alternate prefixes. The generated
-      prefixes are named <c>ni</c>, where <c>n</c> is the literal character 'n' and <c>i</c> is a number beginning at one. The number is reset
-   to one for each element. See the example section
-   for a demonstration of this behavior.</para>
-      <para>Attributes which are associated with a namespace URI
-   must have a prefix (default namespaces do not apply to attributes). This
-   conforms to section 5.2 of the W3C Namespaces in XML recommendation. If an
-   attribute references a namespace URI, but does not specify a prefix, the writer
-   generates a prefix for the attribute.</para>
-      <para>When writing an empty element, an additional space is
-   added between tag name and the closing tag, for example <c>&lt;item /&gt;</c>. This provides compatibility
-with older browsers.</para>
-      <para>When a <see cref="T:System.String" /> is used as method
-parameter, <see langword="null" /> and <see cref="F:System.String.Empty" /> are equivalent.
-<see cref="F:System.String.Empty" /> follows
-the W3C rules.</para>
-      <para>This class implements the <see cref="T:System.Xml.XmlWriter" />
-class.</para>
-    </remarks>
     <example>
       <para>The following example demonstrates how this class
       resolves namespace conflicts inside an element. In the example, the writer writes an element that contains two attributes. The element and both
@@ -76,85 +45,145 @@ public class WriteFragment
       xmlns:n1="namespace1" xnlns:prefix="namespace" /&gt;</c>
       </para>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class implements the <see cref="T:System.Xml.XmlWriter" /> class.</para>
+      <block subset="none" type="note">
+        <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+      </block>
+      <para>XmlTextWriter maintains a namespace stack corresponding to all the namespaces defined in the current element stack. Using XmlTextWriter you can declare namespaces manually.</para>
+      <code> w.WriteStartElement("root");
+ w.WriteAttributeString("xmlns", "x", null, "urn:1");
+  w.WriteStartElement("item","urn:1");
+  w.WriteEndElement();
+  w.WriteStartElement("item","urn:1");
+  w.WriteEndElement();
+ w.WriteEndElement();</code>
+      <para>The above C# code produces the following output. XmlTextWriter promotes the namespace declaration to the root element to avoid having it duplicated on the two child elements. The child elements pick up the prefix from the namespace declaration.</para>
+      <code> &lt;root xmlns:x="urn:1"&gt;
+  &lt;x:item/&gt;
+  &lt;x:item/&gt;
+ &lt;/x:root&gt;</code>
+      <para>XmlTextWriter also allows you to override the current namespace declaration. In the following example, the namespace URI "123" is overridden by "abc" to produce the XML element &lt;x:node xmlns:x="abc"/&gt;.</para>
+      <code> w.WriteStartElement("x","node","123");
+ w.WriteAttributeString("xmlns","x",null,"abc");</code>
+      <para>By using the write methods that take a prefix as an argument you can also specify which prefix to use. In the following example, two different prefixes are mapped to the same namespace URI to produce the XML text &lt;x:root xmlns:x="urn:1"&gt;&lt;y:item xmlns:y="urn:1"/&gt;&lt;/x:root&gt;.</para>
+      <code> XmlTextWriter w = new XmlTextWriter(Console.Out);
+ w.WriteStartElement("x","root","urn:1");
+  w.WriteStartElement("y","item","urn:1");
+  w.WriteEndElement();
+ w.WriteEndElement();
+ w.Close();</code>
+      <para>If there are multiple namespace declarations mapping different prefixes to the same namespace URI, XmlTextWriter walks the stack of namespace declarations backwards and picks the closest one.</para>
+      <code> XmlTextWriter w = new XmlTextWriter(Console.Out);
+ w.Formatting = Formatting.Indented;
+ w.WriteStartElement("x","root","urn:1");
+ w.WriteStartElement("y","item","urn:1");
+ w.WriteAttributeString("attr","urn:1","123");
+ w.WriteEndElement();
+ w.WriteEndElement();
+ w.Close();</code>
+      <para>In the above C# example, because the WriteAttributeString call does not specify a prefix, the writer uses the last prefix pushed onto the namespace stack, and produces the following XML: </para>
+      <code> &lt;x:root xmlns:x="urn:1"&gt;
+  &lt;y:item y:attr="123" xmlns:y="urn:1" /&gt;
+ &lt;/x:root&gt;</code>
+      <para>If namespace conflicts occur, XmlTextWriter resolves them by generating alternate prefixes. For example, if an attribute and element have the same prefix but different namespaces, XmlWriter generates an alternate prefix for the attribute. The generated prefixes are named n{i} where i is a number beginning at 1. The number is reset to 1 for each element.</para>
+      <para>Attributes which are associated with a namespace URI must have a prefix (default namespaces do not apply to attributes). This conforms to section 5.2 of the W3C Namespaces in XML recommendation. If an attribute references a namespace URI, but does not specify a prefix, the writer generates a prefix for the attribute.</para>
+      <para>When writing an empty element, an additional space is added between tag name and the closing tag, for example &lt;item /&gt;. This provides compatibility with older browsers.</para>
+      <para>When a String is used as method parameter, null and String.Empty are equivalent. String.Empty follows the W3C rules.</para>
+      <para>To write strongly typed data, use the <see cref="T:System.Xml.XmlConvert" /> class to convert data types to string. For example, the following C# code converts the data from Double to String and writes the element &lt;price&gt;19.95&lt;/price&gt;.</para>
+      <code> Double price = 19.95;
+ writer.WriteElementString("price", XmlConvert.ToString(price));</code>
+      <para>XmlTextWriter does not check for the following: </para>
+      <list type="bullet">
+        <item>
+          <para>Invalid characters in attribute and element names.</para>
+        </item>
+        <item>
+          <para>Unicode characters that do not fit the specified encoding. If the Unicode characters do not fit the specified encoding, the XmlTextWriter does not escape the Unicode characters into character entities.</para>
+        </item>
+        <item>
+          <para>Duplicate attributes.</para>
+        </item>
+        <item>
+          <para>Characters in the DOCTYPE public identifier or system identifier.</para>
+        </item>
+      </list>
+      <para>For more information about writing XML, see <format type="text/html"><a href="ea41f72c-e1d3-4e0a-ab0f-f0eb1c27ab86">Writing XML with the XmlWriter</a></format>.</para>
+      <format type="text/html">
+        <h2>Security Considerations</h2>
+      </format>
+      <para>The following items are things to consider when working with the <see cref="T:System.Xml.XmlTextWriter" /> class.</para>
+      <list type="bullet">
+        <item>
+          <para>Exceptions thrown by the <see cref="T:System.Xml.XmlTextWriter" /> can disclose path information that you do not want bubbled up to the application. Your applications must catch exceptions and process them appropriately.</para>
+        </item>
+        <item>
+          <para>When you pass the <see cref="T:System.Xml.XmlTextWriter" /> to another application the underlying stream is exposed to that application. If you need to pass the <see cref="T:System.Xml.XmlTextWriter" /> to a semi-trusted application, you should use an <see cref="T:System.Xml.XmlWriter" /> object created by the <see cref="M:System.Xml.XmlWriter.Create(System.Xml.XmlWriter)" /> method instead.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Xml.XmlTextWriter" /> does not validate any data that is passed to the <see cref="M:System.Xml.XmlTextWriter.WriteDocType(System.String,System.String,System.String,System.String)" /> or <see cref="Overload:System.Xml.XmlTextWriter.WriteRaw" /> methods. You should not pass arbitrary data to these methods.</para>
+        </item>
+        <item>
+          <para>If the default settings are changed, there is no guarantee that the generated output is well-formed XML data.</para>
+        </item>
+        <item>
+          <para>Do not accept supporting components, such as an <see cref="T:System.Text.Encoding" /> object, from an untrusted source.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a writer that provides a fast, non-cached, forward-only way of generating streams or files containing XML data that conforms to the W3C Extensible Markup Language (XML) 1.0 and the Namespaces in XML recommendations. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.TextWriter w)" />
-      <MemberSignature Language="C#" Value="public XmlTextWriter (System.IO.TextWriter writer);" />
+      <MemberSignature Language="C#" Value="public XmlTextWriter (System.IO.TextWriter w);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.TextWriter w) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="writer" Type="System.IO.TextWriter" />
-      </Parameters>
-      <Docs>
-        <param name="writer">The <see cref="T:System.IO.TextWriter" qualify="true" /> to write to, initialized to the correct encoding. </param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Xml.XmlTextWriter" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>The following properties are initialized to the specified values:</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Formatting" /> to <see cref="F:System.Xml.Formatting.None" qualify="true" />.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Indentation" /> to 2.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.IndentChar" /> to the space character.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> to <see langword="true" />.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.QuoteChar" /> to the double quote character.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.WriteState" /> to <see cref="F:System.Xml.WriteState.Start" qualify="true" />.</para>
-          <block subset="none" type="note">
-            <para> If a specific encoding is necessary, set the encoding using the
-      constructor of <paramref name="w" /> before instantiating the writer.</para>
-          </block>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="w" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the XmlTextWriter class using the specified <see cref="T:System.IO.TextWriter" />.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextWriter to write to. It is assumed that the TextWriter is already set to the correct encoding. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream w, class System.Text.Encoding encoding)" />
-      <MemberSignature Language="C#" Value="public XmlTextWriter (System.IO.Stream stream, System.Text.Encoding encoding);" />
+      <MemberSignature Language="C#" Value="public XmlTextWriter (System.IO.Stream w, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream w, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
-        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="w" Type="System.IO.Stream" />
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encoding">The <see cref="T:System.Text.Encoding" qualify="true" /> to generate, or <see langword="null" />.</param>
-        <param name="encoding">To be added.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the
-   <see cref="T:System.Xml.XmlTextWriter" /> class using the specified output
-      stream.</para>
-        </summary>
-        <remarks>
-          <para> If <paramref name="encoding" /> is <see langword="null" />, the stream
-   is written as UTF-8 and the encoding attribute is omitted from the processing
-   instruction.</para>
-          <para>The following properties are initialized to the
-   specified values:</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Formatting" /> to <see cref="F:System.Xml.Formatting.None" qualify="true" />.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Indentation" /> to 2.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.IndentChar" /> to the space character.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> to <see langword="true" />.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.QuoteChar" /> to the double quote character.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.WriteState" /> to <see cref="F:System.Xml.WriteState.Start" qualify="true" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="w" /> cannot be written to.</para>
@@ -163,50 +192,41 @@ class.</para>
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="w " /> is <see langword="null" />.</exception>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding to generate. If encoding is null it writes out the stream as UTF-8 and omits the encoding attribute from the ProcessingInstruction. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the XmlTextWriter class using the specified stream and encoding.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to which you want to write. </param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding to generate. If encoding is null it writes out the stream as UTF-8 and omits the encoding attribute from the ProcessingInstruction. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string filename, class System.Text.Encoding encoding)" />
       <MemberSignature Language="C#" Value="public XmlTextWriter (string filename, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filename, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="filename" Type="System.String" />
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="filename">A <see cref="T:System.String" qualify="true" /> specifying the path and name of the file to write to.</param>
-        <param name="encoding">The <see cref="T:System.Text.Encoding" qualify="true" /> to generate, or <see langword="null" />.</param>
-        <param name="encoding">To be added.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Xml.XmlTextWriter" /> class using the
-   specified
-   file.</para>
-        </summary>
-        <remarks>
-          <para> If <paramref name="filename" /> exists, it is truncated and overwritten with the new
-   content.</para>
-          <para>If <paramref name="encoding" /> is <see langword="null" />, the file is written as UTF-8
-and the encoding attribute is omitted from the processing instruction.</para>
-          <para>The following properties are initialized to the specified values:</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Formatting" /> to <see cref="F:System.Xml.Formatting.None" qualify="true" />.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Indentation" /> to 2.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.IndentChar" /> to the space character.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> to <see langword="true" />.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.QuoteChar" /> to the double quote character.</para>
-          <para>
-            <see cref="P:System.Xml.XmlTextWriter.WriteState" /> to <see cref="F:System.Xml.WriteState.Start" qualify="true" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="filename" /> is <see cref="F:System.String.Empty" />, contains only white space, or contains one or more implementation-specific invalid characters.</para>
@@ -222,308 +242,363 @@ and the encoding attribute is omitted from the processing instruction.</para>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permissions.</exception>
         <exception cref="T:System.UnauthorizedAccessException">Write access is not permitted by the operating system for the path specified in <paramref name="filename" />.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding to generate. If encoding is null it writes the file out as UTF-8, and omits the encoding attribute from the ProcessingInstruction. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Xml.XmlTextWriter" /> class using the specified file.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filename to write to. If the file exists, it truncates it and overwrites it with the new content. </param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding to generate. If encoding is null it writes the file out as UTF-8, and omits the encoding attribute from the ProcessingInstruction. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BaseStream">
       <MemberSignature Language="ILASM" Value=".property class System.IO.Stream BaseStream { public hidebysig specialname instance class System.IO.Stream get_BaseStream() }" />
       <MemberSignature Language="C#" Value="public System.IO.Stream BaseStream { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Stream BaseStream" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the underlying stream used by the writer.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.IO.Stream" qualify="true" />, or <see langword="null" /> if the current
    instance does not use an underlying stream.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>If the current instance was constructed using
-      a <see cref="T:System.IO.TextWriter" qualify="true" /> that is a subclass of the <see cref="T:System.IO.StreamWriter" qualify="true" />
-      class, this property is equivalent to the <see cref="P:System.IO.StreamWriter.BaseStream" />
-      
-      property.</para>
-          <para> If the writer was constructed using a
-   <see cref="T:System.IO.Stream" qualify="true" />, this property returns the <see langword="Stream" /> passed to the constructor.</para>
-          <para> If the writer was constructed using a file name, this
-      property returns the <see langword="Stream" /> representing the file.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If the writer was constructed using a TextWriter that is derived from the StreamWriter class, this property is equivalent to the <see cref="P:System.IO.StreamWriter.BaseStream" /> property. If the writer was constructed using a <see cref="T:System.IO.Stream" />, this property returns the Stream passed to the constructor. If the writer was constructed using a file name, this property returns the Stream representing the file.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the underlying stream object.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
       <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Closes the writer.</para>
-        </summary>
         <remarks>
-          <para>This method closes all elements and attributes created
-      by the <see cref="M:System.Xml.XmlTextWriter.WriteStartElement(System.String,System.String,System.String)" /> and <see cref="M:System.Xml.XmlTextWriter.WriteStartAttribute(System.String,System.String,System.String)" /> methods,
-      respectively, that are open when the <see cref="M:System.Xml.XmlTextWriter.Close" /> method is
-      called.</para>
-          <para> This method calls
-      the <see cref="M:System.Xml.XmlTextWriter.Flush" />
-      method to flush the underlying buffered stream and then closes the stream.</para>
-          <para> This method sets
-      the <see cref="P:System.Xml.XmlTextWriter.WriteState" /> to <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>Any elements or attributes left open are automatically closed.</para>
+          <para>This method does not throw any exceptions.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes this stream and the underlying stream.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Flush">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Flush()" />
       <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Flush() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Clears all buffers and causes any buffered data to be
-      written to the
-      underlying stream.</para>
-        </summary>
         <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.Flush" qualify="true" />.</para>
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
           </block>
+          <para>This is called instead of <see cref="M:System.Xml.XmlTextWriter.Close" /> when you want to write more to the underlying stream without losing what is still in the buffer.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushes whatever is in the buffer to the underlying streams and also flushes the underlying stream.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Formatting">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.Formatting Formatting { public hidebysig specialname instance valuetype System.Xml.Formatting get_Formatting() public hidebysig specialname instance void set_Formatting(valuetype System.Xml.Formatting value) }" />
-      <MemberSignature Language="C#" Value="public System.Xml.Formatting Formatting { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Formatting Formatting { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Formatting Formatting" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Formatting</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Indicates how the output
-      is formatted.</para>
-        </summary>
         <value>
           <para>One of the members of the <see cref="T:System.Xml.Formatting" qualify="true" /> enumeration. The default is <see cref="F:System.Xml.Formatting.None" /> (no
    special formatting).</para>
         </value>
         <remarks>
-          <para>If this property is set to <see cref="F:System.Xml.Formatting.Indented" />, child elements are indented using
-   the <see cref="P:System.Xml.XmlTextWriter.Indentation" /> and <see cref="P:System.Xml.XmlTextWriter.IndentChar" />
-   
-   properties. Only element content will be indented.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
-            <para>Writing any text content, including <see cref="F:System.String.Empty" qualify="true" />, puts
-   that element into mixed content mode. Child elements do not inherit this "mixed"
-   mode status. A child element of a "mixed" element will do indenting, unless it
-   is also contains "mixed" content. Element content
-   (http://www.w3.org/TR/1998/REC-xml-19980210#sec-element-content) and mixed
-   content (http://www.w3.org/TR/1998/REC-xml-19980210#sec-mixed-content) are
-   defined according to the XML 1.0 definitions of these terms. </para>
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If the Indented option is set, child elements are indented using the <see cref="P:System.Xml.XmlTextWriter.Indentation" /> and <see cref="P:System.Xml.XmlTextWriter.IndentChar" /> properties. Only element content is indented. The following C# code writes out HTML elements including mixed content: </para>
+          <code> XmlTextWriter w = new XmlTextWriter(Console.Out); 
+  w.Formatting = Formatting.Indented; 
+  w.WriteStartElement("ol"); 
+  w.WriteStartElement("li"); 
+  w.WriteString("The big "); // This means "li" now has a mixed content model.
+  w.WriteElementString("b", "E"); 
+  w.WriteElementString("i", "lephant"); 
+  w.WriteString(" walks slowly."); 
+  w.WriteEndElement(); 
+  w.WriteEndElement();</code>
+          <para>The above code produces the following output: </para>
+          <code> &lt;ol&gt; 
+   &lt;li&gt;The big &lt;b&gt;E&lt;/b&gt;&lt;i&gt;lephant&lt;/i&gt; walks slowly.&lt;/li&gt; 
+ &lt;/ol&gt;</code>
+          <para>When this is viewed in HTML no white space appears between the bold and italic elements. In fact, in this example, if indenting was added between these elements the word "Elephant" would be incorrectly broken.</para>
+          <block subset="none" type="note">
+            <para>Writing any text content, excluding String.Empty puts that element into mixed content mode. Child elements do not inherit this "mixed" mode status. A child element of a "mixed" element does indenting, unless it is also contains "mixed" content. Element content (http://www.w3.org/TR/1998/REC-xml-19980210#sec-element-content) and mixed content (http://www.w3.org/TR/1998/REC-xml-19980210#sec-mixed-content) are defined according to the XML 1.0 definitions of these terms.</para>
           </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates how the output is formatted.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Indentation">
       <MemberSignature Language="ILASM" Value=".property int32 Indentation { public hidebysig specialname instance int32 get_Indentation() public hidebysig specialname instance void set_Indentation(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int Indentation { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Indentation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Indentation" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets how many indentation characters to write for each level
-      in the hierarchy when <see cref="P:System.Xml.XmlTextWriter.Formatting" /> is set to <see cref="F:System.Xml.Formatting.Indented" qualify="true" />.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" qualify="true" /> specifying the
    number of <see cref="P:System.Xml.XmlTextWriter.IndentChar" /> characters to use for each level. The default is 2.</para>
         </value>
-        <remarks>
-          <para>Indentation is performed on the following members
-      of <see cref="T:System.Xml.XmlNodeType" />: <see langword="DocumentType" />,
-   <see langword="Element" />, <see langword="Comment" />,
-   <see langword="ProcessingInstruction" />, and <see langword="CDATA" />. All
-      other node types are not affected. The <see cref="T:System.Xml.XmlTextWriter" /> class
-      does
-      not indent the internal DTD subset.
-      </para>
-        </remarks>
         <exception cref="T:System.ArgumentException">The value to be set is less than zero.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>Indentation is performed on following node types: DocumentType, Element, Comment, ProcessingInstruction, and CDATASection. All other node types are not affected. The XmlTextWriter does not indent the internal DTD subset. However, you could do the following to apply formatting to the internal DTD subset.</para>
+          <code> String name = "Employees";
+ String pubid = null;
+ String sysid = null;
+ String subset =
+ @"
+     &lt;!ELEMENT Employees (Employee)+&gt;
+     &lt;!ELEMENT Employee EMPTY&gt;
+     &lt;!ATTLIST Employee firstname CDATA #REQUIRED&gt;
+     &lt;!ENTITY Company 'Microsoft'&gt;]&gt;
+ ";
+ XmlTextWriter tw = new XmlTextWriter(Console.Out);
+ tw.WriteDocType(name, pubid, sysid, subset);</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets how many IndentChars to write for each level in the hierarchy when <see cref="P:System.Xml.XmlTextWriter.Formatting" /> is set to Formatting.Indented.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndentChar">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Char IndentChar { public hidebysig specialname instance valuetype System.Char get_IndentChar() public hidebysig specialname instance void set_IndentChar(valuetype System.Char value) }" />
-      <MemberSignature Language="C#" Value="public char IndentChar { set; get; }" />
+      <MemberSignature Language="C#" Value="public char IndentChar { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char IndentChar" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the character to use for indenting
-      when <see cref="P:System.Xml.XmlTextWriter.Formatting" /> is set to
-   <see cref="F:System.Xml.Formatting.Indented" qualify="true" />.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Char" qualify="true" /> specifying the 
    character to use for indenting. The default is space
    (character code 0x20).</para>
         </value>
         <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
-            <para>This property can be set to any character. To ensure valid XML, set this property
-         to a valid white space character: 0x9, 0x10, 0x13, or 0x20.</para>
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
           </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets which character to use for indenting when <see cref="P:System.Xml.XmlTextWriter.Formatting" /> is set to Formatting.Indented.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LookupPrefix">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string LookupPrefix(string ns)" />
-      <MemberSignature Language="C#" Value="public override string LookupPrefix (string namespaceUri);" />
+      <MemberSignature Language="C#" Value="public override string LookupPrefix (string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string LookupPrefix(string ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="namespaceUri">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI.</param>
-        <summary>
-          <para> Returns the prefix defined in the current
-      namespace scope for the specified namespace URI.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the
-   corresponding prefix, or <see cref="F:System.String.Empty" qualify="true" /> if the prefix is not found and <paramref name="ns" /> is
-   the default namespace, or <see langword="null" /> if no matching namespace URI is found in the current scope.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.LookupPrefix(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="ns " /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the closest prefix defined in the current namespace scope for the namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching prefix. Or null if no matching namespace URI is found in the current scope.</para>
+        </returns>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />Namespace URI whose prefix you want to find. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Namespaces">
       <MemberSignature Language="ILASM" Value=".property bool Namespaces { public hidebysig specialname instance bool get_Namespaces() public hidebysig specialname instance void set_Namespaces(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool Namespaces { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Namespaces { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Namespaces" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets
-      or sets a value indicating whether the writer supports namespaces.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the writer supports namespaces; otherwise,
 <see langword="false" />. The default is <see langword="true" />.</para>
         </value>
-        <remarks>
-          <para>This property determines whether
-      the writer supports the XML Namespaces specification (http://www.w3.org/TR/REC-xml-names).</para>
-          <para> If an attempt is made to set this property after a write
-      operation has occurred, a <see cref="T:System.InvalidOperationException" />
-      is thrown.</para>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> of the current instance is not <see cref="F:System.Xml.WriteState.Start" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This property determines whether the writer supports the W3C Namespaces in XML recommendation located at www.w3.org/TR/REC-xml-names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to do namespace support.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="QuoteChar">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Char QuoteChar { public hidebysig specialname instance valuetype System.Char get_QuoteChar() public hidebysig specialname instance void set_QuoteChar(valuetype System.Char value) }" />
-      <MemberSignature Language="C#" Value="public char QuoteChar { set; get; }" />
+      <MemberSignature Language="C#" Value="public char QuoteChar { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char QuoteChar" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the character used to quote the value of an
-      attribute.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Char" qualify="true" /> specifying the 
    quotation mark character (" or ') used to enclose the value of an attribute. The
    default is the double quote. </para>
         </value>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentException">The value to be set is not the single quote or double quote character.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets which character to use to quote attribute values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteBase64">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteBase64(class System.Byte[] buffer, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public override void WriteBase64 (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteBase64(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -533,40 +608,41 @@ and the encoding attribute is omitted from the processing instruction.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array containing the bytes to encode.</param>
-        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the first byte to encode.</param>
-        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of bytes to encode.</param>
-        <summary>
-          <para>Encodes the specified binary bytes as Base64 and writes the resulting text.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para> Base64 encoding
-         represents byte sequences in a text form comprised of the 65 US-ASCII
-         characters (A-Z, a-z, 0-9, +, /, =) where each
-         character encodes 6 bits of the
-         binary data.</para>
-            <para>For more information on Base64 encoding, see RFC 2045 (http://www.ietf.org/rfc/rfc2045).</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteBase64(System.Byte[],System.Int32,System.Int32)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> or <paramref name="count" /> is less than zero.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes the specified binary bytes as base64 and writes out the resulting text.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />Byte array to encode. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position within the buffer indicating the start of the bytes to write. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteBinHex">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteBinHex(class System.Byte[] buffer, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public override void WriteBinHex (byte[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteBinHex(unsigned int8[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -576,37 +652,41 @@ and the encoding attribute is omitted from the processing instruction.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Byte" qualify="true" /> array containing the bytes to encode. </param>
-        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the first byte to encode. </param>
-        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of bytes to encode. </param>
-        <summary>
-          <para> Encodes the specified binary bytes as BinHex and writes the resulting text.
-      </para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>For information on BinHex encoding, see RFC 1741 
-         (http://www.ietf.org/rfc/rfc1741).</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteBinHex(System.Byte[],System.Int32,System.Int32)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> or <paramref name="count" /> is less than zero.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes the specified binary bytes as binhex and writes out the resulting text.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />Byte array to encode. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the buffer indicating the start of the bytes to write. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteCData">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteCData(string text)" />
       <MemberSignature Language="C#" Value="public override void WriteCData (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteCData(string text) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -614,32 +694,34 @@ and the encoding attribute is omitted from the processing instruction.</para>
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">A <see cref="T:System.String" qualify="true" /> specifying the text to place inside the CDATA block.</param>
-        <summary>
-          <para>Writes out a CDATA block containing
-      the specified text.</para>
-        </summary>
-        <remarks>
-          <para>This method writes <c>&lt;![CDATA[</c><paramref name="text" /><c>]]&gt;</c>.</para>
-          <para> If <paramref name="text    " /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, this method writes an empty CDATA block,
-   <c>&lt;![CDATA[]]&gt;</c>.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteCData(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">The text would result in a non-well formed XML document.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If <paramref name="text" /> is either null or String.Empty, this method writes an empty CDATA block, for example &lt;![CDATA[]]&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a &lt;![CDATA[...]]&gt; block containing the specified text.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Text to place inside the CDATA block. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteCharEntity">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteCharEntity(valuetype System.Char ch)" />
       <MemberSignature Language="C#" Value="public override void WriteCharEntity (char ch);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteCharEntity(char ch) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -647,31 +729,34 @@ and the encoding attribute is omitted from the processing instruction.</para>
         <Parameter Name="ch" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="ch">The <see cref="T:System.Char" qualify="true" /> for which to generate the entity.</param>
-        <summary>
-          <para>Forces the
-      generation of a character entity for the specified Unicode character value.</para>
-        </summary>
-        <remarks>
-          <para> This method writes the Unicode character in hexadecimal character entity
-      reference format.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteCharEntity(System.Char)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">The character is in the surrogate pair character range, 0xd800 - 0xdfff, or the text would result in a non-well formed XML document.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method writes the Unicode character in hexadecimal character entity reference format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces the generation of a character entity for the specified Unicode character value.</para>
+        </summary>
+        <param name="ch">
+          <attribution license="cc4" from="Microsoft" modified="false" />Unicode character for which to generate a character entity. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteChars">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteChars(class System.Char[] buffer, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public override void WriteChars (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteChars(char[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -681,24 +766,6 @@ and the encoding attribute is omitted from the processing instruction.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Char" qualify="true" /> array containing the text to write. </param>
-        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the start of the text to write. </param>
-        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of characters to write. </param>
-        <summary>
-          <para> Writes text a buffer at a time.
-      </para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method can be used to write large
-         amounts of text a buffer at a time.</para>
-            <para> An exception is thrown if surrogate pair characters would be
-         split across multiple buffer writes. This exception must be caught in order
-         to continue writing the next surrogate pair characters. The XML specification defines the
-         valid ranges for surrogate pairs.</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteChars(System.Char[],System.Int32,System.Int32)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -708,17 +775,38 @@ and the encoding attribute is omitted from the processing instruction.</para>
           <para>The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method can be used to write large amounts of text one buffer at a time.</para>
+          <para>Special handling must be done to ensure the WriteChars method does not split surrogate pair characters across multiple buffer writes. The XML specification defines the valid ranges for surrogate pairs.</para>
+          <para>An exception is thrown if surrogate pair characters are written that would result in the surrogate pair characters being split in the buffer. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes text one buffer at a time.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />Character array containing the text to write. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the buffer indicating the start of the text to write. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteComment">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteComment(string text)" />
       <MemberSignature Language="C#" Value="public override void WriteComment (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteComment(string text) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -726,32 +814,34 @@ and the encoding attribute is omitted from the processing instruction.</para>
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">A <see cref="T:System.String" qualify="true" /> containing the text to place inside the comment.</param>
-        <summary>
-          <para>Writes out a comment containing
-      the specified text.</para>
-        </summary>
-        <remarks>
-          <para>This method writes <c>&lt;!--</c><paramref name="text" /><c>--&gt;</c>.</para>
-          <para>If <paramref name="text" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" /> , this method
-writes a comment with no content, <c>&lt;!----&gt;</c>.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteComment(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">The text would result in a non-well formed XML document</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If <paramref name="text" /> is either null or String.Empty, this method writes a Comment with no data content, for example &lt;!----&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a comment &lt;!--...--&gt; containing the specified text.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Text to place inside the comment. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteDocType">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteDocType(string name, string pubid, string sysid, string subset)" />
       <MemberSignature Language="C#" Value="public override void WriteDocType (string name, string pubid, string sysid, string subset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteDocType(string name, string pubid, string sysid, string subset) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -762,29 +852,6 @@ writes a comment with no content, <c>&lt;!----&gt;</c>.</para>
         <Parameter Name="subset" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name of the document type.</param>
-        <param name="pubid">
-          <para>A <see cref="T:System.String" qualify="true" /> specifying the public identifier, which is an alternative to the system identifier.</para>
-        </param>
-        <param name="sysid">
-          <para>A <see cref="T:System.String" qualify="true" /> specifying the system identifier, which is the URI of the DTD (document type definition) for the document.</para>
-        </param>
-        <param name="subset">
-          <para>A <see cref="T:System.String" qualify="true" /> specifying a URI that contains markup declarations. </para>
-        </param>
-        <summary>
-          <para> Writes the document type declaration with the specified name
-      and optional attributes.</para>
-        </summary>
-        <remarks>
-          <para>The optional attributes, <paramref name="pubid" />, <paramref name="sysid" />, and <paramref name=" subset" />, are not checked for invalid
-   characters.</para>
-          <block subset="none" type="note">
-            <para>A document type declaration is of the following form:</para>
-            <para>&lt;!DOCTYPE <paramref name="name" /> PUBLIC "<paramref name="pubid" />" "<paramref name="sysid" />" [<paramref name="subset" />]&gt;</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteDocType(System.String,System.String,System.String,System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</para>
@@ -792,107 +859,132 @@ writes a comment with no content, <c>&lt;!----&gt;</c>.</para>
           <para>The value for <paramref name="name" /> would result in invalid XML.</para>
         </exception>
         <exception cref="T:System.InvalidOperationException">This method was called outside the prolog (after the root element).</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method does not check for invalid characters in <paramref name="pubid" />, <paramref name="sysid" /> or <paramref name="subset" />. It also does not check that the internal subset is well-formed.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlTextWriter" /> does not validate any data that is passed to the <see cref="M:System.Xml.XmlTextWriter.WriteDocType(System.String,System.String,System.String,System.String)" /> method. You should not pass arbitrary data to this method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the DOCTYPE declaration with the specified name and optional attributes.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the DOCTYPE. This must be non-empty. </param>
+        <param name="pubid">
+          <attribution license="cc4" from="Microsoft" modified="false" />If non-null it also writes PUBLIC "pubid" "sysid" where <paramref name="pubid" /> and <paramref name="sysid" /> are replaced with the value of the given arguments. </param>
+        <param name="sysid">
+          <attribution license="cc4" from="Microsoft" modified="false" />If <paramref name="pubid" /> is null and <paramref name="sysid" /> is non-null it writes SYSTEM "sysid" where <paramref name="sysid" /> is replaced with the value of this argument. </param>
+        <param name="subset">
+          <attribution license="cc4" from="Microsoft" modified="false" />If non-null it writes [subset] where subset is replaced with the value of this argument. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteEndAttribute">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteEndAttribute()" />
       <MemberSignature Language="C#" Value="public override void WriteEndAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEndAttribute() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Closes the attribute started with the <see cref="M:System.Xml.XmlTextWriter.WriteStartAttribute(System.String,System.String,System.String)" />
-method.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para> The <see cref="M:System.Xml.XmlTextWriter.WriteStartAttribute(System.String,System.String,System.String)" /> and <see cref="M:System.Xml.XmlTextWriter.WriteEndElement" /> methods 
-      also will close an open attribute if one exists when
-      they are called.</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteEndAttribute" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is not<see cref="F:System.Xml.WriteState.Attribute" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If you call WriteStartAttribute, you can close the attribute with this method.</para>
+          <para>You can also close the attribute by calling WriteStartAttribute again, calling <see cref="M:System.Xml.XmlWriter.WriteAttributeString(System.String,System.String,System.String)" />, or calling <see cref="M:System.Xml.XmlTextWriter.WriteEndElement" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the previous <see cref="M:System.Xml.XmlTextWriter.WriteStartAttribute(System.String,System.String,System.String)" /> call.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteEndDocument">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteEndDocument()" />
       <MemberSignature Language="C#" Value="public override void WriteEndDocument ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEndDocument() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Closes open elements and attributes and sets
-      the <see cref="P:System.Xml.XmlTextWriter.WriteState" />
-      back to the <see cref="F:System.Xml.WriteState.Start" qualify="true" />
-      state.</para>
-        </summary>
-        <remarks>
-          <para>This method closes all elements and attributes created by 
-      the <see cref="M:System.Xml.XmlTextWriter.WriteStartElement(System.String,System.String,System.String)" /> and <see cref="M:System.Xml.XmlTextWriter.WriteStartAttribute(System.String,System.String,System.String)" /> methods,
-      respectively, that are open when the <see cref="M:System.Xml.XmlTextWriter.WriteEndDocument" />
-      method is called.</para>
-          <block subset="none" type="note">
-            <para> After calling this method, the current instance can be used to write a
-         new XML document.</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteEndDocument" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">The current instance is in the wrong <see cref="T:System.Xml.WriteState" qualify="true" />, or the document does not have a root element.</exception>
         <exception cref="T:System.InvalidOperationException">The current instance is in the wrong <see cref="T:System.Xml.WriteState" qualify="true" />, or the document does not have a root element.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes any open elements or attributes and puts the writer back in the Start state.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteEndElement">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteEndElement()" />
       <MemberSignature Language="C#" Value="public override void WriteEndElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEndElement() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Closes an open element and pops the corresponding namespace scope.</para>
-        </summary>
-        <remarks>
-          <para> If the open element does not contain content, it is closed as an empty element using "<c> /&gt;</c>"; otherwise an end element is written.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteEndElement" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">No element was open, or the <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If the element contains no content a short end tag "/&gt;" is written; otherwise a full end tag is written.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes one element and pops the corresponding namespace scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteEntityRef">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteEntityRef(string name)" />
       <MemberSignature Language="C#" Value="public override void WriteEntityRef (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEntityRef(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -900,55 +992,63 @@ method.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name of the entity reference.</param>
-        <summary>
-          <para>Writes an entity reference with the specified name.</para>
-        </summary>
-        <remarks>
-          <para>This method writes <c>%</c><paramref name="name" /><c>;</c>.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteEntityRef(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">A <see cref="T:System.String" qualify="true" /> containing the text would result in a non-well formed XML document, or <paramref name="name" /> is either <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out an entity reference as &amp;name;.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of the entity reference. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteFullEndElement">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteFullEndElement()" />
       <MemberSignature Language="C#" Value="public override void WriteFullEndElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteFullEndElement() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Closes an open element and pops the corresponding namespace scope.</para>
-        </summary>
-        <remarks>
-          <para> This method writes an end element regardless of whether there is any content in the element.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteFullEndElement" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">No start tag was open, or the <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method always writes the full end tag. This is useful when dealing with elements that must include a full end tag. For example, browsers expect HTML script blocks to be closed with "&lt;/script&gt;".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes one element and pops the corresponding namespace scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteName">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteName(string name)" />
       <MemberSignature Language="C#" Value="public override void WriteName (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteName(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -956,68 +1056,74 @@ method.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name to write.</param>
-        <summary>
-          <para> Writes out the specified name, ensuring it is a
-      valid name according to the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
-        </summary>
-        <remarks>
-          <para>If <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is set to <see langword="true" />, this method checks that <paramref name="name" /> is also valid according to the W3C Namespaces in 
-   XML recommendation
-   (http://www.w3.org/TR/REC-xml-names).</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteName(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />; or <paramref name="name" /> is not a valid XML Name.</para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is set to true, WriteName also checks that the name is also valid according to the W3C Namespaces in XML recommendation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the specified name, ensuring it is a valid name according to the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteNmToken">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteNmToken(string name)" />
-      <MemberSignature Language="C#" Value="public override void WriteNmToken (string nmtoken);" />
+      <MemberSignature Language="C#" Value="public override void WriteNmToken (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteNmToken(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="nmtoken" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="nmtoken">A <see cref="T:System.String" qualify="true" /> specifying the name to write.</param>
-        <summary>
-          <para>Writes out the specified name, ensuring it is a valid name token (Nmtoken) according to
-      the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteNmToken(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="name" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />; or <paramref name="name" /> is not a valid XML Nmtoken.</para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the specified name, ensuring it is a valid NmToken according to the W3C XML 1.0 recommendation (http://www.w3.org/TR/1998/REC-xml-19980210#NT-Name).</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteProcessingInstruction">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteProcessingInstruction(string name, string text)" />
       <MemberSignature Language="C#" Value="public override void WriteProcessingInstruction (string name, string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteProcessingInstruction(string name, string text) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1026,22 +1132,6 @@ method.</para>
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">A <see cref="T:System.String" qualify="true" /> specifying the name of the processing instruction.</param>
-        <param name="text">A <see cref="T:System.String" qualify="true" /> specifying the text to include in the processing instruction.</param>
-        <param name="text">To be added.</param>
-        <summary>
-          <para> Writes out a processing instruction with the specified 
-      name and text.</para>
-        </summary>
-        <remarks>
-          <para>This method writes <c>&lt;?</c><paramref name="name" /><paramref name="text" /><c>?&gt;</c>.</para>
-          <para>If <paramref name="text" /> is
-<see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, this method writes a processing 
-instruction with no text content, <c>&lt;?</c><paramref name="name" /><c>?&gt;</c>.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteProcessingInstruction(System.String,System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para> The text would result in a non-well formed XML document.</para>
           <para> - or -</para>
@@ -1051,17 +1141,36 @@ instruction with no text content, <c>&lt;?</c><paramref name="name" /><c>?&gt;</
           <para>This method is being used to create an XML declaration after <see cref="M:System.Xml.XmlTextWriter.WriteStartDocument" /> has already been called. </para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Text to include in the processing instruction. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>If <paramref name="text" /> is either null or String.Empty, this method writes a ProcessingInstruction with no data content, for example &lt;?name?&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a processing instruction with a space between the name and text as follows: &lt;?name text?&gt;.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of the processing instruction. </param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Text to include in the processing instruction. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteQualifiedName">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteQualifiedName(string localName, string ns)" />
       <MemberSignature Language="C#" Value="public override void WriteQualifiedName (string localName, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteQualifiedName(string localName, string ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1070,25 +1179,6 @@ instruction with no text content, <c>&lt;?</c><paramref name="name" /><c>?&gt;</
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name to write.</param>
-        <param name="ns">A <see cref="T:System.String" qualify="true" /> specifying the namespace URI to associate with <paramref name="localname" />.</param>
-        <param name="ns">To be added.</param>
-        <summary>
-          <para> Writes out the qualified name.</para>
-        </summary>
-        <remarks>
-          <para>If <paramref name="ns" /> maps to the current default namespace, no
-   prefix is generated. </para>
-          <para>When writing attribute values, this method generates a prefix if <paramref name="ns" /> is not found. When writing element content, this method throws an exception if
-<paramref name="ns" /> is not found.</para>
-          <para>If the current instance supports namespaces (<see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is set to <see langword="true" />), this method looks up the prefix that
-is in scope for the given namespace and checks that the name
-is valid according to the W3C Namespaces in XML recommendation
-(http://www.w3.org/TR/REC-xml-names).</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteQualifiedName(System.String,System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</para>
@@ -1102,47 +1192,91 @@ is valid according to the W3C Namespaces in XML recommendation
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="localName" /> is not a valid XML name.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to associate with the name. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>For example, the following Microsoft Visual C# code: </para>
+          <code> writer.Formatting = Formatting.Indented;
+ writer.WriteStartElement("root");
+  writer.WriteAttributeString("xmlns","x",null,"urn:abc");
+  writer.WriteStartElement("item");
+  writer.WriteStartAttribute("href",null);
+  writer.WriteString("#");
+  writer.WriteQualifiedName("test","urn:abc");
+  writer.WriteEndAttribute();
+  writer.WriteEndElement();
+  writer.WriteEndElement();
+  writer.Close();</code>
+          <para>Generates the following output: </para>
+          <code> &lt;root xmlns:x="urn:abc"&gt;
+  &lt;item href="#x:test"/&gt;
+  &lt;/root&gt;</code>
+          <para>If <paramref name="ns" /> maps to the current default namespace, no prefix is generated.</para>
+          <para>When writing attribute values, this method generates a prefix if <paramref name="ns" /> is not found. When writing element content, it throws an exception if <paramref name="ns" /> is not found.</para>
+          <para>If this writer supports namespaces (<see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is set to true), this method also checks that the name is valid according to the W3C Namespaces in XML recommendation (http://www.w3.org/TR/REC-xml-names).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the namespace-qualified name. This method looks up the prefix that is in scope for the given namespace.</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name to write. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to associate with the name. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteRaw">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteRaw(string data)" />
-      <MemberSignature Language="C#" Value="public override void WriteRaw (string raw);" />
+      <MemberSignature Language="C#" Value="public override void WriteRaw (string data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteRaw(string data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="raw" Type="System.String" />
+        <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="raw">A <see cref="T:System.String" qualify="true" /> specifying the text to write.</param>
-        <summary>
-          <para> Writes raw text from a string.</para>
-        </summary>
+        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
         <remarks>
-          <para>If <paramref name="data" /> is <see langword="null" />, <see cref="F:System.String.Empty" /> is written.</para>
-          <para> This method does not encode any characters.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteRaw(System.Char[],System.Int32,System.Int32)" qualify="true" />.</para>
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method does not escape special characters.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlTextWriter" /> does not validate any data that is passed to the <see cref="M:System.Xml.XmlTextWriter.WriteRaw(System.String)" /> method. You should not pass arbitrary data to this method.</para>
           </block>
         </remarks>
-        <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes raw markup manually from a string.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />String containing the text to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteRaw">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteRaw(class System.Char[] buffer, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public override void WriteRaw (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteRaw(char[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1152,20 +1286,6 @@ is valid according to the W3C Namespaces in XML recommendation
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Char" qualify="true" /> array containing the text to write. </param>
-        <param name="index">A <see cref="T:System.Int32" qualify="true" /> specifying the position within the array of the start of the text to write. </param>
-        <param name="count">A <see cref="T:System.Int32" qualify="true" /> specifying the number of characters to write. </param>
-        <summary>
-          <para> Writes raw text from a character array.
-      </para>
-        </summary>
-        <remarks>
-          <para> This method does not encode any characters.
-      </para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteRaw(System.Char[],System.Int32,System.Int32)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -1175,93 +1295,115 @@ is valid according to the W3C Namespaces in XML recommendation
           <para>The buffer length minus <paramref name="index" /> is less than <paramref name="count" />.</para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method does not escape special characters.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.XmlTextWriter" /> does not validate any data that is passed to the <see cref="M:System.Xml.XmlTextWriter.WriteRaw(System.Char[],System.Int32,System.Int32)" /> method. You should not pass arbitrary data to this method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes raw markup manually from a character buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />Character array containing the text to write. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position within the buffer indicating the start of the text to write. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteStartAttribute">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteStartAttribute(string prefix, string localName, string ns)" />
-      <MemberSignature Language="C#" Value="public override void WriteStartAttribute (string prefix, string localName, string namespaceUri);" />
+      <MemberSignature Language="C#" Value="public override void WriteStartAttribute (string prefix, string localName, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartAttribute(string prefix, string localName, string ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prefix" Type="System.String" />
         <Parameter Name="localName" Type="System.String" />
-        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the namespace prefix of the attribute.</param>
-        <param name="localName">A <see cref="T:System.String" qualify="true" /> specifying the local name of the attribute.</param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="prefix">To be added.</param>
-        <summary>
-          <para>Writes the start of an attribute with the specified prefix
-      and name, and associates the prefix with the specified namespace URI.</para>
-        </summary>
-        <remarks>
-          <para>If any of the input parameters are <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, the start attribute is written with that parameter missing.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteStartAttribute(System.String,System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is <see langword="false" /> for the writer, and <paramref name="prefix" /> and <paramref name="ns" /> are not both <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is not one of the following: <see cref="F:System.Xml.WriteState.Attribute" qualify="true" /> or <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />Namespace prefix of the attribute. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This is a more advanced version of <see cref="M:System.Xml.XmlWriter.WriteAttributeString(System.String,System.String,System.String)" /> that allows you to write an attribute value using multiple write methods, such as <see cref="M:System.Xml.XmlTextWriter.WriteString(System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the start of an attribute.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />Namespace prefix of the attribute. </param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />LocalName of the attribute. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />NamespaceURI of the attribute </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteStartDocument">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteStartDocument()" />
       <MemberSignature Language="C#" Value="public override void WriteStartDocument ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartDocument() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Writes the XML declaration with the version "1.0" and no
-      standalone attribute.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>When <see cref="T:System.Xml.XmlTextWriter" /> is instantiated, the <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is set to <see cref="F:System.Xml.WriteState.Start" />. All the "write" methods change the
-   <see cref="P:System.Xml.XmlTextWriter.WriteState" /> to a value other than <see langword="Start" />. Thus,
-      if this method is not the first "write" method called, a <see cref="T:System.InvalidOperationException" />
-      
-      is thrown.</para>
-            <para>If <see cref="M:System.Xml.XmlTextWriter.WriteStartDocument" /> has been called and then the
-<see cref="M:System.Xml.XmlTextWriter.WriteProcessingInstruction(System.String,System.String)" /> method is
-   used to create another XML declaration, a <see cref="T:System.ArgumentException" /> will be thrown.</para>
-            <para> The output of this method using an encoding equal to <see cref="P:System.Text.Encoding.Unicode" qualify="true" /> and the default <see cref="P:System.Xml.XmlTextWriter.QuoteChar" /> is</para>
-            <para>
-              <c>&lt;?xml version="1.0" encoding="utf-16"?&gt;</c>
-            </para>
-            <para>Character encoding is set when the writer is instantiated.</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteStartDocument" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Start" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>The encoding level of the document is determined by how the writer is implemented. For example, if an <see cref="T:System.Text.Encoding" /> object is specified in the XmlTextWriter constructor, this determines the value of the encoding attribute. This method does not create a standalone attribute.</para>
+          <para>When WriteStartDocument is called the writer validates that what you are writing is a well-formed XML document. For example, it checks that the XML declaration is the first node, that one and only one root-level element exists and so on. If this method is not called, the writer assumes an XML fragment is being written and applies no root level rules.</para>
+          <para>If WriteStartDocument has been called and then the <see cref="M:System.Xml.XmlTextWriter.WriteProcessingInstruction(System.String,System.String)" /> method is used to create another XML declaration, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the XML declaration with the version "1.0".</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteStartDocument">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteStartDocument(bool standalone)" />
       <MemberSignature Language="C#" Value="public override void WriteStartDocument (bool standalone);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartDocument(bool standalone) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1269,73 +1411,44 @@ is valid according to the W3C Namespaces in XML recommendation
         <Parameter Name="standalone" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="standalone">A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates to write "yes" as the value for the standalone attribute, and <see langword="false" /> indicates to write "no".</param>
-        <summary>
-          <para> Writes the XML declaration with the
-      version "1.0" and the standalone attribute.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>When <see cref="T:System.Xml.XmlTextWriter" /> is instantiated, the <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is set to <see cref="F:System.Xml.WriteState.Start" />. All the "write" methods change the
-   <see cref="P:System.Xml.XmlTextWriter.WriteState" /> to a value other than <see langword="Start" />. Thus,
-      if this method is not the first "write" method called, a <see cref="T:System.InvalidOperationException" />
-      
-      is thrown.</para>
-            <para>If <see cref="M:System.Xml.XmlTextWriter.WriteStartDocument" /> has been called and then the <see cref="M:System.Xml.XmlTextWriter.WriteProcessingInstruction(System.String,System.String)" /> method is
-   used to create another XML declaration, a <see cref="T:System.ArgumentException" />
-   will be thrown.</para>
-            <para> The output of this method with <paramref name="standalone" />
-equal to <see langword="true" />, an encoding equal to <see cref="P:System.Text.Encoding.Unicode" qualify="true" />, and using the default <see cref="P:System.Xml.XmlTextWriter.QuoteChar" /> is:</para>
-            <para>
-              <c>&lt;?xml version="1.0" encoding="utf-16" standalone="yes"?&gt;</c>
-            </para>
-            <para>Character encoding is set when the writer is instantiated.</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteStartDocument" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Start" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>The encoding level of the document is determined by how the writer is implemented. For example, if an <see cref="T:System.Text.Encoding" /> object is specified in the XmlTextWriter constructor, this determines the value of the encoding attribute.</para>
+          <para>When WriteStartDocument is called the writer validates that what you are writing is a well-formed XML document. For example, it checks that the XML declaration is the first node, that one and only one root-level element exists and so on. If this method is not called, the writer assumes an XML fragment is being written and applies no root level rules.</para>
+          <para>If WriteStartDocument has been called and then the <see cref="M:System.Xml.XmlTextWriter.WriteProcessingInstruction(System.String,System.String)" /> method is used to create another XML declaration, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the XML declaration with the version "1.0" and the standalone attribute.</para>
+        </summary>
+        <param name="standalone">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, it writes "standalone=yes"; if false, it writes "standalone=no". </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteStartElement">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteStartElement(string prefix, string localName, string ns)" />
-      <MemberSignature Language="C#" Value="public override void WriteStartElement (string prefix, string localName, string namespaceUri);" />
+      <MemberSignature Language="C#" Value="public override void WriteStartElement (string prefix, string localName, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartElement(string prefix, string localName, string ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prefix" Type="System.String" />
         <Parameter Name="localName" Type="System.String" />
-        <Parameter Name="namespaceUri" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">A <see cref="T:System.String" qualify="true" /> specifying the namespace prefix of the element.</param>
-        <param name="localName">
-          <para> A <see cref="T:System.String" qualify="true" /> specifying the local name of the element.</para>
-        </param>
-        <param name="namespaceUri">To be added.</param>
-        <param name="prefix">To be added.</param>
-        <summary>
-          <para> Writes a start element with the specified name, and associates it with the given namespace
-      and prefix.</para>
-        </summary>
-        <remarks>
-          <para>If <paramref name="ns" /> is already in scope and has an associated prefix, the
-   current instance will automatically write that prefix also.</para>
-          <para>If any of the input parameters are <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, the start element is written with that parameter missing.</para>
-          <block subset="none" type="note">
-            <para> Write any attributes using
-      the <see cref="M:System.Xml.XmlTextWriter.WriteStartAttribute(System.String,System.String,System.String)" />, <see cref="M:System.Xml.XmlTextWriter.WriteString(System.String)" />, and
-   <see cref="M:System.Xml.XmlTextWriter.WriteEndAttribute" /> methods, then close the element
-      using the <see cref="M:System.Xml.XmlTextWriter.WriteEndElement" /> method. </para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteStartElement(System.String,System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is <see langword="false" /> for the writer, and <paramref name="prefix" /> and <paramref name="ns" /> are not both <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
@@ -1369,46 +1482,70 @@ public class WriteXml
           </para>
           <para> The value of the encoding attribute is the encoding of the output stream of the console.</para>
         </example>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix of the element. </param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>After calling this method you can either write attributes or create content using <see cref="M:System.Xml.XmlTextWriter.WriteComment(System.String)" />, <see cref="M:System.Xml.XmlTextWriter.WriteString(System.String)" />, or <see cref="M:System.Xml.XmlTextWriter.WriteStartElement(System.String,System.String,System.String)" /> for child elements. You can close the element with <see cref="M:System.Xml.XmlTextWriter.WriteEndElement" /> at which time an end tag is written out.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified start tag and associates it with the given namespace and prefix.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix of the element. </param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to associate with the element. If this namespace is already in scope and has an associated prefix then the writer automatically writes that prefix also. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteState">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.WriteState WriteState { public hidebysig virtual specialname valuetype System.Xml.WriteState get_WriteState() }" />
       <MemberSignature Language="C#" Value="public override System.Xml.WriteState WriteState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.WriteState WriteState" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WriteState</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the write state of the writer.</para>
-        </summary>
         <value>
           <para> One of the members of the <see cref="T:System.Xml.WriteState" /> enumeration.
    </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
-            <para>This property overrides <see cref="P:System.Xml.XmlWriter.WriteState" qualify="true" />.</para>
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
           </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the writer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteString(string text)" />
       <MemberSignature Language="C#" Value="public override void WriteString (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteString(string text) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1416,40 +1553,6 @@ public class WriteXml
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">A <see cref="T:System.String" qualify="true" /> specifying the text to write. </param>
-        <summary>
-          <para> Writes the specified text.</para>
-        </summary>
-        <remarks>
-          <para>This method performs the following conversions before writing the text:</para>
-          <list type="bullet">
-            <item>
-              <term>
-         
-         The characters '&amp;', '&lt;', and '&gt;' are
-         replaced with "&amp;amp;", "&amp;lt;", and "&amp;gt;", respectively.</term>
-            </item>
-            <item>
-              <term>
-         
-         Character values in the range 0x-0x1F (excluding the
-         white space characters 0x9, 0x10, and 0x13) are replaced with numeric
-         character entities ("&amp;#0;" through "&amp;#0x1F").</term>
-            </item>
-            <item>
-              <term>
-         
-         If called in the context of an attribute value, double
-         and single quotes are replaced with "&amp;quot;" and "&amp;apos;"
-         respectively.</term>
-            </item>
-          </list>
-          <para>If <paramref name="text" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />, this method writes a text
-node with no data content.</para>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" /> and <paramref name="text" /> is neither <see langword="null" /> nor <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <example>
           <para>The following example demonstrates the conversions performed by this method.</para>
@@ -1469,152 +1572,179 @@ public class WriteFrag {
           <para>The output is</para>
           <para>&amp;lt;1 &amp;amp; 2 = 3&amp;gt;</para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>WriteString does the following </para>
+          <list type="bullet">
+            <item>
+              <para>The characters &amp;, &lt;, and &gt; are replaced with &amp;amp;, &amp;lt;, and &amp;gt;, respectively.</para>
+            </item>
+            <item>
+              <para>Character values in the range 0x-0x1F (excluding white space characters 0x9, 0xA, and 0xD) are replaced with numeric character entities (&amp;#0; through &amp;#0x1F).</para>
+            </item>
+            <item>
+              <para>If WriteString is called in the context of an attribute value, double and single quotes are replaced with &amp;quot; and &amp;apos; respectively.</para>
+            </item>
+          </list>
+          <para>For example, this input string test&lt;item&gt;test is written as </para>
+          <code> test&amp;lt;item&amp;gt;test</code>
+          <para>If <paramref name="text" /> is either null or String.Empty, this method writes a text node with no data content.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the given text content.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Text to write. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteSurrogateCharEntity">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteSurrogateCharEntity(valuetype System.Char lowChar, valuetype System.Char highChar)" />
-      <MemberSignature Language="C#" Value="public override void WriteSurrogateCharEntity (char low, char high);" />
+      <MemberSignature Language="C#" Value="public override void WriteSurrogateCharEntity (char lowChar, char highChar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteSurrogateCharEntity(char lowChar, char highChar) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="low" Type="System.Char" />
-        <Parameter Name="high" Type="System.Char" />
+        <Parameter Name="lowChar" Type="System.Char" />
+        <Parameter Name="highChar" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="low">To be added.</param>
-        <param name="high">To be added.</param>
-        <summary>
-          <para> Generates and writes the surrogate character entity
-      for the surrogate character pair.</para>
-        </summary>
-        <remarks>
-          <para>This method only applies to a writer that uses the UTF-16 encoding
-      type.</para>
-          <para>The surrogate character entity is written in hexadecimal format. The range
-      for surrogate characters is #x10000 to #x10FFFF. The following formula is used
-      to generate the surrogate character entity: <c>(</c><paramref name="highChar" /><c> - 0xD800) * 0x400 + (</c><paramref name="lowChar" /><c> - 0xDC00) + 0x10000</c>.</para>
-          <block subset="none" type="note">
-            <para>For both HTML and XML, the document character set (and therefore the notation
-         of numeric character references) is based on UCS [ISO-10646]. A single numeric
-         character reference in a source document might therefore in some cases correspond
-         to two 16-bit units in a string (a high surrogate and a low surrogate). These
-         16-bit units are referred to as a surrogate pair.</para>
-            <para>For more information regarding surrogates or characters, refer to section 3.7
-         of the Unicode 3.0/Unicode 2.0 standard located at http://www.unicode.org, or
-         section 2.2 of the W3C XML 1.0 Recommendation located at
-         http://www.w3.org/TR/REC-xml#charsets .</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteSurrogateCharEntity(System.Char,System.Char)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">An invalid surrogate character pair was passed.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method is only applicable on systems that use UTF-16 encoding.</para>
+          <para>The surrogate character entity is written in hexadecimal format. The range for surrogate characters is #x10000 to #x10FFFF. The following formula is used to generate the surrogate character entity: (<paramref name="highChar" /> - 0xD800) * 0x400 + (<paramref name="lowChar" /> - 0xDC00) + 0x10000. </para>
+          <para>For both HTML and XML, the document character set (and therefore the notation of numeric character references) is based on UCS [ISO-10646]. A single numeric character reference in a source document may therefore in some cases correspond to two 16-bit units in a string (a high surrogate and a low surrogate). These 16-bit units are referred to as a surrogate pair.</para>
+          <para>For more information regarding surrogates or characters, refer to section 3.7 of the Unicode 3.0/Unicode 2.0 standard located at http://www.unicode.org, or section 2.2 of the W3C XML 1.0 Recommendation located at http://www.w3.org/TR/REC-xml#charsets.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates and writes the surrogate character entity for the surrogate character pair.</para>
+        </summary>
+        <param name="lowChar">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low surrogate. This must be a value between 0xDC00 and 0xDFFF. </param>
+        <param name="highChar">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high surrogate. This must be a value between 0xD800 and 0xDBFF. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteWhitespace">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteWhitespace(string ws)" />
-      <MemberSignature Language="C#" Value="public override void WriteWhitespace (string text);" />
+      <MemberSignature Language="C#" Value="public override void WriteWhitespace (string ws);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteWhitespace(string ws) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="ws" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">A <see cref="T:System.String" qualify="true" /> containing the white space characters.</param>
-        <summary>
-          <para> Writes the given white space.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method is used to manually format a document. Use the <see cref="P:System.Xml.XmlTextWriter.Formatting" /> property to have the current instance
-      format the output automatically.</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlWriter.WriteWhitespace(System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="ws" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" /> or contains non-white space characters.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
+          </block>
+          <para>This method is used to manually format your document. Use the <see cref="P:System.Xml.XmlTextWriter.Formatting" /> property to have the writer format the output automatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the given white space.</para>
+        </summary>
+        <param name="ws">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string of white space characters. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlLang">
       <MemberSignature Language="ILASM" Value=".property string XmlLang { public hidebysig virtual specialname string get_XmlLang() }" />
       <MemberSignature Language="C#" Value="public override string XmlLang { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string XmlLang" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the language attribute, <c>xml:lang</c>, specifying the language in which the
-   content and attribute values of the current element are written.
-   </para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" qualify="true" />
 containing the language attribute, or <see langword="null" /> if the
 language attribute is not specified for the element.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
-            <para>This property overrides <see cref="P:System.Xml.XmlWriter.XmlLang" qualify="true" />.</para>
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
           </block>
+          <para>This property allows one component to find out what state another component has left the writer in. For example, perhaps one component wants to tell another which language help text to generate. The language information is communicated by writing an xml:lang attribute.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current xml:lang scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlSpace">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Xml.XmlSpace XmlSpace { public hidebysig virtual specialname valuetype System.Xml.XmlSpace get_XmlSpace() }" />
       <MemberSignature Language="C#" Value="public override System.Xml.XmlSpace XmlSpace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlSpace XmlSpace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlSpace</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the white space attribute, <c>xml:space</c>, specifying how white space is handled in the
-   current element. </para>
-        </summary>
         <value>
           <para> One of the members of the <see cref="T:System.Xml.XmlSpace" qualify="true" /> enumeration, or <see cref="F:System.Xml.XmlSpace.None" /> if the white space attribute is not
    specified for the element. </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
-            <para>This property overrides <see cref="P:System.Xml.XmlWriter.XmlSpace" qualify="true" />.</para>
+            <para>In the dnprdnext release, the recommended practice is to create <see cref="T:System.Xml.XmlWriter" /> instances using the <see cref="Overload:System.Xml.XmlWriter.Create" /> method and the <see cref="T:System.Xml.XmlWriterSettings" /> class. This allows you to take full advantage of all the new features introduced in this release. For more information, see <format type="text/html"><a href="365a45ab-1a3a-4c89-9644-1e0cf2b4b5ce">Creating XML Writers</a></format>.</para>
           </block>
+          <para>This property allows one component to find out in what state another component has left the writer.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.XmlSpace" /> representing the current xml:space scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

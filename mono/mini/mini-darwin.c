@@ -265,8 +265,8 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 	commands = fopen (template, "w");
 	if (using_lldb) {
 		fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
-		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread list\")\n");
-		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread backtrace all\")\n");
+		fprintf (commands, "thread list\n");
+		fprintf (commands, "thread backtrace all\n");
 		fprintf (commands, "detach\n");
 		fprintf (commands, "quit\n");
 		argv [1] = "--source";
@@ -290,20 +290,19 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 }
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThreadId thread_id, MonoNativeThreadHandle thread_handle)
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info)
 {
 	kern_return_t ret;
 	mach_msg_type_number_t num_state;
 	thread_state_t state;
 	ucontext_t ctx;
 	mcontext_t mctx;
-	guint32 domain_key, jit_key;
 	MonoJitTlsData *jit_tls;
 	void *domain;
-#if defined (MONO_ARCH_ENABLE_MONO_LMF_VAR)
-	guint32 lmf_key;
-#endif
+	MonoLMF *lmf = NULL;
+	gpointer *addr;
 
+	g_assert (info);
 	/*Zero enough state to make sure the caller doesn't confuse itself*/
 	tctx->valid = FALSE;
 	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = NULL;
@@ -313,7 +312,7 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThrea
 	state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
 	mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
 
-	ret = mono_mach_arch_get_thread_state (thread_handle, state, &num_state);
+	ret = mono_mach_arch_get_thread_state (info->native_handle, state, &num_state);
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 
@@ -322,25 +321,29 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThrea
 
 	mono_sigctx_to_monoctx (&ctx, &tctx->ctx);
 
-	domain_key = mono_domain_get_tls_key ();
-	jit_key = mono_get_jit_tls_key ();
-
-	jit_tls = mono_mach_arch_get_tls_value_from_thread (thread_id, jit_key);
-	domain = mono_mach_arch_get_tls_value_from_thread (thread_id, domain_key);
+	/* mono_set_jit_tls () sets this */
+	jit_tls = mono_thread_info_tls_get (info, TLS_KEY_JIT_TLS);
+	/* SET_APPDOMAIN () sets this */
+	domain = mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
 
 	/*Thread already started to cleanup, can no longer capture unwind state*/
 	if (!jit_tls || !domain)
 		return FALSE;
 
-#if defined (MONO_ARCH_ENABLE_MONO_LMF_VAR)
-	lmf_key =  mono_get_lmf_tls_offset ();
-	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = mono_mach_arch_get_tls_value_from_thread (thread_id, lmf_key);;
-#else
-	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = jit_tls ? jit_tls->lmf : NULL;
-#endif
+	/*
+	 * The current LMF address is kept in a separate TLS variable, and its hard to read its value without
+	 * arch-specific code. But the address of the TLS variable is stored in another TLS variable which
+	 * can be accessed through MonoThreadInfo.
+	 */
+	/* mono_set_lmf_addr () sets this */
+	addr = mono_thread_info_tls_get (info, TLS_KEY_LMF_ADDR);
+	if (addr)
+		lmf = *addr;
+
 
 	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = domain;
 	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = jit_tls;
+	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = lmf;
 	tctx->valid = TRUE;
 
 	return TRUE;

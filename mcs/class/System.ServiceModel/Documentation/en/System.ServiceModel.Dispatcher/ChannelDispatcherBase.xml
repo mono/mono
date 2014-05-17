@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ChannelDispatcherBase" FullName="System.ServiceModel.Dispatcher.ChannelDispatcherBase">
+  <TypeSignature Language="C#" Value="public abstract class ChannelDispatcherBase : System.ServiceModel.Channels.CommunicationObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ChannelDispatcherBase extends System.ServiceModel.Channels.CommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.CommunicationObject</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is used by developers who want to keep the indigo1 programming model but replace the system-provided runtime. Such applications will pull messages out of channels and handle them directly with user-defined dispatchers. To use <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> , create a class derived from it, extend <see cref="T:System.ServiceModel.ServiceHost" /> and override <see cref="M:System.ServiceModel.ServiceHostBase.InitializeRuntime" />, adding instances of your class derived from <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> to <see cref="P:System.ServiceModel.ServiceHostBase.ChannelDispatchers" />.</para>
+      <para>The <see cref="T:System.ServiceModel.Channels.IChannelListener" /> and the <see cref="T:System.ServiceModel.ServiceHost" />, associated with the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> object are available for inspection or modification through the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcherBase.Listener" /> and <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcherBase.Host" /> respectively. </para>
+      <para>
+        <see cref="T:System.ServiceModel.ServiceHost" /> calls the <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcherBase.Attach(System.ServiceModel.ServiceHostBase)" /> or <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcherBase.Detach(System.ServiceModel.ServiceHostBase)" /> methods when adding or removing a <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> item from its <see cref="P:System.ServiceModel.ServiceHostBase.ChannelDispatchers" /> collection.</para>
+      <para>
+        <see cref="T:System.ServiceModel.ServiceHost" /> calls the <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcherBase.CloseInput" /> during shutdown before closing InstanceContexts. indigo1 uses this call to close datagram channels and wait for all messages to get to an InstanceContext.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Abstract base class for the channel dispatcher that accepts channels and associates them with a service.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ChannelDispatcherBase ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Attach">
+      <MemberSignature Language="C#" Value="protected virtual void Attach (System.ServiceModel.ServiceHostBase host);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void Attach(class System.ServiceModel.ServiceHostBase host) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can only be set when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+          <para>A <see cref="T:System.ServiceModel.ServiceHost" /> calls this method when the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> is added to its <see cref="P:System.ServiceModel.ServiceHostBase.ChannelDispatchers" /> collection.  This gives the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> a chance to hook events and inspect the <see cref="T:System.ServiceModel.ServiceHost" />, and provides the value that should be returned from the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcherBase.Host" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, attaches the channel dispatcher to a specific host.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.ServiceHostBase" /> for the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CloseInput">
+      <MemberSignature Language="C#" Value="public virtual void CloseInput ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CloseInput() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.ServiceHost" /> calls this method during shutdown to give the dispatcher a chance to drain messages. <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> uses this call to close datagram channels.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, removes the endpoint dispatchers associated with the channel dispatcher.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Detach">
+      <MemberSignature Language="C#" Value="protected virtual void Detach (System.ServiceModel.ServiceHostBase host);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void Detach(class System.ServiceModel.ServiceHostBase host) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.ServiceHostBase" /> can only be detached when the instance of the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> is in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, as this is the only state that is both mutable and not disposed.</para>
+          <para>Should set the <see cref="T:System.ServiceModel.ServiceHostBase" /> associated with the channel dispatcher to null.</para>
+          <para>
+            <see cref="T:System.ServiceModel.ServiceHost" /> calls this method when the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> is removed from its <see cref="P:System.ServiceModel.ServiceHostBase.ChannelDispatchers" /> collection. This gives the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> a chance to unhook events and inspect the <see cref="T:System.ServiceModel.ServiceHost" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, detaches the channel dispatcher from a specific host.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.ServiceHostBase" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Host">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.ServiceHostBase Host { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.ServiceHostBase Host" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceHostBase</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each <see cref="T:System.ServiceModel.ServiceHost" /> object can have many <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> objects, each associated with a different <see cref="T:System.ServiceModel.Channels.IChannelListener" /> for that service. The host keeps a list of these <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> objects in the <see cref="P:System.ServiceModel.ServiceHostBase.ChannelDispatchers" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the service host associated with the channel dispatcher. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Listener">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.IChannelListener Listener { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.IChannelListener Listener" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> associates an <see cref="T:System.ServiceModel.Channels.IChannelListener" /> whose channels and messages this <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcherBase" /> is dispatching.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the channel listener associated with the channel dispatcher. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

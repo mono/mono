@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeTypeReference" FullName="System.CodeDom.CodeTypeReference">
   <TypeSignature Language="C#" Value="public class CodeTypeReference : System.CodeDom.CodeObject" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeTypeReference extends System.CodeDom.CodeObject" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -14,102 +17,161 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.AutoDispatch)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.AutoDispatch)</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.CodeTypeReference" /> object is used to represent a type for CodeDOM objects. When CodeDOM types have a Type property, it is of type <see cref="T:System.CodeDom.CodeTypeReference" />. For example, the <see cref="P:System.CodeDom.CodeMemberField.Type" /> property is a <see cref="T:System.CodeDom.CodeTypeReference" /> that represents a field's data type.</para>
+      <para>A <see cref="T:System.CodeDom.CodeTypeReference" /> can be initialized with a <see cref="T:System.Type" /> object or a string. It is generally recommended to use a <see cref="T:System.Type" /> to do this, although it may not always be possible. If initializing an instance of this class with a string, it is strongly recommended to always use fully qualified types, such as "System.Console" instead of just "Console", because not all languages support importing namespaces. Array types can be specified by either passing in a type object for an array or using one of the constructors that accept rank as a parameter.</para>
+      <para>The <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> property specifies the name of the type to reference. For references to array types, the <see cref="P:System.CodeDom.CodeTypeReference.ArrayElementType" /> property indicates the type of the elements of the array, and the <see cref="P:System.CodeDom.CodeTypeReference.ArrayRank" /> property indicates the number of dimensions in the array.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reference to a type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CodeTypeReference ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an empty <see cref="T:System.CodeDom.CodeTypeReference" /> object.  If you use this constructor, set properties to establish the type reference.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CodeTypeReference (System.CodeDom.CodeTypeParameter typeParameter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.CodeDom.CodeTypeParameter typeParameter) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="typeParameter" Type="System.CodeDom.CodeTypeParameter" />
       </Parameters>
       <Docs>
-        <param name="typeParameter">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified code type parameter. </para>
+        </summary>
+        <param name="typeParameter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeParameter" /> that represents the type of the type parameter.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CodeTypeReference (string baseType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string baseType) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("We should parse basetype from right to left in 2.0 profile.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue />
       <Parameters>
         <Parameter Name="baseType" Type="System.String" />
       </Parameters>
       <Docs>
         <param name="baseType">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="typeName" /> parameter references a generic type, it must follow the syntax conventions for generic types. For example, the reflection signature for a <see cref="T:System.Collections.Generic.Dictionary`2" /> type, where <paramref name="K" /> is a string and <paramref name="V" /> is a <see cref="T:System.Collections.Generic.List`1" /> of integers, is represented by reflection as the following (with the assembly information removed): System.Collections.Generic.Dictionary`2[[System.String], [System.Collections.Generic.List`1[[System.Int32]]]].</para>
+          <block subset="none" type="note">
+            <para>You must use square brackets ([]) and not the C# angle brackets (&lt;&gt;) to delimit generic parameters. </para>
+          </block>
+          <para>To avoid the possibility of making a mistake in specifying the syntax, consider using the constructor that takes a type as a parameter instead of a string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified type name.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CodeTypeReference (Type baseType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type baseType) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("We should parse basetype from right to left in 2.0 profile.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue />
       <Parameters>
         <Parameter Name="baseType" Type="System.Type" />
       </Parameters>
       <Docs>
         <param name="baseType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CodeTypeReference (System.CodeDom.CodeTypeReference arrayType, int rank);" />
+      <MemberSignature Language="C#" Value="public CodeTypeReference (System.CodeDom.CodeTypeReference arrayElementType, int arrayRank);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.CodeDom.CodeTypeReference arrayElementType, int32 arrayRank) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="arrayType" Type="System.CodeDom.CodeTypeReference" />
-        <Parameter Name="rank" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="arrayType">To be added: an object of type 'CodeTypeReference'</param>
-        <param name="rank">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="arrayElementType" Type="System.CodeDom.CodeTypeReference" />
+        <Parameter Name="arrayRank" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="arrayElementType">To be added.</param>
+        <param name="arrayRank">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor can be used to construct arrays of arrays by nesting <see cref="T:System.CodeDom.CodeTypeReference" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified array type and rank.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CodeTypeReference (string typeName, System.CodeDom.CodeTypeReference[] typeArguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string typeName, class System.CodeDom.CodeTypeReference[] typeArguments) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="typeName" Type="System.String" />
@@ -122,124 +184,207 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="typeArguments">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified type name and type arguments.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to reference.</param>
+        <param name="typeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeTypeReference" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CodeTypeReference (string typeName, System.CodeDom.CodeTypeReferenceOptions codeTypeReferenceOption);" />
+      <MemberSignature Language="C#" Value="public CodeTypeReference (string typeName, System.CodeDom.CodeTypeReferenceOptions referenceOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string typeName, valuetype System.CodeDom.CodeTypeReferenceOptions referenceOptions) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="typeName" Type="System.String" />
-        <Parameter Name="codeTypeReferenceOption" Type="System.CodeDom.CodeTypeReferenceOptions" />
+        <Parameter Name="referenceOptions" Type="System.CodeDom.CodeTypeReferenceOptions" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="codeTypeReferenceOption">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="referenceOptions">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified type name and code type reference option.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to reference.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CodeTypeReference (string baseType, int rank);" />
+      <MemberSignature Language="C#" Value="public CodeTypeReference (string baseType, int arrayRank);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string baseType, int32 arrayRank) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="baseType" Type="System.String" />
-        <Parameter Name="rank" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="baseType">To be added: an object of type 'string'</param>
-        <param name="rank">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("We should parse basetype from right to left in 2.0 profile.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="baseType" Type="System.String" />
+        <Parameter Name="arrayRank" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="arrayRank">To be added.</param>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified array type name and rank.</para>
+        </summary>
+        <param name="baseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type of the elements of the array. </param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CodeTypeReference (Type type, System.CodeDom.CodeTypeReferenceOptions codeTypeReferenceOption);" />
+      <MemberSignature Language="C#" Value="public CodeTypeReference (Type type, System.CodeDom.CodeTypeReferenceOptions referenceOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, valuetype System.CodeDom.CodeTypeReferenceOptions referenceOptions) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="type" Type="System.Type" />
-        <Parameter Name="codeTypeReferenceOption" Type="System.CodeDom.CodeTypeReferenceOptions" />
+        <Parameter Name="referenceOptions" Type="System.CodeDom.CodeTypeReferenceOptions" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="codeTypeReferenceOption">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="referenceOptions">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeReference" /> class using the specified type and code type reference.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to reference.</param>
       </Docs>
     </Member>
     <Member MemberName="ArrayElementType">
-      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeReference ArrayElementType { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeReference ArrayElementType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeTypeReference ArrayElementType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeTypeReference</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is disregarded unless the <see cref="P:System.CodeDom.CodeTypeReference.ArrayRank" /> property is greater than or equal to 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the elements in the array.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ArrayRank">
+      <MemberSignature Language="C#" Value="public int ArrayRank { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ArrayRank" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ArrayRank">
-      <MemberSignature Language="C#" Value="public int ArrayRank { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the array rank of the array.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="BaseType">
+      <MemberSignature Language="C#" Value="public string BaseType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BaseType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BaseType">
-      <MemberSignature Language="C#" Value="public string BaseType { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property contains the name of the type unless it is an array type, in which case it is the array element type.</para>
+          <block subset="none" type="note">
+            <para>The name of the property may be misleading. This property contains just the type name with any array adornments or generic type arguments removed, not the base or parent type as might be expected. For example, the <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> value for System.Collections.Generic.Dictionary`2[[System.String], [System.Collections.Generic.List`1[[System.Int32]]]] is System.Collections.Generic.Dictionary`2.</para>
+          </block>
+          <format type="text/html">
+            <h2>Representation of Generic Types</h2>
+          </format>
+          <para>The information in this section is intended for CodeDom provider developers and only applies to CLS-compliant languages. The return value can contain generic types. Generic types are formatted with the name of the type followed by a grave accent ("`") followed by a count of the generic type arguments. The generic type arguments can be found in the <see cref="T:System.CodeDom.CodeTypeReferenceCollection" /> returned by the <see cref="P:System.CodeDom.CodeTypeReference.TypeArguments" /> property. The values returned by <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> and the associated <see cref="P:System.CodeDom.CodeTypeReference.TypeArguments" /> contain the same content as the value of the type returned by reflection. </para>
+          <para>For example, a constructed <see cref="T:System.Collections.Generic.Dictionary`2" /> where <paramref name="K" /> is a string and <paramref name="V" /> is a constructed <see cref="T:System.Collections.Generic.List`1" /> of integers is represented by reflection as the following (with the assembly information removed): </para>
+          <code>System.Collections.Generic.Dictionary`2[[System.String], [System.Collections.Generic.List`1[[System.Int32]]]]</code>
+          <para>Recursively parsing the <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> property from the <see cref="T:System.CodeDom.CodeTypeReference" /> for <see cref="T:System.Collections.Generic.Dictionary`2" /> yields the same strings as the reflection representation above:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> property for the parent <see cref="T:System.CodeDom.CodeTypeReference" /> returns the following:</para>
+              <code>System.Collections.Generic.Dictionary`2</code>
+            </item>
+            <item>
+              <para>The <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> property for the first <see cref="T:System.CodeDom.CodeTypeReference" /> object in the <see cref="P:System.CodeDom.CodeTypeReference.TypeArguments" /> collection returns the following:</para>
+              <code>System.String</code>
+            </item>
+            <item>
+              <para>The <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> property for the second <see cref="T:System.CodeDom.CodeTypeReference" /> object in the <see cref="P:System.CodeDom.CodeTypeReference.TypeArguments" /> collection returns the following:</para>
+              <code>System.Collections.Generic.List`1</code>
+            </item>
+            <item>
+              <para>The <see cref="P:System.CodeDom.CodeTypeReference.TypeArguments" /> property in the <see cref="T:System.CodeDom.CodeTypeReference" /> object for System.Collections.Generic.List`1 returns the following:</para>
+              <code>System.Int32</code>
+            </item>
+          </list>
+          <para>The type argument count should be used when parsing the associated <see cref="P:System.CodeDom.CodeTypeReference.TypeArguments" /> values. The common practice is to remove the type argument count from the generated code, but the practice is compiler specific.  It is important to note that the type argument count can be found within a nested type name, in which case it is followed by a plus sign ("+"). </para>
+          <block subset="none" type="note">
+            <para>When creating a generic <see cref="T:System.CodeDom.CodeTypeReference" />, the recommended practice is to specify the type arguments as <see cref="T:System.CodeDom.CodeTypeReference" /> objects or use the constructor that takes a <see cref="T:System.Type" />. Use of the constructor that creates a <see cref="T:System.CodeDom.CodeTypeReference" /> from a string can lead to undiscoverable type-argument errors.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the type being referenced.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Options">
-      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeReferenceOptions Options { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeReferenceOptions Options { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.CodeDom.CodeTypeReferenceOptions Options" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -250,16 +395,21 @@
         <ReturnType>System.CodeDom.CodeTypeReferenceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the code type reference option.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeArguments">
       <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeReferenceCollection TypeArguments { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeTypeReferenceCollection TypeArguments" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -270,9 +420,15 @@
         <ReturnType>System.CodeDom.CodeTypeReferenceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.CodeDom.CodeTypeReference.TypeArguments" /> property is a collection of type references to be substituted for the type parameter references of the current generic type. The collection contains all the type arguments for all nested types. For an example, see the <see cref="P:System.CodeDom.CodeTypeReference.BaseType" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type arguments for the current generic type reference.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

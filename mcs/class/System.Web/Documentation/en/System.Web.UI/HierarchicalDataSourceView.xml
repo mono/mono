@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HierarchicalDataSourceView" FullName="System.Web.UI.HierarchicalDataSourceView">
   <TypeSignature Language="C#" Value="public abstract class HierarchicalDataSourceView" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET supports a data-binding architecture that enables Web server controls to bind to data and present it in a consistent fashion. Web server controls that bind to data are called data-bound controls, and the classes that facilitate that binding are called data source controls. Data source controls can represent any data source: a file, a stream, a relational database, a business object, and so on. Data source controls present data in a consistent way to data-bound controls, regardless of the source or format of the underlying data.</para>
+      <para>Data source controls that represent hierarchical data derive from the abstract <see cref="T:System.Web.UI.HierarchicalDataSourceControl" /> class. You can think of a data source control as the combination of the data source control object and its associated views on the underlying data, which are represented by data source view objects. Hierarchical data source controls support a hierarchical data source view for each hierarchical level of data they represent. The data source views are not named, like the <see cref="T:System.Web.UI.DataSourceView" /> objects associated with a <see cref="T:System.Web.UI.DataSourceControl" /> control, but are identified by their unique hierarchical path.</para>
+      <para>Data source views define the capabilities of a data source control. All data source view objects, including <see cref="T:System.Web.UI.HierarchicalDataSourceView" />, support data retrieval from the underlying data source using the <see cref="M:System.Web.UI.HierarchicalDataSourceView.Select" /> method, which retrieves a hierarchical list of data as an <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> object. All data source view objects optionally support a basic set of capabilities, including operations such as <see cref="M:System.Web.UI.DataSourceView.Insert(System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" />, <see cref="M:System.Web.UI.DataSourceView.Update(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" />, <see cref="M:System.Web.UI.DataSourceView.Delete(System.Collections.IDictionary,System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" />, and sorting. A data-bound control can discover the capabilities of a data source control by retrieving an associated data source view using the <see cref="M:System.Web.UI.HierarchicalDataSourceControl.GetHierarchicalView(System.String)" /> method and querying the view at design time or at run time. <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> does not currently support <see cref="M:System.Web.UI.DataSourceView.Insert(System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" />, <see cref="M:System.Web.UI.DataSourceView.Update(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" /> or <see cref="M:System.Web.UI.DataSourceView.Delete(System.Collections.IDictionary,System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" /> operations.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a data view on a node or collection of nodes in a hierarchical data structure for a <see cref="T:System.Web.UI.HierarchicalDataSourceControl" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,10 +47,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HierarchicalDataSourceView.Select" /> method returns an <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of data items in the current view. You can call the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method to get an <see cref="T:System.Collections.IEnumerator" /> object and iterate through the collection of data items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of all the data items in the view.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of data items.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

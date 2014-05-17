@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IConvertible" FullName="System.IConvertible">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IConvertible" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IConvertible" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,6 +10,7 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -17,31 +20,53 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface provides methods to convert the value of an instance of an implementing type to a common language runtime type that has an equivalent value. The common language runtime types are <see cref="T:System.Boolean" />, <see cref="T:System.SByte" />, <see cref="T:System.Byte" />, <see cref="T:System.Int16" />, <see cref="T:System.UInt16" />, <see cref="T:System.Int32" />, <see cref="T:System.UInt32" />, <see cref="T:System.Int64" />, <see cref="T:System.UInt64" />, <see cref="T:System.Single" />, <see cref="T:System.Double" />, <see cref="T:System.Decimal" />, <see cref="T:System.DateTime" />, <see cref="T:System.Char" />, and <see cref="T:System.String" />.</para>
+      <para>If there is no meaningful conversion to a common language runtime type, then a particular interface method implementation throws <see cref="T:System.InvalidCastException" />. For example, if this interface is implemented on a Boolean type, the implementation of the <see cref="M:System.IConvertible.ToDateTime(System.IFormatProvider)" /> method throws an exception because there is no meaningful <see cref="T:System.DateTime" /> equivalent to a Boolean type.</para>
+      <para>The common language runtime typically exposes the <see cref="T:System.IConvertible" /> interface through the <see cref="T:System.Convert" /> class. The common language runtime also uses the <see cref="T:System.IConvertible" /> interface internally, in explicit interface implementations, to simplify the code used to support conversions in the <see cref="T:System.Convert" /> class and basic common language runtime types.</para>
+      <para>In addition to the <see cref="T:System.IConvertible" /> interface, the .NET Framework provides classes called type converters for converting user-defined data types to other data types. For more information, see the <format type="text/html"><a href="49253AE6-7657-4810-82AB-1176A6FEEADA">Generalized Type Conversion</a></format> topic.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods that convert the value of the implementing reference or value type to a common language runtime type that has an equivalent value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetTypeCode">
       <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.TypeCode GetTypeCode() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.TypeCode</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeCode'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TypeCode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.TypeCode" /> for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant that is the <see cref="T:System.TypeCode" /> of the class or value type that implements this interface.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="ToBoolean">
       <MemberSignature Language="C#" Value="public bool ToBoolean (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool ToBoolean(class System.IFormatProvider provider) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -49,20 +74,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent Boolean value using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToByte">
+      <MemberSignature Language="C#" Value="public byte ToByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8 ToByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToByte">
-      <MemberSignature Language="C#" Value="public byte ToByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -70,20 +103,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 8-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-bit unsigned integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToChar">
+      <MemberSignature Language="C#" Value="public char ToChar (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance char ToChar(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToChar">
-      <MemberSignature Language="C#" Value="public char ToChar (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -91,20 +132,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent Unicode character using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Unicode character equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="C#" Value="public DateTime ToDateTime (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.DateTime ToDateTime(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToDateTime">
-      <MemberSignature Language="C#" Value="public DateTime ToDateTime (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -112,20 +161,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent <see cref="T:System.DateTime" /> using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> instance equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToDecimal">
+      <MemberSignature Language="C#" Value="public decimal ToDecimal (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Decimal ToDecimal(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToDecimal">
-      <MemberSignature Language="C#" Value="public decimal ToDecimal (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -133,20 +190,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'decimal'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent <see cref="T:System.Decimal" /> number using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Decimal" /> number equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToDouble">
+      <MemberSignature Language="C#" Value="public double ToDouble (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance float64 ToDouble(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToDouble">
-      <MemberSignature Language="C#" Value="public double ToDouble (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -154,20 +219,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent double-precision floating-point number using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToInt16">
+      <MemberSignature Language="C#" Value="public short ToInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int16 ToInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToInt16">
-      <MemberSignature Language="C#" Value="public short ToInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -175,20 +248,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 16-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 16-bit signed integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToInt32">
+      <MemberSignature Language="C#" Value="public int ToInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 ToInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToInt32">
-      <MemberSignature Language="C#" Value="public int ToInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -196,20 +277,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 32-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 32-bit signed integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToInt64">
+      <MemberSignature Language="C#" Value="public long ToInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int64 ToInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToInt64">
-      <MemberSignature Language="C#" Value="public long ToInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -217,20 +306,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 64-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 64-bit signed integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToSByte">
+      <MemberSignature Language="C#" Value="public sbyte ToSByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int8 ToSByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToSByte">
-      <MemberSignature Language="C#" Value="public sbyte ToSByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -238,20 +335,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'sbyte'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 8-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-bit signed integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToSingle">
+      <MemberSignature Language="C#" Value="public float ToSingle (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance float32 ToSingle(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToSingle">
-      <MemberSignature Language="C#" Value="public float ToSingle (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -259,20 +364,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent single-precision floating-point number using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single-precision floating-point number equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -280,20 +393,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent <see cref="T:System.String" /> using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> instance equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToType">
+      <MemberSignature Language="C#" Value="public object ToType (Type conversionType, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object ToType(class System.Type conversionType, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToType">
-      <MemberSignature Language="C#" Value="public object ToType (Type conversionType, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -302,21 +423,30 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="conversionType">To be added: an object of type 'Type'</param>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an <see cref="T:System.Object" /> of the specified <see cref="T:System.Type" /> that has an equivalent value, using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> instance of type <paramref name="conversionType" /> whose value is equivalent to the value of this instance.</para>
+        </returns>
+        <param name="conversionType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to which the value of this instance is converted. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToUInt16">
+      <MemberSignature Language="C#" Value="public ushort ToUInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int16 ToUInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToUInt16">
-      <MemberSignature Language="C#" Value="public ushort ToUInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -324,20 +454,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ushort'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 16-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 16-bit unsigned integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToUInt32">
+      <MemberSignature Language="C#" Value="public uint ToUInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int32 ToUInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToUInt32">
-      <MemberSignature Language="C#" Value="public uint ToUInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -345,20 +483,28 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'uint'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 32-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 32-bit unsigned integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToUInt64">
+      <MemberSignature Language="C#" Value="public ulong ToUInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int64 ToUInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToUInt64">
-      <MemberSignature Language="C#" Value="public ulong ToUInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -366,17 +512,18 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ulong'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 64-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 64-bit unsigned integer equivalent to the value of this instance.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Interfaces />
 </Type>

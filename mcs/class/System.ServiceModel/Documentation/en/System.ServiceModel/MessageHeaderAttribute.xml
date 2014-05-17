@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageHeaderAttribute" FullName="System.ServiceModel.MessageHeaderAttribute">
+  <TypeSignature Language="C#" Value="public class MessageHeaderAttribute : System.ServiceModel.MessageContractMemberAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageHeaderAttribute extends System.ServiceModel.MessageContractMemberAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.MessageContractMemberAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.MessageHeaderAttribute" /> attribute allows you to map fields and properties of a type marked with the <see cref="T:System.ServiceModel.MessageContractAttribute" /> attribute to SOAP message headers. The field or property can be of a simple type or a composite type that can be serialized. </para>
+      <para>For information on controlling the serialization of the contents of a SOAP body without modifying the default SOAP envelope itself, see <see cref="T:System.Runtime.Serialization.DataContractAttribute" />, <format type="text/html"><a href="7c5a26c8-89c9-4bcb-a4bc-7131e6d01f0c">Specifying Data Transfer in Service Contracts</a></format>, and <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Data Contracts Overview</a></format>.</para>
+      <para>For more information about creating message contracts, see <format type="text/html"><a href="1e19c64a-ae84-4c2f-9155-91c54a77c249">Using Message Contracts</a></format>.</para>
+      <para>The SOAP standard defines the following attributes that can exist on a header:</para>
+      <list type="bullet">
+        <item>
+          <para>Actor or Role (Actor in SOAP 1.1, Role in SOAP 1.2)</para>
+        </item>
+        <item>
+          <para>MustUnderstand</para>
+        </item>
+        <item>
+          <para>Relay</para>
+        </item>
+      </list>
+      <para>The Actor or Role attribute specifies the URI of the node for which a given header is intended. The MustUnderstand attribute specifies whether the header understands the node processing. The Relay attribute specifies whether the header is to be relayed to downstream nodes. indigo1 does not perform any processing of these attributes on incoming messages, except for the MustUnderstand attribute. </para>
+      <para>You can, however, read and write these attributes, even though they are not sent by default. You can set the attribute values in two ways. First, you can change the <see cref="P:System.ServiceModel.MessageHeaderAttribute.Actor" />, <see cref="P:System.ServiceModel.MessageHeaderAttribute.MustUnderstand" /> and <see cref="P:System.ServiceModel.MessageHeaderAttribute.Relay" /> properties on the <see cref="T:System.ServiceModel.MessageHeaderAttribute" />. (There is no Role property – set the <see cref="P:System.ServiceModel.MessageHeaderAttribute.Actor" /> property and Role is passed if SOAP 1.2 is used). For example:</para>
+      <para>code reference: MessageHeaderAttribute#7</para>
+      <para>The second way to control these attributes is by making the desired header type the type parameter of the <see cref="T:System.ServiceModel.MessageHeader`1" /> class and using the resulting type together with the <see cref="T:System.ServiceModel.MessageHeaderAttribute" />. Then use the <see cref="T:System.ServiceModel.MessageHeader`1" /> properties programmatically to set the SOAP attributes. For example:</para>
+      <para>code reference: MessageHeaderAttribute#7</para>
+      <para>code reference: MessageHeaderAttribute#8</para>
+      <para>If both the dynamic and the static control mechanisms are used, the static settings are the default but can be overridden using the dynamic mechanism. For example:</para>
+      <para>code reference: MessageHeaderAttribute#9</para>
+      <para>code reference: MessageHeaderAttribute#10</para>
+      <para>Creating repeated headers with dynamic attribute control is allowed. For example:</para>
+      <code>[MessageHeaderArray] public MessageHeader&lt;Person&gt; documentApprovers[];</code>
+      <para>On the receiving side, reading these SOAP attributes can only be done if the generic <see cref="T:System.ServiceModel.MessageHeader`1" /> class is used. Examine the <see cref="P:System.ServiceModel.MessageHeader`1.Actor" />, <see cref="P:System.ServiceModel.MessageHeader`1.Relay" /> or <see cref="P:System.ServiceModel.MessageHeader`1.MustUnderstand" /> properties of a header of the <see cref="T:System.ServiceModel.MessageHeader`1" /> type to discover the attribute settings on the received message.</para>
+      <para>When a message is received and then sent back, the SOAP attribute settings only roundtrip for headers of the <see cref="T:System.ServiceModel.MessageHeader`1" /> type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a data member is a SOAP message header.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageHeaderAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.MessageHeaderAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Actor">
+      <MemberSignature Language="C#" Value="public string Actor { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Actor" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the Remarks section of <see cref="T:System.ServiceModel.MessageHeaderAttribute" /> for details.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a URI that indicates the node at which this header is targeted. Maps to the role header attribute when SOAP 1.2 is used and the actor header attribute when SOAP 1.1 is used. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MustUnderstand">
+      <MemberSignature Language="C#" Value="public bool MustUnderstand { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MustUnderstand" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the Remarks section of <see cref="T:System.ServiceModel.MessageHeaderAttribute" /> for details.</para>
+          <block subset="none" type="note">
+            <para>It is important to remember that if the <see cref="P:System.ServiceModel.MessageHeaderAttribute.MustUnderstand" /> property is true in a message being sent and the application on the receiving side does not understand the header a fault is generated. Conversely, if a header with the mustUnderstand SOAP header attribute set to true is received by indigo1, it must be a part of the message contract (or must be processed by one of the indigo1 channels); otherwise, it is assumed that the header is not understood and an exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the node acting in the <see cref="P:System.ServiceModel.MessageHeaderAttribute.Actor" /> role must understand this header. This is mapped to the mustUnderstand SOAP header attribute.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Relay">
+      <MemberSignature Language="C#" Value="public bool Relay { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Relay" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is ignored when SOAP 1.1 is used. For more information, see the Remarks section of <see cref="T:System.ServiceModel.MessageHeaderAttribute" /> for details.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether this header is to be relayed to downstream nodes. This is mapped to the relay SOAP header attribute.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

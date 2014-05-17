@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="FaultContractInfo" FullName="System.ServiceModel.Dispatcher.FaultContractInfo">
+  <TypeSignature Language="C#" Value="public class FaultContractInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FaultContractInfo extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can get a collection of <see cref="T:System.ServiceModel.Dispatcher.FaultContractInfo" /> objects by accessing the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.FaultContractInfos" /> and <see cref="P:System.ServiceModel.Dispatcher.DispatchOperation.FaultContractInfos" /> properties. The <see cref="T:System.ServiceModel.Dispatcher.FaultContractInfo" /> class exposes the action of the SOAP fault and the detail type that is serialized into the SOAP fault.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents information about a SOAP fault that is specified in a <see cref="T:System.ServiceModel.FaultContractAttribute" /> attribute.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FaultContractInfo (string action, Type detail);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string action, class System.Type detail) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="action" Type="System.String" />
+        <Parameter Name="detail" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new FaultContractInfo from the <paramref name="action" /> and <paramref name="detail" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.FaultContractInfo" /> class that uses the specified action and detail type.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action of the SOAP fault.</param>
+        <param name="detail">
+          <attribution license="cc4" from="Microsoft" modified="false" />The detail type that is serialized as the SOAP fault detail.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public string Action { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Action" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the SOAP fault action value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Detail">
+      <MemberSignature Language="C#" Value="public Type Detail { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Detail" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the object that is serialized as the SOAP fault detail.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

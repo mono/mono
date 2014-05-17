@@ -5,6 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -624,6 +625,21 @@ namespace MonoTests.System.Runtime.Serialization.Json
 				Thread.CurrentThread.CurrentCulture = new CultureInfo ("de-DE");
 				// if we read a number just by current culture, it will be regarded as correct JSON.
 				ReadToEnd (CreateReader ("123,45"));
+			} finally {
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
+		}
+
+		[Test]
+		public void ReadValidNumberGerman ()
+		{
+			CultureInfo originalCulture = Thread.CurrentThread.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("de-DE");
+				var s = GetInput ("123.45"); // German is ',' for decimals
+				var r = new DataContractJsonSerializer (typeof (double));
+				var d = (double) r.ReadObject (s);
+				Assert.AreEqual (123.45, d, "InvariantCulture");
 			} finally {
 				Thread.CurrentThread.CurrentCulture = originalCulture;
 			}

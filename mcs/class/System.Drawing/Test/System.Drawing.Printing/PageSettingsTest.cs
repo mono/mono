@@ -40,7 +40,7 @@ namespace MonoTests.System.Drawing.Printing
 			// Check for installed printers, because we need
 			// to have at least one to test
 			if (PrinterSettings.InstalledPrinters.Count == 0)
-				return;
+				Assert.Ignore ("No printers found.");
 
 			PageSettings ps = new PageSettings ();
 			ps.Color = false;

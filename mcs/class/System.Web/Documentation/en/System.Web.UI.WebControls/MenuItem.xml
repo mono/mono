@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MenuItem" FullName="System.Web.UI.WebControls.MenuItem">
   <TypeSignature Language="C#" Value="public sealed class MenuItem : ICloneable, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -21,9 +22,217 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.UI.WebControls.Menu" /> control is made up of a hierarchy of menu items represented by <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects. Each menu item has a read-only <see cref="P:System.Web.UI.WebControls.MenuItem.Depth" /> property that specifies the level at which the menu item is displayed in the <see cref="T:System.Web.UI.WebControls.Menu" /> control. Menu items at the top level (level 0) that do not have a parent menu item are called root menu items. A menu item that has a parent menu item is called a submenu item. All root menu items are stored in the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> collection. Submenu items are stored in a parent menu item's <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection. You can access a menu item's parent menu item by using the <see cref="P:System.Web.UI.WebControls.MenuItem.Parent" /> property.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="P:System.Web.UI.WebControls.Menu.Items" /> and <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collections contain only the menu items for the next level down. To access menu items further down the menu tree, use the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> property of a subsequent menu item.</para>
+      </block>
+      <para>To create the menu items for a <see cref="T:System.Web.UI.WebControls.Menu" /> control, use one of the following methods:</para>
+      <para>Use declarative syntax to create static menu items.</para>
+      <para>Use a constructor to dynamically create new instances of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class. These <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects can then be added to the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> or <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection.</para>
+      <para>Bind the <see cref="T:System.Web.UI.WebControls.Menu" /> control to a data source. When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control, <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects are automatically created that correspond to the items in the data source. For other data sources, <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects are also automatically created that match the hierarchy structure of data source; however, you must also use the <see cref="P:System.Web.UI.WebControls.Menu.DataBindings" /> collection to define the menu item bindings that specify the binding relationship between a menu item and its corresponding data item.</para>
+      <para>The menu items are displayed in either a static menu or a dynamic menu, depending on its level. The static menu is always displayed in a <see cref="T:System.Web.UI.WebControls.Menu" /> control. By default, the menu items at the top level (level 0) are displayed in the static menu. You can display additional menu levels (static submenus) within the static menu by setting the <see cref="P:System.Web.UI.WebControls.Menu.StaticDisplayLevels" /> property. Menu items (if any) with a higher level than the value specified by the <see cref="P:System.Web.UI.WebControls.Menu.StaticDisplayLevels" /> property are displayed in a dynamic submenu. A dynamic submenu appears only when the user positions the mouse pointer over the parent menu item that contains a dynamic submenu.</para>
+      <para>When the user clicks a menu item, the <see cref="T:System.Web.UI.WebControls.Menu" /> control can either navigate to a linked Web page or simply post back to the server. If the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a menu item is set, the <see cref="T:System.Web.UI.WebControls.Menu" /> control navigates to the linked page; otherwise, it posts the page back to the server for processing. By default, a linked page is displayed in the same window or frame as the <see cref="T:System.Web.UI.WebControls.Menu" /> control. To display the linked content in a different window or frame, use the <see cref="P:System.Web.UI.WebControls.Menu.Target" /> property of the <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="P:System.Web.UI.WebControls.Menu.Target" /> property affects every menu item in the control. To specify a window or frame for an individual menu item, set the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object directly.</para>
+      </block>
+      <para>Each menu item has a <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> and a <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property. The value of the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property is displayed in the <see cref="T:System.Web.UI.WebControls.Menu" /> control, while the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property is used to store any additional data about the menu item, such as data passed to the postback event associated with the menu item. If you set the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property, but leave the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property unset, the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property is automatically set with the same value as the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property. The opposite is also true. If you set the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property, but not the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property is automatically set with the same value as the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property.</para>
+      <block subset="none" type="note">
+        <para>Menu items at the same menu level must each have a unique value for the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property; the <see cref="T:System.Web.UI.WebControls.Menu" /> control cannot distinguish between different menu items at the same level that have the same value. In this scenario, if the user clicks a menu item that has a duplicate value, the menu item that appears first in the menu is selected.</para>
+      </block>
+      <para>To display a ToolTip when the user positions the mouse pointer over a menu item, set the item's <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.Menu" /> control has several different types of menu items. You can control the style (such as font size and color) for the different menu item types by using the properties in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Menu item style property</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.DynamicHoverStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for a dynamic menu item when the mouse pointer is positioned over it.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.DynamicMenuItemStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for an individual dynamic menu item.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.DynamicMenuStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for a dynamic menu.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.DynamicSelectedStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for the currently selected dynamic menu item.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.StaticHoverStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for a static menu item when the mouse pointer is positioned over it.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.StaticMenuItemStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for an individual static menu item.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.StaticMenuStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for a static menu.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.StaticSelectedStyle" />
+            </para>
+          </term>
+          <description>
+            <para>The style settings for the currently selected static menu item.</para>
+          </description>
+        </item>
+      </list>
+      <para>Instead of setting the individual style properties, you can specify styles that are applied to menu items based on their level by using the style collections shown in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Level style collections</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.LevelMenuItemStyles" />
+            </para>
+          </term>
+          <description>
+            <para>A collection of <see cref="T:System.Web.UI.WebControls.MenuItemStyle" /> objects that control the style of the menu items based on their level.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.LevelSelectedStyles" />
+            </para>
+          </term>
+          <description>
+            <para>A collection of <see cref="T:System.Web.UI.WebControls.MenuItemStyle" /> objects that control the style of selected menu items based on their level.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.Menu.LevelSubMenuStyles" />
+            </para>
+          </term>
+          <description>
+            <para>A collection of <see cref="T:System.Web.UI.WebControls.MenuItemStyle" /> objects that control the style of the submenu items based on their level.</para>
+          </description>
+        </item>
+      </list>
+      <para>The first style in the collection corresponds to the style of the menu items at the first depth level in the menu tree. The second style in the collection corresponds to the style of the menu items at the second depth level in the menu tree, and so on. This is most often used to generate table of contents-style navigation menus where menu items at a certain depth should have the same appearance, regardless of whether they have submenus.</para>
+      <block subset="none" type="note">
+        <para>If you use any of the level style collections listed in the previous table to define the style for the <see cref="T:System.Web.UI.WebControls.Menu" /> control, these style settings override the individual menu item style properties.</para>
+      </block>
+      <para>In addition to customizing a menu item's style, you can also customize its appearance. You can specify custom images for the different parts for a menu item by setting the properties in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Image property</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>An optional image displayed next to the text of a menu item.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>An optional image displayed in a menu item to indicate that the menu item has a dynamic submenu.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>An optional image displayed at the bottom of a menu item to separate it from other menu items.</para>
+          </description>
+        </item>
+      </list>
+      <para>To determine whether a menu item is currently selected in a <see cref="T:System.Web.UI.WebControls.Menu" /> control, use the <see cref="P:System.Web.UI.WebControls.MenuItem.Selected" /> property. You can also determine whether a menu item is bound to data by using the <see cref="P:System.Web.UI.WebControls.MenuItem.DataBound" /> property. If a menu item is bound to data, you can use the <see cref="P:System.Web.UI.WebControls.MenuItem.DataItem" /> property to access the values of the data item bound to the menu item.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class, see the <see cref="M:System.Web.UI.WebControls.MenuItem.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a menu item displayed in the <see cref="T:System.Web.UI.WebControls.Menu" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +240,19 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> class without menu text or a value.</para>
+          <block subset="none" type="note">
+            <para>When this constructor is used, all properties in the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object are set to their default values. Be sure to set the properties, as necessary, after creating the object.</para>
+          </block>
+          <para>This constructor is commonly used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> collection of a <see cref="T:System.Web.UI.WebControls.Menu" /> control or the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class without menu text or a value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,10 +265,41 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the menu text specified by the <paramref name="text" /> parameter.</para>
+          <para>The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Text" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the text parameter.</para>
+              </description>
+            </item>
+          </list>
+          <para>This constructor is commonly used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> collection of a <see cref="T:System.Web.UI.WebControls.Menu" /> control or the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the specified menu text. </para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text displayed for a menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,11 +313,53 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the menu text and value specified by the <paramref name="text" /> and <paramref name="value" /> parameters, respectively.</para>
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Text" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Value" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <para>This constructor is commonly used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> collection of a <see cref="T:System.Web.UI.WebControls.Menu" /> control or the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the specified menu text and value. </para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text displayed for a menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The supplemental data associated with the menu item, such as data used for handling postback events.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,12 +374,65 @@
         <Parameter Name="imageUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="imageUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the menu text, value, and image URL specified by the <paramref name="text" />, <paramref name="value" />, and <paramref name="imageUrl" /> parameters, respectively.</para>
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Text" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Value" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="imageUrl" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <para>This constructor is commonly used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> collection of a <see cref="T:System.Web.UI.WebControls.Menu" /> control or the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the specified menu text, value, and URL to an image. </para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text displayed for a menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The supplemental data associated with the menu item, such as data used for handling postback events.</param>
+        <param name="imageUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to an image displayed next to the text in a menu item.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,13 +448,77 @@
         <Parameter Name="navigateUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="imageUrl">To be added.</param>
-        <param name="navigateUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the menu text, value, image URL, and navigation URL specified by the <paramref name="text" />, <paramref name="value" />, <paramref name="imageUrl" />, and <paramref name="navigateUrl" /> parameters, respectively.</para>
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Text" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Value" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="imageUrl" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="navigateUrl" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <para>This constructor is commonly used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> collection of a <see cref="T:System.Web.UI.WebControls.Menu" /> control or the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the specified menu text, value, image URL, and navigation URL. </para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text displayed for a menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The supplemental data associated with the menu item, such as data used for handling postback events.</param>
+        <param name="imageUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to an image displayed next to the text in a menu item.</param>
+        <param name="navigateUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to link to when the menu item is clicked.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -126,14 +535,89 @@
         <Parameter Name="target" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="imageUrl">To be added.</param>
-        <param name="navigateUrl">To be added.</param>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the menu text, value, image URL, navigation URL, and target specified by the <paramref name="text" />, <paramref name="value" />, <paramref name="imageUrl" />, <paramref name="navigateUrl" />, and <paramref name="target" /> parameters, respectively.</para>
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Text" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="text" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Value" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="value" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="imageUrl" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="navigateUrl" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.MenuItem.Target" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="target" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <para>This constructor is commonly used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.Items" /> collection of a <see cref="T:System.Web.UI.WebControls.Menu" /> control or the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> collection of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class using the specified menu text, value, image URL, navigation URL, and target. </para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text displayed for a menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The supplemental data associated with the menu item, such as data used for handling postback events. </param>
+        <param name="imageUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to an image displayed next to the text in a menu item. </param>
+        <param name="navigateUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to link to when the menu item is clicked. </param>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target window or frame in which to display the Web page content linked to a menu item when the menu item is clicked. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,10 +641,17 @@
         <ReturnType>System.Web.UI.WebControls.MenuItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> property (collection) to access the submenu items of the current menu item, if any. This collection contains only the menu items at the next level. To access menu items further down the menu tree, use the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> property of a subsequent menu item. If the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> property is null, the current menu does not have any submenu items.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> property can also be used to programmatically manage the submenu items of the current menu item. You can add, insert, remove, retrieve, and modify <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects from the collection. Any updates to the collection will automatically be reflected in the <see cref="T:System.Web.UI.WebControls.Menu" /> control the next time the page is refreshed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.WebControls.MenuItemCollection" /> object that contains the submenu items of the current menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -184,10 +675,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.DataBound" /> property is used to programmatically determine whether the menu item was created through data binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the menu item was created through data binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -208,10 +705,19 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, such as an <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> object, this property is set to the data item that is bound to this specific menu item. This property is commonly used to access the value of the data item.</para>
+          <block subset="none" type="note">
+            <para>This property is available only after data binding has occurred.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data item that is bound to the menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -235,10 +741,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.DataPath" /> property value is commonly used when calling the <see cref="M:System.Web.UI.IHierarchicalDataSource.GetHierarchicalView(System.String)" /> method to provide the path to the data that is bound to the current menu item. This method then returns a <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> object that contains the data at the specified path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path to the data that is bound to the menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -259,10 +771,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.Depth" /> property to determine the depth of the menu item. The depth indicates the level at which a menu item is displayed and represents the number of levels of hierarchy between the current menu item and the root menu item. For example, a root menu item has a depth of 0. A submenu item of the root menu item has a depth of 1, and so on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the level at which a menu item is displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -283,10 +801,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to false, the menu item is disabled and no pop-out image indicating child items is displayed. Setting this property to false for a menu item essentially makes the menu item the end of that node, where no further levels are shown off of that node. The default value is true.</para>
+          <para>If you want the menu item to show any child items, but to not be "clickable" itself, use the <see cref="P:System.Web.UI.WebControls.MenuItem.Selectable" /> property and set it to false. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object is enabled, allowing the item to display a pop-out image and any child menu items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -310,10 +835,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property to specify a custom image for the current menu item in the <see cref="T:System.Web.UI.WebControls.Menu" /> control. This image is displayed next to the menu item text and can be in any file format (.jpg, .gif, .bmp, and so on), as long as the client's browser supports that format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image that is displayed next to the text in a menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -337,10 +868,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A menu item can be in one of two modes: selection mode or navigation mode. By default, a menu item is in selection mode. To put a menu item into navigation mode, set the menu item's <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property to a value other than an empty string ("").</para>
+          <para>When a menu item is in navigation mode, all selection events are disabled for that menu item. Clicking the menu item in navigation mode takes the user to the specified URL. You can optionally set the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property to specify the window or frame in which to display the linked content.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to navigate to when the menu item is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -361,10 +899,20 @@
         <ReturnType>System.Web.UI.WebControls.MenuItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.Parent" /> property to determine the parent menu item or to access its properties.</para>
+          <block subset="none" type="note">
+            <para>A root menu item does not have a parent menu item.</para>
+          </block>
+          <para>To access the submenu items of the current menu item, use the <see cref="P:System.Web.UI.WebControls.MenuItem.ChildItems" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent menu item of the current menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -388,10 +936,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="T:System.Web.UI.WebControls.MenuRenderingMode" /> is set to List, or if <see cref="T:System.Web.UI.WebControls.MenuRenderingMode" /> is set to Default and <see cref="P:System.Web.Configuration.PagesSection.ControlRenderingCompatibilityVersion" /> is set to 4.0 or later, this property has no effect. Use the <see cref="P:System.Web.UI.WebControls.Menu.DynamicEnableDefaultPopOutImage" /> property or the <see cref="P:System.Web.UI.WebControls.Menu.StaticEnableDefaultPopOutImage" /> property instead of this property.</para>
+          <para>If <see cref="T:System.Web.UI.WebControls.MenuRenderingMode" /> is set to Table, or if <see cref="T:System.Web.UI.WebControls.MenuRenderingMode" /> is set to Default and <see cref="P:System.Web.Configuration.PagesSection.ControlRenderingCompatibilityVersion" /> is set to 3.5, use this property to specify a custom image that is displayed in a menu item to indicate that the menu item has a dynamic submenu. This image can be in any file format (.jpg, .gif, .bmp, and so on), as long as the client's browser supports that format.</para>
+          <block subset="none" type="note">
+            <para>Setting this property overrides the image specified by the <see cref="P:System.Web.UI.WebControls.Menu.DynamicPopOutImageUrl" /> and <see cref="P:System.Web.UI.WebControls.Menu.StaticPopOutImageUrl" /> properties.</para>
+          </block>
+          <para>You can also disable this image in a static menu by setting this property to an empty string and setting the <see cref="P:System.Web.UI.WebControls.Menu.StaticEnableDefaultPopOutImage" /> property to false. Similarly, you can disable this image in a dynamic menu by setting this property to an empty string and setting the <see cref="P:System.Web.UI.WebControls.Menu.DynamicEnableDefaultPopOutImage" /> property to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image that is displayed in a menu item to indicate that the menu item has a dynamic submenu.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -412,10 +971,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to false on a menu item, no action occurs when the menu item is clicked (selected). The pop-out image indicating child menu items for the menu item, if one exists, is still shown and available.</para>
+          <para>If you do not want any child menu items to appear for a menu item, set the <see cref="P:System.Web.UI.WebControls.MenuItem.Enabled" /> property to false.</para>
+          <para>
+            <see cref="P:System.Web.UI.WebControls.MenuItem.Selectable" /> applies only to menu items that can be selected, in the sense that clicking a menu item posts back and sets that item in the selected state. Note that a menu item that cannot be selected is still formatted as a link. This is for accessibility reasons, so that the menu item can cause an action to occur. Also, a menu item, even if it cannot be selected, may have child menu items that can be selected or that need to be displayed.</para>
+          <para>If you want to prevent a user from clicking a menu item, do one of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Do not set <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrl" /> and set <see cref="P:System.Web.UI.WebControls.MenuItem.Selectable" /> to false.</para>
+            </item>
+            <item>
+              <para>Set the menu item's <see cref="P:System.Web.UI.WebControls.MenuItem.Enabled" /> property to false.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object can be selected, or is "clickable."</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -436,10 +1013,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.Selected" /> property to specify or determine whether the current menu item is selected.</para>
+          <block subset="none" type="note">
+            <para>Although the property can be used to determine whether a menu item is selected, it is more common to use the <see cref="P:System.Web.UI.WebControls.Menu.SelectedItem" /> property.</para>
+          </block>
+          <para>Only one menu item can be selected at a time in the <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the current menu item is selected in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -463,10 +1050,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property to specify a custom image (usually of a line) that is displayed at the bottom of a menu item to separate it from other menu items. This image can be in any file format (.jpg, .gif, .bmp, and so on), as long as the client's browser supports that format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image displayed at the bottom of a menu item to separate it from other menu items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -483,9 +1076,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.MenuItem.System#ICloneable#Clone" /> method is used by the <see cref="T:System.Web.UI.WebControls.MenuItem" /> class to make a copy of itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents a copy of the <see cref="T:System.Web.UI.WebControls.MenuItem" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -498,9 +1100,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="P:System.Web.UI.WebControls.MenuItem.System#Web#UI#IStateManager#IsTrackingViewState" /> member to determine whether a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object is tracking view-state changes. </para>
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.System#Web#UI#IStateManager#IsTrackingViewState" /> member is an explicit interface member implementation. It can be used only when a <see cref="T:System.Web.UI.WebControls.MenuItem" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object is saving changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -517,8 +1126,11 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the menu item's previously saved view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -532,9 +1144,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the view-state changes to an <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the view-state changes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -548,8 +1166,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this method has been called on a server control, the <see cref="P:System.Web.UI.Control.IsTrackingViewState" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to track changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -564,10 +1188,75 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property to specify the window or frame in which to display the Web content linked to a menu item when that menu item is clicked. Values must begin with a letter in the range of A through Z (case-insensitive), except for certain special values that begin with an underscore, as shown in the following table. Note that setting this property overrides the <see cref="P:System.Web.UI.WebControls.Menu.Target" /> property of the <see cref="T:System.Web.UI.WebControls.Menu" /> control for this menu item.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search</para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine if the _search value is supported. For example, Microsoft Internet Explorer 5.0 and later support the _search target value.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property is rendered as a target attribute. The target attribute on anchor elements is not allowed in the XHTML 1.1 strict document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.HyperLink" /> must be XHTML 1.1-compliant. For more information, see <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>.</para>
+            <para>When creating accessible Web pages, it is strongly recommended you avoid using the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property to target another window. For more information, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">ASP.NET Accessibility</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target window or frame in which to display the Web page content associated with a menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -588,10 +1277,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property to specify or determine the text that is displayed for the menu item in the <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property contains null, the get accessor returns the value of the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property. If the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property, in turn, contains null, <see cref="F:System.String.Empty" /> is returned.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed for the menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -612,10 +1311,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property to specify the ToolTip text for the menu item. The ToolTip text is displayed when the mouse pointer is positioned over the menu item.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ToolTip text for the menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -636,10 +1342,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property is used to supplement the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property by storing any additional data associated with the menu item. This value is not displayed in the control and is commonly used to store data for handling postback events.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property contains null, the get accessor returns the value of the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property. If the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property, in turn, contains null, <see cref="F:System.String.Empty" /> is returned.</para>
+          </block>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property is also used when the value path specified in the <see cref="P:System.Web.UI.WebControls.MenuItem.ValuePath" /> property is generated. A value path is a delimiter-separated list of menu item values that forms a path from the root menu item to the current menu item. The value path is used to indicate the position of a menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          <block subset="none" type="note">
+            <para>Menu items at the same menu level must each have a unique value for the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property; the <see cref="T:System.Web.UI.WebControls.Menu" /> control cannot distinguish between different menu items at the same level that have the same value.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a non-displayed value used to store any additional data about the menu item, such as data used for handling postback events.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -660,10 +1380,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.ValuePath" /> property contains a delimiter-separated list of menu item values that form a path from the root menu item to the current menu item. The value path is used to indicate the position of a menu item in a <see cref="T:System.Web.UI.WebControls.Menu" /> control. You can specify the delimiter character used to separate the menu item values by using the <see cref="P:System.Web.UI.WebControls.Menu.PathSeparator" /> property. This value is commonly used when parsing the list for the individual values, or to pass as an argument to the <see cref="M:System.Web.UI.WebControls.Menu.FindItem(System.String)" /> method of the <see cref="T:System.Web.UI.WebControls.TreeView" /> class. Depending on the value displayed in the <see cref="T:System.Web.UI.WebControls.Menu" /> control, the delimiter character might need to be changed to prevent any conflicts. For example, if you set the delimiter character to a comma, the displayed value should not contain any commas; otherwise, you cannot accurately parse the <see cref="P:System.Web.UI.WebControls.MenuItem.ValuePath" /> property.</para>
+          <block subset="none" type="note">
+            <para>The values of the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of each menu item from the root menu item to the current menu item are used to generate the value path. Menu items at the same menu level must each have a unique value for the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property; the <see cref="T:System.Web.UI.WebControls.Menu" /> control cannot distinguish between different menu items at the same level that have the same value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path from the root menu item to the current menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

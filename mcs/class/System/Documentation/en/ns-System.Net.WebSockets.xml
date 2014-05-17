@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Net.WebSockets">
+  <Docs>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Net.WebSockets" /> namespace provides a managed implementation of the WebSocket interface for developers.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Some of the classes in the <see cref="N:System.Net.WebSockets" /> namespace are supported on Windows 7, Windows Vista SP2, and Windows Server 2008. However, the only public implementations of client and server WebSockets are supported on Windows 8 and Windows Server 2012. The classes and class elements in the <see cref="N:System.Net.WebSockets" /> namespace that are supported on Windows 7, Windows Vista SP2, and Windows Server 2008 are abstract classes. This allows an application developer to inherit and extend these abstract classes with an actual implementation of client WebSockets.
+</para>
+    </remarks>
+  </Docs>
+</Namespace>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractVerificationAttribute" FullName="System.Diagnostics.Contracts.ContractVerificationAttribute">
   <TypeSignature Language="C#" Value="public sealed class ContractVerificationAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractVerificationAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -17,12 +19,30 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Indicates whether the code contract verification tools should verify this item. If not, the item is assumed to be correct.</summary>
-    <remarks />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use ContractVerification(false) to explicitly mark an assembly, type, or member as not requiring verification. The most specific element found (member, type, and then assembly) takes precedence. Applying this attribute to a property, type, or assembly has the following effects:</para>
+      <list type="bullet">
+        <item>
+          <para>When you apply it to a property, it applies to both the get accessor and the set accessor.</para>
+        </item>
+        <item>
+          <para>When you apply it to a type, it applies to all members of the type, including nested types. </para>
+        </item>
+        <item>
+          <para>When you apply it to an assembly, it applies to all types and members of the assembly.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instructs analysis tools to assume the correctness of an assembly, type, or member without performing static verification.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractVerificationAttribute (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool value) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -31,13 +51,18 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="value">Whether to include this item in verification.</param>
-        <summary>Construct a ContractVerificationAttribute, specifying whether to include this item in verification.</summary>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.ContractVerificationAttribute" /> class. </para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to require verification; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="C#" Value="public bool Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Value" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -46,9 +71,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets whether to include this item in verification.</summary>
         <value>Whether to include this item in verification.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value that indicates whether to verify the contract of the target. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

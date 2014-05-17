@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XmlSerializerFormatAttribute" FullName="System.ServiceModel.XmlSerializerFormatAttribute">
+  <TypeSignature Language="C#" Value="public sealed class XmlSerializerFormatAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlSerializerFormatAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method | System.AttributeTargets.Interface | System.AttributeTargets.All, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This attribute is similar to the <see cref="T:System.ServiceModel.DataContractFormatAttribute" /> attribute. Both attributes can be applied to a method, class, or interface. </para>
+      <para>crabout the <see cref="T:System.Xml.Serialization.XmlSerializer" />, see <format type="text/html"><a href="c680602d-39d3-44f1-bf22-8e6654ad5069">Using the XmlSerializer</a></format>.</para>
+      <para>A method can have either of the two attributes applied, but not both. Any operation that has neither applied uses the attribute applied to the containing class. If the containing class does not have either attribute applied, the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is used. </para>
+      <para>Applying the attribute also causes a <see cref="T:System.ServiceModel.Description.XmlSerializerOperationBehavior" /> to be created at runtime. The behavior allows customization at runtime of the serializer behavior.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instructs the indigo1 infrastructure to use the <see cref="T:System.Xml.Serialization.XmlSerializer" /> instead of the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlSerializerFormatAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.XmlSerializerFormatAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Style">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.OperationFormatStyle Style { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.OperationFormatStyle Style" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.OperationFormatStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.XmlSerializerFormatAttribute.Style" /> and <see cref="P:System.ServiceModel.XmlSerializerFormatAttribute.Use" /> properties affect how messages are formatted. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SOAP style of the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportFaults">
+      <MemberSignature Language="C#" Value="public bool SupportFaults { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportFaults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default formatter for fault serialization is the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. To use the <see cref="T:System.Xml.Serialization.XmlSerializer" />, set this property to true. Starting in .NET 4 the serializer set by the <see cref="P:System.ServiceModel.XmlSerializerFormatAttribute.SupportFaults" /> property will be used even if a custom behavior is set on the contract to which the <see cref="T:System.ServiceModel.XmlSerializerFormatAttribute" /> is applied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates that the <see cref="T:System.Xml.Serialization.XmlSerializer" /> should be used for reading and writing faults. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Use">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.OperationFormatUse Use { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.OperationFormatUse Use" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.OperationFormatUse</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.XmlSerializerFormatAttribute.Style" /> and <see cref="P:System.ServiceModel.XmlSerializerFormatAttribute.Use" /> properties affect how messages are formatted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the format to use.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

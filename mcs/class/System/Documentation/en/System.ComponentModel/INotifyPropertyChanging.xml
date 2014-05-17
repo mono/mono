@@ -1,27 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INotifyPropertyChanging" FullName="System.ComponentModel.INotifyPropertyChanging">
   <TypeSignature Language="C#" Value="public interface INotifyPropertyChanging" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INotifyPropertyChanging" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.INotifyPropertyChanging" /> interface is used to notify clients, typically binding clients, that a property value is changing.</para>
+      <para>
+        <see cref="T:System.ComponentModel.INotifyPropertyChanging" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Notifies clients that a property value is changing.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="PropertyChanging">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.PropertyChangingEventHandler PropertyChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.PropertyChangingEventHandler PropertyChanging" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyChangingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a property value is changing.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

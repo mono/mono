@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceSection" FullName="System.Web.Configuration.TraceSection">
   <TypeSignature Language="C#" Value="public sealed class TraceSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.TraceSection" /> class provides a way to programmatically access and modify the content of the configuration file trace section. The trace section configures the ASP.NET trace functionality and controls how trace results are gathered, stored, and displayed.</para>
+      <para>When tracing is enabled, each page request generates trace messages that can be appended to the page output or stored in an application trace log. You can use the ASP.NET trace viewer (Trace.axd) to view the contents of the trace log.</para>
+      <block subset="none" type="note">
+        <para>The <format type="text/html"><a href="05f08d15-1e2c-4c56-84d1-b1d7ba039af6">trace</a></format> element is allowed in the <format type="text/html"><a href="a7589d5e-8dce-4951-a876-b1276c02b60b">system.web</a></format> section of the configuration hierarchy in the Machine.config file and the Web.config files. It is not allowed in configuration files of Web subdirectories.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the ASP.NET trace service. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.TraceSection" /> class using default settings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +53,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the ASP.NET trace service is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +77,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the ASP.NET trace viewer (Trace.axd) is available only to requests from the host Web server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,10 +101,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests are stored in the trace log in the order they arrive, up to the number of requests specified in the <see cref="P:System.Web.Configuration.TraceSection.RequestLimit" /> property. When the request limit is reached and <see cref="P:System.Web.Configuration.TraceSection.MostRecent" /> is true, older requests are automatically discarded and new requests continue to be added to the log. When the request limit is reached and <see cref="P:System.Web.Configuration.TraceSection.MostRecent" /> is false, new requests are discarded until earlier requests are removed from the log or the request limit is increased.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the most recent requests are always stored on the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -102,10 +128,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the ASP.NET trace information is appended to the output of each page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -142,10 +171,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum request limit is 10,000. If a value greater than 10,000 is specified, it is silently rounded down to 10,000 by ASP.NET. </para>
+          <para>The <see cref="P:System.Web.Configuration.TraceSection.MostRecent" /> property gets or sets a value that determines whether the requests stored on the server are the most recent requests or the first requests to arrive.</para>
+          <para>Note   When the number of requests exceeds the limit imposed by this setting and <see cref="P:System.Web.Configuration.TraceSection.MostRecent" /> is false, no more requests are stored in the trace log. If <see cref="P:System.Web.Configuration.TraceSection.MostRecent" /> is true, the most recent requests are stored up to the limit imposed by this setting and older requests are discarded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the maximum number of requests to the application for which ASP.NET stores trace information. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -163,10 +200,13 @@
         <ReturnType>System.Web.Configuration.TraceDisplayMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the order in which ASP.NET trace information is displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -184,10 +224,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the messages emitted through the page trace are forwarded to an instance of the <see cref="T:System.Diagnostics.Trace" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

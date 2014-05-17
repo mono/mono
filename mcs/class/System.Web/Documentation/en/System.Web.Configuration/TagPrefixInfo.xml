@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TagPrefixInfo" FullName="System.Web.Configuration.TagPrefixInfo">
   <TypeSignature Language="C#" Value="public sealed class TagPrefixInfo : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,29 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.TagPrefixInfo" /> class allows you to programmatically access and modify tag-prefix information stored in a configuration file. It provides the same functionality as the ASP.NET @Register directive. Tag prefixes associate a "namespace" in ASP.NET to the assemblies and namespaces that must be included for custom controls and user controls to work properly. <see cref="T:System.Web.Configuration.TagPrefixInfo" /> objects are stored as members of a <see cref="T:System.Web.Configuration.TagPrefixCollection" /> object. The <see cref="T:System.Web.Configuration.TagPrefixCollection" /> class allows you to programmatically access and modify the controls subsection of the pages section of a configuration file. </para>
+      <para>
+        <see cref="T:System.Web.Configuration.TagPrefixInfo" /> objects are added to the collection using the add element and specifying a value for the tagPrefix attribute along with values for other relevant attributes. The other required information varies based on the kind of control you will use with the specified tag prefix:</para>
+      <list type="bullet">
+        <item>
+          <para>If it is a user control, you must define the <see cref="P:System.Web.Configuration.TagPrefixInfo.TagPrefix" />, <see cref="P:System.Web.Configuration.TagPrefixInfo.TagName" />, and <see cref="P:System.Web.Configuration.TagPrefixInfo.Source" /> properties.</para>
+        </item>
+        <item>
+          <para>If it is a custom control, you must define the <see cref="P:System.Web.Configuration.TagPrefixInfo.TagPrefix" />, <see cref="P:System.Web.Configuration.TagPrefixInfo.Namespace" />, and <see cref="P:System.Web.Configuration.TagPrefixInfo.Assembly" /> properties. The <see cref="P:System.Web.Configuration.TagPrefixInfo.Assembly" /> property is not required if the control is in the application code directory.</para>
+        </item>
+      </list>
+      <para>The same tagPrefix value can be used to map to multiple assemblies or namespaces.</para>
+      <block subset="none" type="note">
+        <para>When a source is specified, the user control itself must not be in the same directory as the page. If it is, you get a run-time error when you attempt to load the page.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a configuration element containing tag-related information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,14 +46,33 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tagPrefix">To be added.</param>
-        <param name="nameSpace">To be added.</param>
-        <param name="assembly">To be added.</param>
-        <param name="tagName">To be added.</param>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an instance of the <see cref="T:System.Web.Configuration.TagPrefixInfo" /> class and initializes it using the passed parameters. The parameters for which you specify values depend on the kind of control you refer to with the specified tag prefix. Parameters not required for that tag prefix should be left blank. (Use an empty string.) </para>
+          <list type="bullet">
+            <item>
+              <para>If the control is a user control, you must specify values for the <paramref name="tagPrefix" />, <paramref name="tagName" />, and <paramref name="source" /> parameters. </para>
+            </item>
+            <item>
+              <para>If the control is a custom control, you must specify values for the <paramref name="tagPrefix" /> and <paramref name="nameSpace" /> parameters. If the control is not in the application code directory, you must also specify the <paramref name="assembly" /> parameter.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.TagPrefixInfo" /> class using the passed values.</para>
+        </summary>
+        <param name="tagPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag prefix being mapped to a source file or namespace and assembly. </param>
+        <param name="nameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace associated with the tag prefix.</param>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly where the namespace resides.</param>
+        <param name="tagName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the control to be used in the page.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the user control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +90,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the assembly in which the control resides. It applies only to a custom control and is not required if the control is in the application code directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the assembly containing the control implementation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,11 +131,18 @@
         <Parameter Name="prefix" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this instance to another object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are identical; otherwise, false.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />Object to compare.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,10 +156,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash value for the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash value for the current instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -124,10 +183,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the namespace in which the control resides. It applies only to custom controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace in which the control resides.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -161,10 +226,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the name and path of the file containing the user control implementation. It applies only to user controls. The path may be relative to the application or the application root.</para>
+          <block subset="none" type="note">
+            <para>The user control itself must not be in the same directory as the page. If it is, you get a run-time error when you attempt to load the page.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name and path of the file containing the user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -182,10 +256,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the name of the control. It applies only to user controls. This is the value that would follow the tag prefix in the ASP.NET code. For example, "myControl" in &lt;myTag: myControl /&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -206,10 +286,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.TagPrefixInfo.TagPrefix" /> property defines the alias used for the namespace where the control resides. It applies to user and custom controls. This is the value that would precede the tag name in the ASP.NET code. For example "myTag" in &lt;myTag: myControl /&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the tag prefix that is being associated with a source file or namespace and assembly. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

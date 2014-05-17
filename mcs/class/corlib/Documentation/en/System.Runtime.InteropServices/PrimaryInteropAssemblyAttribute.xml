@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrimaryInteropAssemblyAttribute" FullName="System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class PrimaryInteropAssemblyAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit PrimaryInteropAssemblyAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,63 +23,98 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to assemblies, although the <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrfTypeLibraryImporterTlbimpexe&gt;]</a></format> typically applies it for you when it imports a type library.</para>
+      <para>An interop assembly contains metadata that describes existing COM types, which are often already described in a COM type library. Tlbimp.exe produces interop assemblies from COM type libraries. Interop assemblies typically only contain metadata (no code). Primary interop assemblies are provided by the same publisher as the type library they describe, and provide the official definitions of the types defined with that type library. Primary interop assemblies are always signed by their publisher to ensure uniqueness.</para>
+      <para>You can generate a primary interop assembly from a type library in the following ways: </para>
+      <list type="bullet">
+        <item>
+          <para>Run TlbImp.exe with the /primary option from the command line.</para>
+        </item>
+        <item>
+          <para>Apply the <see cref="T:System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute" /> at design time.</para>
+        </item>
+      </list>
+      <para>To specify a primary interop assembly in managed source code, you must apply the <see cref="T:System.Runtime.InteropServices.GuidAttribute" /> and <see cref="T:System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute" /> to the assembly at design time. The <see cref="T:System.Runtime.InteropServices.GuidAttribute" /> on the primary interop assembly identifies the LIBID of the type library and the <see cref="T:System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute" /> identifies the version of the particular type library for which this assembly is the primary interop assembly. The <see cref="T:System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute" /> can appear multiple times if the assembly is the primary interop assembly for multiple versions of the same type library.</para>
+      <para>When using the types defined in a type library, always reference the primary interop assembly for that type library, rather than reimporting or redefining the types themselves. For guidelines and procedures on how to produce or use primary interop assemblies, see <format type="text/html"><a href="B977A8BE-59A0-40A0-A806-B11FFBA5C080">[&lt;topic://cpconprimaryinteropassemblies&gt;]</a></format>. For a detailed description of the type library importing process, see <format type="text/html"><a href="BF3F90C5-4770-4AB8-895C-3BA1055CC958">[&lt;topic://cpcontypelibrarytoassemblyconversionsummary&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the attributed assembly is a primary interop assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PrimaryInteropAssemblyAttribute (int major, int minor);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 major, int32 minor) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="major" Type="System.Int32" />
         <Parameter Name="minor" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added: an object of type 'int'</param>
-        <param name="minor">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute" /> can appear multiple times if the assembly is the primary interop assembly for multiple versions of the same type library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute" /> class with the major and minor version numbers of the type library for which this assembly is the primary interop assembly.</para>
+        </summary>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version of the type library for which this assembly is the primary interop assembly. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version of the type library for which this assembly is the primary interop assembly. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MajorVersion">
       <MemberSignature Language="C#" Value="public int MajorVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MajorVersion" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the major version number of the type library for which this assembly is the primary interop assembly.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MinorVersion">
       <MemberSignature Language="C#" Value="public int MinorVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MinorVersion" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'int'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor version number of the type library for which this assembly is the primary interop assembly.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

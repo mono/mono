@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableLayoutColumnStyleCollection" FullName="System.Windows.Forms.TableLayoutColumnStyleCollection">
   <TypeSignature Language="C#" Value="public class TableLayoutColumnStyleCollection : System.Windows.Forms.TableLayoutStyleCollection" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" /> class represents the collection of all the styles used to describe the columns in an associated <see cref="T:System.Windows.Forms.TableLayoutPanel" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection that stores <see cref="T:System.Windows.Forms.ColumnStyle" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -26,10 +33,21 @@
         <Parameter Name="columnStyle" Type="System.Windows.Forms.ColumnStyle" />
       </Parameters>
       <Docs>
-        <param name="columnStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TableLayoutColumnStyleCollection.Add(System.Windows.Forms.ColumnStyle)" /> method reapplies the table layout to all the controls in the current <see cref="T:System.Windows.Forms.TableLayoutPanel" /> container. </para>
+          <para>The number of styles stored in a collection is limited only by available memory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an item to the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted.</para>
+        </returns>
+        <param name="columnStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ColumnStyle" /> to add to the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -45,10 +63,17 @@
         <Parameter Name="columnStyle" Type="System.Windows.Forms.ColumnStyle" />
       </Parameters>
       <Docs>
-        <param name="columnStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Windows.Forms.ColumnStyle" /> is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.ColumnStyle" /> is found in the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />; otherwise, false.</para>
+        </returns>
+        <param name="columnStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ColumnStyle" /> to locate in the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />. The value can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -64,10 +89,20 @@
         <Parameter Name="columnStyle" Type="System.Windows.Forms.ColumnStyle" />
       </Parameters>
       <Docs>
-        <param name="columnStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TableLayoutColumnStyleCollection.IndexOf(System.Windows.Forms.ColumnStyle)" /> method begins searching at the first element of the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" /> and ends either when it finds a match or it reaches the last element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of a specific item in the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="columnStyle" /> if found in the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />; otherwise, -1.</para>
+        </returns>
+        <param name="columnStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ColumnStyle" /> to locate in the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -84,10 +119,20 @@
         <Parameter Name="columnStyle" Type="System.Windows.Forms.ColumnStyle" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="columnStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TableLayoutColumnStyleCollection.Insert(System.Int32,System.Windows.Forms.ColumnStyle)" /> method reapplies the table layout to all the controls in the current <see cref="T:System.Windows.Forms.TableLayoutPanel" /> container. </para>
+          <para>The number of styles stored in a collection is limited only by available memory.</para>
+          <para>In collections of contiguous elements, such as the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" /> class, the elements that follow the insertion point move down to accommodate the inserted element. The indexes of the elements that are moved are also updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Windows.Forms.ColumnStyle" /> into the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" /> at the specified position.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <see cref="T:System.Windows.Forms.ColumnStyle" /> should be inserted.</param>
+        <param name="columnStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ColumnStyle" /> to insert into the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -122,9 +167,17 @@
         <Parameter Name="columnStyle" Type="System.Windows.Forms.ColumnStyle" />
       </Parameters>
       <Docs>
-        <param name="columnStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TableLayoutColumnStyleCollection.Remove(System.Windows.Forms.ColumnStyle)" /> method reapplies the table layout to all the controls in the current <see cref="T:System.Windows.Forms.TableLayoutPanel" /> container. </para>
+          <para>In collections of contiguous elements, such as the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" /> class, the elements that follow the deletion point move up to occupy the vacated spot. The indexes of the elements that are moved are also updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of a specific <see cref="T:System.Windows.Forms.ColumnStyle" /> from the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />.</para>
+        </summary>
+        <param name="columnStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ColumnStyle" /> to remove from the <see cref="T:System.Windows.Forms.TableLayoutColumnStyleCollection" />. The value can be null.</param>
       </Docs>
     </Member>
   </Members>

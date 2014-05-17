@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IObservable&lt;T&gt;" FullName="System.IObservable&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IObservable&lt;out T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IObservable`1&lt;+ T&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -14,12 +16,33 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IObserver`1" /> and <see cref="T:System.IObservable`1" /> interfaces provide a generalized mechanism for push-based notification, also known as the observer design pattern. The <see cref="T:System.IObservable`1" /> interface represents the class that sends notifications (the provider); the <see cref="T:System.IObserver`1" /> interface represents the class that receives them (the observer). <paramref name="T" /> represents the class that provides the notification information. In some push-based notifications, the <see cref="T:System.IObserver`1" /> implementation and <paramref name="T" /> can represent the same type.</para>
+      <para>The provider must implement a single method, <see cref="M:System.IObservable`1.Subscribe(System.IObserver{`0})" />, that indicates that an observer wants to receive push-based notifications. Callers to the method pass an instance of the observer. The method returns an <see cref="T:System.IDisposable" /> implementation that enables observers to cancel notifications at any time before the provider has stopped sending them.</para>
+      <para>At any given time, a given provider may have zero, one, or multiple observers. The provider is responsible for storing references to observers and ensuring that they are valid before it sends notifications. The <see cref="T:System.IObservable`1" /> interface does not make any assumptions about the number of observers or the order in which notifications are sent.</para>
+      <para>The provider sends the following three kinds of notifications to the observer by calling <see cref="T:System.IObserver`1" /> methods: </para>
+      <list type="bullet">
+        <item>
+          <para>The current data. The provider can call the <see cref="M:System.IObserver`1.OnNext(`0)" /> method to pass the observer a <paramref name="T" /> object that has current data, changed data, or fresh data.</para>
+        </item>
+        <item>
+          <para>An error condition. The provider can call the <see cref="M:System.IObserver`1.OnError(System.Exception)" /> method to notify the observer that some error condition has occurred.</para>
+        </item>
+        <item>
+          <para>No further data. The provider can call the <see cref="M:System.IObserver`1.OnCompleted" /> method to notify the observer that it has finished sending notifications.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a provider for push-based notification.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Subscribe">
       <MemberSignature Language="C#" Value="public IDisposable Subscribe (IObserver&lt;out T&gt; observer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IDisposable Subscribe(class System.IObserver`1&lt;!T&gt; observer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

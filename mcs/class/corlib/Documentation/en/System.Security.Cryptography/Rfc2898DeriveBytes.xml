@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Rfc2898DeriveBytes" FullName="System.Security.Cryptography.Rfc2898DeriveBytes">
   <TypeSignature Language="C#" Value="public class Rfc2898DeriveBytes : System.Security.Cryptography.DeriveBytes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Rfc2898DeriveBytes extends System.Security.Cryptography.DeriveBytes" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,115 +17,232 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> takes a password, a salt, and an iteration count, and then generates keys through calls to the <see cref="M:System.Security.Cryptography.Rfc2898DeriveBytes.GetBytes(System.Int32)" /> method.</para>
+      <para>RFC 2898 includes methods for creating a key and initialization vector (IV) from a password and salt. You can use PBKDF2, a password-based key derivation function, to derive keys using a pseudo-random function that allows keys of virtually unlimited length to be generated. The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class can be used to produce a derived key from a base key and other parameters. In a password-based key derivation function, the base key is a password and the other parameters are a salt value and an iteration count.</para>
+      <para>For more information about PBKDF2, see RFC 2898, "PKCS #5: Password-Based Cryptography Specification Version 2.0," available on the <see cref="http://go.microsoft.com/fwlink/?LinkID=37119">Request for Comments Web site</see>. See section 5.2, "PBKDF2," for complete details.</para>
+      <block subset="none" type="note">
+        <para>Never hard-code a password within your source code.  Hard-coded passwords can be retrieved from an assembly by using the <format type="text/html"><a href="db27f6b2-f1ec-499e-be3a-7eecf95ca42b">MSIL Disassembler (Ildasm.exe)</a></format>, by using a hexadecimal editor, or by simply opening up the assembly in a text editor such as Notepad.exe. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements password-based key derivation functionality, PBKDF2, by using a pseudo-random number generator based on <see cref="T:System.Security.Cryptography.HMACSHA1" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (string password, byte[] salt);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string password, unsigned int8[] salt) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="password" Type="System.String" />
         <Parameter Name="salt" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="password">To be added.</param>
-        <param name="salt">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The salt size must be 8 bytes or larger.</para>
+          <para>RFC 2898 includes methods for creating a key and initialization vector (IV) from a password and salt. You can use PBKDF2, a password-based key derivation function, to derive keys using a pseudo-random function that allows keys of virtually unlimited length to be generated. The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class can be used to produce a derived key from a base key and other parameters. In a password-based key derivation function, the base key is a password and the other parameters are a salt value and an iteration count.</para>
+          <para>For more information about PBKDF2, see RFC 2898, "PKCS #5: Password-Based Cryptography Specification Version 2.0," available on the <see cref="http://go.microsoft.com/fwlink/?LinkID=37119">Request for Comments Web site</see>. See section 5.2, "PBKDF2," for complete details.</para>
+          <block subset="none" type="note">
+            <para>Never hard-code a password within your source code.  Hard-coded passwords can be retrieved from an assembly by using the <format type="text/html"><a href="db27f6b2-f1ec-499e-be3a-7eecf95ca42b">MSIL Disassembler (Ildasm.exe)</a></format>, by using a hexadecimal editor, or by simply opening up the assembly in a text editor such as Notepad.exe. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class using a password and salt to derive the key.</para>
+        </summary>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password used to derive the key. </param>
+        <param name="salt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key salt used to derive the key. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (string password, int saltSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string password, int32 saltSize) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (string password, int saltSize);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="password" Type="System.String" />
         <Parameter Name="saltSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="password">To be added.</param>
-        <param name="saltSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The salt size must be 8 bytes or larger.</para>
+          <para>RFC 2898 includes methods for creating a key and initialization vector (IV) from a password and salt. You can use PBKDF2, a password-based key derivation function, to derive keys using a pseudo-random function that allows keys of virtually unlimited length to be generated. The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class can be used to produce a derived key from a base key and other parameters. In a password-based key derivation function, the base key is a password and the other parameters are a salt value and an iteration count.</para>
+          <para>For more information about PBKDF2, see RFC 2898, "PKCS #5: Password-Based Cryptography Specification Version 2.0," available on the <see cref="http://go.microsoft.com/fwlink/?LinkID=37119">Request for Comments Web site</see>. See section 5.2, "PBKDF2," for complete details.</para>
+          <block subset="none" type="note">
+            <para>Never hard-code a password within your source code.  Hard-coded passwords can be retrieved from an assembly by using the <format type="text/html"><a href="db27f6b2-f1ec-499e-be3a-7eecf95ca42b">MSIL Disassembler (Ildasm.exe)</a></format>, by using a hexadecimal editor, or by simply opening up the assembly in a text editor such as Notepad.exe. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class using the password and salt size to derive the key.</para>
+        </summary>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password used to derive the key. </param>
+        <param name="saltSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the random salt that you want the class to generate. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (byte[] password, byte[] salt, int iterations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] password, unsigned int8[] salt, int32 iterations) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (byte[] password, byte[] salt, int iterations);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="password" Type="System.Byte[]" />
         <Parameter Name="salt" Type="System.Byte[]" />
         <Parameter Name="iterations" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="password">To be added.</param>
-        <param name="salt">To be added.</param>
-        <param name="iterations">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The salt size must be 8 bytes or larger and the iteration count must be greater than zero. The minimum recommended number of iterations is 1000.</para>
+          <para>RFC 2898 includes methods for creating a key and initialization vector (IV) from a password and salt. You can use PBKDF2, a password-based key derivation function, to derive keys using a pseudo-random function that allows keys of virtually unlimited length to be generated. The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class can be used to produce a derived key from a base key and other parameters. In a password-based key derivation function, the base key is a password and the other parameters are a salt value and an iteration count.</para>
+          <para>For more information about PBKDF2, see RFC 2898, "PKCS #5: Password-Based Cryptography Specification Version 2.0," available on the <see cref="http://go.microsoft.com/fwlink/?LinkID=37119">Request for Comments Web site</see>. See section 5.2, "PBKDF2," for complete details.</para>
+          <block subset="none" type="note">
+            <para>Never hard-code a password within your source code.  Hard-coded passwords can be retrieved from an assembly by using the <format type="text/html"><a href="db27f6b2-f1ec-499e-be3a-7eecf95ca42b">MSIL Disassembler (Ildasm.exe)</a></format>, by using a hexadecimal editor, or by simply opening up the assembly in a text editor such as Notepad.exe. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class using a password, a salt, and number of iterations to derive the key.</para>
+        </summary>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password used to derive the key. </param>
+        <param name="salt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key salt used to derive the key.</param>
+        <param name="iterations">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of iterations for the operation. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (string password, byte[] salt, int iterations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string password, unsigned int8[] salt, int32 iterations) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (string password, byte[] salt, int iterations);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="password" Type="System.String" />
         <Parameter Name="salt" Type="System.Byte[]" />
         <Parameter Name="iterations" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="password">To be added.</param>
-        <param name="salt">To be added.</param>
-        <param name="iterations">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The salt size must be 8 bytes or larger and the iteration count must be greater than zero. The minimum recommended number of iterations is 1000.</para>
+          <para>RFC 2898 includes methods for creating a key and initialization vector (IV) from a password and salt. You can use PBKDF2, a password-based key derivation function, to derive keys using a pseudo-random function that allows keys of virtually unlimited length to be generated. The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class can be used to produce a derived key from a base key and other parameters. In a password-based key derivation function, the base key is a password and the other parameters are a salt value and an iteration count.</para>
+          <para>For more information about PBKDF2, see RFC 2898, "PKCS #5: Password-Based Cryptography Specification Version 2.0," available on the <see cref="http://go.microsoft.com/fwlink/?LinkID=37119">Request for Comments Web site</see>. See section 5.2, "PBKDF2," for complete details.</para>
+          <block subset="none" type="note">
+            <para>Never hard-code a password within your source code.  Hard-coded passwords can be retrieved from an assembly by using the <format type="text/html"><a href="db27f6b2-f1ec-499e-be3a-7eecf95ca42b">MSIL Disassembler (Ildasm.exe)</a></format>, by using a hexadecimal editor, or by simply opening up the assembly in a text editor such as Notepad.exe. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class using a password, a salt, and number of iterations to derive the key.</para>
+        </summary>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password used to derive the key. </param>
+        <param name="salt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key salt used to derive the key. </param>
+        <param name="iterations">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of iterations for the operation. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (string password, int saltSize, int iterations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string password, int32 saltSize, int32 iterations) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Rfc2898DeriveBytes (string password, int saltSize, int iterations);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="password" Type="System.String" />
         <Parameter Name="saltSize" Type="System.Int32" />
         <Parameter Name="iterations" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="password">To be added.</param>
-        <param name="saltSize">To be added.</param>
-        <param name="iterations">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The salt size must be 8 bytes or larger and the iteration count must be greater than zero. The minimum recommended number of iterations is 1000.</para>
+          <para>RFC 2898 includes methods for creating a key and initialization vector (IV) from a password and salt. You can use PBKDF2, a password-based key derivation function, to derive keys using a pseudo-random function that allows keys of virtually unlimited length to be generated. The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class can be used to produce a derived key from a base key and other parameters. In a password-based key derivation function, the base key is a password and the other parameters are a salt value and an iteration count.</para>
+          <para>For more information on PBKDF2, see RFC 2898,"PKCS #5: Password-Based Cryptography Specification Version 2.0," available on the <see cref="http://go.microsoft.com/fwlink/?LinkID=37119">Request for Comments Web site</see>. See section 5.2, "PBKDF2," for complete details.</para>
+          <block subset="none" type="note">
+            <para>Never hard-code a password within your source code.  Hard-coded passwords can be retrieved from an assembly by using the <format type="text/html"><a href="db27f6b2-f1ec-499e-be3a-7eecf95ca42b">MSIL Disassembler (Ildasm.exe)</a></format>, by using a hexadecimal editor, or by simply opening up the assembly in a text editor such as Notepad.exe. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class using a password, a salt size, and number of iterations to derive the key.</para>
+        </summary>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password used to derive the key. </param>
+        <param name="saltSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the random salt that you want the class to generate. </param>
+        <param name="iterations">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of iterations for the operation. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. Finalize invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public override byte[] GetBytes (int cb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance unsigned int8[] GetBytes(int32 cb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="C#" Value="public override byte[] GetBytes (int cb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -131,67 +250,94 @@
         <Parameter Name="cb" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="cb">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class implements PBKDF2 functionality by using a pseudorandom number generator based on <see cref="T:System.Security.Cryptography.HMACSHA1" />. The <see cref="T:System.Security.Cryptography.Rfc2898DeriveBytes" /> class takes a password, a salt, and an iteration count, and then generates keys through calls to the <see cref="M:System.Security.Cryptography.Rfc2898DeriveBytes.GetBytes(System.Int32)" /> method. Repeated calls to this method will not generate the same key; instead, appending two calls of the <see cref="M:System.Security.Cryptography.Rfc2898DeriveBytes.GetBytes(System.Int32)" /> method with a <paramref name="cb" /> parameter value of <paramref name="20" /> is the equivalent of calling the <see cref="M:System.Security.Cryptography.Rfc2898DeriveBytes.GetBytes(System.Int32)" /> method once with a <paramref name="cb" /> parameter value of <paramref name="40" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the pseudo-random key for this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array filled with pseudo-random key bytes.</para>
+        </returns>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of pseudo-random key bytes to generate. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IterationCount">
+      <MemberSignature Language="C#" Value="public int IterationCount { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 IterationCount" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IterationCount">
-      <MemberSignature Language="C#" Value="public int IterationCount { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Iteration count is the number of times an operation is performed. For this method, the count should be greater than zero. The minimum recommended number of iterations is 1000.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of iterations for the operation.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public override void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public override void Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is automatically called if the salt or iteration count is modified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the state of the operation.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Salt">
+      <MemberSignature Language="C#" Value="public byte[] Salt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Salt" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Salt">
-      <MemberSignature Language="C#" Value="public byte[] Salt { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Salt, a random set of bytes, is used to make unauthorized decrypting of a message more difficult. A dictionary attack is an attack in which the attacker attempts to decrypt an encrypted message by comparing the encrypted value with previously computed encrypted values for the most likely keys. This attack is made much more difficult by the introduction of salt, or random bytes, at the end of the password before the key derivation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key salt value for the operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

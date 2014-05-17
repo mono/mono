@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITemplateEditingService" FullName="System.Web.UI.Design.ITemplateEditingService">
   <TypeSignature Language="C#" Value="public interface ITemplateEditingService" />
   <AssemblyInfo>
@@ -7,8 +8,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.Design.ITemplateEditingService" /> interface is obsolete. Expose templates through the <see cref="P:System.Web.UI.Design.ControlDesigner.TemplateGroups" /> property of a control designer. The design host creates a <see cref="T:System.Web.UI.Design.TemplatedEditableDesignerRegion" /> for each <see cref="T:System.Web.UI.Design.TemplateGroup" /> defined for a control designer.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides services for editing control templates at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateFrame">
@@ -23,12 +32,26 @@
         <Parameter Name="templateNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="designer">To be added.</param>
-        <param name="frameName">To be added.</param>
-        <param name="templateNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.Design.ITemplateEditingService" /> interface is obsolete. Expose templates through the <see cref="P:System.Web.UI.Design.ControlDesigner.TemplateGroups" /> property of a control designer. The design host creates a <see cref="T:System.Web.UI.Design.TemplatedEditableDesignerRegion" /> for each <see cref="T:System.Web.UI.Design.TemplateGroup" /> defined for a control designer.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new template editing frame for the specified templated control designer, using the specified name and templates.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Web.UI.Design.ITemplateEditingFrame" />.</para>
+        </returns>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> that will use the template editing frame. </param>
+        <param name="frameName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the editing frame that will be displayed on the frame. Typically this is the same as the <see cref="P:System.ComponentModel.Design.DesignerVerb.Text" /> property used as the menu text for the <see cref="T:System.Web.UI.Design.TemplateEditingVerb" /> that is invoked to create the frame. </param>
+        <param name="templateNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of names for the templates that the template editing frame will contain. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,14 +72,30 @@
         <Parameter Name="templateStyles" Type="System.Web.UI.WebControls.Style[]" />
       </Parameters>
       <Docs>
-        <param name="designer">To be added.</param>
-        <param name="frameName">To be added.</param>
-        <param name="templateNames">To be added.</param>
-        <param name="controlStyle">To be added.</param>
-        <param name="templateStyles">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.Design.ITemplateEditingService" /> interface is obsolete. Expose templates through the <see cref="P:System.Web.UI.Design.ControlDesigner.TemplateGroups" /> property of a control designer. The design host creates a <see cref="T:System.Web.UI.Design.TemplatedEditableDesignerRegion" /> for each <see cref="T:System.Web.UI.Design.TemplateGroup" /> defined for a control designer.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new template editing frame for the specified <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" />, using the specified name, template names, control style, and template styles.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Web.UI.Design.ITemplateEditingFrame" />.</para>
+        </returns>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> that will use the template editing frame. </param>
+        <param name="frameName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the editing frame that will be displayed on the frame. Typically this is the same as the <see cref="P:System.ComponentModel.Design.DesignerVerb.Text" /> property used as the menu text for the <see cref="T:System.Web.UI.Design.TemplateEditingVerb" /> that is invoked to create the frame. </param>
+        <param name="templateNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of names for the templates that the template editing frame will contain. </param>
+        <param name="controlStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control <see cref="T:System.Web.UI.WebControls.Style" /> for the editing frame. </param>
+        <param name="templateStyles">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Web.UI.WebControls.Style" /> that represents the template styles for the editing frame. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,10 +112,22 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.Design.ITemplateEditingService" /> interface is obsolete. Use the <see cref="P:System.Web.UI.Design.TemplatedEditableDesignerRegion.TemplateDefinition" /> property of the <see cref="T:System.Web.UI.Design.TemplatedEditableDesignerRegion" /> class for equivalent design time functionality.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the parent template.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the parent template.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> for which to get the name of the parent template. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,9 +141,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates whether a template editor can be invoked from a component of a parent template editor's templated control. This is called nested template editing, because a template editor is invoked for a component of a control for which a template editor is already operating.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.Design.ITemplateEditingService" /> interface is obsolete. Expose templates through the <see cref="P:System.Web.UI.Design.ControlDesigner.TemplateGroups" /> property of a control designer. The design host creates a <see cref="T:System.Web.UI.Design.TemplatedEditableDesignerRegion" /> for each <see cref="T:System.Web.UI.Design.TemplateGroup" /> defined for a control designer.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the service supports nested template editing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

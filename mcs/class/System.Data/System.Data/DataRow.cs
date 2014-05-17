@@ -548,7 +548,7 @@ namespace System.Data {
 			if (index >= 0)
 				return index;
 
-			throw new VersionNotFoundException (String.Format ("There is no {0} data to accces.", version));
+			throw new VersionNotFoundException (String.Format ("There is no {0} data to access.", version));
 		}
 
 		internal DataRowVersion VersionFromIndex (int index)

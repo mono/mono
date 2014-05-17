@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConsoleColor" FullName="System.ConsoleColor">
   <TypeSignature Language="C#" Value="public enum ConsoleColor" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ConsoleColor extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,250 +11,317 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies constants that define foreground and background colors for the console.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Black">
       <MemberSignature Language="C#" Value="Black" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Black = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Black color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color black.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Blue">
       <MemberSignature Language="C#" Value="Blue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Blue = int32(9)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Blue color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color blue.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Cyan">
       <MemberSignature Language="C#" Value="Cyan" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Cyan = int32(11)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Cyan color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color cyan (blue-green).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DarkBlue">
       <MemberSignature Language="C#" Value="DarkBlue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor DarkBlue = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Dark Blue color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color dark blue.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DarkCyan">
       <MemberSignature Language="C#" Value="DarkCyan" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor DarkCyan = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Dark Cyan color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color dark cyan (dark blue-green).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DarkGray">
       <MemberSignature Language="C#" Value="DarkGray" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor DarkGray = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Dark Gray Color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color dark gray.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DarkGreen">
       <MemberSignature Language="C#" Value="DarkGreen" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor DarkGreen = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Dark Green color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color dark green.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DarkMagenta">
       <MemberSignature Language="C#" Value="DarkMagenta" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor DarkMagenta = int32(5)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Dark Magenta color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color dark magenta (dark purplish-red).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DarkRed">
       <MemberSignature Language="C#" Value="DarkRed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor DarkRed = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Dark Red color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color dark red.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DarkYellow">
       <MemberSignature Language="C#" Value="DarkYellow" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor DarkYellow = int32(6)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Dark Yellow color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color dark yellow (ochre).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Gray">
       <MemberSignature Language="C#" Value="Gray" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Gray = int32(7)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Gray color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color gray.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Green">
       <MemberSignature Language="C#" Value="Green" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Green = int32(10)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Green color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color green.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Magenta">
       <MemberSignature Language="C#" Value="Magenta" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Magenta = int32(13)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Magenta color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color magenta (purplish-red).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Red">
       <MemberSignature Language="C#" Value="Red" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Red = int32(12)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Red color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color red.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="White">
       <MemberSignature Language="C#" Value="White" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor White = int32(15)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>White color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color white.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Yellow">
       <MemberSignature Language="C#" Value="Yellow" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleColor Yellow = int32(14)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleColor</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Yellow color.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleColor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color yellow.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

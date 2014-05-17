@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CriticalHandle" FullName="System.Runtime.InteropServices.CriticalHandle">
   <TypeSignature Language="C#" Value="public abstract class CriticalHandle : System.Runtime.ConstrainedExecution.CriticalFinalizerObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CriticalHandle extends System.Runtime.ConstrainedExecution.CriticalFinalizerObject implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,45 +16,49 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class is similar to the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class, except that <see cref="T:System.Runtime.InteropServices.SafeHandle" /> implements reference counting. You can use <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> instead of <see cref="T:System.Runtime.InteropServices.SafeHandle" /> to address performance considerations when you can provide the necessary synchronization more efficiently yourself.</para>
+      <para>Because the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class does not perform reference counting, it does not provide protection from handle recycling security attacks. Because the reference counting algorithm implicitly serializes operations, a certain amount of thread safety is also lost. If you call the <see cref="M:System.IDisposable.Dispose" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> method while an operation that is using the handle is outstanding on another thread, or if you call <see cref="M:System.IDisposable.Dispose" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> from two threads at the same time, the results are non-deterministic. The <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class still provides the guaranteed critical finalization provided by the <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a wrapper class for handle resources.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected CriticalHandle (IntPtr invalidHandleValue);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(native int invalidHandleValue) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="invalidHandleValue" Type="System.IntPtr" />
-      </Parameters>
-      <Docs>
-        <param name="invalidHandleValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="invalidHandleValue" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class with the specified invalid handle value.</para>
+        </summary>
+        <param name="invalidHandleValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of an invalid handle (usually 0 or -1).</param>
+      </Docs>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -62,19 +68,28 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method allows the resources to be freed. Unlike the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class, this will always happen immediately since there is no reference count to indicate that other threads are using this handle. Therefore, you must employ a synchronization mechanism to ensure it is safe to call the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> method. Although most classes that use the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class do not need to provide a finalizer, this is sometimes necessary (for example, to flush out file buffers or to write some data back into memory). In this case, the class can provide a finalizer that is guaranteed to run before the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> critical finalizer runs.</para>
+          <para>Call the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method when you are finished using the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object. The <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> method leaves the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object in an unusable state.</para>
+          <para>Note   Always call <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> before you release your last reference to the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object's <see cref="M:System.Runtime.InteropServices.CriticalHandle.Finalize" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the handle for releasing and freeing resources.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -84,10 +99,37 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method allows the resources to be freed. Unlike the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class, this will always happen immediately since there is no reference count to indicate that other threads are using this handle. Therefore, you must employ a synchronization mechanism to ensure it is safe to call the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method. Although most classes that use the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class do not need to provide a finalizer, this is sometimes necessary (for example, to flush out file buffers or to write some data back into memory). In this case, the class can provide a finalizer that is guaranteed to run before the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> critical finalizer runs.</para>
+          <para>Call the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method when you are finished using the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object. The <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> method leaves the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object in an unusable state.</para>
+          <para>Note   Always call the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method before you release your last reference to the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object's <see cref="M:System.Runtime.InteropServices.CriticalHandle.Finalize" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Runtime.InteropServices.CriticalHandle" />. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -95,11 +137,23 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should never explicitly call the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose(System.Boolean)" /> method with the <paramref name="disposing" /> parameter set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class specifying whether to perform a normal dispose operation.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true for a normal dispose operation; false to finalize the handle.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~CriticalHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -109,19 +163,116 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~CriticalHandle ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.InteropServices.CriticalHandle.Finalize" /> method is the destructor for the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> class. Application code should not call this method directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees all resources associated with the handle.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="handle">
+      <MemberSignature Language="C#" Value="protected IntPtr handle;" />
+      <MemberSignature Language="ILAsm" Value=".field family native int handle" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not expose the handle publicly (that is, outside of the derived class).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the handle to be wrapped.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsClosed">
+      <MemberSignature Language="C#" Value="public bool IsClosed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsClosed" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsClosed" /> method returns a value indicating whether the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object's handle is no longer associated with a native resource. This differs from the definition of the <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsInvalid" /> property, which computes whether a given handle is always considered invalid. The <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsClosed" /> method returns a true value in the following cases:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="M:System.Runtime.InteropServices.CriticalHandle.SetHandleAsInvalid" /> method was called.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method or <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> method was called and there are no references to the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object on other threads.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the handle is closed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsInvalid">
+      <MemberSignature Language="C#" Value="public abstract bool IsInvalid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInvalid" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived classes must implement the <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsInvalid" /> property so that the common language runtime can determine whether critical finalization is required. Derived classes must provide an implementation that suits the general type of handle they support (0 or -1 is invalid). These classes can then be further derived for specific safe handle types.</para>
+          <para>Unlike the <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsClosed" /> property, which reports whether the <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> object has finished using the underlying handle, the <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsInvalid" /> property calculates whether the given handle value is always considered invalid. Therefore, the <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsInvalid" /> property always returns the same value for any one handle value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether the handle value is invalid.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReleaseHandle">
+      <MemberSignature Language="C#" Value="protected abstract bool ReleaseHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool ReleaseHandle() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -131,80 +282,33 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="handle">
-      <MemberSignature Language="C#" Value="protected IntPtr handle;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IntPtr</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsClosed">
-      <MemberSignature Language="C#" Value="public bool IsClosed { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="IsInvalid">
-      <MemberSignature Language="C#" Value="public abstract bool IsInvalid { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="ReleaseHandle">
-      <MemberSignature Language="C#" Value="protected abstract bool ReleaseHandle ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.InteropServices.CriticalHandle.ReleaseHandle" /> method is guaranteed to be called only once, provided that you employ proper synchronization mechanisms to ensure that only one call to the <see cref="M:System.Runtime.InteropServices.CriticalHandle.Close" /> or <see cref="Overload:System.Runtime.InteropServices.CriticalHandle.Dispose" /> method is made. The <see cref="M:System.Runtime.InteropServices.CriticalHandle.ReleaseHandle" /> method will not be called if the <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsInvalid" /> or <see cref="P:System.Runtime.InteropServices.CriticalHandle.IsClosed" /> property is true. Implement this method in your <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> derived classes to execute any code that is required to free the handle. Because one of the functions of <see cref="T:System.Runtime.InteropServices.CriticalHandle" /> is to guarantee prevention of resource leaks, the code in your implementation of <see cref="M:System.Runtime.InteropServices.CriticalHandle.ReleaseHandle" /> must never fail. The garbage collector calls <see cref="M:System.Runtime.InteropServices.CriticalHandle.ReleaseHandle" /> after normal finalizers have been run for objects that were garbage collected at the same time, and guarantees the resources to invoke it and that it will not be interrupted while it is in progress. This method will be prepared as a constrained execution region (CER) at instance construction time (along with all the methods in its statically determinable call graph). Although this prevents thread abort interrupts, you must still be careful not to introduce any fault paths in your overridden <see cref="M:System.Runtime.InteropServices.CriticalHandle.ReleaseHandle" /> method. In particular, apply the <see cref="T:System.Runtime.ConstrainedExecution.ReliabilityContractAttribute" /> attribute to any methods you call from <see cref="M:System.Runtime.InteropServices.CriticalHandle.ReleaseHandle" />. In most cases this code should be:</para>
+          <para>ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)</para>
+          <para>Additionally, for simple cleanup (for example, calling the Win32 API CloseHandle on a file handle) you can check the return value for the single platform invoke call. For complex cleanup, you may have a lot of program logic and many method calls, some of which might fail. You must ensure that your program logic has fallback code for each of those cases.</para>
+          <para>If the <see cref="M:System.Runtime.InteropServices.CriticalHandle.ReleaseHandle" /> method returns false for any reason, it generates a <format type="text/html"><a href="44cd98ba-95e5-40a1-874d-e8e163612c51">ReleaseHandleFailed</a></format> Managed Debugging Assistant.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, executes the code required to free the handle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a <format type="text/html"><a href="44cd98ba-95e5-40a1-874d-e8e163612c51">ReleaseHandleFailed</a></format> Managed Debugging Assistant.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="SetHandle">
+      <MemberSignature Language="C#" Value="protected void SetHandle (IntPtr handle);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void SetHandle(native int handle) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -214,10 +318,6 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SetHandle">
-      <MemberSignature Language="C#" Value="protected void SetHandle (IntPtr handle);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -225,11 +325,23 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.InteropServices.CriticalHandle.SetHandle(System.IntPtr)" /> method only if you need to support a pre-existing handle (for example, if the handle is returned in a structure) because the .NET Framework COM interop infrastructure does not support marshaling handles in a structure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the handle to the specified pre-existing handle.</para>
+        </summary>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The pre-existing handle to use.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SetHandleAsInvalid">
+      <MemberSignature Language="C#" Value="public void SetHandleAsInvalid ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetHandleAsInvalid() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -239,28 +351,22 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SetHandleAsInvalid">
-      <MemberSignature Language="C#" Value="public void SetHandleAsInvalid ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.Runtime.InteropServices.CriticalHandle.SetHandleAsInvalid" /> method only when you know that your handle is invalid and you want to mark it as such. Doing so does not change the value of the <see cref="F:System.Runtime.InteropServices.CriticalHandle.handle" /> field; it only marks the handle as invalid. The handle might then contain a potentially stale value. The effect of this call is that no attempt is made to free the resources.</para>
+          <para>As with the <see cref="M:System.Runtime.InteropServices.CriticalHandle.SetHandle(System.IntPtr)" /> method, use <see cref="M:System.Runtime.InteropServices.CriticalHandle.SetHandleAsInvalid" /> only if you need to support a pre-existing handle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks a handle as invalid.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
 </Type>

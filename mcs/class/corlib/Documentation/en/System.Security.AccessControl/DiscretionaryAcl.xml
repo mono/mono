@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscretionaryAcl" FullName="System.Security.AccessControl.DiscretionaryAcl">
   <TypeSignature Language="C#" Value="public sealed class DiscretionaryAcl : System.Security.AccessControl.CommonAcl" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DiscretionaryAcl extends System.Security.AccessControl.CommonAcl" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,56 +12,81 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Discretionary Access Control List (DACL).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DiscretionaryAcl (bool isContainer, bool isDS, int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool isContainer, bool isDS, int32 capacity) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="isContainer" Type="System.Boolean" />
         <Parameter Name="isDS" Type="System.Boolean" />
         <Parameter Name="capacity" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="isContainer">To be added.</param>
-        <param name="isDS">To be added.</param>
-        <param name="capacity">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> class with the specified values.</para>
+        </summary>
+        <param name="isContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object is a container.</param>
+        <param name="isDS">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object is a directory object Access Control List (ACL).</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of Access Control Entries (ACEs) this <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object can contain. This number is to be used only as a hint.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DiscretionaryAcl (bool isContainer, bool isDS, System.Security.AccessControl.RawAcl rawAcl);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool isContainer, bool isDS, class System.Security.AccessControl.RawAcl rawAcl) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public DiscretionaryAcl (bool isContainer, bool isDS, System.Security.AccessControl.RawAcl rawAcl);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="isContainer" Type="System.Boolean" />
         <Parameter Name="isDS" Type="System.Boolean" />
         <Parameter Name="rawAcl" Type="System.Security.AccessControl.RawAcl" />
       </Parameters>
       <Docs>
-        <param name="isContainer">To be added.</param>
-        <param name="isDS">To be added.</param>
-        <param name="rawAcl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Access Control Entries (ACEs) in the <see cref="T:System.Security.AccessControl.RawAcl" /> object are cloned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> class with the specified values from the specified <see cref="T:System.Security.AccessControl.RawAcl" /> object.</para>
+        </summary>
+        <param name="isContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object is a container.</param>
+        <param name="isDS">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object is a directory object Access Control List (ACL).</param>
+        <param name="rawAcl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying <see cref="T:System.Security.AccessControl.RawAcl" /> object for the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object. Specify null to create an empty ACL.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DiscretionaryAcl (bool isContainer, bool isDS, byte revision, int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool isContainer, bool isDS, unsigned int8 revision, int32 capacity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public DiscretionaryAcl (bool isContainer, bool isDS, byte revision, int capacity);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="isContainer" Type="System.Boolean" />
         <Parameter Name="isDS" Type="System.Boolean" />
@@ -67,22 +94,30 @@
         <Parameter Name="capacity" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="isContainer">To be added.</param>
-        <param name="isDS">To be added.</param>
-        <param name="revision">To be added.</param>
-        <param name="capacity">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> class with the specified values.</para>
+        </summary>
+        <param name="isContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object is a container.</param>
+        <param name="isDS">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object is a directory object Access Control List (ACL).</param>
+        <param name="revision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The revision level of the new <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object.</param>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of Access Control Entries (ACEs) this <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object can contain. This number is to be used only as a hint.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddAccess">
       <MemberSignature Language="C#" Value="public void AddAccess (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAccess(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -94,23 +129,35 @@
         <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can cause existing ACEs to be merged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an Access Control Entry (ACE) with the specified settings to the current <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object.</para>
+        </summary>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to add.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to add an ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule for the new ACE.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the new ACE.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the new ACE.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddAccess">
       <MemberSignature Language="C#" Value="public void AddAccess (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAccess(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.ObjectAceFlags objectFlags, valuetype System.Guid objectType, valuetype System.Guid inheritedObjectType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -125,26 +172,41 @@
         <Parameter Name="inheritedObjectType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="objectFlags">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="inheritedObjectType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can cause existing ACEs to be merged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an Access Control Entry (ACE) with the specified settings to the current <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object. Use this method for directory object Access Control Lists (ACLs) when specifying the object type or the inherited object type for the new ACE.</para>
+        </summary>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to add.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to add an ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule for the new ACE.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the new ACE.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the new ACE.</param>
+        <param name="objectFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify if the <paramref name="objectType" /> and <paramref name="inheritedObjectType" /> parameters contain non-null values.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of objects to which the new ACE applies.</param>
+        <param name="inheritedObjectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of child objects which can inherit the new ACE.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAccess">
       <MemberSignature Language="C#" Value="public bool RemoveAccess (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAccess(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -156,24 +218,39 @@
         <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Access removal is accomplished by using a complex algorithm that might add Access Control Entries (ACEs) in addition to removing them.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified access control rule from the current <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this method successfully removes the specified access; otherwise, false.</para>
+        </returns>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to remove.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to remove an access control rule.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask for the rule to be removed.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the rule to be removed.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the rule to be removed.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAccess">
       <MemberSignature Language="C#" Value="public bool RemoveAccess (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAccess(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.ObjectAceFlags objectFlags, valuetype System.Guid objectType, valuetype System.Guid inheritedObjectType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -188,27 +265,45 @@
         <Parameter Name="inheritedObjectType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="objectFlags">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="inheritedObjectType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Access removal is accomplished by using a complex algorithm that might add Access Control Entries (ACEs) in addition to removing them.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified access control rule from the current <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object. Use this method for directory object Access Control Lists (ACLs) when specifying the object type or the inherited object type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this method successfully removes the specified access; otherwise, false.</para>
+        </returns>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to remove.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to remove an access control rule.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask for the access control rule to be removed.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the access control rule to be removed.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the access control rule to be removed.</param>
+        <param name="objectFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify if the <paramref name="objectType" /> and <paramref name="inheritedObjectType" /> parameters contain non-null values.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of objects to which the removed access control rule applies.</param>
+        <param name="inheritedObjectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of child objects which can inherit the removed access control rule.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAccessSpecific">
       <MemberSignature Language="C#" Value="public void RemoveAccessSpecific (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAccessSpecific(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -220,23 +315,32 @@
         <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified Access Control Entry (ACE) from the current <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object.</para>
+        </summary>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to remove.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to remove an ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask for the ACE to be removed.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the ACE to be removed.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the ACE to be removed.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAccessSpecific">
       <MemberSignature Language="C#" Value="public void RemoveAccessSpecific (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAccessSpecific(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.ObjectAceFlags objectFlags, valuetype System.Guid objectType, valuetype System.Guid inheritedObjectType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -251,26 +355,38 @@
         <Parameter Name="inheritedObjectType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="objectFlags">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="inheritedObjectType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified Access Control Entry (ACE) from the current <see cref="T:System.Security.AccessControl.DiscretionaryAcl" /> object. Use this method for directory object Access Control Lists (ACLs) when specifying the object type or the inherited object type for the ACE to be removed.</para>
+        </summary>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to remove.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to remove an ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask for the ACE to be removed.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the ACE to be removed.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the ACE to be removed.</param>
+        <param name="objectFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify if the <paramref name="objectType" /> and <paramref name="inheritedObjectType" /> parameters contain non-null values.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of objects to which the removed ACE applies.</param>
+        <param name="inheritedObjectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of child objects which can inherit the removed ACE.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetAccess">
       <MemberSignature Language="C#" Value="public void SetAccess (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccess(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -282,23 +398,35 @@
         <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes all existing Access Control Entries (ACEs) that match both specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object and the specified access qualifier (allow or deny).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified access control for the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </summary>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to set.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to set an ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule for the new ACE.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the new ACE.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the new ACE.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SetAccess">
+      <MemberSignature Language="C#" Value="public void SetAccess (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccess(valuetype System.Security.AccessControl.AccessControlType accessType, class System.Security.Principal.SecurityIdentifier sid, int32 accessMask, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.ObjectAceFlags objectFlags, valuetype System.Guid objectType, valuetype System.Guid inheritedObjectType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetAccess">
-      <MemberSignature Language="C#" Value="public void SetAccess (System.Security.AccessControl.AccessControlType accessType, System.Security.Principal.SecurityIdentifier sid, int accessMask, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.ObjectAceFlags objectFlags, Guid objectType, Guid inheritedObjectType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -313,22 +441,32 @@
         <Parameter Name="inheritedObjectType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="accessType">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="objectFlags">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="inheritedObjectType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes all existing Access Control Entries (ACEs) that match both specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object and the specified access qualifier (allow or deny).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified access control for the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </summary>
+        <param name="accessType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access control (allow or deny) to set.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> for which to set an ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule for the new ACE.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance properties of the new ACE.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify the inheritance propagation properties for the new ACE.</param>
+        <param name="objectFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify if the <paramref name="objectType" /> and <paramref name="inheritedObjectType" /> parameters contain non-null values.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of objects to which the new ACE applies.</param>
+        <param name="inheritedObjectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of child objects which can inherit the new ACE.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

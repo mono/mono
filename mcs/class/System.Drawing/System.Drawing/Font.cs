@@ -176,7 +176,7 @@ namespace System.Drawing
 			}
 		}
 
-		internal void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+		void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			_name = family.Name;
 			_fontFamily = family;			

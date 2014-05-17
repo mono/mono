@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Diagnostics;
 using System.Collections;
@@ -72,7 +70,6 @@ namespace Microsoft.Build.Utilities
 		{
 			this.TaskResources = taskResources;
 			this.HelpKeywordPrefix = helpKeywordPrefix;
-			this.toolPath = MonoLocationHelper.GetBinDir ();
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
 		}
@@ -245,33 +242,38 @@ namespace Microsoft.Build.Utilities
 				singleLine.StartsWith ("Compilation failed"))
 				return;
 
-			Match match = CscErrorRegex.Match (singleLine);
-			if (!match.Success) {
+			var result = MSBuildErrorParser.TryParseLine (singleLine);
+			if (result == null) {
 				Log.LogMessage (importance, singleLine);
 				return;
 			}
 
-			string filename = match.Result ("${file}") ?? "";
-			string line = match.Result ("${line}");
-			int lineNumber = !string.IsNullOrEmpty (line) ? Int32.Parse (line) : 0;
+			string filename = result.Origin ?? GetType ().Name.ToUpper ();
 
-			string col = match.Result ("${column}");
-			int columnNumber = 0;
-			if (!string.IsNullOrEmpty (col))
-				columnNumber = col.IndexOf ("+") >= 0 ? -1 : Int32.Parse (col);
-
-			string category = match.Result ("${level}");
-			string code = match.Result ("${number}");
-			string text = match.Result ("${message}");
-
-			if (String.Compare (category, "warning", StringComparison.OrdinalIgnoreCase) == 0) {
-				Log.LogWarning (null, code, null, filename, lineNumber, columnNumber, -1,
-					-1, text, null);
-			} else if (String.Compare (category, "error", StringComparison.OrdinalIgnoreCase) == 0) {
-				Log.LogError (null, code, null, filename, lineNumber, columnNumber, -1,
-					-1, text, null);
+			if (result.IsError) {
+				Log.LogError (
+					result.Subcategory,
+					result.Code,
+					null,
+					filename,
+					result.Line,
+					result.Column,
+					result.EndLine,
+					result.EndColumn,
+					result.Message
+				);
 			} else {
-				Log.LogMessage (importance, singleLine);
+				Log.LogWarning (
+					result.Subcategory,
+					result.Code,
+					null,
+					filename,
+					result.Line,
+					result.Column,
+					result.EndLine,
+					result.EndColumn,
+					result.Message
+				);
 			}
 		}
 
@@ -298,6 +300,7 @@ namespace Microsoft.Build.Utilities
 
 			pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
 			pinfo.UseShellExecute = false;
+			pinfo.CreateNoWindow = true;
 			pinfo.RedirectStandardOutput = true;
 			pinfo.RedirectStandardError = true;
 
@@ -439,15 +442,12 @@ namespace Microsoft.Build.Utilities
 		public virtual string ToolExe
 		{
 			get {
-				if (toolExe == null)
+				if (string.IsNullOrEmpty (toolExe))
 					return ToolName;
 				else
 					return toolExe;
 			}
-			set {
-				if (!String.IsNullOrEmpty (value))
-					toolExe = value;
-			}
+			set { toolExe = value; }
 		}
 
 		protected abstract string ToolName
@@ -458,23 +458,7 @@ namespace Microsoft.Build.Utilities
 		public string ToolPath
 		{
 			get { return toolPath; }
-			set {
-				if (!String.IsNullOrEmpty (value))
-					toolPath  = value;
-			}
-		}
-
-		// Snatched from our codedom code, with some changes to make it compatible with csc
-		// (the line+column group is optional is csc)
-		static Regex errorRegex;
-		static Regex CscErrorRegex {
-			get {
-				if (errorRegex == null)
-					errorRegex = new Regex (@"^(\s*(?<file>[^\(]+)(\((?<line>\d*)(,(?<column>\d*[\+]*))?\))?:\s+)*(?<level>\w+)\s+(?<number>.*\d):\s*(?<message>.*)", RegexOptions.Compiled | RegexOptions.ExplicitCapture);
-				return errorRegex;
-			}
+			set { toolPath  = value; }
 		}
 	}
 }
-
-#endif

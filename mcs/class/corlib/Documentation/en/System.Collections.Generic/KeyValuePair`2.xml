@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyValuePair&lt;TKey,TValue&gt;" FullName="System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt;">
   <TypeSignature Language="C#" Value="public struct KeyValuePair&lt;TKey,TValue&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit KeyValuePair`2&lt;TKey, TValue&gt; extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -16,16 +18,28 @@
   <Docs>
     <typeparam name="TKey">To be added.</typeparam>
     <typeparam name="TValue">To be added.</typeparam>
+    <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Collections.Generic.Dictionary`2.Enumerator.Current" /> property returns an instance of this type.</para>
+      <para>The foreach statement of the C# language (for each in C++, For Each in Visual Basic) requires the type of the elements in the collection. Since each element of a collection based on <see cref="T:System.Collections.Generic.IDictionary`2" /> is a key/value pair, the element type is not the type of the key or the type of the value. Instead, the element type is <see cref="T:System.Collections.Generic.KeyValuePair`2" />. For example: </para>
+      <para>code reference: Generic.Dictionary#11</para>
+      <para>The foreach statement is a wrapper around the enumerator, which allows only reading from, not writing to, the collection.</para>
+    </remarks>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>Defines a key/value pair that can be set or retrieved.</para>
     </summary>
-    <remarks>To be added.</remarks>
-    <since version=".NET 2.0" />
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public KeyValuePair (TKey key, TValue value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!TKey key, !TValue value) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="key" Type="TKey" />
         <Parameter Name="value" Type="TValue" />
@@ -37,71 +51,85 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Key">
+      <MemberSignature Language="C#" Value="public TKey Key { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !TKey Key" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Key">
-      <MemberSignature Language="C#" Value="public TKey Key { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>TKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>
-          <para>The key in the key/value pair.    </para>
-        </summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is read/only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key in the key/value pair.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation consists of the string representations of the key and value, separated by a comma and a space, and enclosed in square brackets. For example, the <see cref="M:System.Collections.Generic.KeyValuePair`2.ToString" /> method for a <see cref="T:System.Collections.Generic.KeyValuePair`2" /> structure with the string <see cref="P:System.Collections.Generic.KeyValuePair`2.Key" /> "Test" and the integer <see cref="P:System.Collections.Generic.KeyValuePair`2.Value" /> 14 returns the string "[Test, 14]". </para>
+          <block subset="none" type="note">
+            <para>This method uses the ToString methods provided by the key and value types. Some types do not return useful or informative values for their ToString methods.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the <see cref="T:System.Collections.Generic.KeyValuePair`2" />, using the string representations of the key and value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the <see cref="T:System.Collections.Generic.KeyValuePair`2" />, which includes the string representations of the key and value.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public TValue Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !TValue Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public TValue Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>TValue</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>
-          <para>The value in the key/value pair.    </para>
-        </summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is read/only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value in the key/value pair.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Diagnostics.DebuggerDisplay("{value}", Name="[{key}]")</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

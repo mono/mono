@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlTriggerContext" FullName="Microsoft.SqlServer.Server.SqlTriggerContext">
   <TypeSignature Language="C#" Value="public sealed class SqlTriggerContext" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The contextual information provided includes the type of action that caused the trigger to fire, which columns were modified in an UPDATE operation, and, in the case of a data definition language (DDL) trigger, an XML EventData structure (see "Transact-SQL Reference" in SQL Server Books Online) that describes the triggering operation.</para>
+      <para>An instance of <see cref="T:Microsoft.SqlServer.Server.SqlTriggerContext" /> is available from the <see cref="T:Microsoft.SqlServer.Server.SqlContext" /> class, when the code is running inside a trigger through the <see cref="P:Microsoft.SqlServer.Server.SqlContext.TriggerContext" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides contextual information about the trigger that was fired. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ColumnCount">
@@ -24,9 +32,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:Microsoft.SqlServer.Server.SqlTriggerContext.ColumnCount" /> property is useful to determine the maximum ordinal that <see cref="M:Microsoft.SqlServer.Server.SqlTriggerContext.IsUpdatedColumn(System.Int32)" /> allows for a given trigger invocation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of columns contained by the data table bound to the trigger. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventData">
@@ -36,10 +51,16 @@
         <ReturnType>System.Data.SqlTypes.SqlXml</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This information is available for data definition language (DDL) triggers. No information is available through this property for data manipulation language (DML) triggers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the event data specific to the action that fired the trigger.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,11 +76,18 @@
         <Parameter Name="columnOrdinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="columnOrdinal">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if a column was affected by an INSERT or UPDATE statement.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column was affected by an INSERT or UPDATE operation.</para>
+        </returns>
+        <param name="columnOrdinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based ordinal of the column.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +100,13 @@
         <ReturnType>Microsoft.SqlServer.Server.TriggerAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates what action fired the trigger.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

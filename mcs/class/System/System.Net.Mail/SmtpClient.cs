@@ -30,11 +30,12 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using System.Security.Cryptography.X509Certificates;
 #else
 extern alias PrebuiltSystem;
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 #endif
@@ -47,7 +48,6 @@ using System.IO;
 using System.Net;
 using System.Net.Mime;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Reflection;

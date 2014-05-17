@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceContainer" FullName="System.ComponentModel.Design.ServiceContainer">
-  <TypeSignature Language="C#" Maintainer="auto" Value="public class ServiceContainer : IDisposable, System.ComponentModel.Design.IServiceContainer" />
+  <TypeSignature Language="C#" Maintainer="auto" Value="public class ServiceContainer : IDisposable, IServiceProvider, System.ComponentModel.Design.IServiceContainer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceContainer extends System.Object implements class System.ComponentModel.Design.IServiceContainer, class System.IDisposable, class System.IServiceProvider" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -18,46 +21,79 @@
     <Interface>
       <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.IServiceProvider</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.ServiceContainer" /> object can be used to store and provide services. <see cref="T:System.ComponentModel.Design.ServiceContainer" /> implements the <see cref="T:System.ComponentModel.Design.IServiceContainer" /> interface.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.ServiceContainer" /> object can be created using a constructor that adds a parent <see cref="T:System.ComponentModel.Design.IServiceContainer" /> through which services can be optionally added to or removed from all parent <see cref="T:System.ComponentModel.Design.IServiceContainer" /> objects, including the immediate parent <see cref="T:System.ComponentModel.Design.IServiceContainer" />. To add or remove a service from all <see cref="T:System.ComponentModel.Design.IServiceContainer" /> implementations that are linked to this <see cref="T:System.ComponentModel.Design.IServiceContainer" /> through parenting, call the <see cref="M:System.ComponentModel.Design.ServiceContainer.AddService(System.Type,System.Object)" /> or <see cref="M:System.ComponentModel.Design.ServiceContainer.RemoveService(System.Type)" /> method overload that accepts a Boolean value indicating whether to promote the service request.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.SharedState" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a simple implementation of the <see cref="T:System.ComponentModel.Design.IServiceContainer" /> interface. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ServiceContainer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.ServiceContainer" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ServiceContainer (IServiceProvider parentProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IServiceProvider parentProvider) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="parentProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="parentProvider">To be added: an object of type 'IServiceProvider'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service container uses this service object provider to retrieve services, if they are not available locally in the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.ServiceContainer" /> class using the specified parent service provider.</para>
+        </summary>
+        <param name="parentProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parent service provider. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddService">
       <MemberSignature Language="C#" Value="public void AddService (Type serviceType, System.ComponentModel.Design.ServiceCreatorCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddService(class System.Type serviceType, class System.ComponentModel.Design.ServiceCreatorCallback callback) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -66,19 +102,26 @@
         <Parameter Name="callback" Type="System.ComponentModel.Design.ServiceCreatorCallback" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <param name="callback">To be added: an object of type 'ServiceCreatorCallback'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified service to the service container.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to add. </param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A callback object that can create the service. This allows a service to be declared as available, but delays creation of the object until the service is requested. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddService">
       <MemberSignature Language="C#" Value="public void AddService (Type serviceType, object serviceInstance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddService(class System.Type serviceType, object serviceInstance) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -87,19 +130,26 @@
         <Parameter Name="serviceInstance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <param name="serviceInstance">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified service to the service container.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to add. </param>
+        <param name="serviceInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the service to add. This object must implement or inherit from the type indicated by the <paramref name="serviceType" /> parameter. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddService">
       <MemberSignature Language="C#" Value="public virtual void AddService (Type serviceType, System.ComponentModel.Design.ServiceCreatorCallback callback, bool promote);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddService(class System.Type serviceType, class System.ComponentModel.Design.ServiceCreatorCallback callback, bool promote) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -109,20 +159,28 @@
         <Parameter Name="promote" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <param name="callback">To be added: an object of type 'ServiceCreatorCallback'</param>
-        <param name="promote">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified service to the service container.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to add. </param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A callback object that can create the service. This allows a service to be declared as available, but delays creation of the object until the service is requested. </param>
+        <param name="promote">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this service should be added to any parent service containers; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddService">
       <MemberSignature Language="C#" Value="public virtual void AddService (Type serviceType, object serviceInstance, bool promote);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddService(class System.Type serviceType, object serviceInstance, bool promote) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -132,52 +190,77 @@
         <Parameter Name="promote" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <param name="serviceInstance">To be added: an object of type 'object'</param>
-        <param name="promote">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified service to the service container.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to add. </param>
+        <param name="serviceInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the service type to add. This object must implement or inherit from the type indicated by the <paramref name="serviceType" /> parameter. </param>
+        <param name="promote">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this service should be added to any parent service containers; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultServices">
       <MemberSignature Language="C#" Value="protected virtual Type[] DefaultServices { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type[] DefaultServices" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the default services that are implemented directly on this <see cref="T:System.ComponentModel.Design.IServiceContainer" />. the default implementation of this property is to return the <see cref="T:System.ComponentModel.Design.IServiceContainer" /> and <see cref="T:System.ComponentModel.Design.ServiceContainer" /> types. You may override this property and return your own types, modifying the default behavior of <see cref="M:System.ComponentModel.Component.GetService(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default services implemented directly by <see cref="T:System.ComponentModel.Design.ServiceContainer" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ComponentModel.Design.ServiceContainer.Dispose" /> walks all instantiated services within the container and disposes any that implement <see cref="T:System.IDisposable" />, and clears the service list.</para>
+          <para>Call <see cref="Overload:System.ComponentModel.Design.ServiceContainer.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.Design.ServiceContainer" />. The <see cref="Overload:System.ComponentModel.Design.ServiceContainer.Dispose" /> method leaves the <see cref="T:System.ComponentModel.Design.ServiceContainer" /> in an unusable state. After calling <see cref="Overload:System.ComponentModel.Design.ServiceContainer.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.Design.ServiceContainer" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Design.ServiceContainer" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="Overload:System.ComponentModel.Design.ServiceContainer.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.Design.ServiceContainer" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Design.ServiceContainer" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes this service container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -186,14 +269,30 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ComponentModel.Design.ServiceContainer.Dispose" /> walks all instantiated services within the container and disposes any that implement <see cref="T:System.IDisposable" />, and clears the service list.</para>
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.Design.ServiceContainer" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes this service container.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the <see cref="T:System.ComponentModel.Design.ServiceContainer" /> is in the process of being disposed of; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="GetService">
       <MemberSignature Language="C#" Value="public virtual object GetService (Type serviceType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetService(class System.Type serviceType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -201,19 +300,28 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the requested service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the service if it could be found, or null if it could not be found.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveService">
       <MemberSignature Language="C#" Value="public void RemoveService (Type serviceType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveService(class System.Type serviceType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -221,18 +329,24 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified service type from the service container.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to remove. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveService">
       <MemberSignature Language="C#" Value="public virtual void RemoveService (Type serviceType, bool promote);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveService(class System.Type serviceType, bool promote) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -241,15 +355,16 @@
         <Parameter Name="promote" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <param name="promote">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified service type from the service container.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to remove. </param>
+        <param name="promote">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this service should be removed from any parent service containers; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

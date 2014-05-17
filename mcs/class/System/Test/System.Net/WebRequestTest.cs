@@ -362,7 +362,7 @@ namespace MonoTests.System.Net {
 			 * instead of reporting an error.
 			 */
 			if (req.ResponseUri.DnsSafeHost.Equals ("navigationshilfe1.t-online.de"))
-				return;
+				Assert.Ignore ("Misbehaving DNS server.");
 
 			Assert.Fail ("Should have raised an exception");
 		} catch (Exception e) {

@@ -1,0 +1,1278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SyndicationFeedFormatter" FullName="System.ServiceModel.Syndication.SyndicationFeedFormatter">
+  <TypeSignature Language="C#" Value="public abstract class SyndicationFeedFormatter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SyndicationFeedFormatter extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.Serialization.DataContract</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is abstract and cannot be instantiated directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract class used as a base class for other formatters, (for example <see cref="T:System.ServiceModel.Syndication.Atom10FeedFormatter" />).</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SyndicationFeedFormatter ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SyndicationFeedFormatter (System.ServiceModel.Syndication.SyndicationFeed feedToWrite);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Syndication.SyndicationFeed feedToWrite) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="feedToWrite" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+      </Parameters>
+      <Docs>
+        <param name="feedToWrite">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> must have a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> associated with it. The <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> can then write out the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> to an <see cref="T:System.Xml.XmlReader" />. The only way to associate a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> with a <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> is by using this constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> class with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CanRead">
+      <MemberSignature Language="C#" Value="public abstract bool CanRead (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CanRead(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method verifies whether the start element name and namespace match the start element name and namespace of the RSS 2.0 or Atom 1.0 specification.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether the specified <see cref="T:System.Xml.XmlReader" /> contains a valid syndication feed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the XML reader contains a valid syndication feed, otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateCategory">
+      <MemberSignature Language="C#" Value="protected static System.ServiceModel.Syndication.SyndicationCategory CreateCategory (System.ServiceModel.Syndication.SyndicationFeed feed);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig class System.ServiceModel.Syndication.SyndicationCategory CreateCategory(class System.ServiceModel.Syndication.SyndicationFeed feed) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationCategory</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+      </Parameters>
+      <Docs>
+        <param name="feed">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> class using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateCategory">
+      <MemberSignature Language="C#" Value="protected static System.ServiceModel.Syndication.SyndicationCategory CreateCategory (System.ServiceModel.Syndication.SyndicationItem item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig class System.ServiceModel.Syndication.SyndicationCategory CreateCategory(class System.ServiceModel.Syndication.SyndicationItem item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationCategory</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> class using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFeedInstance">
+      <MemberSignature Language="C#" Value="protected abstract System.ServiceModel.Syndication.SyndicationFeed CreateFeedInstance ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.ServiceModel.Syndication.SyndicationFeed CreateFeedInstance() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationFeed</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateItem">
+      <MemberSignature Language="C#" Value="protected static System.ServiceModel.Syndication.SyndicationItem CreateItem (System.ServiceModel.Syndication.SyndicationFeed feed);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig class System.ServiceModel.Syndication.SyndicationItem CreateItem(class System.ServiceModel.Syndication.SyndicationFeed feed) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationItem</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+      </Parameters>
+      <Docs>
+        <param name="feed">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateLink">
+      <MemberSignature Language="C#" Value="protected static System.ServiceModel.Syndication.SyndicationLink CreateLink (System.ServiceModel.Syndication.SyndicationFeed feed);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig class System.ServiceModel.Syndication.SyndicationLink CreateLink(class System.ServiceModel.Syndication.SyndicationFeed feed) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationLink</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+      </Parameters>
+      <Docs>
+        <param name="feed">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> class with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateLink">
+      <MemberSignature Language="C#" Value="protected static System.ServiceModel.Syndication.SyndicationLink CreateLink (System.ServiceModel.Syndication.SyndicationItem item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig class System.ServiceModel.Syndication.SyndicationLink CreateLink(class System.ServiceModel.Syndication.SyndicationItem item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationLink</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> class with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePerson">
+      <MemberSignature Language="C#" Value="protected static System.ServiceModel.Syndication.SyndicationPerson CreatePerson (System.ServiceModel.Syndication.SyndicationFeed feed);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig class System.ServiceModel.Syndication.SyndicationPerson CreatePerson(class System.ServiceModel.Syndication.SyndicationFeed feed) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationPerson</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+      </Parameters>
+      <Docs>
+        <param name="feed">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePerson">
+      <MemberSignature Language="C#" Value="protected static System.ServiceModel.Syndication.SyndicationPerson CreatePerson (System.ServiceModel.Syndication.SyndicationItem item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig class System.ServiceModel.Syndication.SyndicationPerson CreatePerson(class System.ServiceModel.Syndication.SyndicationItem item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationPerson</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Feed">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.SyndicationFeed Feed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.SyndicationFeed Feed" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationFeed</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> is associated with the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> by passing in a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> associated with the formatter.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void LoadElementExtensions (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationCategory category, int maxExtensionSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void LoadElementExtensions(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationCategory category, int32 maxExtensionSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="category" Type="System.ServiceModel.Syndication.SyndicationCategory" />
+        <Parameter Name="maxExtensionSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="category">To be added.</param>
+        <param name="maxExtensionSize">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void LoadElementExtensions (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationFeed feed, int maxExtensionSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void LoadElementExtensions(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationFeed feed, int32 maxExtensionSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+        <Parameter Name="maxExtensionSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="feed">To be added.</param>
+        <param name="maxExtensionSize">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void LoadElementExtensions (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationItem item, int maxExtensionSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void LoadElementExtensions(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationItem item, int32 maxExtensionSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+        <Parameter Name="maxExtensionSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="maxExtensionSize">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void LoadElementExtensions (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationLink link, int maxExtensionSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void LoadElementExtensions(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationLink link, int32 maxExtensionSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="link" Type="System.ServiceModel.Syndication.SyndicationLink" />
+        <Parameter Name="maxExtensionSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="link">To be added.</param>
+        <param name="maxExtensionSize">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void LoadElementExtensions (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationPerson person, int maxExtensionSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void LoadElementExtensions(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationPerson person, int32 maxExtensionSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="person" Type="System.ServiceModel.Syndication.SyndicationPerson" />
+        <Parameter Name="maxExtensionSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="person">To be added.</param>
+        <param name="maxExtensionSize">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadFrom">
+      <MemberSignature Language="C#" Value="public abstract void ReadFrom (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ReadFrom(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />, associates it with the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> and reads the feed into the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads in a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetFeed">
+      <MemberSignature Language="C#" Value="protected virtual void SetFeed (System.ServiceModel.Syndication.SyndicationFeed feed);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void SetFeed(class System.ServiceModel.Syndication.SyndicationFeed feed) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+      </Parameters>
+      <Docs>
+        <param name="feed">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is protected and cannot be called from user code. To associate a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance with a <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" />, either create a new <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance and pass the constructor a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance or load a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance into the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> by calling the <see cref="M:System.ServiceModel.Syndication.SyndicationFeedFormatter.ReadFrom(System.Xml.XmlReader)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates a <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance with the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseAttribute">
+      <MemberSignature Language="C#" Value="protected static bool TryParseAttribute (string name, string ns, string value, System.ServiceModel.Syndication.SyndicationCategory category, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseAttribute(string name, string ns, string value, class System.ServiceModel.Syndication.SyndicationCategory category, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="category" Type="System.ServiceModel.Syndication.SyndicationCategory" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <param name="category">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseAttribute">
+      <MemberSignature Language="C#" Value="protected static bool TryParseAttribute (string name, string ns, string value, System.ServiceModel.Syndication.SyndicationFeed feed, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseAttribute(string name, string ns, string value, class System.ServiceModel.Syndication.SyndicationFeed feed, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <param name="feed">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationFeed.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseAttribute">
+      <MemberSignature Language="C#" Value="protected static bool TryParseAttribute (string name, string ns, string value, System.ServiceModel.Syndication.SyndicationItem item, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseAttribute(string name, string ns, string value, class System.ServiceModel.Syndication.SyndicationItem item, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseAttribute">
+      <MemberSignature Language="C#" Value="protected static bool TryParseAttribute (string name, string ns, string value, System.ServiceModel.Syndication.SyndicationLink link, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseAttribute(string name, string ns, string value, class System.ServiceModel.Syndication.SyndicationLink link, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="link" Type="System.ServiceModel.Syndication.SyndicationLink" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <param name="link">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseAttribute">
+      <MemberSignature Language="C#" Value="protected static bool TryParseAttribute (string name, string ns, string value, System.ServiceModel.Syndication.SyndicationPerson person, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseAttribute(string name, string ns, string value, class System.ServiceModel.Syndication.SyndicationPerson person, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="value" Type="System.String" />
+        <Parameter Name="person" Type="System.ServiceModel.Syndication.SyndicationPerson" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="ns">To be added.</param>
+        <param name="value">To be added.</param>
+        <param name="person">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseContent">
+      <MemberSignature Language="C#" Value="protected static bool TryParseContent (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationItem item, string contentType, string version, out System.ServiceModel.Syndication.SyndicationContent content);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseContent(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationItem item, string contentType, string version, class System.ServiceModel.Syndication.SyndicationContent content) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+        <Parameter Name="contentType" Type="System.String" />
+        <Parameter Name="version" Type="System.String" />
+        <Parameter Name="content" Type="System.ServiceModel.Syndication.SyndicationContent&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="contentType">To be added.</param>
+        <param name="version">To be added.</param>
+        <param name="content">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseElement">
+      <MemberSignature Language="C#" Value="protected static bool TryParseElement (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationCategory category, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseElement(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationCategory category, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="category" Type="System.ServiceModel.Syndication.SyndicationCategory" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="category">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseElement">
+      <MemberSignature Language="C#" Value="protected static bool TryParseElement (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationFeed feed, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseElement(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationFeed feed, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="feed">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationFeed.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseElement">
+      <MemberSignature Language="C#" Value="protected static bool TryParseElement (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationItem item, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseElement(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationItem item, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseElement">
+      <MemberSignature Language="C#" Value="protected static bool TryParseElement (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationLink link, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseElement(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationLink link, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="link" Type="System.ServiceModel.Syndication.SyndicationLink" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="link">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParseElement">
+      <MemberSignature Language="C#" Value="protected static bool TryParseElement (System.Xml.XmlReader reader, System.ServiceModel.Syndication.SyndicationPerson person, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool TryParseElement(class System.Xml.XmlReader reader, class System.ServiceModel.Syndication.SyndicationPerson person, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="person" Type="System.ServiceModel.Syndication.SyndicationPerson" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <param name="person">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="C#" Value="public abstract string Version { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Version" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>indigo1 supports the RSS 2.0 and Atom 1.0 specifications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the syndication version of the formatter.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteAttributeExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationCategory category, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteAttributeExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationCategory category, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="category" Type="System.ServiceModel.Syndication.SyndicationCategory" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="category">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteAttributeExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationFeed feed, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteAttributeExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationFeed feed, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="feed">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationFeed.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteAttributeExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationItem item, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteAttributeExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationItem item, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteAttributeExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationLink link, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteAttributeExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationLink link, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="link" Type="System.ServiceModel.Syndication.SyndicationLink" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="link">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAttributeExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteAttributeExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationPerson person, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteAttributeExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationPerson person, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="person" Type="System.ServiceModel.Syndication.SyndicationPerson" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="person">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteElementExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationCategory category, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteElementExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationCategory category, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="category" Type="System.ServiceModel.Syndication.SyndicationCategory" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="category">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteElementExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationFeed feed, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteElementExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationFeed feed, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="feed" Type="System.ServiceModel.Syndication.SyndicationFeed" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="feed">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationFeed.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteElementExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationItem item, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteElementExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationItem item, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteElementExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationLink link, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteElementExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationLink link, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="link" Type="System.ServiceModel.Syndication.SyndicationLink" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="link">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteElementExtensions">
+      <MemberSignature Language="C#" Value="protected static void WriteElementExtensions (System.Xml.XmlWriter writer, System.ServiceModel.Syndication.SyndicationPerson person, string version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig void WriteElementExtensions(class System.Xml.XmlWriter writer, class System.ServiceModel.Syndication.SyndicationPerson person, string version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="person" Type="System.ServiceModel.Syndication.SyndicationPerson" />
+        <Parameter Name="version" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <param name="person">To be added.</param>
+        <param name="version">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public abstract void WriteTo (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteTo(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> to the specified <see cref="T:System.Xml.XmlWriter" /> instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

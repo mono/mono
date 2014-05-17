@@ -575,6 +575,14 @@ namespace MonoTests.I18N.CJK
 			Assert.AreEqual ("don\u2019t", s);
 
 		}
+		
+		[Test]
+		public void Bug14591 ()
+		{
+			var expected = "\u4f50\u85e4\u8c4a";
+			var text = Encoding.GetEncoding ("iso-2022-jp").GetString (Convert.FromBase64String ("GyRAOjRGI0stGyhK"));
+			Assert.AreEqual (expected, text, "#1");
+		}
 		#endregion
 
 		#region Korean

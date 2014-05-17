@@ -1,59 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UriFormat" FullName="System.UriFormat">
   <TypeSignature Language="C#" Value="public enum UriFormat" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed UriFormat extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by the <see cref="M:System.Uri.GetComponents(System.UriComponents,System.UriFormat)" /> method to specify the level of character escaping in the returned URI.</para>
+      <para>RFC 2396 defines the standard escaping for URIs, and is available at <see cref="http://rfc-editor.org">http://rfc-editor.org</see>.</para>
+      <para>
+        <see cref="F:System.UriFormat.SafeUnescaped" /> leaves the following characters escaped if the character has a reserved meaning in the requested <see cref="T:System.UriComponents" />: "%", "#", "?", "/", "\", and "@".</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls how URI information is escaped.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SafeUnescaped">
       <MemberSignature Language="C#" Value="SafeUnescaped" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriFormat SafeUnescaped = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Characters that have a reserved meaning in the requested URI components remain escaped. All others are not escaped. See Remarks.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unescaped">
       <MemberSignature Language="C#" Value="Unescaped" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriFormat Unescaped = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No escaping is performed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UriEscaped">
       <MemberSignature Language="C#" Value="UriEscaped" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriFormat UriEscaped = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Escaping is performed according to the rules in RFC 2396.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

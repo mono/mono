@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IWsdlExportExtension" FullName="System.ServiceModel.Description.IWsdlExportExtension">
+  <TypeSignature Language="C#" Value="public interface IWsdlExportExtension" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IWsdlExportExtension" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To modify and extend the Web Services Description Language (WSDL) exported by <see cref="T:System.ServiceModel.Description.WsdlExporter" /> objects, implement the <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> interface on an endpoint, contract, or operation behavior (an object that implements either <see cref="T:System.ServiceModel.Description.IContractBehavior" />, <see cref="T:System.ServiceModel.Description.IEndpointBehavior" />, or <see cref="T:System.ServiceModel.Description.IOperationBehavior" />) and add the behavior to the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.Behaviors" />, <see cref="P:System.ServiceModel.Description.ContractDescription.Behaviors" />, or <see cref="P:System.ServiceModel.Description.OperationDescription.Behaviors" /> property. In addition, you can also implement <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> on a <see cref="T:System.ServiceModel.Channels.BindingElement" />.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> implementations are never invoked if they are implemented as an <see cref="T:System.ServiceModel.Description.IServiceBehavior" />.</para>
+      </block>
+      <para>
+        <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> does not export custom policy assertions even though indigo1 exports custom binding policy assertions to the appropriate element inside WSDL. If you want to export custom policy assertions, implement the <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> interface. </para>
+      <para>The metadata publication process begins by calling <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" /> which in turn calls <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" /> for each endpoint. </para>
+      <para>The endpoint is exported by first exporting its contract.When exporting a contract the <see cref="T:System.ServiceModel.Description.WsdlExporter" /> calls the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportContract(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlContractConversionContext)" /> method on all <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> implementations on the contract, and operation behaviors for that contract. Operations that use wildcard actions are not exported in metadata, so <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> implementations on operation behaviors for these operations are not exported.</para>
+      <para>After exporting the contract, the port and binding are exported and exported policy expressions are attached.</para>
+      <para>Both the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportContract(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlContractConversionContext)" /> and the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlEndpointConversionContext)" /> methods provide access to the <see cref="T:System.ServiceModel.Description.WsdlExporter" /> so that <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> implementations can report recoverable errors and warnings through the <see cref="P:System.ServiceModel.Description.MetadataExporter.Errors" /> property. The context objects passed into both methods provide convenient mappings from exported WSDL elements to properties of <see cref="T:System.ServiceModel.Description.ContractDescription" /> and <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects.</para>
+      <para>If an <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> implementation throws an exception on export, the generated metadata is in an inconsistent state and the <see cref="T:System.ServiceModel.Description.WsdlExporter" /> object should be discarded.</para>
+      <block subset="none" type="note">
+        <para>Custom export extension must run after the built-in serializer populates the service description.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines endpoint or contract behaviors that can export custom metadata.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ExportContract">
+      <MemberSignature Language="C#" Value="public void ExportContract (System.ServiceModel.Description.WsdlExporter exporter, System.ServiceModel.Description.WsdlContractConversionContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ExportContract(class System.ServiceModel.Description.WsdlExporter exporter, class System.ServiceModel.Description.WsdlContractConversionContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exporter" Type="System.ServiceModel.Description.WsdlExporter" />
+        <Parameter Name="context" Type="System.ServiceModel.Description.WsdlContractConversionContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportContract(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlContractConversionContext)" /> method is called when the metadata export system is exporting the contract. Only contract and operation behaviors implementing <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> get the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportContract(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlContractConversionContext)" /> call. All behaviors implementing <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> get the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlEndpointConversionContext)" /> call.</para>
+          <para>Use the <paramref name="context" /> parameter to modify the WSDL to be exported. For an example, see the Example section.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes custom Web Services Description Language (WSDL) elements into the generated WSDL for a contract.</para>
+        </summary>
+        <param name="exporter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.WsdlExporter" /> that exports the contract information.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Provides mappings from exported WSDL elements to the contract description.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportEndpoint">
+      <MemberSignature Language="C#" Value="public void ExportEndpoint (System.ServiceModel.Description.WsdlExporter exporter, System.ServiceModel.Description.WsdlEndpointConversionContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ExportEndpoint(class System.ServiceModel.Description.WsdlExporter exporter, class System.ServiceModel.Description.WsdlEndpointConversionContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exporter" Type="System.ServiceModel.Description.WsdlExporter" />
+        <Parameter Name="context" Type="System.ServiceModel.Description.WsdlEndpointConversionContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlEndpointConversionContext)" /> method to modify the WSDL exported for an endpoint. This method is called after the contract has been exported by <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportContract(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlContractConversionContext)" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes custom Web Services Description Language (WSDL) elements into the generated WSDL for an endpoint.</para>
+        </summary>
+        <param name="exporter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.WsdlExporter" /> that exports the endpoint information.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Provides mappings from exported WSDL elements to the endpoint description.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

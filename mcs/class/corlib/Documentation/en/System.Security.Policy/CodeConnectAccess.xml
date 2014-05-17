@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeConnectAccess" FullName="System.Security.Policy.CodeConnectAccess">
   <TypeSignature Language="C#" Value="public class CodeConnectAccess" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeConnectAccess extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,49 +17,80 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used in conjunction with the <see cref="T:System.Security.Policy.NetCodeGroup" /> class to control how executing code can connect back to the site it was downloaded from. These classes provide programmatic control of the <see cref="T:System.Net.WebPermission" /> granted to executing code that controls what schemes and ports the code can use access its origin site. You can specify scheme and port pairs that are permitted based on the scheme in the URL where the code originates. </para>
+      <para>To create a <see cref="T:System.Security.Policy.CodeConnectAccess" /> object based on the code's origin scheme, use the <see cref="M:System.Security.Policy.CodeConnectAccess.CreateOriginSchemeAccess(System.Int32)" /> method.</para>
+      <para>To create a <see cref="T:System.Security.Policy.CodeConnectAccess" /> object that can use any scheme but is restricted by port, use the <see cref="M:System.Security.Policy.CodeConnectAccess.CreateAnySchemeAccess(System.Int32)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the network resource access that is granted to code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CodeConnectAccess (string allowScheme, int allowPort);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string allowScheme, int32 allowPort) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="allowScheme" Type="System.String" />
         <Parameter Name="allowPort" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="allowScheme">To be added.</param>
-        <param name="allowPort">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Policy.CodeConnectAccess.Scheme" /> property is set using the <paramref name="allowScheme" /> parameter. The scheme is converted to lowercase. The value of <see cref="P:System.Security.Policy.CodeConnectAccess.Scheme" /> controls the scheme that executing code can use to connect to a network resource.</para>
+          <para>The <see cref="P:System.Security.Policy.CodeConnectAccess.Port" /> property is set using the <paramref name="allowPort" /> parameter. The value of <see cref="P:System.Security.Policy.CodeConnectAccess.Port" /> controls the port that executing code can use to connect to a network resource.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.CodeConnectAccess" /> class. </para>
+        </summary>
+        <param name="allowScheme">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI scheme represented by the current instance.</param>
+        <param name="allowPort">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port represented by the current instance.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AnyScheme">
+      <MemberSignature Language="C#" Value="public static readonly string AnyScheme;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly string AnyScheme" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AnyScheme">
-      <MemberSignature Language="C#" Value="public static readonly string AnyScheme;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As an alternative to constructing a <see cref="T:System.Security.Policy.CodeConnectAccess" /> object using this value, you can call the <see cref="M:System.Security.Policy.CodeConnectAccess.CreateAnySchemeAccess(System.Int32)" /> method to obtain a <see cref="T:System.Security.Policy.CodeConnectAccess" /> object that represents a specified port and any scheme.</para>
+          <para>The value of this field is "*".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the string value that represents the scheme wildcard.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateAnySchemeAccess">
       <MemberSignature Language="C#" Value="public static System.Security.Policy.CodeConnectAccess CreateAnySchemeAccess (int allowPort);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Policy.CodeConnectAccess CreateAnySchemeAccess(int32 allowPort) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Policy.CodeConnectAccess</ReturnType>
       </ReturnValue>
@@ -65,20 +98,31 @@
         <Parameter Name="allowPort" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="allowPort">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Policy.CodeConnectAccess" /> instance returned by this method uses the scheme wildcard value <see cref="F:System.Security.Policy.CodeConnectAccess.AnyScheme" /> ("*") to represent the scheme.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Security.Policy.CodeConnectAccess" /> instance that represents access to the specified port using any scheme.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Policy.CodeConnectAccess" /> instance for the specified port.</para>
+        </returns>
+        <param name="allowPort">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port represented by the returned instance.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateOriginSchemeAccess">
       <MemberSignature Language="C#" Value="public static System.Security.Policy.CodeConnectAccess CreateOriginSchemeAccess (int allowPort);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Policy.CodeConnectAccess CreateOriginSchemeAccess(int32 allowPort) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Policy.CodeConnectAccess</ReturnType>
       </ReturnValue>
@@ -86,37 +130,56 @@
         <Parameter Name="allowPort" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="allowPort">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Policy.CodeConnectAccess" /> instance returned by this method has the scheme value <see cref="F:System.Security.Policy.CodeConnectAccess.OriginScheme" />. The origin scheme is the scheme value from the URI where the code originated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Security.Policy.CodeConnectAccess" /> instance that represents access to the specified port using the code's scheme of origin.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Policy.CodeConnectAccess" /> instance for the specified port.</para>
+        </returns>
+        <param name="allowPort">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port represented by the returned instance.</param>
       </Docs>
+    </Member>
+    <Member MemberName="DefaultPort">
+      <MemberSignature Language="C#" Value="public static readonly int DefaultPort;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 DefaultPort" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefaultPort">
-      <MemberSignature Language="C#" Value="public static readonly int DefaultPort;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <MemberValue>-3</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create a <see cref="T:System.Security.Policy.CodeConnectAccess" /> object that has the default port for a specified scheme, use this field as the <paramref name="allowPort" /> parameter of the <see cref="M:System.Security.Policy.CodeConnectAccess.#ctor(System.String,System.Int32)" /> constructor.</para>
+          <para>The value of this field is -3.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value used to represent the default port.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object o) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -124,20 +187,31 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Security.Policy.CodeConnectAccess" /> objects are equal if their <see cref="P:System.Security.Policy.CodeConnectAccess.Scheme" /> and <see cref="P:System.Security.Policy.CodeConnectAccess.Port" /> property values are equal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two <see cref="T:System.Security.Policy.CodeConnectAccess" /> objects represent the same scheme and port.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two objects represent the same scheme and port; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current <see cref="T:System.Security.Policy.CodeConnectAccess" /> object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -148,77 +222,103 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="OriginPort">
+      <MemberSignature Language="C#" Value="public static readonly int OriginPort;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 OriginPort" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OriginPort">
-      <MemberSignature Language="C#" Value="public static readonly int OriginPort;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <MemberValue>-4</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create a <see cref="T:System.Security.Policy.CodeConnectAccess" /> object that has the same port as the port in the executing code's URL evidence, use this field as the <paramref name="allowPort" /> parameter of the <see cref="M:System.Security.Policy.CodeConnectAccess.#ctor(System.String,System.Int32)" /> constructor.</para>
+          <para>The value of this field is -4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value used to represent the port value in the URI where code originated.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="OriginScheme">
+      <MemberSignature Language="C#" Value="public static readonly string OriginScheme;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly string OriginScheme" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OriginScheme">
-      <MemberSignature Language="C#" Value="public static readonly string OriginScheme;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this field with the <see cref="M:System.Security.Policy.CodeConnectAccess.#ctor(System.String,System.Int32)" /> constructor. Instead, use the <see cref="M:System.Security.Policy.CodeConnectAccess.CreateOriginSchemeAccess(System.Int32)" /> method.</para>
+          <para>The value of this field is "$origin".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value used to represent the scheme in the URL where the code originated.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="C#" Value="public int Port { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Port" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Port">
-      <MemberSignature Language="C#" Value="public int Port { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Port values are between 0 and 65,535. The port value is specified when you create an instance of <see cref="T:System.Security.Policy.CodeConnectAccess" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the port represented by the current instance.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Scheme">
+      <MemberSignature Language="C#" Value="public string Scheme { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Scheme" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Scheme">
-      <MemberSignature Language="C#" Value="public string Scheme { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The scheme value is specified when you create an instance of <see cref="T:System.Security.Policy.CodeConnectAccess" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI scheme represented by the current instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

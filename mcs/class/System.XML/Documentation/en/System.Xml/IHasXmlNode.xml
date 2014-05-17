@@ -1,34 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IHasXmlNode" FullName="System.Xml.IHasXmlNode">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IHasXmlNode" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IHasXmlNode" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The IHasXmlNode interface provides an interface that enables a class to return an <see cref="T:System.Xml.XmlNode" /> from the current context or position. It is implemented by <see cref="T:System.Xml.XPath.XPathNavigator" /> objects that operate over classes that have <see cref="T:System.Xml.XmlNode" /> nodes. For example, if the XPathNavigator object is created by an <see cref="T:System.Xml.XmlDocument" />, you can use the <see cref="M:System.Xml.IHasXmlNode.GetNode" /> method to return the XmlNode representing the current position of the navigator.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables a class to return an <see cref="T:System.Xml.XmlNode" /> from the current context or position.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetNode">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNode GetNode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode GetNode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlNode'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following C# code uses GetNode to access a node the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on.</para>
+          <code> XmlDocument doc = new XmlDocument();
+ doc.Load("books.xml");
+ XPathNavigator nav =  doc.CreateNavigator();
+ XmlNode node = ((IHasXmlNode)nav).GetNode();
+ Console.WriteLine(node.LocalName); 
+ //You can edit the returned XmlNode.</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Xml.XmlNode" /> for the current position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlNode for the current position.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

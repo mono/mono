@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapHeaderDirection" FullName="System.Web.Services.Protocols.SoapHeaderDirection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum SoapHeaderDirection" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.Services.Protocols.SoapHeaderAttribute" /> can be applied to either an XML Web service method or a method of a proxy class to an XML Web service. In either case, the recipient(s) are specified by the <see cref="P:System.Web.Services.Protocols.SoapHeaderAttribute.Direction" /> property of <see cref="T:System.Web.Services.Protocols.SoapHeaderAttribute" />. To specify that an XML Web service method returns a SOAP header when an exception is thrown during its execution, apply an <see cref="T:System.Web.Services.Protocols.SoapHeaderAttribute" /> to the method and set the <see cref="P:System.Web.Services.Protocols.SoapHeaderAttribute.Direction" /> property to <see cref="F:System.Web.Services.Protocols.SoapHeaderDirection.Fault" />.</para>
+      <para>Version 1.0 of the .NET Framework does not support the <see cref="F:System.Web.Services.Protocols.SoapHeaderDirection.Fault" /> value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether the recipient of the <see cref="T:System.Web.Services.Protocols.SoapHeader" /> is the XML Web service, the XML Web service client, or both.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Fault">
@@ -32,7 +40,10 @@
         <ReturnType>System.Web.Services.Protocols.SoapHeaderDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the <see cref="T:System.Web.Services.Protocols.SoapHeader" /> is sent to the XML Web service client when an exception is thrown by the XML Web service method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="In">
@@ -44,8 +55,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the <see cref="T:System.Web.Services.Protocols.SoapHeader" /> is sent to the XML Web service.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,8 +75,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the <see cref="T:System.Web.Services.Protocols.SoapHeader" /> is sent to both the XML Web service and the XML Web service client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -78,8 +95,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the <see cref="T:System.Web.Services.Protocols.SoapHeader" /> is sent to the XML Web service client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

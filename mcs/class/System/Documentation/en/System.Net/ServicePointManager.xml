@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServicePointManager" FullName="System.Net.ServicePointManager" FullNameSP="System_Net_ServicePointManager" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public ServicePointManager extends System.Object" />
   <TypeSignature Language="C#" Value="public class ServicePointManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi ServicePointManager extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +10,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>The public static fields exposed in ServicePointManager are not thread safe.  Changing one of these values in one thread will change the value for any other thread subsequently accessing the field.</ThreadingSafetyStatement>
   <Base>
@@ -15,198 +18,306 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Manages <see cref="T:System.Net.ServicePoint" /> instances.</para>
-    </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>
-        <see cref="T:System.Net.ServicePointManager" /> creates, maintains,
- and deletes <see cref="T:System.Net.ServicePoint" /> instances. </para>
-      <para> When an application requests a connection to an Internet resource through
- the <see cref="T:System.Net.ServicePointManager" />, the <see cref="T:System.Net.ServicePointManager" />
- returns a <see cref="T:System.Net.ServicePoint" /> instance containing
- connection information for the host identified by
- the Uniform Resource Identifier (URI) of the resource. If there is an existing <see cref="T:System.Net.ServicePoint" /> for that host, the
-<see cref="T:System.Net.ServicePointManager" /> 
-returns the existing <see cref="T:System.Net.ServicePoint" />, otherwise the <see cref="T:System.Net.ServicePointManager" /> creates a new <see cref="T:System.Net.ServicePoint" />
-instance. </para>
+        <see cref="T:System.Net.ServicePointManager" /> is a static class used to create, maintain, and delete instances of the <see cref="T:System.Net.ServicePoint" /> class.</para>
+      <para>When an application requests a connection to an Internet resource Uniform Resource Identifier (URI) through the <see cref="T:System.Net.ServicePointManager" /> object, the <see cref="T:System.Net.ServicePointManager" /> returns a <see cref="T:System.Net.ServicePoint" /> object that contains connection information for the host and scheme identified by the URI. If there is an existing <see cref="T:System.Net.ServicePoint" /> object for that host and scheme, the <see cref="T:System.Net.ServicePointManager" /> object returns the existing <see cref="T:System.Net.ServicePoint" /> object; otherwise, the <see cref="T:System.Net.ServicePointManager" /> object creates a new <see cref="T:System.Net.ServicePoint" /> object.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages the collection of <see cref="T:System.Net.ServicePoint" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CertificatePolicy">
-      <MemberSignature Language="C#" Value="public static System.Net.ICertificatePolicy CertificatePolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.ICertificatePolicy CertificatePolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.ICertificatePolicy CertificatePolicy" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Net.ICertificatePolicy</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("Use ServerCertificateValidationCallback instead", false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.ICertificatePolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Net.ServicePointManager.CertificatePolicy" /> property is set to an <see cref="T:System.Net.ICertificatePolicy" /> interface object, the <see cref="T:System.Net.ServicePointManager" /> object uses the certificate policy defined in that instance instead of the default certificate policy.</para>
+          <para>The default certificate policy allows valid certificates and valid certificates that have expired.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets policy for server certificates.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CheckCertificateRevocationList">
-      <MemberSignature Language="C#" Value="public static bool CheckCertificateRevocationList { set; get; }" />
+      <MemberSignature Language="C#" Value="public static bool CheckCertificateRevocationList { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool CheckCertificateRevocationList" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("CRL checks not implemented")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Net.ServicePointManager.CheckCertificateRevocationList" /> is true, the certificate is checked against the certificate authority revocation list, as part of the certificate validation process. Its default value is false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that indicates whether the certificate is checked against the certificate authority revocation list.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ClientCipherSuitesCallback">
+      <MemberSignature Language="C#" Value="public static System.Net.CipherSuitesCallback ClientCipherSuitesCallback { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.CipherSuitesCallback ClientCipherSuitesCallback" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.CipherSuitesCallback</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary preserve-mono="true">You can filter and/or re-order the ciphers suites that will be sent to the SSL/TLS server by providing your own callback.</summary>
+        <value>Your custom delegate or null for the default behaviour.</value>
+        <remarks preserve-mono="true">
+          <para>
+	    This mechanism cannot be used to add new ciphers. Undefined ciphers will be ignored. 
+	  </para>
+          <para>
+	    This API is only available in Mono and Xamarin products.
+	  </para>
+          <para>
+	    You can filter and/or re-order the ciphers suites that the SSL/TLS server
+	    will accept from a client. The first match for a supported client cipher suite
+	    will be used (so the order is important).
+	  </para>
+          <example>
+            <para>The following example removes weak (export) ciphers from the list that will be offered to the server.</para>
+            <code lang="C#">
+ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable&lt;string&gt; allCiphers) =&gt; {
+    return from cipher in allCiphers where !cipher.Contains ("EXPORT")
+    select cipher;
+};
+	  </code>
+          </example>
+          <example>
+            <para>Example: Use AES128 (preference) or AES256 (allowed) but no other ciphers.</para>
+            <code lang="C#">
+ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable&lt;string&gt; allCiphers) =&gt; {
+    string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+    return new List&lt;string&gt; { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
+};
+    </code>
+          </example>
+        </remarks>
+      </Docs>
     </Member>
     <Member MemberName="DefaultConnectionLimit">
       <MemberSignature Language="ILASM" Value=".property int32 DefaultConnectionLimit { public hidebysig static specialname int32 get_DefaultConnectionLimit() public hidebysig static specialname void set_DefaultConnectionLimit(int32 value) }" />
-      <MemberSignature Language="C#" Value="public static int DefaultConnectionLimit { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int DefaultConnectionLimit { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 DefaultConnectionLimit" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>2</MemberValue>
       <Docs>
-        <summary>
-          <para>Gets or sets the maximum number of concurrent connections allowed by a
-   <see cref="T:System.Net.ServicePoint" /> instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> containing the maximum number of concurrent connections allowed by a <see cref="T:System.Net.ServicePoint" /> instance.</para>
         </value>
-        <remarks>
-          <para>The <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> property sets the default maximum number of concurrent
-   connections that the <see cref="T:System.Net.ServicePointManager" /> assigns to the <see cref="P:System.Net.ServicePoint.ConnectionLimit" /> property
-   when creating <see cref="T:System.Net.ServicePoint" /> instances.</para>
-          <para>
-            <block subset="none" type="note">Changing the <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> property has no effect on existing <see cref="T:System.Net.ServicePoint" />
-instances; it affects only <see cref="T:System.Net.ServicePoint" /> instances that
-are initialized after the change.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than or equal to zero.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> property sets the default maximum number of concurrent connections that the <see cref="T:System.Net.ServicePointManager" /> object assigns to the <see cref="P:System.Net.ServicePoint.ConnectionLimit" /> property when creating <see cref="T:System.Net.ServicePoint" /> objects.</para>
+          <para>Changing the <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> property has no effect on existing <see cref="T:System.Net.ServicePoint" /> objects; it affects only <see cref="T:System.Net.ServicePoint" /> objects that are initialized after the change. If the value of this property has not been set either directly or through configuration, the value defaults to the constant <see cref="F:System.Net.ServicePointManager.DefaultPersistentConnectionLimit" />.</para>
+          <block subset="none" type="note">
+            <para>Any changes to the <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> property affect both HTTP 1.0 and HTTP 1.1 connections. It is not possible to separately alter the connection limit for HTTP 1.0 and HTTP 1.1 protocols. When used in the server environment (ASP.NET) <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> defaults to higher number of connections, which is 10.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of concurrent connections allowed by a <see cref="T:System.Net.ServicePoint" /> object.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultNonPersistentConnectionLimit">
       <MemberSignature Language="ILASM" Value=".field public static literal int32 DefaultNonPersistentConnectionLimit = 4" />
       <MemberSignature Language="C#" Value="public const int DefaultNonPersistentConnectionLimit = 4;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 DefaultNonPersistentConnectionLimit = (4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>4</MemberValue>
       <Docs>
-        <summary>
-          <para> The default number of non-persistent connections allowed on a <see cref="T:System.Net.ServicePoint" /> .
-   </para>
-        </summary>
         <remarks>
           <para>This field is read-only.</para>
           <para>The value of this field is
       4.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default number of non-persistent connections (4) allowed on a <see cref="T:System.Net.ServicePoint" /> object connected to an HTTP/1.0 or later server. This field is constant but is no longer used in the .NET Framework 2.0.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultPersistentConnectionLimit">
       <MemberSignature Language="ILASM" Value=".field public static literal int32 DefaultPersistentConnectionLimit = 2" />
       <MemberSignature Language="C#" Value="public const int DefaultPersistentConnectionLimit = 2;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 DefaultPersistentConnectionLimit = (2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>2</MemberValue>
       <Docs>
-        <summary>
-          <para> The default number of persistent connections allowed on a <see cref="T:System.Net.ServicePoint" /> .
-   </para>
-        </summary>
         <remarks>
           <para>This field is read-only.</para>
           <para>The value of this field is
       2.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default number of persistent connections (2) allowed on a <see cref="T:System.Net.ServicePoint" /> object connected to an HTTP/1.1 or later server. This field is constant and is used to initialize the <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> property if the value of the <see cref="P:System.Net.ServicePointManager.DefaultConnectionLimit" /> property has not been set either directly or through configuration.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DnsRefreshTimeout">
-      <MemberSignature Language="C#" Value="public static int DnsRefreshTimeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int DnsRefreshTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 DnsRefreshTimeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates how long a Domain Name Service (DNS) resolution is considered valid.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableDnsRoundRobin">
-      <MemberSignature Language="C#" Value="public static bool EnableDnsRoundRobin { set; get; }" />
+      <MemberSignature Language="C#" Value="public static bool EnableDnsRoundRobin { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool EnableDnsRoundRobin" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When more than one IP address is associated with a host name, a DNS resolution normally returns only the first IP address. If you set this property to true, then subsequent DNS resolutions will cycle through all available IP addresses for a particular host. This option is useful when a service uses DNS as a load balancing mechanism between servers or server clusters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether a Domain Name Service (DNS) resolution rotates among the applicable Internet Protocol (IP) addresses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Expect100Continue">
-      <MemberSignature Language="C#" Value="public static bool Expect100Continue { set; get; }" />
+      <MemberSignature Language="C#" Value="public static bool Expect100Continue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool Expect100Continue" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, 100-Continue behavior is used. Client requests that use the PUT and POST methods will add an Expect header to the request if the <see cref="P:System.Net.ServicePointManager.Expect100Continue" /> property is true and <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property is greater than zero or the <see cref="P:System.Net.HttpWebRequest.SendChunked" /> property is true. The client will expect to receive a 100-Continue response from the server to indicate that the client should send the data to be posted. This mechanism allows clients to avoid sending large amounts of data over the network when the server, based on the request headers, intends to reject the request.</para>
+          <para>For example, assume the <see cref="P:System.Net.ServicePointManager.Expect100Continue" /> property is false. When the request is sent to the server, it includes the data. If, after reading the request headers, the server requires authentication and must send a 401 response, the client must resend the data with proper authentication headers.</para>
+          <para>If this property is true, the request headers are sent to the server. If the server has not rejected the request, it sends a 100-Continue response signaling that the data can be transmitted. If, as in the preceding example, the server requires authentication, it sends the 401 response and the client has not unnecessarily transmitted the data.</para>
+          <para>Changing the value of this property does not affect existing <see cref="T:System.Net.ServicePoint" /> objects. Only new <see cref="T:System.Net.ServicePoint" /> objects created after the change are affected.</para>
+          <para>The 100-Continue behavior is not used for HTTP 1.0 requests even if this property is set to true.</para>
+          <para>The Expect 100-Continue behavior is fully described in IETF RFC 2616 Section 10.1.1. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that determines whether 100-Continue behavior is used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FindServicePoint">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.ServicePoint FindServicePoint(class System.Uri address)" />
       <MemberSignature Language="C#" Value="public static System.Net.ServicePoint FindServicePoint (Uri address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.ServicePoint FindServicePoint(class System.Uri address) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ServicePoint</ReturnType>
       </ReturnValue>
@@ -214,34 +325,36 @@ are initialized after the change.</block>
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="address">A <see cref="T:System.Uri" /> containing the Internet host to contact.</param>
-        <summary>
-          <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> or creates a new <see cref="T:System.Net.ServicePoint" /> to connect to the specified host.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Net.ServicePoint" /> that connects to the host identified in
-<paramref name="address" /> 
-.</para>
-        </returns>
-        <remarks>
-          <para>This method is identical to <see cref="M:System.Net.ServicePointManager.FindServicePoint(System.Uri)" />(<paramref name="address" />, <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" />).</para>
-          <para> If no <see cref="T:System.Net.ServicePoint" /> exists for the host named in <paramref name="address" /> , the <see cref="T:System.Net.ServicePointManager" /> attempts to
-create one.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="address " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">The maximum number of service points defined in <see cref="P:System.Net.ServicePointManager.MaxServicePoints" /> has been reached and there is no service point that connects to the specified host.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.ServicePointManager.FindServicePoint(System.Uri)" /> method returns the <see cref="T:System.Net.ServicePoint" /> object associated with the specified Internet host name. If no <see cref="T:System.Net.ServicePoint" /> object exists for that host, the <see cref="T:System.Net.ServicePointManager" /> object creates one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> object or creates a new <see cref="T:System.Net.ServicePoint" /> object to manage communications with the specified <see cref="T:System.Uri" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.ServicePoint" /> object that manages communications for the request.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> object of the Internet resource to contact. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FindServicePoint">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.ServicePoint FindServicePoint(string uriString, class System.Net.IWebProxy proxy)" />
       <MemberSignature Language="C#" Value="public static System.Net.ServicePoint FindServicePoint (string uriString, System.Net.IWebProxy proxy);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.ServicePoint FindServicePoint(string uriString, class System.Net.IWebProxy proxy) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ServicePoint</ReturnType>
       </ReturnValue>
@@ -250,37 +363,39 @@ create one.</para>
         <Parameter Name="proxy" Type="System.Net.IWebProxy" />
       </Parameters>
       <Docs>
-        <param name="uriString">A <see cref="T:System.String" /> containing a URI that names the host to contact.</param>
-        <param name="proxy">A <see cref="T:System.Net.IWebProxy" /> that represents a proxy server to access.</param>
-        <summary>
-          <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> or creates a new <see cref="T:System.Net.ServicePoint" /> to connect to the specified host.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Net.ServicePoint" /> that connects to the host identified in
-<paramref name="uriString" /> 
-.</para>
-        </returns>
-        <remarks>
-          <para>This method is identical to <see cref="M:System.Net.ServicePointManager.FindServicePoint(System.Uri)" />(new <see cref="T:System.Uri" />(<paramref name="uriString" />),
-<paramref name="proxy" />).</para>
-          <para>If no <see cref="T:System.Net.ServicePoint" /> exists for the host named in <paramref name="uriString" />, the
-<see cref="T:System.Net.ServicePointManager" /> attempts to create one.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uriString" /> is <see langword="null" />.</exception>
         <exception cref="T:System.UriFormatException">The URI specified in <paramref name="uriString" /> is in an invalid form.</exception>
         <exception cref="T:System.InvalidOperationException">The maximum number of service points defined in <see cref="P:System.Net.ServicePointManager.MaxServicePoints" /> has been reached and there is no service point that connects to the specified host.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.ServicePointManager.FindServicePoint(System.Uri)" /> method returns the <see cref="T:System.Net.ServicePoint" /> object associated with the specified Internet host name. If no <see cref="T:System.Net.ServicePoint" /> object exists for that host, the <see cref="T:System.Net.ServicePointManager" /> object creates one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> object or creates a new <see cref="T:System.Net.ServicePoint" /> object to manage communications with the specified Uniform Resource Identifier (URI).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.ServicePoint" /> object that manages communications for the request.</para>
+        </returns>
+        <param name="uriString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the Internet resource to be contacted. </param>
+        <param name="proxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The proxy data for this request. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FindServicePoint">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.ServicePoint FindServicePoint(class System.Uri address, class System.Net.IWebProxy proxy)" />
       <MemberSignature Language="C#" Value="public static System.Net.ServicePoint FindServicePoint (Uri address, System.Net.IWebProxy proxy);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.ServicePoint FindServicePoint(class System.Uri address, class System.Net.IWebProxy proxy) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ServicePoint</ReturnType>
       </ReturnValue>
@@ -289,159 +404,226 @@ create one.</para>
         <Parameter Name="proxy" Type="System.Net.IWebProxy" />
       </Parameters>
       <Docs>
-        <param name="address">A <see cref="T:System.Uri" /> instance containing the address of the Internet resource to contact.</param>
-        <param name="proxy">A <see cref="T:System.Net.IWebProxy" /> that represents a proxy server to access.</param>
-        <summary>
-          <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> or creates a new <see cref="T:System.Net.ServicePoint" /> to connect to the specified host.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Net.ServicePoint" /> that connects to the host identified in
-<paramref name="address" /> 
-.</para>
-        </returns>
-        <remarks>
-          <para> If no <see cref="T:System.Net.ServicePoint" /> exists for the <see cref="P:System.Uri.Host" /> specified in <paramref name="address" /> , the <see cref="T:System.Net.ServicePointManager" /> attempts to create one.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="address " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">The maximum number of service points defined in <see cref="P:System.Net.ServicePointManager.MaxServicePoints" /> has been reached and there is no service point that connects to the specified host.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.ServicePointManager.FindServicePoint(System.Uri)" /> method returns the <see cref="T:System.Net.ServicePoint" /> object associated with the specified Internet host name. If no <see cref="T:System.Net.ServicePoint" /> object exists for that host, the <see cref="T:System.Net.ServicePointManager" /> object creates one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> object or creates a new <see cref="T:System.Net.ServicePoint" /> object to manage communications with the specified <see cref="T:System.Uri" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.ServicePoint" /> object that manages communications for the request.</para>
+        </returns>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> object that contains the address of the Internet resource to contact. </param>
+        <param name="proxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The proxy data for this request. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxServicePointIdleTime">
       <MemberSignature Language="ILASM" Value=".property int32 MaxServicePointIdleTime { public hidebysig static specialname int32 get_MaxServicePointIdleTime() public hidebysig static specialname void set_MaxServicePointIdleTime(int32 value) }" />
-      <MemberSignature Language="C#" Value="public static int MaxServicePointIdleTime { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int MaxServicePointIdleTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 MaxServicePointIdleTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>900000</MemberValue>
       <Docs>
-        <summary>
-          <para> Gets or sets the maximum amount of time a <see cref="T:System.Net.ServicePoint" /> instance can be idle, 
-   after which resources allocated
-   to the service point can be released.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> containing the maximum idle time, in milliseconds, of a <see cref="T:System.Net.ServicePoint" /> instance.</para>
         </value>
-        <remarks>
-          <para> A <see cref="T:System.Net.ServicePoint" />
-is idle when the list of
-connections associated with the <see cref="T:System.Net.ServicePoint" /> is empty.</para>
-          <para>The <see cref="P:System.Net.ServicePointManager.MaxServicePointIdleTime" />
-property holds the value for the maximum idle time for service points. When a <see cref="T:System.Net.ServicePoint" /> instance is created,
-this value is assigned to its <see cref="P:System.Net.ServicePoint.MaxIdleTime" /> property. Changes to the value
-of this property affect only <see cref="T:System.Net.ServicePoint" /> instances that are initialized after this property
-is changed.</para>
-          <para>After a <see cref="T:System.Net.ServicePoint" /> has been idle for the time
-specified in <see cref="P:System.Net.ServicePoint.MaxIdleTime" /> , it is
-released by the service point manager, and
-any resources allocated
-for it are freed.</para>
-          <para>The default value of this property is
-   implementation defined.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than <see cref="F:System.Threading.Timeout.Infinite" /> or greater than <see cref="F:System.Int32.MaxValue" qualify="true" /></exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.ServicePointManager.MaxServicePointIdleTime" /> property sets the maximum idle time that the <see cref="T:System.Net.ServicePointManager" /> object assigns to the <see cref="P:System.Net.ServicePoint.MaxIdleTime" /> property when creating <see cref="T:System.Net.ServicePoint" /> objects. Changes to this value affect only <see cref="T:System.Net.ServicePoint" /> objects that are initialized after the value is changed.</para>
+          <para>After a <see cref="T:System.Net.ServicePoint" /> object has been idle for the time specified in <see cref="P:System.Net.ServicePoint.MaxIdleTime" />, it is eligible for garbage collection. A <see cref="T:System.Net.ServicePoint" /> object is idle when the list of connections associated with the <see cref="T:System.Net.ServicePoint" /> object is empty.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum idle time of a <see cref="T:System.Net.ServicePoint" /> object.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxServicePoints">
       <MemberSignature Language="ILASM" Value=".property int32 MaxServicePoints { public hidebysig static specialname int32 get_MaxServicePoints() public hidebysig static specialname void set_MaxServicePoints(int32 value) }" />
-      <MemberSignature Language="C#" Value="public static int MaxServicePoints { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int MaxServicePoints { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 MaxServicePoints" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>0</MemberValue>
       <Docs>
-        <summary>
-          <para>Gets or sets the maximum number of <see cref="T:System.Net.ServicePoint" /> instances managed by this class at any
- time.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> containing the maximum number of <see cref="T:System.Net.ServicePoint" /> instances to maintain.</para>
         </value>
-        <remarks>
-          <para>If this property is set to a value that is less than the
- number of <see cref="T:System.Net.ServicePoint" /> instances currently in
- existence, the <see cref="T:System.Net.ServicePointManager" />
- deletes the
- <see cref="T:System.Net.ServicePoint" /> instances with the longest idle times.
- If the number of <see cref="T:System.Net.ServicePoint" /> instances with active
- connections is greater than the value of
- <see cref="P:System.Net.ServicePointManager.MaxServicePoints" />, the <see cref="T:System.Net.ServicePointManager" /> 
- deletes <see cref="T:System.Net.ServicePoint" />
- instances as they become idle. </para>
-          <para>
-            <block subset="none" type="note">The default value
- of the <see cref="P:System.Net.ServicePointManager.MaxServicePoints" /> property is 0, which indicates
- there is no limit to the number of <see cref="T:System.Net.ServicePoint" /> instances.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than zero or greater than <see cref="F:System.Int32.MaxValue" qualify="true" /></exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you reduce the <see cref="P:System.Net.ServicePointManager.MaxServicePoints" /> property below the number of <see cref="T:System.Net.ServicePoint" /> objects currently in existence, the <see cref="T:System.Net.ServicePointManager" /> deletes the <see cref="T:System.Net.ServicePoint" /> objects with the longest idle times. If the number of <see cref="T:System.Net.ServicePoint" /> objects with active connections is greater than the value of <see cref="P:System.Net.ServicePointManager.MaxServicePoints" />, the <see cref="T:System.Net.ServicePointManager" /> object deletes the <see cref="T:System.Net.ServicePoint" /> objects as they become idle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of <see cref="T:System.Net.ServicePoint" /> objects to maintain at any time.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SecurityProtocol">
+      <MemberSignature Language="C#" Value="public static System.Net.SecurityProtocolType SecurityProtocol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Net.SecurityProtocolType SecurityProtocol" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SecurityProtocol">
-      <MemberSignature Language="C#" Value="public static System.Net.SecurityProtocolType SecurityProtocol { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Net.SecurityProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property selects the version of the Secure Sockets Layer (SSL) or Transport Layer Security (TLS) protocol to use for new connections that use the Secure Hypertext Transfer Protocol (HTTPS) scheme only; existing connections are not changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the security protocol used by the <see cref="T:System.Net.ServicePoint" /> objects managed by the <see cref="T:System.Net.ServicePointManager" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ServerCertificateValidationCallback">
-      <MemberSignature Language="C#" Value="public static System.Net.Security.RemoteCertificateValidationCallback ServerCertificateValidationCallback { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.Security.RemoteCertificateValidationCallback ServerCertificateValidationCallback { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.Security.RemoteCertificateValidationCallback ServerCertificateValidationCallback" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.RemoteCertificateValidationCallback</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An application can set the <see cref="P:System.Net.ServicePointManager.ServerCertificateValidationCallback" /> property to a method to use for custom validation by the client of the server certificate. When doing custom validation, the <paramref name="sender" /> parameter passed to the <see cref="T:System.Net.Security.RemoteCertificateValidationCallback" /> can be a host string name or an object derived from <see cref="T:System.Net.WebRequest" /> (<see cref="T:System.Net.HttpWebRequest" />, for example) depending on the <see cref="P:System.Net.ServicePointManager.CertificatePolicy" /> property. </para>
+          <para>When custom validation is not used, the certificate name is compared with host name used to create the request. For example, if <see cref="M:System.Net.WebRequest.Create(System.String)" /> was passed a parameter of "https://www.contoso.com/default.hmtl", the default behavior is for the client to check the certificate against www.contoso.com.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the callback to validate a server certificate.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServerCipherSuitesCallback">
+      <MemberSignature Language="C#" Value="public static System.Net.CipherSuitesCallback ServerCipherSuitesCallback { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.CipherSuitesCallback ServerCipherSuitesCallback" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.CipherSuitesCallback</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>You can filter and/or re-order the ciphers suites that the SSL/TLS server
+			will accept from a client. The first match for a supported client cipher suite
+			will be used (so the order is important).</summary>
+        <value>Your custom delegate or null for the default behaviour.</value>
+        <remarks>This mechanism cannot be used to add new ciphers. Undefined ciphers will be ignored. 
+			This API is only available in Mono and Xamarin products.</remarks>
+        <example>
+          <para>The following example let the server accept AES128 (prefered cipher) or AES256 (allowed cipher) but no other cipher suite.</para>
+          <code lang="C#">ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType
+p, IEnumerable&lt;string&gt; allCiphers) =&gt; {
+            string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+            return new List&lt;string&gt; { prefix + "RSA_WITH_AES_128_CBC_SHA",
+prefix + "RSA_WITH_AES_256_CBC_SHA" };
+        };
+			</code>
+        </example>
+      </Docs>
+    </Member>
+    <Member MemberName="SetTcpKeepAlive">
+      <MemberSignature Language="C#" Value="public static void SetTcpKeepAlive (bool enabled, int keepAliveTime, int keepAliveInterval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetTcpKeepAlive(bool enabled, int32 keepAliveTime, int32 keepAliveInterval) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="enabled" Type="System.Boolean" />
+        <Parameter Name="keepAliveTime" Type="System.Int32" />
+        <Parameter Name="keepAliveInterval" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An application can request that a TCP/IP provider enable the use of keep-alive packets on a TCP connection. The default is that the use of keep-alive packets on a TCP connection is disabled. </para>
+          <para>The default settings when a TCP socket is initialized sets the keep-alive timeout to 2 hours and the keep-alive interval to 1 second. The <paramref name="keepAliveTime" /> parameter specifies the timeout, in milliseconds, with no activity until the first keep-alive packet is sent. The <paramref name="keepAliveInterval" /> parameter specifies the interval, in milliseconds, between when successive keep-alive packets are sent if no acknowledgement is received. The number of keep-alive probes cannot be changed and is set to 10. </para>
+          <para>If a TCP connection is dropped as the result of keep-alives, a <see cref="T:System.Net.Sockets.SocketError" /> of <see cref="F:System.Net.Sockets.SocketError.NetworkReset" /> is returned to any calls in progress on the socket, and any subsequent calls will fail with a <see cref="T:System.Net.Sockets.SocketError" /> of <see cref="F:System.Net.Sockets.SocketError.NotConnected" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables or disables the keep-alive option on a TCP connection.</para>
+        </summary>
+        <param name="enabled">
+          <attribution license="cc4" from="Microsoft" modified="false" />If set to true, then the TCP keep-alive option on a TCP connection will be enabled using the specified <paramref name="keepAliveTime " />and <paramref name="keepAliveInterval" /> values. </param>
+        <param name="keepAliveTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the timeout, in milliseconds, with no activity until the first keep-alive packet is sent.</param>
+        <param name="keepAliveInterval">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval, in milliseconds, between when successive keep-alive packets are sent if no acknowledgement is received.</param>
       </Docs>
     </Member>
     <Member MemberName="UseNagleAlgorithm">
-      <MemberSignature Language="C#" Value="public static bool UseNagleAlgorithm { set; get; }" />
+      <MemberSignature Language="C#" Value="public static bool UseNagleAlgorithm { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool UseNagleAlgorithm" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Nagle algorithm is used to reduce network traffic by buffering small packets of data and transmitting them as a single packet. This process is also referred to as "nagling"; it is widely used because it reduces the number of packets transmitted and lowers the overhead per packet.</para>
+          <para>Changing the value of this property does not affect existing <see cref="T:System.Net.ServicePoint" /> objects. Only new service points created after the change are affected.</para>
+          <para>The Nagle algorithm is fully described in IETF RFC 896.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the Nagle algorithm is used by the service points managed by this <see cref="T:System.Net.ServicePointManager" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

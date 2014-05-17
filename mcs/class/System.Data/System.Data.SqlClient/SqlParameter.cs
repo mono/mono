@@ -594,6 +594,10 @@ namespace System.Data.SqlClient {
 				MetaParameter.TypeName = "datetime";
 				sqlDbType = SqlDbType.DateTime;
 				break;
+			case DbType.DateTime2:
+				MetaParameter.TypeName = "datetime2";
+				sqlDbType = SqlDbType.DateTime2;
+				break;
 			case DbType.Decimal:
 				MetaParameter.TypeName = "decimal";
 				sqlDbType = SqlDbType.Decimal;

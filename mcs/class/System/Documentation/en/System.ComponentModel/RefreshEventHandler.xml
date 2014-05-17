@@ -1,26 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RefreshEventHandler" FullName="System.ComponentModel.RefreshEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void RefreshEventHandler(RefreshEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RefreshEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
   <Parameters>
     <Parameter Name="e" Type="System.ComponentModel.RefreshEventArgs" />
   </Parameters>
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
+  <Docs>
+    <param name="e">To be added.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a <see cref="T:System.ComponentModel.RefreshEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event raised when a <see cref="T:System.Type" /> or component is changed during design time.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

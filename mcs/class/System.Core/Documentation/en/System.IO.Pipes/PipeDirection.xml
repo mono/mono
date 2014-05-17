@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PipeDirection" FullName="System.IO.Pipes.PipeDirection">
+  <TypeSignature Language="C#" Value="public enum PipeDirection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed PipeDirection extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Anonymous pipes must have a pipe direction of <see cref="F:System.IO.Pipes.PipeDirection.In" /> or <see cref="F:System.IO.Pipes.PipeDirection.Out" />. A <see cref="T:System.IO.Pipes.PipeDirection" /> value of <see cref="F:System.IO.Pipes.PipeDirection.InOut" /> is not supported by anonymous pipes because they are defined to be one-way only.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the direction of the pipe.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="In">
+      <MemberSignature Language="C#" Value="In" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeDirection In = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeDirection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the pipe direction is in.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InOut">
+      <MemberSignature Language="C#" Value="InOut" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeDirection InOut = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeDirection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the pipe direction is two-way.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Out">
+      <MemberSignature Language="C#" Value="Out" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Pipes.PipeDirection Out = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Pipes.PipeDirection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the pipe direction is out.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

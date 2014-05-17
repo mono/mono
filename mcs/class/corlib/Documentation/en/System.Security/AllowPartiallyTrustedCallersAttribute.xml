@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AllowPartiallyTrustedCallersAttribute" FullName="System.Security.AllowPartiallyTrustedCallersAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AllowPartiallyTrustedCallersAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AllowPartiallyTrustedCallersAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,24 +23,47 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para> The net_v40_long introduces new security rules that affect the behavior of the <see cref="T:System.Security.AllowPartiallyTrustedCallersAttribute" /> attribute (see <format type="text/html"><a href="4d05610a-0da6-4f08-acea-d54c9d6143c0">Security-Transparent Code, Level 2</a></format>). In the net_v40_short, all code defaults to security-transparent, that is, partially trusted. However, you can annotate individual types and members to assign them other transparency attributes. For this and other security changes, see <format type="text/html"><a href="5e87881c-9c13-4b52-8ad1-e34bb46e8aaa">Security Changes in the .NET Framework Version 4</a></format>.</para>
+      </block>
+      <para>.NET Framework version 2.0 (<format type="text/html"><a href="5fd8f46d-3961-46a7-84af-2eb1f48e75cf">level 1 transparent</a></format>) assemblies must be strong-named to effectively use the <see cref="T:System.Security.AllowPartiallyTrustedCallersAttribute" /> (APTCA) attribute. net_v40_short (<format type="text/html"><a href="4d05610a-0da6-4f08-acea-d54c9d6143c0">level 2</a></format>) assemblies do not have to be strong-named for the APTCA attribute to be effective, and they can contain transparent, security-critical and security-safe-critical code. For more information about applying attributes at the assembly level, see <format type="text/html"><a href="dd7604eb-9fa3-4b60-b2dd-b47739fa3148">Applying Attributes</a></format>.</para>
+      <para>By default, if a strong-named, <format type="text/html"><a href="5fd8f46d-3961-46a7-84af-2eb1f48e75cf">level 1 transparent</a></format> assembly does not explicitly apply this attribute at the assembly level, it can be called only by other assemblies that are granted full trust. This restriction is enforced by placing a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> for FullTrust on every public or protected method on every publicly accessible class in the assembly. Assemblies that are intended to be called by partially trusted code can declare their intent through the use of <see cref="T:System.Security.AllowPartiallyTrustedCallersAttribute" />. An example of the declaration in C# is [assembly:AllowPartiallyTrustedCallers]; an example in Visual Basic is &lt;assembly:AllowPartiallyTrustedCallers&gt;.</para>
+      <block subset="none" type="note">
+        <para>The presence of this assembly-level attribute prevents the default behavior of placing FullTrust <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> security checks, and makes the assembly callable from any other (partially or fully trusted) assembly.</para>
+      </block>
+      <para>When the APTCA attribute is present, all other security checks function as intended, including any class-level or method-level declarative security attributes that are present. This attribute blocks only the implicit, fully trusted caller demand.</para>
+      <para>This is not a declarative security attribute, but a regular attribute (it derives from <see cref="T:System.Attribute" />, not from <see cref="T:System.Security.Permissions.SecurityAttribute" />).</para>
+      <para>For more information, see <format type="text/html"><a href="dd66cd4c-b087-415f-9c3e-94e3a1835f74">Using Libraries from Partially Trusted Code</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows an assembly to be called by partially trusted code. Without this declaration, only fully trusted callers are able to use the assembly. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AllowPartiallyTrustedCallersAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute should be applied only at the assembly level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AllowPartiallyTrustedCallersAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

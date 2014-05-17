@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IOutputSession" FullName="System.ServiceModel.Channels.IOutputSession">
+  <TypeSignature Language="C#" Value="public interface IOutputSession : System.ServiceModel.Channels.ISession" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOutputSession implements class System.ServiceModel.Channels.ISession" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.ISession</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>On the other side of the message interchange, the <see cref="T:System.ServiceModel.Channels.IInputSession" /> interface represents an incoming <see cref="T:System.ServiceModel.Channels.ISession" /> implemented on the receiving side of a one-way communication between messaging endpoints. Note these two sessions are distinct.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface for the session implemented on the sending side of a one-way communication between messaging endpoints. </para>
+    </summary>
+  </Docs>
+  <Members />
+</Type>

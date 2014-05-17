@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FCB4DC7D-7B4C-4BD6-98CA-4F5AA08CB18B}</ProjectGuid>
+    <ProjectGuid>{A39E95C7-A667-472B-8A53-798974756DBD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Data.Services-tests-net_4_5</OutputPath>
@@ -67,26 +67,29 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data.Services\System.Data.Services-net_4_5.csproj">
-      <Project>{90405849-4C66-4BF7-B9F6-E0D81995231B}</Project>
+      <Project>{F3B101A1-2CC5-416E-9C64-AABAB5D4A625}</Project>
       <Name>System.Data.Services\System.Data.Services-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_5.csproj">
-      <Project>{0EDE201B-DEE2-486E-8DF2-F18F9D6239B9}</Project>
-      <Name>System.ServiceModel\System.ServiceModel-net_4_5</Name>
+    <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_5-1.csproj">
+      <Project>{F1316A49-176B-4E68-8A5F-1BA718289D46}</Project>
+      <Name>System.ServiceModel\System.ServiceModel-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -94,3 +97,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

@@ -1,150 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DelimitedListTraceListener" FullName="System.Diagnostics.DelimitedListTraceListener">
   <TypeSignature Language="C#" Value="public class DelimitedListTraceListener : System.Diagnostics.TextWriterTraceListener" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DelimitedListTraceListener extends System.Diagnostics.TextWriterTraceListener" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Diagnostics.TextWriterTraceListener</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The trace output is in a delimited text format that uses the delimiter specified by the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property. The delimiter is used to terminate each field in a line of output. For example, to display the trace output in a Microsoft Excel spreadsheet, you might specify a comma (",") as a delimiter and create a comma-separated value (CSV) file.</para>
+      <para>You can enable or disable a <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> through the application configuration file and then use the configured <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> in your application. Alternately, you can create a <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> in your code.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> delimits only text that is emitted by using the methods that have names starting with the word Trace, such as <see cref="Overload:System.Diagnostics.DelimitedListTraceListener.TraceEvent" /> or <see cref="M:System.Diagnostics.Trace.TraceWarning(System.String)" />. Trace data that is emitted by using the <see cref="Overload:System.Diagnostics.Debug.Write" /> and <see cref="Overload:System.Diagnostics.TextWriterTraceListener.WriteLine" /> methods is not delimited.</para>
+      </block>
+      <para>To configure a <see cref="T:System.Diagnostics.DelimitedListTraceListener" />, edit the configuration file that corresponds to the name of your application. In this file, you can add a listener, set the properties for a listener, or remove a listener. The configuration file should be formatted as shown in the following example: </para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="4"&gt;
+      &lt;listeners&gt;
+        &lt;add name="delimitedListener" 
+          type="System.Diagnostics.DelimitedListTraceListener" 
+          delimiter="," 
+          initializeData="delimitedOutput.csv" 
+          traceOutputOptions="ProcessId, DateTime" /&gt;
+      &lt;/listeners&gt;
+    &lt;/trace&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+      <block subset="none" type="note">
+        <para>If you try to write to a file that is in use or unavailable, the file name is automatically prefixed by a GUID.  </para>
+      </block>
+      <block subset="none" type="note">
+        <para>Listeners are intended to be used by methods of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace information. Listener methods, except for constructors, should not be called directly from application code.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Directs tracing or debugging output to a text writer, such as a stream writer, or to a stream, such as a file stream.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DelimitedListTraceListener (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Diagnostics.TraceListener.Name" /> property to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> class that writes to the specified output stream. </para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> to receive the output.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DelimitedListTraceListener (System.IO.TextWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.TextWriter writer) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="writer" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Diagnostics.TraceListener.Name" /> property to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> class that writes to the specified text writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to receive the output.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DelimitedListTraceListener (string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string fileName) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Diagnostics.TraceListener.Name" /> property to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> class that writes to the specified file.  </para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file to receive the output.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DelimitedListTraceListener (System.IO.Stream stream, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, string name) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="stream" Type="System.IO.Stream" />
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Diagnostics.TraceListener.Name" /> property to the value of the <paramref name="name" /> parameter, or to an empty string ("") if the <paramref name="name" /> parameter is null.  The <see cref="P:System.Diagnostics.TraceListener.Name" /> property can be used as an index into the Listeners collection to programmatically change the properties for the listener. For example, the following code sets the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property for the instance of <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> that has the name "delimListener":   </para>
+          <code>((DelimitedListTraceListener)Trace.Listeners["delimListener"]).Delimiter = ":"</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> class that writes to the specified output stream and has the specified name. </para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> to receive the output.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new instance of the trace listener. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DelimitedListTraceListener (System.IO.TextWriter writer, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.TextWriter writer, string name) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="writer" Type="System.IO.TextWriter" />
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Diagnostics.TraceListener.Name" /> property to the value of the <paramref name="name" /> parameter, or to an empty string ("") if the <paramref name="name" /> parameter is null. The <see cref="P:System.Diagnostics.TraceListener.Name" /> property can be used as an index into the Listeners collection to programmatically change the properties for the listener. For example the following code sets the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property for the instance of <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> that has the name "delimListener":   </para>
+          <code>((DelimitedListTraceListener)Trace.Listeners["delimListener"]).Delimiter = ":"</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> class that writes to the specified text writer and has the specified name. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to receive the output.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new instance of the trace listener. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DelimitedListTraceListener (string fileName, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string fileName, string name) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="fileName" Type="System.String" />
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified file on the specified path, using <see cref="P:System.Text.Encoding.UTF8" /> encoding. If the file exists, it is appended to. If the file does not exist, a new file is created.</para>
+          <block subset="none" type="note">
+            <para>To reduce the chance of an exception, any character that might invalidate the output is replaced with a "?" character.</para>
+          </block>
+          <para>The <see cref="P:System.Diagnostics.TraceListener.Name" /> property is set to the value of the <paramref name="name" /> parameter, or to an empty string ("") if the <paramref name="name" /> parameter is null. The <see cref="P:System.Diagnostics.TraceListener.Name" /> property can be used as an index into the Listeners collection to programmatically change the properties for the listener. For example, the following code sets the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property for the instance of <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> that has the name "delimListener":   </para>
+          <code>((DelimitedListTraceListener)Trace.Listeners["delimListener"]).Delimiter = ":"</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> class that writes to the specified file and has the specified name. </para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file to receive the output. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new instance of the trace listener. </param>
       </Docs>
     </Member>
     <Member MemberName="Delimiter">
-      <MemberSignature Language="C#" Value="public string Delimiter { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Delimiter { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Delimiter" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default delimiter is ";" (semicolon). The following configuration file example shows the setting of the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property using the delimiter attribute in a configuration file:</para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="4"&gt;
+      &lt;listeners&gt;
+        &lt;add name="delimitedListener" 
+          type="System.Diagnostics.DelimitedListTraceListener" 
+          delimiter=":" 
+          initializeData="delimitedOutput.txt" 
+          traceOutputOptions="ProcessId, DateTime" /&gt;
+        &lt;remove name="Default" /&gt;
+      &lt;/listeners&gt;
+    &lt;/trace&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;
+</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the delimiter for the delimited list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetSupportedAttributes">
       <MemberSignature Language="C#" Value="protected override string[] GetSupportedAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance string[] GetSupportedAttributes() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute is an attribute that is not inherited from the base class that can be used to set a property for the class. The custom attribute for <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> is used to set the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property. The following configuration file example shows the use of the delimiter attribute to set the <see cref="P:System.Diagnostics.DelimitedListTraceListener.Delimiter" /> property:</para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="4"&gt;
+      &lt;listeners&gt;
+        &lt;add name="delimitedListener" 
+          type="System.Diagnostics.DelimitedListTraceListener" 
+<codeFeaturedElement>          delimiter=":" </codeFeaturedElement>
+          initializeData="delimitedOutput.txt" 
+          traceOutputOptions="ProcessId, DateTime" /&gt;
+        &lt;remove name="Default" /&gt;
+      &lt;/listeners&gt;
+    &lt;/trace&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the custom configuration file attribute supported by the delimited trace listener.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array that contains the single value "delimiter".</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TraceData">
       <MemberSignature Language="C#" Value="public override void TraceData (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceData(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, object data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -157,20 +304,36 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The values of the <paramref name="source" />, <paramref name="eventType" />, and <paramref name="id" /> parameters are written as a header. The data object is converted to a string using the ToString method of the object. The <paramref name="eventCache" /> data is written as a footer whose content depends on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Diagnostics.DelimitedListTraceListener.TraceData" /> method is not intended to be called by application code. It is called by methods of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, a data object, and event information to the output file or stream.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />A data object to write to the output file or stream.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceData">
       <MemberSignature Language="C#" Value="public override void TraceData (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceData(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, object[] data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -189,20 +352,36 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The values of the <paramref name="source" />, <paramref name="eventType" />, and <paramref name="id" /> parameters are written as a header. The data objects are converted to strings using the ToString method of each object. The <paramref name="eventCache" /> data is written as a footer whose content depends on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Diagnostics.DelimitedListTraceListener.TraceData" /> method is not intended to be called by application code. It is called by methods of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, an array of data objects, and event information to the output file or stream.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of data objects to write to the output file or stream.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public override void TraceEvent (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceEvent(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string message) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -215,20 +394,36 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The values of the <paramref name="source" />, <paramref name="eventType" />, and <paramref name="id" /> parameters are written as a header, followed by the <paramref name="message" /> data. The <paramref name="eventCache" /> data is written as a footer whose content depends on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Diagnostics.DelimitedListTraceListener.TraceEvent" /> method is not intended to be called by application code. It is called by methods of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, a message, and event information to the output file or stream.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace message to write to the output file or stream.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public override void TraceEvent (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceEvent(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string format, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -248,14 +443,29 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="format">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The values of the <paramref name="source" />, <paramref name="eventType" />, and <paramref name="id" /> parameters are written as a header. The <paramref name="args" /> object array is converted to a string using the <see cref="M:System.String.Format(System.String,System.Object[])" /> method, passing the <paramref name="format" /> string and <paramref name="args" /> array to format the string as the message portion of the trace. The <paramref name="eventCache" /> data is written as a footer whose content depends on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Diagnostics.DelimitedListTraceListener.TraceEvent" /> method is not intended to be called by application code. It is called by methods of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, a formatted array of objects, and event information to the output file or stream.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A format string that contains zero or more format items that correspond to objects in the <paramref name="args" /> array.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array containing zero or more objects to format.</param>
       </Docs>
     </Member>
   </Members>

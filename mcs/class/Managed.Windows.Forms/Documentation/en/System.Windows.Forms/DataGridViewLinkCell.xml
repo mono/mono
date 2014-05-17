@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewLinkCell" FullName="System.Windows.Forms.DataGridViewLinkCell">
   <TypeSignature Language="C#" Value="public class DataGridViewLinkCell : System.Windows.Forms.DataGridViewCell" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewLinkCell" /> class is a specialized type of <see cref="T:System.Windows.Forms.DataGridViewCell" /> used to display links.</para>
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewLinkColumn" /> is the column type specialized to hold cells of this type. By default, the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> is initialized to a new <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />. To pattern the cells within a column after an existing <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />, set the column's <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.CellTemplate" /> property to the cell to use as a pattern.</para>
+      <para>The cell-related properties of the column are wrappers for the similarly-named properties of the template cell. Changing the property values of the template cell will affect only cells based on the template that are added after the change. Changing the cell-related property values of the column, however, will update the template cell and all other cells in the column, and refresh the column display if necessary. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a cell that contains a link. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewLinkCell" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActiveLinkColor">
@@ -35,9 +47,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.ActiveLinkColor" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.ActiveLinkColor" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color used to display an active link.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -51,9 +69,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Windows.Forms.DataGridViewLinkCell.Clone" /> method whenever you derive from <see cref="T:System.Windows.Forms.DataGridViewLinkCell" /> and add new properties to the derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateAccessibilityInstance">
@@ -67,9 +94,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.DataGridViewLinkCell.CreateAccessibilityInstance" /> method, it will be called when the <see cref="T:System.Windows.Forms.DataGridViewLinkCell.DataGridViewLinkCellAccessibleObject" /> property is referenced.</para>
+          <block subset="none" type="note">
+            <para>To get or set <see cref="P:System.Windows.Forms.DataGridViewCell.AccessibilityObject" />, you must add a reference to the Accessibility assembly installed with the .NET Framework.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridViewLinkCell.DataGridViewLinkCellAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EditType">
@@ -82,9 +121,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As implemented in this class, this property always returns null because a <see cref="T:System.Windows.Forms.DataGridViewLinkCell" /> cannot be edited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the cell's hosted editing control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormattedValueType">
@@ -97,9 +142,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the display <see cref="T:System.Type" /> of the cell value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetContentBounds">
@@ -206,11 +254,24 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.DataGridViewLinkCell.KeyUpUnsharesRow(System.Windows.Forms.KeyEventArgs,System.Int32)" /> is called just before <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnKeyUp(System.Windows.Forms.KeyEventArgs,System.Int32)" />. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnKeyUp(System.Windows.Forms.KeyEventArgs,System.Int32)" /> has the effect of unsharing the row containing the cell. It should return false otherwise.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the row containing the cell will be unshared when a key is released and the cell has focus.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the SPACE key was released, the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.TrackVisitedState" /> property is true, the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkVisited" /> property is false, and the CTRL, ALT, and SHIFT keys are not pressed; otherwise, false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains data about the key press.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the cell.</param>
       </Docs>
     </Member>
     <Member MemberName="LinkBehavior">
@@ -228,9 +289,16 @@
         <ReturnType>System.Windows.Forms.LinkBehavior</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Examples of link behavior include whether the link always displays an underline or the link only displays an underline when the mouse pointer moves over it, and whether a double click or a single click activates a link.</para>
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.LinkBehavior" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkBehavior" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that represents the behavior of a link.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinkColor">
@@ -243,9 +311,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.LinkColor" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkColor" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color used to display an inactive and unvisited link.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinkVisited">
@@ -258,9 +332,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.TrackVisitedState" /> property is set to true, the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkVisited" /> property is automatically set when the link is visited.</para>
+          <para>A link is visited if it has been activated by selecting it with the mouse or keyboard.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the link was visited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseDownUnsharesRow">
@@ -276,10 +357,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.DataGridViewLinkCell.MouseDownUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> is called just before <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseDown(System.Windows.Forms.DataGridViewCellMouseEventArgs)" />. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseDown(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. It should return false otherwise.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the row containing the cell will be unshared when the mouse button is pressed while the pointer is over the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the mouse pointer is over the link; otherwise, false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains data about the mouse click.</param>
       </Docs>
     </Member>
     <Member MemberName="MouseLeaveUnsharesRow">
@@ -295,10 +388,22 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.DataGridViewLinkCell.MouseLeaveUnsharesRow(System.Int32)" /> is called just before <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseLeave(System.Int32)" />. <see cref="M:System.Windows.Forms.DataGridViewLinkCell.MouseLeaveUnsharesRow(System.Int32)" /> must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseLeave(System.Int32)" /> has the effect of unsharing the row containing the cell. It should return false otherwise.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the row containing the cell will be unshared when the mouse pointer leaves the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the link displayed by the cell is not in the normal state; otherwise, false.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the cell.</param>
       </Docs>
     </Member>
     <Member MemberName="MouseMoveUnsharesRow">
@@ -314,10 +419,21 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewLinkCell.MouseMoveUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseMove(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseMove(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. It should return false otherwise.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the row containing the cell will be unshared when the mouse pointer moves over the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the mouse pointer is over the link and the link is has not yet changed color to reflect the hover state; otherwise, false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains data about the mouse click.</param>
       </Docs>
     </Member>
     <Member MemberName="MouseUpUnsharesRow">
@@ -333,10 +449,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.DataGridViewLinkCell.MouseUpUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> is called just before <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseUp(System.Windows.Forms.DataGridViewCellMouseEventArgs)" />. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseUp(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. It should return false otherwise.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the row containing the cell will be unshared when the mouse button is released while the pointer is over the cell. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the mouse pointer is over the link; otherwise, false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains data about the mouse click.</param>
       </Docs>
     </Member>
     <Member MemberName="OnKeyUp">
@@ -500,9 +628,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When false, the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkVisited" /> property will not be automatically set to true when visited.  </para>
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.TrackVisitedState" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.TrackVisitedState" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the link changes color when it is visited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseColumnTextForLinkValue">
@@ -520,9 +655,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.UseColumnTextForLinkValue" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.UseColumnTextForLinkValue" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the column <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.Text" /> property value is displayed as the link text.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueType">
@@ -550,9 +691,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewLinkColumn.VisitedLinkColor" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.VisitedLinkColor" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color used to display a link that has been previously visited.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

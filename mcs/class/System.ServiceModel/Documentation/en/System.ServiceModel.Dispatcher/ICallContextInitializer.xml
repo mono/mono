@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ICallContextInitializer" FullName="System.ServiceModel.Dispatcher.ICallContextInitializer">
+  <TypeSignature Language="C#" Value="public interface ICallContextInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICallContextInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.ICallContextInitializer" /> interface and add it to the <see cref="P:System.ServiceModel.Dispatcher.DispatchOperation.CallContextInitializers" /> property to initialize and clean up thread-local storage for the thread that invokes user code. Typical usage is to set some value, such as impersonation or changing the <see cref="T:System.Globalization.CultureInfo" />. If you wanted to establish some custom context, this is the extension point to initialize the static context property, which is then available for developers in the course of the operation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the methods that enable the initialization and recycling of thread-local storage with the thread that invokes user code.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AfterInvoke">
+      <MemberSignature Language="C#" Value="public void AfterInvoke (object correlationState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AfterInvoke(object correlationState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="correlationState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to perform any necessary cleaning up of the operation thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement to participate in cleaning up the thread that invoked the operation.</para>
+        </summary>
+        <param name="correlationState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The correlation object returned from the <see cref="M:System.ServiceModel.Dispatcher.ICallContextInitializer.BeforeInvoke(System.ServiceModel.InstanceContext,System.ServiceModel.IClientChannel,System.ServiceModel.Channels.Message)" /> method.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeforeInvoke">
+      <MemberSignature Language="C#" Value="public object BeforeInvoke (System.ServiceModel.InstanceContext instanceContext, System.ServiceModel.IClientChannel channel, System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object BeforeInvoke(class System.ServiceModel.InstanceContext instanceContext, class System.ServiceModel.IClientChannel channel, class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instanceContext" Type="System.ServiceModel.InstanceContext" />
+        <Parameter Name="channel" Type="System.ServiceModel.IClientChannel" />
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Dispatcher.ICallContextInitializer.BeforeInvoke(System.ServiceModel.InstanceContext,System.ServiceModel.IClientChannel,System.ServiceModel.Channels.Message)" /> method to initialize and clean up thread-local storage for the thread that invokes user code. Typical usage is to set some value, such as impersonation or changing the <see cref="T:System.Globalization.CultureInfo" />. If you wanted to establish some custom context, this is the extension point to initialize the static context property, which is then available for developers in the course of the operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement to participate in the initialization of the operation thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A correlation object passed back as the parameter of the <see cref="M:System.ServiceModel.Dispatcher.ICallContextInitializer.AfterInvoke(System.Object)" /> method.</para>
+        </returns>
+        <param name="instanceContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service instance for the operation.</param>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The client channel.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming message.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

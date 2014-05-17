@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Tuple&lt;T1,T2,T3,T4,T5,T6,T7,TRest&gt;" FullName="System.Tuple&lt;T1,T2,T3,T4,T5,T6,T7,TRest&gt;">
-  <TypeSignature Language="C#" Value="public class Tuple&lt;T1,T2,T3,T4,T5,T6,T7,TRest&gt; : IComparable, System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable" />
+  <TypeSignature Language="C#" Value="public class Tuple&lt;T1,T2,T3,T4,T5,T6,T7,TRest&gt; : IComparable, ITuple, System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Tuple`8&lt;T1, T2, T3, T4, T5, T6, T7, TRest&gt; extends System.Object implements class System.Collections.IStructuralComparable, class System.Collections.IStructuralEquatable, class System.IComparable, class System.ITuple" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,6 +29,9 @@
     <Interface>
       <InterfaceName>System.IComparable</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.ITuple</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
     <typeparam name="T1">To be added.</typeparam>
@@ -37,12 +42,45 @@
     <typeparam name="T6">To be added.</typeparam>
     <typeparam name="T7">To be added.</typeparam>
     <typeparam name="TRest">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A tuple is a data structure that has a specific number and sequence of values. The <see cref="T:System.Tuple`8" /> class represents an n-tuple that has eight or more components. </para>
+      <para>You can instantiate a <see cref="T:System.Tuple`8" /> object with exactly eight components by calling the static <see cref="M:System.Tuple.Create``8(``0,``1,``2,``3,``4,``5,``6,``7)" /> method. The following example creates an 8-tuple (octuple) that contains prime numbers that are less than 20. Note that it uses type inference to determine the type of each component. </para>
+      <para>code reference: System.Tuple.Create#17</para>
+      <para>You can also instantiate an n-tuple object with eight or more components by calling the <see cref="M:System.Tuple`8.#ctor(`0,`1,`2,`3,`4,`5,`6,`7)" /> constructor. The following example uses the <see cref="M:System.Tuple`8.#ctor(`0,`1,`2,`3,`4,`5,`6,`7)" /> constructor to create an 8-tuple that is equivalent to the tuple created in the previous example. </para>
+      <para>code reference: System.Tuple`8.Class#1</para>
+      <block subset="none" type="note">
+        <para>To create an n-tuple with nine or more components, you must call the  <see cref="M:System.Tuple`8.#ctor(`0,`1,`2,`3,`4,`5,`6,`7)" /> constructor. The static factory methods of the <see cref="T:System.Tuple" /> class do not support the creation of Tuple objects with more than eight components.</para>
+      </block>
+      <para>To instantiate an n-tuple that has eight or more components with the <see cref="M:System.Tuple`8.#ctor(`0,`1,`2,`3,`4,`5,`6,`7)" /> constructor, you supply a generic Tuple object as the <paramref name="rest" /> parameter to define the eighth through nth components of the tuple. By nesting generic Tuple objects in this way, you can create a tuple that has no practical limitation on the number of its components. </para>
+      <para>The following example creates a 17-tuple that contains population data for the city of Detroit, Michigan, for each national census from 1860 to 2000. The first component of the tuple is the city name. The second component is the start date of the data series, and the third component is the population at the start date. Each subsequent component provides the population at decade intervals. The 17-tuple is created by nesting a <see cref="T:System.Tuple`3" /> object inside a <see cref="T:System.Tuple`8" /> object. (That is, the <see cref="T:System.Tuple`3" /> object is supplied as the value of the <paramref name="rest" /> parameter in the <see cref="T:System.Tuple`8" /> class constructor.) This <see cref="T:System.Tuple`8" /> object is, in turn, nested in an outer <see cref="T:System.Tuple`8" /> object. (That is, the <see cref="T:System.Tuple`8" /> object is supplied as the value of the <paramref name="rest" /> parameter in the outer <see cref="T:System.Tuple`8" /> object's class constructor.)</para>
+      <para>code reference: System.Tuple.Create#19</para>
+      <para>You can retrieve the value of the tuple's first seven components by using the read-only <see cref="P:System.Tuple`7.Item1" />, <see cref="P:System.Tuple`7.Item2" />, <see cref="P:System.Tuple`7.Item3" />, <see cref="P:System.Tuple`7.Item4" />, <see cref="P:System.Tuple`7.Item5" />, <see cref="P:System.Tuple`7.Item6" />, and <see cref="P:System.Tuple`7.Item7" /> instance properties. Any additional components are nested and can be retrieved from the <see cref="P:System.Tuple`8.Rest" /> property. In the previous example, the <see cref="P:System.Tuple`8.Item1" /> through <see cref="P:System.Tuple`8.Item7" /> properties retrieve the first through seventh components of the tuple. The eighth through fourteenth components are contained in the tuple that is nested at the second level, and are represented by the Rest.Item1 through Rest.Item7 properties. The fifteenth through seventeenth components are contained in the tuple that is nested at the third level, and are represented by the Rest.Rest.Item1 though Rest.Rest.Item3 properties.</para>
+      <para>Tuples are commonly used in four different ways:</para>
+      <list type="bullet">
+        <item>
+          <para>To represent a single set of data. For example, a tuple can represent a database record, and its components can represent individual fields of the record.</para>
+        </item>
+        <item>
+          <para>To provide easy access to, and manipulation of, a data set. </para>
+        </item>
+        <item>
+          <para>To return multiple values from a method without the use of out parameters (in C#) or ByRef parameters (in Visual Basic). For example, the previous example returns its computed statistics, along with the city name, in a <see cref="T:System.Tuple`7" /> object.</para>
+        </item>
+        <item>
+          <para>To pass multiple values to a method through a single parameter. For example, the <see cref="M:System.Threading.Thread.Start(System.Object)" /> method has a single parameter that lets you supply one value to the method that the thread executes at startup. If you supply a <see cref="T:System.Tuple`7" /> object as the method argument, you can supply the thread’s startup routine with seven items of data.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an n-tuple, where n is 8 or greater.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Tuple (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, TRest rest);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!T1 item1, !T2 item2, !T3 item3, !T4 item4, !T5 item5, !T6 item6, !T7 item7, !TRest rest) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -72,6 +110,7 @@
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -83,14 +122,36 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="obj" /> parameter is considered to be equal to the current instance if it meets all the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>It is a <see cref="T:System.Tuple`8" /> object.</para>
+            </item>
+            <item>
+              <para>It has the same total number of components that are of the same types as the current instance.</para>
+            </item>
+            <item>
+              <para>Its components (including its nested components) are equal to those of the current instance. Equality is determined by the default equality comparer for each component. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current <see cref="T:System.Tuple`8" /> object is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is equal to the specified object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -100,13 +161,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the hash code for the current <see cref="T:System.Tuple`8" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item1">
       <MemberSignature Language="C#" Value="public T1 Item1 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T1 Item1" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -115,13 +183,28 @@
         <ReturnType>T1</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dynamically determine the type of the <see cref="P:System.Tuple`8.Item1" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`8.Item1" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`8" /> object, and retrieving the first element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the current <see cref="T:System.Tuple`8" /> object's first component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item2">
       <MemberSignature Language="C#" Value="public T2 Item2 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T2 Item2" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -130,13 +213,28 @@
         <ReturnType>T2</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dynamically determine the type of the <see cref="P:System.Tuple`8.Item2" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`8.Item2" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`8" /> object, and retrieving the second element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the current <see cref="T:System.Tuple`8" /> object's second component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item3">
       <MemberSignature Language="C#" Value="public T3 Item3 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T3 Item3" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -145,13 +243,28 @@
         <ReturnType>T3</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dynamically determine the type of the <see cref="P:System.Tuple`8.Item3" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`8.Item3" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`8" /> object, and retrieving the third element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the current <see cref="T:System.Tuple`8" /> object's third component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item4">
       <MemberSignature Language="C#" Value="public T4 Item4 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T4 Item4" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -160,13 +273,28 @@
         <ReturnType>T4</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dynamically determine the type of the <see cref="P:System.Tuple`8.Item4" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`8.Item4" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`8" /> object, and retrieving the fourth element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the current <see cref="T:System.Tuple`8" /> object's fourth component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item5">
       <MemberSignature Language="C#" Value="public T5 Item5 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T5 Item5" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -175,13 +303,28 @@
         <ReturnType>T5</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dynamically determine the type of the <see cref="P:System.Tuple`8.Item5" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`8.Item5" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`8" /> object, and retrieving the fifth element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the current <see cref="T:System.Tuple`8" /> object's fifth component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item6">
       <MemberSignature Language="C#" Value="public T6 Item6 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T6 Item6" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -190,13 +333,28 @@
         <ReturnType>T6</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dynamically determine the type of the <see cref="P:System.Tuple`8.Item6" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`8.Item6" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`8" /> object, and retrieving the sixth element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the current <see cref="T:System.Tuple`8" /> object's sixth component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item7">
       <MemberSignature Language="C#" Value="public T7 Item7 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T7 Item7" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -205,13 +363,28 @@
         <ReturnType>T7</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can dynamically determine the type of the <see cref="P:System.Tuple`8.Item7" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`8.Item7" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`8" /> object, and retrieving the seventh element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the current <see cref="T:System.Tuple`8" /> object's seventh component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Rest">
       <MemberSignature Language="C#" Value="public TRest Rest { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !TRest Rest" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -220,13 +393,22 @@
         <ReturnType>TRest</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Tuple`8.Rest" /> property returns a nested Tuple object that allows access to the eighth though nth components of the tuple. Depending on the total number of components in the tuple, the values of the eighth through fourteenth components can be retrieved from the nested Tuple object's <see cref="P:System.Tuple`8.Item1" /> through <see cref="P:System.Tuple`8.Item7" /> properties. You can then use the <see cref="P:System.Tuple`8.Rest" /> property of a nested <see cref="T:System.Tuple`8" /> object to retrieve the Tuple object at the next level of nesting.</para>
+          <para>You can dynamically determine the number of components in a nested Tuple object that is returned by the <see cref="P:System.Tuple`8.Rest" /> property by extracting the digit from its type name. The following example provides an illustration.</para>
+          <para>code reference: System.Tuple`8.Item1#2</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Tuple`8" /> object's remaining components.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IStructuralComparable.CompareTo">
       <MemberSignature Language="C#" Value="int IStructuralComparable.CompareTo (object other, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IStructuralComparable.CompareTo(object other, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -239,15 +421,68 @@
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface implementation. It can be used only when the <see cref="T:System.Tuple`8" /> instance is cast to an <see cref="T:System.Collections.IStructuralComparable" /> interface.</para>
+          <para>This method lets you define customized comparisons of <see cref="T:System.Tuple`8" /> objects. For example, you can use this method to order <see cref="T:System.Tuple`8" /> objects based on the value of a specific component.</para>
+          <para>Although this method can be called directly, it is most commonly called by collection-sorting methods that include <see cref="T:System.Collections.IComparer" /> parameters to order the members of a collection. For example, it is called by the <see cref="M:System.Array.Sort(System.Array,System.Collections.IComparer)" /> method and the <see cref="M:System.Collections.SortedList.Add(System.Object,System.Object)" /> method of a <see cref="T:System.Collections.SortedList" /> object that is instantiated by using the <see cref="M:System.Collections.SortedList.#ctor(System.Collections.IComparer)" /> constructor.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Tuple`8.System#Collections#IStructuralComparable#CompareTo(System.Object,System.Collections.IComparer)" /> method is intended for use in sorting operations. It should not be used when the primary purpose of a comparison is to determine whether two objects are equal. To determine whether two objects are equal, call the <see cref="M:System.Tuple`8.System#Collections#IStructuralEquatable#Equals(System.Object,System.Collections.IEqualityComparer)" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current <see cref="T:System.Tuple`8" /> object to a specified object by using a specified comparer and returns an integer that indicates whether the current object is before, after, or in the same position as the specified object in the sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative position of this instance and <paramref name="other" /> in the sort order, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer</para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="other" /> have the same position in the sort order.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer</para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current instance.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that provides custom rules for comparison.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IStructuralEquatable.Equals">
       <MemberSignature Language="C#" Value="bool IStructuralEquatable.Equals (object other, System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.IStructuralEquatable.Equals(object other, class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -260,15 +495,28 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`8" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
+          <para>The <see cref="M:System.Collections.IEqualityComparer.Equals(System.Object,System.Object)" /> implementation is called only if <paramref name="other" /> is not null, and if it can be successfully cast (in C#) or converted (in Visual Basic) to a <see cref="T:System.Tuple`8" /> object that has the same total number of components (including those in nested Tuple objects) of the same types as the current instance. The <see cref="M:System.Tuple`8.System#Collections#IStructuralEquatable#Equals(System.Object,System.Collections.IEqualityComparer)" /> method first passes the <see cref="P:System.Tuple`8.Item1" /> values of the <see cref="T:System.Tuple`8" /> objects to be compared to the <see cref="M:System.Collections.IEqualityComparer.Equals(System.Object,System.Object)" /> implementation. If this method call returns true, the method is called again and passed the <see cref="P:System.Tuple`8.Item2" /> values of the two <see cref="T:System.Tuple`8" /> objects. This continues until the method call returns false when it compares a specific pair of values, or the two <see cref="P:System.Tuple`8.Rest" /> values are passed to the method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current <see cref="T:System.Tuple`8" /> object is equal to a specified object based on a specified comparison method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is equal to the specified object; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that defines the method to use to evaluate whether the two objects are equal.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IStructuralEquatable.GetHashCode">
       <MemberSignature Language="C#" Value="int IStructuralEquatable.GetHashCode (System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IStructuralEquatable.GetHashCode(class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -280,14 +528,27 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`8" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
+          <para>The method simply wraps a call to the <paramref name="comparer" /> object's <see cref="M:System.Collections.IEqualityComparer.GetHashCode(System.Object)" /> implementation.</para>
+          <para>The algorithm used to compute the hash code should return the same hash code for two <see cref="T:System.Tuple`8" /> objects that are considered to be equal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the hash code for the current <see cref="T:System.Tuple`8" /> object by using a specified computation method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object whose <see cref="M:System.Collections.IEqualityComparer.GetHashCode(System.Object)" />  method calculates the hash code of the current <see cref="T:System.Tuple`8" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.IComparable.CompareTo">
       <MemberSignature Language="C#" Value="int IComparable.CompareTo (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.IComparable.CompareTo(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -299,14 +560,66 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`8" /> instance is cast to an <see cref="T:System.IComparable" /> interface.</para>
+          <para>This method provides the <see cref="M:System.IComparable.CompareTo(System.Object)" /> implementation for the <see cref="T:System.Tuple`7" /> class. Although the method can be called directly, it is most commonly called by the default overloads of collection-sorting methods, such as <see cref="M:System.Array.Sort(System.Array)" /> and <see cref="M:System.Collections.SortedList.Add(System.Object,System.Object)" />, to order the members of a collection.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Tuple`7.System#IComparable#CompareTo(System.Object)" /> method is intended for use in sorting operations. It should not be used when the primary purpose of a comparison is to determine whether two objects are equal. To determine whether two objects are equal, call the <see cref="M:System.Tuple`7.Equals(System.Object)" /> method.</para>
+          </block>
+          <para>This method uses the default object comparer to compare each component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current <see cref="T:System.Tuple`8" /> object to a specified object and returns an integer that indicates whether the current object is before, after, or in the same position as the specified object in the sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative position of this instance and <paramref name="obj" /> in the sort order, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer</para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="obj" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="obj" /> have the same position in the sort order.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer</para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="obj" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current instance.</param>
       </Docs>
     </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
+    <Member MemberName="System.ITuple.ToString">
+      <MemberSignature Language="C#" Value="string ITuple.ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance string System.ITuple.ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -319,6 +632,32 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this method takes the form (Item1, Item2, Item3, Item4, <paramref name="Item5, Item6, Item7" />, Item8…), where Item1, Item2, Item3, Item4, Item5, Item6, and Item7 represent the values of the <see cref="P:System.Tuple`8.Item1" />, <see cref="P:System.Tuple`8.Item2" />, <see cref="P:System.Tuple`8.Item3" />, <see cref="P:System.Tuple`8.Item4" />, <see cref="P:System.Tuple`8.Item5" />, <see cref="P:System.Tuple`8.Item6" />, and <see cref="P:System.Tuple`8.Item7" /> properties. Item8 represents the value of the <see cref="T:System.Tuple`8" /> object's Next.Item1 property. The value of any additional nested components follow Item8. If any of the property values is null, it is represented as <see cref="F:System.String.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the value of this <see cref="T:System.Tuple`8" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of this <see cref="T:System.Tuple`8" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

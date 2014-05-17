@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CriticalFinalizerObject" FullName="System.Runtime.ConstrainedExecution.CriticalFinalizerObject">
   <TypeSignature Language="C#" Value="public abstract class CriticalFinalizerObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CriticalFinalizerObject extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,14 +17,27 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Classes deriving from the <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" /> class are implicitly treated as a constrained execution region (CER).  This requires code in the finalizer to only call code with a strong reliability contract. For more information about CERs, see the <see cref="N:System.Runtime.ConstrainedExecution" /> namespace.</para>
+      <para>In classes derived from the <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" /> class, the common language runtime (CLR) guarantees that all critical finalization code will be given the opportunity to execute, provided the finalizer follows the rules for a CER, even in situations where the CLR forcibly unloads an application domain or aborts a thread. If a finalizer violates the rules for a CER, it might not successfully execute. In addition, the CLR establishes a weak ordering among normal and critical finalizers: for objects reclaimed by garbage collection at the same time, all the noncritical finalizers are called before any of the critical finalizers. For example, a class such as <see cref="T:System.IO.FileStream" />, which holds data in the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class that is derived from <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" />, can run a standard finalizer to flush out existing buffered data.</para>
+      <para>In most cases, you do not need to write classes that derive from the <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" /> class. The .NET Framework class library provides two classes, <see cref="T:System.Runtime.InteropServices.SafeHandle" /> and <see cref="T:System.Runtime.InteropServices.CriticalHandle" />, that provide critical finalization functionality for handle resources. Furthermore, the .NET Framework provides a set of prewritten classes derived from the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class, and this set is located in the <see cref="N:Microsoft.Win32.SafeHandles" /> namespace. These classes are designed to provide common functionality for supporting file and operating system handles.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Ensures that all finalization code in derived classes is marked as critical.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected CriticalFinalizerObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
@@ -30,27 +45,18 @@
       </Attributes>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~CriticalFinalizerObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -60,6 +66,21 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The finalizer for any types deriving from <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" /> is given the opportunity to execute and will not be aborted, assuming the finalizer correctly follows the rules for a constrained execution region (CER). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all the resources used by the <see cref="T:System.Runtime.ConstrainedExecution.CriticalFinalizerObject" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

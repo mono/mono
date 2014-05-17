@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="RegexMatchTimeoutException" FullName="System.Text.RegularExpressions.RegexMatchTimeoutException">
+  <TypeSignature Language="C#" Value="public class RegexMatchTimeoutException : TimeoutException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit RegexMatchTimeoutException extends System.TimeoutException implements class System.Runtime.Serialization.ISerializable" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.TimeoutException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.MonoTODO</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The presence of a <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> exception generally indicates one of the following conditions: </para>
+      <list type="bullet">
+        <item>
+          <para>The regular expression engine is backtracking excessively as it attempts to match the input text to the regular expression pattern.</para>
+        </item>
+        <item>
+          <para>The time-out interval has been set too low, especially given high machine load.</para>
+        </item>
+      </list>
+      <para>The way in which an exception handler handles an exception depends on the cause of the exception:</para>
+      <list type="bullet">
+        <item>
+          <para>If the time-out results from excessive backtracking, your exception handler should abandon the attempt to match the input and inform the user that a time-out has occurred in the regular expression pattern-matching method. If possible, information about the regular expression pattern, which is available from the <see cref="P:System.Text.RegularExpressions.RegexMatchTimeoutException.Pattern" /> property, and the input that caused excessive backtracking, which is available from the <see cref="P:System.Text.RegularExpressions.RegexMatchTimeoutException.Input" /> property, should be logged so that the issue can be investigated and the regular expression pattern modified. Time-outs due to excessive backtracking are always reproducible.</para>
+        </item>
+        <item>
+          <para>If the time-out results from setting the time-out threshold too low, you can increase the time-out interval and retry the matching operation. The current time-out interval is available from the <see cref="P:System.Text.RegularExpressions.RegexMatchTimeoutException.MatchTimeout" /> property. When a <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> exception is thrown, the regular expression engine maintains its state so that any future invocations return the same result, as if the exception did not occur. The recommended pattern is to wait for a brief, random time interval after the exception is thrown before calling the matching method again. This can be repeated several times. However, the number of repetitions should be small in case the time-out is caused by excessive backtracking. </para>
+        </item>
+      </list>
+      <para>The example in the next section illustrates both techniques for handling a <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when the execution time of a regular expression pattern-matching method exceeds its time-out interval.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RegexMatchTimeoutException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default constructor of the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> class. This constructor initializes the <see cref="P:System.Exception.Message" /> property of the new instance to a system-supplied message that describes the error. This message is localized for the current system culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> class with a system-supplied message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RegexMatchTimeoutException (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="message" /> string is assigned to the <see cref="P:System.Exception.Message" /> property. The string should be localized for the current culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> class with the specified message string.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that describes the exception.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected RegexMatchTimeoutException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not called directly by your code to instantiate the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> object. Instead, it is called by the <see cref="M:System.Runtime.Serialization.IFormatter.Deserialize(System.IO.Stream)" /> method when deserializing the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> object from a stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> class with serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the serialized data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the serialized data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RegexMatchTimeoutException (string message, Exception inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception inner) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="inner" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you use this overload to handle an exception in a try/catch block. The <paramref name="innerException" /> parameter should be a reference to the exception object handled in the catch block, or it can be null. This value is then assigned to the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> object's <see cref="P:System.Exception.InnerException" /> property.</para>
+          <para>The <paramref name="message" /> string is assigned to the <see cref="P:System.Exception.Message" /> property. The string should be localized for the current culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that describes the exception.</param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RegexMatchTimeoutException (string regexInput, string regexPattern, TimeSpan matchTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string regexInput, string regexPattern, valuetype System.TimeSpan matchTimeout) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="regexInput" Type="System.String" />
+        <Parameter Name="regexPattern" Type="System.String" />
+        <Parameter Name="matchTimeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="regexInput" />, <paramref name="regexPattern" />, and <paramref name="matchTimeout" /> values are assigned to the <see cref="P:System.Text.RegularExpressions.RegexMatchTimeoutException.Input" />, <see cref="P:System.Text.RegularExpressions.RegexMatchTimeoutException.Pattern" />, and <see cref="P:System.Text.RegularExpressions.RegexMatchTimeoutException.MatchTimeout" /> properties of the new <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> class with information about the regular expression pattern, the input text, and the time-out interval.</para>
+        </summary>
+        <param name="regexInput">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input text processed by the regular expression engine when the time-out occurred.</param>
+        <param name="regexPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The pattern used by the regular expression engine when the time-out occurred.</param>
+        <param name="matchTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time-out interval.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Input">
+      <MemberSignature Language="C#" Value="public string Input { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Input" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property reflects the value of the <paramref name="regexInput" />  parameter of the <see cref="M:System.Text.RegularExpressions.RegexMatchTimeoutException.#ctor(System.String,System.String,System.TimeSpan)" /> constructor. If this parameter is not explicitly initialized in a constructor call, its value is <see cref="F:System.String.Empty" />.</para>
+          <para>When the exception is thrown by the regular expression engine, the value of the <see cref="P:System.Text.RegularExpressions.RegexMatchTimeoutException.Input" /> property reflects the entire input string passed to the regular expression engine. It does not reflect a partial string, such as the substring that the engine searches in the call to a method such as <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the input text that the regular expression engine was processing when the time-out occurred.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MatchTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan MatchTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan MatchTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property reflects the value of the <paramref name="matchTimeout" /> parameter of the <see cref="M:System.Text.RegularExpressions.RegexMatchTimeoutException.#ctor(System.String,System.String,System.TimeSpan)" /> constructor. If the parameter is not properly initialized in a constructor call, its value is Timespan.FromTicks(-1).</para>
+          <para>The value of this property reflects the time-out interval set in the call to the <see cref="T:System.Text.RegularExpressions.Regex" /> constructor or static method. It does not reflect the exact interval that has elapsed from the beginning of the method call to the time the exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time-out interval for a regular expression match.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Pattern">
+      <MemberSignature Language="C#" Value="public string Pattern { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Pattern" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property reflects the value of the <paramref name="regexPattern" />  parameter of the <see cref="M:System.Text.RegularExpressions.RegexMatchTimeoutException.#ctor(System.String,System.String,System.TimeSpan)" /> constructor. If the parameter is not properly initialized in a constructor call, its value is <see cref="F:System.String.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the regular expression pattern that was used in the matching operation when the time-out occurred.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

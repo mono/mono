@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SearchOption" FullName="System.IO.SearchOption">
   <TypeSignature Language="C#" Value="public enum SearchOption" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed SearchOption extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,40 +16,54 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you choose <see cref="F:System.IO.SearchOption.AllDirectories" /> in your search and the directory structure contains a link that creates a loop, the search operation enters an infinite loop.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether to search the current directory, or the current directory and all subdirectories. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllDirectories">
       <MemberSignature Language="C#" Value="AllDirectories" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.SearchOption AllDirectories = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.SearchOption</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.SearchOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Includes the current directory and all its subdirectories in a search operation. This option includes reparse points such as mounted drives and symbolic links in the search.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="TopDirectoryOnly">
       <MemberSignature Language="C#" Value="TopDirectoryOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.SearchOption TopDirectoryOnly = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.SearchOption</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.SearchOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Includes only the current directory in a search operation.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

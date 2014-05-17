@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DbProviderFactories" FullName="System.Data.Common.DbProviderFactories">
   <TypeSignature Language="C#" Value="public static class DbProviderFactories" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of static methods for creating one or more instances of <see cref="T:System.Data.Common.DbProviderFactory" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetFactory">
@@ -24,11 +28,22 @@
         <Parameter Name="providerRow" Type="System.Data.DataRow" />
       </Parameters>
       <Docs>
-        <param name="providerRow">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="providerRow" /> parameter corresponds to the <see cref="T:System.Data.DataRow" /> of a table returned by <see cref="M:System.Data.Common.DbProviderFactories.GetFactoryClasses" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an instance of a <see cref="T:System.Data.Common.DbProviderFactory" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a <see cref="T:System.Data.Common.DbProviderFactory" /> for a specified <see cref="T:System.Data.DataRow" />.</para>
+        </returns>
+        <param name="providerRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Data.DataRow" /> containing the provider's configuration information.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,11 +59,21 @@
         <Parameter Name="providerInvariantName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="providerInvariantName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="providerInvariantName" /> parameter corresponds to the InvariantName column of a table returned by <see cref="M:System.Data.Common.DbProviderFactories.GetFactoryClasses" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an instance of a <see cref="T:System.Data.Common.DbProviderFactory" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a <see cref="T:System.Data.Common.DbProviderFactory" /> for a specified provider name.</para>
+        </returns>
+        <param name="providerInvariantName">
+          <attribution license="cc4" from="Microsoft" modified="false" />Invariant name of a provider.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,10 +87,75 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> that contains information about all installed providers that implement <see cref="T:System.Data.Common.DbProviderFactory" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> containing <see cref="T:System.Data.DataRow" /> objects that contain the following data. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Column ordinal</para>
+                </term>
+                <description>
+                  <para>Column name</para>
+                </description>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0</para>
+              </term>
+              <description>
+                <para>Name</para>
+              </description>
+              <description>
+                <para>Human-readable name for the data provider.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1</para>
+              </term>
+              <description>
+                <para>Description</para>
+              </description>
+              <description>
+                <para>Human-readable description of the data provider.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2</para>
+              </term>
+              <description>
+                <para>InvariantName</para>
+              </description>
+              <description>
+                <para>Name that can be used programmatically to refer to the data provider.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3</para>
+              </term>
+              <description>
+                <para>AssemblyQualifiedName</para>
+              </description>
+              <description>
+                <para>Fully qualified name of the factory class, which contains enough information to instantiate the object.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

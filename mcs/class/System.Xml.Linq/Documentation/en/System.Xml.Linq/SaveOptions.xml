@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SaveOptions" FullName="System.Xml.Linq.SaveOptions">
+  <TypeSignature Language="C#" Value="public enum SaveOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SaveOptions extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you disable formatting when serializing, all insignificant white space in the XML tree is serialized as is. If you do not disable formatting, then all insignificant white space in the XML tree is discarded, and the XML is formatted (indented) as it is serialized.</para>
+      <para>This type allows you to control how LINQ to XML handles white space when serializing. For more information, see <format type="text/html"><a href="093a7169-a04e-4638-b08c-d1cb98aa650d">Preserving White Space while Loading or Parsing XML</a></format> and <format type="text/html"><a href="fb146217-0a49-4efc-ac84-7265b91d3939">Preserving White Space While Serializing</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies serialization options.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="DisableFormatting">
+      <MemberSignature Language="C#" Value="DisableFormatting" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.SaveOptions DisableFormatting = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.SaveOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Preserve all insignificant white space while serializing.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.SaveOptions None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.SaveOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Format (indent) the XML while serializing.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OmitDuplicateNamespaces">
+      <MemberSignature Language="C#" Value="OmitDuplicateNamespaces" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.SaveOptions OmitDuplicateNamespaces = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.SaveOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Remove the duplicate namespace declarations while serializing.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

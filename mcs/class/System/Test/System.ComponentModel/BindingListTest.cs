@@ -629,6 +629,16 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsTrue (added, "ItemAdded");
 			Assert.IsTrue (changed, "ItemChanged");
 		}
+		
+		[Test] // https://bugzilla.xamarin.com/show_bug.cgi?id=16902
+		public void Bug16902 ()
+		{
+			var list = new BindingList<Item> ();
+			list.Insert (0, null);
+			var count = list.Count;
+			
+			Assert.AreEqual (1, count, "1");
+		}
 	}
 }
 

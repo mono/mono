@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E572DA55-C0E6-42BA-9BCF-05B2C777D15B}</ProjectGuid>
+    <ProjectGuid>{48DFBC3C-F8C1-488E-B1E2-15555551B796}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Tasks-tests-net_4_5</OutputPath>
@@ -84,34 +84,41 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_4_5.csproj">
-      <Project>{B0995E00-BF37-4B8A-8229-285C060E5957}</Project>
+      <Project>{A76A398F-08C0-4B3D-A624-690717233736}</Project>
       <Name>Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5.csproj">
-      <Project>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</Project>
+      <Project>{54DFC5A7-7C1D-4BA5-A0F7-F0B312E1E076}</Project>
       <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
+      <Project>{DA3B9FEE-8FBD-4587-B760-65420765256A}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_4_5.csproj">
+      <Project>{73FB1B7E-09F9-4E7F-A63A-C407A93BCA59}</Project>
+      <Name>Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_4_5</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5.csproj">
-      <Project>{5CD66EA1-51EB-48EE-8C1C-DDFD23E22C38}</Project>
+      <Project>{6E1C7BDE-7B9E-47B0-A7B2-1561822FE922}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -119,3 +126,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

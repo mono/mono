@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GCHandleType" FullName="System.Runtime.InteropServices.GCHandleType" FullNameSP="System_Runtime_InteropServices_GCHandleType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable GCHandleType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum GCHandleType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed GCHandleType extends System.Enum" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,103 +14,109 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Represents the types of handles the
-   <see cref="T:System.Runtime.InteropServices.GCHandle" /> class can allocate.</para>
-    </summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the types of handles the <see cref="T:System.Runtime.InteropServices.GCHandle" /> class can allocate.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Normal">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Normal = 2" />
       <MemberSignature Language="C#" Value="Normal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Normal = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Normal</MemberValue>
       <Docs>
-        <summary>
-          <para>A <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> is an opaque 
-   handle, and the address of the object it references cannot be resolved through
-   it. The <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> also prevents the
-   collection of the referenced object by the GC.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This handle type represents an opaque handle, meaning you cannot resolve the address of the pinned object through the handle. You can use this type to track an object and prevent its collection by the garbage collector. This enumeration member is useful when an unmanaged client holds the only reference, which is undetectable from the garbage collector, to a managed object.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Pinned">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Pinned = 3" />
+      <MemberSignature Language="C#" Value="Pinned" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Pinned = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Pinned">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Pinned = 3" />
-      <MemberSignature Language="C#" Value="Pinned" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Pinned</MemberValue>
       <Docs>
-        <summary>
-          <para> Similar to <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" />, but allows the
- address of the object, which the current <see cref="T:System.Runtime.InteropServices.GCHandle" />
- 
- represents to be taken.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This handle type is similar to <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" />, but allows the address of the pinned object to be taken. This prevents the garbage collector from moving the object and hence undermines the efficiency of the garbage collector. Use the <see cref="M:System.Runtime.InteropServices.GCHandle.Free" /> method to free the allocated handle as soon as possible.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Weak">
+      <MemberSignature Language="C#" Value="Weak" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType Weak = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Weak">
-      <MemberSignature Language="C#" Value="Weak" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
       </ReturnValue>
       <MemberValue>Weak</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This handle type is used to track an object, but allow it to be collected. When an object is collected, the contents of the <see cref="T:System.Runtime.InteropServices.GCHandle" /> are zeroed. Weak references are zeroed before the finalizer runs, so even if the finalizer resurrects the object, the Weak reference is still zeroed.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="WeakTrackResurrection">
+      <MemberSignature Language="C#" Value="WeakTrackResurrection" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.GCHandleType WeakTrackResurrection = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WeakTrackResurrection">
-      <MemberSignature Language="C#" Value="WeakTrackResurrection" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandleType</ReturnType>
       </ReturnValue>
       <MemberValue>WeakTrackResurrection</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This handle type is similar to <see cref="F:System.Runtime.InteropServices.GCHandleType.Weak" />, but the handle is not zeroed if the object is resurrected during finalization.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

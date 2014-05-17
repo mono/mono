@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractRuntimeIgnoredAttribute" FullName="System.Diagnostics.Contracts.ContractRuntimeIgnoredAttribute">
   <TypeSignature Language="C#" Value="public sealed class ContractRuntimeIgnoredAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractRuntimeIgnoredAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -17,20 +19,30 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Marks a method or property as having no runtime behaviour when called in methods in System.Diagnostics.Contracts.Contract.</summary>
-    <remarks />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Methods and properties that are marked with this attribute can be used within calls to <see cref="T:System.Diagnostics.Contracts.Contract" /> methods, but they have no run-time behavior.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a member that has no run-time behavior.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractRuntimeIgnoredAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>Construct a ContractRuntimeIgnoredAttribute.</summary>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.ContractRuntimeIgnoredAttribute" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

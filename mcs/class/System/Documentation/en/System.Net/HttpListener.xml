@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpListener" FullName="System.Net.HttpListener">
   <TypeSignature Language="C#" Value="public sealed class HttpListener : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit HttpListener extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -13,75 +16,151 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Using the <see cref="T:System.Net.HttpListener" /> class, you can create a simple HTTP protocol listener that responds to HTTP requests. The listener is active for the lifetime of the <see cref="T:System.Net.HttpListener" /> object and runs within your application with its permissions. </para>
+      <block subset="none" type="note">
+        <para>This class is available only on computers running the Windows XP SP2 or Windows Server 2003 operating systems. If you attempt to create an <see cref="T:System.Net.HttpListener" /> object on a computer that is running an earlier operating system, the constructor throws a <see cref="T:System.PlatformNotSupportedException" /> exception.</para>
+      </block>
+      <para>To use <see cref="T:System.Net.HttpListener" />, create a new instance of the class using the <see cref="T:System.Net.HttpListener" /> constructor and use the <see cref="P:System.Net.HttpListener.Prefixes" /> property to gain access to the collection that holds the strings that specify which Uniform Resource Identifier (URI) prefixes the <see cref="T:System.Net.HttpListener" /> should process. </para>
+      <para>A URI prefix string is composed of a scheme (http or https), a host, an optional port, and an optional path. An example of a complete prefix string is "http://www.contoso.com:8080/customerData/". Prefixes must end in a forward slash ("/"). The <see cref="T:System.Net.HttpListener" /> object with the prefix that most closely matches a requested URI responds to the request. Multiple <see cref="T:System.Net.HttpListener" /> objects cannot add the same prefix; a <see cref="T:System.ComponentModel.Win32Exception" /> exception is thrown if a <see cref="T:System.Net.HttpListener" /> adds a prefix that is already in use. </para>
+      <para>When a port is specified, the host element can be replaced with "*" to indicate that the <see cref="T:System.Net.HttpListener" /> accepts requests sent to the port if the requested URI does not match any other prefix. For example, to receive all requests sent to port 8080 when the requested URI is not handled by any <see cref="T:System.Net.HttpListener" />, the prefix is "http://*:8080/". Similarly, to specify that the <see cref="T:System.Net.HttpListener" /> accepts all requests sent to a port, replace the host element with the "+" character, "https://+:8080". The "*" and "+" characters can be present in prefixes that include paths.</para>
+      <para>To begin listening for requests from clients, add the URI prefixes to the collection and call the <see cref="M:System.Net.HttpListener.Start" /> method. <see cref="T:System.Net.HttpListener" /> offers both synchronous and asynchronous models for processing client requests. Requests and their associated responses are accessed using the <see cref="T:System.Net.HttpListenerContext" /> object returned by the <see cref="M:System.Net.HttpListener.GetContext" /> method or its asynchronous counterparts, the <see cref="M:System.Net.HttpListener.BeginGetContext(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.HttpListener.EndGetContext(System.IAsyncResult)" /> methods. </para>
+      <para>The synchronous model is appropriate if your application should block while waiting for a client request and if you want to process only one request at a time. Using the synchronous model, call the <see cref="M:System.Net.HttpListener.GetContext" /> method, which waits for a client to send a request. The method returns an <see cref="T:System.Net.HttpListenerContext" /> object to you for processing when one occurs. </para>
+      <para>In the more complex asynchronous model, your application does not block while waiting for requests and each request is processed in its own execution thread. Use the <see cref="M:System.Net.HttpListener.BeginGetContext(System.AsyncCallback,System.Object)" /> method to specify an application-defined method to be called for each incoming request. Within that method, call the <see cref="M:System.Net.HttpListener.EndGetContext(System.IAsyncResult)" /> method to obtain the request, process it, and respond. </para>
+      <para>In either model, incoming requests are accessed using the <see cref="P:System.Net.HttpListenerContext.Request" /> property and are represented by <see cref="T:System.Net.HttpListenerRequest" /> objects. Similarly, responses are accessed using the <see cref="P:System.Net.HttpListenerContext.Response" /> property and are represented by <see cref="T:System.Net.HttpListenerResponse" /> objects. These objects share some functionality with the <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.HttpWebResponse" /> objects, but the latter objects cannot be used in conjunction with <see cref="T:System.Net.HttpListener" /> because they implement client, not server, behaviors.</para>
+      <para>An <see cref="T:System.Net.HttpListener" /> can require client authentication. You can either specify a particular scheme to use for authentication, or you can specify a delegate that determines the scheme to use. You must require some form of authentication to obtain information about the client's identity. For additional information, see the <see cref="P:System.Net.HttpListenerContext.User" />, <see cref="P:System.Net.HttpListener.AuthenticationSchemes" />, and <see cref="P:System.Net.HttpListener.AuthenticationSchemeSelectorDelegate" /> properties.</para>
+      <block subset="none" type="note">
+        <para>If you create an <see cref="T:System.Net.HttpListener" /> using https, you must select a Server Certificate for that listener. Otherwise, an <see cref="T:System.Net.HttpWebRequest" /> query of this <see cref="T:System.Net.HttpListener" /> will fail with an unexpected close of the connection.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>You can configure Server Certificates and other listener options by using HttpCfg.exe. See <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/http/http/httpcfg_exe.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/http/http/httpcfg_exe.asp</see> for more details. The executable is shipped with Windows Server 2003, or can be built from source code available in the Platform SDK.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>If you specify multiple authentication schemes for the <see cref="T:System.Net.HttpListener" />, the listener will challenge clients in the following order: Negotiate, NTLM, Digest, and then Basic.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a simple, programmatically controlled HTTP protocol listener. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpListener ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before using the instance returned by this constructor, you must invoke its <see cref="M:System.Net.HttpListener.Start" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.HttpListener" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Abort">
       <MemberSignature Language="C#" Value="public void Abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Abort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method disposes of all resources held by this listener. Any pending requests are unable to complete. </para>
+          <para>After calling this method, you will receive an <see cref="T:System.ObjectDisposedException" /> if you attempt to use this <see cref="T:System.Net.HttpListener" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shuts down the <see cref="T:System.Net.HttpListener" /> object immediately, discarding all currently queued requests.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AuthenticationSchemes">
-      <MemberSignature Language="C#" Value="public System.Net.AuthenticationSchemes AuthenticationSchemes { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.AuthenticationSchemes AuthenticationSchemes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.AuthenticationSchemes AuthenticationSchemes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.AuthenticationSchemes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.HttpListener" /> uses the specified scheme to authenticate all incoming requests. The <see cref="M:System.Net.HttpListener.GetContext" /> and <see cref="M:System.Net.HttpListener.EndGetContext(System.IAsyncResult)" /> methods return an incoming client request only if the <see cref="T:System.Net.HttpListener" /> successfully authenticates the request.</para>
+          <para>You can interrogate the identity of a successfully authenticated client by using the <see cref="P:System.Net.HttpListenerContext.User" /> property.</para>
+          <para>If you want an <see cref="T:System.Net.HttpListener" /> object to use different authentication mechanisms based on characteristics of the requests it receives (for example, the request's <see cref="P:System.Net.HttpListenerRequest.Url" /> or <see cref="P:System.Net.HttpListenerRequest.UserHostName" /> property), you must implement a method that chooses the authentication scheme. For instructions about how to do this, see the <see cref="P:System.Net.HttpListener.AuthenticationSchemeSelectorDelegate" /> property documentation.</para>
+          <block subset="none" type="note">
+            <para>To set this property to enable Digest, NTLM, or Negotiate requires the <see cref="T:System.Security.Permissions.SecurityPermission" />, <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlPrincipal" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the scheme used to authenticate clients.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AuthenticationSchemeSelectorDelegate">
-      <MemberSignature Language="C#" Value="public System.Net.AuthenticationSchemeSelector AuthenticationSchemeSelectorDelegate { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.AuthenticationSchemeSelector AuthenticationSchemeSelectorDelegate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.AuthenticationSchemeSelector AuthenticationSchemeSelectorDelegate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.AuthenticationSchemeSelector</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If you want the same authentication protocol to be used for all requests handled by a particular instance of <see cref="T:System.Net.HttpListener" />, you do not need to set this property. To specify a protocol to be used for all client requests, use the <see cref="P:System.Net.HttpListener.AuthenticationSchemes" /> property.</para>
+          </block>
+          <para>If the client has not specified authentication information in its headers, the <see cref="T:System.Net.HttpListener" /> calls the specified delegate for each unauthenticated incoming request to determine which, if any, protocol to use to authenticate the client. The <see cref="M:System.Net.HttpListener.GetContext" /> and <see cref="M:System.Net.HttpListener.EndGetContext(System.IAsyncResult)" /> methods return an incoming request only if the <see cref="T:System.Net.HttpListener" /> successfully authenticated the request. If a request cannot be authenticated, the <see cref="T:System.Net.HttpListener" /> automatically sends back a 401 response. You can get the identity of a successfully authenticated client using the <see cref="P:System.Web.HttpRequest.LogonUserIdentity" /> property.</para>
+          <para>The ability to delegate the choice of authentication protocol to an application-specific method is useful if you want an instance of <see cref="T:System.Net.HttpListener" /> to use different authentication protocols depending on the characteristics of the requests it receives (for example, the request's <see cref="P:System.Net.HttpListenerRequest.Url" /> or <see cref="P:System.Net.HttpListenerRequest.UserHostAddress" /> property). </para>
+          <block subset="none" type="note">
+            <para>To set this property to enable Digest, NTLM, or Negotiate requires the <see cref="T:System.Security.Permissions.SecurityPermission" />, <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlPrincipal" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the delegate called to determine the protocol used to authenticate clients.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginGetContext">
       <MemberSignature Language="C#" Value="public IAsyncResult BeginGetContext (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IAsyncResult BeginGetContext(class System.AsyncCallback callback, object state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -90,36 +169,61 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.HttpListener.BeginGetContext(System.AsyncCallback,System.Object)" /> method begins an asynchronous (non-blocking) call to receive incoming client requests. Before calling this method, you must call the <see cref="M:System.Net.HttpListener.Start" /> method and add at least one Uniform Resource Identifier (URI) prefix to listen for by adding the URI strings to the <see cref="T:System.Net.HttpListenerPrefixCollection" /> returned by the <see cref="P:System.Net.HttpListener.Prefixes" /> property.</para>
+          <para>The asynchronous operation must be completed by calling the <see cref="M:System.Net.HttpListener.EndGetContext(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="callback" /> delegate.</para>
+          <para>This method does not block while the operation completes. To get an incoming request and block until the operation completes, call the <see cref="M:System.Net.HttpListener.GetContext" /> method.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format></para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins asynchronously retrieving an incoming request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that indicates the status of the asynchronous operation.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when a client request is available.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the operation. This object is passed to the <paramref name="callback" /> delegate when the operation completes.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After calling this method, you can no longer use the <see cref="T:System.Net.HttpListener" /> object. To temporarily pause an <see cref="T:System.Net.HttpListener" /> object, use the <see cref="M:System.Net.HttpListener.Stop" /> method.</para>
+          <para>This method shut downs the <see cref="T:System.Net.HttpListener" /> object without processing queued requests. Any pending requests are unable to complete.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shuts down the <see cref="T:System.Net.HttpListener" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndGetContext">
       <MemberSignature Language="C#" Value="public System.Net.HttpListenerContext EndGetContext (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.HttpListenerContext EndGetContext(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpListenerContext</ReturnType>
       </ReturnValue>
@@ -127,175 +231,311 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.HttpListener.EndGetContext(System.IAsyncResult)" /> method is called, usually within an application-defined callback method invoked by a delegate, to obtain the <see cref="T:System.Net.HttpListenerContext" /> object that contains an incoming client request and its associated response. This method completes an operation previously started by calling the <see cref="M:System.Net.HttpListener.BeginGetContext(System.AsyncCallback,System.Object)" /> method. If the operation has not completed, this method blocks until it does.</para>
+          <para>Because calling the <see cref="M:System.Net.HttpListener.EndGetContext(System.IAsyncResult)" /> method requires the <see cref="T:System.Net.HttpListener" /> object, this object is typically passed into a callback method by using the state object passed into the <see cref="M:System.Net.HttpListener.BeginGetContext(System.AsyncCallback,System.Object)" /> method. You can obtain this state object by using the <see cref="P:System.IAsyncResult.AsyncState" /> property of the <paramref name="asyncResult" /> object.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format></para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to retrieve an incoming client request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.HttpListenerContext" /> object that represents the client request.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> object that was obtained when the asynchronous operation was started.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetContext">
       <MemberSignature Language="C#" Value="public System.Net.HttpListenerContext GetContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.HttpListenerContext GetContext() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpListenerContext</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before calling this method, you must call the <see cref="M:System.Net.HttpListener.Start" /> method and add at least one URI prefix to listen for by adding the URI strings to the <see cref="T:System.Net.HttpListenerPrefixCollection" /> returned by the <see cref="P:System.Net.HttpListener.Prefixes" /> property. For a detailed description of prefixes, see the <see cref="T:System.Net.HttpListener" /> class overview.</para>
+          <para>This method blocks while waiting for an incoming request. If you want incoming requests to be processed asynchronously (on separate threads) so that your application does not block, use the <see cref="M:System.Net.HttpListener.BeginGetContext(System.AsyncCallback,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for an incoming request and returns when one is received.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.HttpListenerContext" /> object that represents a client request.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetContextAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Net.HttpListenerContext&gt; GetContextAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Net.HttpListenerContext&gt; GetContextAsync() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.HttpListenerContext&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete when the incoming request has been received.</para>
+          <para>Before calling this method, you must call the <see cref="M:System.Net.HttpListener.Start" /> method and add at least one URI prefix to listen for by adding the URI strings to the <see cref="T:System.Net.HttpListenerPrefixCollection" /> returned by the <see cref="P:System.Net.HttpListener.Prefixes" /> property. For a detailed description of prefixes, see the <see cref="T:System.Net.HttpListener" /> class overview.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Waits for an incoming request as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns an <see cref="T:System.Net.HttpListenerContext" /> object that represents a client request.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="IgnoreWriteExceptions">
-      <MemberSignature Language="C#" Value="public bool IgnoreWriteExceptions { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IgnoreWriteExceptions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreWriteExceptions" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to true if your application does not require that a response is successfully sent to each client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that specifies whether your application receives exceptions that occur when an <see cref="T:System.Net.HttpListener" /> sends the response to the client.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsListening">
       <MemberSignature Language="C#" Value="public bool IsListening { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsListening" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To start an <see cref="T:System.Net.HttpListener" />, call the <see cref="M:System.Net.HttpListener.Start" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether <see cref="T:System.Net.HttpListener" /> has been started.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSupported">
       <MemberSignature Language="C#" Value="public static bool IsSupported { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsSupported" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class is available only on computers running the Windows XP SP2 or Windows Server 2003 operating systems.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether <see cref="T:System.Net.HttpListener" /> can be used with the current operating system.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Prefixes">
       <MemberSignature Language="C#" Value="public System.Net.HttpListenerPrefixCollection Prefixes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.HttpListenerPrefixCollection Prefixes" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpListenerPrefixCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The prefixes are in canonical form. For a detailed description of prefixes, see the <see cref="T:System.Net.HttpListener" /> class overview.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Uniform Resource Identifier (URI) prefixes handled by this <see cref="T:System.Net.HttpListener" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Realm">
-      <MemberSignature Language="C#" Value="public string Realm { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Realm { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Realm" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Servers use realms to partition protected resources; each partition can have its own authentication scheme and/or authorization database. Realms are used only for basic and digest authentication. After a client successfully authenticates, the authentication is valid for all resources in a given realm. For a detailed description of realms, see RFC 2617 at <see cref="http://www.ietf.org">http://www.ietf.org</see>.</para>
+          <para>An instance of <see cref="T:System.Net.HttpListener" /> has only one associated realm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the realm, or resource partition, associated with this <see cref="T:System.Net.HttpListener" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Start">
       <MemberSignature Language="C#" Value="public void Start ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Start() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method must be called before you call the <see cref="M:System.Net.HttpListener.GetContext" /> or <see cref="M:System.Net.HttpListener.BeginGetContext(System.AsyncCallback,System.Object)" /> method.</para>
+          <para>After you have started an <see cref="T:System.Net.HttpListener" /> object, you can use the <see cref="M:System.Net.HttpListener.Stop" /> method to stop it.</para>
+          <block subset="none" type="note">
+            <para>If this listener instance uses https, you must install and select a Server Certificate. Otherwise, an <see cref="T:System.Net.HttpWebRequest" /> query of this <see cref="T:System.Net.HttpListener" /> will fail with an unexpected close of the connection. You can configure Server Certificates and other listener options by using HttpCfg.exe. See <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/http/http/httpcfg_exe.asp">http://msdn.microsoft.com/library/default.asp?url=/library/en-us/http/http/httpcfg_exe.asp</see> for more details.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows this instance to receive incoming requests.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Stop">
       <MemberSignature Language="C#" Value="public void Stop ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Stop() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this instance is already stopped, calling this method has no effect.</para>
+          <para>After you have stopped an <see cref="T:System.Net.HttpListener" /> object, you can use the <see cref="M:System.Net.HttpListener.Start" /> method to restart it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes this instance to stop receiving incoming requests.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.IDisposable.Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applications should use the <see cref="M:System.Net.HttpListener.Close" /> method instead of calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources held by this <see cref="T:System.Net.HttpListener" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnsafeConnectionNtlmAuthentication">
-      <MemberSignature Language="C#" Value="public bool UnsafeConnectionNtlmAuthentication { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool UnsafeConnectionNtlmAuthentication { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UnsafeConnectionNtlmAuthentication" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Support for NTLM needs some loving.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true and the first request over a particular TCP connection is authenticated using NTLM, subsequent requests over the same TCP connection are processed using the authentication information (<see cref="T:System.Security.Principal.IIdentity" />) of the initial request.</para>
+          <para>This property has no effect when NTLM is not the authentication protocol. When Negotiate is specified as the authentication protocol, this property has an effect only if NTLM is the actual protocol used for authentication. </para>
+          <block subset="none" type="note">
+            <para>While setting this property to true increases performance because the <see cref="T:System.Net.HttpListener" /> does not send additional NTLM authentication challenges, there is a security risk in not requiring all requests to provide authentication information. You must determine whether the increase in performance is worth this risk.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that controls whether, when NTLM is used, additional requests using the same Transmission Control Protocol (TCP) connection are required to authenticate.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

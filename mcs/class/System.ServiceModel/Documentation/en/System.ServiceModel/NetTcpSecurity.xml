@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="NetTcpSecurity" FullName="System.ServiceModel.NetTcpSecurity">
+  <TypeSignature Language="C#" Value="public sealed class NetTcpSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NetTcpSecurity extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each of the standard bindings provides parameters for controlling the transfer security requirements. These parameters typically include the security mode that specified whether message-level or transport-level security is used and the choice of client credential type. Based on the choice of options these parameters present, a channel stack is constructed with appropriate security. </para>
+      <para>The system-provided bindings supplied by indigo1 are a set designed to meet some of the most common scenario requirements. Each of these bindings allows the specification of security requirements for some specific targeted scenarios. </para>
+      <para>
+        <see cref="T:System.ServiceModel.NetTcpSecurity" /> provides the security specifications for <see cref="T:System.ServiceModel.NetTcpBinding" />. This is a secure, reliable, optimized binding suitable for cross-machine communication. By default it generates a run-time communication stack that supports TCP for message delivery and Windows Security for message security and authentication, WS-ReliableMessaging for reliability, and binary message encoding. </para>
+      <para>This class is instantiated by the <see cref="T:System.ServiceModel.NetTcpBinding" />, and can be accessed by a read-only property called <see cref="P:System.ServiceModel.NetTcpBinding.Security" />. Because this property is read-only you cannot make changes to the returned object. If you want to control the creation of the <see cref="T:System.ServiceModel.NetTcpSecurity" /> object, you can derive a class from <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the types of transport-level and message-level security used by an endpoint configured with a <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public NetTcpSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.NetTcpSecurity" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.MessageSecurityOverTcp Message { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.MessageSecurityOverTcp Message" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.MessageSecurityOverTcp</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.NetTcpSecurity.Message" /> uses message-level security for the integrity and confidentiality of the SOAP message and for mutual authentication of the communication peers. If this security mode is selected on a binding, the channel stack is configured with message security binding elements and the SOAP messages are secured in compliance with WS-Security* standards.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of message-level security requirements for a service configured with a <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Mode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.SecurityMode Mode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.SecurityMode Mode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.SecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security mode determines the type of security required by an endpoint. indigo1 security offers a variety of mechanisms with which to secure the transfer of messages that are configured with the system-provided bindings. Each of the bindings supports a subset of these security modes. The mode determines the mechanisms by which message transfer security functions (integrity, confidentiality and authentication) are required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether message-level security and transport-level security are used by an endpoint configured with a <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Transport">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.TcpTransportSecurity Transport { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.TcpTransportSecurity Transport" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TcpTransportSecurity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="P:System.ServiceModel.NetTcpSecurity.Transport" /> security for integrity and confidentiality of the SOAP message and for mutual authentication. If this security mode is selected on a binding, the channel stack is configured using a secure transport and the SOAP messages are secured using transport security such as HTTPS or SSL over TCP.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of message-level security requirements for an endpoint configured with a <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

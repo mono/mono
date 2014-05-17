@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DefaultMemberAttribute" FullName="System.Reflection.DefaultMemberAttribute" FullNameSP="System_Reflection_DefaultMemberAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable DefaultMemberAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class DefaultMemberAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit DefaultMemberAttribute extends System.Attribute" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,76 +25,73 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Defines the member that is invoked when no member name
-      is specified for the type targeted by <see cref="T:System.Reflection.DefaultMemberAttribute" />
-      .
-      </para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>This attribute is used by the <see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" /> methods.</para>
-        <para>This attribute can
-      be applied to classes, structs, and interfaces.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A property is imported as an indexer (default indexed property in Visual Basic) if the property has arguments and if the name of the property or one of its accessors matches the name specified by the <see cref="T:System.Reflection.DefaultMemberAttribute" />. If the <see cref="T:System.Reflection.DefaultMemberAttribute" /> is not present on the containing type, then the type does not have an indexer. The C# compiler emits the <see cref="T:System.Reflection.DefaultMemberAttribute" /> on any type containing an indexer. In C# it is an error to manually attribute a type with the <see cref="T:System.Reflection.DefaultMemberAttribute" /> if the type also declares an indexer.  </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the member of a type that is the default member used by <see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string memberName)" />
       <MemberSignature Language="C#" Value="public DefaultMemberAttribute (string memberName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string memberName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="memberName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="memberName">
-          <para>A <see cref="T:System.String" /> containing the name of the member to invoke. Can be a constructor, method, property, or field.</para>
-        </param>
-        <summary>
-          <para> Constructs and initializes new instance of the <see cref="T:System.Reflection.DefaultMemberAttribute" />
-class.</para>
-        </summary>
         <remarks>
           <para>This constructor initializes the <see cref="P:System.Reflection.DefaultMemberAttribute.MemberName" /> property using <paramref name="memberName" />
 .</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.DefaultMemberAttribute" /> class.</para>
+        </summary>
+        <param name="memberName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A String containing the name of the member to invoke. This may be a constructor, method, property, or field. A suitable invocation attribute must be specified when the member is invoked. The default member of a class can be specified by passing an empty String as the name of the member.</param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MemberName">
+      <MemberSignature Language="ILASM" Value=".property string MemberName { public hidebysig specialname instance string get_MemberName() }" />
+      <MemberSignature Language="C#" Value="public string MemberName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MemberName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MemberName">
-      <MemberSignature Language="ILASM" Value=".property string MemberName { public hidebysig specialname instance string get_MemberName() }" />
-      <MemberSignature Language="C#" Value="public string MemberName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the member name contained by the current instance.
-      </para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> representing the member name contained by the current instance.
    </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There is no set accessor because the name must be provided to the constructor. The name is not optional.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name from the attribute.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

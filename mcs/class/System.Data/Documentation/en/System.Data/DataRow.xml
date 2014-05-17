@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataRow" FullName="System.Data.DataRow">
   <TypeSignature Language="C#" Value="public class DataRow" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.DataRow" /> and <see cref="T:System.Data.DataColumn" /> objects are primary components of a <see cref="T:System.Data.DataTable" />. Use the <see cref="T:System.Data.DataRow" /> object and its properties and methods to retrieve and evaluate; and insert, delete, and update the values in the <see cref="T:System.Data.DataTable" />. The <see cref="T:System.Data.DataRowCollection" /> represents the actual <see cref="T:System.Data.DataRow" /> objects in the <see cref="T:System.Data.DataTable" />, and the <see cref="T:System.Data.DataColumnCollection" /> contains the <see cref="T:System.Data.DataColumn" /> objects that describe the schema of the <see cref="T:System.Data.DataTable" />. Use the overloaded <see cref="P:System.Data.DataRow.Item(System.Int32)" /> property to return or set the value of a <see cref="T:System.Data.DataColumn" />.</para>
+      <para>Use the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> and <see cref="M:System.Data.DataRow.IsNull(System.Int32)" /> properties to determine the status of a particular row value, and the <see cref="P:System.Data.DataRow.RowState" /> property to determine the state of the row relative to its parent <see cref="T:System.Data.DataTable" />.</para>
+      <para>To create a new <see cref="T:System.Data.DataRow" />, use the <see cref="M:System.Data.DataTable.NewRow" /> method of the <see cref="T:System.Data.DataTable" /> object. After creating a new <see cref="T:System.Data.DataRow" />, use the <see cref="M:System.Data.DataRowCollection.Add(System.Data.DataRow)" /> method to add the new <see cref="T:System.Data.DataRow" /> to the <see cref="T:System.Data.DataRowCollection" />. Finally, call the <see cref="M:System.Data.DataRow.AcceptChanges" /> method of the <see cref="T:System.Data.DataTable" /> object to confirm the addition. For more information about adding data to a <see cref="T:System.Data.DataTable" />, see <format type="text/html"><a href="d6aa8474-7bde-48f7-949d-20dc38a1625b">Adding Data to a Table</a></format>.</para>
+      <para>You can delete a <see cref="T:System.Data.DataRow" /> from the <see cref="T:System.Data.DataRowCollection" /> by calling the <see cref="M:System.Data.DataRowCollection.Remove(System.Data.DataRow)" /> method of the <see cref="T:System.Data.DataRowCollection" />, or by calling the <see cref="M:System.Data.DataRow.Delete" /> method of the <see cref="T:System.Data.DataRow" /> object. The <see cref="M:System.Data.DataRowCollection.Remove(System.Data.DataRow)" /> method removes the row from the collection. In contrast, <see cref="M:System.Data.DataRow.Delete" /> marks the <see cref="T:System.Data.DataRow" /> for removal. The actual removal occurs when you call <see cref="M:System.Data.DataRow.AcceptChanges" /> method. By calling <see cref="M:System.Data.DataRow.Delete" />, you can programmatically check which rows are marked for removal before actually deleting them. For more information, see <format type="text/html"><a href="c34f531d-4b9b-4071-b2d7-342c402aa586">Deleting a Row from a Table</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a row of data in a <see cref="T:System.Data.DataTable" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,9 +38,13 @@
         <Parameter Name="builder" Type="System.Data.DataRowBuilder" />
       </Parameters>
       <Docs>
-        <param name="builder">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the DataRow. Constructs a row from the builder. Only for internal usage..</para>
+        </summary>
+        <param name="builder">
+          <attribution license="cc4" from="Microsoft" modified="false" />builder </param>
       </Docs>
     </Member>
     <Member MemberName="AcceptChanges">
@@ -41,8 +55,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When invoking <see cref="M:System.Data.DataRow.AcceptChanges" />, the <see cref="M:System.Data.DataRow.EndEdit" /> method is implicitly called to end any edits. If the <see cref="P:System.Data.DataRow.RowState" /> of the row was Added or Modified, the <see cref="P:System.Data.DataRow.RowState" /> becomes Unchanged. If the <see cref="P:System.Data.DataRow.RowState" /> was Deleted, the row is removed.</para>
+          <para>See the <see cref="M:System.Data.DataRow.BeginEdit" /> method for more information.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> class also has an <see cref="M:System.Data.DataTable.AcceptChanges" /> method which affects changes made to the whole table. For more information and a code example that demonstrates how to accept and reject changes to individual data rows, see <format type="text/html"><a href="e2d1a6fe-31f9-4b83-9728-06c406a3394e">AcceptChanges and RejectChanges</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits all the changes made to this row since the last time <see cref="M:System.Data.DataRow.AcceptChanges" /> was called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,8 +79,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Data.DataRow.BeginEdit" /> method to put a <see cref="T:System.Data.DataRow" /> into edit mode. In this mode, events are temporarily suspended, letting the user make changes to more than one row without triggering validation rules. For example, if you must make sure that the value of the column for a total amount is equal to the values for the debit and credit columns in a row, you can put each row into edit mode to suspend the validation of the row values until the user tries to commit the values.</para>
+          <para>The <see cref="M:System.Data.DataRow.BeginEdit" /> method is called implicitly when the user changes the value of a data-bound control; the <see cref="M:System.Data.DataRow.EndEdit" /> method is called implicitly when you invoke the <see cref="M:System.Data.DataTable.AcceptChanges" /> method for the <see cref="T:System.Data.DataTable" /> object. While in this edit mode, the <see cref="T:System.Data.DataRow" /> stores representations of the original and new proposed values. Therefore, as long as the <see cref="M:System.Data.DataRow.EndEdit" /> method has not been called, you can retrieve either the original or proposed version by passing either DataRowVersion.Original or DataRowVersion.Proposed for the <paramref name="version" /> parameter of the <see cref="P:System.Data.DataRow.Item(System.Int32)" /> property. You can also cancel any edits at this point by invoking the <see cref="M:System.Data.DataRow.CancelEdit" /> method.</para>
+          <para>To see if the row contains an original or proposed value, call the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Data.DataRow.BeginEdit" /> method temporarily suspends <see cref="E:System.Data.DataTable.RowChanging" /> events, but the delete operation does not.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts an edit operation on a <see cref="T:System.Data.DataRow" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -78,8 +111,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="M:System.Data.DataRow.BeginEdit" /> method for more information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels the current edit on the row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,8 +138,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> and <see cref="M:System.Data.DataRow.GetColumnError(System.Int32)" /> to set and return errors for individual columns.</para>
+          <para>Set the <see cref="P:System.Data.DataRow.RowError" /> property to set an error that applies to the whole row.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> method. Consequently, you can use the <see cref="M:System.Data.DataRow.GetColumnsInError" /> method to retrieve all the columns with errors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the errors for the row. This includes the <see cref="P:System.Data.DataRow.RowError" /> and errors set with <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,8 +162,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Data.DataRow.RowState" /> of the row is Added, the <see cref="P:System.Data.DataRow.RowState" /> becomes Detached and the row is removed from the table when you call <see cref="M:System.Data.DataRow.AcceptChanges" />.</para>
+          <para>The <see cref="P:System.Data.DataRow.RowState" /> becomes Deleted after you use the <see cref="M:System.Data.DataRow.Delete" /> method on an existing <see cref="T:System.Data.DataRow" />. It remains Deleted until you call <see cref="M:System.Data.DataRow.AcceptChanges" />. At this time, the <see cref="T:System.Data.DataRow" /> is removed from the table.</para>
+          <para>
+            <see cref="M:System.Data.DataRow.Delete" /> should not be called in a foreach loop while iterating through a <see cref="T:System.Data.DataRowCollection" /> object. <see cref="M:System.Data.DataRow.Delete" /> modifies the state of the collection.</para>
+          <para>A deleted row can be undeleted by invoking <see cref="M:System.Data.DataRow.RejectChanges" />.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Data.DataRow.BeginEdit" /> method temporarily suspends <see cref="E:System.Data.DataTable.RowChanging" /> events, but the delete operation does not.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the <see cref="T:System.Data.DataRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -131,8 +191,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you set the property, an exception is generated if an exception occurs in the <see cref="E:System.Data.DataTable.RowChanging" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the edit occurring on the row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,10 +220,20 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child rows of this <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -174,10 +250,20 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relationName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of the <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,11 +281,24 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> property to determine whether the <see cref="T:System.Data.DataRowVersion" /> that you want exists.</para>
+          <para>If <see cref="F:System.Data.DataRowVersion.Default" /> is specified, the version that is used depends on the <see cref="P:System.Data.DataRow.RowState" /> of the row on which GetChildRows is invoked. If the row on which GetChildRows is invoked has a RowState of Modified, New, or Unchanged, the <see cref="F:System.Data.DataRowVersion.Current" /> version of the row is used for fetching related child rows with matching values in their Current versions. If the row on which GetChildRows is invoked has a RowState of Deleted, the <see cref="F:System.Data.DataRowVersion.Original" /> version of the row is used for fetching related child rows with matching values in their original versions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects.</para>
+        </returns>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values specifying the version of the data to get. Possible values are Default, Original, Current, and Proposed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,11 +316,24 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="relationName">To be added: an object of type 'string'</param>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects that is returned by the <see cref="P:System.Data.DataTable.ChildRelations" /> property.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> property to determine whether the <see cref="T:System.Data.DataRowVersion" /> that you want exists.</para>
+          <para>If <see cref="F:System.Data.DataRowVersion.Default" /> is specified, the version that is used depends on the <see cref="P:System.Data.DataRow.RowState" /> of the row on which GetChildRows is invoked. If the row on which GetChildRows is invoked has a RowState of Modified, New, or Unchanged, the <see cref="F:System.Data.DataRowVersion.Current" /> version of the row is used for fetching related child rows with matching values in their Current versions. If the row on which GetChildRows is invoked has a RowState of Deleted, the <see cref="F:System.Data.DataRowVersion.Original" /> version of the row is used for fetching related child rows with matching values in their original versions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of the <see cref="T:System.Data.DataRelation" /> to use. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values specifying the version of the data to get. Possible values are Default, Original, Current, and Proposed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -238,10 +350,22 @@
         <Parameter Name="column" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <param name="column">To be added: an object of type 'DataColumn'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method to set column errors.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> method. Consequently, you can use the <see cref="M:System.Data.DataRow.GetColumnsInError" /> method to retrieve all the columns with errors. Alternatively, the <see cref="M:System.Data.DataTable.GetErrors" /> method of the <see cref="T:System.Data.DataTable" /> returns all rows with errors.</para>
+          <para>To clear all errors for the columns collection, use the <see cref="M:System.Data.DataRow.ClearErrors" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error description of the specified <see cref="T:System.Data.DataColumn" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of the error description.</para>
+        </returns>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -258,10 +382,22 @@
         <Parameter Name="columnIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="columnIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method to set column errors.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> method. Consequently, you can use the <see cref="M:System.Data.DataRow.GetColumnsInError" /> method to retrieve all the columns with errors.</para>
+          <para>To clear all errors for the columns collection, use the <see cref="M:System.Data.DataRow.ClearErrors" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error description for the column specified by index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of the error description.</para>
+        </returns>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -278,10 +414,22 @@
         <Parameter Name="columnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="columnName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method to set column errors.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> method. Consequently, you can use the <see cref="M:System.Data.DataRow.GetColumnsInError" /> method to retrieve all the columns with errors.</para>
+          <para>To clear all errors for the columns collection, use the <see cref="M:System.Data.DataRow.ClearErrors" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error description for a column, specified by name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of the error description.</para>
+        </returns>
+        <param name="columnName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,9 +444,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataColumn []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.DataRow.GetColumnsInError" /> lets you reduce the number of <see cref="T:System.Data.DataColumn" /> objects that must be processed for errors by returning only those columns that have an error. Errors can be set to individual columns with the <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> method. To further reduce the number of processing, examine the <see cref="P:System.Data.DataRow.HasErrors" /> property of the <see cref="T:System.Data.DataRow" /> class to determine whether a <see cref="T:System.Data.DataRow" /> has errors before invoking <see cref="M:System.Data.DataRow.GetColumnsInError" />.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.ClearErrors" /> method to clear all errors on the row. This includes the <see cref="P:System.Data.DataRow.RowError" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of columns that have errors.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataColumn" /> objects that contain errors.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -315,10 +473,21 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -335,10 +504,21 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relationName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -356,11 +536,24 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> property to determine whether the <see cref="T:System.Data.DataRowVersion" /> that you want exists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values specifying the version of the data to get. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -378,11 +571,24 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="relationName">To be added: an object of type 'string'</param>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> property to determine whether the <see cref="T:System.Data.DataRowVersion" /> that you want exists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent row of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent <see cref="T:System.Data.DataRow" /> of the current row.</para>
+        </returns>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -399,10 +605,21 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -419,10 +636,21 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relationName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -440,11 +668,24 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> property to determine whether the <see cref="T:System.Data.DataRowVersion" /> that you want exists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> to use. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values specifying the version of the data to get. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -462,11 +703,24 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="relationName">To be added: an object of type 'string'</param>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DataRow []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a <see cref="T:System.Data.DataSet" />, the collection of all parent <see cref="T:System.Data.DataRelation" /> objects for the data set is returned by the <see cref="M:System.Data.DataRow.GetParentRows(System.String)" /> method.</para>
+          <para>The <see cref="T:System.Data.DataTable" /> also contains a collection of <see cref="T:System.Data.DataRelation" /> objects, returned by the <see cref="P:System.Data.DataTable.ParentRelations" /> property.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.HasVersion(System.Data.DataRowVersion)" /> property to determine whether the <see cref="T:System.Data.DataRowVersion" /> that you want exists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent rows of a <see cref="T:System.Data.DataRow" /> using the specified <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />, and <see cref="T:System.Data.DataRowVersion" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects or an array of length zero.</para>
+        </returns>
+        <param name="relationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Data.DataRelation.RelationName" /> of a <see cref="T:System.Data.DataRelation" />. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values specifying the version of the data to get. Possible values are Default, Original, Current, and Proposed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -480,9 +734,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HasErrors returns true if any <see cref="T:System.Data.DataColumn" /> object in the row contains an error, or if the <see cref="P:System.Data.DataRow.RowError" /> property of the <see cref="T:System.Data.DataRow" /> is not an empty string.</para>
+          <para>When validating data, you can set an error on any column in a row. Such a column, when displayed in the <see cref="T:System.Windows.Forms.DataGrid" /> control, is marked with a red exclamation point to signal to the user that the column is in error.</para>
+          <para>Use <see cref="M:System.Data.DataRow.SetColumnError(System.Int32,System.String)" /> to set an error on any column.</para>
+          <para>Use the <see cref="M:System.Data.DataRow.GetColumnError(System.Int32)" /> and GetColumnsInError methods to return columns with errors.</para>
+          <para>The <see cref="M:System.Data.DataRow.ClearErrors" /> method clears all errors for the row.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether there are errors in a row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -499,10 +763,20 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="M:System.Data.DataRow.BeginEdit" /> method for more information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a specified version exists.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the version exists; otherwise, false.</para>
+        </returns>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values that specifies the row version. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -519,10 +793,17 @@
         <Parameter Name="column" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <param name="column">To be added: an object of type 'DataColumn'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the specified <see cref="T:System.Data.DataColumn" /> contains a null value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -539,10 +820,17 @@
         <Parameter Name="columnIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="columnIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the column at the specified index contains a null value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -559,10 +847,17 @@
         <Parameter Name="columnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="columnName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the named column contains a null value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
+        <param name="columnName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -580,11 +875,19 @@
         <Parameter Name="version" Type="System.Data.DataRowVersion" />
       </Parameters>
       <Docs>
-        <param name="column">To be added: an object of type 'DataColumn'</param>
-        <param name="version">To be added: an object of type 'DataRowVersion'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the specified <see cref="T:System.Data.DataColumn" /> and <see cref="T:System.Data.DataRowVersion" /> contains a null value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the column contains a null value; otherwise, false.</para>
+        </returns>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" />. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values that specifies the row version. Possible values are Default, Original, Current, and Proposed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -726,9 +1029,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to set or get values for this row through an array. If you use this property to set values, the array must have the same size and ordering as the column collection. Passing null in the <see cref="P:System.Data.DataRow.ItemArray" /> indicates that no value was specified.</para>
+          <para>Users can generate exceptions in the <see cref="E:System.Data.DataTable.ColumnChanging" /> event or the <see cref="E:System.Data.DataTable.RowChanging" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets all the values for this row through an array.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -743,8 +1053,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you call the <see cref="M:System.Data.DataRow.RejectChanges" /> method, the <see cref="M:System.Data.DataRow.CancelEdit" /> method is implicitly called to cancel any edits. If <see cref="P:System.Data.DataRow.RowState" /> is deleted or modified, the row reverts to its previous values, and <see cref="P:System.Data.DataRow.RowState" /> becomes unchanged. If the <see cref="P:System.Data.DataRow.RowState" /> is added, the row is removed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rejects all changes made to the row since <see cref="M:System.Data.DataRow.AcceptChanges" /> was last called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -760,9 +1076,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses the <see cref="P:System.Data.DataRow.HasErrors" /> property to first determine whether a <see cref="T:System.Data.DataRow" /> contains errors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom error description for a row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -776,9 +1098,15 @@
         <ReturnType>System.Data.DataRowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataRowState'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Data.DataRow.RowState" /> depends on two factors: the kind of operation has been performed on the row, and whether <see cref="M:System.Data.DataRow.AcceptChanges" /> has been called on the <see cref="T:System.Data.DataRow" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of the row with regard to its relationship to the <see cref="T:System.Data.DataRowCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -796,8 +1124,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the <see cref="P:System.Data.DataRow.RowState" /> of a <see cref="T:System.Data.DataRow" /> to Added. If the current row is not in either an Unchanged or an Added state, it throws an <see cref="T:System.InvalidOperationException" /> with the message that SetAdded can only be invoked on a DataRow instance where the RowState is Unchanged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the <see cref="P:System.Data.DataRow.Rowstate" /> of a <see cref="T:System.Data.DataRow" /> to Added. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetColumnError">
@@ -811,10 +1145,23 @@
         <Parameter Name="error" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="column">To be added: an object of type 'DataColumn'</param>
-        <param name="error">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To examine error descriptions, use the <see cref="M:System.Data.DataRow.GetColumnError(System.Int32)" /> method.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> property. Consequently, you can use the <see cref="M:System.Data.DataRow.GetColumnsInError" /> method to retrieve all the columns with errors. </para>
+          <para>If null or an empty string is passed in as the <paramref name="error" /> parameter, the <see cref="T:System.Data.DataRow" /> behaves as if no error was set and the <see cref="P:System.Data.DataRow.HasErrors" /> property will return false.</para>
+          <para>To set a custom error description on the whole row, use the <see cref="P:System.Data.DataRow.RowError" /> property.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> method.</para>
+          <para>To clear all errors for the columns collection, use the <see cref="M:System.Data.DataRow.ClearErrors" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the error description for a column specified as a <see cref="T:System.Data.DataColumn" />.</para>
+        </summary>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataColumn" /> to set the error description for. </param>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error description. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -832,10 +1179,24 @@
         <Parameter Name="error" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="columnIndex">To be added: an object of type 'int'</param>
-        <param name="error">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method is used to set custom error descriptions on specified columns. You can use the <see cref="T:System.Windows.Forms.ErrorProvider" /> control to display the text of the error.</para>
+          <para>To examine error descriptions, use the <see cref="M:System.Data.DataRow.GetColumnError(System.Int32)" /> method.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> property. Consequently, you can use the <see cref="M:System.Data.DataRow.GetColumnsInError" /> method to retrieve all the columns with errors.</para>
+          <para>If null or an empty string is passed in as the <paramref name="error" /> parameter, the <see cref="T:System.Data.DataRow" /> behaves as if no error was set and the <see cref="P:System.Data.DataRow.HasErrors" /> property will return false.</para>
+          <para>To set a custom error description on the whole row, use the <see cref="P:System.Data.DataRow.RowError" /> property.</para>
+          <para>To clear all errors for the columns collection, use the <see cref="M:System.Data.DataRow.ClearErrors" /> method.</para>
+          <para>To set error text that applies to a whole row, set the <see cref="P:System.Data.DataRow.RowError" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the error description for a column specified by index.</para>
+        </summary>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the column. </param>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error description. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -853,10 +1214,24 @@
         <Parameter Name="error" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="columnName">To be added: an object of type 'string'</param>
-        <param name="error">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a column is set with the <see cref="P:System.Data.DataColumn.ColumnName" /> property of the <see cref="T:System.Data.DataColumn" /> class.</para>
+          <para>To examine error descriptions, use the <see cref="M:System.Data.DataRow.GetColumnError(System.Int32)" /> method.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> property. Consequently, you can use the <see cref="M:System.Data.DataRow.GetColumnsInError" /> method to retrieve all the columns with errors.</para>
+          <para>If null or an empty string is passed in as the <paramref name="error" /> parameter, the <see cref="T:System.Data.DataRow" /> behaves as if no error was set and the <see cref="P:System.Data.DataRow.HasErrors" /> property will return false.</para>
+          <para>To set a custom error description on the whole row, use the <see cref="P:System.Data.DataRow.RowError" /> property.</para>
+          <para>To determine whether any errors exist for the columns collection, use the <see cref="P:System.Data.DataRow.HasErrors" /> method.</para>
+          <para>To clear all errors for the columns collection, use the <see cref="M:System.Data.DataRow.ClearErrors" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the error description for a column specified by name.</para>
+        </summary>
+        <param name="columnName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error description. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -874,8 +1249,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the <see cref="P:System.Data.DataRow.Rowstate" /> of a <see cref="T:System.Data.DataRow" /> to Modified. If the current row is not in either an Unchanged or an Added state, it throws an <see cref="T:System.InvalidOperationException" /> with the message that SetModified can only be invoked on a DataRow instance where the RowState is Unchanged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the <see cref="P:System.Data.DataRow.Rowstate" /> of a <see cref="T:System.Data.DataRow" /> to Modified. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetNull">
@@ -888,9 +1269,16 @@
         <Parameter Name="column" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <param name="column">To be added: an object of type 'DataColumn'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Data.DataRow.IsNull(System.Int32)" /> method to determine whether a column contains a null value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the specified <see cref="T:System.Data.DataColumn" /> to a null value.</para>
+        </summary>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -907,9 +1295,13 @@
         <Parameter Name="parentRow" Type="System.Data.DataRow" />
       </Parameters>
       <Docs>
-        <param name="parentRow">To be added: an object of type 'DataRow'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the parent row of a <see cref="T:System.Data.DataRow" /> with specified new parent <see cref="T:System.Data.DataRow" />.</para>
+        </summary>
+        <param name="parentRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new parent <see cref="T:System.Data.DataRow" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -927,10 +1319,15 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <param name="parentRow">To be added: an object of type 'DataRow'</param>
-        <param name="relation">To be added: an object of type 'DataRelation'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the parent row of a <see cref="T:System.Data.DataRow" /> with specified new parent <see cref="T:System.Data.DataRow" /> and <see cref="T:System.Data.DataRelation" />.</para>
+        </summary>
+        <param name="parentRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new parent <see cref="T:System.Data.DataRow" />. </param>
+        <param name="relation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relation <see cref="T:System.Data.DataRelation" /> to use. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -944,9 +1341,15 @@
         <ReturnType>System.Data.DataTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataTable'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataRow" /> does not necessarily belong to any table's collection of rows. This behavior occurs when the <see cref="T:System.Data.DataRow" /> has been created but not added to the <see cref="T:System.Data.DataRowCollection" />. If the <see cref="P:System.Data.DataRow.RowState" /> property returns DataRowState.Detached, the row is not in any collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.DataTable" /> for which this row has a schema.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

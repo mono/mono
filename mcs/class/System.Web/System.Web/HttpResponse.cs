@@ -127,8 +127,13 @@ namespace System.Web
 			this.context = context;
 
 #if !TARGET_J2EE
-			if (worker_request != null)
-				use_chunked = (worker_request.GetHttpVersion () == "HTTP/1.1");
+			if (worker_request != null && worker_request.GetHttpVersion () == "HTTP/1.1") {
+				string gi = worker_request.GetServerVariable ("GATEWAY_INTERFACE");
+				use_chunked = (String.IsNullOrEmpty (gi) ||
+					!gi.StartsWith ("cgi", StringComparison.OrdinalIgnoreCase));
+			} else {
+				use_chunked = false;
+			}
 #endif
 			writer = new HttpWriter (this);
 		}
@@ -505,27 +510,27 @@ namespace System.Web
 			if (headers_sent)
 				throw new HttpException ("Headers have been already sent");
 #if !TARGET_J2EE
-			if (String.Compare (name, "content-length", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "content-length", StringComparison.OrdinalIgnoreCase) == 0){
 				content_length = (long) UInt64.Parse (value);
 				use_chunked = false;
 				return;
 			}
 #endif
 
-			if (String.Compare (name, "content-type", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "content-type", StringComparison.OrdinalIgnoreCase) == 0){
 				ContentType = value;
 				return;
 			}
 
 #if !TARGET_J2EE
-			if (String.Compare (name, "transfer-encoding", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "transfer-encoding", StringComparison.OrdinalIgnoreCase) == 0){
 				transfer_encoding = value;
 				use_chunked = false;
 				return;
 			}
 #endif
 
-			if (String.Compare (name, "cache-control", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "cache-control", StringComparison.OrdinalIgnoreCase) == 0){
 				user_cache_control = value;
 				return;
 			}
@@ -719,9 +724,7 @@ namespace System.Web
 				string header = content_type;
 
 				if (charset_set || header == "text/plain" || header == "text/html") {
-					if (header.IndexOf ("charset=") == -1) {
-						if (charset == null || charset == "")
-							charset = ContentEncoding.HeaderName;
+					if (header.IndexOf ("charset=") == -1 && !string.IsNullOrEmpty (charset)) {
 						header += "; charset=" + charset;
 					}
 				}

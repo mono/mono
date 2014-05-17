@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ReliableSession" FullName="System.ServiceModel.ReliableSession">
+  <TypeSignature Language="C#" Value="public class ReliableSession" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ReliableSession extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The properties contained in the <see cref="T:System.ServiceModel.ReliableSession" /> class are the subset of those contained in the <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" /> that are accessible from a predefined binding. This subset consists of the <see cref="P:System.ServiceModel.ReliableSession.InactivityTimeout" /> and <see cref="P:System.ServiceModel.ReliableSession.Ordered" /> properties. The <see cref="T:System.ServiceModel.ReliableSession" /> class references the same objects as does the <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" />, so changing the value of one changes the value of the other too. This class gathers these two properties of reliable session binding element together for better discoverability. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides convenient access to the properties of a reliable session binding element that are available when using one of the system-provided bindings.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ReliableSession ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ReliableSession" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ReliableSession (System.ServiceModel.Channels.ReliableSessionBindingElement binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.ReliableSessionBindingElement binding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.ReliableSessionBindingElement" />
+      </Parameters>
+      <Docs>
+        <param name="binding">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ReliableSession" /> class from a reliable session binding element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InactivityTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan InactivityTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan InactivityTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property gets and sets the value of the <see cref="P:System.ServiceModel.Channels.ReliableSessionBindingElement.InactivityTimeout" /> property.</para>
+          <para>Activity on a channel is defined as receiving an application or infrastructure message. The inactivity timeout property controls the maximum amount of time to keep an inactive session alive. If more than the <see cref="P:System.ServiceModel.ReliableSession.InactivityTimeout" /> specified time interval passes with no activity, the session is aborted by the infrastructure and the channel faults. The reliable session is torn down unilaterally.</para>
+          <para>If the sending application has no messages to send then the reliable session is normally not faulted because of inactivity; instead a keep-alive mechanism keeps the session active indefinitely. Note that the dispatcher could independently abort the reliable session if no application messages are sent or received. Thus, the inactivity timeout typically expires if network conditions are such that no messages of any sort are received or if there is a failure on the sender. </para>
+          <para>Setting this timeout prevents the server from holding onto a security session if the client does not close it. If the security session has not received a message for the inactivity interval of time, it is closed by the server. This mitigates a potential denial of service attack.</para>
+          <para>When using a reliable session, there are two different inactivity timers that must be satisfied to keep the connection alive. If either of these inactivity timers goes off, then the connection is dropped.</para>
+          <list type="bullet">
+            <item>
+              <para>The first inactivity timer is on the reliable session and is called the <see cref="P:System.ServiceModel.ReliableSession.InactivityTimeout" />. This inactivity timer fires if no messages, either application or infrastructure, are received within the timeout period. An infrastructure message is a message that is generated for the purpose of one of the protocols in the channel stack, such as a keep alive or an acknowledgment, rather than containing application data. </para>
+            </item>
+            <item>
+              <para>The second inactivity timer is on the service and uses the <see cref="P:System.ServiceModel.Channels.Binding.ReceiveTimeout" /> setting of the binding. This inactivity timer fires if no application messages are received within the timeout period. </para>
+            </item>
+          </list>
+          <para>Since the connection is dropped if either inactivity timer fires, increasing <see cref="P:System.ServiceModel.ReliableSession.InactivityTimeout" /> once it is greater than <see cref="P:System.ServiceModel.Channels.Binding.ReceiveTimeout" /> has no effect. The default for both of these timeouts is 10 minutes, so you always have to increase both of them to make a difference when using a reliable session. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an interval of time that a service can remain inactive before closing.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Ordered">
+      <MemberSignature Language="C#" Value="public bool Ordered { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Ordered" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property gets and sets the value of the <see cref="P:System.ServiceModel.Channels.ReliableSessionBindingElement.Ordered" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether message delivery must preserve the order in which messages are sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

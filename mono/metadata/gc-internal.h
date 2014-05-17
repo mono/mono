@@ -289,6 +289,10 @@ gsize* mono_gc_get_bitmap_for_descr (void *descr, int *numbits) MONO_INTERNAL;
    or -1 if not applicable. */
 int mono_gc_get_suspend_signal (void) MONO_INTERNAL;
 
+/* Return the suspend signal number used by the GC to suspend threads,
+   or -1 if not applicable. */
+int mono_gc_get_restart_signal (void) MONO_INTERNAL;
+
 /*
  * Return a human readable description of the GC in malloc-ed memory.
  */
@@ -335,9 +339,6 @@ gboolean mono_gc_precise_stack_mark_enabled (void) MONO_INTERNAL;
 
 FILE *mono_gc_get_logfile (void) MONO_INTERNAL;
 
-typedef void (*mono_reference_queue_callback) (void *user_data);
-
-typedef struct _MonoReferenceQueue MonoReferenceQueue;
 typedef struct _RefQueueEntry RefQueueEntry;
 
 struct _RefQueueEntry {
@@ -355,10 +356,6 @@ struct _MonoReferenceQueue {
 	gboolean should_be_deleted;
 };
 
-MonoReferenceQueue* mono_gc_reference_queue_new (mono_reference_queue_callback callback) MONO_INTERNAL;
-void mono_gc_reference_queue_free (MonoReferenceQueue *queue) MONO_INTERNAL;
-gboolean mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data) MONO_INTERNAL;
-
 #ifdef HOST_WIN32
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved) MONO_INTERNAL;
 #endif
@@ -367,8 +364,10 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 Those functions must be used when it's possible that either destination is not
 word aligned or size is not a multiple of word size.
 */
-void mono_gc_bzero (void *dest, size_t size) MONO_INTERNAL;
-void mono_gc_memmove (void *dest, const void *src, size_t size) MONO_INTERNAL;
+void mono_gc_bzero_atomic (void *dest, size_t size) MONO_INTERNAL;
+void mono_gc_bzero_aligned (void *dest, size_t size) MONO_INTERNAL;
+void mono_gc_memmove_atomic (void *dest, const void *src, size_t size) MONO_INTERNAL;
+void mono_gc_memmove_aligned (void *dest, const void *src, size_t size) MONO_INTERNAL;
 
 guint mono_gc_get_vtable_bits (MonoClass *class) MONO_INTERNAL;
 

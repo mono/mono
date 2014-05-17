@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IChannelInitializer" FullName="System.ServiceModel.Dispatcher.IChannelInitializer">
+  <TypeSignature Language="C#" Value="public interface IChannelInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IChannelInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface used to inspect and add state to channels when they are first created. This can be used to track all outstanding sessions, for instance, so the service can send messages on them. Add service channel initializers to the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.ChannelInitializers" /> collection. Add client channel initializers to the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.ChannelInitializers" /> collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface to notify a service or client when a channel is created.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public void Initialize (System.ServiceModel.IClientChannel channel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Initialize(class System.ServiceModel.IClientChannel channel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="channel" Type="System.ServiceModel.IClientChannel" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.ServiceModel.Dispatcher.IChannelInitializer" /> class with a specified <see cref="T:System.ServiceModel.IClientChannel" />.</para>
+        </summary>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.IClientChannel" /> used to initialize the <see cref="T:System.ServiceModel.Dispatcher.IChannelInitializer" />.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnhandledExceptionEventHandler" FullName="System.UnhandledExceptionEventHandler" FullNameSP="System_UnhandledExceptionEventHandler" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UnhandledExceptionEventHandler extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed UnhandledExceptionEventHandler extends System.MulticastDelegate" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,33 +14,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="sender">The application domain that handled the <see cref="F:System.AppDomain.UnhandledException" /> event.</param>
-    <param name="e">A <see cref="T:System.UnhandledExceptionEventArgs" /> that contains the event data.</param>
-    <summary>
-      <para>Defines the shape of methods that handle the event that
- is raised by the system for uncaught exceptions.</para>
-    </summary>
-    <remarks>
-      <para>A <see cref="T:System.UnhandledExceptionEventHandler" /> instance can only be specified for the default application
- domain that is created by the system to execute an application. Specifying a
-<see cref="T:System.UnhandledExceptionEventHandler" /> for a <see cref="T:System.AppDomain" /> created by an application has no effect.</para>
-      <para>
-        <block subset="none" type="note">A <see cref="T:System.UnhandledExceptionEventHandler" /> instance is used to specify methods that are invoked
-in response to exceptions that are not caught. To associate an
-instance of <see langword="UnhandledExceptionEventHandler " />with an application domain,
-add the <see langword="UnhandledExceptionEventHandler " />to the <see cref="F:System.AppDomain.UnhandledException" /> event. The methods referenced by the
-<see langword="UnhandledExceptionEventHandler " />instance are 
-invoked whenever an object, typically a
-<see cref="T:System.Exception" />, is thrown and is not caught.</block>
-      </para>
-      <para>
-        <block subset="none" type="note">For additional information about events, see Partitions I and II of the CLI Specification.</block>
-      </para>
-    </remarks>
-  </Docs>
-  <Members />
-  <TypeExcluded>0</TypeExcluded>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="sender" Type="System.Object" />
     <Parameter Name="e" Type="System.UnhandledExceptionEventArgs" />
@@ -46,9 +26,19 @@ invoked whenever an object, typically a
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="sender">The application domain that handled the <see cref="F:System.AppDomain.UnhandledException" /> event.</param>
+    <param name="e">A <see cref="T:System.UnhandledExceptionEventArgs" /> that contains the event data.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.UnhandledExceptionEventHandler" /> can only be specified for the default application domain that is created by the system to execute an application. Specifying an <see cref="T:System.UnhandledExceptionEventHandler" /> for an <see cref="T:System.AppDomain" /> created by an application has no effect.</para>
+      <para>When you create an <see cref="T:System.UnhandledExceptionEventHandler" /> delegate, you identify the method that will handle the event. To associate the event handler with your event, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the event raised by an exception that is not handled by the application domain.</para>
+    </summary>
+  </Docs>
+  <Members />
+  <TypeExcluded>0</TypeExcluded>
 </Type>

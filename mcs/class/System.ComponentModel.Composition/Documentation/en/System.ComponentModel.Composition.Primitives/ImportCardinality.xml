@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ImportCardinality" FullName="System.ComponentModel.Composition.Primitives.ImportCardinality">
+  <TypeSignature Language="C#" Value="public enum ImportCardinality" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ImportCardinality extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the cardinality of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects required by an <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ExactlyOne">
+      <MemberSignature Language="C#" Value="ExactlyOne" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.Primitives.ImportCardinality ExactlyOne = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ImportCardinality</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exactly one <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object is required by the <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ZeroOrMore">
+      <MemberSignature Language="C#" Value="ZeroOrMore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.Primitives.ImportCardinality ZeroOrMore = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ImportCardinality</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Zero or more <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects are required by the <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ZeroOrOne">
+      <MemberSignature Language="C#" Value="ZeroOrOne" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ComponentModel.Composition.Primitives.ImportCardinality ZeroOrOne = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Primitives.ImportCardinality</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Zero or one <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects are required by the <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

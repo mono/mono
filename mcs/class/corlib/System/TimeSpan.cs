@@ -5,10 +5,12 @@
 //   Duco Fijma (duco@lorentz.xs4all.nl)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Sebastien Pouliot  <sebastien@ximian.com>
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Duco Fijma
 // (C) 2004 Andreas Nahr
 // Copyright (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -543,7 +545,7 @@ namespace System
 
 			NumberFormatInfo number_info = null;
 			if (formatProvider != null)
-				number_info = (NumberFormatInfo)formatProvider.GetFormat (typeof (NumberFormatInfo));
+				number_info = formatProvider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
 			if (number_info == null)
 				number_info = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
@@ -606,7 +608,7 @@ namespace System
 
 			StringBuilder sb = new StringBuilder (format.Length + 1);
 
-			for (;;) {
+			while (true) {
 				if (parser.AtEnd)
 					break;
 
@@ -614,42 +616,42 @@ namespace System
 				switch (element.Type) {
 					case FormatElementType.Days:
 						value = Math.Abs (Days);
-						sb.Append (value.ToString ("D" + element.IntValue));
 						break;
 					case FormatElementType.Hours:
 						value = Math.Abs (Hours);
-						sb.Append (value.ToString ("D" + element.IntValue));
 						break;
 					case FormatElementType.Minutes:
 						value = Math.Abs (Minutes);
-						sb.Append (value.ToString ("D" + element.IntValue));
 						break;
 					case FormatElementType.Seconds:
 						value = Math.Abs (Seconds);
-						sb.Append (value.ToString ("D" + element.IntValue));
 						break;
 					case FormatElementType.Ticks:
-						value = Math.Abs (Milliseconds);
-						sb.Append (value.ToString ("D" + element.IntValue));
-						break;
 					case FormatElementType.TicksUppercase:
 						value = Math.Abs (Milliseconds);
-						if (value > 0) {
-							int threshold = (int)Math.Pow (10, element.IntValue);
-							while (value >= threshold)
-								value /= 10;
-							sb.Append (value.ToString ());
+						if (value == 0) {
+							if (element.Type == FormatElementType.Ticks)
+								break;
+
+							continue;
 						}
-						break;
+
+						int threshold = (int)Math.Pow (10, element.IntValue);
+						while (value >= threshold)
+							value /= 10;
+						sb.Append (value.ToString ());
+						continue;
 					case FormatElementType.EscapedChar:
 						sb.Append (element.CharValue);
-						break;
+						continue;
 					case FormatElementType.Literal:
 						sb.Append (element.StringValue);
-						break;
+						continue;
 					default:
 						throw new FormatException ("The format is not recognized.");
 				}
+
+				sb.Append (value.ToString ("D" + element.IntValue.ToString ()));
 			}
 
 			return sb.ToString ();
@@ -756,11 +758,11 @@ namespace System
 				number_format = GetNumberFormatInfo (formatProvider);
 			}
 
-			NumberFormatInfo GetNumberFormatInfo (IFormatProvider formatProvider)
+			static NumberFormatInfo GetNumberFormatInfo (IFormatProvider formatProvider)
 			{
 				NumberFormatInfo format = null;
 				if (formatProvider != null)
-					format = (NumberFormatInfo) formatProvider.GetFormat (typeof (NumberFormatInfo));
+					format = formatProvider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
 				if (format == null)
 					format = Thread.CurrentThread.CurrentCulture.NumberFormat;
 

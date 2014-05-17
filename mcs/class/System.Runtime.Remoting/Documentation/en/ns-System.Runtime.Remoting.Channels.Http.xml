@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Channels.Http">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Channels.Http" /> namespace contains channels that use the HTTP protocol to transport messages and objects to and from remote locations. By default, the HTTP channels encode objects and method calls in SOAP format for transmission, but other encoding and decoding formatter sinks can be specified in the configuration properties of a channel. One of the most important classes of the <see cref="N:System.Runtime.Remoting.Channels.Http" /> namespace is the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" /> class.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Channels.Http.HttpChannel" /> class combines the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpClientChannel" /> class and the <see cref="T:System.Runtime.Remoting.Channels.Http.HttpServerChannel" /> class, and can be used to receive and send messages using the HTTP protocol.</para>
+    </remarks>
   </Docs>
 </Namespace>

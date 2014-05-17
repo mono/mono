@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="HttpRequestMessageProperty" FullName="System.ServiceModel.Channels.HttpRequestMessageProperty">
+  <TypeSignature Language="C#" Value="public sealed class HttpRequestMessageProperty : System.ServiceModel.Channels.IMessageProperty" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit HttpRequestMessageProperty extends System.Object implements class System.ServiceModel.Channels.IMessageProperty" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IMessageProperty</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is a general-purpose class that gives the developer direct access to the HTTP request information, which can be used for encapsulating HTTP-specific information. One example of the use of this class is to support services implemented in accordance with the Representational State Transfer (REST) architecture.</para>
+      <para>This class enables support for the following scenarios:</para>
+      <list type="bullet">
+        <item>
+          <para>Varies the HTTP verb used for each request.</para>
+        </item>
+        <item>
+          <para>Allows HTTP header (key, value) pairs to be set and queried by request.</para>
+        </item>
+        <item>
+          <para>Allows the query string to be specified for an HTTP request.</para>
+        </item>
+      </list>
+      <para>This class can be used by <see cref="T:System.ServiceModel.Channels.HttpTransportBindingElement" /> and related classes.</para>
+      <para>For incoming messages, this property is added to messages. </para>
+      <para>For outgoing messages, this property causes the following to happen:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.Net.HttpWebRequest.Method" /> is set to <see cref="P:System.ServiceModel.Channels.HttpRequestMessageProperty.Method" />.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Channels.HttpRequestMessageProperty.QueryString" /> is appended to the <see cref="P:System.Net.HttpWebRequest.RequestUri" />.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ServiceModel.Channels.HttpRequestMessageProperty.Headers" /> is added to the HTTP headers set to be transmitted.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the HTTP request to access and respond to the additional information made available for requests over the HTTP protocol.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public HttpRequestMessageProperty ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the object as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.HttpRequestMessageProperty.Method" /> = POST.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.HttpRequestMessageProperty.QueryString" /> is set to the empty string.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.HttpRequestMessageProperty.SuppressEntityBody" /> = false.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.HttpRequestMessageProperty" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Headers">
+      <MemberSignature Language="C#" Value="public System.Net.WebHeaderCollection Headers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.WebHeaderCollection Headers" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebHeaderCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are situations in which this property is not available and attempts to access it may cause an exception. This can happen when indigo2 is hosted in IIS, after the HTTP request is complete, especially in one-way scenarios where the reply is sent back before the message has become available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTTP headers from the HTTP request.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Method">
+      <MemberSignature Language="C#" Value="public string Method { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Method" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, indigo2 uses the POST verb for HTTP messages. The GET verb is used by indigo2 to display help information when accessing a ServiceHost's base address. This is useful for checking whether a indigo2 service is active when using a Web browser. Other methods defined by the <see cref="http://go.microsoft.com/fwlink/?LinkId=96616">HTTP RFC</see> are PUT, DELETE, HEAD, OPTIONS, TRACE, and CONNECT. These methods have special behaviors when interoperating with other services. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP verb for the HTTP request.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public static string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the message property associated with the <see cref="T:System.ServiceModel.Channels.HttpRequestMessageProperty" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="QueryString">
+      <MemberSignature Language="C#" Value="public string QueryString { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string QueryString" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are many well-known security attacks based on an HTTP request's query string (for example, the SQL injection attack). Always rigorously validate the parameters contained in the query string. If you use the values without validation, a well-known security hole is open.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the query string for the HTTP request.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SuppressEntityBody">
+      <MemberSignature Language="C#" Value="public bool SuppressEntityBody { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SuppressEntityBody" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used for empty message requests: for example, a service that accepts a GET request without a message body. In this case, when building the <see cref="T:System.ServiceModel.Channels.HttpRequestMessageProperty" /> object for the response message, set the <see cref="P:System.ServiceModel.Channels.HttpRequestMessageProperty.SuppressEntityBody" /> property to true.</para>
+          <para>When interoperating with non-indigo2 services, it is important to note that certain verbs are expected to contain a message body according to the HTTP standard; these include PUT and POST. Other verbs are expected to suppress the message body; these include GET and HEAD.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the body of the message is ignored and only the headers are sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Channels.IMessageProperty.CreateCopy">
+      <MemberSignature Language="C#" Value="System.ServiceModel.Channels.IMessageProperty IMessageProperty.CreateCopy ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.ServiceModel.Channels.IMessageProperty System.ServiceModel.Channels.IMessageProperty.CreateCopy() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IMessageProperty</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a copy of the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.IMessageProperty" /> object that represents a copy of the current object.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

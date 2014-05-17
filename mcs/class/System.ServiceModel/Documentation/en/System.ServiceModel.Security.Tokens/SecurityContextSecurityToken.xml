@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecurityContextSecurityToken" FullName="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken">
+  <TypeSignature Language="C#" Value="public class SecurityContextSecurityToken : System.IdentityModel.Tokens.SecurityToken" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SecurityContextSecurityToken extends System.IdentityModel.Tokens.SecurityToken" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.IdentityModel.Tokens.SecurityToken</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An instance of this class contains key material along with authentication information that represents the client. The user selects the particular cryptographic algorithm to use with it.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the token defined by the WS-SecureConversation specification.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecurityContextSecurityToken (System.Xml.UniqueId contextId, byte[] key, DateTime validFrom, DateTime validTo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.UniqueId contextId, unsigned int8[] key, valuetype System.DateTime validFrom, valuetype System.DateTime validTo) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="key" Type="System.Byte[]" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="contextId" /> should be unique among all security context tokens issued by the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" /> class.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the key.</param>
+        <param name="validFrom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The effective start time.</param>
+        <param name="validTo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expiration time.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecurityContextSecurityToken (System.Xml.UniqueId contextId, string id, byte[] key, DateTime validFrom, DateTime validTo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.UniqueId contextId, string id, unsigned int8[] key, valuetype System.DateTime validFrom, valuetype System.DateTime validTo) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="key" Type="System.Byte[]" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="contextId" /> should be unique among all security context tokens issued by the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" /> class.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token id.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the key.</param>
+        <param name="validFrom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The effective start time.</param>
+        <param name="validTo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expiration time.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecurityContextSecurityToken (System.Xml.UniqueId contextId, string id, byte[] key, DateTime validFrom, DateTime validTo, System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.UniqueId contextId, string id, unsigned int8[] key, valuetype System.DateTime validFrom, valuetype System.DateTime validTo, class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="key" Type="System.Byte[]" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+        <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="contextId" /> should be unique among all security context tokens issued by the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" /> class.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token id.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the key.</param>
+        <param name="validFrom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The effective start time.</param>
+        <param name="validTo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expiration time.</param>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A read-only collection of <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> instances that represents the party to whom the token is issued.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecurityContextSecurityToken (System.Xml.UniqueId contextId, string id, byte[] key, DateTime validFrom, DateTime validTo, System.Xml.UniqueId keyGeneration, DateTime keyEffectiveTime, DateTime keyExpirationTime, System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.UniqueId contextId, string id, unsigned int8[] key, valuetype System.DateTime validFrom, valuetype System.DateTime validTo, class System.Xml.UniqueId keyGeneration, valuetype System.DateTime keyEffectiveTime, valuetype System.DateTime keyExpirationTime, class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="key" Type="System.Byte[]" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+        <Parameter Name="keyGeneration" Type="System.Xml.UniqueId" />
+        <Parameter Name="keyEffectiveTime" Type="System.DateTime" />
+        <Parameter Name="keyExpirationTime" Type="System.DateTime" />
+        <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="contextId" /> should be unique among all security context tokens issued by the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" /> class.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token id.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the key.</param>
+        <param name="validFrom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The effective start time.</param>
+        <param name="validTo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expiration time.</param>
+        <param name="keyGeneration">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the key generation.</param>
+        <param name="keyEffectiveTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key effective start time.</param>
+        <param name="keyExpirationTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key expiration time.</param>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A read-only collection of <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> instances that represents the party to whom the token is issued.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthorizationPolicies">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; AuthorizationPolicies { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; AuthorizationPolicies" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a read-only collection of token authorization policies.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CanCreateKeyIdentifierClause&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public override bool CanCreateKeyIdentifierClause&lt;T&gt; () where T : System.IdentityModel.Tokens.SecurityKeyIdentifierClause;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool CanCreateKeyIdentifierClause&lt;(class System.IdentityModel.Tokens.SecurityKeyIdentifierClause) T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.IdentityModel.Tokens.SecurityKeyIdentifierClause</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a specified key identifier clause type can be created.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key identifier clause type can be created; otherwise, false.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified key identifier clause type.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="ContextId">
+      <MemberSignature Language="C#" Value="public System.Xml.UniqueId ContextId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.UniqueId ContextId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the context id.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateCookieSecurityContextToken">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Security.Tokens.SecurityContextSecurityToken CreateCookieSecurityContextToken (System.Xml.UniqueId contextId, string id, byte[] key, DateTime validFrom, DateTime validTo, System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies, System.ServiceModel.Security.SecurityStateEncoder securityStateEncoder);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken CreateCookieSecurityContextToken(class System.Xml.UniqueId contextId, string id, unsigned int8[] key, valuetype System.DateTime validFrom, valuetype System.DateTime validTo, class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies, class System.ServiceModel.Security.SecurityStateEncoder securityStateEncoder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityContextSecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="key" Type="System.Byte[]" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+        <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
+        <Parameter Name="securityStateEncoder" Type="System.ServiceModel.Security.SecurityStateEncoder" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a security context token cookie.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A security context token cookie.</para>
+        </returns>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token id.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the key.</param>
+        <param name="validFrom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The effective start time.</param>
+        <param name="validTo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expiration time.</param>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A read-only collection of <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> instances.</param>
+        <param name="securityStateEncoder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security state encoder.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateCookieSecurityContextToken">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Security.Tokens.SecurityContextSecurityToken CreateCookieSecurityContextToken (System.Xml.UniqueId contextId, string id, byte[] key, DateTime validFrom, DateTime validTo, System.Xml.UniqueId keyGeneration, DateTime keyEffectiveTime, DateTime keyExpirationTime, System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies, System.ServiceModel.Security.SecurityStateEncoder securityStateEncoder);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken CreateCookieSecurityContextToken(class System.Xml.UniqueId contextId, string id, unsigned int8[] key, valuetype System.DateTime validFrom, valuetype System.DateTime validTo, class System.Xml.UniqueId keyGeneration, valuetype System.DateTime keyEffectiveTime, valuetype System.DateTime keyExpirationTime, class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; authorizationPolicies, class System.ServiceModel.Security.SecurityStateEncoder securityStateEncoder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityContextSecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="id" Type="System.String" />
+        <Parameter Name="key" Type="System.Byte[]" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+        <Parameter Name="keyGeneration" Type="System.Xml.UniqueId" />
+        <Parameter Name="keyEffectiveTime" Type="System.DateTime" />
+        <Parameter Name="keyExpirationTime" Type="System.DateTime" />
+        <Parameter Name="authorizationPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
+        <Parameter Name="securityStateEncoder" Type="System.ServiceModel.Security.SecurityStateEncoder" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a security context token cookie.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A security context token cookie.</para>
+        </returns>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token id.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the key.</param>
+        <param name="validFrom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The effective start time.</param>
+        <param name="validTo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expiration time.</param>
+        <param name="keyGeneration">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the key generation.</param>
+        <param name="keyEffectiveTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key effective start time.</param>
+        <param name="keyExpirationTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key expiration time.</param>
+        <param name="authorizationPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A read-only collection of <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> instances.</param>
+        <param name="securityStateEncoder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security state encoder.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateKeyIdentifierClause&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public override T CreateKeyIdentifierClause&lt;T&gt; () where T : System.IdentityModel.Tokens.SecurityKeyIdentifierClause;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance !!T CreateKeyIdentifierClause&lt;(class System.IdentityModel.Tokens.SecurityKeyIdentifierClause) T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.IdentityModel.Tokens.SecurityKeyIdentifierClause</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a key identifier clause of a specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> cast to type <paramref name="T" />.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified type.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public override string Id { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Id" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the token id.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KeyEffectiveTime">
+      <MemberSignature Language="C#" Value="public DateTime KeyEffectiveTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime KeyEffectiveTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key effective start time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KeyExpirationTime">
+      <MemberSignature Language="C#" Value="public DateTime KeyExpirationTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime KeyExpirationTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key expiration time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KeyGeneration">
+      <MemberSignature Language="C#" Value="public System.Xml.UniqueId KeyGeneration { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.UniqueId KeyGeneration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starting with the netfx35_short, this property is emitted on the wire as an &lt;sc:Instance&gt; element. In prior versions of the dnprdnshort, it was emitted as an &lt;sc:Generation&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key generation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MatchesKeyIdentifierClause">
+      <MemberSignature Language="C#" Value="public override bool MatchesKeyIdentifierClause (System.IdentityModel.Tokens.SecurityKeyIdentifierClause clause);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MatchesKeyIdentifierClause(class System.IdentityModel.Tokens.SecurityKeyIdentifierClause clause) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clause" Type="System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
+      </Parameters>
+      <Docs>
+        <param name="clause">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the current token's key identifier clause matches a specified key identifier clause.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current token's key identifier clause matches a specified key identifier clause; otherwise, false. The default is false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="SecurityKeys">
+      <MemberSignature Language="C#" Value="public override System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Tokens.SecurityKey&gt; SecurityKeys { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Tokens.SecurityKey&gt; SecurityKeys" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Tokens.SecurityKey&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a read-only collection of security keys.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a text representation of the current instance of this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of the current instance of this object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidFrom">
+      <MemberSignature Language="C#" Value="public override DateTime ValidFrom { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime ValidFrom" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the token effective start time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidTo">
+      <MemberSignature Language="C#" Value="public override DateTime ValidTo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime ValidTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the token expiration time.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

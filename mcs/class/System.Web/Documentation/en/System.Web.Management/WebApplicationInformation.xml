@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebApplicationInformation" FullName="System.Web.Management.WebApplicationInformation">
   <TypeSignature Language="C#" Value="public sealed class WebApplicationInformation" />
   <AssemblyInfo>
@@ -9,9 +10,34 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET health monitoring allows production and operations staff to manage deployed Web applications. The <see cref="N:System.Web.Management" /> namespace contains the health-event types responsible for packaging application health-status data and the provider types responsible for processing this data. It also contains supporting types that help during the management of health events.</para>
+      <para>Instances of the <see cref="T:System.Web.Management.WebApplicationInformation" /> class contain information that is obtained using any of the types derived from the <see cref="T:System.Web.Management.WebManagementEvent" /> type. </para>
+      <para>Your application needs the appropriate permissions to access protected information provided by this type.</para>
+      <para>The following is an excerpt of a configuration file you could use to enable ASP.NET to log error events that contain application information.  </para>
+      <code>&lt;healthMonitoring 
+  enabled="true" heartBeatInterval="0"&gt;
+
+    &lt;rules&gt;
+     &lt;add 
+       name="All Errors Default"
+       eventName="All Errors"
+       provider="EventLogProvider"
+       profile="Default"
+       minInterval="00:01:00" /&gt;
+    &lt;/rules&gt;
+
+&lt;/healthMonitoring&gt;</code>
+      <block subset="none" type="note">
+        <para>In most cases you will be able to use the ASP.NET health-monitoring types as implemented, and you will control the health-monitoring system by specifying values in the healthMonitoring configuration section. You can also derive from the health-monitoring types to create your own custom events and providers. For an example of creating a custom event class, see the example provided in this topic.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information associated with health events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ApplicationDomain">
@@ -21,10 +47,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current application domain name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +66,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property requires appropriate permissions to be accessed. Refer to the Permissions section.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application physical path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +88,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application logical path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +110,20 @@
         <Parameter Name="formatter" Type="System.Web.Management.WebEventFormatter" />
       </Parameters>
       <Docs>
-        <param name="formatter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Management.WebApplicationInformation.FormatToString(System.Web.Management.WebEventFormatter)" /> method provides a uniform format for event information, which is useful if the event data must be logged and later presented to the user. It is called internally when the provider invokes one of the <see cref="Overload:System.Web.Management.WebBaseEvent.ToString" /> methods.</para>
+          <block subset="none" type="note">
+            <para>When formatting your custom event information for display, override the <see cref="M:System.Web.Management.WebApplicationInformation.FormatToString(System.Web.Management.WebEventFormatter)" /> method rather than the <see cref="M:System.Web.Management.WebApplicationInformation.ToString" /> method. This will avoid overwriting or tampering with sensitive system information.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Formats the application information.</para>
+        </summary>
+        <param name="formatter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Management.WebEventFormatter" /> that contains the tab and indentation settings used to format the Web health event information.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -88,10 +136,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application machine name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,10 +156,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Management.WebBaseEvent.ToString" /> method formats event information by calling the <see cref="M:System.Web.Management.WebApplicationInformation.FormatToString(System.Web.Management.WebEventFormatter)" /> method.</para>
+          <block subset="none" type="note">
+            <para>When formatting your custom event information for display, override the <see cref="M:System.Web.Management.WebApplicationInformation.FormatToString(System.Web.Management.WebEventFormatter)" /> method rather than this <see cref="M:System.Web.Management.WebApplicationInformation.ToString" /> method. This will avoid overwriting or tampering with sensitive system information.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Formats event information for display purposes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event information.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -121,10 +184,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property requires appropriate permissions to be accessed. Refer to the Permissions section.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application trust level.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

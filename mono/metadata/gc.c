@@ -676,7 +676,7 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 			gpointer *entries;
 
 			entries = mono_gc_alloc_fixed (sizeof (gpointer) * new_size, make_root_descr_all_refs (new_size, handles->type == HANDLE_PINNED));
-			mono_gc_memmove (entries, handles->entries, sizeof (gpointer) * handles->size);
+			mono_gc_memmove_aligned (entries, handles->entries, sizeof (gpointer) * handles->size);
 
 			mono_gc_free_fixed (handles->entries);
 			handles->entries = entries;
@@ -1101,6 +1101,8 @@ finalizer_thread (gpointer unused)
 		 */
 		mono_gc_invoke_finalizers ();
 
+		mono_threads_join_threads ();
+
 		reference_queue_proccess_all ();
 
 		SetEvent (pending_done_event);
@@ -1116,7 +1118,7 @@ static
 void
 mono_gc_init_finalizer_thread (void)
 {
-	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, TRUE, 0);
+	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, 0);
 	ves_icall_System_Threading_Thread_SetName_internal (gc_thread, mono_string_new (mono_domain_get (), "Finalizer"));
 }
 
@@ -1135,8 +1137,8 @@ mono_gc_init (void)
 	mono_counters_register ("Created object count", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &mono_stats.new_object_count);
 	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.minor_gc_count);
 	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
-	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &gc_stats.minor_gc_time_usecs);
-	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &gc_stats.major_gc_time_usecs);
+	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.minor_gc_time_usecs);
+	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time_usecs);
 
 	mono_gc_base_init ();
 
@@ -1171,6 +1173,8 @@ mono_gc_cleanup (void)
 		ResetEvent (shutdown_event);
 		finished = TRUE;
 		if (mono_thread_internal_current () != gc_thread) {
+			gboolean timed_out = FALSE;
+
 			mono_gc_finalize_notify ();
 			/* Finishing the finalizer thread, so wait a little bit... */
 			/* MS seems to wait for about 2 seconds */
@@ -1193,28 +1197,18 @@ mono_gc_cleanup (void)
 					 * state the finalizer thread depends on will vanish.
 					 */
 					g_warning ("Shutting down finalizer thread timed out.");
-				} else {
-					/*
-					 * FIXME: On unix, when the above wait returns, the thread 
-					 * might still be running io-layer code, or pthreads code.
-					 */
-					Sleep (100);
+					timed_out = TRUE;
 				}
-			} else {
+			}
+
+			if (!timed_out) {
 				int ret;
 
 				/* Wait for the thread to actually exit */
 				ret = WaitForSingleObjectEx (gc_thread->handle, INFINITE, TRUE);
 				g_assert (ret == WAIT_OBJECT_0);
 
-#ifndef HOST_WIN32
-				/*
-				 * The above wait only waits for the exited event to be signalled, the thread might still be running. To fix this race, we
-				 * create the finalizer thread without calling pthread_detach () on it, so we can wait for it manually.
-				 */
-				ret = pthread_join ((MonoNativeThreadId)(gpointer)(gsize)gc_thread->tid, NULL);
-				g_assert (ret == 0);
-#endif
+				mono_thread_join ((gpointer)gc_thread->tid);
 			}
 		}
 		gc_thread = NULL;
@@ -1473,16 +1467,20 @@ reference_queue_clear_for_domain (MonoDomain *domain)
 }
 /**
  * mono_gc_reference_queue_new:
- * @callback callback used when processing dead entries.
+ * @callback callback used when processing collected entries.
  *
  * Create a new reference queue used to process collected objects.
- * A reference queue let you queue a pair (managed object, user data)
+ * A reference queue let you add a pair of (managed object, user data)
  * using the mono_gc_reference_queue_add method.
  *
  * Once the managed object is collected @callback will be called
  * in the finalizer thread with 'user data' as argument.
  *
- * The callback is called without any locks held.
+ * The callback is called from the finalizer thread without any locks held.
+ * When a AppDomain is unloaded, all callbacks for objects belonging to it
+ * will be invoked.
+ *
+ * @returns the new queue.
  */
 MonoReferenceQueue*
 mono_gc_reference_queue_new (mono_reference_queue_callback callback)
@@ -1506,7 +1504,7 @@ mono_gc_reference_queue_new (mono_reference_queue_callback callback)
  *
  * Queue an object to be watched for collection, when the @obj is
  * collected, the callback that was registered for the @queue will
- * be invoked with the @obj and @user_data arguments.
+ * be invoked with @user_data as argument.
  *
  * @returns false if the queue is scheduled to be freed.
  */
@@ -1534,9 +1532,9 @@ mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *u
 
 /**
  * mono_gc_reference_queue_free:
- * @queue the queue that should be deleted.
+ * @queue the queue that should be freed.
  *
- * This operation signals that @queue should be deleted. This operation is deferred
+ * This operation signals that @queue should be freed. This operation is deferred
  * as it happens on the finalizer thread.
  *
  * After this call, no further objects can be queued. It's the responsibility of the
@@ -1547,157 +1545,3 @@ mono_gc_reference_queue_free (MonoReferenceQueue *queue)
 {
 	queue->should_be_deleted = TRUE;
 }
-
-#define ptr_mask ((sizeof (void*) - 1))
-#define _toi(ptr) ((size_t)ptr)
-#define unaligned_bytes(ptr) (_toi(ptr) & ptr_mask)
-#define align_down(ptr) ((void*)(_toi(ptr) & ~ptr_mask))
-#define align_up(ptr) ((void*) ((_toi(ptr) + ptr_mask) & ~ptr_mask))
-
-#define BZERO_WORDS(dest,words) do {	\
-	int __i;	\
-	for (__i = 0; __i < (words); ++__i)	\
-		((void **)(dest))[__i] = 0;	\
-} while (0)
-
-/**
- * mono_gc_bzero:
- * @dest: address to start to clear
- * @size: size of the region to clear
- *
- * Zero @size bytes starting at @dest.
- *
- * Use this to zero memory that can hold managed pointers.
- *
- * FIXME borrow faster code from some BSD libc or bionic
- */
-void
-mono_gc_bzero (void *dest, size_t size)
-{
-	char *d = (char*)dest;
-	size_t tail_bytes, word_bytes;
-
-	/*
-	If we're copying less than a word, just use memset.
-
-	We cannot bail out early if both are aligned because some implementations
-	use byte copying for sizes smaller than 16. OSX, on this case.
-	*/
-	if (size < sizeof(void*)) {
-		memset (dest, 0, size);
-		return;
-	}
-
-	/*align to word boundary */
-	while (unaligned_bytes (d) && size) {
-		*d++ = 0;
-		--size;
-	}
-
-	/* copy all words with memmove */
-	word_bytes = (size_t)align_down (size);
-	switch (word_bytes) {
-	case sizeof (void*) * 1:
-		BZERO_WORDS (d, 1);
-		break;
-	case sizeof (void*) * 2:
-		BZERO_WORDS (d, 2);
-		break;
-	case sizeof (void*) * 3:
-		BZERO_WORDS (d, 3);
-		break;
-	case sizeof (void*) * 4:
-		BZERO_WORDS (d, 4);
-		break;
-	default:
-		memset (d, 0, word_bytes);
-	}
-
-	tail_bytes = unaligned_bytes (size);
-	if (tail_bytes) {
-		d += word_bytes;
-		do {
-			*d++ = 0;
-		} while (--tail_bytes);
-	}
-}
-
-/**
- * mono_gc_memmove:
- * @dest: destination of the move
- * @src: source
- * @size: size of the block to move
- *
- * Move @size bytes from @src to @dest.
- * size MUST be a multiple of sizeof (gpointer)
- *
- */
-void
-mono_gc_memmove (void *dest, const void *src, size_t size)
-{
-	/*
-	If we're copying less than a word we don't need to worry about word tearing
-	so we bailout to memmove early.
-
-	If both dest is aligned and size is a multiple of word size, we can go straigh
-	to memmove.
-
-	*/
-	if (size < sizeof(void*) || !((_toi (dest) | (size)) & sizeof (void*))) {
-		memmove (dest, src, size);
-		return;
-	}
-
-	/*
-	 * A bit of explanation on why we align only dest before doing word copies.
-	 * Pointers to managed objects must always be stored in word aligned addresses, so
-	 * even if dest is misaligned, src will be by the same amount - this ensure proper atomicity of reads.
-	 *
-	 * We don't need to case when source and destination have different alignments since we only do word stores
-	 * using memmove, which must handle it.
-	 */
-	if (dest > src && ((size_t)((char*)dest - (char*)src) < size)) { /*backward copy*/
-		char *p = (char*)dest + size;
-			char *s = (char*)src + size;
-			char *start = (char*)dest;
-			char *align_end = MAX((char*)dest, (char*)align_down (p));
-			char *word_start;
-			size_t bytes_to_memmove;
-
-			while (p > align_end)
-				*--p = *--s;
-
-			word_start = align_up (start);
-			bytes_to_memmove = p - word_start;
-			p -= bytes_to_memmove;
-			s -= bytes_to_memmove;
-			memmove (p, s, bytes_to_memmove);
-
-			while (p > start)
-				*--p = *--s;
-	} else {
-		char *d = (char*)dest;
-		const char *s = (const char*)src;
-		size_t tail_bytes;
-
-		/*align to word boundary */
-		while (unaligned_bytes (d)) {
-			*d++ = *s++;
-			--size;
-		}
-
-		/* copy all words with memmove */
-		memmove (d, s, (size_t)align_down (size));
-
-		tail_bytes = unaligned_bytes (size);
-		if (tail_bytes) {
-			d += (size_t)align_down (size);
-			s += (size_t)align_down (size);
-			do {
-				*d++ = *s++;
-			} while (--tail_bytes);
-		}
-	}
-}
-
-

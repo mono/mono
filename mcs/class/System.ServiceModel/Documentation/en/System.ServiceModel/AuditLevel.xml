@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AuditLevel" FullName="System.ServiceModel.AuditLevel">
+  <TypeSignature Language="C#" Value="public enum AuditLevel" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AuditLevel extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When creating a indigo1 application that requires authentication and/or authorization of the callers, you can specify that events related to security be recorded for either success, failure, or both. The level of auditing is determined by this enumeration.</para>
+      <para>The location of the audit log is specified by setting the <see cref="P:System.ServiceModel.Description.ServiceSecurityAuditBehavior.AuditLogLocation" /> property of the <see cref="T:System.ServiceModel.Description.ServiceSecurityAuditBehavior" /> class to one of the <see cref="T:System.ServiceModel.AuditLogLocation" /> values.</para>
+      <para>For more information about auditing, see <format type="text/html"><a href="5633f61c-a3c9-40dd-8070-1c373b66a716">Auditing Security Events</a></format>.</para>
+      <para>You can also specify audit behavior using the <format type="text/html"><a href="ba517369-a034-4f8e-a2c4-66517716062b">serviceSecurityAudit element</a></format> binding.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies when to audit security events. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Failure">
+      <MemberSignature Language="C#" Value="Failure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AuditLevel Failure = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only failed security-related events will be recorded.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AuditLevel None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No events will be recorded. This is the default.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Success">
+      <MemberSignature Language="C#" Value="Success" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AuditLevel Success = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only successful security-related events will be recorded.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SuccessOrFailure">
+      <MemberSignature Language="C#" Value="SuccessOrFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AuditLevel SuccessOrFailure = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AuditLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Both failed and successful security-related events will be recorded.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

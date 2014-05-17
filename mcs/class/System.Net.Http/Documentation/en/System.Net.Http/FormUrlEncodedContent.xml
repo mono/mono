@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="FormUrlEncodedContent" FullName="System.Net.Http.FormUrlEncodedContent">
+  <TypeSignature Language="C#" Value="public class FormUrlEncodedContent : System.Net.Http.ByteArrayContent" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FormUrlEncodedContent extends System.Net.Http.ByteArrayContent" />
+  <AssemblyInfo>
+    <AssemblyName>System.Net.Http</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Net.Http.ByteArrayContent</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A container for name/value tuples encoded using application/x-www-form-urlencoded MIME type.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FormUrlEncodedContent (System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;string,string&gt;&gt; nameValueCollection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;string, string&gt;&gt; nameValueCollection) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="nameValueCollection" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.String,System.String&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.FormUrlEncodedContent" /> class with a specific collection of name/value pairs.</para>
+        </summary>
+        <param name="nameValueCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of name/value pairs.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

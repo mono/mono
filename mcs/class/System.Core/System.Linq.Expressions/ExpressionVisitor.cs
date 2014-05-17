@@ -26,14 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_4_0
+
 using System;
 using System.Collections.ObjectModel;
 
 namespace System.Linq.Expressions {
 
-#if FULL_AOT_RUNTIME
-	public
-#endif
 	abstract class ExpressionVisitor {
 
 		protected virtual void Visit (Expression expression)
@@ -257,3 +256,5 @@ namespace System.Linq.Expressions {
 		}
 	}
 }
+
+#endif

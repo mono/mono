@@ -1,70 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XslCompiledTransform" FullName="System.Xml.Xsl.XslCompiledTransform">
   <TypeSignature Language="C#" Value="public sealed class XslCompiledTransform" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XslCompiledTransform extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class is an XSLT processor that supports the XSLT 1.0 syntax. It is a new implementation and includes performance gains when compared to the obsolete <see cref="T:System.Xml.Xsl.XslTransform" /> class. The structure of the <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class is very similar to the <see cref="T:System.Xml.Xsl.XslTransform" /> class. The <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Load" /> method loads and compiles the style sheet, while the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method executes the XSLT transform.</para>
+      <para>Support for the XSLT document() function and embedded script blocks are disabled by default. These features can be enabled by creating an <see cref="T:System.Xml.Xsl.XsltSettings" /> object and passing it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Load" /> method.</para>
+      <para>For more information, see <format type="text/html"><a href="f9b074f6-d6f4-49dd-a093-df510bf0cf7b">Using the XsltCompiledTransform Class</a></format> and <format type="text/html"><a href="9404d758-679f-4ffb-995d-3d07d817659e">Migrating From the XslTransform Class</a></format>.</para>
+      <format type="text/html">
+        <h2>Security Considerations</h2>
+      </format>
+      <para>When creating an application that uses the <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class, you should be aware of the following items and their implications:</para>
+      <list type="bullet">
+        <item>
+          <para>XSLT scripting is disabled by default. XSLT scripting should be enabled only if you require script support and you are working in a fully trusted environment. </para>
+        </item>
+        <item>
+          <para>The XSLT document() function is disabled by default. If you enable the document() function, restrict the resources that can be accessed by passing an <see cref="T:System.Xml.XmlSecureResolver" /> object to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method.</para>
+        </item>
+        <item>
+          <para>Extension objects are enabled by default. If an <see cref="T:System.Xml.Xsl.XsltArgumentList" /> object containing extension objects is passed to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method, they are utilized.</para>
+        </item>
+        <item>
+          <para>XSLT style sheets can include references to other files and embedded script blocks. A malicious user can exploit this by supplying you with data or style sheets that when executed can cause your system to process until the computer runs low on resources.</para>
+        </item>
+        <item>
+          <para>XSLT applications that run in a mixed trust environment can result in style sheet spoofing. For example, a malicious user can load an object with a harmful style sheet and hand it off to another user who subsequently calls the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method and executes the transformation.</para>
+        </item>
+      </list>
+      <para>These security issues can be mitigated by not enabling scripting or the document() function unless the style sheet comes from a trusted source, and by not accepting <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> objects, XSLT style sheets, or XML source data from an untrusted source.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Transforms XML data using an XSLT style sheet.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XslCompiledTransform ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XslCompiledTransform (bool enableDebug);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool enableDebug) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="enableDebug" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="enableDebug">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following conditions must be met in order to step into the code and debug the style sheet:</para>
+          <list type="bullet">
+            <item>
+              <para>The <paramref name="enableDebug" /> parameter is set to true.</para>
+            </item>
+            <item>
+              <para>The style sheet is passed to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Load" /> method either as a URI, or an implementation of the <see cref="T:System.Xml.XmlReader" /> class that implements the <see cref="T:System.Xml.IXmlLineInfo" /> interface. The <see cref="T:System.Xml.IXmlLineInfo" /> interface is implemented on all text-parsing <see cref="T:System.Xml.XmlReader" /> objects.</para>
+              <para>In other words, if the style sheet is loaded using an <see cref="T:System.Xml.XPath.IXPathNavigable" /> object, such as an <see cref="T:System.Xml.XmlDocument" /> or <see cref="T:System.Xml.XPath.XPathDocument" />, or an <see cref="T:System.Xml.XmlReader" /> implementation that does not implement the <see cref="T:System.Xml.IXmlLineInfo" /> interface, you cannot debug the style sheet.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Xml.XmlResolver" /> used to load the style sheet is a file-based <see cref="T:System.Xml.XmlResolver" />, such as the <see cref="T:System.Xml.XmlUrlResolver" /> (this is the default <see cref="T:System.Xml.XmlResolver" /> used by the <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class).</para>
+            </item>
+            <item>
+              <para>The style sheet is located on the local machine or on the intranet.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class with the specified debug setting. </para>
+        </summary>
+        <param name="enableDebug">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to generate debug information; otherwise false. Setting this to true enables you to debug the style sheet with the Microsoft Visual Studio Debugger.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public void Load (string url);" />
+      <MemberSignature Language="C#" Value="public void Load (string stylesheetUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Load(string stylesheetUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="url" Type="System.String" />
+        <Parameter Name="stylesheetUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace.</para>
+          <para>This method has the following behavior:</para>
+          <list type="bullet">
+            <item>
+              <para>An <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials is used to resolve the style sheet URI, and process any xsl:import or xsl:include elements.</para>
+            </item>
+            <item>
+              <para>An <see cref="T:System.Xml.XmlReader" /> with default settings is used to load the style sheet. DTD processing is disabled on the <see cref="T:System.Xml.XmlReader" />. If you require DTD processing, create an <see cref="T:System.Xml.XmlReader" /> with this feature enabled, and pass it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Load" /> method.</para>
+            </item>
+            <item>
+              <para>The document() function is disabled.</para>
+            </item>
+            <item>
+              <para>Embedded scripts are not supported.</para>
+            </item>
+          </list>
+          <para>You can use the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Load(System.String,System.Xml.Xsl.XsltSettings,System.Xml.XmlResolver)" /> overload to specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary authentication credentials, or to specify different XSLT settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads and compiles the style sheet located at the specified URI.</para>
+        </summary>
+        <param name="stylesheetUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the style sheet.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public void Load (System.Xml.XmlReader stylesheet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Load(class System.Xml.XmlReader stylesheet) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -72,18 +164,41 @@
         <Parameter Name="stylesheet" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="stylesheet">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace.</para>
+          <para>The style sheet loads from the current node of the <see cref="T:System.Xml.XmlReader" /> through all its children. This enables you to use a portion of a document as the style sheet. After the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Load(System.Xml.XmlReader)" /> method completes, the <see cref="T:System.Xml.XmlReader" /> is positioned on the next node after the end of the style sheet. If the end of the document is reached, the <see cref="T:System.Xml.XmlReader" /> is positioned at the end of file (EOF).</para>
+          <para>This method has the following behavior:</para>
+          <list type="bullet">
+            <item>
+              <para>An <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials is used to process any xsl:import or xsl:include elements.</para>
+            </item>
+            <item>
+              <para>The document() function is disabled.</para>
+            </item>
+            <item>
+              <para>Embedded scripts are not supported.</para>
+            </item>
+          </list>
+          <para>You can use the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Load(System.Xml.XmlReader,System.Xml.Xsl.XsltSettings,System.Xml.XmlResolver)" /> overload to specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary authentication credentials, or to specify different XSLT settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the style sheet contained in the <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <param name="stylesheet">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> containing the style sheet.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.IXPathNavigable stylesheet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Load(class System.Xml.XPath.IXPathNavigable stylesheet) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -91,431 +206,697 @@
         <Parameter Name="stylesheet" Type="System.Xml.XPath.IXPathNavigable" />
       </Parameters>
       <Docs>
-        <param name="stylesheet">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace.</para>
+          <para>This method has the following behavior:</para>
+          <list type="bullet">
+            <item>
+              <para>An <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials is used to process any xsl:import or xsl:include elements.</para>
+            </item>
+            <item>
+              <para>The document() function is disabled.</para>
+            </item>
+            <item>
+              <para>Embedded scripts are not supported.</para>
+            </item>
+          </list>
+          <para>You can use the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Load(System.Xml.XPath.IXPathNavigable,System.Xml.Xsl.XsltSettings,System.Xml.XmlResolver)" /> overload to specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary authentication credentials, or to specify different XSLT settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the style sheet contained in the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object.</para>
+        </summary>
+        <param name="stylesheet">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface. In the Microsoft .NET Framework, this can be either an <see cref="T:System.Xml.XmlNode" /> (typically an <see cref="T:System.Xml.XmlDocument" />), or an <see cref="T:System.Xml.XPath.XPathDocument" /> containing the style sheet.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public void Load (string stylesheet, System.Xml.Xsl.XsltSettings settings, System.Xml.XmlResolver resolver);" />
+      <MemberSignature Language="C#" Value="public void Load (string stylesheetUri, System.Xml.Xsl.XsltSettings settings, System.Xml.XmlResolver stylesheetResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Load(string stylesheetUri, class System.Xml.Xsl.XsltSettings settings, class System.Xml.XmlResolver stylesheetResolver) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="stylesheet" Type="System.String" />
+        <Parameter Name="stylesheetUri" Type="System.String" />
         <Parameter Name="settings" Type="System.Xml.Xsl.XsltSettings" />
-        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="stylesheetResolver" Type="System.Xml.XmlResolver" />
       </Parameters>
       <Docs>
-        <param name="stylesheet">To be added.</param>
-        <param name="settings">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace.</para>
+          <para>An <see cref="T:System.Xml.XmlReader" /> with default settings is used to load the style sheet. DTD processing is disabled on the <see cref="T:System.Xml.XmlReader" />. If you require DTD processing, create an <see cref="T:System.Xml.XmlReader" /> with this feature enabled, and pass it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Load" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads and compiles the XSLT style sheet specified by the URI. The <see cref="T:System.Xml.XmlResolver" /> resolves any XSLT import or include elements and the XSLT settings determine the permissions for the style sheet.</para>
+        </summary>
+        <param name="stylesheetUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the style sheet.</param>
+        <param name="settings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Xsl.XsltSettings" /> to apply to the style sheet. If this is null, the <see cref="P:System.Xml.Xsl.XsltSettings.Default" /> setting is applied.</param>
+        <param name="stylesheetResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> used to resolve the style sheet URI and any style sheets referenced in XSLT import and include elements. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public void Load (System.Xml.XmlReader stylesheet, System.Xml.Xsl.XsltSettings settings, System.Xml.XmlResolver resolver);" />
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XmlReader stylesheet, System.Xml.Xsl.XsltSettings settings, System.Xml.XmlResolver stylesheetResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Load(class System.Xml.XmlReader stylesheet, class System.Xml.Xsl.XsltSettings settings, class System.Xml.XmlResolver stylesheetResolver) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="stylesheet" Type="System.Xml.XmlReader" />
         <Parameter Name="settings" Type="System.Xml.Xsl.XsltSettings" />
-        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="stylesheetResolver" Type="System.Xml.XmlResolver" />
       </Parameters>
       <Docs>
-        <param name="stylesheet">To be added.</param>
-        <param name="settings">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace.</para>
+          <para>The style sheet loads from the current node of the <see cref="T:System.Xml.XmlReader" /> through all its children. This enables you to use a portion of a document as the style sheet. After the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Load(System.Xml.XmlReader)" /> method completes, the <see cref="T:System.Xml.XmlReader" /> is positioned on the next node after the end of the style sheet. If the end of the document is reached, the <see cref="T:System.Xml.XmlReader" /> is positioned at the end of file (EOF).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the XSLT style sheet contained in the <see cref="T:System.Xml.XmlReader" />. The <see cref="T:System.Xml.XmlResolver" /> resolves any XSLT import or include elements and the XSLT settings determine the permissions for the style sheet.</para>
+        </summary>
+        <param name="stylesheet">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> containing the style sheet.</param>
+        <param name="settings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Xsl.XsltSettings" /> to apply to the style sheet. If this is null, the <see cref="P:System.Xml.Xsl.XsltSettings.Default" /> setting is applied.</param>
+        <param name="stylesheetResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> used to resolve any style sheets referenced in XSLT import and include elements. If this is null, external resources are not resolved.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.IXPathNavigable stylesheet, System.Xml.Xsl.XsltSettings settings, System.Xml.XmlResolver resolver);" />
+      <MemberSignature Language="C#" Value="public void Load (System.Xml.XPath.IXPathNavigable stylesheet, System.Xml.Xsl.XsltSettings settings, System.Xml.XmlResolver stylesheetResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Load(class System.Xml.XPath.IXPathNavigable stylesheet, class System.Xml.Xsl.XsltSettings settings, class System.Xml.XmlResolver stylesheetResolver) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="stylesheet" Type="System.Xml.XPath.IXPathNavigable" />
         <Parameter Name="settings" Type="System.Xml.Xsl.XsltSettings" />
-        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="stylesheetResolver" Type="System.Xml.XmlResolver" />
       </Parameters>
       <Docs>
-        <param name="stylesheet">To be added.</param>
-        <param name="settings">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.XslCompiledTransform" /> class supports the XSLT 1.0 syntax. The XSLT style sheet must use the http://www.w3.org/1999/XSL/Transform namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the XSLT style sheet contained in the <see cref="T:System.Xml.XPath.IXPathNavigable" />. The <see cref="T:System.Xml.XmlResolver" /> resolves any XSLT import or include elements and the XSLT settings determine the permissions for the style sheet.</para>
+        </summary>
+        <param name="stylesheet">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface. In the Microsoft .NET Framework, this can be either an <see cref="T:System.Xml.XmlNode" /> (typically an <see cref="T:System.Xml.XmlDocument" />), or an <see cref="T:System.Xml.XPath.XPathDocument" /> containing the style sheet.</param>
+        <param name="settings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Xsl.XsltSettings" /> to apply to the style sheet. If this is null, the <see cref="P:System.Xml.Xsl.XsltSettings.Default" /> setting is applied.</param>
+        <param name="stylesheetResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> used to resolve any style sheets referenced in XSLT import and include elements. If this is null, external resources are not resolved.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputSettings">
       <MemberSignature Language="C#" Value="public System.Xml.XmlWriterSettings OutputSettings { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlWriterSettings OutputSettings" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlWriterSettings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is populated after a successful call to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Load" /> method. It contains information derived from the xsl:output element of a compiled style sheet. This <see cref="T:System.Xml.XmlWriterSettings" /> object can be passed to the <see cref="Overload:System.Xml.XmlWriter.Create" /> method to create the <see cref="T:System.Xml.XmlWriter" /> object to which you want to output.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.XmlWriterSettings" /> object that contains the output information derived from the xsl:output element of the style sheet.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TemporaryFiles">
       <MemberSignature Language="C#" Value="public System.CodeDom.Compiler.TempFileCollection TemporaryFiles { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.Compiler.TempFileCollection TemporaryFiles" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.TempFileCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property identifies the files that were generated during XSLT processing. The files are placed in your Temp directory (specified by the %TEMP% environment variable) You can delete these files after the XSLT processing has completed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.CodeDom.Compiler.TempFileCollection" /> that contains the temporary files generated on disk after a successful call to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Load" /> method. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (string inputfile, string outputfile);" />
+      <MemberSignature Language="C#" Value="public void Transform (string inputUri, string resultsFile);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(string inputUri, string resultsFile) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="inputfile" Type="System.String" />
-        <Parameter Name="outputfile" Type="System.String" />
+        <Parameter Name="inputUri" Type="System.String" />
+        <Parameter Name="resultsFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="inputfile">To be added.</param>
-        <param name="outputfile">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses a default <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials to resolve the input and output documents. If any of these resources are located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>An <see cref="T:System.Xml.XmlReader" /> with default settings is used to load the input document. DTD processing is disabled on the <see cref="T:System.Xml.XmlReader" />. If you require DTD processing, create an <see cref="T:System.Xml.XmlReader" /> with this feature enabled, and pass it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the URI and outputs the results to a file.</para>
+        </summary>
+        <param name="inputUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the input document.</param>
+        <param name="resultsFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the output file.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (string inputfile, System.Xml.XmlWriter output);" />
+      <MemberSignature Language="C#" Value="public void Transform (string inputUri, System.Xml.XmlWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(string inputUri, class System.Xml.XmlWriter results) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="inputfile" Type="System.String" />
-        <Parameter Name="output" Type="System.Xml.XmlWriter" />
+        <Parameter Name="inputUri" Type="System.String" />
+        <Parameter Name="results" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="inputfile">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses a default <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials to resolve the input document and any instances of the XSLT document() function found in the style sheet. If any of these resources are located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>An <see cref="T:System.Xml.XmlReader" /> with default settings is used to load the input document. DTD processing is disabled on the <see cref="T:System.Xml.XmlReader" />. If you require DTD processing, create an <see cref="T:System.Xml.XmlReader" /> with this feature enabled, and pass it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method.</para>
+          <para>This method does not support the xsl:strip-space element. If your compiled style sheet included the xsl:strip-space element, you must use the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> overload which takes an <see cref="T:System.Xml.XmlReader" /> as the input argument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the URI and outputs the results to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="inputUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the input document.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to which you want to output.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader reader, System.Xml.XmlWriter output);" />
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader input, System.Xml.XmlWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XmlReader input, class System.Xml.XmlWriter results) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="reader" Type="System.Xml.XmlReader" />
-        <Parameter Name="output" Type="System.Xml.XmlWriter" />
-      </Parameters>
-      <Docs>
-        <param name="reader">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.XmlWriter output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
-        <Parameter Name="output" Type="System.Xml.XmlWriter" />
-      </Parameters>
-      <Docs>
-        <param name="input">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (string inputfile, System.Xml.Xsl.XsltArgumentList args, System.IO.Stream output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="inputfile" Type="System.String" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.IO.Stream" />
-      </Parameters>
-      <Docs>
-        <param name="inputfile">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (string inputfile, System.Xml.Xsl.XsltArgumentList args, System.IO.TextWriter output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="inputfile" Type="System.String" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.IO.TextWriter" />
-      </Parameters>
-      <Docs>
-        <param name="inputfile">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (string inputfile, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="inputfile" Type="System.String" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.Xml.XmlWriter" />
-      </Parameters>
-      <Docs>
-        <param name="inputfile">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader reader, System.Xml.Xsl.XsltArgumentList args, System.IO.Stream output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="reader" Type="System.Xml.XmlReader" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.IO.Stream" />
-      </Parameters>
-      <Docs>
-        <param name="reader">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader reader, System.Xml.Xsl.XsltArgumentList args, System.IO.TextWriter output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="reader" Type="System.Xml.XmlReader" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.IO.TextWriter" />
-      </Parameters>
-      <Docs>
-        <param name="reader">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader reader, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="reader" Type="System.Xml.XmlReader" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.Xml.XmlWriter" />
-      </Parameters>
-      <Docs>
-        <param name="reader">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.IO.Stream output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.IO.Stream" />
-      </Parameters>
-      <Docs>
-        <param name="input">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.IO.TextWriter output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.IO.TextWriter" />
-      </Parameters>
-      <Docs>
-        <param name="input">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.Xml.XmlWriter" />
-      </Parameters>
-      <Docs>
-        <param name="input">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Transform">
-      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader input, System.Xml.Xsl.XsltArgumentList args, System.Xml.XmlWriter output, System.Xml.XmlResolver resolver);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="input" Type="System.Xml.XmlReader" />
-        <Parameter Name="args" Type="System.Xml.Xsl.XsltArgumentList" />
-        <Parameter Name="output" Type="System.Xml.XmlWriter" />
-        <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
+        <Parameter Name="results" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="output">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XSLT document() function is enabled, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XmlReader" /> object and outputs the results to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> containing the input document.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to which you want to output.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.XmlWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XPath.IXPathNavigable input, class System.Xml.XmlWriter results) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="results" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XSLT document() function is enabled, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>This method does not support the xsl:strip-space element. If your compiled style sheet included the xsl:strip-space element, you must use the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> overload which takes an <see cref="T:System.Xml.XmlReader" /> as the input argument.</para>
+          <para>The <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface is implemented in the <see cref="T:System.Xml.XmlNode" /> and <see cref="T:System.Xml.XPath.XPathDocument" /> classes. These classes represent an in-memory cache of XML data.</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="T:System.Xml.XmlNode" /> class is based on the W3C Document Object Model (DOM) and includes editing capabilities.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Xml.XPath.XPathDocument" /> class is a read-only data store based on the XPath data model. <see cref="T:System.Xml.XPath.XPathDocument" /> is the recommended class for XSLT processing. It provides faster performance when compared to the <see cref="T:System.Xml.XmlNode" /> class.</para>
+            </item>
+          </list>
+          <para>Transformations apply to the document as a whole. In other words, if you pass in a node other than the document root node, this does not prevent the transformation process from accessing all nodes in the loaded document. To transform a node fragment, you must create an object containing just the node fragment, and pass that object to the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Transform(System.Xml.XPath.IXPathNavigable,System.Xml.XmlWriter)" /> method. For more information, see <format type="text/html"><a href="73a6c582-b9d7-4fa7-9a05-6d931e1f3de8">How To: Transform a Node Fragment</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object and outputs the results to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface. In the Microsoft .NET Framework, this can be either an <see cref="T:System.Xml.XmlNode" /> (typically an <see cref="T:System.Xml.XmlDocument" />), or an <see cref="T:System.Xml.XPath.XPathDocument" /> containing the data to be transformed.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (string inputUri, System.Xml.Xsl.XsltArgumentList arguments, System.IO.Stream results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(string inputUri, class System.Xml.Xsl.XsltArgumentList arguments, class System.IO.Stream results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputUri" Type="System.String" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses a default <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials to resolve the input document and any instances of the XSLT document() function found in the style sheet. If any of these resources are located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>An <see cref="T:System.Xml.XmlReader" /> with default settings is used to load the input document. DTD processing is disabled on the <see cref="T:System.Xml.XmlReader" />. If you require DTD processing, create an <see cref="T:System.Xml.XmlReader" /> with this feature enabled, and pass it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the URI and outputs the results to stream. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments.</para>
+        </summary>
+        <param name="inputUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the input document.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (string inputUri, System.Xml.Xsl.XsltArgumentList arguments, System.IO.TextWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(string inputUri, class System.Xml.Xsl.XsltArgumentList arguments, class System.IO.TextWriter results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputUri" Type="System.String" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses a default <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials to resolve the input document and any instances of the XSLT document() function found in the style sheet. If any of these resources are located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>An <see cref="T:System.Xml.XmlReader" /> with default settings is used to load the input document. DTD processing is disabled on the <see cref="T:System.Xml.XmlReader" />. If you require DTD processing, create an <see cref="T:System.Xml.XmlReader" /> with this feature enabled, and pass it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the URI and outputs the results to a <see cref="T:System.IO.TextWriter" />.</para>
+        </summary>
+        <param name="inputUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the input document.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (string inputUri, System.Xml.Xsl.XsltArgumentList arguments, System.Xml.XmlWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(string inputUri, class System.Xml.Xsl.XsltArgumentList arguments, class System.Xml.XmlWriter results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputUri" Type="System.String" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses a default <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials to resolve the input document and any instances of the XSLT document() function found in the style sheet. If any of these resources are located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>An <see cref="T:System.Xml.XmlReader" /> with default settings is used to load the input document. DTD processing is disabled on the <see cref="T:System.Xml.XmlReader" />. If you require DTD processing, create an <see cref="T:System.Xml.XmlReader" /> with this feature enabled, and pass it to the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the URI and outputs the results to an <see cref="T:System.Xml.XmlWriter" />. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments.</para>
+        </summary>
+        <param name="inputUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the input document.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader input, System.Xml.Xsl.XsltArgumentList arguments, System.IO.Stream results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XmlReader input, class System.Xml.Xsl.XsltArgumentList arguments, class System.IO.Stream results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XmlReader" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the style sheet includes an XSLT document() function, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XmlReader" /> object and outputs the results to a stream. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> containing the input document.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader input, System.Xml.Xsl.XsltArgumentList arguments, System.IO.TextWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XmlReader input, class System.Xml.Xsl.XsltArgumentList arguments, class System.IO.TextWriter results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XmlReader" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the style sheet includes an XSLT document() function, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XmlReader" /> object and outputs the results to a <see cref="T:System.IO.TextWriter" />. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> containing the input document.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader input, System.Xml.Xsl.XsltArgumentList arguments, System.Xml.XmlWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XmlReader input, class System.Xml.Xsl.XsltArgumentList arguments, class System.Xml.XmlWriter results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XmlReader" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the style sheet includes an XSLT document() function, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XmlReader" /> object and outputs the results to an <see cref="T:System.Xml.XmlWriter" />. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> containing the input document.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList arguments, System.IO.Stream results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XPath.IXPathNavigable input, class System.Xml.Xsl.XsltArgumentList arguments, class System.IO.Stream results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XSLT document() function is enabled, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>This method does not support the xsl:strip-space element. If your compiled style sheet included the xsl:strip-space element, you must use the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> overload which takes an <see cref="T:System.Xml.XmlReader" /> as the input argument.</para>
+          <para>The <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface is implemented in the <see cref="T:System.Xml.XmlNode" /> and <see cref="T:System.Xml.XPath.XPathDocument" /> classes. These classes represent an in-memory cache of XML data.</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="T:System.Xml.XmlNode" /> class is based on the W3C Document Object Model (DOM) and includes editing capabilities.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Xml.XPath.XPathDocument" /> class is a read-only data store based on the XPath data model. <see cref="T:System.Xml.XPath.XPathDocument" /> is the recommended class for XSLT processing. It provides faster performance when compared to the <see cref="T:System.Xml.XmlNode" /> class.</para>
+            </item>
+          </list>
+          <para>Transformations apply to the document as a whole. In other words, if you pass in a node other than the document root node, this does not prevent the transformation process from accessing all nodes in the loaded document. To transform a node fragment, you must create an object containing just the node fragment, and pass that object to the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Transform(System.Xml.XPath.IXPathNavigable,System.Xml.Xsl.XsltArgumentList,System.IO.Stream)" /> method. For more information, see <format type="text/html"><a href="73a6c582-b9d7-4fa7-9a05-6d931e1f3de8">How To: Transform a Node Fragment</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object and outputs the results to a stream. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional runtime arguments.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface. In the Microsoft .NET Framework, this can be either an <see cref="T:System.Xml.XmlNode" /> (typically an <see cref="T:System.Xml.XmlDocument" />), or an <see cref="T:System.Xml.XPath.XPathDocument" /> containing the data to be transformed.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList arguments, System.IO.TextWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XPath.IXPathNavigable input, class System.Xml.Xsl.XsltArgumentList arguments, class System.IO.TextWriter results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XSLT document() function is enabled, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>This method does not support the xsl:strip-space element. If your compiled style sheet included the xsl:strip-space element, you must use the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> overload which takes an <see cref="T:System.Xml.XmlReader" /> as the input argument.</para>
+          <para>The <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface is implemented in the <see cref="T:System.Xml.XmlNode" /> and <see cref="T:System.Xml.XPath.XPathDocument" /> classes. These classes represent an in-memory cache of XML data.</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="T:System.Xml.XmlNode" /> class is based on the W3C Document Object Model (DOM) and includes editing capabilities.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Xml.XPath.XPathDocument" /> class is a read-only data store based on the XPath data model. <see cref="T:System.Xml.XPath.XPathDocument" /> is the recommended class for XSLT processing. It provides faster performance when compared to the <see cref="T:System.Xml.XmlNode" /> class.</para>
+            </item>
+          </list>
+          <para>Transformations apply to the document as a whole. In other words, if you pass in a node other than the document root node, this does not prevent the transformation process from accessing all nodes in the loaded document. To transform a node fragment, you must create an object containing just the node fragment, and pass that object to the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Transform(System.Xml.XPath.IXPathNavigable,System.Xml.Xsl.XsltArgumentList,System.IO.TextWriter)" /> method. For more information, see <format type="text/html"><a href="73a6c582-b9d7-4fa7-9a05-6d931e1f3de8">How To: Transform a Node Fragment</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object and outputs the results to an <see cref="T:System.IO.TextWriter" />. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface. In the Microsoft .NET Framework, this can be either an <see cref="T:System.Xml.XmlNode" /> (typically an <see cref="T:System.Xml.XmlDocument" />), or an <see cref="T:System.Xml.XPath.XPathDocument" /> containing the data to be transformed.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XPath.IXPathNavigable input, System.Xml.Xsl.XsltArgumentList arguments, System.Xml.XmlWriter results);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XPath.IXPathNavigable input, class System.Xml.Xsl.XsltArgumentList arguments, class System.Xml.XmlWriter results) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XPath.IXPathNavigable" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XSLT document() function is enabled, it is resolved using an <see cref="T:System.Xml.XmlUrlResolver" /> with no user credentials. If the external resource is located on a network resource that requires authentication, use the overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an <see cref="T:System.Xml.XmlResolver" /> with the necessary credentials.</para>
+          <para>This method does not support the xsl:strip-space element. If your compiled style sheet included the xsl:strip-space element, you must use the <see cref="Overload:System.Xml.Xsl.XslCompiledTransform.Transform" /> overload which takes an <see cref="T:System.Xml.XmlReader" /> as the input argument.</para>
+          <para>The <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface is implemented in the <see cref="T:System.Xml.XmlNode" /> and <see cref="T:System.Xml.XPath.XPathDocument" /> classes. These classes represent an in-memory cache of XML data.</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="T:System.Xml.XmlNode" /> class is based on the W3C Document Object Model (DOM) and includes editing capabilities.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Xml.XPath.XPathDocument" /> class is a read-only data store based on the XPath data model. <see cref="T:System.Xml.XPath.XPathDocument" /> is the recommended class for XSLT processing. It provides faster performance when compared to the <see cref="T:System.Xml.XmlNode" /> class.</para>
+            </item>
+          </list>
+          <para>Transformations apply to the document as a whole. In other words, if you pass in a node other than the document root node, this does not prevent the transformation process from accessing all nodes in the loaded document. To transform a node fragment, you must create an object containing just the node fragment, and pass that object to the <see cref="M:System.Xml.Xsl.XslCompiledTransform.Transform(System.Xml.XPath.IXPathNavigable,System.Xml.Xsl.XsltArgumentList,System.Xml.XmlWriter)" /> method. For more information, see <format type="text/html"><a href="73a6c582-b9d7-4fa7-9a05-6d931e1f3de8">How To: Transform a Node Fragment</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object and outputs the results to an <see cref="T:System.Xml.XmlWriter" />. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing the <see cref="T:System.Xml.XPath.IXPathNavigable" /> interface. In the Microsoft .NET Framework, this can be either an <see cref="T:System.Xml.XmlNode" /> (typically an <see cref="T:System.Xml.XmlDocument" />), or an <see cref="T:System.Xml.XPath.XPathDocument" /> containing the data to be transformed.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to which you want to output.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Transform">
+      <MemberSignature Language="C#" Value="public void Transform (System.Xml.XmlReader input, System.Xml.Xsl.XsltArgumentList arguments, System.Xml.XmlWriter results, System.Xml.XmlResolver documentResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Transform(class System.Xml.XmlReader input, class System.Xml.Xsl.XsltArgumentList arguments, class System.Xml.XmlWriter results, class System.Xml.XmlResolver documentResolver) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Xml.XmlReader" />
+        <Parameter Name="arguments" Type="System.Xml.Xsl.XsltArgumentList" />
+        <Parameter Name="results" Type="System.Xml.XmlWriter" />
+        <Parameter Name="documentResolver" Type="System.Xml.XmlResolver" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the transform using the input document specified by the <see cref="T:System.Xml.XmlReader" /> object and outputs the results to an <see cref="T:System.Xml.XmlWriter" />. The <see cref="T:System.Xml.Xsl.XsltArgumentList" /> provides additional run-time arguments and the XmlResolver resolves the XSLT document() function.</para>
+        </summary>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> containing the input document.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Xsl.XsltArgumentList" /> containing the namespace-qualified arguments used as input to the transform. This value can be null.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to which you want to output.</param>
+        <param name="documentResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> used to resolve the XSLT document() function. If this is null, the document() function is not resolved.</param>
+      </Docs>
     </Member>
   </Members>
 </Type>

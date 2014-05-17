@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoundPlayer" FullName="System.Media.SoundPlayer">
   <TypeSignature Language="C#" Value="public class SoundPlayer : System.ComponentModel.Component, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable SoundPlayer extends System.ComponentModel.Component implements class System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.Component</BaseTypeName>
@@ -18,148 +21,241 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Media.SoundPlayer" /> class provides a simple interface for loading and playing a .wav file. The <see cref="T:System.Media.SoundPlayer" /> class supports loading a .wav file from a file path, a URL, a <see cref="T:System.IO.Stream" /> that contains a .wav file, or an embedded resource that contains a .wav file.</para>
+      <para>To play a sound using the <see cref="T:System.Media.SoundPlayer" /> class, configure a <see cref="T:System.Media.SoundPlayer" /> with a path to the .wav file and call one of the play methods. You can identify the .wav file to play by using one of the constructors or by setting either the <see cref="P:System.Media.SoundPlayer.SoundLocation" /> or <see cref="P:System.Media.SoundPlayer.Stream" /> property. The file can be loaded prior to playing by using one of the load methods, or loading can be deferred until one of the play methods is called. A <see cref="T:System.Media.SoundPlayer" /> configured to load a .wav file from a <see cref="T:System.IO.Stream" /> or URL must load the .wav file into memory before playback begins.</para>
+      <para>You can load or play a .wav file synchronously or asynchronously. If you call a synchronous load or play method, the calling thread will wait until the method returns, which may cause painting and other events to be interrupted. Calling an asynchronous load or play method will allow the calling thread to continue without interruption. For more information on asynchronous method calls, see <format type="text/html"><a href="5b56e2aa-dc05-444f-930c-2d7b23f9ad5b">How to: Run an Operation in the Background</a></format>.</para>
+      <para>When a <see cref="T:System.Media.SoundPlayer" /> has finished loading a .wav file, it raises the <see cref="E:System.Media.SoundPlayer.LoadCompleted" /> event. You can examine the <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" /> in your event handler to determine if the load succeeded or failed. The <see cref="E:System.Media.SoundPlayer.SoundLocationChanged" /> event is raised when the audio source is set to a new file path or URL. The <see cref="E:System.Media.SoundPlayer.StreamChanged" /> event is raised when the audio source is set to a new <see cref="T:System.IO.Stream" />. For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For more information about <see cref="T:System.Media.SoundPlayer" />, see <format type="text/html"><a href="fcebb938-62b9-4677-9cbe-6465bc863e22">SoundPlayer Class Overview (Windows Forms)</a></format>.</para>
+      <block subset="none" type="note">
+        <para>   The <see cref="T:System.Media.SoundPlayer" /> class cannot play other file types, such as .wma or .mp3. If you want to play other file types, you can use the Windows Media Player control. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=131267">Using the Windows Media Player Control in a .NET Framework Solution</see> and <see cref="http://go.microsoft.com/fwlink/?LinkId=131269">Windows Media Player Object Model Reference for Visual Basic .NET and C#</see> in the Windows Media Player SDK.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls playback of a sound from a .wav file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoundPlayer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a <see cref="T:System.Media.SoundPlayer" /> with no audio source. Until it is configured with an audio source path, the <see cref="T:System.Media.SoundPlayer" /> will play a beep sound when one of its playback methods is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Media.SoundPlayer" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoundPlayer (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.Stream" /> passed to the <paramref name="stream" /> parameter should be a <see cref="T:System.IO.Stream" /> containing a .wav file. The data returned by the <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" /> method of the <see cref="T:System.IO.Stream" /> should be the data within a .wav file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Media.SoundPlayer" /> class, and attaches the .wav file within the specified <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> to a .wav file.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoundPlayer (string soundLocation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string soundLocation) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="soundLocation" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="soundLocation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string passed to the <paramref name="soundLocation" /> parameter can be either a file path or a URL to a .wav file. If the path or URL is not valid, the <see cref="T:System.Media.SoundPlayer" /> will still be constructed, but subsequent calls to a load or play method will fail.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Media.SoundPlayer" /> class, and attaches the specified .wav file.</para>
+        </summary>
+        <param name="soundLocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location of a .wav file to load.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected SoundPlayer (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo serializationInfo, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Media.SoundPlayer" /> class.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to be used for deserialization.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination to be used for deserialization.</param>
       </Docs>
     </Member>
     <Member MemberName="IsLoadCompleted">
       <MemberSignature Language="C#" Value="public bool IsLoadCompleted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsLoadCompleted" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether loading of a .wav file has successfully completed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public void Load ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Load() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Media.SoundPlayer.Load" /> method uses the current thread to load a .wav file, preventing the thread from handling other messages until the load is complete.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Media.SoundPlayer.Load" /> method may produce a delay while loading a large .wav file. In addition, painting and other events will be blocked until the load is completed. Use the <see cref="M:System.Media.SoundPlayer.LoadAsync" /> method to load a sound asynchronously, which allows the calling thread to continue without interruption.</para>
+          </block>
+          <para>This method raises the <see cref="E:System.Media.SoundPlayer.LoadCompleted" /> event when loading completes, even if the load was not successful.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a sound synchronously.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadAsync">
       <MemberSignature Language="C#" Value="public void LoadAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void LoadAsync() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a <see cref="T:System.Media.SoundPlayer" /> is configured to load a .wav file from a <see cref="T:System.IO.Stream" /> or Web resource, this method begins loading a .wav file from the location using a new thread.</para>
+          <para>This method raises the <see cref="E:System.Media.SoundPlayer.LoadCompleted" /> event when loading completes, even if the load was not successful.</para>
+          <para>If a <see cref="T:System.Media.SoundPlayer" /> is configured to load a .wav file from a local file path, this method does nothing, because loading is deferred until playing begins.</para>
+          <para>For more information about asynchronous loading, see <format type="text/html"><a href="3b6a9296-1d5e-4d52-a4ba-94366d6fe302">How to: Load a Sound Asynchronously within a Windows Form</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a .wav file from a stream or a Web resource using a new thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadCompleted">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.AsyncCompletedEventHandler LoadCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.AsyncCompletedEventHandler LoadCompleted" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.AsyncCompletedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when loading of a .wav file is complete. The event arguments indicate whether the load of the sound was completed successfully or failed.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a .wav file has been successfully or unsuccessfully loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadTimeout">
-      <MemberSignature Language="C#" Value="public int LoadTimeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public int LoadTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LoadTimeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this time has expired, the loading is canceled and a <see cref="T:System.ServiceProcess.TimeoutException" /> exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time, in milliseconds, in which the .wav file must load.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnLoadCompleted">
       <MemberSignature Language="C#" Value="protected virtual void OnLoadCompleted (System.ComponentModel.AsyncCompletedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnLoadCompleted(class System.ComponentModel.AsyncCompletedEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -168,16 +264,27 @@
         <Parameter Name="e" Type="System.ComponentModel.AsyncCompletedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when loading of a .wav file is complete.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Media.SoundPlayer.OnLoadCompleted(System.ComponentModel.AsyncCompletedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Media.SoundPlayer.LoadCompleted" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" />  that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnSoundLocationChanged">
       <MemberSignature Language="C#" Value="protected virtual void OnSoundLocationChanged (EventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSoundLocationChanged(class System.EventArgs e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -186,16 +293,27 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when a new audio source path for this <see cref="T:System.Media.SoundPlayer" /> has been set.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see How to: Provide Event functionality and <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Media.SoundPlayer.OnSoundLocationChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Media.SoundPlayer.SoundLocationChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnStreamChanged">
       <MemberSignature Language="C#" Value="protected virtual void OnStreamChanged (EventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnStreamChanged(class System.EventArgs e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -204,134 +322,212 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when a new <see cref="T:System.IO.Stream" /> audio source for this <see cref="T:System.Media.SoundPlayer" /> has been set.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Media.SoundPlayer.OnStreamChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Media.SoundPlayer.StreamChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="Play">
       <MemberSignature Language="C#" Value="public void Play ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Play() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Media.SoundPlayer.Play" /> method plays the sound using a new thread. If you call <see cref="M:System.Media.SoundPlayer.Play" /> before the .wav file has been loaded into memory, the .wav file will be loaded before playback starts. You can use the <see cref="M:System.Media.SoundPlayer.LoadAsync" /> or <see cref="M:System.Media.SoundPlayer.Load" /> method to load the .wav file to memory in advance. After a .wav file is successfully loaded from a <see cref="T:System.IO.Stream" /> or URL, future calls to playback methods for the <see cref="T:System.Media.SoundPlayer" /> will not need to reload the .wav file until the path for the sound changes.</para>
+          <para>If the .wav file has not been specified or it fails to load, the <see cref="M:System.Media.SoundPlayer.Play" /> method will play the default beep sound.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Plays the .wav file using a new thread, and loads the .wav file first if it has not been loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PlayLooping">
       <MemberSignature Language="C#" Value="public void PlayLooping ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void PlayLooping() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Media.SoundPlayer.PlayLooping" /> method plays and loops the sound using a new thread. If you call <see cref="M:System.Media.SoundPlayer.PlayLooping" /> before the .wav file has been loaded into memory, the .wav file will be loaded before playback starts. You can use the <see cref="M:System.Media.SoundPlayer.LoadAsync" /> or <see cref="M:System.Media.SoundPlayer.Load" /> method to load the .wav file to memory in advance. After a .wav file is successfully loaded from a <see cref="T:System.IO.Stream" /> or URL, future calls to playback methods for the <see cref="T:System.Media.SoundPlayer" /> will not need to reload the .wav file until the path for the sound changes.</para>
+          <para>If the .wav file has not been specified or it fails to load, the <see cref="M:System.Media.SoundPlayer.PlayLooping" /> method will play the default beep sound.</para>
+          <para>For more information about <see cref="M:System.Media.SoundPlayer.PlayLooping" />, see <format type="text/html"><a href="ea95dd46-10a3-46c0-8263-4b205f00df7f">How to: Loop a Sound Playing on a Windows Form</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Plays and loops the .wav file using a new thread, and loads the .wav file first if it has not been loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PlaySync">
       <MemberSignature Language="C#" Value="public void PlaySync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void PlaySync() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Media.SoundPlayer.PlaySync" /> method uses the current thread to play a .wav file, preventing the thread from handling other messages until the load is complete. You can use the <see cref="M:System.Media.SoundPlayer.LoadAsync" /> or <see cref="M:System.Media.SoundPlayer.Load" /> method to load the .wav file to memory in advance. After a .wav file is successfully loaded from a <see cref="T:System.IO.Stream" /> or URL, future calls to playback methods for the <see cref="T:System.Media.SoundPlayer" /> will not need to reload the .wav file until the path for the sound changes.</para>
+          <para>If the .wav file has not been specified or it fails to load, the <see cref="M:System.Media.SoundPlayer.PlaySync" /> method will play the default beep sound.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Plays the .wav file and loads the .wav file first if it has not been loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SoundLocation">
-      <MemberSignature Language="C#" Value="public string SoundLocation { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SoundLocation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SoundLocation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set to <see cref="F:System.String.Empty" /> when the <see cref="P:System.Media.SoundPlayer.Stream" /> property is set to a <see cref="T:System.IO.Stream" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the file path or URL of the .wav file to load.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SoundLocationChanged">
       <MemberSignature Language="C#" Value="public event EventHandler SoundLocationChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler SoundLocationChanged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when a new audio source path for this <see cref="T:System.Media.SoundPlayer" /> has been set.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a new audio source path for this <see cref="T:System.Media.SoundPlayer" /> has been set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Stop">
       <MemberSignature Language="C#" Value="public void Stop ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Stop() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops playback of the sound if playback is occurring.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Stream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream Stream { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream Stream { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Stream Stream" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set to null when the <see cref="P:System.Media.SoundPlayer.SoundLocation" /> property is set to a new and valid sound location.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.IO.Stream" /> from which to load the .wav file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StreamChanged">
       <MemberSignature Language="C#" Value="public event EventHandler StreamChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler StreamChanged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when a new <see cref="T:System.IO.Stream" /> audio source for this <see cref="T:System.Media.SoundPlayer" /> has been set.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a new <see cref="T:System.IO.Stream" /> audio source for this <see cref="T:System.Media.SoundPlayer" /> has been set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
       <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.Serialization.ISerializable.GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -341,25 +537,38 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Media.SoundPlayer" /> instance is cast to an <see cref="T:System.Runtime.Serialization.ISerializable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> method.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" />  to populate with data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="Tag">
-      <MemberSignature Language="C#" Value="public object Tag { set; get; }" />
+      <MemberSignature Language="C#" Value="public object Tag { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Tag" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Object" /> that contains data about the <see cref="T:System.Media.SoundPlayer" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

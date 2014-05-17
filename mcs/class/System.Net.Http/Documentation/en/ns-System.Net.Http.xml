@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Net.Http">
+  <Docs>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Net.Http" /> namespace provides a programming interface for modern HTTP applications.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Net.Http" /> namespace is designed to provide the following: </para>
+      <list type="ordered">
+        <item>
+          <para>HTTP client components that allow users to consume modern web services over HTTP.</para>
+        </item>
+        <item>
+          <para>HTTP components that can be used by both clients and servers (HTTP headers and messages, for example). This provides a consistent programming model on both the client and the server side for modern web services over HTTP.</para>
+        </item>
+      </list>
+      <para>The <see cref="N:System.Net.Http" /> namespace and the related <see cref="N:System.Net.Http.Headers" /> namespace provide the following set of components:</para>
+      <list type="ordered">
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.HttpClient" /> - the primary class used to send and receive requests over HTTP. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.HttpRequestMessage" /> and <see cref="T:System.Net.Http.HttpResponseMessage" /> - HTTP messages as defined in RFC 2616 by the IETF. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.Headers.HttpHeaders" /> - HTTP headers as defined in RFC 2616 by the IETF. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.HttpClientHandler" /> - HTTP handlers responsible for producing HTTP response messages. </para>
+        </item>
+      </list>
+      <para>There are various HTTP message handles that can be used. These include the following. </para>
+      <list type="ordered">
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.DelegatingHandler" /> - A class used to plug a handler into a handler chain.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.HttpMessageHandler" /> - A simple to class to derive from that supports the most common requirements for most applications.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.HttpClientHandler" /> - A class that operates at the bottom of the handler chain that actually handles the HTTP transport operations.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.WebRequestHandler" /> - A specialty class that operates at the bottom of the handler chain class that handles HTTP transport operations with options that are specific to the <see cref="T:System.Net.HttpWebRequest" /> object.</para>
+        </item>
+      </list>
+      <para>The contents of an HTTP message corresponds to the entity body defined in RFC 2616.</para>
+      <para>A number of classes can be used for HTTP content. These include the following.</para>
+      <list type="ordered">
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.ByteArrayContent" /> - HTTP content based on a byte array.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.FormUrlEncodedContent" /> - HTTP content of name/value tuples encoded using application/x-www-form-urlencoded MIME type.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.MultipartContent" /> - HTTP content that gets serialized using the multipart/* content type specification. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.MultipartFormDataContent" /> - HTTP content encoded using the multipart/form-data MIME type.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.StreamContent" /> - HTTP content based on a stream. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Net.Http.StringContent" /> - HTTP content based on a string.</para>
+        </item>
+      </list>
+      <para>If an app using the <see cref="N:System.Net.Http" /> and <see cref="N:System.Net.Http.Headers" /> namespaces intends to download large amounts of data (50 megabytes or more), then the app should stream those downloads and not use the default buffering. If the default buffering is used the client memory usage will get very large, potentially resulting in substantially reduced performance.</para>
+      <para>Classes in the <see cref="N:System.Net.Http" /> and <see cref="N:System.Net.Http.Headers" /> namespaces can be used to develop Windows Store apps or desktop apps. When used in a Windows Store app, classes in the <see cref="N:System.Net.Http" /> and <see cref="N:System.Net.Http.Headers" /> namespaces are affected by network isolation feature, part of the application security model used by the win8. The appropriate network capabilities must be enabled in the app manifest for a Windows Store app for the system to allow network access by a Windows store app. For more information, see the <format type="text/html"><a href="b064497c-d956-46b8-838d-7a0223c7e200">Network Isolation for Windows Store Apps</a></format>. </para>
+    </remarks>
+  </Docs>
+</Namespace>

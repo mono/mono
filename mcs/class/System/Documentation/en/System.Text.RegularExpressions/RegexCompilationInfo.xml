@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegexCompilationInfo" FullName="System.Text.RegularExpressions.RegexCompilationInfo">
   <TypeSignature Language="C#" Value="public class RegexCompilationInfo" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit RegexCompilationInfo extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,13 +16,26 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An array of <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> objects is passed to the <see cref="M:System.Text.RegularExpressions.Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName)" /> method to provide information about each regular expression to be included in the assembly. Each compiled regular expression that is included in the assembly is represented as a class derived from <see cref="T:System.Text.RegularExpressions.Regex" />. The properties of the <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> type define the regular expression's class name, its fully qualified name (that is, its namespace and its type name), its regular expression pattern, any additional options (such as whether the regular expression is case-insensitive), and a time-out interval that specifies how long the regular expression engine should search for a match.</para>
+      <para>You can instantiate a <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> object by calling its overloaded class constructor. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about a regular expression that is used to compile a regular expression to a stand-alone assembly. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public RegexCompilationInfo (string pattern, System.Text.RegularExpressions.RegexOptions options, string name, string fullnamespace, bool ispublic);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string pattern, valuetype System.Text.RegularExpressions.RegexOptions options, string name, string fullnamespace, bool ispublic) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="pattern" Type="System.String" />
@@ -29,108 +45,157 @@
         <Parameter Name="ispublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="pattern">To be added: an object of type 'string'</param>
-        <param name="options">To be added: an object of type 'RegexOptions'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="fullnamespace">To be added: an object of type 'string'</param>
-        <param name="ispublic">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each parameter of the <see cref="M:System.Text.RegularExpressions.RegexCompilationInfo.#ctor(System.String,System.Text.RegularExpressions.RegexOptions,System.String,System.String,System.Boolean)" /> constructor directly corresponds to a property of the <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> class. Because all properties are read/write, their values can also be assigned directly. </para>
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName)" /> method generates an assembly that contains compiled regular expressions. Therefore, you should not specify <see cref="F:System.Text.RegularExpressions.RegexOptions.Compiled" /> as one of the values of <paramref name="options" />. </para>
+          <para>If <paramref name="ispublic" /> is true, the compiled regular expression class is given public accessibility. That is, it can be instantiated from code that executes in any assembly. If <paramref name="ispublic" /> is false, the compiled regular expression class is given internal (in C#) or Friend (in Visual Basic) accessibility. That is, it can be instantiated only from code that executes in the same assembly as the regular expression class.   </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> class that contains information about a regular expression to be included in an assembly. </para>
+        </summary>
+        <param name="pattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The regular expression to compile. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The regular expression options to use when compiling the regular expression. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type that represents the compiled regular expression. </param>
+        <param name="fullnamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to which the new type belongs. </param>
+        <param name="ispublic">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to make the compiled regular expression publicly visible; otherwise, false. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsPublic">
+      <MemberSignature Language="C#" Value="public bool IsPublic { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPublic" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsPublic">
-      <MemberSignature Language="C#" Value="public bool IsPublic { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.IsPublic" /> property is false, the regular expression class defined by the current instance can be instantiated only by code that is executing in the assembly that contains the class. However, because the <see cref="M:System.Text.RegularExpressions.Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName)" /> method generates an assembly that contains only compiled regular expressions and does not allow additional code to be added, there is generally no reason to assign this property a value of false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the compiled regular expression has public visibility.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> class is used to define a compiled regular expression, which is represented as a class derived from <see cref="T:System.Text.RegularExpressions.Regex" />. The <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Name" /> property defines the class name of the regular expression type, and the <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Namespace" /> and <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Name" /> properties together define its fully qualified name. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the type that represents the compiled regular expression.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Namespace">
-      <MemberSignature Language="C#" Value="public string Namespace { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> class is used to define a compiled regular expression, which is represented as a class derived from <see cref="T:System.Text.RegularExpressions.Regex" />. The <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Namespace" /> property defines the namespace that contains the compiled regular expression type, and the <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Namespace" /> and <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Name" /> properties together define its fully qualified name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace to which the new type belongs.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Options">
+      <MemberSignature Language="C#" Value="public System.Text.RegularExpressions.RegexOptions Options { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Text.RegularExpressions.RegexOptions Options" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Options">
-      <MemberSignature Language="C#" Value="public System.Text.RegularExpressions.RegexOptions Options { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'RegexOptions'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName)" /> method generates an assembly that contains compiled regular expressions. Therefore, you do not have to specify <see cref="F:System.Text.RegularExpressions.RegexOptions.Compiled" /> as one of the values of this property. If it is present, the <see cref="F:System.Text.RegularExpressions.RegexOptions.Compiled" /> option is ignored. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the options to use when compiling the regular expression.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Pattern">
+      <MemberSignature Language="C#" Value="public string Pattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Pattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Pattern">
-      <MemberSignature Language="C#" Value="public string Pattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Pattern" /> property can contain any valid regular expression. If the value of the <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Pattern" /> property is not a syntactically correct regular expression pattern, the call to the <see cref="M:System.Text.RegularExpressions.Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName)" /> method throws an <see cref="T:System.ArgumentException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the regular expression to compile.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

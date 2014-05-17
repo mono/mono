@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CreateParams" FullName="System.Windows.Forms.CreateParams">
   <TypeSignature Language="C#" Value="public class CreateParams" />
   <AssemblyInfo>
@@ -10,8 +11,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The information in a <see cref="T:System.Windows.Forms.CreateParams" /> can be used to pass information about the initial state and appearance of a control. Most <see cref="T:System.Windows.Forms.Control" /> derived controls override the <see cref="P:System.Windows.Forms.Control.CreateParams" /> property to pass in the appropriate values or include additional information in the <see cref="T:System.Windows.Forms.CreateParams" />.</para>
+      <para>For more information about creating control parameters, see the CreateWindow and CreateWindowEx functions and the CREATESTRUCT structure documentation in the Windows Platform SDK reference located in the MSDN Library.</para>
+      <block subset="none" type="note">
+        <para>The constants used to set the <see cref="P:System.Windows.Forms.CreateParams.Style" />, <see cref="P:System.Windows.Forms.CreateParams.ExStyle" />, and <see cref="P:System.Windows.Forms.CreateParams.ClassStyle" /> properties are defined in the Winuser.h header file. This file is installed by the Platform SDK or Visual Studio.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the information needed when creating a control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +30,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.CreateParams" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +48,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the control's initial text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,9 +67,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for this property is null, indicating that the control is not derived from an existing control class. To derive from an existing control class, store the system class name in this property. For example, to derive from the standard <see cref="T:System.Windows.Forms.Button" /> control, set this property to "BUTTON".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the Windows class to derive the control from.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +89,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.CreateParams.ClassStyle" /> property is ignored if the <see cref="P:System.Windows.Forms.CreateParams.ClassName" /> property is not null.</para>
+          <para>For more information about creating control parameters, see the CreateWindow and CreateWindowEx functions and the CREATESTRUCT structure documentation in the Windows Platform SDK reference located in the MSDN Library.</para>
+          <block subset="none" type="note">
+            <para>The constants used to set the <see cref="P:System.Windows.Forms.CreateParams.Style" />, <see cref="P:System.Windows.Forms.CreateParams.ExStyle" />, and <see cref="P:System.Windows.Forms.CreateParams.ClassStyle" /> properties are defined in the Winuser.h header file. This file is installed by the Platform SDK or Visual Studio.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a bitwise combination of class style values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +115,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.CreateParams.ExStyle" /> property supports extended appearance and initial state values to apply to the control.</para>
+          <para>For more information about creating control parameters, see the CreateWindow and CreateWindowEx functions and the CREATESTRUCT structure documentation in the Windows Platform SDK reference located in the MSDN Library.</para>
+          <block subset="none" type="note">
+            <para>The constants used to set the <see cref="P:System.Windows.Forms.CreateParams.Style" />, <see cref="P:System.Windows.Forms.CreateParams.ExStyle" />, and <see cref="P:System.Windows.Forms.CreateParams.ClassStyle" /> properties are defined in the Winuser.h header file. This file is installed by the Platform SDK or Visual Studio.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a bitwise combination of extended window style values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +141,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the initial height of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,9 +160,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are creating a multiple document interface (MDI) client window, the <see cref="P:System.Windows.Forms.CreateParams.Param" /> property must reference a CLIENTCREATESTRUCT structure.</para>
+          <para>For more information about creating control parameters, see the CreateWindow and CreateWindowEx functions and the CLIENTCREATESTRUCT structure documentation in the Windows Platform SDK reference located in the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets additional parameter information needed to create the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,9 +183,12 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the control's parent.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,9 +202,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.CreateParams.Style" /> property controls the appearance of the control and its initial state.</para>
+          <para>For more information about creating control parameters, see the CreateWindow and CreateWindowEx functions and the CREATESTRUCT structure documentation in the Windows Platform SDK reference located in the MSDN Library.</para>
+          <block subset="none" type="note">
+            <para>The constants used to set the <see cref="P:System.Windows.Forms.CreateParams.Style" />, <see cref="P:System.Windows.Forms.CreateParams.ExStyle" />, and <see cref="P:System.Windows.Forms.CreateParams.ClassStyle" /> properties are defined in the Winuser.h header file. This file is installed by the Platform SDK or Visual Studio.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a bitwise combination of window style values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -179,9 +245,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the initial width of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,9 +264,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the initial left position of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -211,9 +283,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the top position of the initial location of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

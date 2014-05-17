@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WsdlImporter" FullName="System.ServiceModel.Description.WsdlImporter">
+  <TypeSignature Language="C#" Value="public class WsdlImporter : System.ServiceModel.Description.MetadataImporter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WsdlImporter extends System.ServiceModel.Description.MetadataImporter" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Description.MetadataImporter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> class to import metadata as well as convert that information into various classes that represent contract and endpoint information.</para>
+      <para>The base class for <see cref="T:System.ServiceModel.Description.WsdlImporter" />, the <see cref="T:System.ServiceModel.Description.MetadataImporter" /> class, defines methods that selectively import contract and endpoint information and properties that expose any import errors and accept type information relevant to the import and conversion process. The <see cref="T:System.ServiceModel.Description.WsdlImporter" /> type uses the custom policy importers (<see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> implementations) from its parent type to handle custom policy statements and its own custom WSDL importers (<see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> implementations) to handle custom WSDL elements. For details, see <format type="text/html"><a href="8c6b3b00-61b8-4589-8fa5-546cc33719bf">Extending the Metadata System</a></format>. </para>
+      <para>When importing policy from WSDL documents, the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> type will try up to 32 combinations of policy alternatives attached to the different WSDL policy subjects.  If no combination imports cleanly, the first combination is used to construct a partial custom binding. </para>
+      <para>In addition to these methods and properties, <see cref="T:System.ServiceModel.Description.WsdlImporter" /> also implements methods that support importing binding information and properties that provide access to any policy documents, WSDL documents, WSDL extensions, and XML schema documents. For information about extending <see cref="T:System.ServiceModel.Description.WsdlImporter" /> to support custom WSDL elements, see <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" />.</para>
+      <para>Typically the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> class is used in a three-step process.</para>
+      <list type="ordered">
+        <item>
+          <para>Create a <see cref="T:System.ServiceModel.Description.WsdlImporter" /> object and pass a <see cref="T:System.ServiceModel.Description.MetadataSet" /> object to the constructor.</para>
+        </item>
+        <item>
+          <para>Call the appropriate Import method to retrieve the results.</para>
+        </item>
+        <item>
+          <para>Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>When importing WSDL port types, if the QName of the port type matches an entry in the <see cref="P:System.ServiceModel.Description.MetadataImporter.KnownContracts" /> dictionary then the port type is not imported and the known contract is used instead.</para>
+      </block>
+      <para>No values are returned from the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> properties until one of the import methods is called. Custom <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> objects can either be loaded into the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> programmatically or using the client configuration <format type="text/html"><a href="270c7f93-eab7-47b6-8b94-ac3f5b7f17e4">&lt;wsdlImporters&gt;</a></format> element.</para>
+      <para>Metadata that has been imported as service endpoints cannot be used to create a runtime or export metadata because the imported endpoints contain no managed type information. To use the metadata to create a client or service runtime or to generate metadata, you must first generate and compile code from the metadata and use that type information to create a new <see cref="T:System.ServiceModel.Description.ContractDescription" /> object using <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Imports Web Services Description Language (WSDL) 1.1 metadata with WS-Policy attachments.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WsdlImporter (System.ServiceModel.Description.MetadataSet metadata);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Description.MetadataSet metadata) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="metadata" Type="System.ServiceModel.Description.MetadataSet" />
+      </Parameters>
+      <Docs>
+        <param name="metadata">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.#ctor(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.MetadataSection})" /> constructor to create a <see cref="T:System.ServiceModel.Description.WsdlImporter" /> object from a set of metadata documents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WsdlImporter (System.ServiceModel.Description.MetadataSet metadata, System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.IPolicyImportExtension&gt; policyImportExtensions, System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.IWsdlImportExtension&gt; wsdlImportExtensions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Description.MetadataSet metadata, class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.IPolicyImportExtension&gt; policyImportExtensions, class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.IWsdlImportExtension&gt; wsdlImportExtensions) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="metadata" Type="System.ServiceModel.Description.MetadataSet" />
+        <Parameter Name="policyImportExtensions" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.IPolicyImportExtension&gt;" />
+        <Parameter Name="wsdlImportExtensions" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.IWsdlImportExtension&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="metadata">To be added.</param>
+        <param name="policyImportExtensions">To be added.</param>
+        <param name="wsdlImportExtensions">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to control the metadata to be imported and the policy and WSDL importers to be used. </para>
+          <block subset="none" type="note">
+            <para>If custom policy importers or custom WSDL importers are passed to this constructor any custom importers specified in application configuration files are not loaded. If you want to add a custom importer, you must reconstruct the importers collections prior to using this constructor. See the Example section.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ServiceModel.Description.WsdlImporter" /> object from the specified metadata, custom policy importers, and custom WSDL importers.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportAllBindings">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Channels.Binding&gt; ImportAllBindings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Channels.Binding&gt; ImportAllBindings() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Channels.Binding&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportAllBindings" /> method to import all binding information from the metadata documents and return them as <see cref="T:System.ServiceModel.Channels.Binding" /> objects. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned objects.</para>
+          <para>To import a specific WSDL binding, see the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportBinding(System.Web.Services.Description.Binding)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a set of <see cref="T:System.ServiceModel.Channels.Binding" /> objects imported from the metadata documents.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of <see cref="T:System.ServiceModel.Channels.Binding" /> objects imported from the metadata documents.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportAllContracts">
+      <MemberSignature Language="C#" Value="public override System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ContractDescription&gt; ImportAllContracts ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ContractDescription&gt; ImportAllContracts() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ContractDescription&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportAllContracts" /> method to import all WSDL port type information from the metadata documents and return them as <see cref="T:System.ServiceModel.Description.ContractDescription" /> objects. It is recommended to check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned objects.</para>
+          <para>To import only one port type, see the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportContract(System.Web.Services.Description.PortType)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a set of <see cref="T:System.ServiceModel.Description.ContractDescription" /> objects that represent port type information in the metadata documents.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of <see cref="T:System.ServiceModel.Description.ContractDescription" /> objects that represent port type information in the metadata documents.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportAllEndpoints">
+      <MemberSignature Language="C#" Value="public override System.ServiceModel.Description.ServiceEndpointCollection ImportAllEndpoints ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ServiceModel.Description.ServiceEndpointCollection ImportAllEndpoints() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportAllEndpoints" /> method to import all endpoint information from the metadata documents and return them as a collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned objects.</para>
+          <para>To import only a specific WSDL port, see the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportEndpoint(System.Web.Services.Description.Port)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents the endpoints in WSDL documents.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents the endpoints in WSDL documents.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportBinding">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Binding ImportBinding (System.Web.Services.Description.Binding binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.Binding ImportBinding(class System.Web.Services.Description.Binding binding) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Binding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binding" Type="System.Web.Services.Description.Binding" />
+      </Parameters>
+      <Docs>
+        <param name="binding">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportBinding(System.Web.Services.Description.Binding)" /> method to use a <see cref="T:System.Web.Services.Description.Binding" /> object to locate binding information in the metadata and return that binding information as a <see cref="T:System.ServiceModel.Channels.Binding" /> object. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Channels.Binding" /> object that represents binding information from a set of metadata documents.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Binding" /> object that represents binding information from a set of metadata documents.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportContract">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ContractDescription ImportContract (System.Web.Services.Description.PortType wsdlPortType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ContractDescription ImportContract(class System.Web.Services.Description.PortType wsdlPortType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ContractDescription</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="wsdlPortType" Type="System.Web.Services.Description.PortType" />
+      </Parameters>
+      <Docs>
+        <param name="wsdlPortType">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportContract(System.Web.Services.Description.PortType)" /> method to use a <see cref="T:System.Web.Services.Description.PortType" /> object to locate port type information in the metadata and return that information as a <see cref="T:System.ServiceModel.Description.ContractDescription" /> object. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.ContractDescription" /> object that represents metadata located by the specified port type information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ContractDescription" /> object that represents metadata located by the specified port type information.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportEndpoint">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint ImportEndpoint (System.Web.Services.Description.Port wsdlPort);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint ImportEndpoint(class System.Web.Services.Description.Port wsdlPort) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="wsdlPort" Type="System.Web.Services.Description.Port" />
+      </Parameters>
+      <Docs>
+        <param name="wsdlPort">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportEndpoint(System.Web.Services.Description.Port)" /> method to use a <see cref="T:System.Web.Services.Description.Port" /> object to locate port type information in the metadata and return that information as a <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> object. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> from a set of metadata documents that uses information from the specified <see cref="T:System.Web.Services.Description.Port" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> object that represents specific WSDL port information in the metadata document.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportEndpoints">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpointCollection ImportEndpoints (System.Web.Services.Description.Binding binding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpointCollection ImportEndpoints(class System.Web.Services.Description.Binding binding) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binding" Type="System.Web.Services.Description.Binding" />
+      </Parameters>
+      <Docs>
+        <param name="binding">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types using the specified <see cref="T:System.Web.Services.Description.Binding" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types using the specified <see cref="T:System.Web.Services.Description.Binding" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportEndpoints">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpointCollection ImportEndpoints (System.Web.Services.Description.PortType portType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpointCollection ImportEndpoints(class System.Web.Services.Description.PortType portType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="portType" Type="System.Web.Services.Description.PortType" />
+      </Parameters>
+      <Docs>
+        <param name="portType">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types associated with the specified <see cref="T:System.Web.Services.Description.PortType" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types associated with the specified <see cref="T:System.Web.Services.Description.PortType" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportEndpoints">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpointCollection ImportEndpoints (System.Web.Services.Description.Service service);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpointCollection ImportEndpoints(class System.Web.Services.Description.Service service) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="service" Type="System.Web.Services.Description.Service" />
+      </Parameters>
+      <Docs>
+        <param name="service">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types within the specified <see cref="T:System.Web.Services.Description.Service" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types within the specified <see cref="T:System.Web.Services.Description.Service" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="WsdlDocuments">
+      <MemberSignature Language="C#" Value="public System.Web.Services.Description.ServiceDescriptionCollection WsdlDocuments { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.Services.Description.ServiceDescriptionCollection WsdlDocuments" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Services.Description.ServiceDescriptionCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.WsdlImporter.WsdlDocuments" /> property is not populated until an import method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects that describe the contract information in the metadata documents.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WsdlImportExtensions">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IWsdlImportExtension&gt; WsdlImportExtensions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.KeyedByTypeCollection`1&lt;class System.ServiceModel.Description.IWsdlImportExtension&gt; WsdlImportExtensions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IWsdlImportExtension&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.WsdlImporter.WsdlImportExtensions" /> property to add or remove custom WSDL importers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> objects used to import custom WSDL information.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="XmlSchemas">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet XmlSchemas { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaSet XmlSchemas" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not populated until one of the import methods is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of <see cref="T:System.Xml.Schema.XmlSchema" /> objects that describe types in the metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

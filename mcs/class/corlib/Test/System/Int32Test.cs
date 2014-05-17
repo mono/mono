@@ -252,6 +252,18 @@ public class Int32Test
 			Assert.IsTrue (typeof (ArgumentException) == e.GetType (), "C#42");
 		}
 
+		try {
+			Int32.Parse ("５", NumberStyles.Any, CultureInfo.InvariantCulture);
+			Assert.Fail ("C#42");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int32.Parse ("\xFF15\xFF15", NumberStyles.Any, CultureInfo.InvariantCulture);
+			Assert.Fail ("C#43");
+		} catch (FormatException) {
+		}
+
 		// Pass a DateTimeFormatInfo, it is unable to format
 		// numbers, but we should not crash
 		
@@ -265,7 +277,7 @@ public class Int32Test
 		Assert.AreEqual (0, Int32.Parse ("0+", NumberStyles.Any), "#50");
 	}
 
-    [Test]
+	[Test]
 	public void TestParseExponent ()
 	{
 		Assert.AreEqual (2, Int32.Parse ("2E0", NumberStyles.AllowExponent), "A#1");
@@ -278,6 +290,7 @@ public class Int32Test
 		Assert.AreEqual (520, Int32.Parse (".52E3", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#8");
 		Assert.AreEqual (32500000, Int32.Parse ("32.5E6", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#9");
 		Assert.AreEqual (890, Int32.Parse ("8.9000E2", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#10");
+		Assert.AreEqual (35, Int32.Parse ("3500E-02", NumberStyles.AllowExponent), "A#5");
 
 		try {
 			Int32.Parse ("2E");
@@ -317,9 +330,9 @@ public class Int32Test
 		}
 
 		try {
-			Int32.Parse ("2E-1", NumberStyles.AllowExponent); // negative exponent
+			Int32.Parse ("2E-1", NumberStyles.AllowExponent);
 			Assert.Fail ("B#7");
-		} catch (OverflowException) {
+		} catch (OverflowException){
 		}
 
 		try {
@@ -332,7 +345,7 @@ public class Int32Test
 			Int32.Parse ("2.09E1",  NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent);
 			Assert.Fail ("B#9");
 		} catch (OverflowException) {
-		}		
+		}
 	}
 
 	[Test]

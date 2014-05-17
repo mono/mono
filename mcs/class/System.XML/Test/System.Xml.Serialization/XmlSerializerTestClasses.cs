@@ -432,6 +432,7 @@ namespace MonoTests.System.Xml.TestClasses
 	public class ReadOnlyProperties
 	{
 		string[] strArr = new string[2] { "string1", "string2" };
+		List<string> strList = new List<string> { "listString1" };
 
 		public string[] StrArr
 		{
@@ -442,7 +443,20 @@ namespace MonoTests.System.Xml.TestClasses
 		{
 			get { return "fff"; }
 		}
+
+		public IList<string> StrList { get { return strList; } }
 	}
+
+	[Serializable]
+	public class ReadOnlyListProperty {
+		List<string> strList = new List<string> { "listString1", "listString2" };
+
+		public List<string> StrList
+		{
+			get { return strList; }
+		}
+	}
+
 
 	[XmlRoot ("root")]
 	public class ListDefaults

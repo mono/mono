@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ReaderWriterLockSlim" FullName="System.Threading.ReaderWriterLockSlim">
+  <TypeSignature Language="C#" Value="public class ReaderWriterLockSlim : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ReaderWriterLockSlim extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Threading.ReaderWriterLockSlim" /> to protect a resource that is read by multiple threads and written to by one thread at a time. <see cref="T:System.Threading.ReaderWriterLockSlim" /> allows multiple threads to be in read mode, allows one thread to be in write mode with exclusive ownership of the lock, and allows one thread that has read access to be in upgradeable read mode, from which the thread can upgrade to write mode without having to relinquish its read access to the resource.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Threading.ReaderWriterLockSlim" /> is similar to <see cref="T:System.Threading.ReaderWriterLock" />, but it has simplified rules for recursion and for upgrading and downgrading lock state. <see cref="T:System.Threading.ReaderWriterLockSlim" /> avoids many cases of potential deadlock. In addition, the performance of <see cref="T:System.Threading.ReaderWriterLockSlim" /> is significantly better than <see cref="T:System.Threading.ReaderWriterLock" />. <see cref="T:System.Threading.ReaderWriterLockSlim" /> is recommended for all new development.</para>
+      </block>
+      <para>By default, new instances of <see cref="T:System.Threading.ReaderWriterLockSlim" /> are created with the <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" /> flag and do not allow recursion. This default policy is recommended for all new development, because recursion introduces unnecessary complications and makes your code more prone to deadlocks. To simplify migration from existing projects that use <see cref="T:System.Threading.Monitor" /> or <see cref="T:System.Threading.ReaderWriterLock" />, you can use the <see cref="F:System.Threading.LockRecursionPolicy.SupportsRecursion" /> flag to create instances of <see cref="T:System.Threading.ReaderWriterLockSlim" /> that allow recursion.</para>
+      <para>A thread can enter the lock in three modes: read mode, write mode, and upgradeable read mode. (In the rest of this topic, "upgradeable read mode" is referred to as "upgradeable mode", and the phrase "enter <paramref name="x" /> mode" is used in preference to the longer phrase "enter the lock in <paramref name="x" /> mode".)</para>
+      <para>Regardless of recursion policy, only one thread can be in write mode at any time. When a thread is in write mode, no other thread can enter the lock in any mode. Only one thread can be in upgradeable mode at any time. Any number of threads can be in read mode, and there can be one thread in upgradeable mode while other threads are in read mode. </para>
+      <para>
+        <see cref="T:System.Threading.ReaderWriterLockSlim" /> has managed thread affinity; that is, each <see cref="T:System.Threading.Thread" /> object must make its own method calls to enter and exit lock modes. No thread can change the mode of another thread. </para>
+      <para>If a <see cref="T:System.Threading.ReaderWriterLockSlim" /> does not allow recursion, a thread that tries to enter the lock can block for several reasons:</para>
+      <list type="bullet">
+        <item>
+          <para>A thread that tries to enter read mode blocks if there are threads waiting to enter write mode or if there is a single thread in write mode.</para>
+          <block subset="none" type="note">
+            <para>Blocking new readers when writers are queued is a lock fairness policy that favors writers. The current fairness policy balances fairness to readers and writers, to promote throughput in the most common scenarios. Future versions of the dnprdnshort may introduce new fairness policies. </para>
+          </block>
+        </item>
+        <item>
+          <para>A thread that tries to enter upgradeable mode blocks if there is already a thread in upgradeable mode, if there are threads waiting to enter write mode, or if there is a single thread in write mode. </para>
+        </item>
+        <item>
+          <para>A thread that tries to enter write mode blocks if there is a thread in any of the three modes. </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Upgrading and Downgrading Locks</h2>
+      </format>
+      <para>Upgradeable mode is intended for cases where a thread usually reads from the protected resource, but might need to write to it if some condition is met. A thread that has entered a <see cref="T:System.Threading.ReaderWriterLockSlim" /> in upgradeable mode has read access to the protected resource, and can upgrade to write mode by calling the <see cref="M:System.Threading.ReaderWriterLockSlim.EnterWriteLock" /> or <see cref="Overload:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock" /> methods. Because there can be only one thread in upgradeable mode at a time, upgrading to write mode cannot deadlock when recursion is not allowed, which is the default policy.</para>
+      <block subset="none" type="note">
+        <para>Regardless of recursion policy, a thread that initially entered read mode is not allowed to upgrade to upgradeable mode or write mode, because that pattern creates a strong probability of deadlocks. For example, if two threads in read mode both try to enter write mode, they will deadlock. Upgradeable mode is designed to avoid such deadlocks.</para>
+      </block>
+      <para>If there are other threads in read mode, the thread that is upgrading blocks. While the thread is blocked, other threads that try to enter read mode are blocked. When all threads have exited from read mode, the blocked upgradeable thread enters write mode. If there are other threads waiting to enter write mode, they remain blocked, because the single thread that is in upgradeable mode prevents them from gaining exclusive access to the resource. </para>
+      <para>When the thread in upgradeable mode exits write mode, other threads that are waiting to enter read mode can do so, unless there are threads waiting to enter write mode. The thread in upgradeable mode can upgrade and downgrade indefinitely, as long as it is the only thread that writes to the protected resource. </para>
+      <block subset="none" type="note">
+        <para>If you allow multiple threads to enter write mode or upgradeable mode, you must not allow one thread to monopolize upgradeable mode. Otherwise, threads that try to enter write mode directly will be blocked indefinitely, and while they are blocked, other threads will be unable to enter read mode.</para>
+      </block>
+      <para>A thread in upgradeable mode can downgrade to read mode by first calling the <see cref="M:System.Threading.ReaderWriterLockSlim.EnterReadLock" /> method and then calling the <see cref="M:System.Threading.ReaderWriterLockSlim.ExitUpgradeableReadLock" /> method. This downgrade pattern is allowed for all lock recursion policies, even <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />. </para>
+      <para>After downgrading to read mode, a thread cannot reenter upgradeable mode until it has exited from read mode.</para>
+      <format type="text/html">
+        <h2>Entering the Lock Recursively</h2>
+      </format>
+      <para>You can create a <see cref="T:System.Threading.ReaderWriterLockSlim" /> that supports recursive lock entry by using the <see cref="M:System.Threading.ReaderWriterLockSlim.#ctor(System.Threading.LockRecursionPolicy)" /> constructor that specifies lock policy, and specifying <see cref="F:System.Threading.LockRecursionPolicy.SupportsRecursion" />. </para>
+      <block subset="none" type="note">
+        <para>The use of recursion is not recommended for new development, because it introduces unnecessary complications and makes your code more prone to deadlocks.</para>
+      </block>
+      <para>For a <see cref="T:System.Threading.ReaderWriterLockSlim" /> that allows recursion, the following can be said about the modes a thread can enter:</para>
+      <list type="bullet">
+        <item>
+          <para>A thread in read mode can enter read mode recursively, but cannot enter write mode or upgradeable mode. If it tries to do this, a <see cref="T:System.Threading.LockRecursionException" /> is thrown. Entering read mode and then entering write mode or upgradeable mode is a pattern with a strong probability of deadlocks, so it is not allowed. As discussed earlier, upgradeable mode is provided for cases where it is necessary to upgrade a lock. </para>
+        </item>
+        <item>
+          <para>A thread in upgradeable mode can enter write mode and/or read mode, and can enter any of the three modes recursively. However, an attempt to enter write mode blocks if there are other threads in read mode.</para>
+        </item>
+        <item>
+          <para>A thread in write mode can enter read mode and/or upgradeable mode, and can enter any of the three modes recursively. </para>
+        </item>
+        <item>
+          <para>A thread that has not entered the lock can enter any mode. This attempt can block for the same reasons as an attempt to enter a non-recursive lock.</para>
+        </item>
+      </list>
+      <para>A thread can exit the modes it has entered in any order, as long as it exits each mode exactly as many times as it entered that mode. If a thread tries to exit a mode too many times, or to exit a mode it has not entered, a <see cref="T:System.Threading.SynchronizationLockException" /> is thrown.</para>
+      <format type="text/html">
+        <h2>Lock States</h2>
+      </format>
+      <para>You may find it useful to think of the lock in terms of its states. A <see cref="T:System.Threading.ReaderWriterLockSlim" /> can be in one of four states: not entered, read, upgrade, and write.</para>
+      <list type="bullet">
+        <item>
+          <para>Not entered: In this state, no threads have entered the lock (or all threads have exited the lock).</para>
+        </item>
+        <item>
+          <para>Read: In this state, one or more threads have entered the lock for read access to the protected resource. </para>
+          <block subset="none" type="note">
+            <para>A thread can enter the lock in read mode by using the <see cref="M:System.Threading.ReaderWriterLockSlim.EnterReadLock" /> or <see cref="Overload:System.Threading.ReaderWriterLockSlim.TryEnterReadLock" /> methods, or by downgrading from upgradeable mode. </para>
+          </block>
+        </item>
+        <item>
+          <para>Upgrade: In this state, one thread has entered the lock for read access with the option to upgrade to write access (that is, in upgradeable mode), and zero or more threads have entered the lock for read access. No more than one thread at a time can enter the lock with the option to upgrade; additional threads that try to enter upgradeable mode are blocked.</para>
+        </item>
+        <item>
+          <para>Write: In this state, one thread has entered the lock for write access to the protected resource. That thread has exclusive possession of the lock. Any other thread that tries to enter the lock for any reason is blocked.</para>
+        </item>
+      </list>
+      <para>The following table describes the transitions between lock states, for locks that do not allow recursion, when a thread <paramref name="t" /> takes the action described in the leftmost column. At the time it takes the action, <paramref name="t" /> has no mode. (The special case where <paramref name="t" /> is in upgradeable mode is described in the table footnotes.) The top row describes the starting state of the lock. The cells describe what happens to the thread, and show changes to the lock state in parentheses.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para> </para>
+            </term>
+            <description>
+              <para>Not entered (N)</para>
+            </description>
+            <description>
+              <para>Read (R)</para>
+            </description>
+            <description>
+              <para>Upgrade (U)</para>
+            </description>
+            <description>
+              <para>Write (W)</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <paramref name="t" /> enters read mode</para>
+          </term>
+          <description>
+            <para>
+              <paramref name="t" /> enters (R).</para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks if threads are waiting for write mode; otherwise, <paramref name="t" /> enters.</para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks if threads are waiting for write mode; otherwise, <paramref name="t" /> enters.<superscript>1</superscript></para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <paramref name="t" /> enters upgradeable mode</para>
+          </term>
+          <description>
+            <para>
+              <paramref name="t" /> enters (U).</para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks if threads are waiting for write mode or upgrade mode; otherwise, <paramref name="t" /> enters (U).</para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks.</para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <paramref name="t" /> enters write mode</para>
+          </term>
+          <description>
+            <para>
+              <paramref name="t" /> enters (W).</para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks.</para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks.<superscript>2</superscript></para>
+          </description>
+          <description>
+            <para>
+              <paramref name="t" /> blocks. </para>
+          </description>
+        </item>
+      </list>
+      <para>
+        <superscript>1</superscript> If <paramref name="t" /> starts out in upgradeable mode, it enters read mode. This action never blocks. The lock state does not change. (The thread can then complete a downgrade to read mode by exiting upgradeable mode.)</para>
+      <para>
+        <superscript>2</superscript> If <paramref name="t" /> starts out in upgradeable mode, it blocks if there are threads in read mode. Otherwise it upgrades to write mode. The lock state changes to Write (W). If <paramref name="t" /> blocks because there are threads in read mode, it enters write mode as soon as the last thread exits read mode, even if there are threads waiting to enter write mode.</para>
+      <para>When a state change occurs because a thread exits the lock, the next thread to be awakened is selected as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>First, a thread that is waiting for write mode and is already in upgradeable mode (there can be at most one such thread).</para>
+        </item>
+        <item>
+          <para>Failing that, a thread that is waiting for write mode.</para>
+        </item>
+        <item>
+          <para>Failing that, a thread that is waiting for upgradeable mode.</para>
+        </item>
+        <item>
+          <para>Failing that, all threads that are waiting for read mode. </para>
+        </item>
+      </list>
+      <para>The subsequent state of the lock is always Write (W) in the first two cases and Upgrade (U) in the third case, regardless of the state of the lock when the exiting thread triggered the state change. In the last case, the state of the lock is Upgrade (U) if there is a thread in upgradeable mode after the state change, and Read (R) otherwise, regardless of the prior state.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a lock that is used to manage access to a resource, allowing multiple threads for reading or exclusive access for writing.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ReaderWriterLockSlim ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.ReaderWriterLockSlim" /> that is initialized with this constructor does not allow recursion. That is, the <see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> property returns <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />. </para>
+          <para>For more information about recursion policy and its effects, see the <see cref="T:System.Threading.LockRecursionPolicy" /> enumeration and the <see cref="T:System.Threading.ReaderWriterLockSlim" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.ReaderWriterLockSlim" /> class with default property values.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ReaderWriterLockSlim (System.Threading.LockRecursionPolicy recursionPolicy);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Threading.LockRecursionPolicy recursionPolicy) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="recursionPolicy" Type="System.Threading.LockRecursionPolicy" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Recursion policy determines the restrictions on threads that enter the lock more than once. For example, if a lock was created with <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" /> and a thread has entered the lock in read mode, <see cref="T:System.Threading.LockRecursionException" /> is thrown if the thread tries to reenter the lock in read mode. Similarly, if a thread has entered the lock in write mode, <see cref="T:System.Threading.LockRecursionException" /> is thrown if the thread tries to reenter the lock in any mode. </para>
+          <block subset="none" type="note">
+            <para>A thread in upgradeable mode can upgrade to write mode or downgrade to read mode regardless of the lock recursion policy setting. </para>
+          </block>
+          <para>Regardless of recursion policy, a thread that initially entered read mode is not allowed to upgrade to upgradeable mode or write mode, because that pattern creates a strong probability of deadlocks. </para>
+          <para>For more information about recursion policy and its effects, see the <see cref="T:System.Threading.LockRecursionPolicy" /> enumeration and the <see cref="T:System.Threading.ReaderWriterLockSlim" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.ReaderWriterLockSlim" /> class, specifying the lock recursion policy.</para>
+        </summary>
+        <param name="recursionPolicy">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the lock recursion policy. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentReadCount">
+      <MemberSignature Language="C#" Value="public int CurrentReadCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CurrentReadCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread is counted only once, even if the lock allows recursion and the thread has entered read mode multiple times.</para>
+          <para>Use this property only for debugging, profiling, and logging purposes, and not to control the behavior of an algorithm. The results can change as soon as they have been calculated. Therefore, it is not safe to make decisions based on this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of unique threads that have entered the lock in read mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Threading.ReaderWriterLockSlim.Dispose" /> when you are finished using the <see cref="T:System.Threading.ReaderWriterLockSlim" />. The <see cref="M:System.Threading.ReaderWriterLockSlim.Dispose" /> method leaves the <see cref="T:System.Threading.ReaderWriterLockSlim" /> in an unusable state. After calling <see cref="M:System.Threading.ReaderWriterLockSlim.Dispose" />, you must release all references to the <see cref="T:System.Threading.ReaderWriterLockSlim" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Threading.ReaderWriterLockSlim" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Threading.ReaderWriterLockSlim.Dispose" /> before you release your last reference to the <see cref="T:System.Threading.ReaderWriterLockSlim" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Threading.ReaderWriterLockSlim" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Threading.ReaderWriterLockSlim" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EnterReadLock">
+      <MemberSignature Language="C#" Value="public void EnterReadLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnterReadLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks until the calling thread enters the lock, and therefore might never return. Use the <see cref="Overload:System.Threading.ReaderWriterLockSlim.TryEnterReadLock" /> method to block for a specified interval, and then return if the calling thread has not entered read mode during that interval. </para>
+          <para>Multiple threads can enter read mode at the same time.</para>
+          <para>If one or more threads are waiting to enter write mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.EnterReadLock" /> method blocks until those threads have either timed out or entered write mode and then exited from it.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in read mode can enter read mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+          <para>At most one thread can be in upgradeable mode while other threads are in read mode. If additional threads are waiting to enter upgradeable mode, and there are no threads waiting to enter write mode, threads that call the <see cref="M:System.Threading.ReaderWriterLockSlim.EnterReadLock" /> method enter read mode immediately and do not block.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in read mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EnterUpgradeableReadLock">
+      <MemberSignature Language="C#" Value="public void EnterUpgradeableReadLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnterUpgradeableReadLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks until the calling thread enters the lock, and therefore might never return. Use the <see cref="Overload:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock" /> method to block for a specified interval, and then return if the calling thread has not entered upgradeable mode during that interval.</para>
+          <para>Use upgradeable mode when a thread usually accesses the resource that is protected by the <see cref="T:System.Threading.ReaderWriterLockSlim" /> in read mode, but may need to enter write mode if certain conditions are met. A thread in upgradeable mode can downgrade to read mode or upgrade to write mode.</para>
+          <para>Only one thread can enter upgradeable mode at any given time. If a thread is in upgradeable mode, and there are no threads waiting to enter write mode, any number of other threads can enter read mode, even if there are threads waiting to enter upgradeable mode.</para>
+          <para>If one or more threads are waiting to enter write mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock" /> method blocks until those threads have either timed out or entered write mode and then exited from it.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in upgradeable mode can enter upgradeable mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in upgradeable mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EnterWriteLock">
+      <MemberSignature Language="C#" Value="public void EnterWriteLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnterWriteLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks until the calling thread enters the lock, and therefore might never return. Use the <see cref="Overload:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock" /> method to block for a specified interval, and then return if the calling thread has not entered write mode during that interval.</para>
+          <para>If other threads have entered the lock in read mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.EnterWriteLock" /> method blocks until those threads have exited read mode. When there are threads waiting to enter write mode, additional threads that try to enter read mode or upgradeable mode block until all the threads waiting to enter write mode have either timed out or entered write mode and then exited from it.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in write mode can enter write mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in write mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExitReadLock">
+      <MemberSignature Language="C#" Value="public void ExitReadLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ExitReadLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not sensitive to recursion order. For example, if a thread enters a lock in upgradeable mode and then enters the lock in read mode, the order in which the thread exits the two modes does not matter. If a lock allows recursion, a thread can enter the lock in write mode and then enter it recursively in read mode; the order in which the thread exits read mode and write mode does not matter. </para>
+          <para>Exiting the lock might signal other waiting threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reduces the recursion count for read mode, and exits read mode if the resulting count is 0 (zero).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExitUpgradeableReadLock">
+      <MemberSignature Language="C#" Value="public void ExitUpgradeableReadLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ExitUpgradeableReadLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not sensitive to recursion order. For example, if a thread enters a lock in upgradeable mode and then enters the lock in write mode, the order in which the thread exits the two modes does not matter. If a lock allows recursion, a thread can enter the lock in write mode and then enter it recursively in upgradeable mode; the order in which the thread exits upgradeable mode and write mode does not matter. </para>
+          <para>Exiting the lock might signal other waiting threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reduces the recursion count for upgradeable mode, and exits upgradeable mode if the resulting count is 0 (zero).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExitWriteLock">
+      <MemberSignature Language="C#" Value="public void ExitWriteLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ExitWriteLock() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not sensitive to recursion order. For example, if a thread enters a lock in upgradeable mode and then enters the lock in write mode, the order in which the thread exits the two modes does not matter. If a lock allows recursion, a thread can enter the lock in write mode and then enter it recursively in read mode; the order in which the thread exits read mode and write mode does not matter. </para>
+          <para>Exiting the lock might signal other waiting threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reduces the recursion count for write mode, and exits write mode if the resulting count is 0 (zero).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReadLockHeld">
+      <MemberSignature Language="C#" Value="public bool IsReadLockHeld { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadLockHeld" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is intended for use in asserts or for other debugging purposes. Do not use it to control the flow of program execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current thread has entered the lock in read mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsUpgradeableReadLockHeld">
+      <MemberSignature Language="C#" Value="public bool IsUpgradeableReadLockHeld { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsUpgradeableReadLockHeld" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is intended for use in asserts or for other debugging purposes. Do not use it to control the flow of program execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current thread has entered the lock in upgradeable mode. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsWriteLockHeld">
+      <MemberSignature Language="C#" Value="public bool IsWriteLockHeld { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsWriteLockHeld" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is intended for use in asserts or for other debugging purposes. Do not use it to control the flow of program execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current thread has entered the lock in write mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RecursionPolicy">
+      <MemberSignature Language="C#" Value="public System.Threading.LockRecursionPolicy RecursionPolicy { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.LockRecursionPolicy RecursionPolicy" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.LockRecursionPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Recursion policy determines the restrictions on threads that enter the lock more than once. For example, if a lock was created with <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" /> and a thread has entered the lock in read mode, <see cref="T:System.Threading.LockRecursionException" /> is thrown if the thread tries to reenter the lock in read mode. </para>
+          <block subset="none" type="note">
+            <para>A thread in upgradeable mode can upgrade to write mode or downgrade to read mode regardless of the lock recursion policy setting. </para>
+          </block>
+          <para>Regardless of recursion policy, a thread that initially entered read mode is not allowed to upgrade to upgradeable mode or write mode, because that pattern creates a strong probability of deadlocks. </para>
+          <para>For more information about recursion policy and its effects, see the <see cref="T:System.Threading.LockRecursionPolicy" /> enumeration and the <see cref="T:System.Threading.ReaderWriterLockSlim" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the recursion policy for the current <see cref="T:System.Threading.ReaderWriterLockSlim" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RecursiveReadCount">
+      <MemberSignature Language="C#" Value="public int RecursiveReadCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 RecursiveReadCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property only for debugging, profiling, and logging purposes, and not to control the behavior of an algorithm. The results can change as soon as they have been calculated. Therefore, it is not safe to make decisions based on this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of times the current thread has entered the lock in read mode, as an indication of recursion.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RecursiveUpgradeCount">
+      <MemberSignature Language="C#" Value="public int RecursiveUpgradeCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 RecursiveUpgradeCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property only for debugging, profiling, and logging purposes, and not to control the behavior of an algorithm. The results can change as soon as they have been calculated. Therefore, it is not safe to make decisions based on this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of times the current thread has entered the lock in upgradeable mode, as an indication of recursion.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RecursiveWriteCount">
+      <MemberSignature Language="C#" Value="public int RecursiveWriteCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 RecursiveWriteCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property only for debugging, profiling, and logging purposes, and not to control the behavior of an algorithm. The results can change as soon as they have been calculated. Therefore, it is not safe to make decisions based on this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of times the current thread has entered the lock in write mode, as an indication of recursion.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterReadLock">
+      <MemberSignature Language="C#" Value="public bool TryEnterReadLock (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryEnterReadLock(int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="millisecondsTimeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
+          <para>Multiple threads can enter read mode at the same time.</para>
+          <para>If one or more threads are waiting to enter write mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterReadLock(System.Int32)" /> method blocks until those threads have either timed out or entered write mode and then exited from it, or until the calling thread's own time-out interval expires.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in read mode can enter read mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+          <para>One thread can be in upgradeable mode while other threads are in read mode. If additional threads are waiting to enter upgradeable mode, and there are no threads waiting to enter write mode, threads that call the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterReadLock(System.Int32)" /> method enter read mode immediately and do not block.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in read mode, with an optional integer time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered read mode, otherwise, false.</para>
+        </returns>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or -1 (<see cref="F:System.Threading.Timeout.Infinite" />) to wait indefinitely.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterReadLock">
+      <MemberSignature Language="C#" Value="public bool TryEnterReadLock (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryEnterReadLock(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="timeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
+          <para>Multiple threads can enter the lock in read mode at the same time.</para>
+          <para>If one or more threads are queued to enter write mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterReadLock(System.TimeSpan)" /> method blocks until those threads have either timed out or entered write mode and then exited from it, or until the calling thread's own time-out interval expires.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in read mode can enter read mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+          <para>One thread can be in upgradeable mode while other threads are in read mode. If additional threads are waiting to enter upgradeable mode, and there are no threads waiting to enter write mode, threads that call the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterReadLock(System.TimeSpan)" /> method enter read mode immediately and do not block.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in read mode, with an optional time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered read mode, otherwise, false.</para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The interval to wait, or -1 milliseconds to wait indefinitely. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterUpgradeableReadLock">
+      <MemberSignature Language="C#" Value="public bool TryEnterUpgradeableReadLock (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryEnterUpgradeableReadLock(int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="millisecondsTimeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
+          <para>Use upgradeable mode when a thread usually accesses the resource that is protected by the <see cref="T:System.Threading.ReaderWriterLockSlim" /> in read mode, but may need to enter write mode if certain conditions are met. A thread in upgradeable mode can upgrade to write mode or downgrade to read mode. </para>
+          <para>Only one thread can enter a lock in upgradeable mode at any given time. If a thread is in upgradeable mode, and there are no threads waiting to enter write mode, any number of other threads can enter read mode, even if there are threads waiting to enter upgradeable mode.</para>
+          <para>If one or more threads are waiting to enter write mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock(System.Int32)" /> method blocks until those threads have either timed out or entered write mode and then exited from it, or until the calling thread's own time-out interval expires.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in upgradeable mode can enter upgradeable mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in upgradeable mode, with an optional time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered upgradeable mode, otherwise, false.</para>
+        </returns>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or -1 (<see cref="F:System.Threading.Timeout.Infinite" />) to wait indefinitely.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterUpgradeableReadLock">
+      <MemberSignature Language="C#" Value="public bool TryEnterUpgradeableReadLock (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryEnterUpgradeableReadLock(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="timeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
+          <para>Use upgradeable mode when a thread usually accesses the resource protected by the <see cref="T:System.Threading.ReaderWriterLockSlim" /> in read mode, but may need to enter write mode if certain conditions are met. A thread in upgradeable mode can upgrade to write mode or downgrade to read mode. </para>
+          <para>Only one thread can enter a lock in upgradeable mode at any given time. If a thread is in upgradeable mode, and there are no threads waiting to enter write mode, any number of other threads can enter read mode, even if there are threads waiting to enter upgradeable mode.</para>
+          <para>If one or more threads are waiting to enter write mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock(System.Int32)" /> method blocks until those threads have either timed out or entered write mode and then exited from it, or until the calling thread's own time-out interval expires.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in upgradeable mode can enter upgradeable mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in upgradeable mode, with an optional time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered upgradeable mode, otherwise, false.</para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The interval to wait, or -1 milliseconds to wait indefinitely.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterWriteLock">
+      <MemberSignature Language="C#" Value="public bool TryEnterWriteLock (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryEnterWriteLock(int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="millisecondsTimeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
+          <para>If other threads have entered the lock in read mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock(System.Int32)" /> method blocks until those threads have exited read mode or until the time-out interval has elapsed. While threads are blocked waiting to enter write mode, additional threads that try to enter read mode or upgradeable mode block until all the threads waiting to enter write mode have either timed out or entered write mode and then exited from it.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in write mode can enter write mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in write mode, with an optional time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered write mode, otherwise, false.</para>
+        </returns>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or -1 (<see cref="F:System.Threading.Timeout.Infinite" />) to wait indefinitely.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryEnterWriteLock">
+      <MemberSignature Language="C#" Value="public bool TryEnterWriteLock (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryEnterWriteLock(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="timeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
+          <para>If other threads have entered the lock in read mode, a thread that calls the <see cref="M:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock(System.Int32)" /> method blocks until those threads have exited read mode or until the time-out interval has elapsed. While threads are blocked waiting to enter write mode, additional threads that try to enter read mode or upgradeable mode block until all the threads waiting to enter write mode have either timed out or entered write mode and then exited from it.</para>
+          <block subset="none" type="note">
+            <para>If a lock allows recursion, a thread that has entered the lock in write mode can enter write mode recursively, even if other threads are waiting to enter write mode. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to enter the lock in write mode, with an optional time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered write mode, otherwise, false.</para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The interval to wait, or -1 milliseconds to wait indefinitely.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitingReadCount">
+      <MemberSignature Language="C#" Value="public int WaitingReadCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WaitingReadCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property only for debugging, profiling, and logging purposes, and not to control the behavior of an algorithm. The results can change as soon as they have been calculated. Therefore, it is not safe to make decisions based on this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of threads that are waiting to enter the lock in read mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitingUpgradeCount">
+      <MemberSignature Language="C#" Value="public int WaitingUpgradeCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WaitingUpgradeCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property only for debugging, profiling, and logging purposes, and not to control the behavior of an algorithm. The results can change as soon as they have been calculated. Therefore, it is not safe to make decisions based on this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of threads that are waiting to enter the lock in upgradeable mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitingWriteCount">
+      <MemberSignature Language="C#" Value="public int WaitingWriteCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WaitingWriteCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property only for debugging, profiling, and logging purposes, and not to control the behavior of an algorithm. The results can change as soon as they have been calculated. Therefore, it is not safe to make decisions based on this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of threads that are waiting to enter the lock in write mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

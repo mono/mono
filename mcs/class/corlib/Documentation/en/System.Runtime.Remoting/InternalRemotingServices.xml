@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InternalRemotingServices" FullName="System.Runtime.Remoting.InternalRemotingServices">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class InternalRemotingServices" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit InternalRemotingServices extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,40 +14,45 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines utility methods for use by the .NET Framework remoting infrastructure.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public InternalRemotingServices ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.InternalRemotingServices" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DebugOutChnl">
       <MemberSignature Language="C#" Value="public static void DebugOutChnl (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void DebugOutChnl(string s) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="s" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +63,34 @@
           <AttributeName>System.Diagnostics.Conditional("_LOGGING")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a message concerning a remoting channel to an unmanaged debugger. </para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to place in the message.</param>
+      </Docs>
     </Member>
     <Member MemberName="GetCachedSoapAttribute">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Metadata.SoapAttribute GetCachedSoapAttribute (object reflectionObject);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.Metadata.SoapAttribute GetCachedSoapAttribute(object reflectionObject) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Metadata.SoapAttribute</ReturnType>
       </ReturnValue>
@@ -67,33 +98,28 @@
         <Parameter Name="reflectionObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="reflectionObject">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Metadata.SoapAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class. </para>
+          <para>A "_LOGGING" preprocessing symbol is applied to the method by means of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+          <para>The <see cref="T:System.Runtime.Remoting.Metadata.SoapAttribute" /> class is the base class for various SOAP-related attribute classes in the <see cref="N:System.Runtime.Remoting.Metadata" /> namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an appropriate SOAP-related attribute for the specified class member or method parameter. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAP-related attribute for the specified class member or method parameter.</para>
+        </returns>
+        <param name="reflectionObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A class member or method parameter.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemotingAssert">
       <MemberSignature Language="C#" Value="public static void RemotingAssert (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemotingAssert(bool condition, string message) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="condition" Type="System.Boolean" />
-        <Parameter Name="message" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="condition">To be added: an object of type 'bool'</param>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,10 +130,43 @@
           <AttributeName>System.Diagnostics.Conditional("_DEBUG")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+          <para>A "_DEBUG" preprocessing symbol is applied to the method by means of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs an internal debugger to check for a condition and display a message if the condition is false. </para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to prevent a message from being displayed; otherwise, false.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display if <paramref name="condition" /> is false.</param>
+      </Docs>
     </Member>
     <Member MemberName="RemotingTrace">
       <MemberSignature Language="C#" Value="public static void RemotingTrace (object[] messages);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemotingTrace(object[] messages) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Conditional("_LOGGING")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -121,37 +180,23 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="messages">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+          <para>A "_LOGGING" preprocessing symbol is applied to the method by means of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends any number of messages concerning remoting channels to an internal debugger. </para>
+        </summary>
+        <param name="messages">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Object" /> that contains any number of messages.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("_LOGGING")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="SetServerIdentity">
       <MemberSignature Language="C#" Value="public static void SetServerIdentity (System.Runtime.Remoting.Messaging.MethodCall m, object srvID);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetServerIdentity(class System.Runtime.Remoting.Messaging.MethodCall m, object srvID) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="m" Type="System.Runtime.Remoting.Messaging.MethodCall" />
-        <Parameter Name="srvID" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="m">To be added: an object of type 'Messaging.MethodCall'</param>
-        <param name="srvID">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -162,11 +207,27 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="m" Type="System.Runtime.Remoting.Messaging.MethodCall" />
+        <Parameter Name="srvID" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets internal identifying information for a remoted server object for each method call from client to server.</para>
+        </summary>
+        <param name="m">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Remoting.Messaging.MethodCall" /> that represents a method call on a remote object.</param>
+        <param name="srvID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal identifying information for a remoted server object.</param>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

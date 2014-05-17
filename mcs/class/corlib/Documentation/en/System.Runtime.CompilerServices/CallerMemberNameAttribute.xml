@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallerMemberNameAttribute" FullName="System.Runtime.CompilerServices.CallerMemberNameAttribute">
+  <TypeSignature Language="C#" Value="public sealed class CallerMemberNameAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CallerMemberNameAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Parameter, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You apply the <unmanagedCodeEntityReference>CallerMemberName</unmanagedCodeEntityReference> attribute to an optional parameter that has a default value. You must specify an explicit default value for the optional parameter. You can't apply this attribute to parameters that aren't specified as optional.</para>
+      <para>For more information, see <format type="text/html"><a href="9cb2b8c0-c4f6-44b8-9c90-38948455b373">Caller Information (C# and Visual Basic)</a></format>.</para>
+      <para>You can use the <unmanagedCodeEntityReference>CallerMemberName</unmanagedCodeEntityReference> attribute to avoid specifying the member name as a String argument to the called method. By using this technique, you avoid the problem that <ui>Rename Refactoring</ui> doesn't change the String values. This is especially useful for the following tasks:</para>
+      <list type="bullet">
+        <item>
+          <para>Using tracing and diagnostic routines.</para>
+        </item>
+        <item>
+          <para>Implementing the <see cref="T:System.ComponentModel.INotifyPropertyChanged" /> interface when binding data. This interface allows the property of an object to notify a bound control that the property has changed, so that the control can display the updated information. Without the <unmanagedCodeEntityReference>CallerMemberName</unmanagedCodeEntityReference> attribute, you must specify the property name as a literal.</para>
+        </item>
+      </list>
+      <para>The following chart shows the member names that are returned when you use the <unmanagedCodeEntityReference>CallerMemberName</unmanagedCodeEntityReference> attribute.</para>
+      <list type="table">
+        <item>
+          <term>
+            <para>Call occurs within</para>
+          </term>
+          <description>
+            <para>Member name result</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Method, property, or event</para>
+          </term>
+          <description>
+            <para>The name of the method, property, or event from which the call originated.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Constructor</para>
+          </term>
+          <description>
+            <para>The string ".ctor"</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Static constructor</para>
+          </term>
+          <description>
+            <para>The string ".cctor"</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Destructor</para>
+          </term>
+          <description>
+            <para>The string "Finalize"</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>User-defined operators or conversions</para>
+          </term>
+          <description>
+            <para>The generated name for the member, for example, "op_Addition".</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Attribute constructor</para>
+          </term>
+          <description>
+            <para>The name of the member to which the attribute is applied. If the attribute is any element within a member (such as a parameter, a return value, or a generic type parameter), this result is the name of the member that's associated with that element.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>No containing member (for example, assembly-level or attributes applied to types)</para>
+          </term>
+          <description>
+            <para>The default value of the optional parameter.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows you to obtain the method or property name of the caller to the method.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CallerMemberNameAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.CallerMemberNameAttribute" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

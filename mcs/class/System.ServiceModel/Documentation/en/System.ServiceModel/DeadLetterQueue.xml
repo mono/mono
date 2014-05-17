@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DeadLetterQueue" FullName="System.ServiceModel.DeadLetterQueue">
+  <TypeSignature Language="C#" Value="public enum DeadLetterQueue" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DeadLetterQueue extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The dead-letter queue is a queue on the queue manager of the sending application for expired messages that have failed to be delivered. The <see cref="T:System.ServiceModel.DeadLetterQueue" /> enumeration specifies the type of dead-letter queue to use. The values are:</para>
+      <list type="bullet">
+        <item>
+          <para>None: No dead-letter queue is required. If a message fails delivery, no record of it is maintained in the dead-letter queue. This is the default value when <see cref="P:System.ServiceModel.MsmqBindingBase.ExactlyOnce" /> is set to false.</para>
+        </item>
+        <item>
+          <para>System: The system-wide, dead-letter queue is used to record messages that fail delivery. MSMQ has a transactional, system, dead-letter queue and a non-transactional, system, dead-letter queue to record expired messages that failed delivery from transactional and non-transactional queues, respectively. This is the default value when <see cref="P:System.ServiceModel.MsmqBindingBase.ExactlyOnce" /> is set to true.</para>
+        </item>
+        <item>
+          <para>Custom: The queue specified in the <see cref="P:System.ServiceModel.MsmqBindingBase.CustomDeadLetterQueue" /> is used to record messages that fail delivery.</para>
+        </item>
+      </list>
+      <para>A message can fail to reach the receiving application for any of the following reasons: </para>
+      <list type="bullet">
+        <item>
+          <para>A transactional message is sent to a non-transactional queue.</para>
+        </item>
+        <item>
+          <para>A non-transactional message is sent to a transactional queue.</para>
+        </item>
+        <item>
+          <para>An unauthenticated message is sent to a queue that accepts only authenticated messages.</para>
+        </item>
+        <item>
+          <para>An unencrypted message is sent to a queue that accepts only encrypted messages.</para>
+        </item>
+        <item>
+          <para>The message's time-to-live value expires before the message is delivered to a receiver.</para>
+        </item>
+        <item>
+          <para>The message storage quota of the target computer or the storage quota of the destination queue is exceeded, or there is no available storage space on the target computer when the message arrives.</para>
+        </item>
+        <item>
+          <para>The sender does not have the <see cref="http://go.microsoft.com/fwlink/?LinkID=96167">access rights</see> required to place the message in the destination queue.</para>
+        </item>
+        <item>
+          <para>The digital signature attached to the message is not valid.</para>
+        </item>
+        <item>
+          <para>An encrypted message cannot be decrypted by the destination queue manager.</para>
+        </item>
+        <item>
+          <para>The destination queue is purged or deleted before the message is retrieved.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of dead-letter queue to be used.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Custom">
+      <MemberSignature Language="C#" Value="Custom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.DeadLetterQueue Custom = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.DeadLetterQueue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom dead-letter queue.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.DeadLetterQueue None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.DeadLetterQueue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No dead-letter queue is to be used.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System">
+      <MemberSignature Language="C#" Value="System" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.DeadLetterQueue System = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.DeadLetterQueue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the system-wide, dead-letter queue.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

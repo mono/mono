@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaValidationFlags" FullName="System.Xml.Schema.XmlSchemaValidationFlags">
   <TypeSignature Language="C#" Value="public enum XmlSchemaValidationFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlSchemaValidationFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -13,14 +16,123 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following are notes to consider when using <see cref="T:System.Xml.Schema.XmlSchemaValidationFlags" /> values with the <see cref="T:System.Xml.XmlReader" />.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Xml.Schema.XmlSchemaValidationFlags" /> values define validation options used by a schema validating <see cref="T:System.Xml.XmlReader" /> to perform XML validation against a schema. <see cref="T:System.Xml.Schema.XmlSchemaValidationFlags" /> values for a validating <see cref="T:System.Xml.XmlReader" /> are specified using the <see cref="P:System.Xml.XmlReaderSettings.ValidationFlags" /> property.</para>
+        </item>
+      </list>
+      <para>The following are notes to consider when using the <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> value.</para>
+      <list type="ordered">
+        <item>
+          <para>When a schema doesn’t import the Xml namespace.</para>
+          <list type="ordered">
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true (default) and the instance document contains Xml attributes, the validation engine will load a snapshot of the default Xml namespace schema and use it for validation. If Xml attributes used in the instance document are not found in the default schema, the document will not validate.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to false and the instance document contains Xml attributes, the validation engine will report an error.</para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>When a schema imports the Xml namespace without a location.</para>
+          <list type="ordered">
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true (default) and the instance document contains Xml attributes, the validation engine will use the default Xml namespace schema for validation. If Xml attributes used in the instance document are not found in the default schema, the document will not validate. </para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to false and the instance document contains Xml attributes that are not explicitly allowed by the schema, the validation engine will report an error.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to false and the instance document contains Xml attributes that are explicitly allowed by the schema, the validation engine will validate the attributes the same way it validates other attributes using the default Xml namespace schema.</para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>When a schema imports a custom Xml namespace schema with a custom schemaLocation.</para>
+          <list type="ordered">
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true (default) and the instance document contains Xml attributes, the validation engine will use the custom Xml namespace schema for validation. If Xml attributes used in the instance document are not found in the specified schema, the document will not validate.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to false and the instance document contains Xml attributes that are not explicitly allowed by the schema, the validation engine will report an error.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to false and the instance document contains Xml attributes that are explicitly allowed by the schema, the validation engine will validate the attributes the same way it validates other attributes using specified Xml namespace schema.</para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>When a schema defines an xml:* attribute with use="required".</para>
+          <list type="ordered">
+            <item>
+              <para>The following applies when <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true and false. Required xml:* attributes should be treated as other attributes and validated using the specified Xml namespace schema.</para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>When a schema defines an xml:* attribute with use="prohibited".</para>
+          <list type="ordered">
+            <item>
+              <para>The following applies when <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true and false. If an instance document contains xml:* attributes that are explicitly prohibited by the schema, the validation engine will report an error.</para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>When a schema specifies an attribute wildcard.</para>
+          <list type="ordered">
+            <item>
+              <para>If an instance document contains an Xml attribute and the schema specifies an attribute wildcard with processContents either omitted or set to "strict", the validation engine will use the Xml namespace schema present in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. If no Xml namespace schema is specified, the validation engine will behave as follows.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true, the validation engine will use the default Xml namespace schema to perform validation.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to false, the validation engine will report an error.</para>
+            </item>
+            <item>
+              <para>If an instance document contains an Xml attribute and the schema specifies an attribute wildcard with processContents set to "skip", the validation engine will skip attribute validation.</para>
+            </item>
+            <item>
+              <para>If an instance document contains an Xml attribute and the schema specifies an attribute wildcard with processContents set to "lax", the validation engine will use the Xml namespace schema present in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. If no Xml namespace schema is specified, the validation engine will behave as follows.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true, the validation engine will use the default Xml namespace schema to perform validation.</para>
+            </item>
+            <item>
+              <para>If <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to false, attribute validation will not be performed.</para>
+            </item>
+          </list>
+        </item>
+        <item>
+          <para>When validating simple types.</para>
+          <list type="ordered">
+            <item>
+              <para>When <see cref="F:System.Xml.Schema.XmlSchemaValidationFlags.AllowXmlAttributes" /> is set to true (default), Xml attributes will be allowed on elements of simple types.</para>
+            </item>
+          </list>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies schema validation options used by the <see cref="T:System.Xml.Schema.XmlSchemaValidator" /> and <see cref="T:System.Xml.XmlReader" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllowXmlAttributes">
       <MemberSignature Language="C#" Value="AllowXmlAttributes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaValidationFlags AllowXmlAttributes = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("It is really idiotic idea to include such validation option that breaks W3C XML Schema specification compliance and interoperability.")</AttributeName>
@@ -30,82 +142,107 @@
         <ReturnType>System.Xml.Schema.XmlSchemaValidationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allow xml:* attributes even if they are not defined in the schema. The attributes will be validated based on their data type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaValidationFlags None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaValidationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not process identity constraints, inline schemas, schema location hints, or report schema validation warnings.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProcessIdentityConstraints">
       <MemberSignature Language="C#" Value="ProcessIdentityConstraints" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaValidationFlags ProcessIdentityConstraints = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaValidationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Process identity constraints (xs:ID, xs:IDREF, xs:key, xs:keyref, xs:unique) encountered during validation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProcessInlineSchema">
       <MemberSignature Language="C#" Value="ProcessInlineSchema" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaValidationFlags ProcessInlineSchema = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaValidationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Process inline schemas encountered during validation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProcessSchemaLocation">
       <MemberSignature Language="C#" Value="ProcessSchemaLocation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaValidationFlags ProcessSchemaLocation = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaValidationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Process schema location hints (xsi:schemaLocation, xsi:noNamespaceSchemaLocation) encountered during validation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReportValidationWarnings">
       <MemberSignature Language="C#" Value="ReportValidationWarnings" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Schema.XmlSchemaValidationFlags ReportValidationWarnings = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaValidationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Report schema validation warnings encountered during validation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

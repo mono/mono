@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ValueType" FullName="System.ValueType" FullNameSP="System_ValueType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable ValueType extends System.Object" />
   <TypeSignature Language="C#" Value="public abstract class ValueType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit ValueType extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,23 +16,12 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Provides support for value types. This class is the base class for all value types.</para>
-    </summary>
-    <remarks>
-      <block subset="none" type="note">
-        <para>Data types are separated into value types and reference
-         types. Value types are either stack-allocated or allocated inline in a
-         structure. Reference types are heap-allocated. Both reference and value types
-         are derived from the ultimate base class <see cref="T:System.Object" />. In cases where a value type needs to
-         act like an object, a wrapper that makes the value type look like a reference
-         object is allocated on the heap, and the value type's value is copied into it.
-         The wrapper is marked so that the system knows that it contains a value type.
-         This process is known as boxing, and the reverse process is known as unboxing.
-         Boxing and unboxing allow any type to be treated as an object.</para>
-      </block>
-    </remarks>
     <example>
       <para>In the following example, the number 3 is boxed as a <see cref="T:System.Int32" />, and <see cref="M:System.Int32.ToString" /> () is
    called.</para>
@@ -46,29 +37,54 @@ class Boxer {
         <para>Value is 3.</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ValueType" /> overrides the virtual methods from <see cref="T:System.Object" /> with more appropriate implementations for value types. See also <see cref="T:System.Enum" />, which inherits from <see cref="T:System.ValueType" />.</para>
+      <para>Data types are separated into value types and reference types. Value types are either stack-allocated or allocated inline in a structure. Reference types are heap-allocated. Both reference and value types are derived from the ultimate base class <see cref="T:System.Object" />. In cases where it is necessary for a value type to behave like an object, a wrapper that makes the value type look like a reference object is allocated on the heap, and the value type's value is copied into it. The wrapper is marked so the system knows that it contains a value type. This process is known as boxing, and the reverse process is known as unboxing. Boxing and unboxing allow any type to be treated as an object.</para>
+      <para>Although <see cref="T:System.ValueType" /> is the implicit base class for value types, you cannot create a class that inherits from <see cref="T:System.ValueType" /> directly. Instead, individual compilers provide a language keyword or construct (such as struct in C# and Structure…End Structure in Visual Basic) to support the creation of value types.</para>
+      <para>Aside from serving as the base class for value types in the .NET Framework, the <see cref="T:System.ValueType" /> structure is generally not used directly in code. However, it can be used as a parameter in method calls to restrict possible arguments to value types instead of all objects, or to permit a method to handle a number of different value types. The following example illustrates how <see cref="T:System.ValueType" /> prevents reference types from being passed to methods. It defines a class named Utility that contains four methods: IsNumeric, which indicates whether its argument is a number; IsInteger, which indicates whether its argument is an integer; IsFloat, which indicates whether its argument is a floating-point number; and Compare, which indicates the relationship between two numeric values. In each case, the method parameters are of type <see cref="T:System.ValueType" />, and reference types are prevented from being passed to the methods.</para>
+      <para>code reference: System.ValueType.Structure#1</para>
+      <para>The following example illustrates calls to the methods of the Utility class.</para>
+      <para>code reference: System.ValueType.Structure#2</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for value types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected ValueType ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>Constructs a new instance of the <see cref="T:System.ValueType" /> class.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ValueType" /> class. </para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -76,100 +92,96 @@ class Boxer {
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">The <see cref="T:System.Object" /> to compare the current instance to.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ValueType.Equals(System.Object)" /> method overrides <see cref="M:System.Object.Equals(System.Object)" /> and provides the default implementation of value equality for all value types in the .NET Framework. </para>
+          <para>If none of the fields of the current instance and <paramref name="obj" /> are reference types, the <see cref="M:System.ValueType.Equals(System.Object)" /> method performs a byte-by-byte comparison of the two objects in memory. Otherwise, it uses reflection to compare the corresponding fields of <paramref name="obj" /> and this instance. </para>
+          <block subset="none" type="note">
+            <para>Particularly if your value type contains fields that are reference types, you should override the <see cref="M:System.ValueType.Equals(System.Object)" /> method. This can improve performance and enable you to more closely represent the meaning of equality for the type. </para>
+          </block>
+          <format type="text/html">
+            <h2>Notes for the wrt</h2>
+          </format>
+          <para>When you call the <see cref="M:System.ValueType.Equals(System.Object)" /> method on a wrt structure, it provides the default behavior for value types that don’t override <see cref="M:System.ValueType.Equals(System.Object)" />. This is part of the support that the .NET Framework provides for the wrt (see <format type="text/html"><a href="6fa7d044-ae12-4c54-b8ee-50915607a565">.NET Framework Support for Windows Store Apps and Windows Runtime</a></format>). wrt structures can’t override <see cref="M:System.ValueType.Equals(System.Object)" />, even if they’re written with C# or Visual Basic, because they can’t have methods. (In addition, structures in the wrt itself don’t inherit <see cref="T:System.ValueType" />.) However, they appear to have <see cref="M:System.ValueType.ToString" />, <see cref="M:System.ValueType.Equals(System.Object)" />, and <see cref="M:System.ValueType.GetHashCode" /> methods when you use them in your C# or Visual Basic code, and the .NET Framework provides the default behavior for these methods. </para>
+        </remarks>
         <summary>
-          <para>Determines whether the current instance and a specified
-   <see cref="T:System.Object" /> represent the same value.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this instance and a specified object are equal.</para>
         </summary>
         <returns>
-          <para>
-            <see langword="true " />if <paramref name="obj" /> and the current
-   instance are of the same type and represent the same value; otherwise,
-<see langword="false" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false. </para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method
-      overrides <see cref="M:System.Object.Equals(System.Object)" />
-      .</block>
-          </para>
-        </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ValueType.GetHashCode" /> method applies to types derived from <see cref="T:System.ValueType" />. One or more fields of the derived type is used to calculate the return value. If you call the derived type's GetHashCode method, the return value is not likely to be suitable for use as a key in a hash table. Additionally, if the value of one or more of those fields changes, the return value might become unsuitable for use as a key in a hash table. In either case, consider writing your own implementation of the <see cref="M:System.ValueType.GetHashCode" /> method that more closely represents the concept of a hash code for the type. </para>
+          <para>For more information, see <see cref="M:System.Object.GetHashCode" />, and <see cref="T:System.Collections.Hashtable" />.</para>
+          <format type="text/html">
+            <h2>Notes for the wrt</h2>
+          </format>
+          <para>When you call the <see cref="M:System.ValueType.GetHashCode" /> method on a wrt structure, it provides the default behavior for value types that don’t override <see cref="M:System.ValueType.GetHashCode" />. This is part of the support that the .NET Framework provides for the wrt (see <format type="text/html"><a href="6fa7d044-ae12-4c54-b8ee-50915607a565">.NET Framework Support for Windows Store Apps and Windows Runtime</a></format>). wrt structures can’t override <see cref="M:System.ValueType.GetHashCode" />, even if they’re written with C# or Visual Basic, because they can’t have methods. (In addition, structures in the wrt itself don’t inherit <see cref="T:System.ValueType" />.) However, they appear to have <see cref="M:System.ValueType.ToString" />, <see cref="M:System.ValueType.Equals(System.Object)" />, and <see cref="M:System.ValueType.GetHashCode" /> methods when you use them in your C# or Visual Basic code, and the .NET Framework provides the default behavior for these methods. </para>
+        </remarks>
         <summary>
-          <para>Generates a hash code for the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that is the hash code for this instance.</para>
         </returns>
-        <remarks>
-          <para>The
-      algorithm used to generate the hash code is unspecified.</para>
-          <para>
-            <block subset="none" type="note">This method
-      overrides <see cref="M:System.Object.GetHashCode" />
-      
-      .</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you call the <see cref="M:System.ValueType.ToString" /> method on a wrt structure, it provides the default behavior for value types that don’t override <see cref="M:System.ValueType.ToString" />. This is part of the support that the .NET Framework provides for the wrt (see <format type="text/html"><a href="6fa7d044-ae12-4c54-b8ee-50915607a565">.NET Framework Support for Windows Store Apps and Windows Runtime</a></format>). wrt structures can’t override <see cref="M:System.ValueType.ToString" />, even if they’re written with C# or Visual Basic, because they can’t have methods. (In addition, structures in the wrt itself don’t inherit <see cref="T:System.ValueType" />.) However, they appear to have <see cref="M:System.ValueType.ToString" />, <see cref="M:System.ValueType.Equals(System.Object)" />, and <see cref="M:System.ValueType.GetHashCode" /> methods when you use them in your C# or Visual Basic code, and the .NET Framework provides the default behavior for these methods. </para>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the fully-qualified name of the type of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the fully qualified type name of this instance.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.String" /> representation of the fully-qualified name of
-   the type of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing a fully qualified type name.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para> This method overrides <see cref="M:System.Object.ToString" />.</para>
-            <para> This method returns the <see cref="P:System.Type.FullName" /> property. </para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

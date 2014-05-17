@@ -1,53 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventTypeFilter" FullName="System.Diagnostics.EventTypeFilter">
   <TypeSignature Language="C#" Value="public class EventTypeFilter : System.Diagnostics.TraceFilter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventTypeFilter extends System.Diagnostics.TraceFilter" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Diagnostics.TraceFilter</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>One of several different types of filters can be assigned to a trace listener through the <see cref="P:System.Diagnostics.TraceListener.Filter" /> property to provide a layer of screening beyond that provided by the <see cref="T:System.Diagnostics.TraceSwitch" />. The filter can be used to control the event types that are produced by the listener.</para>
+      <para>This class filters events based on the value of the <see cref="P:System.Diagnostics.EventTypeFilter.EventType" /> property.  This property can be set by code or in a configuration file to specify the event type of messages that should be traced by the listener. The value of the property indicates the threshold at which to begin tracing. Event types at and above the specified level are traced. The <see cref="M:System.Diagnostics.TraceFilter.ShouldTrace(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[],System.Object,System.Object[])" /> method, called by listeners  to determine if an event should be traced, uses the value of the <see cref="P:System.Diagnostics.EventTypeFilter.EventType" /> property.</para>
+      <para>To set the event type at which to begin tracing, edit the configuration file that corresponds to the name of your application. Within this file, you can add a listener, set its filter type, and specify the event type to trace. The configuration file should be formatted as follows. </para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;sharedListeners&gt;
+      &lt;add name="Console" type="System.Diagnostics.ConsoleTraceListener"&gt;
+        &lt;filter type="System.Diagnostics.EventTypeFilter" 
+          initializeData="Warning" /&gt;
+      &lt;/add&gt;
+    &lt;/sharedListeners&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+      <para>For more information about how to initialize data for an <see cref="T:System.Diagnostics.EventTypeFilter" />, see <format type="text/html"><a href="7d4e7faa-2e4e-4379-ac76-f6cd7f2f8fac">&lt;filter&gt; Element for &lt;add&gt; for &lt;sharedListeners&gt;</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether a listener should trace based on the event type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventTypeFilter (System.Diagnostics.SourceLevels eventType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Diagnostics.SourceLevels eventType) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="eventType" Type="System.Diagnostics.SourceLevels" />
       </Parameters>
       <Docs>
         <param name="eventType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="level" /> parameter is used to initialize the <see cref="P:System.Diagnostics.EventTypeFilter.EventType" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.EventTypeFilter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventType">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceLevels EventType { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceLevels EventType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.SourceLevels EventType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.EventTypeFilter.EventType" /> property indicates the level at which to trace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the event type of the messages to trace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShouldTrace">
       <MemberSignature Language="C#" Value="public override bool ShouldTrace (System.Diagnostics.TraceEventCache cache, string source, System.Diagnostics.TraceEventType eventType, int id, string formatOrMessage, object[] args, object data1, object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool ShouldTrace(class System.Diagnostics.TraceEventCache cache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string formatOrMessage, object[] args, object data1, object[] data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -63,17 +103,34 @@
         <Parameter Name="data" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="cache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="formatOrMessage">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="data1">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <paramref name="eventType" /> parameter is greater than or equal to the value of the <see cref="P:System.Diagnostics.EventTypeFilter.EventType" /> property, the method returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the trace listener should trace the event. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>trueif the trace should be produced; otherwise, false.</para>
+        </returns>
+        <param name="cache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> that represents the information cache for the trace event.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values. </param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A trace identifier number.</param>
+        <param name="formatOrMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format to use for writing an array of arguments, or a message to write.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of argument objects.</param>
+        <param name="data1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A trace data object.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of trace data objects.</param>
       </Docs>
     </Member>
   </Members>

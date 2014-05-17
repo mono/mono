@@ -1,22 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AsyncOperation" FullName="System.ComponentModel.AsyncOperation">
   <TypeSignature Language="C#" Value="public sealed class AsyncOperation" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AsyncOperation extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you implement a class according to the <format type="text/html"><a href="792aa8da-918b-458e-b154-9836b97735f3">Event-based Asynchronous Pattern Overview</a></format>, you may need to track the lifetime of each asynchronous operation invoked on an instance of your class. The <see cref="T:System.ComponentModel.AsyncOperation" /> class provides ways to track and report the progress of an asynchronous task.</para>
+      <para>The following list identifies ways to use an <see cref="T:System.ComponentModel.AsyncOperation" /> object: </para>
+      <list type="bullet">
+        <item>
+          <para>To report progress and interim results to the client, call <see cref="M:System.ComponentModel.AsyncOperation.Post(System.Threading.SendOrPostCallback,System.Object)" /> from your asynchronous worker code.</para>
+        </item>
+        <item>
+          <para>To indicate that an asynchronous task has completed, or to cancel a pending asynchronous task, call <see cref="M:System.ComponentModel.AsyncOperation.PostOperationCompleted(System.Threading.SendOrPostCallback,System.Object)" />.</para>
+        </item>
+      </list>
+      <para>Your class should get an <see cref="T:System.ComponentModel.AsyncOperation" /> object for each asynchronous task by calling <see cref="M:System.ComponentModel.AsyncOperationManager.CreateOperation(System.Object)" /> when each task starts. To allow the client to distinguish separate asynchronous tasks, <see cref="M:System.ComponentModel.AsyncOperationManager.CreateOperation(System.Object)" /> takes a parameter for a unique client-provided token, which becomes the <see cref="P:System.ComponentModel.AsyncOperation.UserSuppliedState" /> property. It can then be used by client code to identify the particular asynchronous task that is raising progress or completion events.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Tracks the lifetime of an asynchronous operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~AsyncOperation ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -26,29 +50,39 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OperationCompleted">
       <MemberSignature Language="C#" Value="public void OperationCompleted ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void OperationCompleted() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.ComponentModel.AsyncOperation.OperationCompleted" /> method to end the lifetime of an asynchronous operation. After this method is called for a particular task, calls to its corresponding <see cref="T:System.ComponentModel.AsyncOperation" /> will raise an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the lifetime of an asynchronous operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Post">
       <MemberSignature Language="C#" Value="public void Post (System.Threading.SendOrPostCallback d, object arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Post(class System.Threading.SendOrPostCallback d, object arg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -57,19 +91,32 @@
         <Parameter Name="arg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="arg">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.AsyncOperation.Post(System.Threading.SendOrPostCallback,System.Object)" /> method invokes the delegate specified by the <paramref name="arg" /> parameter without ending the lifetime of the asynchronous operation.</para>
+          <para>You can call the <see cref="M:System.ComponentModel.AsyncOperation.Post(System.Threading.SendOrPostCallback,System.Object)" /> method as often as you like while the lifetime of the asynchronous operation has not been ended by a call to <see cref="M:System.ComponentModel.AsyncOperation.PostOperationCompleted(System.Threading.SendOrPostCallback,System.Object)" />. You can use the method to report progress or interim results back to clients.</para>
+          <para>The <paramref name="d" /> parameter wraps the delegate you want called when you want to post an update about the status of the asynchronous task. The <see cref="T:System.ComponentModel.AsyncOperation" /> object will ensure that your delegate is invoked on the thread or context appropriate for the application model. Your method can optionally raise an event that notifies clients of a status change, progress update, or newly available incremental results.</para>
+          <para>The <paramref name="arg" /> parameter should be used to pass state to the delegate wrapped by the <paramref name="d" /> parameter. It might be a reference to an <see cref="T:System.ComponentModel.AsyncOperation" />, or it might be a <see cref="T:System.ComponentModel.ProgressChangedEventArgs" /> object. It may be desirable to derive your own class from <see cref="T:System.ComponentModel.ProgressChangedEventArgs" /> to provide additional state storage.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes a delegate on the thread or context appropriate for the application model.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.SendOrPostCallback" /> object that wraps the delegate to be called when the operation ends. </param>
+        <param name="arg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument for the delegate contained in the <paramref name="d" /> parameter. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PostOperationCompleted">
       <MemberSignature Language="C#" Value="public void PostOperationCompleted (System.Threading.SendOrPostCallback d, object arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void PostOperationCompleted(class System.Threading.SendOrPostCallback d, object arg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -78,47 +125,70 @@
         <Parameter Name="arg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <param name="arg">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.ComponentModel.AsyncOperation.PostOperationCompleted(System.Threading.SendOrPostCallback,System.Object)" /> method to end the lifetime of an asynchronous operation. After this method is called for a particular task, calls to its corresponding <see cref="T:System.ComponentModel.AsyncOperation" /> object will raise an exception.</para>
+          <para>The <paramref name="d" /> parameter wraps the delegate you want your class to call when the task's lifetime ends due to completion, cancellation, or failure of the task. The <see cref="T:System.ComponentModel.AsyncOperation" /> object will ensure that your delegate is invoked on the thread or context appropriate for the application model. Your delegate can optionally raise an event that notifies clients that the asynchronous task's lifetime has ended.</para>
+          <para>The <paramref name="arg" /> parameter is used to pass state information to the completion delegate <paramref name="d" />. You can use an <see cref="T:System.ComponentModel.AsyncOperation" /> object, or an <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" /> object as the parameter value. Alternatively, if you want to provide additional state storage, you can use an instance of a class you derive from the <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the lifetime of an asynchronous operation.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.SendOrPostCallback" /> object that wraps the delegate to be called when the operation ends. </param>
+        <param name="arg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument for the delegate contained in the <paramref name="d" /> parameter. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SynchronizationContext">
       <MemberSignature Language="C#" Value="public System.Threading.SynchronizationContext SynchronizationContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.SynchronizationContext SynchronizationContext" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.SynchronizationContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.SynchronizationContext" /> object that was passed to the constructor.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserSuppliedState">
       <MemberSignature Language="C#" Value="public object UserSuppliedState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object UserSuppliedState" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If your class supports multiple asynchronous methods or multiple invocations of a single asynchronous method, clients will need a way to determine which asynchronous task is raising events. Your MethodNameAsync method should take a parameter of type <see cref="T:System.Object" /> that will act as a task ID. You will use this task ID when you call the <see cref="M:System.ComponentModel.AsyncOperationManager.CreateOperation(System.Object)" />, method and this will associate the client's task ID with a particular invocation of your asynchronous operation. This task ID is made available to your implementation through the <see cref="P:System.ComponentModel.AsyncOperation.UserSuppliedState" /> property.</para>
+          <block subset="none" type="note">
+            <para>Client code must be careful to provide a unique value for the <see cref="P:System.ComponentModel.AsyncOperation.UserSuppliedState" /> property. Non-unique task IDs may cause your implementation to report progress and other events incorrectly. Your code should check for a non-unique task ID and raise an <see cref="T:System.ArgumentException" /> if one is detected.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object used to uniquely identify an asynchronous operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

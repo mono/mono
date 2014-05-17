@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableLayoutPanelCellPosition" FullName="System.Windows.Forms.TableLayoutPanelCellPosition">
   <TypeSignature Language="C#" Value="public struct TableLayoutPanelCellPosition" />
   <AssemblyInfo>
@@ -14,8 +15,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a cell in a <see cref="T:System.Windows.Forms.TableLayoutPanel" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,10 +33,15 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="column">To be added.</param>
-        <param name="row">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> class.</para>
+        </summary>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column position of the cell.</param>
+        <param name="row">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row position of the cell.</param>
       </Docs>
     </Member>
     <Member MemberName="Column">
@@ -45,9 +54,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the column number of the current <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -63,10 +75,17 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether this <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> contains the same row and column as the specified <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="other" /> is a <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> and has the same row and column as the specified <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> to test.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -80,9 +99,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code for this <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value that specifies a hash value for this <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -99,11 +124,19 @@
         <Parameter Name="p2" Type="System.Windows.Forms.TableLayoutPanelCellPosition" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> objects. The result specifies whether the values of the <see cref="P:System.Windows.Forms.TableLayoutPanelCellPosition.Row" /> and <see cref="P:System.Windows.Forms.TableLayoutPanelCellPosition.Column" /> properties of the two <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="p1" /> and <paramref name="p2" /> are equal; otherwise, false.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> to compare.</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -120,11 +153,19 @@
         <Parameter Name="p2" Type="System.Windows.Forms.TableLayoutPanelCellPosition" />
       </Parameters>
       <Docs>
-        <param name="p1">To be added.</param>
-        <param name="p2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> objects. The result specifies whether the values of the <see cref="P:System.Windows.Forms.TableLayoutPanelCellPosition.Row" /> and <see cref="P:System.Windows.Forms.TableLayoutPanelCellPosition.Column" /> properties of the two <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> objects are unequal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="p1" /> and <paramref name="p2" /> differ; otherwise, false.</para>
+        </returns>
+        <param name="p1">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> to compare.</param>
+        <param name="p2">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="Row">
@@ -137,9 +178,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the row number of the current <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -153,9 +197,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" /> to a human readable string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Windows.Forms.TableLayoutPanelCellPosition" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

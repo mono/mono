@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TaskCompletionSource&lt;TResult&gt;" FullName="System.Threading.Tasks.TaskCompletionSource&lt;TResult&gt;">
   <TypeSignature Language="C#" Value="public class TaskCompletionSource&lt;TResult&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TaskCompletionSource`1&lt;TResult&gt; extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -13,24 +15,36 @@
   <Interfaces />
   <Docs>
     <typeparam name="TResult">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In many scenarios, it is useful to enable a <see cref="T:System.Threading.Tasks.Task`1" /> to represent an external asynchronous operation. <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" /> is provided for this purpose. It enables the creation of a task that can be handed out to consumers, and those consumers can use the members of the task as they would any other. However, unlike most tasks, the state of a task created by a TaskCompletionSource is controlled explicitly by the methods on TaskCompletionSource. This enables the completion of the external asynchronous operation to be propagated to the underlying Task. The separation also ensures that consumers are not able to transition the state without access to the corresponding TaskCompletionSource. For more information, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2009/06/02/9685804.aspx">The Nature of TaskCompletionSource&lt;TResult&gt;</see> in the Parallel Programming with .NET blog.</para>
+      <para>The <see cref="http://go.microsoft.com/fwlink/?LinkID=165717">Parallel Extensions samples</see> also contain examples of how to use <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the producer side of a <see cref="T:System.Threading.Tasks.Task`1" /> unbound to a delegate, providing access to the consumer side through the <see cref="P:System.Threading.Tasks.TaskCompletionSource`1.Task" /> property.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TaskCompletionSource ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TaskCompletionSource (object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object state) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -39,45 +53,64 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" /> with the specified state.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state to use as the underlying <see cref="T:System.Threading.Tasks.Task`1" />'s AsyncState.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public TaskCompletionSource (System.Threading.Tasks.TaskCreationOptions options);" />
+      <MemberSignature Language="C#" Value="public TaskCompletionSource (System.Threading.Tasks.TaskCreationOptions creationOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Threading.Tasks.TaskCreationOptions creationOptions) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="options" Type="System.Threading.Tasks.TaskCreationOptions" />
+        <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Tasks.Task`1" /> created by this instance and accessible through its <see cref="P:System.Threading.Tasks.TaskCompletionSource`1.Task" /> property will be instantiated using the specified <paramref name="creationOptions" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" /> with the specified options.</para>
+        </summary>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The options to use when creating the underlying <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public TaskCompletionSource (object state, System.Threading.Tasks.TaskCreationOptions options);" />
+      <MemberSignature Language="C#" Value="public TaskCompletionSource (object state, System.Threading.Tasks.TaskCreationOptions creationOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object state, valuetype System.Threading.Tasks.TaskCreationOptions creationOptions) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="state" Type="System.Object" />
-        <Parameter Name="options" Type="System.Threading.Tasks.TaskCreationOptions" />
+        <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" /> with the specified state and options.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state to use as the underlying <see cref="T:System.Threading.Tasks.Task`1" />'s AsyncState.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The options to use when creating the underlying <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName="SetCanceled">
       <MemberSignature Language="C#" Value="public void SetCanceled ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCanceled() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -87,12 +120,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transitions the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" /> state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetException">
-      <MemberSignature Language="C#" Value="public void SetException (System.Collections.Generic.IEnumerable&lt;Exception&gt; e);" />
+      <MemberSignature Language="C#" Value="public void SetException (System.Collections.Generic.IEnumerable&lt;Exception&gt; exceptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetException(class System.Collections.Generic.IEnumerable`1&lt;class System.Exception&gt; exceptions) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -101,16 +138,21 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="e" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
+        <Parameter Name="exceptions" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transitions the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" /> state.</para>
+        </summary>
+        <param name="exceptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of exceptions to bind to this <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName="SetException">
-      <MemberSignature Language="C#" Value="public void SetException (Exception e);" />
+      <MemberSignature Language="C#" Value="public void SetException (Exception exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetException(class System.Exception exception) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -119,16 +161,21 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="e" Type="System.Exception" />
+        <Parameter Name="exception" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transitions the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" /> state.</para>
+        </summary>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to bind to this <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName="SetResult">
       <MemberSignature Language="C#" Value="public void SetResult (TResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetResult(!TResult result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -147,6 +194,7 @@
     </Member>
     <Member MemberName="Task">
       <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;TResult&gt; Task { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.Tasks.Task`1&lt;!TResult&gt; Task" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -155,13 +203,21 @@
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables a consumer to access the <see cref="T:System.Threading.Tasks.Task`1" /> that is controlled by this instance. When you create a <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" /> object, the <see cref="P:System.Threading.Tasks.Task.Status" /> property of this <see cref="T:System.Threading.Tasks.Task`1" /> object returns <see cref="F:System.Threading.Tasks.TaskStatus.WaitingForActivation" /></para>
+          <para> The <see cref="M:System.Threading.Tasks.TaskCompletionSource`1.SetResult(`0)" />, <see cref="M:System.Threading.Tasks.TaskCompletionSource`1.SetException(System.Exception)" />, <see cref="M:System.Threading.Tasks.TaskCompletionSource`1.SetException(System.Collections.Generic.IEnumerable{System.Exception})" />, and <see cref="M:System.Threading.Tasks.TaskCompletionSource`1.SetCanceled" /> methods (and their "Try" variants) on this instance all result in the relevant state transitions on this underlying Task.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.Tasks.Task`1" /> created by this <see cref="T:System.Threading.Tasks.TaskCompletionSource`1" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TrySetCanceled">
       <MemberSignature Language="C#" Value="public bool TrySetCanceled ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TrySetCanceled() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -171,13 +227,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will return false if the <see cref="T:System.Threading.Tasks.Task`1" /> is already in one of the three final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" />, <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, or <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" />. </para>
+          <para>This method also returns false if the underlying <see cref="T:System.Threading.Tasks.Task`1" /> has already been disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to transition the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" /> state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the operation was successful; false if the operation was unsuccessful or the object has already been disposed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TrySetException">
-      <MemberSignature Language="C#" Value="public bool TrySetException (System.Collections.Generic.IEnumerable&lt;Exception&gt; e);" />
+      <MemberSignature Language="C#" Value="public bool TrySetException (System.Collections.Generic.IEnumerable&lt;Exception&gt; exceptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TrySetException(class System.Collections.Generic.IEnumerable`1&lt;class System.Exception&gt; exceptions) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -186,17 +253,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="e" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
+        <Parameter Name="exceptions" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will return false if the <see cref="T:System.Threading.Tasks.Task`1" /> is already in one of the three final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" />, <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, or <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to transition the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" /> state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the operation was successful; otherwise, false.</para>
+        </returns>
+        <param name="exceptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of exceptions to bind to this <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName="TrySetException">
-      <MemberSignature Language="C#" Value="public bool TrySetException (Exception e);" />
+      <MemberSignature Language="C#" Value="public bool TrySetException (Exception exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TrySetException(class System.Exception exception) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -205,17 +283,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="e" Type="System.Exception" />
+        <Parameter Name="exception" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will return false if the <see cref="T:System.Threading.Tasks.Task`1" /> is already in one of the three final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion" />, <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" />, or <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to transition the underlying <see cref="T:System.Threading.Tasks.Task`1" /> into the <see cref="F:System.Threading.Tasks.TaskStatus.Faulted" /> state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the operation was successful; otherwise, false.</para>
+        </returns>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to bind to this <see cref="T:System.Threading.Tasks.Task`1" />.</param>
       </Docs>
     </Member>
     <Member MemberName="TrySetResult">
       <MemberSignature Language="C#" Value="public bool TrySetResult (TResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TrySetResult(!TResult result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

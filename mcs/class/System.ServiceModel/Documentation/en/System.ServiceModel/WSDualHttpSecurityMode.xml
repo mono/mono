@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WSDualHttpSecurityMode" FullName="System.ServiceModel.WSDualHttpSecurityMode">
+  <TypeSignature Language="C#" Value="public enum WSDualHttpSecurityMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WSDualHttpSecurityMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration defines the security modes that the <see cref="T:System.ServiceModel.WsDualHttpBinding" /> supports.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the different security modes for <see cref="T:System.ServiceModel.WsDualHttpBinding" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="Message" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.WSDualHttpSecurityMode Message = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.WSDualHttpSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SOAP message-level security is used and the settings in the <see cref="P:System.ServiceModel.WsDualHttpSecurity.Message" /> property become effective.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.WSDualHttpSecurityMode None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.WSDualHttpSecurityMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No security is used.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextBox" FullName="System.Web.UI.WebControls.TextBox">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class TextBox : System.Web.UI.WebControls.WebControl, System.Web.UI.IEditableTextControl, System.Web.UI.IPostBackDataHandler" />
   <AssemblyInfo>
@@ -49,8 +50,103 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.TextBox" /> server control is an input control that lets the user enter text. By default, the <see cref="P:System.Web.UI.WebControls.TextBox.TextMode" /> property of the control is set to TextBoxMode.SingleLine, which displays a single-line text box. However, you can also use the <see cref="T:System.Web.UI.WebControls.TextBox" /> control to display a multiline text box or a text box that masks user input by changing the value of the <see cref="P:System.Web.UI.WebControls.TextBox.TextMode" /> property to TextBoxMode.MultiLine or TextBoxMode.Password, respectively. The text displayed in the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is specified or determined by using the <see cref="P:System.Web.UI.WebControls.TextBox.Text" /> property.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.TextBox" /> control contains several properties that allow you to control the appearance of the control. The display width of the text box, in characters, is determined by its <see cref="P:System.Web.UI.WebControls.TextBox.Columns" /> property. If the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is a multiline text box, the number of rows it displays is determined by the <see cref="P:System.Web.UI.WebControls.TextBox.Rows" /> property. To display text that wraps within the <see cref="T:System.Web.UI.WebControls.TextBox" /> control, set the <see cref="P:System.Web.UI.WebControls.TextBox.Wrap" /> property to true.</para>
+      <para>You can also specify how data is entered in the <see cref="T:System.Web.UI.WebControls.TextBox" /> control by setting a few properties. To prevent the text displayed in the control from being modified, set the <see cref="P:System.Web.UI.WebControls.TextBox.ReadOnly" /> property to true. If you want to limit the user input to a specified number of characters, set the <see cref="P:System.Web.UI.WebControls.TextBox.MaxLength" /> property.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.TextBox" />, see the <see cref="M:System.Web.UI.WebControls.TextBox.#ctor" /> constructor.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to accept user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+      </block>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:TextBox
+    AccessKey="string"
+    AutoCompleteType="<codeFeaturedElement>None</codeFeaturedElement>|Disabled|Cellular|Company|Department|
+        DisplayName|Email|FirstName|Gender|HomeCity|HomeCountryRegion|
+        HomeFax|HomePhone|HomeState|HomeStreetAddress|HomeZipCode|
+        Homepage|JobTitle|LastName|MiddleName|Notes|Office|Pager|
+        BusinessCity|BusinessCountryRegion|BusinessFax|BusinessPhone|
+        BusinessState|BusinessStreetAddress|BusinessUrl|
+        BusinessZipCode|Search"
+    AutoPostBack="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CausesValidation="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Columns="integer"
+    CssClass="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    MaxLength="integer"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnTextChanged="TextChanged event handler"
+    OnUnload="Unload event handler"
+    ReadOnly="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Rows="integer"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    Text="string"
+    TextMode="<codeFeaturedElement>SingleLine</codeFeaturedElement>|MultiLine|Password"
+    ToolTip="string"
+    ValidationGroup="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+    Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays a text box control for user input.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -59,8 +155,35 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TextBox" /> class.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.TextBox" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TagKey </para>
+              </term>
+              <description>
+                <para>HtmlTextWriterTag.Input </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TextBox" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -78,8 +201,14 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers to insert the additional attributes and styles to the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for a <see cref="T:System.Web.UI.WebControls.TextBox" /> control. This method overrides <see cref="M:System.Web.UI.WebControls.WebControl.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds HTML attributes and styles that need to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -96,9 +225,13 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overridden to allow only literal controls to be added as the <see cref="P:System.Web.UI.WebControls.TextBox.Text" /> property.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the parsed element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,9 +256,22 @@
         <ReturnType>System.Web.UI.WebControls.AutoCompleteType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To assist with data entry, Microsoft Internet Explorer 5 and later and some other browsers support a feature referred to as AutoComplete. AutoComplete monitors a text box and creates a list of values entered by the user. When the user returns to the text box at a later time, the list is displayed. Instead of retyping a previously entered value, the user can simply select the value from this list. Use the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property to control the behavior of the AutoComplete feature for a <see cref="T:System.Web.UI.WebControls.TextBox" /> control. The <see cref="T:System.Web.UI.WebControls.AutoCompleteType" /> enumeration is used to represent the values that you can apply to the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property.</para>
+          <block subset="none" type="note">
+            <para>Not all browsers support the AutoComplete feature. Check with your browser to determine compatibility.</para>
+          </block>
+          <para>By default, the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property for a <see cref="T:System.Web.UI.WebControls.TextBox" /> control is set to AutoCompleteType.None. With this setting, the <see cref="T:System.Web.UI.WebControls.TextBox" /> control shares the list with other <see cref="T:System.Web.UI.WebControls.TextBox" /> controls with the same <see cref="P:System.Web.UI.Control.ID" /> property across different pages. You can also share a list between <see cref="T:System.Web.UI.WebControls.TextBox" /> controls based on a category, instead of an <see cref="P:System.Web.UI.Control.ID" /> property. When you set the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property to one of the category values (such as AutoCompleteType.FirstName, AutoCompleteType.LastName, and so on), all <see cref="T:System.Web.UI.WebControls.TextBox" /> controls with the same category share the same list. You can disable the AutoComplete feature for a <see cref="T:System.Web.UI.WebControls.TextBox" /> control by setting the <see cref="P:System.Web.UI.WebControls.TextBox.AutoCompleteType" /> property to AutoCompleteType.Disabled.</para>
+          <para>Refer to your browser documentation for details on configuring and enabling the AutoComplete feature. For example, to enable the AutoComplete feature in Internet Explorer version 5 or later, select <ui>Internet Options</ui> from the <ui>Tools</ui> menu, and then select the <ui>Content</ui> tab. Click the <ui>AutoComplete</ui> button to view and modify the various browser options for the AutoComplete feature.</para>
+          <para>For more information about the AutoComplete feature in Internet Explorer, see <see cref="http://go.microsoft.com/fwlink/?LinkId=163828">Using AutoComplete in HTML Forms</see> in the <see cref="http://go.microsoft.com/fwlink/?linkid=37118">MSDN Library</see>.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates the AutoComplete behavior of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoPostBack">
@@ -136,9 +282,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.AutoPostBack" /> property to specify whether an automatic postback to the server will occur when the <see cref="T:System.Web.UI.WebControls.TextBox" /> control loses focus. Pressing the ENTER or the TAB key while in the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is the most common way to change focus.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="T:System.Web.UI.WebControls.TextBox" /> control's parent container contains a button marked as the default button (for example, if the container's <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultButton" /> or <see cref="P:System.Web.UI.WebControls.Panel.DefaultButton" /> property is set), the default button's Click event is not raised in response to the automatic postback.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether an automatic postback to the server occurs when the <see cref="T:System.Web.UI.WebControls.TextBox" /> control loses focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -171,9 +327,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.CausesValidation" /> property to determine whether validation is performed on both the client and the server when a <see cref="T:System.Web.UI.WebControls.TextBox" /> control is set to validate when a postback occurs. Page validation determines whether the input controls associated with a validation control on the page all pass the validation rules specified by the validation control.</para>
+          <para>By default, a <see cref="T:System.Web.UI.WebControls.TextBox" /> control does not cause page validation when the control loses focus. To set the <see cref="T:System.Web.UI.WebControls.TextBox" /> control to validate when a postback occurs, set the <see cref="P:System.Web.UI.WebControls.TextBox.CausesValidation" /> property to true and the <see cref="P:System.Web.UI.WebControls.TextBox.AutoPostBack" /> property to true.</para>
+          <para>When the value of the <see cref="P:System.Web.UI.WebControls.TextBox.CausesValidation" /> property is set to true, you can also use the <see cref="P:System.Web.UI.WebControls.TextBox.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.TextBox" /> control causes validation.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether validation is performed when the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is set to validate when a postback occurs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Columns">
@@ -184,9 +349,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display width of the text box in characters.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,11 +380,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.TextBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method checks whether the postback data of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is different from its previous value and, if so, loads the content and returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the postback data for the <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the posted content is different from the last posting; otherwise, false. </para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the posted collection that references the content to load. </param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection posted to the server. </param>
       </Docs>
     </Member>
     <Member MemberName="MaxLength">
@@ -227,9 +406,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.MaxLength" /> property to limit the number of characters that can be entered in the <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+          <block subset="none" type="note">
+            <para>This property is applicable only when the <see cref="P:System.Web.UI.WebControls.TextBox.TextMode" /> property is set to TextBoxMode.SingleLine or TextBoxMode.Password.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of characters allowed in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -254,9 +443,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers client script for generating postback events prior to rendering on the client, if <see cref="P:System.Web.UI.WebControls.TextBox.AutoPostBack" /> is true.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -273,9 +466,21 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.TextBox.TextChanged" /> event is raised when the content of the text box changes between posts to the server.</para>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.Web.UI.WebControls.TextBox" /> control must persist some values between posts to the server for this event to work correctly. Be sure that view state is enabled for this control.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.TextBox.OnTextChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.TextBox.TextChanged" /> event. This allows you to handle the event directly.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains event information. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -293,8 +498,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.TextBox.RaisePostDataChangedEvent" /> method invokes the <see cref="M:System.Web.UI.WebControls.TextBox.OnTextChanged(System.EventArgs)" /> method if the posted data for the <see cref="T:System.Web.UI.WebControls.TextBox" /> control has changed. If the <see cref="P:System.Web.UI.WebControls.TextBox.CausesValidation" /> property is true, the controls in the validation group set in the <see cref="P:System.Web.UI.WebControls.TextBox.ValidationGroup" /> property are validated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the <see cref="M:System.Web.UI.WebControls.TextBox.OnTextChanged(System.EventArgs)" /> method when the posted data for the <see cref="T:System.Web.UI.WebControls.TextBox" /> control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadOnly">
@@ -305,9 +516,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.ReadOnly" /> property to specify whether the contents of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control can be changed. Setting this property to true will prevent users from entering a value or changing the existing value. Note that the user of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control cannot change this property; only the developer can.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.TextBox.Text" /> value of a <see cref="T:System.Web.UI.WebControls.TextBox" /> control with the <see cref="P:System.Web.UI.WebControls.TextBox.ReadOnly" /> property set to true is sent to the server when a postback occurs, but the server does no processing for a read-only text box. This prevents a malicious user from changing a <see cref="P:System.Web.UI.WebControls.TextBox.Text" /> value that is read-only. The value of the <see cref="P:System.Web.UI.WebControls.TextBox.Text" /> property is preserved in the view state between postbacks unless modified by server-side code.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the contents of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control can be changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -336,8 +557,15 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.TextBox.Render(System.Web.UI.HtmlTextWriter)" /> method renders the begin tag and end tag of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control to the <see cref="T:System.Web.UI.HtmlTextWriter" /> object for output on the client. If the <see cref="P:System.Web.UI.WebControls.TextBox.TextMode" /> property is set to <see cref="F:System.Web.UI.WebControls.TextBoxMode.MultiLine" />, the content of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is rendered as an HTML &lt;textarea&gt; element. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.TextBox.Render(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.WebControls.TextBox" /> control to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -352,9 +580,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.Rows" /> property to specify the number of rows displayed in a multiline text box.</para>
+          <block subset="none" type="note">
+            <para>This property is applicable only when the <see cref="P:System.Web.UI.WebControls.TextBox.TextMode" /> property is set to TextBoxMode.MultiLine.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of rows displayed in a multiline text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -380,9 +618,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control's life cycle. For more information, see <format type="text/html"><a href="de0d8a1c-b1bc-48e1-b246-26e32289a82f">ASP.NET Application Life Cycle Overview</a></format>. </para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in a hidden HTML input element. When you author custom server controls, you can improve efficiency by overriding this method and modifying your server control's ViewState property. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the changes to the text box view state since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the changes to the <see cref="T:System.Web.UI.WebControls.TextBox" /> view state. If no view state is associated with the object, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.LoadPostData">
@@ -400,11 +649,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.TextBox" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the posted text box content if it is different from the last posting. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the posted content is different from the last posting; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the posted collection that references the content to load. </param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection posted to the server. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -419,8 +679,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.TextBox" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the <see cref="M:System.Web.UI.WebControls.TextBox.OnTextChanged(System.EventArgs)" /> method whenever posted data for the text box has changed. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TagKey">
@@ -431,9 +697,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.HtmlTextWriterTag" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTML tag for the text box control. This property is protected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -448,9 +717,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.Text" /> property to specify or determine the text displayed in the <see cref="T:System.Web.UI.WebControls.TextBox" /> control. To limit the number of characters accepted by the control, set the <see cref="P:System.Web.UI.WebControls.TextBox.MaxLength" /> property. If you want to prevent the text from being modified, set the <see cref="P:System.Web.UI.WebControls.TextBox.ReadOnly" /> property.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+          <para>When the text box is rendered, the contents of this property are HTML-encoded. For example, if you set this property to "&lt;b&gt;Test&lt;/b&gt;", the browser will display "&lt;b&gt;Test&lt;/b&gt;", not "Test" in bold.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text content of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -482,8 +759,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.TextBox.TextChanged" /> event is raised when the content of the text box changes between posts to the server. The event is only raised if the text is changed by the user; the event is not raised if the text is changed programmatically.</para>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.Web.UI.WebControls.TextBox" /> control must persist some values between posts to the server for this event to work correctly. Be sure that view state is enabled for this control.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the content of the text box changes between posts to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -498,9 +785,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TextBoxMode'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.TextMode" /> property to specify whether a <see cref="T:System.Web.UI.WebControls.TextBox" /> control is displayed as a single-line, multiline, or password text box.</para>
+          <para>When the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is in multiline mode, you can control the number of rows displayed by setting the <see cref="P:System.Web.UI.WebControls.TextBox.Rows" /> property. You can also specify whether the text should wrap by setting the <see cref="P:System.Web.UI.WebControls.TextBox.Wrap" /> property.</para>
+          <para>If the <see cref="T:System.Web.UI.WebControls.TextBox" /> control is in password mode, all characters entered in the control are masked.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the behavior mode (single-line, multiline, or password) of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -533,9 +829,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validation groups allow you to assign validation controls on a page to a specific category. Each validation group can be validated independently from other validation groups on the page. Use the <see cref="P:System.Web.UI.WebControls.TextBox.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.TextBox" /> control causes validation when it posts back to the server.</para>
+          <para>This property has an effect only when the <see cref="P:System.Web.UI.WebControls.TextBox.CausesValidation" /> property is set to true. When you specify a value for the <see cref="P:System.Web.UI.WebControls.TextBox.ValidationGroup" /> property, only the validation controls that are part of the specified group are validated when the <see cref="T:System.Web.UI.WebControls.TextBox" /> control posts back to the server. If you do not specify a value for this property and the <see cref="P:System.Web.UI.WebControls.TextBox.CausesValidation" /> property is set to true, all validation controls on the page that are not assigned to a validation group are validated when the control posts back to the server.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the group of controls for which the <see cref="T:System.Web.UI.WebControls.TextBox" /> control causes validation when it posts back to the server. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Wrap">
@@ -546,9 +850,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TextBox.Wrap" /> property to specify whether the text displayed in a multiline <see cref="T:System.Web.UI.WebControls.TextBox" /> control automatically continues on the next line when the text reaches the end of the control.</para>
+          <block subset="none" type="note">
+            <para>This property is applicable only when the <see cref="P:System.Web.UI.WebControls.TextBox.TextMode" /> property is set to TextBoxMode.MultiLine.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the text content wraps within a multiline text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

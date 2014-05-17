@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewComboBoxCell" FullName="System.Windows.Forms.DataGridViewComboBoxCell">
   <TypeSignature Language="C#" Value="public class DataGridViewComboBoxCell : System.Windows.Forms.DataGridViewCell" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> class is a specialized type of <see cref="T:System.Windows.Forms.DataGridViewCell" /> used to display a combo box control, which is an editing field combined with a list selection field. The currently selected <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> hosts a <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" /> in which the user can change the cell's value, assuming the cell's <see cref="P:System.Windows.Forms.DataGridViewCell.ReadOnly" /> property is set to false. </para>
+      <para>Unlike the <see cref="T:System.Windows.Forms.ComboBox" /> control, the <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> does not have <see cref="P:System.Windows.Forms.ComboBox.SelectedIndex" /> and <see cref="P:System.Windows.Forms.ListControl.SelectedValue" /> properties. Instead, selecting a value from a drop-down list sets the cell <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property.</para>
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewComboBoxColumn" /> is the column type specialized to hold cells of this type. By default, the <see cref="P:System.Windows.Forms.DataGridViewComboBoxColumn.CellTemplate" /> is initialized to a new <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" />. To pattern the cells within a column after an existing <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" />, set the column's <see cref="P:System.Windows.Forms.DataGridViewComboBoxColumn.CellTemplate" /> property to the cell to use as a pattern.</para>
+      <para>The cell-related properties of the column are wrappers for the similarly-named properties of the template cell. Changing the property values of the template cell will affect only cells based on the template that are added after the change. Changing the cell-related property values of the column, however, will update the template cell and all other cells in the column, and refresh the column display if necessary. </para>
+      <para>You will typically work with the <see cref="T:System.Windows.Forms.DataGridViewComboBoxColumn" /> type unless you want to override column values for specific cells. The guidelines described in the <see cref="T:System.Windows.Forms.DataGridViewComboBoxColumn" /> class overview topic for populating the drop-down list applies to both cell and column instances. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays a combo box in a <see cref="T:System.Windows.Forms.DataGridView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.AutoComplete" /> property value to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +51,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the cell will match the characters being entered in the cell with a selection from the drop-down list. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +76,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Windows.Forms.DataGridViewComboBoxCell.Clone" /> method whenever you derive from <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> and add new properties to the derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +101,21 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically this property will be set for an entire column of cells through the <see cref="P:System.Windows.Forms.DataGridViewComboBoxColumn.DataSource" /> property.</para>
+          <para>If possible, set <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> to a source containing only the possible selections, like a column of selections. Then the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> property doesn't need to be set. But if the source is more complicated, set <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> to the name of the property or column from which to retrieve possible selections.</para>
+          <para>If <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> is set to a string array, then <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> and <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> do not need to be set because each string in the array will be used for both value and display.</para>
+          <para>Changing the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> property causes the cell to reinitialize its <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.Items" /> collection and redraw itself. </para>
+          <para>When you change the value of the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> property, the control attempts to use the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> and <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> property values with the new data source, and sets each property to null if its value cannot be found. Any exception that occurs during this process is ignored unless it is one of the following critical exceptions: <see cref="T:System.NullReferenceException" />, <see cref="T:System.StackOverflowException" />, <see cref="T:System.OutOfMemoryException" />, <see cref="T:System.Threading.ThreadAbortException" />, <see cref="T:System.ExecutionEngineException" />, <see cref="T:System.IndexOutOfRangeException" />, or <see cref="T:System.AccessViolationException" />. </para>
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> is set, the <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> attaches to the <see cref="E:System.ComponentModel.Component.Disposed" /> event of the data source. When the <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> is detached from the <see cref="T:System.Windows.Forms.DataGridView" />, the resource is not immediately released. The <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> resource is released when the attached data source is disposed. To release the resource for garbage collection immediately, set the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> property to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data source whose data contains the possible selections shown in the drop-down list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,10 +144,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> represents the text information displayed in the combo box drop-down list. In contrast, the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> property represents the corresponding value of a selection.</para>
+          <para>If the data for the selections displayed by the <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> is supposed to be drawn from a nondefault property or column of the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" />, then <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> must be set in addition to <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" />.</para>
+          <para>When <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> is set to a string array, <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> does not need to be set because each string in the array will be used as a valid display string and a valid underlying value.</para>
+          <para>Another way of loading combo box selections is to use the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.Items" /> property. <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> must contain the property name from which to gather the selections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies where to gather selections to display in the drop-down list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +175,20 @@
         <ReturnType>System.Windows.Forms.DataGridViewComboBoxDisplayStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyle" /> property affects the appearance of the cell when it is not in edit mode, and regardless of whether it is read-only. When the cell is in edit mode, it always looks like a <see cref="T:System.Windows.Forms.ComboBox" /> control. </para>
+          <para>If the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyleForCurrentCellOnly" /> property value is true, the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyle" /> property affects the cell only when it is the current cell.</para>
+          <para>The behavior and appearance of the drop-down arrow is indicated by the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.FlatStyle" /> property. </para>
+          <para>To enable cell highlighting when the mouse pointer is over the cell, you must set the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyle" /> property to <see cref="F:System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox" /> and the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.FlatStyle" /> property value to <see cref="F:System.Windows.Forms.FlatStyle.Popup" />. </para>
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewComboBoxColumn.DisplayStyle" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyle" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines how the combo box is displayed when it is not in edit mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,10 +206,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyle" /> property affects the appearance of the cell when it is not in edit mode, and regardless of whether it is read-only. When the cell is in edit mode, it always looks like a <see cref="T:System.Windows.Forms.ComboBox" /> control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyle" /> property value applies to the cell only when it is the current cell in the <see cref="T:System.Windows.Forms.DataGridView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -167,10 +233,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property corresponds to the <see cref="P:System.Windows.Forms.ComboBox.DropDownWidth" /> property of the hosted <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the of the drop-down list portion of a combo box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -188,10 +260,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" /> class is derived from the <see cref="T:System.Windows.Forms.ComboBox" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the cell's hosted editing control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -204,10 +282,18 @@
         <ReturnType>System.Windows.Forms.FlatStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.FlatStyle" /> property affects the behavior and appearance of the drop-down arrow in the cell. </para>
+          <para>To enable cell highlighting when the mouse pointer is over the cell, you must set the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayStyle" /> property to <see cref="F:System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox" /> and the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.FlatStyle" /> property value to <see cref="F:System.Windows.Forms.FlatStyle.Popup" />. </para>
+          <para>Setting the <see cref="P:System.Windows.Forms.DataGridViewComboBoxColumn.FlatStyle" /> property of the owning column also sets the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.FlatStyle" /> property of every cell in the column and refreshes the column display. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the flat style appearance of the cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -225,10 +311,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because a combo box only handles text information, the type of the underlying formatted value is always <see cref="T:System.String" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class type of the formatted value associated with the cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -350,12 +442,33 @@
         <Parameter Name="dataGridViewCellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="initialFormattedValue">To be added.</param>
-        <param name="dataGridViewCellStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewComboBoxCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> method initializes the hosted <see cref="T:System.Windows.Forms.ComboBox" /> control as described in the base <see cref="M:System.Windows.Forms.DataGridViewCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> method. In addition, for every invocation, <see cref="M:System.Windows.Forms.DataGridViewComboBoxCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> does the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Sets the visual properties of the hosted <see cref="T:System.Windows.Forms.ComboBox" /> control, such as <see cref="P:System.Windows.Forms.ComboBox.MaxDropDownItems" />, <see cref="P:System.Windows.Forms.ComboBox.DropDownWidth" />, and <see cref="P:System.Windows.Forms.ComboBox.FlatStyle" />, to match the corresponding properties of the current cell.</para>
+            </item>
+            <item>
+              <para>Sets the data-bound properties of the hosted <see cref="T:System.Windows.Forms.ComboBox" /> control, such as <see cref="P:System.Windows.Forms.ComboBox.DataSource" />, <see cref="P:System.Windows.Forms.ListControl.DisplayMember" />, and <see cref="P:System.Windows.Forms.ListControl.ValueMember" />, to match the corresponding properties of the current cell.</para>
+            </item>
+            <item>
+              <para>Reinitializes the <see cref="P:System.Windows.Forms.ComboBox.Items" /> property of the hosted <see cref="T:System.Windows.Forms.ComboBox" /> control.</para>
+            </item>
+          </list>
+          <para>This method also adjusts the cell's dimensions to accommodate the hosted <see cref="T:System.Windows.Forms.ComboBox" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attaches and initializes the hosted editing control.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
+        <param name="initialFormattedValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial value to be displayed in the control.</param>
+        <param name="dataGridViewCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that determines the appearance of the hosted control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -368,10 +481,24 @@
         <ReturnType>System.Windows.Forms.DataGridViewComboBoxCell+ObjectCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to obtain a reference to the list of items that are currently stored in the <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" />. With this reference, you can add items, remove items, and obtain a count of the items in the collection. For more information on the tasks that can be performed with the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.Items" /> collection, see <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell.ObjectCollection" />.</para>
+          <para>If strings are added to <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.Items" />, then <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> and <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> do not need to be set because each string added will be used for both value and display.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> does not support the use of multiple items with identical display values. </para>
+          </block>
+          <para>If the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> property is set, then the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.Items" /> property cannot be used.</para>
+          <para>The formatted value of the cell must always be one of the values in the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.Items" /> collection or an error will occur and the cell value will revert to the first item in the collection. You can customize this behavior by handling the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> and <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> events. </para>
+          <para>Setting this property to a value other than the value of the parent column's <see cref="P:System.Windows.Forms.DataGridViewComboBoxColumn.Items" /> property will force the row to become unshared, allocating extra memory. For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the objects that represent the selection displayed in the drop-down list. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -392,11 +519,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DataGridView.EditMode" /> property of the <see cref="T:System.Windows.Forms.DataGridView" /> control is set to <see cref="F:System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke" /> or <see cref="F:System.Windows.Forms.DataGridViewEditMode.EditOnKeystrokeOrF2" />, the control uses this method to determine whether a key other than F2 that is pressed by the user while this cell has focus will cause the cell to enter edit mode. </para>
+          <para>This method returns true if the e parameter indicates one of the following keys or key combinations: F4, ALT+UP ARROW, ALT+DOWN ARROW, or an ordinary data-entry key (such as a letter, number, punctuation mark, or the SPACE key) unmodified by ALT or CTRL, excluding SHIFT+SPACE, which is used by the control for selection purposes. For more information, see <format type="text/html"><a href="4519b928-bfc8-4e8b-bb9c-b1e76a0ca552">Default Keyboard and Mouse Handling in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if edit mode should be started based on the given key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if edit mode should be started; otherwise, false. </para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that represents the key that was pressed.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -409,10 +547,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changing the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.MaxDropDownItems" /> property changes the corresponding <see cref="P:System.Windows.Forms.ComboBox.MaxDropDownItems" /> property of the hosted <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" />, if one exits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of items shown in the drop-down list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -431,9 +575,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the <see cref="P:System.Windows.Forms.DataGridViewElement.DataGridView" /> property of the cell changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -577,20 +724,34 @@
         <Parameter Name="paintParts" Type="System.Windows.Forms.DataGridViewPaintParts" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="clipBounds">To be added.</param>
-        <param name="cellBounds">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <param name="elementState">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="formattedValue">To be added.</param>
-        <param name="errorText">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="advancedBorderStyle">To be added.</param>
-        <param name="paintParts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the current <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" />.</para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to paint the cell.</param>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the area of the <see cref="T:System.Windows.Forms.DataGridView" /> that needs to be repainted.</param>
+        <param name="cellBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the bounds of the cell that is being painted.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell that is being painted.</param>
+        <param name="elementState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values that specifies the state of the cell.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data of the cell that is being painted.</param>
+        <param name="formattedValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatted data of the cell that is being painted.</param>
+        <param name="errorText">
+          <attribution license="cc4" from="Microsoft" modified="false" />An error message that is associated with the cell.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that contains formatting and style information about the cell.</param>
+        <param name="advancedBorderStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that contains border styles for the cell that is being painted.</param>
+        <param name="paintParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.DataGridViewPaintParts" /> values that specifies which parts of the cell need to be painted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -629,10 +790,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies whether the hosted <see cref="T:System.Windows.Forms.DataGridViewComboBoxEditingControl" /> sorts existing entries and add new entries to the appropriate sorted position in the list. When this property is set to false, new items are added to the end of the existing list. The sorting operation is case-insensitive and performed in alphabetically ascending order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the items in the combo box are automatically sorted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -667,10 +834,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> represents the corresponding value of a selection. In contrast, the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DisplayMember" /> property represents the text information displayed in the drop-down list.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> property specifies the data source for the value of the selections displayed in the drop-down list.</para>
+          <para>If the data for the selections displayed by the <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" /> is supposed to be drawn from a nondefault property or column of the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" />, then <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> must be set in addition to <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" />.</para>
+          <para>When <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.DataSource" /> is set to a string array, <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> does not need to be set because each string in the array will be used as a valid display string and a valid underlying value.</para>
+          <para>Another way of loading combo box selections is to use the <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.Items" /> property. <see cref="P:System.Windows.Forms.DataGridViewComboBoxCell.ValueMember" /> must contain the property name from which to gather the selections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies where to gather the underlying values used in the drop-down list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

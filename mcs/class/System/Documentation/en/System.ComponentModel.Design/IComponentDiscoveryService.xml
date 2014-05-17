@@ -1,20 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComponentDiscoveryService" FullName="System.ComponentModel.Design.IComponentDiscoveryService">
   <TypeSignature Language="C#" Value="public interface IComponentDiscoveryService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IComponentDiscoveryService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The default implementation of the <see cref="T:System.ComponentModel.Design.IComponentDiscoveryService" /> interface enables design-time enumeration of components in the Toolbox.</para>
+      <para>You could provide a custom implementation that enumerates across other types available at design time. For example, your implementation could enumerate the components that are present in a particular designer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables enumeration of components at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetComponentTypes">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection GetComponentTypes (System.ComponentModel.Design.IDesignerHost designerHost, Type baseType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ICollection GetComponentTypes(class System.ComponentModel.Design.IDesignerHost designerHost, class System.Type baseType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
@@ -24,11 +36,24 @@
         <Parameter Name="baseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="baseType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.IComponentDiscoveryService.GetComponentTypes(System.ComponentModel.Design.IDesignerHost,System.Type)" /> method retrieves the list of available component types, which are types implementing the <see cref="T:System.ComponentModel.IComponent" /> interface. If the <paramref name="baseType" /> parameter is null, all components are retrieved; otherwise, only component types derived from <paramref name="baseType" /> are returned.</para>
+          <para>When you pass in a value for the <paramref name="designerHost" /> parameter, type resolution is scoped to <paramref name="designerHost" />. This means that if there is a <see cref="T:System.Drawing.Design.ToolboxItem" /> whose type is on disk, and not in the global assembly cache, its type will fail to load through <paramref name="designerHost" />.</para>
+          <para>If you pass in null for <paramref name="designerHost" />, it returns all types that can be queried from the global assembly cache or the <see cref="Overload:System.Reflection.Assembly.LoadFrom" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of available component types.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list of available component types.</para>
+        </returns>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The designer host providing design-time services. Can be null.</param>
+        <param name="baseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base type specifying the components to retrieve. Can be null.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DataContractFormatAttribute" FullName="System.ServiceModel.DataContractFormatAttribute">
+  <TypeSignature Language="C#" Value="public sealed class DataContractFormatAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DataContractFormatAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method | System.AttributeTargets.Interface | System.AttributeTargets.All, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This attribute is similar to the <see cref="T:System.ServiceModel.XmlSerializerFormatAttribute" /> attribute. Both attributes can be applied to either a method or a class.</para>
+      <para>A method can have either of the two attributes applied, but not both. Any operation that has neither applied will use the attribute applied to the containing class. If the containing class does not have either attribute applied, the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is used. </para>
+      <para>Applying the attribute also causes a <see cref="T:System.ServiceModel.Description.DataContractSerializerOperationBehavior" /> to be created at run time. The behavior allows customization at run time of the serializer behavior.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instructs the indigo1 infrastructure to use the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataContractFormatAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DataContractFormatAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Style">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.OperationFormatStyle Style { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.OperationFormatStyle Style" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.OperationFormatStyle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SOAP style of the serialized data.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

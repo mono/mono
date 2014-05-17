@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileOptions" FullName="System.IO.FileOptions">
   <TypeSignature Language="C#" Value="public enum FileOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,115 +19,150 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents advanced options for creating a <see cref="T:System.IO.FileStream" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Asynchronous">
       <MemberSignature Language="C#" Value="Asynchronous" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileOptions Asynchronous = int32(1073741824)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a file can be used for asynchronous reading and writing. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DeleteOnClose">
       <MemberSignature Language="C#" Value="DeleteOnClose" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileOptions DeleteOnClose = int32(67108864)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a file is automatically deleted when it is no longer in use.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Encrypted">
       <MemberSignature Language="C#" Value="Encrypted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileOptions Encrypted = int32(16384)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a file is encrypted and can be decrypted only by using the same user account used for encryption.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileOptions None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that no additional options should be used when creating a <see cref="T:System.IO.FileStream" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RandomAccess">
       <MemberSignature Language="C#" Value="RandomAccess" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileOptions RandomAccess = int32(268435456)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the file is accessed randomly. The system can use this as a hint to optimize file caching.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SequentialScan">
       <MemberSignature Language="C#" Value="SequentialScan" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileOptions SequentialScan = int32(134217728)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying this flag can increase performance for applications that read large files using sequential access. Performance gains can be even more noticeable for applications that read large files mostly sequentially, but occasionally skip over small ranges of bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the file is to be accessed sequentially from beginning to end. The system can use this as a hint to optimize file caching. If an application moves the file pointer for random access, optimum caching may not occur; however, correct operation is still guaranteed. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="WriteThrough">
       <MemberSignature Language="C#" Value="WriteThrough" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileOptions WriteThrough = int32(-2147483648)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileOptions</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the system should write through any intermediate cache and go directly to disk.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

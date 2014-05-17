@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MutexAccessRule" FullName="System.Security.AccessControl.MutexAccessRule">
   <TypeSignature Language="C#" Value="public sealed class MutexAccessRule : System.Security.AccessControl.AccessRule" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MutexAccessRule extends System.Security.AccessControl.AccessRule" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,69 +12,123 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.AccessControl.MutexAccessRule" /> class is one of a set of classes that the .NET Framework provides for managing Windows access control security on named system mutexes. For an overview of these classes, and their relationship to the underlying Windows access control structures, see <see cref="T:System.Security.AccessControl.MutexSecurity" />.</para>
+      <block subset="none" type="note">
+        <para>Windows access control security is meaningful only for named system mutexes. If a <see cref="T:System.Threading.Mutex" /> object represents a local mutex, access control is irrelevant.</para>
+      </block>
+      <para>To get a list of the rules currently applied to a named mutex, use the <see cref="M:System.Threading.Mutex.GetAccessControl" /> method to get a <see cref="T:System.Security.AccessControl.MutexSecurity" /> object, and then use its <see cref="M:System.Security.AccessControl.CommonObjectSecurity.GetAccessRules(System.Boolean,System.Boolean,System.Type)" /> method to obtain a collection of <see cref="T:System.Security.AccessControl.MutexAccessRule" /> objects.</para>
+      <para>
+        <see cref="T:System.Security.AccessControl.MutexAccessRule" /> objects do not map one-to-one with access control entries in the underlying discretionary access control list (DACL). When you get the set of all access rules for a mutex, the set contains the minimum number of rules currently required to express all the access control entries. </para>
+      <block subset="none" type="note">
+        <para>The underlying access control entries change as you apply and remove rules. The information in rules is merged if possible, to maintain the smallest number of access control entries. Thus, when you read the current list of rules, it might not look exactly like the list of all the rules you have added.</para>
+      </block>
+      <para>Use <see cref="T:System.Security.AccessControl.MutexAccessRule" /> objects to specify access rights to allow or deny to a user or group. A <see cref="T:System.Security.AccessControl.MutexAccessRule" /> object always represents either allowed access or denied access, never both.</para>
+      <para>To apply a rule to a named system mutex, use the <see cref="M:System.Threading.Mutex.GetAccessControl" /> method to get the <see cref="T:System.Security.AccessControl.MutexSecurity" /> object. Modify the <see cref="T:System.Security.AccessControl.MutexSecurity" /> object by using its methods to add the rule, and then use the <see cref="M:System.Threading.Mutex.SetAccessControl(System.Security.AccessControl.MutexSecurity)" /> method to reattach the security object.</para>
+      <block subset="none" type="note">
+        <para>Changes you make to a <see cref="T:System.Security.AccessControl.MutexSecurity" /> object do not affect the access levels of the named mutex until you call the <see cref="M:System.Threading.Mutex.SetAccessControl(System.Security.AccessControl.MutexSecurity)" /> method to assign the altered security object to the named mutex.</para>
+      </block>
+      <para>
+        <see cref="T:System.Security.AccessControl.MutexAccessRule" /> objects are immutable. Security for a mutex is modified using the methods of the <see cref="T:System.Security.AccessControl.MutexSecurity" /> class to add or remove rules; as you do this, the underlying access control entries are modified. </para>
+      <block subset="none" type="note">
+        <para>Security on synchronization objects is not supported for Windows 98 or Windows Millennium Edition.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MutexAccessRule (System.Security.Principal.IdentityReference identity, System.Security.AccessControl.MutexRights eventRights, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.IdentityReference identity, valuetype System.Security.AccessControl.MutexRights eventRights, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
         <Parameter Name="eventRights" Type="System.Security.AccessControl.MutexRights" />
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <param name="eventRights">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To wait on a <see cref="T:System.Threading.Mutex" /> (by calling the <see cref="Overload:System.Threading.WaitHandle.WaitOne" />, <see cref="Overload:System.Threading.WaitHandle.WaitAny" /> or <see cref="Overload:System.Threading.WaitHandle.WaitAll" /> method), a user must have <see cref="F:System.Security.AccessControl.MutexRights.Synchronize" /> access. To release the mutex, by calling the <see cref="M:System.Threading.Mutex.ReleaseMutex" /> method, the user must have <see cref="F:System.Security.AccessControl.MutexRights.Modify" /> access.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.MutexAccessRule" /> class, specifying the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user or group the rule applies to. Must be of type <see cref="T:System.Security.Principal.SecurityIdentifier" /> or a type such as <see cref="T:System.Security.Principal.NTAccount" /> that can be converted to type <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+        <param name="eventRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values specifying the rights allowed or denied.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MutexAccessRule (string identity, System.Security.AccessControl.MutexRights eventRights, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string identity, valuetype System.Security.AccessControl.MutexRights eventRights, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public MutexAccessRule (string identity, System.Security.AccessControl.MutexRights eventRights, System.Security.AccessControl.AccessControlType type);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="identity" Type="System.String" />
         <Parameter Name="eventRights" Type="System.Security.AccessControl.MutexRights" />
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <param name="eventRights">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To wait on a <see cref="T:System.Threading.Mutex" /> (by calling the <see cref="Overload:System.Threading.WaitHandle.WaitOne" />, <see cref="Overload:System.Threading.WaitHandle.WaitAny" /> or <see cref="Overload:System.Threading.WaitHandle.WaitAll" /> method), a user must have <see cref="F:System.Security.AccessControl.MutexRights.Synchronize" /> access. To release the mutex, by calling the <see cref="M:System.Threading.Mutex.ReleaseMutex" /> methods, the user must have <see cref="F:System.Security.AccessControl.MutexRights.Modify" /> access.</para>
+          <para>This constructor is equivalent to creating an <see cref="T:System.Security.Principal.NTAccount" /> object, by passing <paramref name="identity" /> to the <see cref="M:System.Security.Principal.NTAccount.#ctor(System.String)" /> constructor, and passing the newly created <see cref="T:System.Security.Principal.NTAccount" /> object to the <see cref="M:System.Security.AccessControl.MutexAccessRule.#ctor(System.Security.Principal.IdentityReference,System.Security.AccessControl.MutexRights,System.Security.AccessControl.AccessControlType)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.MutexAccessRule" /> class, specifying the name of the user or group the rule applies to, the access rights, and whether the specified access rights are allowed or denied.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user or group the rule applies to.</param>
+        <param name="eventRights">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Security.AccessControl.MutexRights" /> values specifying the rights allowed or denied.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlType" /> values specifying whether the rights are allowed or denied.</param>
       </Docs>
+    </Member>
+    <Member MemberName="MutexRights">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.MutexRights MutexRights { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.AccessControl.MutexRights MutexRights" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MutexRights">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.MutexRights MutexRights { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Security.AccessControl.MutexAccessRule" /> objects are immutable. You can create a new access rule representing a different user, different rights, or a different <see cref="T:System.Security.AccessControl.AccessControlType" />, but you cannot modify an existing access rule.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the rights allowed or denied by the access rule.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

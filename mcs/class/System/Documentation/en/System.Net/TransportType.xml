@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TransportType" FullName="System.Net.TransportType" FullNameSP="System_Net_TransportType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable TransportType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum TransportType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TransportType extends System.Enum" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,27 +10,32 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Specifies transport types.
-      </para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">The <see cref="T:System.Net.TransportType" /> enumeration defines transport types
-   for the <see cref="T:System.Net.SocketPermission" /> and <see cref="T:System.Net.Sockets.Socket" /> classes.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.TransportType" /> enumeration defines transport types for the <see cref="T:System.Net.SocketPermission" /> and <see cref="T:System.Net.Sockets.Socket" /> classes.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines transport types for the <see cref="T:System.Net.SocketPermission" /> and <see cref="T:System.Net.Sockets.Socket" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType All = 3" />
       <MemberSignature Language="C#" Value="All" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.TransportType All = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.TransportType</ReturnType>
       </ReturnValue>
@@ -36,20 +43,22 @@
       <MemberValue>All</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies any transport type.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All transport types.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Connectionless">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType Connectionless = 1" />
       <MemberSignature Language="C#" Value="Connectionless" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.TransportType Connectionless = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.TransportType</ReturnType>
       </ReturnValue>
@@ -57,19 +66,22 @@
       <MemberValue>Udp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies any connectionless transport, such as User Datagram Protocol (UDP).</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transport type is connectionless, such as UDP. Specifying this value has the same effect as specifying <see cref="F:System.Net.TransportType.Udp" />.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConnectionOriented">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType ConnectionOriented = 2" />
       <MemberSignature Language="C#" Value="ConnectionOriented" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.TransportType ConnectionOriented = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.TransportType</ReturnType>
       </ReturnValue>
@@ -77,19 +89,22 @@
       <MemberValue>Tcp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies any connection-oriented transport, such as Transmission Control Protocol (TCP).</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transport is connection oriented, such as TCP. Specifying this value has the same effect as specifying <see cref="F:System.Net.TransportType.Tcp" />.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Tcp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType Tcp = 2" />
       <MemberSignature Language="C#" Value="Tcp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.TransportType Tcp = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.TransportType</ReturnType>
       </ReturnValue>
@@ -97,20 +112,22 @@
       <MemberValue>Tcp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Transmission Control Protocol (TCP) transport as defined by IETF RFC 793.
-      </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>TCP transport.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Udp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.TransportType Udp = 1" />
       <MemberSignature Language="C#" Value="Udp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.TransportType Udp = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.TransportType</ReturnType>
       </ReturnValue>
@@ -118,15 +135,11 @@
       <MemberValue>Udp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the User Datagram Protocol (UDP) transport as defined by IETF RFC 768.
-      </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>UDP transport.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

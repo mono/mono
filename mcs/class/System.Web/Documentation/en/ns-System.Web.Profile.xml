@@ -1,6 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Profile">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Profile" /> namespace contains classes that are used to work with ASP.NET user profiles in Web server applications.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET profiles are used to store and retrieve user settings in a data source such as a database. Profile information and property values are managed by using a profile provider. Profile information can be stored in a Microsoft SQL Server database by using the <see cref="T:System.Web.Profile.SqlProfileProvider" /> class, or in a custom data source by using an implementation of the <see cref="T:System.Web.Profile.ProfileProvider" /> abstract class.</para>
+      <para>ASP.NET profiles are configured by using the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration section.</para>
+      <para>When an application starts that has profiles enabled, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class. Strongly typed accessors are added to the ProfileCommon class for each property that is defined in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration section. An instance of the ProfileCommon class is set as the value of the <see cref="P:System.Web.HttpContext.Profile" /> property of the current <see cref="T:System.Web.HttpContext" /> object. You can create a custom profile implementation that inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> abstract class and that defines properties for the user profile that are not specified in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element.</para>
+    </remarks>
   </Docs>
 </Namespace>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ApplicationActivator" FullName="System.Runtime.Hosting.ApplicationActivator">
   <TypeSignature Language="C#" Value="public class ApplicationActivator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ApplicationActivator extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,28 +17,82 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>There is a single designated instance of the <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> class in each <see cref="T:System.AppDomain" />  to which all activation calls are routed. The <see cref="T:System.AppDomainManager" />  for the current <see cref="T:System.AppDomain" /> can provide its own custom <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> for this purpose. If a custom <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> is not provided, an instance of the default <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> is created. </para>
+      <para>The following steps describe the behavior of the default <see cref="Overload:System.Runtime.Hosting.ApplicationActivator.CreateInstance" /> method implementation:</para>
+      <list type="ordered">
+        <item>
+          <para>Checks if the <see cref="T:System.ActivationContext" /> of the add-in to be activated matches the <see cref="T:System.ActivationContext" /> of the current domain; if not, proceeds to step 2. Otherwise, executes the assembly and returns the result wrapped in an object handle.</para>
+        </item>
+        <item>
+          <para>Activates the add-in in a new <see cref="T:System.AppDomain" />. The following steps are taken to initialize a new <see cref="T:System.AppDomain" /> using the <see cref="T:System.Runtime.Hosting.ActivationArguments" /> for the add-in.</para>
+          <list type="ordered">
+            <item>
+              <para>Creates a new <see cref="T:System.AppDomainSetup" />  object using an <see cref="T:System.Runtime.Hosting.ActivationArguments" /> object containing the activation context for the add-in.</para>
+            </item>
+            <item>
+              <para>Calls the <see cref="M:System.Runtime.Hosting.ApplicationActivator.CreateInstanceHelper(System.AppDomainSetup)" /> method to create a new domain using the <see cref="T:System.AppDomainSetup" /> object.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Runtime.Hosting.ApplicationActivator.CreateInstanceHelper(System.AppDomainSetup)" /> method calls the <see cref="M:System.Security.HostSecurityManager.DetermineApplicationTrust(System.Security.Policy.Evidence,System.Security.Policy.Evidence,System.Security.Policy.TrustManagerContext)" /> method to acquire an <see cref="T:System.Security.Policy.ApplicationTrust" /> object for the add-in. If the <see cref="P:System.Security.Policy.ApplicationTrust.IsApplicationTrustedToRun" /> property returns true, the add-in is executed. If not, <see cref="M:System.Runtime.Hosting.ApplicationActivator.CreateInstanceHelper(System.AppDomainSetup)" /> throws a <see cref="T:System.Security.Policy.PolicyException" />  indicating that execution permission could not be acquired.</para>
+            </item>
+            <item>
+              <para>If the add-in is trusted to run, then a new <see cref="T:System.AppDomain" /> is created and configured for the <see cref="T:System.ActivationContext" /> of the add-in, and the add-in is loaded and executed.</para>
+            </item>
+            <item>
+              <para>The result of the activation of the add-in is returned, wrapped in an object handle.</para>
+            </item>
+          </list>
+        </item>
+      </list>
+      <para>A custom activator can tailor the activation of an add-in to a particular set of circumstances. For example, a custom activator could find an existing <see cref="T:System.AppDomain" />  to activate this add-in instead of creating a new domain every time. </para>
+      <para>The following steps describe the behavior of a custom <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> that activates an add-in in an existing <see cref="T:System.AppDomain" />:</para>
+      <list type="ordered">
+        <item>
+          <para>The custom activator finds a domain that has the same <see cref="T:System.ActivationContext" /> as the add-in that is being activated.</para>
+        </item>
+        <item>
+          <para>If the <see cref="T:System.ActivationContext" /> has never been seen before in the process, the custom activator creates a new <see cref="T:System.AppDomain" /> for this <see cref="T:System.ActivationContext" /> by calling the <see cref="Overload:System.AppDomain.CreateDomain" /> method directly, or delegating this activity to the <see cref="M:System.Runtime.Hosting.ApplicationActivator.CreateInstanceHelper(System.AppDomainSetup)" /> in the base class.</para>
+        </item>
+        <item>
+          <para>If there is an existing domain with the same <see cref="T:System.ActivationContext" />, then the activator can delegate the <see cref="Overload:System.Runtime.Hosting.ApplicationActivator.CreateInstance" /> method call to the <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> in the target domain. Note that this would be a cross-domain call to an <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> that resides in the target <see cref="T:System.AppDomain" />.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for the activation of manifest-based assemblies. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationActivator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Hosting.ApplicationActivator" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.ObjectHandle CreateInstance (ActivationContext activationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.ObjectHandle CreateInstance(class System.ActivationContext activationContext) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -44,20 +100,31 @@
         <Parameter Name="activationContext" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="activationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is intended for the manifest-based activation of applications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the application to be activated, using the specified activation context. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Remoting.ObjectHandle" /> that is a wrapper for the return value of the application execution. The return value must be unwrapped to access the real object.  </para>
+        </returns>
+        <param name="activationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ActivationContext" /> that identifies the application to activate.</param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.ObjectHandle CreateInstance (ActivationContext activationContext, string[] activationCustomData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.ObjectHandle CreateInstance(class System.ActivationContext activationContext, string[] activationCustomData) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.ObjectHandle CreateInstance (ActivationContext activationContext, string[] activationCustomData);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -66,21 +133,33 @@
         <Parameter Name="activationCustomData" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="activationContext">To be added.</param>
-        <param name="activationCustomData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is intended for the manifest-based activation of applications. The activation data consists of information such as the query string portion of a URL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the application to be activated, using the specified activation context  and custom activation data.  </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Remoting.ObjectHandle" /> that is a wrapper for the return value of the application execution. The return value must be unwrapped to access the real object.</para>
+        </returns>
+        <param name="activationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ActivationContext" /> that identifies the application to activate.</param>
+        <param name="activationCustomData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Custom activation data.</param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstanceHelper">
+      <MemberSignature Language="C#" Value="protected static System.Runtime.Remoting.ObjectHandle CreateInstanceHelper (AppDomainSetup adSetup);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig class System.Runtime.Remoting.ObjectHandle CreateInstanceHelper(class System.AppDomainSetup adSetup) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstanceHelper">
-      <MemberSignature Language="C#" Value="protected static System.Runtime.Remoting.ObjectHandle CreateInstanceHelper (AppDomainSetup adSetup);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ObjectHandle</ReturnType>
       </ReturnValue>
@@ -88,16 +167,22 @@
         <Parameter Name="adSetup" Type="System.AppDomainSetup" />
       </Parameters>
       <Docs>
-        <param name="adSetup">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is intended for the manifest-based activation of applications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of an application using the specified <see cref="T:System.AppDomainSetup" />  object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Remoting.ObjectHandle" /> that is a wrapper for the return value of the application execution. The return value must be unwrapped to access the real object. </para>
+        </returns>
+        <param name="adSetup">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AppDomainSetup" /> object whose <see cref="P:System.AppDomainSetup.ActivationArguments" /> property identifies the application to activate.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

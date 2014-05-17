@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageEncodingBindingElement" FullName="System.ServiceModel.Channels.MessageEncodingBindingElement">
+  <TypeSignature Language="C#" Value="public abstract class MessageEncodingBindingElement : System.ServiceModel.Channels.BindingElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MessageEncodingBindingElement extends System.ServiceModel.Channels.BindingElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.BindingElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encoding is the process of transforming a message into a sequence of bytes. Decoding is the reverse process. indigo1 includes three types of encoding for SOAP messages: Text, Binary and Message Transmission Optimization Mechanism (MTOM). </para>
+      <para>Use this class if you want to implement a custom message encoder. To implement your own custom message encoder, you must provide custom implementations of the following three abstract base classes:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MessageEncoderFactory" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MessageEncoder" />
+          </para>
+        </item>
+      </list>
+      <para>Override the <see cref="P:System.ServiceModel.Channels.MessageEncoderFactory.Encoder" /> to return an instance of your custom <see cref="T:System.ServiceModel.Channels.MessageEncoder" />. Override the <see cref="M:System.ServiceModel.Channels.MessageEncodingBindingElement.CreateMessageEncoderFactory" /> method to return an instance of this factory.</para>
+      <para>Any type that derives from <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElement" /> is responsible for updating the version of the SOAP binding in the WSDL document generated for the service. This is done by implementing the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlEndpointConversionContext)" /> method to modify the generated WSDL.</para>
+      <para>indigo1 provides three types of binding elements derived from the <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElement" /> class that can provide for text, binary and Message Transmission Optimization Mechanism (MTOM) encoding.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.TextMessageEncodingBindingElement" />: the most interoperable, but the least efficient encoder for XML messages. A Web service or Web service client can generally understand textual XML. However, transmitting large blocks of binary data as text is not efficient. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.BinaryMessageEncodingBindingElement" />: represents the binding element that specifies the character encoding and message versioning used for binary-based XML messages. This is most efficient but least interoperable of the encoding options. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MTOMMessageEncodingBindingElement" />: represents the binding element that specifies the character encoding and message versioning used for a message using a Message Transmission Optimization Mechanism (MTOM) encoding. MTOM is an efficient technology for transmitting binary data in indigo2 messages. The MTOM encoder attempts to balance efficiency and interoperability. The MTOM encoding transmits most XML in textual form, but optimizes large blocks of binary data by transmitting them as-is, without conversion to text.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The binding element that specifies the message version used to encode messages.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageEncodingBindingElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElement" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageEncodingBindingElement (System.ServiceModel.Channels.MessageEncodingBindingElement source);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.MessageEncodingBindingElement source) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="source" Type="System.ServiceModel.Channels.MessageEncodingBindingElement" />
+      </Parameters>
+      <Docs>
+        <param name="source">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElement" /> class initialized from an existing element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateMessageEncoderFactory">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.MessageEncoderFactory CreateMessageEncoderFactory ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.MessageEncoderFactory CreateMessageEncoderFactory() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageEncoderFactory</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a factory for producing message encoders.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.MessageEncoderFactory" /> used to produce message encoders.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProperty&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public override T GetProperty&lt;T&gt; (System.ServiceModel.Channels.BindingContext ctx) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance !!T GetProperty&lt;class T&gt;(class System.ServiceModel.Channels.BindingContext ctx) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="ctx" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <param name="ctx">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this to request a typed object such as an interface for retrieving properties or getting status from the appropriate layer in the channel stack. If a layer supports returning the requested object, it returns it. If not, it delegates the call down to the next layer in the stack. If it gets to the bottom of the stack and no channel layer supported the requested object, then the method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the typed object requested, if present, from the appropriate layer in the channel stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T" /> requested if it is present or null if it is not.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageVersion">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.MessageVersion MessageVersion { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.MessageVersion MessageVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When binding elements are asked to process a message that has a <see cref="T:System.ServiceModel.Channels.MessageVersion" /> not returned by this property, it should throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets or sets the message version that can be handled by the message encoders produced by the message encoder factory.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnImportPolicy">
+      <MemberSignature Language="C#" Value="protected virtual void OnImportPolicy (System.Xml.XmlElement assertion, System.ServiceModel.Channels.MessageVersion messageVersion, System.ServiceModel.Description.MetadataImporter exporter, System.ServiceModel.Description.PolicyConversionContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnImportPolicy(class System.Xml.XmlElement assertion, class System.ServiceModel.Channels.MessageVersion messageVersion, class System.ServiceModel.Description.MetadataImporter exporter, class System.ServiceModel.Description.PolicyConversionContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assertion" Type="System.Xml.XmlElement" />
+        <Parameter Name="messageVersion" Type="System.ServiceModel.Channels.MessageVersion" />
+        <Parameter Name="exporter" Type="System.ServiceModel.Description.MetadataImporter" />
+        <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
+      </Parameters>
+      <Docs>
+        <param name="assertion">To be added.</param>
+        <param name="messageVersion">To be added.</param>
+        <param name="exporter">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

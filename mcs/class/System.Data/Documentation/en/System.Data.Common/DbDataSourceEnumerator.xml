@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DbDataSourceEnumerator" FullName="System.Data.Common.DbDataSourceEnumerator">
   <TypeSignature Language="C#" Value="public abstract class DbDataSourceEnumerator" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides the basis for other strongly typed data source enumerators.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a mechanism for enumerating all available instances of database servers within the local network. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,16 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.Common.DbDataSourceEnumerator" /> class provides the basis for strongly typed enumerators such as <see cref="T:System.Data.Sql.SqlDataSourceEnumerator" />.</para>
+          <para>   </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.Common.DbDataSourceEnumerator" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,10 +49,89 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The table returned by this method contains the following columns, all of which contain strings. Individual providers may add additional columns.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Column ordinal</para>
+                </term>
+                <description>
+                  <para>Column</para>
+                </description>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0</para>
+              </term>
+              <description>
+                <para>ServerName</para>
+              </description>
+              <description>
+                <para>Name of the server.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1</para>
+              </term>
+              <description>
+                <para>InstanceName</para>
+              </description>
+              <description>
+                <para>Name of the server instance. Depending on the provider, multiple instances can exist on a single server.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2</para>
+              </term>
+              <description>
+                <para>IsClustered</para>
+              </description>
+              <description>
+                <para>Indicates whether the server is part of a cluster.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>3</para>
+              </term>
+              <description>
+                <para>Version</para>
+              </description>
+              <description>
+                <para>Version of the server. Exact format varies by provider.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4</para>
+              </term>
+              <description>
+                <para>FactoryName</para>
+              </description>
+              <description>
+                <para>Name of the corresponding provider factory.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Data.DataTable" /> containing information about all visible instances of the server represented by the strongly typed instance of this class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> containing information about the visible instances of the associated data source.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

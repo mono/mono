@@ -26,18 +26,39 @@
 //
 
 using System;
+using System.Reflection;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Logging
 {
-        public class LoggerDescription
-        {
-                public LoggerDescription (string loggerClassName, string loggerAssemblyName,
-                        string loggerAssemblyFile, string loggerSwitchParameters,
-                        LoggerVerbosity verbosity)
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+	public class LoggerDescription
+	{
+		public LoggerDescription (string loggerClassName, string loggerAssemblyName,
+				string loggerAssemblyFile, string loggerSwitchParameters,
+				LoggerVerbosity verbosity)
+		{
+			if (loggerAssemblyName != null && loggerAssemblyFile != null)
+				throw new InvalidOperationException ("Cannot specify both loggerAssemblyName and loggerAssemblyFile at the same time.");
+			if (loggerAssemblyName == null && loggerAssemblyFile == null)
+				throw new InvalidOperationException ("Either loggerAssemblyName or loggerAssemblyFile must be specified");
+			class_name = loggerClassName;
+			assembly_name = loggerAssemblyName;
+			assembly_file = loggerAssemblyFile;
+			LoggerSwitchParameters = loggerSwitchParameters;
+			Verbosity = verbosity;
+		}
+
+		string class_name, assembly_name, assembly_file;
+
+		public string LoggerSwitchParameters { get; private set; }
+		public LoggerVerbosity Verbosity { get; private set; }
+
+		public ILogger CreateLogger ()
+		{
+			var assembly = assembly_name != null ? AppDomain.CurrentDomain.Load (assembly_name) : Assembly.LoadFile (assembly_file);
+			var type = assembly.GetType (class_name);
+			return (ILogger) Activator.CreateInstance (type, Verbosity);
+		}
+	}
 }
 

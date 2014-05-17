@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypedReference" FullName="System.TypedReference">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct TypedReference" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit TypedReference extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,19 +23,27 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Describes an object that contains both a managed pointer to a location and a runtime representation of the type that can be stored at that location.</para>
-    </summary>
     <remarks>
-      <para>A <see cref="T:System.TypedReference" /> is a type/value combination used to support variable argument lists (as used by C++, for example), among other things. <see cref="T:System.TypedReference" /> is a built-in value type that can be used for parameters and local variables.</para>
-      <para>Arrays of <see cref="T:System.TypedReference" /> cannot be created.</para>
-      <para>A <see cref="T:System.TypedReference" /> cannot be boxed as it contains ByRefs, so it cannot reside on the heap.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A typed reference is a type/value combination used for varargs and other support. TypedReference is a built-in value type that can be used for parameters and local variables.</para>
+      <para>Arrays of TypedReference objects cannot be created. For example, the following call is invalid: </para>
+      <para>code reference: System.TypedReference#1</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes objects that contain both a managed pointer to a location and a runtime representation of the type that may be stored at that location.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object o) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -41,43 +51,38 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>
-          <para>Determines whether the current instance and the specified
-      <see cref="T:System.Object" /> represent the same type and value.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the same
-   type and value as the current instance; otherwise,  <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
       overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks if this object is equal to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this object is equal to the specified object; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object with which to compare the current object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Generates a hash code for the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para> The algorithm used to
       generate the hash code is unspecified. </para>
@@ -86,16 +91,25 @@
       overrides <see cref="M:System.Object.GetHashCode" />.</block>
           </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code of this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of this object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetTargetType">
+      <MemberSignature Language="C#" Value="public static Type GetTargetType (TypedReference value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetTargetType(valuetype System.TypedReference value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetTargetType">
-      <MemberSignature Language="C#" Value="public static Type GetTargetType (TypedReference value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -103,24 +117,33 @@
         <Parameter Name="value" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <param name="value">The value whose target's type is to be returned.</param>
+        <remarks>To be added</remarks>
         <summary>
-          <para>Returns the type of the target of the specified <see cref="T:System.TypedReference" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type of the target of the specified TypedReference.</para>
         </summary>
         <returns>
-          <para>The <see cref="T:System.Type" /> of the target of the specified <see cref="T:System.TypedReference" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the target of the specified TypedReference.</para>
         </returns>
-        <remarks>To be added</remarks>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value whose target's type is to be returned. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MakeTypedReference">
+      <MemberSignature Language="C#" Value="public static TypedReference MakeTypedReference (object target, System.Reflection.FieldInfo[] flds);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TypedReference MakeTypedReference(object target, class System.Reflection.FieldInfo[] flds) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MakeTypedReference">
-      <MemberSignature Language="C#" Value="public static TypedReference MakeTypedReference (object target, System.Reflection.FieldInfo[] flds);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.TypedReference</ReturnType>
       </ReturnValue>
@@ -129,17 +152,6 @@
         <Parameter Name="flds" Type="System.Reflection.FieldInfo[]" />
       </Parameters>
       <Docs>
-        <param name="target">An object that contains the field described by the first element of <paramref name="flds" />.</param>
-        <param name="flds">A list of field descriptions where each element describes a field that contains the field described by the succeeding element. Each described field must be a value type.</param>
-        <summary>
-          <para>Makes a <see cref="T:System.TypedReference" /> for a field identified by a specified object and list of field descriptions.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.TypedReference" /> for the field described by the last element of <paramref name="flds" />.</para>
-        </returns>
-        <remarks>
-          <para>This method returns a <see cref="T:System.TypedReference" /> to the terminal field, where the target parameter contains the field described by the first element of <paramref name="flds" />, the field described by the first element of <paramref name="flds" /> contains the field described by the second element of <paramref name="flds" />, and so on, until the terminal field is reached.</para>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>The 
 <paramref name="flds" /> array has no elements. </para>
@@ -157,7 +169,33 @@
           <para>-or-</para>
           <para>The field described by an element of <paramref name="flds" /> is not a value type.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.TypedReference.MakeTypedReference(System.Object,System.Reflection.FieldInfo[])" /> method returns a typed reference to some terminal field, where the <paramref name="target" /> parameter contains the field described by the first element of <paramref name="flds" />, the field described by the first element of <paramref name="flds" /> contains the field described by the second element of <paramref name="flds" />, and so on until the terminal field is reached.</para>
+          <para>For an explanation of run-time type system objects such as RuntimeFieldInfo, see <format type="text/html"><a href="c1439fb5-cf76-475d-a9d2-fe64ba858858">Runtime Types in Reflection</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this method can be used to access non-public members if the caller has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag and if the grant set of the non-public members is restricted to the caller’s grant set, or a subset thereof. (See <format type="text/html"><a href="42d9dc2a-8fcc-4ff3-b002-4ff260ef3dc5">Security Considerations for Reflection</a></format>.) </para>
+            <para>To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Makes a TypedReference for a field identified by a specified object and list of field descriptions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.TypedReference" /> for the field described by the last element of <paramref name="flds" />.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains the field described by the first element of <paramref name="flds" />. </param>
+        <param name="flds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of field descriptions where each element describes a field that contains the field described by the succeeding element. Each described field must be a value type. The field descriptions must be RuntimeFieldInfo objects supplied by the type system.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SetTypedReference">
+      <MemberSignature Language="C#" Value="public static void SetTypedReference (TypedReference target, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetTypedReference(valuetype System.TypedReference target, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -168,10 +206,6 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SetTypedReference">
-      <MemberSignature Language="C#" Value="public static void SetTypedReference (TypedReference target, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -180,11 +214,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="target">The target of the conversion.</param>
-        <param name="value">The value to be converted.</param>
-        <summary>
-          <para>Converts the specified value to a <see cref="T:System.TypedReference" />.</para>
-        </summary>
         <remarks>
           <para>This method converts <paramref name="value" /> to <paramref name="target" />.</para>
         </remarks>
@@ -195,21 +224,29 @@
         <exception cref="T:System.InvalidCastException">
           <para>The requested conversion is not possible.</para>
         </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified value to a TypedReference. This method is not supported.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always throws <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the conversion. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to be converted. </param>
       </Docs>
+    </Member>
+    <Member MemberName="TargetTypeToken">
+      <MemberSignature Language="C#" Value="public static RuntimeTypeHandle TargetTypeToken (TypedReference value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.RuntimeTypeHandle TargetTypeToken(valuetype System.TypedReference value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="TargetTypeToken">
-      <MemberSignature Language="C#" Value="public static RuntimeTypeHandle TargetTypeToken (TypedReference value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeTypeHandle</ReturnType>
       </ReturnValue>
@@ -217,24 +254,28 @@
         <Parameter Name="value" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.TypedReference" /> for which the type handle is requested.</param>
+        <remarks>To be added</remarks>
         <summary>
-          <para>Returns the internal metadata type handle for the specified <see cref="T:System.TypedReference" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the internal metadata type handle for the specified TypedReference.</para>
         </summary>
         <returns>
-          <para>The internal metadata type handle for the specified <see cref="T:System.TypedReference" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The internal metadata type handle for the specified TypedReference.</para>
         </returns>
-        <remarks>To be added</remarks>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TypedReference for which the type handle is requested. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ToObject">
+      <MemberSignature Language="C#" Value="public static object ToObject (TypedReference value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object ToObject(valuetype System.TypedReference value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToObject">
-      <MemberSignature Language="C#" Value="public static object ToObject (TypedReference value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -242,24 +283,21 @@
         <Parameter Name="value" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.TypedReference" /> to be converted.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This might be a boxing operation.</para>
+        </remarks>
         <summary>
-          <para>Converts the specified <see cref="T:System.TypedReference" /> to a System.Object.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified TypedReference to an Object.</para>
         </summary>
         <returns>
-          <para>The <see cref="T:System.Object" /> that results from the conversion of the specified <see cref="T:System.TypedReference" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> converted from a TypedReference.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This might involve a boxing operation.</block>
-          </para>
-        </remarks>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TypedReference to be converted. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

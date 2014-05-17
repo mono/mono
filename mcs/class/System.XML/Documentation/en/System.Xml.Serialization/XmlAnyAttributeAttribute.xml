@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlAnyAttributeAttribute" FullName="System.Xml.Serialization.XmlAnyAttributeAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlAnyAttributeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlAnyAttributeAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -13,27 +16,44 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue | System.AttributeTargets.All)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" /> to contain arbitrary data (as XML attributes) that is sent as part of an XML document, such as, metadata sent as part of the document.</para>
+      <para>Apply the <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" /> to a field that returns an array of <see cref="T:System.Xml.XmlAttribute" /> or <see cref="T:System.Xml.XmlNode" /> objects. When the <see cref="M:System.Xml.Serialization.XmlSerializer.Deserialize(System.IO.Stream)" /> method of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class is called, all XML attributes that do not have a corresponding member in the class being deserialized are collected in the array. After deserialization, you can iterate through the collection of <see cref="T:System.Xml.XmlAttribute" /> items to process the data.</para>
+      <para>The <see cref="E:System.Xml.Serialization.XmlSerializer.UnknownNode" /> and <see cref="E:System.Xml.Serialization.XmlSerializer.UnknownAttribute" /> events of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> do not occur if you apply the <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" /> to a member of a class.</para>
+      <block subset="none" type="note">
+        <para>You can use the word XmlAnyAttribute in your code instead of the longer <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" />.</para>
+      </block>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that the member (a field that returns an array of <see cref="T:System.Xml.XmlAttribute" /> objects) can contain any XML attributes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlAnyAttributeAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a new instance of the <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

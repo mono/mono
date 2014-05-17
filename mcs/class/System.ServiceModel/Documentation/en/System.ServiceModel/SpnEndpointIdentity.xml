@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SpnEndpointIdentity" FullName="System.ServiceModel.SpnEndpointIdentity">
+  <TypeSignature Language="C#" Value="public class SpnEndpointIdentity : System.ServiceModel.EndpointIdentity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SpnEndpointIdentity extends System.ServiceModel.EndpointIdentity" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.EndpointIdentity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An SPN is the name by which a client uniquely identifies an instance of a service. If you install multiple instances of a service on computers throughout a forest, each instance must have its own SPN. A given service instance can have multiple SPNs if there are multiple names that clients might use for authentication.</para>
+      <para>When a client wants to connect to a service, it locates an instance of the service, composes an SPN for that instance, and sets the identity to a <see cref="T:System.ServiceModel.SpnEndpointIdentity" />. A check will be made that the message is intended for that service.</para>
+      <para>The three authentication modes used under Kerberos are:</para>
+      <list type="bullet">
+        <item>
+          <para>SSPINegotiate</para>
+        </item>
+        <item>
+          <para>Kerberos</para>
+        </item>
+        <item>
+          <para>KerberosOverTransport.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a service principal name (SPN) for an identity when the binding uses Kerberos.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SpnEndpointIdentity (System.IdentityModel.Claims.Claim identity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IdentityModel.Claims.Claim identity) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="identity" Type="System.IdentityModel.Claims.Claim" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.ServiceModel.SpnEndpointIdentity.SpnLookupTime" /> property to 1 minute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.ServiceModel.SpnEndpointIdentity" /> with the specified identity claim.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity for this service principal name (SPN).</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SpnEndpointIdentity (string spn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string spn) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="spn" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="spn">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.ServiceModel.SpnEndpointIdentity.SpnLookupTime" /> property to 1 minute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.ServiceModel.SpnEndpointIdentity" /> with the specified service principal name (SPN).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SpnLookupTime">
+      <MemberSignature Language="C#" Value="public static TimeSpan SpnLookupTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.TimeSpan SpnLookupTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the maximum time allowed to look up the service principal name (SPN).</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

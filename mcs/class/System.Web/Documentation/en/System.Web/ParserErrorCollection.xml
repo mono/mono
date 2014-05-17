@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParserErrorCollection" FullName="System.Web.ParserErrorCollection">
   <TypeSignature Language="C#" Value="public sealed class ParserErrorCollection : System.Collections.CollectionBase" />
   <AssemblyInfo>
@@ -9,9 +10,39 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.ParserErrorCollection" /> class provides methods and properties that you can use to manage a collection of <see cref="T:System.Web.ParserError" /> objects. For example, you can add a set of parser errors to a collection upon parsing while using a custom <see cref="T:System.Web.Compilation.BuildProvider" /> object to report all parse exceptions caught during parsing.</para>
+      <para>To add parser errors to, remove them from, or locate them in a collection, use the following: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.ParserErrorCollection.Add(System.Web.ParserError)" /> method to add a single <see cref="T:System.Web.ParserError" /> object to the collection.</para>
+        </item>
+        <item>
+          <para>The <see cref="Overload:System.Web.ParserErrorCollection.AddRange" /> methods to add multiple <see cref="T:System.Web.ParserError" /> objects to the collection.</para>
+        </item>
+        <item>
+          <para>Both the <see cref="M:System.Web.ParserErrorCollection.Insert(System.Int32,System.Web.ParserError)" /> method and the <see cref="P:System.Web.ParserErrorCollection.Item(System.Int32)" /> property, which is the <see cref="T:System.Web.ParserErrorCollection" /> indexer, to add a single <see cref="T:System.Web.ParserError" /> object to the collection at the specified index.</para>
+        </item>
+      </list>
+      <para>Additionally, you can use the <see cref="T:System.Web.ParserErrorCollection" /> class to do the following: </para>
+      <list type="bullet">
+        <item>
+          <para>Remove <see cref="T:System.Web.ParserError" /> objects with the <see cref="M:System.Web.ParserErrorCollection.Remove(System.Web.ParserError)" /> method. </para>
+        </item>
+        <item>
+          <para>Check whether a particular <see cref="T:System.Web.ParserError" /> is in the collection by using the <see cref="M:System.Web.ParserErrorCollection.Contains(System.Web.ParserError)" /> method. </para>
+        </item>
+        <item>
+          <para>Find where a <see cref="T:System.Web.ParserError" /> object is located in the collection by using the <see cref="M:System.Web.ParserErrorCollection.IndexOf(System.Web.ParserError)" /> method.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages a set of parser errors detected during parsing. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +50,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.ParserErrorCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,9 +69,15 @@
       </Parameters>
       <Docs>
         <param name="errors">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.ParserErrorCollection.#ctor(System.Web.ParserError[])" /> constructor adds an array of <see cref="T:System.Web.ParserError" /> objects to the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.ParserErrorCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +94,20 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.ParserErrorCollection.Add(System.Web.ParserError)" /> method to add an existing <see cref="T:System.Web.ParserError" /> object to the collection. You cannot add the same <see cref="T:System.Web.ParserError" /> object to the collection more than once. When you call the <see cref="M:System.Web.ParserErrorCollection.Add(System.Web.ParserError)" /> method using a <see cref="T:System.Web.ParserError" /> object that is already in the collection, the addition fails and -1 is returned.</para>
+          <para>To add multiple objects to the collection, use the <see cref="M:System.Web.ParserErrorCollection.AddRange(System.Web.ParserErrorCollection)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a value to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the value within the collection; otherwise, -1 if the value is already in the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,9 +124,15 @@
       </Parameters>
       <Docs>
         <param name="errors">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.ParserErrorCollection.AddRange(System.Web.ParserError[])" /> method to add an array of <see cref="T:System.Web.ParserError" /> objects to the collection. The <see cref="M:System.Web.ParserErrorCollection.AddRange(System.Web.ParserError[])" /> method is useful when you create multiple <see cref="T:System.Web.ParserError" /> objects and want to add them to the collection with a single method call. To add individual <see cref="T:System.Web.ParserError" /> objects to the collection, use the <see cref="M:System.Web.ParserErrorCollection.Add(System.Web.ParserError)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an array of <see cref="T:System.Web.ParserError" /> objects to the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,9 +149,15 @@
       </Parameters>
       <Docs>
         <param name="collection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike the <see cref="M:System.Web.ParserErrorCollection.Add(System.Web.ParserError)" /> method, the <see cref="M:System.Web.ParserErrorCollection.AddRange(System.Web.ParserErrorCollection)" /> method does not have a return value that can be used to determine whether a <see cref="T:System.Web.ParserError" /> object being added is already in the collection. If you need this information, use the <see cref="M:System.Web.ParserErrorCollection.Contains(System.Web.ParserError)" /> method before using <see cref="M:System.Web.ParserErrorCollection.AddRange(System.Web.ParserErrorCollection)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the objects in an existing <see cref="T:System.Web.ParserErrorCollection" /> to the collection. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -112,10 +174,19 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot add the same <see cref="T:System.Web.ParserError" /> object to the collection more than once. However, attempting to add a <see cref="T:System.Web.ParserError" /> object more than once will not throw an exception. Instead, the addition will fail. In this case, the <see cref="M:System.Web.ParserErrorCollection.Add(System.Web.ParserError)" /> method will return a value of –1. However, the <see cref="Overload:System.Web.ParserErrorCollection.AddRange" /> and <see cref="M:System.Web.ParserErrorCollection.Insert(System.Int32,System.Web.ParserError)" /> methods do not have return values. When adding <see cref="T:System.Web.ParserError" /> objects by using one of these methods, use the <see cref="M:System.Web.ParserErrorCollection.Contains(System.Web.ParserError)" /> method to determine whether a particular <see cref="T:System.Web.ParserError" /> object is already in the collection. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Web.ParserError" /> object is located in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.ParserError" /> is in the collection; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -133,10 +204,31 @@
       </Parameters>
       <Docs>
         <param name="errors">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.ParserErrorCollection.CopyTo(System.Web.ParserError[],System.Int32)" /> method to copy the <see cref="T:System.Web.ParserError" /> objects in a collection (including the item references they contain) to a compatible array, starting at a specified index. This is useful when you want to sort the <see cref="T:System.Web.ParserError" /> objects in the collection by using the <see cref="Overload:System.Array.Sort" /> method. To do this: </para>
+          <list type="ordered">
+            <item>
+              <para>Copy the <see cref="T:System.Web.ParserError" /> objects into a compatible array. </para>
+            </item>
+            <item>
+              <para>Sort the array. </para>
+            </item>
+            <item>
+              <para>Use the <see cref="M:System.Web.ParserErrorCollection.Remove(System.Web.ParserError)" /> method to remove all the <see cref="T:System.Web.ParserError" /> objects from the collection.</para>
+            </item>
+            <item>
+              <para>Use the <see cref="M:System.Web.ParserErrorCollection.AddRange(System.Web.ParserError[])" /> method to add the sorted array back to the collection.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Web.ParserError" /> objects in the collection to a compatible one-dimensional array, starting at the specified index of the target array.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first index within the array to which the <see cref="T:System.Web.ParserError" /> is copied.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,10 +245,19 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.ParserErrorCollection.IndexOf(System.Web.ParserError)" /> method to determine the index of a <see cref="T:System.Web.ParserError" /> object within the collection. This is useful to determine the index of each <see cref="T:System.Web.ParserError" /> when you iterate through the collection by using the <see cref="T:System.Collections.IEnumerator" /> object returned by the <see cref="M:System.Collections.CollectionBase.GetEnumerator" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the specified <see cref="T:System.Web.ParserError" /> object in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the <see cref="T:System.Web.ParserError" /> objects within the collection; otherwise, 1 if the <see cref="T:System.Web.ParserError" /> is not in the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -173,11 +274,19 @@
         <Parameter Name="error" Type="System.Web.ParserError" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
         <param name="error">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.ParserErrorCollection.Insert(System.Int32,System.Web.ParserError)" /> method to insert an existing <see cref="T:System.Web.ParserError" /> object at a particular index within the collection.</para>
+          <para>You cannot add the same <see cref="T:System.Web.ParserError" /> object to the collection more than once. When you call the <see cref="M:System.Web.ParserErrorCollection.Insert(System.Int32,System.Web.ParserError)" /> method by using a <see cref="T:System.Web.ParserError" /> that is already in the collection, the insertion fails. Use the <see cref="M:System.Web.ParserErrorCollection.Contains(System.Web.ParserError)" /> method before the insertion to determine whether a particular <see cref="T:System.Web.ParserError" /> is already in the collection. To reposition a <see cref="T:System.Web.ParserError" /> within the collection, you must first remove it by using the <see cref="M:System.Web.ParserErrorCollection.Remove(System.Web.ParserError)" /> method and then insert it at the desired index by using <see cref="M:System.Web.ParserErrorCollection.Insert(System.Int32,System.Web.ParserError)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.Web.ParserError" /> object into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the collection at which to insert the <see cref="T:System.Web.ParserError" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -214,9 +323,15 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.ParserErrorCollection.Remove(System.Web.ParserError)" /> method to remove a <see cref="T:System.Web.ParserError" /> object from the collection when you have a reference to the <see cref="T:System.Web.ParserError" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.ParserError" /> object from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

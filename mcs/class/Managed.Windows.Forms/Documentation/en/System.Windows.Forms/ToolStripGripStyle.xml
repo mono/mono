@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripGripStyle" FullName="System.Windows.Forms.ToolStripGripStyle">
   <TypeSignature Language="C#" Value="public enum ToolStripGripStyle" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a stack layout, make a <see cref="T:System.Windows.Forms.ToolStrip" /> movable by putting it in a <see cref="T:System.Windows.Forms.ToolStripPanel" /> and ensuring that its <see cref="P:System.Windows.Forms.ToolStrip.GripStyle" /> is set to <see cref="F:System.Windows.Forms.ToolStripGripStyle.Visible" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies visibility of a <see cref="T:System.Windows.Forms.ToolStrip" /> move handle (grip).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Hidden">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.ToolStripGripStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a <see cref="T:System.Windows.Forms.ToolStrip" /> move handle (grip) is not visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.ToolStripGripStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a <see cref="T:System.Windows.Forms.ToolStrip" /> move handle (grip) is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

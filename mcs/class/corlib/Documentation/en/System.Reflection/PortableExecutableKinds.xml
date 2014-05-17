@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PortableExecutableKinds" FullName="System.Reflection.PortableExecutableKinds">
   <TypeSignature Language="C#" Value="public enum PortableExecutableKinds" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed PortableExecutableKinds extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,85 +19,131 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To obtain this value for a module, use the <see cref="M:System.Reflection.Module.GetPEKind(System.Reflection.PortableExecutableKinds@,System.Reflection.ImageFileMachine@)" /> method.</para>
+      <block subset="none" type="note">
+        <para>This enumeration corresponds to the CorPEKind enumeration in the unmanaged reflection API, which is accessed by the unmanaged GetPEKind function.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the nature of the code in an executable file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ILOnly">
       <MemberSignature Language="C#" Value="ILOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.PortableExecutableKinds ILOnly = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The executable contains only Microsoft intermediate language (MSIL), and is therefore neutral with respect to 32-bit or 64-bit platforms.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NotAPortableExecutableImage">
       <MemberSignature Language="C#" Value="NotAPortableExecutableImage" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.PortableExecutableKinds NotAPortableExecutableImage = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file is not in portable executable (PE) file format.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PE32Plus">
       <MemberSignature Language="C#" Value="PE32Plus" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.PortableExecutableKinds PE32Plus = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The executable requires a 64-bit platform.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Preferred32Bit">
+      <MemberSignature Language="C#" Value="Preferred32Bit" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.PortableExecutableKinds Preferred32Bit = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The executable is platform-agnostic but should be run on a 32-bit platform whenever possible.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Required32Bit">
       <MemberSignature Language="C#" Value="Required32Bit" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.PortableExecutableKinds Required32Bit = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The executable can be run on a 32-bit platform, or in the 32-bit Windows on Windows (WOW) environment on a 64-bit platform.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Unmanaged32Bit">
       <MemberSignature Language="C#" Value="Unmanaged32Bit" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.PortableExecutableKinds Unmanaged32Bit = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PortableExecutableKinds</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The executable contains pure unmanaged code.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

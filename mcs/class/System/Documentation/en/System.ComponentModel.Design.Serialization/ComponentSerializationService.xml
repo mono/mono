@@ -1,51 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComponentSerializationService" FullName="System.ComponentModel.Design.Serialization.ComponentSerializationService">
   <TypeSignature Language="C#" Value="public abstract class ComponentSerializationService" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ComponentSerializationService extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.ComponentSerializationService" /> serializes a set of components or serializable objects into a serialization store. The store can then be deserialized later. The <see cref="T:System.ComponentModel.Design.Serialization.ComponentSerializationService" /> class differs from other serialization schemes in that the serialization format is opaque, and it allows for partial serialization of objects. For example, you can choose to serialize only selected properties for an object. </para>
+      <para>This class is abstract. Typically, a <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" /> will provide a concrete implementation of this class and add it as a service to its <see cref="T:System.ComponentModel.Design.DesignSurface" />. This allows objects to be serialized in the format best suited for them.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.ComponentSerializationService" /> class replaces the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationService" /> interface from the .NET Framework version 1.0, although the latter is retained for backward compatibility.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for serializing a set of components or serializable objects into a serialization store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected ComponentSerializationService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.ComponentSerializationService" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateStore">
       <MemberSignature Language="C#" Value="public abstract System.ComponentModel.Design.Serialization.SerializationStore CreateStore ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.Design.Serialization.SerializationStore CreateStore() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.Serialization.SerializationStore</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiple objects can be serialized into the same serialization store. When you are finished with the store, you can call its <see cref="M:System.ComponentModel.Design.Serialization.SerializationStore.System#IDisposable#Dispose" /> or <see cref="M:System.ComponentModel.Design.Serialization.SerializationStore.Close" /> method. Once closed, a serialization store can be used for deserialization, or it can be saved into a stream.</para>
+          <para>The serialization store can be passed to any of the various serializing methods to build up serialization state for a group of objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new created serialization store.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
       <MemberSignature Language="C#" Value="public abstract System.Collections.ICollection Deserialize (System.ComponentModel.Design.Serialization.SerializationStore store);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ICollection Deserialize(class System.ComponentModel.Design.Serialization.SerializationStore store) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
@@ -54,17 +84,29 @@
         <Parameter Name="store" Type="System.ComponentModel.Design.Serialization.SerializationStore" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method deserializes <paramref name="store" /> to produce a collection of objects contained within it. Objects are deserialized in the same order in which they were serialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the given store to produce a collection of objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects created according to the stored state.</para>
+        </returns>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to deserialize.</param>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
       <MemberSignature Language="C#" Value="public abstract System.Collections.ICollection Deserialize (System.ComponentModel.Design.Serialization.SerializationStore store, System.ComponentModel.IContainer container);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ICollection Deserialize(class System.ComponentModel.Design.Serialization.SerializationStore store, class System.ComponentModel.IContainer container) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
@@ -74,18 +116,32 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method deserializes <paramref name="store" /> to produce a collection of objects contained within it. Objects are deserialized in the same order in which they were serialized.</para>
+          <para>Created objects that implement <see cref="T:System.ComponentModel.IComponent" /> are added to <paramref name="container" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the given store and populates the given <see cref="T:System.ComponentModel.IContainer" /> with deserialized <see cref="T:System.ComponentModel.IComponent" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects created according to the stored state.</para>
+        </returns>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to deserialize.</param>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IContainer" /> to which <see cref="T:System.ComponentModel.IComponent" /> objects will be added.</param>
       </Docs>
     </Member>
     <Member MemberName="DeserializeTo">
       <MemberSignature Language="C#" Value="public void DeserializeTo (System.ComponentModel.Design.Serialization.SerializationStore store, System.ComponentModel.IContainer container);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeserializeTo(class System.ComponentModel.Design.Serialization.SerializationStore store, class System.ComponentModel.IContainer container) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -95,17 +151,27 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.DeserializeTo(System.ComponentModel.Design.Serialization.SerializationStore,System.ComponentModel.IContainer)" /> method deserializes <paramref name="store" />, but instead of producing new objects, it applies the data in the store to an existing set of objects that are taken from the provided container. As a result, the caller can create in advance an object however it sees fit. If an object has a deserialization state and the object is not named in the set of existing objects, a new object will be created. If that object also implements <see cref="T:System.ComponentModel.IComponent" />, it will be added to <paramref name="container" />. Objects in the container must have names and types that match objects in the serialization store in order for an existing object to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the given <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to the given container.</para>
+        </summary>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to deserialize.</param>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The container to which <see cref="T:System.ComponentModel.IComponent" /> objects will be added.</param>
       </Docs>
     </Member>
     <Member MemberName="DeserializeTo">
       <MemberSignature Language="C#" Value="public void DeserializeTo (System.ComponentModel.Design.Serialization.SerializationStore store, System.ComponentModel.IContainer container, bool validateRecycledTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeserializeTo(class System.ComponentModel.Design.Serialization.SerializationStore store, class System.ComponentModel.IContainer container, bool validateRecycledTypes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -116,18 +182,29 @@
         <Parameter Name="validateRecycledTypes" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="container">To be added.</param>
-        <param name="validateRecycledTypes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.DeserializeTo(System.ComponentModel.Design.Serialization.SerializationStore,System.ComponentModel.IContainer)" /> method deserializes <paramref name="store" />, but instead of producing new objects, it applies the data in the store to an existing set of objects that are taken from the provided container. As a result, the caller can create in advance an object however it sees fit. If an object has a deserialization state and the object is not named in the set of existing objects, a new object will be created. If that object also implements <see cref="T:System.ComponentModel.IComponent" />, it will be added to <paramref name="container" />. Objects in the container must have names and types that match objects in the serialization store in order for an existing object to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the given <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to the given container, optionally validating recycled types.</para>
+        </summary>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to deserialize.</param>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The container to which <see cref="T:System.ComponentModel.IComponent" /> objects will be added.</param>
+        <param name="validateRecycledTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to guarantee that the deserialization will only work if applied to an object of the same type.</param>
       </Docs>
     </Member>
     <Member MemberName="DeserializeTo">
       <MemberSignature Language="C#" Value="public abstract void DeserializeTo (System.ComponentModel.Design.Serialization.SerializationStore store, System.ComponentModel.IContainer container, bool validateRecycledTypes, bool applyDefaults);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeserializeTo(class System.ComponentModel.Design.Serialization.SerializationStore store, class System.ComponentModel.IContainer container, bool validateRecycledTypes, bool applyDefaults) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -139,19 +216,31 @@
         <Parameter Name="applyDefaults" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="container">To be added.</param>
-        <param name="validateRecycledTypes">To be added.</param>
-        <param name="applyDefaults">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.DeserializeTo(System.ComponentModel.Design.Serialization.SerializationStore,System.ComponentModel.IContainer)" /> method deserializes <paramref name="store" />, but instead of producing new objects, it applies the data in the store to an existing set of objects that are taken from the provided container. As a result, the caller can create in advance an object however it sees fit. If an object has a deserialization state and the object is not named in the set of existing objects, a new object will be created. If that object also implements <see cref="T:System.ComponentModel.IComponent" />, it will be added to <paramref name="container" />. Objects in the container must have names and types that match objects in the serialization store in order for an existing object to be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the given <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to the given container, optionally applying default property values.</para>
+        </summary>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to deserialize.</param>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The container to which <see cref="T:System.ComponentModel.IComponent" /> objects will be added.</param>
+        <param name="validateRecycledTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to guarantee that the deserialization will only work if applied to an object of the same type.</param>
+        <param name="applyDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the default property values should be applied.</param>
       </Docs>
     </Member>
     <Member MemberName="LoadStore">
       <MemberSignature Language="C#" Value="public abstract System.ComponentModel.Design.Serialization.SerializationStore LoadStore (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.Design.Serialization.SerializationStore LoadStore(class System.IO.Stream stream) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.Serialization.SerializationStore</ReturnType>
@@ -160,17 +249,29 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the returned store to deserialize objects by passing it to one of the <see cref="Overload:System.ComponentModel.Design.Serialization.ComponentSerializationService.Deserialize" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> from a stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> instance.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> from which the store will be loaded.</param>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
       <MemberSignature Language="C#" Value="public abstract void Serialize (System.ComponentModel.Design.Serialization.SerializationStore store, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Serialize(class System.ComponentModel.Design.Serialization.SerializationStore store, object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -180,17 +281,27 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The store can be used to serialize more than one object by calling this method more than once.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object to the given <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" />.</para>
+        </summary>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to which the state of <paramref name="value" /> will be written.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeAbsolute">
       <MemberSignature Language="C#" Value="public abstract void SerializeAbsolute (System.ComponentModel.Design.Serialization.SerializationStore store, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SerializeAbsolute(class System.ComponentModel.Design.Serialization.SerializationStore store, object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -200,17 +311,29 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Standard serialization, as implemented through the <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.Serialize(System.ComponentModel.Design.Serialization.SerializationStore,System.Object)" /> method, only serializes values that differ from the component's default state. This provides the most compact serialization mechanism but assumes that a newly created object will be used during deserialization. If an existing object is used, the resulting deserialized object is not guaranteed to duplicate the original state of the serialized object; the properties that contained default values during serialization will not be reset back to their defaults during deserialization.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.SerializeAbsolute(System.ComponentModel.Design.Serialization.SerializationStore,System.Object)" /> method does not use this shortcut. It serializes all properties of the source object so that deserialization can restore all the object's properties, regardless of default state. </para>
+          <para>This method is particularly useful for serializing collections, because the order of the constituent items within the collection can change. In this circumstance, the safest process to restore the original state of the entire collection is to overwrite all the items with all their original property values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object, accounting for default property values.</para>
+        </summary>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to which the state of <paramref name="value" /> will be serialized.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeMember">
       <MemberSignature Language="C#" Value="public abstract void SerializeMember (System.ComponentModel.Design.Serialization.SerializationStore store, object owningObject, System.ComponentModel.MemberDescriptor member);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SerializeMember(class System.ComponentModel.Design.Serialization.SerializationStore store, object owningObject, class System.ComponentModel.MemberDescriptor member) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -221,18 +344,29 @@
         <Parameter Name="member" Type="System.ComponentModel.MemberDescriptor" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="owningObject">To be added.</param>
-        <param name="member">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.SerializeMember(System.ComponentModel.Design.Serialization.SerializationStore,System.Object,System.ComponentModel.MemberDescriptor)" /> method can be invoked multiple times for the same object to build up a list of serialized members within the serialization store. In general, the member should be a property or an event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given member on the given object. </para>
+        </summary>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to which the state of <paramref name="member" /> will be serialized.</param>
+        <param name="owningObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to which <paramref name="member" /> is attached.</param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.MemberDescriptor" /> specifying the member to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeMemberAbsolute">
       <MemberSignature Language="C#" Value="public abstract void SerializeMemberAbsolute (System.ComponentModel.Design.Serialization.SerializationStore store, object owningObject, System.ComponentModel.MemberDescriptor member);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SerializeMemberAbsolute(class System.ComponentModel.Design.Serialization.SerializationStore store, object owningObject, class System.ComponentModel.MemberDescriptor member) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -243,11 +377,21 @@
         <Parameter Name="member" Type="System.ComponentModel.MemberDescriptor" />
       </Parameters>
       <Docs>
-        <param name="store">To be added.</param>
-        <param name="owningObject">To be added.</param>
-        <param name="member">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.SerializeMemberAbsolute(System.ComponentModel.Design.Serialization.SerializationStore,System.Object,System.ComponentModel.MemberDescriptor)" /> method serializes the <paramref name="member" /> on <paramref name="owningObject" />, even if <paramref name="member" /> contains the default property value. </para>
+          <para>Note that for some members, containing the default value and restoring the setting of the same value to the member are different concepts. For example, if a property inherits its value from a parent object when no local value is set, setting the value back to the property may not be what is desired. The <see cref="M:System.ComponentModel.Design.Serialization.ComponentSerializationService.SerializeMemberAbsolute(System.ComponentModel.Design.Serialization.SerializationStore,System.Object,System.ComponentModel.MemberDescriptor)" /> method takes this into account and would clear the state of the property in this case.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given member on the given object, accounting for the default property value.</para>
+        </summary>
+        <param name="store">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to which the state of <paramref name="member" /> will be serialized.</param>
+        <param name="owningObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to which <paramref name="member" /> is attached.</param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to serialize.</param>
       </Docs>
     </Member>
   </Members>

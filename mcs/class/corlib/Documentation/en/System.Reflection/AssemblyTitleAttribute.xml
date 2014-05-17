@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyTitleAttribute" FullName="System.Reflection.AssemblyTitleAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AssemblyTitleAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AssemblyTitleAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,44 +23,66 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The assembly title is a friendly name, which can include spaces. </para>
+      <para>In Windows Vista, the information specified for this attribute appears on the <ui>Details</ui> tab of the <ui>Windows File Properties</ui> dialog box for the assembly. The property name is <ui>File description</ui>. In Windows XP, this information appears on the <ui>Version</ui> tab of the <ui>Windows File Properties</ui> dialog box. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a description for an assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AssemblyTitleAttribute (string title);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string title) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="title" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="title">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In Windows Vista, the string specified for the <paramref name="title" /> parameter appears on the <ui>Details</ui> tab of the <ui>Windows File Properties</ui> dialog box for the assembly. The property name is <ui>File description</ui>. In Windows XP, this string appears on the <ui>Version</ui> tab of the <ui>Windows File Properties</ui> dialog box. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyTitleAttribute" /> class.</para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly title. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Title">
+      <MemberSignature Language="C#" Value="public string Title { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Title" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Title">
-      <MemberSignature Language="C#" Value="public string Title { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In Windows Vista, the value of the <see cref="P:System.Reflection.AssemblyTitleAttribute.Title" /> property appears on the <ui>Details</ui> tab of the <ui>Windows File Properties</ui> dialog box for the assembly. The property name is <ui>File description</ui>. In Windows XP, this property appears on the <ui>Version</ui> tab of the <ui>Windows File Properties</ui> dialog box. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets assembly title information.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

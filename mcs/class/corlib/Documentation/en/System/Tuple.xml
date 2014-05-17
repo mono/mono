@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Tuple" FullName="System.Tuple">
   <TypeSignature Language="C#" Value="public static class Tuple" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Tuple extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,43 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A tuple is a data structure that has a specific number and sequence of elements. An example of a tuple is a data structure with three elements (known as a 3-tuple or triple) that is used to store an identifier such as a person's name in the first element, a year in the second element, and the person's income for that year in the third element. The .NET Framework directly supports tuples with one to seven elements. In addition, you can create tuples of eight or more elements by nesting tuple objects in the <see cref="P:System.Tuple`8.Rest" /> property of a <see cref="T:System.Tuple`8" /> object.</para>
+      <para>Tuples are commonly used in four ways:</para>
+      <list type="bullet">
+        <item>
+          <para>To represent a single set of data. For example, a tuple can represent a database record, and its components can represent individual fields of the record.</para>
+        </item>
+        <item>
+          <para>To provide easy access to, and manipulation of, a data set. </para>
+        </item>
+        <item>
+          <para>To return multiple values from a method without using out parameters (in C#) or ByRef parameters (in Visual Basic).</para>
+        </item>
+        <item>
+          <para>To pass multiple values to a method through a single parameter. For example, the <see cref="M:System.Threading.Thread.Start(System.Object)" /> method has a single parameter that lets you supply one value to the method that the thread executes at startup time. If you supply a <see cref="T:System.Tuple`3" /> object as the method argument, you can supply the thread’s startup routine with three items of data.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Tuple" /> class does not itself represent a tuple. Instead, it is a class that provides static methods for creating instances of the tuple types that are supported by the .NET Framework. It provides helper methods that you can call to instantiate tuple objects without having to explicitly specify the type of each tuple component. </para>
+      <para>Although you can create an instance of a tuple class by calling its class constructor, the code to do so can be cumbersome. The following example uses a class constructor to create a 7-tuple or septuple that contains population data for New York City for each census from 1950 through 2000.</para>
+      <para>code reference: System.Tuple.Class#1</para>
+      <para>Creating the same tuple object by using a helper method is more straightforward, as the following example shows.</para>
+      <para>code reference: System.Tuple.Class#2</para>
+      <para>The <see cref="Overload:System.Tuple.Create" /> helper methods directly support the creation of tuple objects that have from one to eight components (that is, singletons through octuples). Although there is no practical limit to the number of components a tuple may have, helper methods are not available to create a tuple with nine or more components. To create such a tuple, you must call the <see cref="M:System.Tuple`8.#ctor(`0,`1,`2,`3,`4,`5,`6,`7)" /> constructor.</para>
+      <block subset="none" type="note">
+        <para>For additional information and examples that use tuples, see the documentation for the individual tuple types in the .NET Framework. These are listed in the See Also section at the end of this topic.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides static methods for creating tuple objects. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Create&lt;T1&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1&gt; Create&lt;T1&gt; (T1 item1);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`1&lt;!!T1&gt; Create&lt;T1&gt;(!!T1 item1) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -38,6 +71,7 @@
     </Member>
     <Member MemberName="Create&lt;T1,T2&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2&gt; Create&lt;T1,T2&gt; (T1 item1, T2 item2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`2&lt;!!T1, !!T2&gt; Create&lt;T1, T2&gt;(!!T1 item1, !!T2 item2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -65,6 +99,7 @@
     </Member>
     <Member MemberName="Create&lt;T1,T2,T3&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3&gt; Create&lt;T1,T2,T3&gt; (T1 item1, T2 item2, T3 item3);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`3&lt;!!T1, !!T2, !!T3&gt; Create&lt;T1, T2, T3&gt;(!!T1 item1, !!T2 item2, !!T3 item3) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -96,6 +131,7 @@
     </Member>
     <Member MemberName="Create&lt;T1,T2,T3,T4&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4&gt; Create&lt;T1,T2,T3,T4&gt; (T1 item1, T2 item2, T3 item3, T4 item4);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`4&lt;!!T1, !!T2, !!T3, !!T4&gt; Create&lt;T1, T2, T3, T4&gt;(!!T1 item1, !!T2 item2, !!T3 item3, !!T4 item4) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -131,6 +167,7 @@
     </Member>
     <Member MemberName="Create&lt;T1,T2,T3,T4,T5&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5&gt; Create&lt;T1,T2,T3,T4,T5&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`5&lt;!!T1, !!T2, !!T3, !!T4, !!T5&gt; Create&lt;T1, T2, T3, T4, T5&gt;(!!T1 item1, !!T2 item2, !!T3 item3, !!T4 item4, !!T5 item5) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -170,6 +207,7 @@
     </Member>
     <Member MemberName="Create&lt;T1,T2,T3,T4,T5,T6&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5,T6&gt; Create&lt;T1,T2,T3,T4,T5,T6&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`6&lt;!!T1, !!T2, !!T3, !!T4, !!T5, !!T6&gt; Create&lt;T1, T2, T3, T4, T5, T6&gt;(!!T1 item1, !!T2 item2, !!T3 item3, !!T4 item4, !!T5 item5, !!T6 item6) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -213,6 +251,7 @@
     </Member>
     <Member MemberName="Create&lt;T1,T2,T3,T4,T5,T6,T7&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5,T6,T7&gt; Create&lt;T1,T2,T3,T4,T5,T6,T7&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`7&lt;!!T1, !!T2, !!T3, !!T4, !!T5, !!T6, !!T7&gt; Create&lt;T1, T2, T3, T4, T5, T6, T7&gt;(!!T1 item1, !!T2 item2, !!T3 item3, !!T4 item4, !!T5 item5, !!T6 item6, !!T7 item7) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -260,6 +299,7 @@
     </Member>
     <Member MemberName="Create&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;">
       <MemberSignature Language="C#" Value="public static Tuple&lt;T1,T2,T3,T4,T5,T6,T7,Tuple&lt;T8&gt;&gt; Create&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt; (T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, T8 item8);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Tuple`8&lt;!!T1, !!T2, !!T3, !!T4, !!T5, !!T6, !!T7, class System.Tuple`1&lt;!!T8&gt;&gt; Create&lt;T1, T2, T3, T4, T5, T6, T7, T8&gt;(!!T1 item1, !!T2 item2, !!T3 item3, !!T4 item4, !!T5 item5, !!T6 item6, !!T7 item7, !!T8 item8) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

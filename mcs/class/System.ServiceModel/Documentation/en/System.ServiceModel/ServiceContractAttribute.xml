@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceContractAttribute" FullName="System.ServiceModel.ServiceContractAttribute">
+  <TypeSignature Language="C#" Value="public sealed class ServiceContractAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ServiceContractAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface | System.AttributeTargets.All, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.ServiceContractAttribute" /> attribute on an interface (or class) to define a service contract. Then use the <see cref="T:System.ServiceModel.OperationContractAttribute" /> attribute on one or more of the class (or interface) methods to define the contract's service operations. When the service contract is implemented and combined with a <format type="text/html"><a href="845df323-be53-4848-92ef-ba67a406484d">binding</a></format> and an <see cref="T:System.ServiceModel.EndpointAddress" /> object, the service contract is exposed for use by clients. For an overview of the process using simple examples, see <format type="text/html"><a href="df939177-73cb-4440-bd95-092a421516a1">Getting Started</a></format>. For more information about creating service contracts, see <format type="text/html"><a href="036fae20-7c55-4002-b71d-ac4466e167a3">Defining Service Contracts</a></format>.</para>
+      <para>The information expressed by a <see cref="T:System.ServiceModel.ServiceContractAttribute" /> and its interface is loosely related to the Web Services Description Language (WSDL) &lt;portType&gt; element. A service contract is used on the service side to specify what the service’s endpoint exposes to callers. It is also used on the client side to specify the contract of the endpoint with which the client communicates and, in the case of duplex contracts, to specify the callback contract (using the <see cref="P:System.ServiceModel.ServiceContractAttribute.CallbackContract" /> property) that the client must implement in order to participate in a duplex conversation. </para>
+      <block subset="none" type="note">
+        <para>An interface or class that is decorated with <see cref="T:System.ServiceModel.ServiceContractAttribute" /> must also have at least one method marked with the <see cref="T:System.ServiceModel.OperationContractAttribute" /> attribute to expose any functionality. See the Examples section for a code example of the simplest use of the two attributes to define and implement a service. </para>
+      </block>
+      <para>Use the <see cref="T:System.ServiceModel.ServiceContractAttribute" /> properties to modify the service contract. </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceContractAttribute.ConfigurationName" /> property specifies the name of the service element in the configuration file to use. </para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceContractAttribute.Name" /> and <see cref="P:System.ServiceModel.ServiceContractAttribute.Namespace" /> properties control the name and namespace of the contract in the WSDL &lt;portType&gt; element.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceContractAttribute.SessionMode" /> property specifies whether the contract requires a binding that supports sessions.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceContractAttribute.CallbackContract" /> property specifies the return contract in a two-way (duplex) conversation.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.ServiceContractAttribute.HasProtectionLevel" /> and <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> properties indicate whether all messages supporting the contract have a explicit <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> value, and if so, what that level is.</para>
+        </item>
+      </list>
+      <para>Services implement service contracts, which represent the data exchange that a service type supports. A service class can implement a service contract (by implementing an interface marked with <see cref="T:System.ServiceModel.ServiceContractAttribute" /> that has methods marked with <see cref="T:System.ServiceModel.OperationContractAttribute" />) or it can be marked with the <see cref="T:System.ServiceModel.ServiceContractAttribute" /> and apply the <see cref="T:System.ServiceModel.OperationContractAttribute" /> attribute to its own methods. (If a class implements an interface marked with <see cref="T:System.ServiceModel.ServiceContractAttribute" />, it cannot be itself marked with <see cref="T:System.ServiceModel.ServiceContractAttribute" />.) Methods on service types that are marked with the <see cref="T:System.ServiceModel.OperationContractAttribute" /> are treated as part of a default service contract specified by the service type itself. For details about service operations, see <see cref="T:System.ServiceModel.OperationContractAttribute" />. </para>
+      <para>By default, the <see cref="P:System.ServiceModel.ServiceContractAttribute.Name" /> and <see cref="P:System.ServiceModel.ServiceContractAttribute.Namespace" /> properties are the name of the contract type and http://tempuri.org, respectively, and <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> is <see cref="F:System.Net.Security.ProtectionLevel.None" />. It is recommended that service contracts explicitly set their names, namespaces, and protection levels using these properties. Doing so accomplishes two goals. First, it builds a contract that is not directly connected to the managed type information, enabling you to refactor your managed code and namespaces without breaking the contract as it is expressed in WSDL. Second, explicitly requiring a certain level of protection on the contract itself enables the runtime to validate whether the binding configuration supports that level of security, preventing poor configuration from exposing sensitive information. For more information about protection levels, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+      <para>To expose a service for use by client applications, create a host application to register your service endpoint with indigo1. You can host indigo2 services using Windows Activation Services (WAS), in console applications, Windows Service applications, ASP.NET applications, Windows Forms applications, or any other kind of application domain. </para>
+      <para>Hosting in the WAS is very similar to creating an ASP.NET application. For details, see <format type="text/html"><a href="b044b1c9-c1e5-4c9f-84d8-0f02f4537f8b">How To: Create a Basic IIS-Hosted Service</a></format>.  </para>
+      <para>Clients either use the service contract interface (the interface marked with <see cref="T:System.ServiceModel.ServiceContractAttribute" />) to create a channel to the service or they use the client objects (which combine the type information of the service contract interface with the <see cref="T:System.ServiceModel.ClientBase`1" /> class) to communicate with your service. For details on client channels to services, see the <see cref="T:System.ServiceModel.ChannelFactory`1" /> class and <format type="text/html"><a href="f60d9bc5-8ade-4471-8ecf-5a07a936c82d">WCF Client Overview</a></format>. </para>
+      <para>Using a <see cref="T:System.ServiceModel.ServiceContractAttribute" /> class or interface to inherit from another <see cref="T:System.ServiceModel.ServiceContractAttribute" /> class or interface extends the parent contract. For example, if an IChildContract interface is marked with <see cref="T:System.ServiceModel.ServiceContractAttribute" /> and inherited from another service contract interface, IParentContract, the IChildContract service contract contains the methods of both IParentContract and IChildContract. Extending contracts (whether on classes or interfaces) is very similar to extending managed classes and interfaces.</para>
+      <para>The most flexible approach to creating services is to define service contract interfaces first and then have your service class implement that interface. (This is also the simplest way to build your services if you must implement service contracts that have been defined by others.) Building services directly by marking a class with <see cref="T:System.ServiceModel.ServiceContractAttribute" /> and its methods with <see cref="T:System.ServiceModel.OperationContractAttribute" /> works when the service exposes only one contract (but that contract can be exposed by more than one endpoint). </para>
+      <para>Use the <see cref="P:System.ServiceModel.ServiceContractAttribute.CallbackContract" /> property to indicate another service contract that, when bound together with the original service contract, define a message exchange that can flow in two ways independently. For details, see <see cref="P:System.ServiceModel.ServiceContractAttribute.CallbackContract" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that an interface or a class defines a service contract in a indigo1 application. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceContractAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor creates an instance of the attribute with no session requirements, no callback contract, and the default name and namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceContractAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CallbackContract">
+      <MemberSignature Language="C#" Value="public Type CallbackContract { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type CallbackContract" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify an interface in the <see cref="P:System.ServiceModel.ServiceContractAttribute.CallbackContract" /> property that represents the required opposite contract in a two-way (or duplex) message exchange. This enables client applications to listen for inbound operation calls that the server-side service application can send independently of client activity. Callback contracts that have one-way operations represent calls from the service that the client can handle. </para>
+          <block subset="none" type="note">
+            <para> The <see cref="T:System.ServiceModel.ServiceContractAttribute" /> attribute is ignored on callback contracts. To configure runtime behavior of callback objects, use the <see cref="T:System.ServiceModel.CallbackBehaviorAttribute" />. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of callback contract when the contract is a duplex contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConfigurationName">
+      <MemberSignature Language="C#" Value="public string ConfigurationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConfigurationName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set the value by which the configuration system locates a contract value in the configuration file, see <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.ConfigurationName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name used to locate the service in an application configuration file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasProtectionLevel">
+      <MemberSignature Language="C#" Value="public bool HasProtectionLevel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.ServiceContractAttribute.HasProtectionLevel" /> property indicates whether a protection level value other than false has been set for the contract.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the member has a protection level assigned.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.ServiceContractAttribute.Name" /> and the <see cref="P:System.ServiceModel.ServiceContractAttribute.Namespace" /> properties to control the name and namespace of the &lt;portType&gt; element in WSDL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name for the &lt;portType&gt; element in Web Services Description Language (WSDL). </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace of the &lt;portType&gt; element in Web Services Description Language (WSDL).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionLevel">
+      <MemberSignature Language="C#" Value="public System.Net.Security.ProtectionLevel ProtectionLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.ProtectionLevel ProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> property to specify the degree to which the contract binding requires encryption, digital signatures, or both for endpoints that expose the contract. The value set here is the default value for all operation messages including faults.</para>
+          <para>It is important to remember that the protection behavior at runtime is the combination of the protection-level values set on the following properties. These properties have a hierarchical structure. Setting the outermost value establishes the default setting for all narrower scopes unless a different value for a narrower scope is explicitly set. In this case, the outer value remains the default for all narrower scopes with the exception of that specifically set. </para>
+          <para>For example, if <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> is set to <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" /> and no other narrower scopes have protection level settings, all messages in an operation contract are encrypted and signed. If, however, one of those operations has the <see cref="T:System.ServiceModel.OperationContractAttribute" /> set to <see cref="F:System.Net.Security.ProtectionLevel.Sign" />, then the messages for that operation are signed but all other messages in the contract are encrypted and signed.</para>
+          <para>For details about protection levels and their assumptions and scopes, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+          <para>The scopes at which these values are set are:</para>
+          <para>
+            <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" />
+          </para>
+          <para>    <see cref="P:System.ServiceModel.OperationContractAttribute.ProtectionLevel" /></para>
+          <para>        <see cref="P:System.ServiceModel.FaultContractAttribute.ProtectionLevel" /></para>
+          <para>        <see cref="P:System.ServiceModel.MessageContractAttribute.ProtectionLevel" /></para>
+          <para>            The <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property on <see cref="T:System.ServiceModel.MessageHeaderAttribute" />.</para>
+          <para>            The <see cref="P:System.ServiceModel.MessageContractMemberAttribute.ProtectionLevel" /> property on <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" />.</para>
+          <para>When there is no protection level explicitly specified on the contract and the underlying binding supports security (whether at the transport or message level), the effective protection level for the whole contract is <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />. If the binding does not support security (such as <see cref="T:System.ServiceModel.BasicHttpBinding" />), the effective <see cref="T:System.Net.Security.ProtectionLevel" /> is <see cref="F:System.Net.Security.ProtectionLevel.None" /> for the whole contract. The result is that depending upon the endpoint binding, clients can require different message or transport level security protection even when the contract specifies <see cref="F:System.Net.Security.ProtectionLevel.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the binding for the contract must support the value of the <see cref="P:System.ServiceModel.ServiceContractAttribute.ProtectionLevel" /> property.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SessionMode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.SessionMode SessionMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.SessionMode SessionMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.SessionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.ServiceContractAttribute.SessionMode" /> property to require bindings that support sessions between endpoints. A session is a way of correlating a set of messages exchanged between two or more endpoints. If your service supports channel sessions, you can then use the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property to specify the relationship between instances your service contract implementation and the channel session. If a binding does not support sessions, an exception is thrown.</para>
+          <para>For example, if the <see cref="P:System.ServiceModel.ServiceContractAttribute.SessionMode" /> property is set to <see cref="F:System.ServiceModel.SessionMode.Required" /> and the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property is set to <see cref="F:System.ServiceModel.InstanceContextMode.PerSession" />, clients can use the same connection to make repeated calls to the same service object. </para>
+          <para>For more information about sessions and service instances, see <format type="text/html"><a href="864ba12f-3331-4359-a359-6d6d387f1035">Using Session</a></format> and <format type="text/html"><a href="50797a3b-7678-44ed-8138-49ac1602f35b">Sessions, Instancing, and Concurrency</a></format>.</para>
+          <block subset="none" type="note">
+            <para>A channel that supports sessions supports the default association of a service instance with a particular session. However, different session implementations support different features in addition to session-based instancing control. indigo2 provides four types of sessions that you can use to provide sessionful application behavior; each type of session provides additional behavior specific to the type of session it is.</para>
+          </block>
+          <list type="ordered">
+            <item>
+              <para>The <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> supports security sessions, in which both ends of communication have agreed upon an encryption and/or digital signature process; all messages are correlated with that specific secure conversation. For more information, see <format type="text/html"><a href="f0ecc6f7-f4b5-42a4-9cb1-b02e28e26620">Securing Services</a></format>. For example, the <see cref="T:System.ServiceModel.WSHttpBinding" />, which contains support for both security sessions and reliable sessions, by default uses only a secure session which encrypts and digitally signs messages. </para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.ServiceModel.NetTcpBinding" /> supports the sessions exposed by the TCP/IP connections to ensure that all messages are correlated by the connection session at the socket level. </para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" />, which implements the WS-ReliableMessaging specification, provides support for reliable sessions in which messages are delivered in order and exactly once, enabling confidence even when messages travel across multiple nodes during the conversation. For more information, see <format type="text/html"><a href="143951b3-3aa0-4540-b4b7-d33e77e874a1">Reliable Sessions</a></format>.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.ServiceModel.NetMsmqBinding" /> provides MSMQ datagram sessions. For more information, see <format type="text/html"><a href="43008409-1bb4-4bd4-85d7-862c8f10ae20">Queues in Windows Communication Foundation</a></format>.</para>
+            </item>
+          </list>
+          <para>Remember that setting the <see cref="P:System.ServiceModel.ServiceContractAttribute.SessionMode" /> property does not specify the type of session the contract requires, only that it requires one. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether sessions are allowed, not allowed or required.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

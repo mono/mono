@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TaskCommandLineEventArgs" FullName="Microsoft.Build.Framework.TaskCommandLineEventArgs">
   <TypeSignature Language="C#" Value="public class TaskCommandLineEventArgs : Microsoft.Build.Framework.BuildMessageEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:Microsoft.Build.Framework.TaskCommandLineEventArgs" /> extends <see cref="T:Microsoft.Build.Framework.BuildMessageEventArgs" /> so that the command line string used by a task to execute an underlying program can be logged as a message. Logging a command line string is only relevant for tasks that wrap an underlying program or emulate a shell command. Tasks that have no command line equivalent should not raise this extended message event.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:Microsoft.Build.Framework.IEventSource.MessageRaised" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.TaskCommandLineEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,12 +47,18 @@
         <Parameter Name="importance" Type="Microsoft.Build.Framework.MessageImportance" />
       </Parameters>
       <Docs>
-        <param name="commandLine">To be added.</param>
-        <param name="taskName">To be added.</param>
-        <param name="importance">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.TaskCommandLineEventArgs" /> class with the specified command line and <see cref="T:Microsoft.Build.Framework.MessageImportance" />.</para>
+        </summary>
+        <param name="commandLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command line used by the task to run the underlying program.</param>
+        <param name="taskName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the task raising the event.</param>
+        <param name="importance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.Framework.MessageImportance" /> of the message.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +71,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command line used by the task to run the underlying program.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -70,10 +90,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the task that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

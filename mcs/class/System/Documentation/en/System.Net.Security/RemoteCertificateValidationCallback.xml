@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RemoteCertificateValidationCallback" FullName="System.Net.Security.RemoteCertificateValidationCallback">
   <TypeSignature Language="C#" Value="public delegate bool RemoteCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RemoteCertificateValidationCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -21,9 +24,16 @@
     <param name="certificate">To be added.</param>
     <param name="chain">To be added.</param>
     <param name="sslPolicyErrors">To be added.</param>
-    <summary>To be added.</summary>
-    <value>To be added.</value>
-    <remarks>To be added.</remarks>
+    <returns>To be added.</returns>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The delegate's <paramref name="sslPolicyErrors" /> argument contains any certificate errors returned by SSPI while authenticating the client or server. The <see cref="T:System.Boolean" /> value returned by the method invoked by this delegate determines whether the authentication is allowed to succeed.</para>
+      <para>This delegate is used with the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Verifies the remote Secure Sockets Layer (SSL) certificate used for authentication.</para>
+    </summary>
   </Docs>
 </Type>

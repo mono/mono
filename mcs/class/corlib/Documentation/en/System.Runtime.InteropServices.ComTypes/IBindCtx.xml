@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBindCtx" FullName="System.Runtime.InteropServices.ComTypes.IBindCtx">
   <TypeSignature Language="C#" Value="public interface IBindCtx" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindCtx" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,14 +17,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, see the existing documentation for IBindCtx in the MSDN library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IBindCtx interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnumObjectParam">
       <MemberSignature Language="C#" Value="public void EnumObjectParam (out System.Runtime.InteropServices.ComTypes.IEnumString ppenum);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EnumObjectParam(class System.Runtime.InteropServices.ComTypes.IEnumString ppenum) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -35,14 +49,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetBindOptions">
+      <MemberSignature Language="C#" Value="public void GetBindOptions (ref System.Runtime.InteropServices.ComTypes.BIND_OPTS pbindopts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetBindOptions(valuetype System.Runtime.InteropServices.ComTypes.BIND_OPTS pbindopts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBindOptions">
-      <MemberSignature Language="C#" Value="public void GetBindOptions (ref System.Runtime.InteropServices.ComTypes.BIND_OPTS pbindopts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -55,14 +70,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectParam">
+      <MemberSignature Language="C#" Value="public void GetObjectParam (string pszKey, out object ppunk);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectParam(string pszKey, object ppunk) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectParam">
-      <MemberSignature Language="C#" Value="public void GetObjectParam (string pszKey, out object ppunk);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -77,14 +93,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetRunningObjectTable">
+      <MemberSignature Language="C#" Value="public void GetRunningObjectTable (out System.Runtime.InteropServices.ComTypes.IRunningObjectTable pprot);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetRunningObjectTable(class System.Runtime.InteropServices.ComTypes.IRunningObjectTable pprot) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRunningObjectTable">
-      <MemberSignature Language="C#" Value="public void GetRunningObjectTable (out System.Runtime.InteropServices.ComTypes.IRunningObjectTable pprot);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -97,14 +114,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="RegisterObjectBound">
+      <MemberSignature Language="C#" Value="public void RegisterObjectBound (object punk);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RegisterObjectBound(object punk) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterObjectBound">
-      <MemberSignature Language="C#" Value="public void RegisterObjectBound (object punk);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -112,19 +130,27 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="punk">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RegisterObjectBound in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the passed object as one of the objects that has been bound during a moniker operation and that should be released when the operation is complete.</para>
+        </summary>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register for release. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterObjectParam">
+      <MemberSignature Language="C#" Value="public void RegisterObjectParam (string pszKey, object punk);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RegisterObjectParam(string pszKey, object punk) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterObjectParam">
-      <MemberSignature Language="C#" Value="public void RegisterObjectParam (string pszKey, object punk);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -133,37 +159,53 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="pszKey">To be added.</param>
-        <param name="punk">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RegisterObjectParam in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the specified object pointer under the specified name in the internally maintained table of object pointers.</para>
+        </summary>
+        <param name="pszKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to register <paramref name="punk" /> with. </param>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register. </param>
       </Docs>
+    </Member>
+    <Member MemberName="ReleaseBoundObjects">
+      <MemberSignature Language="C#" Value="public void ReleaseBoundObjects ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ReleaseBoundObjects() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReleaseBoundObjects">
-      <MemberSignature Language="C#" Value="public void ReleaseBoundObjects ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::ReleaseBoundObjects in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all the objects currently registered with the bind context by using the <see cref="M:System.Runtime.InteropServices.ComTypes.IBindCtx.RegisterObjectBound(System.Object)" /> method.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="RevokeObjectBound">
+      <MemberSignature Language="C#" Value="public void RevokeObjectBound (object punk);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RevokeObjectBound(object punk) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RevokeObjectBound">
-      <MemberSignature Language="C#" Value="public void RevokeObjectBound (object punk);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -171,19 +213,27 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="punk">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RevokeObjectBound in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the object from the set of registered objects that need to be released.</para>
+        </summary>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to unregister for release. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RevokeObjectParam">
+      <MemberSignature Language="C#" Value="public int RevokeObjectParam (string pszKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 RevokeObjectParam(string pszKey) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RevokeObjectParam">
-      <MemberSignature Language="C#" Value="public int RevokeObjectParam (string pszKey);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -191,20 +241,31 @@
         <Parameter Name="pszKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="pszKey">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IBindCtx::RevokeObjectParam in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Revokes the registration of the object currently found under the specified key in the internally maintained table of contextual object parameters, if that key is currently registered.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the specified key was successfully removed from the table; otherwise, an S_FALSE HRESULT value.</para>
+        </returns>
+        <param name="pszKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to unregister. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SetBindOptions">
+      <MemberSignature Language="C#" Value="public void SetBindOptions (ref System.Runtime.InteropServices.ComTypes.BIND_OPTS pbindopts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetBindOptions(valuetype System.Runtime.InteropServices.ComTypes.BIND_OPTS pbindopts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetBindOptions">
-      <MemberSignature Language="C#" Value="public void SetBindOptions (ref System.Runtime.InteropServices.ComTypes.BIND_OPTS pbindopts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -217,10 +278,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

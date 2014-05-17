@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UrlMappingCollection" FullName="System.Web.Configuration.UrlMappingCollection">
   <TypeSignature Language="C#" Value="public sealed class UrlMappingCollection : System.Configuration.ConfigurationElementCollection" />
   <AssemblyInfo>
@@ -14,9 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.UrlMappingCollection" /> type allows access to the <see cref="P:System.Web.Configuration.UrlMappingsSection.UrlMappings" /> elements of the <see cref="T:System.Web.Configuration.UrlMappingsSection" /> section element collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.Configuration.UrlMapping" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +31,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.UrlMappingCollection.#ctor" /> constructor is not intended to be used directly from your code. It is called by the ASP.NET configuration system. You obtain an instance of the <see cref="T:System.Web.Configuration.UrlMappingCollection" /> class by using <see cref="P:System.Web.Configuration.UrlMappingsSection.UrlMappings" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.UrlMappingCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +55,14 @@
         <Parameter Name="urlMapping" Type="System.Web.Configuration.UrlMapping" />
       </Parameters>
       <Docs>
-        <param name="urlMapping">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Configuration.UrlMapping" /> to the collection.</para>
+        </summary>
+        <param name="urlMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.UrlMapping" /> object to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,10 +75,13 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of the keys for all of the configuration elements contained in the <see cref="T:System.Web.Configuration.UrlMappingCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,9 +95,35 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you save the configuration file after calling the <see cref="M:System.Web.Configuration.UrlMappingCollection.Clear" /> method, the result will be dependent upon the chosen <see cref="T:System.Configuration.ConfigurationSaveMode" />. </para>
+          <para>The following list describes the conditions that apply if you use the <see cref="M:System.Configuration.Configuration.Save(System.Configuration.ConfigurationSaveMode)" /> method to save the file:</para>
+          <list type="bullet">
+            <item>
+              <para>If you pass <see cref="F:System.Configuration.ConfigurationSaveMode.Full" /> or <see cref="F:System.Configuration.ConfigurationSaveMode.Modified" /> as the parameter value, a clear element is inserted into the urlMappings section of the configuration file at the current hierarchy level. </para>
+            </item>
+            <item>
+              <para>If you pass <see cref="F:System.Configuration.ConfigurationSaveMode.Minimal" /> as the parameter value, a series of remove elements are added to the urlMappings of the configuration file at the current hierarchy level. These remove elements remove all references to the add elements defined in the parent configuration files at higher levels in the hierarchy. With the <see cref="F:System.Configuration.ConfigurationSaveMode.Minimal" /> enumeration value, there is one additional property on the collection that affects what gets serialized to the configuration file. The property is <see cref="P:System.Configuration.ConfigurationElementCollection.EmitClear" /> and is false by default. One of the following conditions applies:</para>
+              <list type="bullet">
+                <item>
+                  <para>
+                    <see cref="P:System.Configuration.ConfigurationElementCollection.EmitClear" /> set to true. A clear element is inserted into the urlMappings section of the configuration file at the current hierarchy level. This removes all references to the add elements defined in the parent configuration files at higher levels in the hierarchy. </para>
+                </item>
+                <item>
+                  <para>
+                    <see cref="P:System.Configuration.ConfigurationElementCollection.EmitClear" /> flag is set to false. This has the effect of removing the clear element from the urlMappings section of the configuration file at the current hierarchy level, if it exists.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>The <see cref="M:System.Web.Configuration.UrlMappingCollection.Clear" /> method actually deletes the add elements defined in the urlMappings section of the configuration file at the current hierarchy level. It also removes all references to the add elements defined in the parent configuration files at higher levels in the hierarchy but does not delete them.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the <see cref="T:System.Web.Configuration.UrlMapping" /> objects from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,11 +176,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection key of the specified element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the value of the key. </para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection index of the element to get.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -206,10 +259,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.UrlMappingCollection.Remove(System.String)" /> method deletes the add element in the urlMappings section at the current hierarchy level and inserts a remove element. The remove element effectively removes the reference to the add element defined in the parent configuration files at higher levels in the hierarchy but does not delete it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.Configuration.UrlMapping" /> object with the specified name from the collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.Configuration.UrlMapping" /> object to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -225,10 +285,17 @@
         <Parameter Name="urlMapping" Type="System.Web.Configuration.UrlMapping" />
       </Parameters>
       <Docs>
-        <param name="urlMapping">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.UrlMappingCollection.Remove(System.Web.Configuration.UrlMapping)" /> method deletes the add element in the urlMappings section at the current hierarchy level and inserts a remove element. The remove element effectively removes the reference to the add element defined in the parent configuration files at higher levels in the hierarchy but does not delete it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.Configuration.UrlMapping" /> object from the collection.</para>
+        </summary>
+        <param name="urlMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.UrlMapping" /> object to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,10 +311,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.UrlMappingCollection.RemoveAt(System.Int32)" /> method deletes the add element in the urlMappings section at the current hierarchy level and inserts a remove element. The remove element effectively removes the reference to the add element defined in the parent configuration files at higher levels in the hierarchy but does not delete it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.Configuration.UrlMapping" /> object with the specified index from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection index of the <see cref="T:System.Web.Configuration.UrlMapping" /> object to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

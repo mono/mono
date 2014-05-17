@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Rijndael" FullName="System.Security.Cryptography.Rijndael">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class Rijndael : System.Security.Cryptography.SymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Rijndael extends System.Security.Cryptography.SymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,51 +15,122 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Rijndael is a symmetric block cipher supporting block and key sizes of 128, 192 and 256 bits.  It has been chosen as the AES cipher.
-</summary>
     <remarks>
-      <para>To be compatible with AES you should only use 128 bits as the block size. Other block size (192, 256) aren't part of the AES specification and may be problematic for interoperability with other implementations.</para>
-      <para>The AES specification is known as NIST FIPS PUB 197: Advanced Encryption Standard available at http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This algorithm supports key lengths of 128, 192, or 256 bits.</para>
+      <para>The <see cref="T:System.Security.Cryptography.Rijndael" /> class is the predecessor of the <see cref="T:System.Security.Cryptography.Aes" /> algorithm. You should use the <see cref="T:System.Security.Cryptography.Aes" /> algorithm instead of <see cref="T:System.Security.Cryptography.Rijndael" />. For more information, see the entry <see cref="http://go.microsoft.com/fwlink/?LinkId=200932">The Differences Between Rijndael and AES</see> in the .NET Security blog.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class from which all implementations of the <see cref="T:System.Security.Cryptography.Rijndael" /> symmetric encryption algorithm must inherit.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Rijndael ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code will create a new instance of a derived class.</para>
+          <para>This method initializes the protected fields of <see cref="T:System.Security.Cryptography.SymmetricAlgorithm" /> to the default values listed in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Field </para>
+                </term>
+                <description>
+                  <para>Default Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.KeySizeValue" /> </para>
+              </term>
+              <description>
+                <para>256 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.BlockSizeValue" /> </para>
+              </term>
+              <description>
+                <para>128 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.Cryptography.SymmetricAlgorithm.FeedbackSizeValue" /> </para>
+              </term>
+              <description>
+                <para>128 </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Cryptography.Rijndael" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.Rijndael Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.Rijndael Create() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Rijndael</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Create an instance of the default Rijndael implementation.</summary>
-        <returns>To be added: an object of type 'Rijndael'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of <see cref="T:System.Security.Cryptography.Rijndael" /> is <see cref="T:System.Security.Cryptography.RijndaelManaged" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a cryptographic object to perform the <see cref="T:System.Security.Cryptography.Rijndael" /> algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.Rijndael Create (string algName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.Rijndael Create(string algName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.Rijndael Create (string algName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Rijndael</ReturnType>
       </ReturnValue>
@@ -65,21 +138,21 @@
         <Parameter Name="algName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="algName">To be added: an object of type 'string'</param>
-        <summary>Create an instance of the specified Rijndael implementation. </summary>
-        <returns>To be added: an object of type 'Rijndael'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Acceptable values for the <paramref name="algName" /> parameter are Rijndael and System.Security.Cryptography.RijndaelManaged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a cryptographic object to perform the specified implementation of the <see cref="T:System.Security.Cryptography.Rijndael" /> algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object.</para>
+        </returns>
+        <param name="algName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.Rijndael" /> to create. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

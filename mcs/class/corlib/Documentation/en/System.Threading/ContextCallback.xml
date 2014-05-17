@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContextCallback" FullName="System.Threading.ContextCallback">
   <TypeSignature Language="C#" Value="public delegate void ContextCallback(object state);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ContextCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -8,6 +10,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="state" Type="System.Object" />
   </Parameters>
@@ -16,13 +23,16 @@
   </ReturnValue>
   <Docs>
     <param name="state">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Threading.ContextCallback" /> is used by the <see cref="M:System.Threading.ExecutionContext.Run(System.Threading.ExecutionContext,System.Threading.ContextCallback,System.Object)" /> and the <see cref="M:System.Security.SecurityContext.Run(System.Security.SecurityContext,System.Threading.ContextCallback,System.Object)" /> methods. <see cref="T:System.Threading.ContextCallback" /> represents the method to be run in the provided context. Upon completion of the method execution, the context is restored to its previous state. </para>
+      <para>Create the delegate by passing your callback method to the <see cref="T:System.Threading.ContextCallback" /> constructor. Your method must have the signature shown here.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a method to be called within a new context.  </para>
+    </summary>
   </Docs>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

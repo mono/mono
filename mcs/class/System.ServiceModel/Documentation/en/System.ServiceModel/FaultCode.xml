@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="FaultCode" FullName="System.ServiceModel.FaultCode">
+  <TypeSignature Language="C#" Value="public class FaultCode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FaultCode extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Fault code provides a machine-readable identifier that can be used to programmatically identify the error condition and respond as appropriate. The SOAP specifications define the following fault codes specific to SOAP 1.1 and 1.2.</para>
+      <list type="bullet">
+        <item>
+          <para>SOAP 1.1. VersionMismatch, MustUnderstand, Client, and Server. </para>
+        </item>
+        <item>
+          <para>SOAP 1.2. VersionMismatch, MustUnderstand, DataEncodingUnknown, Sender, and Receiver. </para>
+        </item>
+      </list>
+      <para>In addition to those fault codes defined by the SOAP specifications, indigo1 uses fault codes defined by each Web services specification that it implements.</para>
+      <para>
+        <br />
+      </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a SOAP fault code. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FaultCode (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.FaultCode" /> class.  </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the fault code.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FaultCode (string name, System.ServiceModel.FaultCode subcode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.ServiceModel.FaultCode subcode) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="subcode" Type="System.ServiceModel.FaultCode" />
+      </Parameters>
+      <Docs>
+        <param name="subcode">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.FaultCode" /> class. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the fault code.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FaultCode (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, string ns) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> object is used in conjunction with a <see cref="T:System.ServiceModel.Channels.MessageFault" /> object to fully represent a SOAP fault. </para>
+          <para>
+            <br />
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.FaultCode" /> class with the specified name and namespace. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the fault code. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace name of the fault code. </param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FaultCode (string name, string ns, System.ServiceModel.FaultCode subcode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, string ns, class System.ServiceModel.FaultCode subcode) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+        <Parameter Name="subcode" Type="System.ServiceModel.FaultCode" />
+      </Parameters>
+      <Docs>
+        <param name="subcode">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.FaultCode" /> class with the specified name, namespace, and fault subcode. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the fault code. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace name of the fault code. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateReceiverFaultCode">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.FaultCode CreateReceiverFaultCode (System.ServiceModel.FaultCode subcode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.FaultCode CreateReceiverFaultCode(class System.ServiceModel.FaultCode subcode) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.FaultCode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcode" Type="System.ServiceModel.FaultCode" />
+      </Parameters>
+      <Docs>
+        <param name="subcode">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a receiver fault code with the specified subcode. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> object with the created SOAP fault subcode in the <see cref="P:System.ServiceModel.FaultCode.SubCode" /> property. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateReceiverFaultCode">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.FaultCode CreateReceiverFaultCode (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.FaultCode CreateReceiverFaultCode(string name, string ns) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.FaultCode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a receiver fault code with the specified subcode. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> instance with the created SOAP fault subcode in the <see cref="P:System.ServiceModel.FaultCode.SubCode" /> property. </para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name for the fault subcode. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace name for the fault subcode. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateSenderFaultCode">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.FaultCode CreateSenderFaultCode (System.ServiceModel.FaultCode subcode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.FaultCode CreateSenderFaultCode(class System.ServiceModel.FaultCode subcode) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.FaultCode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="subcode" Type="System.ServiceModel.FaultCode" />
+      </Parameters>
+      <Docs>
+        <param name="subcode">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a sender fault code with the specified subcode. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> object with the created SOAP fault subcode in the <see cref="P:System.ServiceModel.FaultCode.SubCode" /> property. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateSenderFaultCode">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.FaultCode CreateSenderFaultCode (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.FaultCode CreateSenderFaultCode(string name, string ns) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.FaultCode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a sender fault code with the specified subcode.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultCode" /> object with the created SOAP fault subcode in <see cref="P:System.ServiceModel.FaultCode.SubCode" />. </para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name for the fault subcode. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace name for the fault subcode. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsPredefinedFault">
+      <MemberSignature Language="C#" Value="public bool IsPredefinedFault { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPredefinedFault" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the fault is a SOAP 1.1 or SOAP 1.2 fault.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReceiverFault">
+      <MemberSignature Language="C#" Value="public bool IsReceiverFault { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReceiverFault" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the fault is a SOAP 1.1 server fault or a SOAP 1.2 receiver fault.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSenderFault">
+      <MemberSignature Language="C#" Value="public bool IsSenderFault { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSenderFault" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the fault is a SOAP 1.1 client fault or a SOAP 1.2 sender fault.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local name of the fault code. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace for the fault code. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SubCode">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.FaultCode SubCode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.FaultCode SubCode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.FaultCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fault subcode. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

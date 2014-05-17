@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileMode" FullName="System.IO.FileMode" FullNameSP="System_IO_FileMode" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable FileMode extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum FileMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileMode extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,169 +14,168 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Specifies how the operating system opens a file.</para>
-    </summary>
     <remarks>
-      <para>
-        <see cref="T:System.IO.FileMode" /> values specify whether a
-   file is created if one does not exist, and determine whether the contents of existing
-   files are retained or overwritten.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For an example of creating a file and writing text to a file, see <format type="text/html"><a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a></format>. For an example of reading text from a file, see <format type="text/html"><a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a></format>. For an example of reading from and writing to a binary file, see <format type="text/html"><a href="E209D949-31E8-44EA-8E38-87F9093F3093">[&lt;topic://cpconReadingWritingToNewlyCreatedDataFile&gt;]</a></format>.</para>
+      <para>A FileMode parameter is specified in many of the constructors for <see cref="T:System.IO.FileStream" />, <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFileStream" />, and in the Open methods of <see cref="T:System.IO.File" /> and <see cref="T:System.IO.FileInfo" /> to control how a file is opened.</para>
+      <para>FileMode parameters control whether a file is overwritten, created, opened, or some combination thereof. Use Open to open an existing file. To append to a file, use Append. To truncate a file or create a file if it doesn't exist, use Create.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how the operating system should open a file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Append">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Append = 6" />
       <MemberSignature Language="C#" Value="Append" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileMode Append = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileMode</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Append</MemberValue>
       <Docs>
-        <summary>
-          <para> Requests a file be opened. If the file exists, its contents
-      are preserved. This value is valid only for <see cref="F:System.IO.FileAccess.Write" qualify="true" />
-      access. Attempts to read from a file opened with <see langword="Append" />
-      cause an
-      exception.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the file if it exists and seeks to the end of the file, or creates a new file. This requires <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Append" /> permission. FileMode.Append can be used only in conjunction with FileAccess.Write. Trying to seek to a position before the end of the file throws an <see cref="T:System.IO.IOException" /> exception, and any attempt to read fails and throws a <see cref="T:System.NotSupportedException" /> exception.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Create = 2" />
+      <MemberSignature Language="C#" Value="Create" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileMode Create = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Create = 2" />
-      <MemberSignature Language="C#" Value="Create" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileMode</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Create</MemberValue>
       <Docs>
-        <summary>
-          <para> Requests a new file be created if it does not exist. The 
-      file contents are overwritten if it does exist. This value is equivalent to
-      requesting that if the file does not exist, use <see cref="F:System.IO.FileMode.CreateNew" />;
-      otherwise, use <see cref="F:System.IO.FileMode.Truncate" />.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the operating system should create a new file. If the file already exists, it will be overwritten. This requires <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /> permission. FileMode.Create is equivalent to requesting that if the file does not exist, use <see cref="F:System.IO.FileMode.CreateNew" />; otherwise, use <see cref="F:System.IO.FileMode.Truncate" />. If the file already exists but is a hidden file, an <see cref="T:System.UnauthorizedAccessException" /> exception is thrown.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CreateNew">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode CreateNew = 1" />
+      <MemberSignature Language="C#" Value="CreateNew" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileMode CreateNew = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateNew">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode CreateNew = 1" />
-      <MemberSignature Language="C#" Value="CreateNew" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileMode</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>CreateNew</MemberValue>
       <Docs>
-        <summary>
-          <para> Requests a new file be created. An exception
-      is thrown if the file already exists.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the operating system should create a new file. This requires <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /> permission. If the file already exists, an <see cref="T:System.IO.IOException" /> exception is thrown.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Open = 3" />
+      <MemberSignature Language="C#" Value="Open" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileMode Open = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Open = 3" />
-      <MemberSignature Language="C#" Value="Open" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileMode</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Open</MemberValue>
       <Docs>
-        <summary>
-          <para>Requests an existing file be opened. An exception is
-      thrown if the file does not exist.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the operating system should open an existing file. The ability to open the file is dependent on the value specified by the <see cref="T:System.IO.FileAccess" /> enumeration. A <see cref="T:System.IO.FileNotFoundException" /> exception is thrown if the file does not exist.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenOrCreate">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode OpenOrCreate = 4" />
+      <MemberSignature Language="C#" Value="OpenOrCreate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileMode OpenOrCreate = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenOrCreate">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode OpenOrCreate = 4" />
-      <MemberSignature Language="C#" Value="OpenOrCreate" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileMode</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>OpenOrCreate</MemberValue>
       <Docs>
-        <summary>
-          <para> Requests a file be opened. The file is
-      created if it does not exist.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the operating system should open a file if it exists; otherwise, a new file should be created. If the file is opened with FileAccess.Read, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" /> permission is required. If the file access is FileAccess.Write, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /> permission is required. If the file is opened with FileAccess.ReadWrite, both <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /> permissions are required.  </para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Truncate">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Truncate = 5" />
+      <MemberSignature Language="C#" Value="Truncate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileMode Truncate = int32(5)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Truncate">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.FileMode Truncate = 5" />
-      <MemberSignature Language="C#" Value="Truncate" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileMode</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Truncate</MemberValue>
       <Docs>
-        <summary>
-          <para> Requests an existing file be opened; existing contents
-      are deleted. This value is valid only for <see cref="F:System.IO.FileAccess.Write" qualify="true" />
-      access. Attempts to read from a file opened with <see langword="Truncate" />
-      cause
-      an exception.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the operating system should open an existing file. When the file is opened, it should be truncated so that its size is zero bytes. This requires <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /> permission. Attempts to read from a file opened with FileMode.Truncate cause an <see cref="T:System.ArgumentException" /> exception.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

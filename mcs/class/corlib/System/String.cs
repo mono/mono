@@ -1596,7 +1596,13 @@ namespace System
 
 			fixed (char* dest = tmp, src = this) {
 				char* padPos = dest;
-				char* padTo = dest + (totalWidth - length);
+				char* padTo;
+				try {
+					padTo = checked (dest + (totalWidth - length));
+				} catch (OverflowException) {
+					throw new OutOfMemoryException ();
+				}
+
 				while (padPos != padTo)
 					*padPos++ = paddingChar;
 
@@ -1627,10 +1633,14 @@ namespace System
 			fixed (char* dest = tmp, src = this) {
 				CharCopy (dest, src, length);
 
-				char* padPos = dest + length;
-				char* padTo = dest + totalWidth;
-				while (padPos != padTo)
-					*padPos++ = paddingChar;
+				try {
+					char* padPos = checked (dest + length);
+					char* padTo = checked (dest + totalWidth);
+					while (padPos != padTo)
+						*padPos++ = paddingChar;
+				} catch (OverflowException) {
+					throw new OutOfMemoryException ();
+				}
 			}
 			return tmp;
 		}
@@ -1795,7 +1805,14 @@ namespace System
 				}
 				if (count == 0)
 					return this;
-				int nlen = this.length + ((newValue.length - oldValue.length) * count);
+				int nlen = 0;
+				checked {
+					try {
+						nlen = this.length + ((newValue.length - oldValue.length) * count);
+					} catch (OverflowException) {
+						throw new OutOfMemoryException ();
+					}
+				}
 				String tmp = InternalAllocateStr (nlen);
 
 				int curPos = 0, lastReadPos = 0;
@@ -2029,7 +2046,7 @@ namespace System
 						if (arg is IFormattable)
 							str = ((IFormattable)arg).ToString (arg_format, provider);
 						else
-							str = arg.ToString ();
+							str = arg.ToString () ?? Empty;
 					}
 
 					// pad formatted string and append to result
@@ -2165,7 +2182,10 @@ namespace System
 			if (str1 == null || str1.Length == 0)
 				return str0; 
 
-			String tmp = InternalAllocateStr (str0.length + str1.length);
+			int nlen = str0.length + str1.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			String tmp = InternalAllocateStr (nlen);
 
 			fixed (char *dest = tmp, src = str0)
 				CharCopy (dest, src, str0.length);
@@ -2199,7 +2219,13 @@ namespace System
 				}
 			}
 
-			String tmp = InternalAllocateStr (str0.length + str1.length + str2.length);
+			int nlen = str0.length + str1.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			nlen += str2.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			String tmp = InternalAllocateStr (nlen);
 
 			if (str0.Length != 0) {
 				fixed (char *dest = tmp, src = str0) {
@@ -2234,6 +2260,15 @@ namespace System
 			if (str3 == null)
 				str3 = Empty;
 
+			int nlen = str0.length + str1.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			nlen += str2.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			nlen += str3.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
 			String tmp = InternalAllocateStr (str0.length + str1.length + str2.length + str3.length);
 
 			if (str0.Length != 0) {
@@ -2275,6 +2310,8 @@ namespace System
 				if (args[i] != null) {
 					strings[i] = args[i].ToString ();
 					len += strings[i].length;
+					if (len < 0)
+						throw new OutOfMemoryException ();
 				}
 			}
 
@@ -2291,6 +2328,8 @@ namespace System
 				String s = values[i];
 				if (s != null)
 					len += s.length;
+					if (len < 0)
+						throw new OutOfMemoryException ();
 			}
 
 			return ConcatInternal (values, len);
@@ -2300,6 +2339,8 @@ namespace System
 		{
 			if (length == 0)
 				return Empty;
+			if (length < 0)
+				throw new OutOfMemoryException ();
 
 			String tmp = InternalAllocateStr (length);
 
@@ -2330,7 +2371,12 @@ namespace System
 				return this;
 			if (this.Length == 0)
 				return value;
-			String tmp = InternalAllocateStr (this.length + value.length);
+
+			int nlen = this.length + value.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+
+			String tmp = InternalAllocateStr (nlen);
 
 			fixed (char *dest = tmp, src = this, val = value) {
 				char *dst = dest;
@@ -2680,6 +2726,8 @@ namespace System
 				if (v == null)
 					continue;
 				len += v.Length;
+				if (len < 0)
+					throw new OutOfMemoryException ();
 				stringList.Add (v);
 			}
 			return ConcatInternal (stringList.ToArray (), len);
@@ -2696,6 +2744,8 @@ namespace System
 			foreach (var v in values){
 				string sr = v.ToString ();
 				len += sr.Length;
+				if (len < 0)
+					throw new OutOfMemoryException ();
 				stringList.Add (sr);
 			}
 			return ConcatInternal (stringList.ToArray (), len);
@@ -2710,9 +2760,7 @@ namespace System
 			if (values == null)
 				throw new ArgumentNullException ("values");
 			
-			var stringList = new List<string> ();
-			foreach (var v in values)
-				stringList.Add (v);
+			var stringList = new List<string> (values);
 
 			return JoinUnchecked (separator, stringList.ToArray (), 0, stringList.Count);
 		}
@@ -2743,11 +2791,13 @@ namespace System
 			if (values == null)
 				throw new ArgumentNullException ("values");
 			
-			var stringList = new List<string> ();
-			foreach (var v in values)
-				stringList.Add (v.ToString ());
+			var stringList = values as IList<T> ?? new List<T> (values);
+			var strCopy = new string [stringList.Count];
+			int i = 0;
+			foreach (var v in stringList)
+				strCopy [i++] = v.ToString ();
 
-			return JoinUnchecked (separator, stringList.ToArray (), 0, stringList.Count);
+			return JoinUnchecked (separator, strCopy, 0, strCopy.Length);
 		}
 
 		public static bool IsNullOrWhiteSpace (string value)
@@ -2829,6 +2879,8 @@ namespace System
 			if (length != 0)
 				fixed (byte* bytePtr = bytes)
 					try {
+						if (value == null)
+							throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
 						memcpy (bytePtr, (byte*) (value + startIndex), length);
 					} catch (NullReferenceException) {
 						throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Timer" FullName="System.Threading.Timer" FullNameSP="System_Threading_Timer" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Timer extends System.MarshalByRefObject implements System.IDisposable" />
   <TypeSignature Language="C#" Value="public sealed class Timer : MarshalByRefObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Timer extends System.MarshalByRefObject implements class System.IDisposable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -18,27 +20,12 @@
       <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Provides a mechanism for executing methods at specified intervals.
-      </para>
-    </summary>
-    <remarks>
-      <para>A <see cref="T:System.Threading.TimerCallback" /> delegate
-   is used to specify the methods associated with a <see langword="Timer" /> . The methods do
-   not execute in the thread that created the timer; they execute in a separate thread that is automatically
-   allocated by the system. The timer delegate
-   is specified when the timer is constructed, and cannot be changed.</para>
-      <para>When creating a timer, the application specifies an
-   amount of time to wait before the first invocation of the delegate methods (due time), and an amount
-   of time to wait between subsequent invocations (period). A timer invokes its methods once
-   when its due time elapses, and invokes its methods once per
-   period thereafter. These values can be changed, or the timer disabled using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" />
-   
-   method.</para>
-      <para> When a timer is no longer needed, use the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" />
-method to free the resources held by the timer.</para>
-    </remarks>
     <example>
       <para>The following example demonstrates the features of the <see cref="T:System.Threading.Timer" />
 class.</para>
@@ -105,29 +92,63 @@ class App {
       </c>
       <para>The exact timings returned by this example will vary.</para>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use a <see cref="T:System.Threading.TimerCallback" /> delegate to specify the method you want the <see cref="T:System.Threading.Timer" /> to execute. The timer delegate is specified when the timer is constructed, and cannot be changed. The method does not execute on the thread that created the timer; it executes on a <see cref="T:System.Threading.ThreadPool" /> thread supplied by the system.</para>
+      <para>When you create a timer, you can specify an amount of time to wait before the first execution of the method (due time), and an amount of time to wait between subsequent executions (period). You can change these values, or disable the timer, using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+      <block subset="none" type="note">
+        <para>As long as you are using a <see cref="T:System.Threading.Timer" />, you must keep a reference to it. As with any managed object, a <see cref="T:System.Threading.Timer" /> is subject to garbage collection when there are no references to it. The fact that a <see cref="T:System.Threading.Timer" /> is still active does not prevent it from being collected.</para>
+      </block>
+      <para>When a timer is no longer needed, use the <see cref="Overload:System.Threading.Timer.Dispose" /> method to free the resources held by the timer. Note that callbacks can occur after the <see cref="M:System.Threading.Timer.Dispose" /> method overload has been called, because the timer queues callbacks for execution by thread pool threads. You can use the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" /> method overload to wait until all callbacks have completed. </para>
+      <para>The callback method executed by the timer should be reentrant, because it is called on <see cref="T:System.Threading.ThreadPool" /> threads. The callback can be executed simultaneously on two thread pool threads if the timer interval is less than the time required to execute the callback, or if all thread pool threads are in use and the callback is queued multiple times.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Threading.Timer" /> is a simple, lightweight timer that uses callback methods and is served by thread pool threads. It is not recommended for use with Windows Forms, because its callbacks do not occur on the user interface thread. <see cref="T:System.Windows.Forms.Timer" /> is a better choice for use with Windows Forms. For server-based timer functionality, you might consider using <see cref="T:System.Timers.Timer" />, which raises events and has additional features.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a mechanism for executing a method at specified intervals. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.TimerCallback callback) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="callback" Type="System.Threading.TimerCallback" />
-      </Parameters>
-      <Docs>
-        <param name="callback">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Threading.TimerCallback" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this constructor when you want to use the <see cref="T:System.Threading.Timer" /> object itself as the state object. After creating the timer, use the <see cref="Overload:System.Threading.Timer.Change" /> method to set the interval and due time.</para>
+          <para>This constructor specifies an infinite due time before the first callback and an infinite interval between callbacks, in order to prevent the first callback from occurring before the <see cref="T:System.Threading.Timer" /> object is assigned to the state object. </para>
+          <para>The method specified for <paramref name="callback" /> should be reentrant, because it is called on <see cref="T:System.Threading.ThreadPool" /> threads. The method can be executed simultaneously on two thread pool threads if the timer interval is less than the time required to execute the method, or if all thread pool threads are in use and the method is queued multiple times.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Timer" /> class with an infinite period and an infinite due time, using the newly created <see cref="T:System.Threading.Timer" /> object as the state object. </para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.TimerCallback" /> delegate representing a method to be executed.</param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Threading.TimerCallback callback, object state, int32 dueTime, int32 period)" />
       <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback, object state, int dueTime, int period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.TimerCallback callback, object state, int32 dueTime, int32 period) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="callback" Type="System.Threading.TimerCallback" />
@@ -136,46 +157,45 @@ class App {
         <Parameter Name="period" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="callback">A <see cref="T:System.Threading.TimerCallback" /> delegate.</param>
-        <param name="state">A <see cref="T:System.Object" /> containing application-specific information relevant to the methods invoked by <paramref name="callback" />, or <see langword="null" />.</param>
-        <param name="dueTime">A <see cref="T:System.Int32" /> containing the amount of time to delay before <paramref name="callback" /> invokes its methods, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from starting. Specify zero to start the timer immediately.</param>
-        <param name="period">A <see cref="T:System.Int32" /> containing the time interval between invocations of the methods referenced by <paramref name="callback," /> in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see langword="Timer " />class.</para>
-        </summary>
-        <remarks>
-          <para>
-            <paramref name="callback" /> invokes its methods once after <paramref name="dueTime" /> elapses, and then invokes
-   its methods each time the <paramref name="period" /> time interval elapses.</para>
-          <para>If <paramref name="dueTime" /> is zero,
-<paramref name="callback" /> performs 
-its first invocation immediately. If <paramref name="dueTime" /> is
-<see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> 
-does not invoke its methods; the timer is disabled, but can be re-enabled using
-the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" />
-method.</para>
-          <para>If <paramref name="period " />is zero
-or <see cref="F:System.Threading.Timeout.Infinite" /> and
-<paramref name="dueTime" /> is not <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> 
-invokes its methods exactly once; the periodic behavior of the timer is
-disabled, but can be re-enabled using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" />
-method.</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="dueTime" /> or <paramref name="period" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" />. </exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="callback" /> is a <see langword="null" /> reference.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The delegate specified by the <paramref name="callback" /> parameter is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the <paramref name="period" /> time interval elapses.</para>
+          <para>[Visual Basic]</para>
+          <block subset="none" type="note">
+            <para>Visual Basic users can omit the <see cref="T:System.Threading.TimerCallback" /> constructor, and simply use the AddressOf operator when specifying the callback method. Visual Basic automatically calls the correct delegate constructor.</para>
+          </block>
+          <para>If <paramref name="dueTime" /> is zero (0), <paramref name="callback" /> is invoked immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> is not invoked; the timer is disabled, but can be re-enabled by calling the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>If <paramref name="period" /> is zero (0) or <see cref="F:System.Threading.Timeout.Infinite" /> and <paramref name="dueTime" /> is not <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>The method specified for <paramref name="callback" /> should be reentrant, because it is called on <see cref="T:System.Threading.ThreadPool" /> threads. The method can be executed simultaneously on two thread pool threads if the timer interval is less than the time required to execute the method, or if all thread pool threads are in use and the method is queued multiple times.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the Timer class, using a 32-bit signed integer to specify the time interval.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.TimerCallback" /> delegate representing a method to be executed. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing information to be used by the callback method, or null. </param>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before <paramref name="callback" /> is invoked, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from starting. Specify zero (0) to start the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of <paramref name="callback" />, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback, object state, long dueTime, long period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.TimerCallback callback, object state, int64 dueTime, int64 period) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback, object state, long dueTime, long period);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="callback" Type="System.Threading.TimerCallback" />
         <Parameter Name="state" Type="System.Object" />
@@ -183,23 +203,41 @@ method.</para>
         <Parameter Name="period" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="dueTime">To be added.</param>
-        <param name="period">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The delegate specified by the <paramref name="callback" /> parameter is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the <paramref name="period" /> time interval elapses.</para>
+          <para>[Visual Basic]</para>
+          <block subset="none" type="note">
+            <para>Visual Basic users can omit the <see cref="T:System.Threading.TimerCallback" /> constructor, and simply use the AddressOf operator when specifying the callback method. Visual Basic automatically calls the correct delegate constructor.</para>
+          </block>
+          <para>If <paramref name="dueTime" /> is zero (0), <paramref name="callback" /> is invoked immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> is not invoked; the timer is disabled, but can be re-enabled by calling the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>If <paramref name="period" /> is zero (0) or <see cref="F:System.Threading.Timeout.Infinite" /> and <paramref name="dueTime" /> is not <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>The method specified for <paramref name="callback" /> should be reentrant, because it is called on <see cref="T:System.Threading.ThreadPool" /> threads. The method can be executed simultaneously on two thread pool threads if the timer interval is less than the time required to execute the method, or if all thread pool threads are in use and the method is queued multiple times.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the Timer class, using 64-bit signed integers to measure time intervals.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.TimerCallback" /> delegate representing a method to be executed. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing information to be used by the callback method, or null. </param>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before <paramref name="callback" /> is invoked, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from starting. Specify zero (0) to start the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of <paramref name="callback" />, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Threading.TimerCallback callback, object state, valuetype System.TimeSpan dueTime, valuetype System.TimeSpan period)" />
+      <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.TimerCallback callback, object state, valuetype System.TimeSpan dueTime, valuetype System.TimeSpan period) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Threading.TimerCallback callback, object state, valuetype System.TimeSpan dueTime, valuetype System.TimeSpan period)" />
-      <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="callback" Type="System.Threading.TimerCallback" />
@@ -208,44 +246,44 @@ method.</para>
         <Parameter Name="period" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="callback">A <see cref="T:System.Threading.TimerCallback" /> delegate.</param>
-        <param name="state">A <see cref="T:System.Object" /> containing application-specific information relevant to the methods invoked by <paramref name="callback" />, or <see langword="null" /> .</param>
-        <param name="dueTime">A <see cref="T:System.TimeSpan" /> set to the amount of time to delay before <paramref name="callback" /> invokes its methods. Set the value to <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds to prevent the timer from starting. Specify zero to start the timer immediately.</param>
-        <param name="period">A <see cref="T:System.TimeSpan" /> set to the time interval between invocations of the methods referenced by <paramref name="callback" /> . Set the value to <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds to disable periodic signaling.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see langword="Timer " />class.</para>
-        </summary>
-        <remarks>
-          <para>The <paramref name="callback" /> delegate invokes its methods
-   once after <paramref name="dueTime" /> elapses, and then invokes its
-   methods each time the <paramref name="period" /> time interval
-   elapses.</para>
-          <para>If <paramref name="dueTime," /> in milliseconds, is zero,
-<paramref name="callback" /> performs its first invocation immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" /> 
-, no method invocation occurs. The timer is disabled, but can be re-enabled using
-the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" />
-method.</para>
-          <para>
-If <paramref name="period " />is zero or <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds and <paramref name="dueTime" /> is not <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" />
-invokes its methods exactly once. The periodic behavior of the timer is
-disabled, but can be re-enabled using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" />
-method.
-</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The number of milliseconds in the value of <paramref name="dueTime" /> or <paramref name="period" /> is negative and not equal to <see cref="F:System.Threading.Timeout.Infinite" />, or is greater than <see cref="F:System.Int32.MaxValue" />.</exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="callback" /> is a <see langword="null" /> reference.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The delegate specified by the <paramref name="callback" /> parameter is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the <paramref name="period" /> time interval elapses.</para>
+          <para>[Visual Basic]</para>
+          <block subset="none" type="note">
+            <para>Visual Basic users can omit the <see cref="T:System.Threading.TimerCallback" /> constructor, and simply use the AddressOf operator when specifying the callback method. Visual Basic automatically calls the correct delegate constructor.</para>
+          </block>
+          <para>If <paramref name="dueTime" /> is zero (0), <paramref name="callback" /> is invoked immediately. If <paramref name="dueTime" /> is negative one (-1) milliseconds, <paramref name="callback" /> is not invoked; the timer is disabled, but can be re-enabled by calling the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>If <paramref name="period" /> is zero (0) or negative one (-1) milliseconds and <paramref name="dueTime" /> is positive, <paramref name="callback" /> is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>The method specified for <paramref name="callback" /> should be reentrant, because it is called on <see cref="T:System.Threading.ThreadPool" /> threads. The method can be executed simultaneously on two thread pool threads if the timer interval is less than the time required to execute the method, or if all thread pool threads are in use and the method is queued multiple times.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the Timer class, using <see cref="T:System.TimeSpan" /> values to measure time intervals.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.TimerCallback" /> delegate representing a method to be executed. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing information to be used by the callback method, or null. </param>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TimeSpan" /> representing the amount of time to delay before the <paramref name="callback" /> parameter invokes its methods. Specify negative one (-1) milliseconds to prevent the timer from starting. Specify zero (0) to start the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of the methods referenced by <paramref name="callback" />. Specify negative one (-1) milliseconds to disable periodic signaling. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback, object state, uint dueTime, uint period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.TimerCallback callback, object state, unsigned int32 dueTime, unsigned int32 period) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Timer (System.Threading.TimerCallback callback, object state, uint dueTime, uint period);" />
-      <MemberType>Constructor</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -258,23 +296,41 @@ method.
         <Parameter Name="period" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="dueTime">To be added.</param>
-        <param name="period">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The delegate specified by the <paramref name="callback" /> parameter is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the <paramref name="period" /> time interval elapses.</para>
+          <para>[Visual Basic]</para>
+          <block subset="none" type="note">
+            <para>Visual Basic users can omit the <see cref="T:System.Threading.TimerCallback" /> constructor, and simply use the AddressOf operator when specifying the callback method. Visual Basic automatically calls the correct delegate constructor.</para>
+          </block>
+          <para>If <paramref name="dueTime" /> is zero (0), <paramref name="callback" /> is invoked immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> is not invoked; the timer is disabled, but can be re-enabled by calling the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>If <paramref name="period" /> is zero (0) or <see cref="F:System.Threading.Timeout.Infinite" /> and <paramref name="dueTime" /> is not <see cref="F:System.Threading.Timeout.Infinite" />, <paramref name="callback" /> is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled using the <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> method.</para>
+          <para>The method specified for <paramref name="callback" /> should be reentrant, because it is called on <see cref="T:System.Threading.ThreadPool" /> threads. The method can be executed simultaneously on two thread pool threads if the timer interval is less than the time required to execute the method, or if all thread pool threads are in use and the method is queued multiple times.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the Timer class, using 32-bit unsigned integers to measure time intervals.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.TimerCallback" /> delegate representing a method to be executed. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing information to be used by the callback method, or null. </param>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before <paramref name="callback" /> is invoked, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from starting. Specify zero (0) to start the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of <paramref name="callback" />, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Change">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Change(int32 dueTime, int32 period)" />
+      <MemberSignature Language="C#" Value="public bool Change (int dueTime, int period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Change(int32 dueTime, int32 period) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Change">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Change(int32 dueTime, int32 period)" />
-      <MemberSignature Language="C#" Value="public bool Change (int dueTime, int period);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -283,62 +339,38 @@ method.
         <Parameter Name="period" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dueTime">A <see cref="T:System.Int32" /> containing the amount of time to delay before the delegate specified at <see cref="T:System.Threading.Timer" /> construction time invokes its methods, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from restarting. Specify zero to restart the timer immediately.</param>
-        <param name="period">A <see cref="T:System.Int32" /> containing the time interval between invocations of the methods referenced by the delegate specified at <see cref="T:System.Threading.Timer" /> construction time<paramref name="," /> in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling.</param>
-        <summary>
-          <para>
-            <SPAN>
-              <SPAN />
-              <SPAN>
-                <SPAN />
-                <SPAN>
-                  <SPAN />
-                  <SPAN>
-                    <SPAN />Changes the
-   start time and interval between method invocations for a timer.</SPAN>
-                </SPAN>
-              </SPAN>
-            </SPAN>
-          </para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true " />
-if the current instance has not been disposed; otherwise, <see langword="false" />. </para>
-        </returns>
-        <remarks>
-          <para>The delegate specified at <see cref="T:System.Threading.Timer" /> construction time invokes its methods once after <paramref name="dueTime" /> elapses, and
-   then invokes its methods each time the <paramref name="period" /> time interval elapses.</para>
-          <para>If <paramref name="dueTime" /> is zero, the
-delegate specified at <see cref="T:System.Threading.Timer" />
-construction time performs its next invocation
-immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" />
-, no method invocation occurs. The timer is disabled, but can be re-enabled by
-calling this method and specifying a non-negative value for
-<paramref name="dueTime" /> 
-.</para>
-          <para>
-If <paramref name="period " />is zero or <see cref="F:System.Threading.Timeout.Infinite" /> and <paramref name="dueTime" /> is not <see cref="F:System.Threading.Timeout.Infinite" />, the
-delegate specified at <see cref="T:System.Threading.Timer" />
-construction time invokes its methods exactly once. The periodic
-behavior of the timer is disabled, but can be re-enabled by calling this method
-and specifying a positive value for <paramref name="period" />
-.
-</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="dueTime" /> or <paramref name="period" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> .</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The callback method is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the time interval specified by <paramref name="period" /> elapses.</para>
+          <para>If <paramref name="dueTime" /> is zero (0), the callback method is invoked immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" />, the callback method is never invoked; the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a positive value for <paramref name="dueTime" />.</para>
+          <para>If <paramref name="period" /> is zero (0) or <see cref="F:System.Threading.Timeout.Infinite" />, and <paramref name="dueTime" /> is not Infinite, the callback method is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a positive value for <paramref name="period" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the start time and the interval between method invocations for a timer, using 32-bit signed integers to measure time intervals.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before the invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Change">
+      <MemberSignature Language="C#" Value="public bool Change (long dueTime, long period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Change(int64 dueTime, int64 period) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Change">
-      <MemberSignature Language="C#" Value="public bool Change (long dueTime, long period);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -347,22 +379,36 @@ and specifying a positive value for <paramref name="period" />
         <Parameter Name="period" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="dueTime">To be added.</param>
-        <param name="period">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The callback method is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the time interval specified by <paramref name="period" /> elapses.</para>
+          <para>If <paramref name="dueTime" /> is zero (0), the callback method is invoked immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" />, the callback method is never invoked; the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a positive value for <paramref name="dueTime" />.</para>
+          <para>If <paramref name="period" /> is zero (0) or <see cref="F:System.Threading.Timeout.Infinite" />, and <paramref name="dueTime" /> is not Infinite, the callback method is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a positive value for <paramref name="period" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the start time and the interval between method invocations for a timer, using 64-bit signed integers to measure time intervals.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before the invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Change">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Change(valuetype System.TimeSpan dueTime, valuetype System.TimeSpan period)" />
+      <MemberSignature Language="C#" Value="public bool Change (TimeSpan dueTime, TimeSpan period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Change(valuetype System.TimeSpan dueTime, valuetype System.TimeSpan period) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Change">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Change(valuetype System.TimeSpan dueTime, valuetype System.TimeSpan period)" />
-      <MemberSignature Language="C#" Value="public bool Change (TimeSpan dueTime, TimeSpan period);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -371,69 +417,33 @@ and specifying a positive value for <paramref name="period" />
         <Parameter Name="period" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="dueTime">A <see cref="T:System.TimeSpan" /> set to the amount of time to delay before the delegate specified at <see cref="T:System.Threading.Timer" /> construction time invokes its methods. Specify <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds to prevent the timer from restarting. Specify zero to restart the timer immediately. </param>
-        <param name="period">A <see cref="T:System.TimeSpan" /> set to the time interval between invocations of the methods referenced by the delegate specified at <see cref="T:System.Threading.Timer" /> construction time. Specify <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds to disable periodic signaling. </param>
-        <summary>
-          <para>
-            <SPAN>
-              <SPAN />
-              <SPAN>
-                <SPAN />Changes the start time and
-   interval between method invocations for a timer.</SPAN>
-            </SPAN>
-          </para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true " /> if the current instance has
-   not been disposed; otherwise, <see langword="false" />.
-   </para>
-        </returns>
-        <remarks>
-          <para>The delegate specified at <see cref="T:System.Threading.Timer" /> construction time invokes its methods once after <paramref name="dueTime" /> elapses, and
-   then invokes its methods each time the <paramref name="period" /> time interval elapses.</para>
-          <para>If <paramref name="dueTime," /> in milliseconds,
-is zero, the delegate specified at <see cref="T:System.Threading.Timer" /> construction time performs its
-next invocation immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds, no method invocation occurs. The timer is disabled, but can be re-enabled by
-calling this method and specifying a non-negative value for <paramref name="dueTime" />
-.</para>
-          <para>
-If <paramref name="period " />is zero or <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds and <paramref name="dueTime" /> is not
-<see cref="F:System.Threading.Timeout.Infinite" /> milliseconds, the delegate specified at <see cref="T:System.Threading.Timer" /> 
-construction time
-invokes its methods exactly once. The periodic behavior of the timer is
-disabled, but can be re-enabled by calling this method and specifying a positive
-value for <paramref name="period" />
-.
-</para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="dueTime" /> or <paramref name="period" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> .</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The callback method is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the time interval specified by <paramref name="period" /> elapses.</para>
+          <para>If <paramref name="dueTime" /> is zero (0), the callback method is invoked immediately. If <paramref name="dueTime" /> is negative one (-1) milliseconds, the callback method is never invoked; the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a positive value for <paramref name="dueTime" />.</para>
+          <para>If <paramref name="period" /> is zero (0) or negative one (-1) milliseconds, and <paramref name="dueTime" /> is positive, the callback method is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a value greater than zero for <paramref name="period" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the start time and the interval between method invocations for a timer, using <see cref="T:System.TimeSpan" /> values to measure time intervals.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> representing the amount of time to delay before invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed. Specify negative one (-1) milliseconds to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed. Specify negative one (-1) milliseconds to disable periodic signaling. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Change">
       <MemberSignature Language="C#" Value="public bool Change (uint dueTime, uint period);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Change(unsigned int32 dueTime, unsigned int32 period) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="dueTime" Type="System.UInt32" />
-        <Parameter Name="period" Type="System.UInt32" />
-      </Parameters>
-      <Docs>
-        <param name="dueTime">To be added.</param>
-        <param name="period">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -444,38 +454,73 @@ value for <paramref name="period" />
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dueTime" Type="System.UInt32" />
+        <Parameter Name="period" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The callback method is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the time interval specified by <paramref name="period" /> elapses.</para>
+          <para>If <paramref name="dueTime" /> is zero (0), the callback method is invoked immediately. If <paramref name="dueTime" /> is <see cref="F:System.Threading.Timeout.Infinite" />, the callback method is never invoked; the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a positive value for <paramref name="dueTime" />.</para>
+          <para>If <paramref name="period" /> is zero (0) or <see cref="F:System.Threading.Timeout.Infinite" />, and <paramref name="dueTime" /> is not Infinite, the callback method is invoked once; the periodic behavior of the timer is disabled, but can be re-enabled by calling <see cref="M:System.Threading.Timer.Change(System.Int32,System.Int32)" /> and specifying a positive value for <paramref name="period" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the start time and the interval between method invocations for a timer, using 32-bit unsigned integers to measure time intervals.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
+        <param name="dueTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before the invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
+        <param name="period">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time interval between invocations of the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to disable periodic signaling. </param>
+      </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual void Dispose()" />
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Releases the resources held by the current instance.</para>
-        </summary>
         <remarks>
-          <para>
-            <block subset="none" type="note">This method is
- implemented to support the <see cref="T:System.IDisposable" />
- interface.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling Dispose allows the resources used by the <see cref="T:System.Threading.Timer" /> to be reallocated for other purposes. For more information about Dispose, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">[&lt;topic://cpconCleaningUpUnmanagedResources&gt;]</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Callbacks can occur after the <see cref="M:System.Threading.Timer.Dispose" /> method overload has been called, because the timer queues callbacks for execution by thread pool threads. You can use the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" /> method overload to wait until all callbacks have completed.</para>
+          </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of <see cref="T:System.Threading.Timer" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Dispose(class System.Threading.WaitHandle notifyObject)" />
+      <MemberSignature Language="C#" Value="public bool Dispose (System.Threading.WaitHandle notifyObject);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Dispose(class System.Threading.WaitHandle notifyObject) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Dispose(class System.Threading.WaitHandle notifyObject)" />
-      <MemberSignature Language="C#" Value="public bool Dispose (System.Threading.WaitHandle notifyObject);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -483,39 +528,29 @@ value for <paramref name="period" />
         <Parameter Name="notifyObject" Type="System.Threading.WaitHandle" />
       </Parameters>
       <Docs>
-        <param name="notifyObject">Specifies a <see cref="T:System.Threading.WaitHandle" /> to be signaled when the timer has been disposed of. </param>
-        <summary>
-          <para> Releases the resources held by the current instance.
-      </para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true " />if the call succeeds;
-   otherwise, <see langword="false" />.
-   </para>
-        </returns>
-        <remarks>
-          <para> When this method completes, the <see cref="T:System.Threading.WaitHandle" /> specified by <paramref name="notifyObject" /> is
-   signaled.
-   </para>
-          <para>This method calls <see cref="M:System.GC.SuppressFinalize(System.Object)" /> to prevent the garbage collector from finalizing the
-current instance.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="notifyObject" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling Dispose allows the resources used by the <see cref="T:System.Threading.Timer" /> to be reallocated for other purposes. For more information about Dispose, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">[&lt;topic://cpconCleaningUpUnmanagedResources&gt;]</a></format>.</para>
+          <para>When this method completes, it signals the <see cref="T:System.Threading.WaitHandle" /> specified by the <paramref name="notifyObject" /> parameter. Use this overload of the <see cref="Overload:System.Threading.Timer.Dispose" /> method if you want to be able to block until you are certain that the timer has been disposed. The timer is not disposed until all currently queued callbacks have completed.</para>
+          <block subset="none" type="note">
+            <para>If the callback uses the <see cref="Overload:System.Threading.Timer.Change" /> method to set the <paramref name="dueTime" /> parameter to zero, a race condition can occur when the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" /> method overload is called: If the timer queues a new callback before the <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" /> method overload detects that there are no callbacks queued, <see cref="M:System.Threading.Timer.Dispose(System.Threading.WaitHandle)" /> continues to block; otherwise, the timer is disposed while the new callback is being queued, and an <see cref="T:System.ObjectDisposedException" /> is thrown when the new callback calls the <see cref="Overload:System.Threading.Timer.Change" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of <see cref="T:System.Threading.Timer" /> and signals when the timer has been disposed of.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the function succeeds; otherwise, false.</para>
+        </returns>
+        <param name="notifyObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to be signaled when the Timer has been disposed of. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

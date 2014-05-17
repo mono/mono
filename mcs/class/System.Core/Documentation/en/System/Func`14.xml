@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,TResult&gt;" FullName="System.Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,TResult&gt;">
+  <TypeSignature Language="C#" Value="public delegate TResult Func&lt;in T1,in T2,in T3,in T4,in T5,in T6,in T7,in T8,in T9,in T10,in T11,in T12,in T13,out TResult&gt;(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Func`14&lt;- T1, - T2, - T3, - T4, - T5, - T6, - T7, - T8, - T9, - T10, - T11, - T12, - T13, + TResult&gt; extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T1">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T2">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T3">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T4">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T5">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T6">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T7">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T8">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T9">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T10">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T11">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T12">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="T13">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="TResult">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="arg1" Type="T1" />
+    <Parameter Name="arg2" Type="T2" />
+    <Parameter Name="arg3" Type="T3" />
+    <Parameter Name="arg4" Type="T4" />
+    <Parameter Name="arg5" Type="T5" />
+    <Parameter Name="arg6" Type="T6" />
+    <Parameter Name="arg7" Type="T7" />
+    <Parameter Name="arg8" Type="T8" />
+    <Parameter Name="arg9" Type="T9" />
+    <Parameter Name="arg10" Type="T10" />
+    <Parameter Name="arg11" Type="T11" />
+    <Parameter Name="arg12" Type="T12" />
+    <Parameter Name="arg13" Type="T13" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>TResult</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="T1">To be added.</typeparam>
+    <typeparam name="T2">To be added.</typeparam>
+    <typeparam name="T3">To be added.</typeparam>
+    <typeparam name="T4">To be added.</typeparam>
+    <typeparam name="T5">To be added.</typeparam>
+    <typeparam name="T6">To be added.</typeparam>
+    <typeparam name="T7">To be added.</typeparam>
+    <typeparam name="T8">To be added.</typeparam>
+    <typeparam name="T9">To be added.</typeparam>
+    <typeparam name="T10">To be added.</typeparam>
+    <typeparam name="T11">To be added.</typeparam>
+    <typeparam name="T12">To be added.</typeparam>
+    <typeparam name="T13">To be added.</typeparam>
+    <typeparam name="TResult">To be added.</typeparam>
+    <param name="arg1">To be added.</param>
+    <param name="arg2">To be added.</param>
+    <param name="arg3">To be added.</param>
+    <param name="arg4">To be added.</param>
+    <param name="arg5">To be added.</param>
+    <param name="arg6">To be added.</param>
+    <param name="arg7">To be added.</param>
+    <param name="arg8">To be added.</param>
+    <param name="arg9">To be added.</param>
+    <param name="arg10">To be added.</param>
+    <param name="arg11">To be added.</param>
+    <param name="arg12">To be added.</param>
+    <param name="arg13">To be added.</param>
+    <returns>To be added.</returns>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use this delegate to represent a method that can be passed as a parameter without explicitly declaring a custom delegate. The encapsulated method must correspond to the method signature that is defined by this delegate. This means that the encapsulated method must have 13 parameters, each of which is passed to it by value, and that it must return a value.</para>
+      <block subset="none" type="note">
+        <para>To reference a method that has 13 parameters and returns void (or in Visual Basic, that is declared as a Sub rather than as a Function), use the generic <see cref="T:System.Action`13" /> delegate instead. </para>
+      </block>
+      <para>You can also use the <see cref="T:System.Func`14" /> delegate with anonymous methods and lambda expressions.</para>
+      <para>The underlying type of a lambda expression is one of the generic Func delegates. This makes it possible to pass a lambda expression as a parameter without explicitly assigning it to a delegate.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a method that has 13 parameters and returns a value of the type specified by the <paramref name="TResult" /> parameter.</para>
+    </summary>
+  </Docs>
+</Type>

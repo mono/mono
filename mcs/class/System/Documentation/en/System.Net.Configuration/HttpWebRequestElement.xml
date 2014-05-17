@@ -1,98 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpWebRequestElement" FullName="System.Net.Configuration.HttpWebRequestElement">
   <TypeSignature Language="C#" Value="public sealed class HttpWebRequestElement : System.Configuration.ConfigurationElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpWebRequestElement extends System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Configuration.ConfigurationElement</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class corresponds to the maximumResponseHeadersLength attribute of the <format type="text/html"><a href="52acd9d2-5bdc-4dc4-9c2a-f0a476ccbb31">HttpWebRequest Element (Network Settings)</a></format> configuration element.</para>
+      <para>The information in this class applies to responses to requests made with the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebClient" /> classes. </para>
+      <para>This class provides programmatic access to information that can be stored in configuration files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the maximum length for response headers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HttpWebRequestElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor adds a <see cref="T:System.Configuration.ConfigurationProperty" /> object that represents the <see cref="P:System.Net.Configuration.HttpWebRequestElement.MaximumResponseHeadersLength" /> to the <see cref="P:System.Configuration.ConfigurationElement.Properties" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.HttpWebRequestElement" /> class. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaximumErrorResponseLength">
-      <MemberSignature Language="C#" Value="public int MaximumErrorResponseLength { set; get; }" />
+      <MemberSignature Language="C#" Value="public int MaximumErrorResponseLength { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaximumErrorResponseLength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Configuration.ConfigurationProperty("maximumErrorResponseLength", DefaultValue="64")</AttributeName>
+          <AttributeName>System.Configuration.ConfigurationProperty("maximumErrorResponseLength", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum allowed length of an error response.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaximumResponseHeadersLength">
-      <MemberSignature Language="C#" Value="public int MaximumResponseHeadersLength { set; get; }" />
+      <MemberSignature Language="C#" Value="public int MaximumResponseHeadersLength { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaximumResponseHeadersLength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Configuration.ConfigurationProperty("maximumResponseHeadersLength", DefaultValue="64")</AttributeName>
+          <AttributeName>System.Configuration.ConfigurationProperty("maximumResponseHeadersLength", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The length is measured in kilobytes (1024 bytes) and it includes the response status line and the response headers, as well as all extra control characters received as part of the HTTP protocol.</para>
+          <para>A value of -1 means no limit is imposed on the response headers; a value of 0 means that all requests will fail.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum allowed length of the response headers.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaximumUnauthorizedUploadLength">
-      <MemberSignature Language="C#" Value="public int MaximumUnauthorizedUploadLength { set; get; }" />
+      <MemberSignature Language="C#" Value="public int MaximumUnauthorizedUploadLength { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaximumUnauthorizedUploadLength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Configuration.ConfigurationProperty("maximumUnauthorizedUploadLength", DefaultValue="-1")</AttributeName>
+          <AttributeName>System.Configuration.ConfigurationProperty("maximumUnauthorizedUploadLength", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum length of an upload in response to an unauthorized error code.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PostDeserialize">
       <MemberSignature Language="C#" Value="protected override void PostDeserialize ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void PostDeserialize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -102,46 +150,78 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Properties">
       <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection contains one element, which corresponds to the <see cref="P:System.Net.Configuration.HttpWebRequestElement.MaximumResponseHeadersLength" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of properties for the current instance. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UseUnsafeHeaderParsing">
-      <MemberSignature Language="C#" Value="public bool UseUnsafeHeaderParsing { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool UseUnsafeHeaderParsing { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseUnsafeHeaderParsing" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Configuration.ConfigurationProperty("useUnsafeHeaderParsing", DefaultValue="False")</AttributeName>
+          <AttributeName>System.Configuration.ConfigurationProperty("useUnsafeHeaderParsing", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to false, the following validations are performed during HTTP parsing:</para>
+          <list type="bullet">
+            <item>
+              <para>In end-of-line code, use CRLF; using CR or LF alone is not allowed.</para>
+            </item>
+            <item>
+              <para>Headers names should not have spaces in them.</para>
+            </item>
+            <item>
+              <para>If multiple status lines exist, all additional status lines are treated as malformed header name/value pairs.</para>
+            </item>
+            <item>
+              <para>The status line must have a status description, in addition to a status code.</para>
+            </item>
+            <item>
+              <para>Header names cannot have non-ASCII chars in them. This validation is performed whether this property is set to true or false.</para>
+            </item>
+          </list>
+          <para>When a protocol violation occurs, a <see cref="T:System.Net.WebException" /> exception is thrown with the status set to <see cref="F:System.Net.WebExceptionStatus.ServerProtocolViolation" />. If the UseUnsafeHeaderParsing property is set to true, validation errors are ignored. </para>
+          <para>Setting this property to true has security implications, so it should only be done if backward compatibility with a server is required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property ignores validation errors that occur during HTTP parsing.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

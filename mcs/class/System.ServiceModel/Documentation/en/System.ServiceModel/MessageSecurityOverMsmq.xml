@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageSecurityOverMsmq" FullName="System.ServiceModel.MessageSecurityOverMsmq">
+  <TypeSignature Language="C#" Value="public sealed class MessageSecurityOverMsmq" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MessageSecurityOverMsmq extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This object is accessed from the binding by means of the <see cref="P:System.ServiceModel.NetMsmqBinding.Security" /> property, which returns a <see cref="T:System.ServiceModel.NetMsmqSecurity" /> object. This object has a <see cref="P:System.ServiceModel.NetMsmqSecurity.Message" /> property that provides a reference to the <see cref="T:System.ServiceModel.MessageSecurityOverMsmq" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables setting message-level security properties on the <see cref="T:System.ServiceModel.NetMsmqBinding" /> binding.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AlgorithmSuite">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.SecurityAlgorithmSuite AlgorithmSuite { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.SecurityAlgorithmSuite AlgorithmSuite" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityAlgorithmSuite</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.Security.SecurityAlgorithmSuite" /> defines of a variety of algorithms such as Canonicalization, Digest, KeyWrap, Signature, Encryption, and KeyDerivation algorithms. This property is most relevant when working with a platform that uses a set of algorithms different than the default. You should be aware of the strengths and weaknesses of the relevant algorithms when making modifications to this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the algorithm suite used for security messages at the SOAP level.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCredentialType">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.MessageCredentialType ClientCredentialType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.MessageCredentialType ClientCredentialType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.MessageCredentialType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be set to one of the following values:</para>
+          <list type="bullet">
+            <item>
+              <para>None: This allows the service to interact with anonymous clients. Neither the service nor the client requires a credential.</para>
+            </item>
+            <item>
+              <para>Windows: This allows the SOAP exchanges to be under the authenticated context of a Windows credential. This always performs Kerberos-based authentication. </para>
+            </item>
+            <item>
+              <para>UserName: This allows the service to require that the client be authenticated using a UserName credential. This credential must be specified using <see cref="T:System.ServiceModel.Description.ClientCredentials" /> class. </para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>indigo2 does not support sending a password digest or deriving keys using password and using such keys for message security. As such, indigo2 enforces that the exchange is secured when using UserName credentials. This mode requires that the service certificate be specified on the client using ClientCredential behavior and serviceCertificate:</para>
+          </block>
+          <list type="bullet">
+            <item>
+              <para>Certificate: This allows the service to require that the client be authenticated using a certificate. The client credential in this case must be specified using <see cref="T:System.ServiceModel.Description.ClientCredentials" /> class or ClientCredentials behavior. The service credential in this case must be specified using <see cref="T:System.ServiceModel.Description.ClientCredentials" /> class or ClientCredentials behavior by specifying the serviceCertificate. </para>
+            </item>
+            <item>
+              <para>InfoCard: This allows the service to require that the client be authenticated using an InfoCard. The serviceCertificate must be provisioned in the ClientCredential behavior.</para>
+            </item>
+            <item>
+              <para>The Certificate credential for the MessageSecurityOverMsmq is relevant only when the security mode is set to Both or Message.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.MessageCredentialType" /> security setting for messages sent over the MSMQ transport.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

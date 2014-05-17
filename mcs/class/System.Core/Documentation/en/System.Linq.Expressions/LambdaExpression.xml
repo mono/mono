@@ -1,62 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LambdaExpression" FullName="System.Linq.Expressions.LambdaExpression">
-  <TypeSignature Language="C#" Value="public class LambdaExpression : System.Linq.Expressions.Expression" />
+  <TypeSignature Language="C#" Value="public abstract class LambdaExpression : System.Linq.Expressions.Expression" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit LambdaExpression extends System.Linq.Expressions.Expression" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Linq.Expressions.Expression</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerTypeProxy(typeof(System.Linq.Expressions.Expression/LambdaExpressionProxy))</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Linq.Expressions.LambdaExpression" /> type represents a lambda expression in the form of an expression tree. The <see cref="T:System.Linq.Expressions.Expression`1" /> type, which derives from <see cref="T:System.Linq.Expressions.LambdaExpression" /> and captures the type of the lambda expression more explicitly, can also be used to represent a lambda expression. At runtime, an expression tree node that represents a lambda expression is always of type <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
+      <para>The value of the <see cref="P:System.Linq.Expressions.Expression.NodeType" /> property of a <see cref="T:System.Linq.Expressions.LambdaExpression" /> is <see cref="F:System.Linq.Expressions.ExpressionType.Lambda" />.</para>
+      <para>Use the <see cref="M:System.Linq.Expressions.Expression.Lambda(System.Linq.Expressions.Expression,System.Linq.Expressions.ParameterExpression[])" /> factory methods to create a <see cref="T:System.Linq.Expressions.LambdaExpression" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes a lambda expression. This captures a block of code that is similar to a .NET method body.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Body">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression Body { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.Expressions.Expression Body" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the body of the lambda expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Compile">
       <MemberSignature Language="C#" Value="public Delegate Compile ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Delegate Compile() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Delegate</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Linq.Expressions.LambdaExpression.Compile" /> method can be used to convert a <see cref="T:System.Linq.Expressions.LambdaExpression" /> expression tree into the delegate that it represents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a delegate that represents the lambda expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Delegate" /> that contains the compiled version of the lambda expression.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Compile">
+      <MemberSignature Language="C#" Value="public Delegate Compile (System.Runtime.CompilerServices.DebugInfoGenerator debugInfoGenerator);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Delegate Compile(class System.Runtime.CompilerServices.DebugInfoGenerator debugInfoGenerator) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Delegate</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="debugInfoGenerator" Type="System.Runtime.CompilerServices.DebugInfoGenerator" />
+      </Parameters>
+      <Docs>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a delegate that represents the lambda expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate containing the compiled version of the lambda.</para>
+        </returns>
+        <param name="debugInfoGenerator">
+          <attribution license="cc4" from="Microsoft" modified="false" />Debugging information generator used by the compiler to mark sequence points and annotate local variables.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CompileToMethod">
+      <MemberSignature Language="C#" Value="public void CompileToMethod (System.Reflection.Emit.MethodBuilder method);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CompileToMethod(class System.Reflection.Emit.MethodBuilder method) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.Emit.MethodBuilder" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the lambda into a method definition.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.Emit.MethodBuilder" /> which will be used to hold the lambda's IL.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CompileToMethod">
+      <MemberSignature Language="C#" Value="public void CompileToMethod (System.Reflection.Emit.MethodBuilder method, System.Runtime.CompilerServices.DebugInfoGenerator debugInfoGenerator);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CompileToMethod(class System.Reflection.Emit.MethodBuilder method, class System.Runtime.CompilerServices.DebugInfoGenerator debugInfoGenerator) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.Emit.MethodBuilder" />
+        <Parameter Name="debugInfoGenerator" Type="System.Runtime.CompilerServices.DebugInfoGenerator" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the lambda into a method definition and custom debug information.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.Emit.MethodBuilder" /> which will be used to hold the lambda's IL.</param>
+        <param name="debugInfoGenerator">
+          <attribution license="cc4" from="Microsoft" modified="false" />Debugging information generator used by the compiler to mark sequence points and annotate local variables.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used for debugging.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the lambda expression.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NodeType">
+      <MemberSignature Language="C#" Value="public override sealed System.Linq.Expressions.ExpressionType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Linq.Expressions.ExpressionType NodeType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the node type of this <see cref="T:System.Linq.Expressions.Expression" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parameters">
       <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.ParameterExpression&gt; Parameters { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Linq.Expressions.ParameterExpression&gt; Parameters" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.ParameterExpression&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters of the lambda expression.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReturnType">
+      <MemberSignature Language="C#" Value="public Type ReturnType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ReturnType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the return type of the lambda expression.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TailCall">
+      <MemberSignature Language="C#" Value="public bool TailCall { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool TailCall" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value that indicates if the lambda expression will be compiled with the tail call optimization.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public override sealed Type Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the static type of the expression that this <see cref="T:System.Linq.Expressions.Expression" /> represents.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

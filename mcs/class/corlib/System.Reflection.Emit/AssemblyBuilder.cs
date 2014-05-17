@@ -570,7 +570,7 @@ namespace System.Reflection.Emit
 			if (resourceFileName.Length == 0)
 				throw new ArgumentException ("resourceFileName");
 			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
-				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
+				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exist or is a directory.");
 			if (native_resource != NativeResourceType.None)
 				throw new ArgumentException ("Native resource has already been defined.");
 

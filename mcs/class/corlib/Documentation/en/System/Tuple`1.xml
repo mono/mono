@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Tuple&lt;T1&gt;" FullName="System.Tuple&lt;T1&gt;">
-  <TypeSignature Language="C#" Value="public class Tuple&lt;T1&gt; : IComparable, System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable" />
+  <TypeSignature Language="C#" Value="public class Tuple&lt;T1&gt; : IComparable, ITuple, System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Tuple`1&lt;T1&gt; extends System.Object implements class System.Collections.IStructuralComparable, class System.Collections.IStructuralEquatable, class System.IComparable, class System.ITuple" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -20,15 +22,26 @@
     <Interface>
       <InterfaceName>System.IComparable</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.ITuple</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
     <typeparam name="T1">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A tuple is a data structure that has a specific number and sequence of values. The <see cref="T:System.Tuple`1" /> class represents a 1-tuple, or singleton, which is a tuple that has a single component. A singleton is used comparatively rarely in application development.</para>
+      <para>You can instantiate a <see cref="T:System.Tuple`1" /> object by calling either the <see cref="M:System.Tuple`1.#ctor(`0)" /> constructor or the static <see cref="M:System.Tuple.Create``1(``0)" /> method. You can retrieve the value of the tuple's single component by using the read-only <see cref="P:System.Tuple`1.Item1" /> instance property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a 1-tuple, or singleton. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Tuple (T1 item1);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!T1 item1) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -44,6 +57,7 @@
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -55,14 +69,36 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="obj" /> parameter is considered to be equal to the current instance under the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>It is a <see cref="T:System.Tuple`1" /> object.</para>
+            </item>
+            <item>
+              <para>Its single component is of the same type as the current instance.</para>
+            </item>
+            <item>
+              <para>Its single component is equal to that of the current instance. Equality is determined by the default object equality comparer for each component. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current <see cref="T:System.Tuple`1" /> object is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is equal to the specified object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -72,13 +108,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the current <see cref="T:System.Tuple`1" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item1">
       <MemberSignature Language="C#" Value="public T1 Item1 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T1 Item1" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -87,13 +130,29 @@
         <ReturnType>T1</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can determine the type of the <see cref="P:System.Tuple`1.Item1" /> component in one of two ways:</para>
+          <list type="bullet">
+            <item>
+              <para>By calling the GetType method on the value that is returned by the <see cref="P:System.Tuple`1.Item1" /> property. </para>
+            </item>
+            <item>
+              <para>By retrieving the <see cref="T:System.Type" /> object that represents the <see cref="T:System.Tuple`1" /> object, and retrieving the first element from the array that is returned by its <see cref="M:System.Type.GetGenericArguments" /> method.</para>
+            </item>
+          </list>
+          <para>The example illustrates both approaches.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the <see cref="T:System.Tuple`1" /> object's single component. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IStructuralComparable.CompareTo">
       <MemberSignature Language="C#" Value="int IStructuralComparable.CompareTo (object other, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IStructuralComparable.CompareTo(object other, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -106,15 +165,66 @@
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although this method can be called directly, it is most commonly called by collection sorting methods that include <see cref="T:System.Collections.IComparer" /> parameters to order the members of a collection. For example, it is called by the <see cref="M:System.Array.Sort(System.Array,System.Collections.IComparer)" /> method and the <see cref="M:System.Collections.SortedList.Add(System.Object,System.Object)" /> method of a <see cref="T:System.Collections.SortedList" /> object that is instantiated by using the <see cref="M:System.Collections.SortedList.#ctor(System.Collections.IComparer)" /> constructor.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Tuple`1.System#Collections#IStructuralComparable#CompareTo(System.Object,System.Collections.IComparer)" /> method is intended for use in sorting operations. It should not be used when the primary purpose of a comparison is to determine whether two objects are equal. To determine whether two objects are equal, call the <see cref="M:System.Tuple`1.System#Collections#IStructuralEquatable#Equals(System.Object,System.Collections.IEqualityComparer)" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current <see cref="T:System.Tuple`1" /> object to a specified object by using a specified comparer, and returns an integer that indicates whether the current object is before, after, or in the same position as the specified object in the sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative position of this instance and <paramref name="other" /> in the sort order, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer</para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="other" /> have the same position in the sort order.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer</para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current instance.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that provides custom rules for comparison.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IStructuralEquatable.Equals">
       <MemberSignature Language="C#" Value="bool IStructuralEquatable.Equals (object other, System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.IStructuralEquatable.Equals(object other, class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -127,15 +237,28 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`1" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
+          <para>The <see cref="M:System.Collections.IEqualityComparer.Equals(System.Object,System.Object)" /> implementation is called only if <paramref name="other" /> is not null, and if it can be successfully cast (in C#) or converted (in Visual Basic) to a <see cref="T:System.Tuple`1" /> object whose single component is of the same type as the current instance. The method is passed the <see cref="P:System.Tuple`1.Item1" /> component of the current instance and the <see cref="P:System.Tuple`1.Item1" /> component of the <see cref="T:System.Tuple`1" /> object represented by the <paramref name="other" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current <see cref="T:System.Tuple`1" /> object is equal to a specified object based on a specified comparison method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is equal to the specified object; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that defines the method to use to evaluate whether the two objects are equal.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IStructuralEquatable.GetHashCode">
       <MemberSignature Language="C#" Value="int IStructuralEquatable.GetHashCode (System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IStructuralEquatable.GetHashCode(class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -147,14 +270,27 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`1" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
+          <para>The method simply wraps a call to the <paramref name="comparer" /> object's <see cref="M:System.Collections.IEqualityComparer.GetHashCode(System.Object)" /> implementation.</para>
+          <para>The algorithm used to compute the hash code should return the same hash code for two <see cref="T:System.Tuple`1" /> objects that are considered to be equal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the hash code for the current <see cref="T:System.Tuple`1" /> object by using a specified computation method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object whose <see cref="M:System.Collections.IEqualityComparer.GetHashCode(System.Object)" />  method calculates the hash code of the current <see cref="T:System.Tuple`1" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.IComparable.CompareTo">
       <MemberSignature Language="C#" Value="int IComparable.CompareTo (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.IComparable.CompareTo(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -166,14 +302,66 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Tuple`1" /> instance is cast to an <see cref="T:System.IComparable" /> interface.</para>
+          <para>This method provides the <see cref="M:System.IComparable.CompareTo(System.Object)" /> implementation for the <see cref="T:System.Tuple`1" /> class. Although the method can be called directly, it is most commonly called by the default overloads of collection sorting methods, such as <see cref="M:System.Array.Sort(System.Array)" /> and <see cref="M:System.Collections.SortedList.Add(System.Object,System.Object)" />, to order the members of a collection.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Tuple`1.System#IComparable#CompareTo(System.Object)" /> method is intended for use in sorting operations. It should not be used when the primary purpose of a comparison is to determine whether two objects are equal. To determine whether two objects are equal, call the <see cref="M:System.Tuple`1.Equals(System.Object)" /> method. </para>
+          </block>
+          <para>The <see cref="M:System.Tuple`1.System#IComparable#CompareTo(System.Object)" /> method uses the default object  comparer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current <see cref="T:System.Tuple`1" /> object to a specified object, and returns an integer that indicates whether the current object is before, after, or in the same position as the specified object in the sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative position of this instance and <paramref name="obj" /> in the sort order, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer</para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="obj" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>This instance and <paramref name="obj" /> have the same position in the sort order.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer</para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="obj" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current instance.</param>
       </Docs>
     </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
+    <Member MemberName="System.ITuple.ToString">
+      <MemberSignature Language="C#" Value="string ITuple.ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance string System.ITuple.ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -186,6 +374,32 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this method takes the form (Item1), where Item1 represents the value of the <see cref="P:System.Tuple`1.Item1" /> property. If the value of <see cref="P:System.Tuple`1.Item1" /> is null, it is represented as <see cref="F:System.String.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the value of this <see cref="T:System.Tuple`1" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of this <see cref="T:System.Tuple`1" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

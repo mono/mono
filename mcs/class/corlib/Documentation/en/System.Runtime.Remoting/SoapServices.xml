@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapServices" FullName="System.Runtime.Remoting.SoapServices">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapServices" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SoapServices extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,14 +14,31 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class makes a link demand. A security exception is thrown if the immediate caller does not have infrastructure permission. See <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> for more information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides several methods for using and publishing remoted objects in SOAP format.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CodeXmlNamespaceForClrTypeNamespace">
       <MemberSignature Language="C#" Value="public static string CodeXmlNamespaceForClrTypeNamespace (string typeNamespace, string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string CodeXmlNamespaceForClrTypeNamespace(string typeNamespace, string assemblyName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -28,21 +47,34 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeNamespace">To be added: an object of type 'string'</param>
-        <param name="assemblyName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method is used by the .NET Framework and the SoapSuds tool to create an XML namespace name for a common language runtime object type.</para>
+          <para>For more information about SoapSuds, see <format type="text/html"><a href="40F6F8C8-B80C-4E9F-A920-31BCD0CF45C5">[&lt;topic://cpgrfsoapsudsutilitysoapsudsexe&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the common language runtime type namespace name from the provided namespace and assembly names.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The common language runtime type namespace name from the provided namespace and assembly names.</para>
+        </returns>
+        <param name="typeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace that is to be coded. </param>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly that is to be coded. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DecodeXmlNamespaceForClrTypeNamespace">
+      <MemberSignature Language="C#" Value="public static bool DecodeXmlNamespaceForClrTypeNamespace (string inNamespace, out string typeNamespace, out string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool DecodeXmlNamespaceForClrTypeNamespace(string inNamespace, string typeNamespace, string assemblyName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DecodeXmlNamespaceForClrTypeNamespace">
-      <MemberSignature Language="C#" Value="public static bool DecodeXmlNamespaceForClrTypeNamespace (string inNamespace, out string typeNamespace, out string assemblyName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -59,15 +91,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetInteropFieldTypeAndNameFromXmlAttribute">
+      <MemberSignature Language="C#" Value="public static void GetInteropFieldTypeAndNameFromXmlAttribute (Type containingType, string xmlAttribute, string xmlNamespace, out Type type, out string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void GetInteropFieldTypeAndNameFromXmlAttribute(class System.Type containingType, string xmlAttribute, string xmlNamespace, class System.Type type, string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInteropFieldTypeAndNameFromXmlAttribute">
-      <MemberSignature Language="C#" Value="public static void GetInteropFieldTypeAndNameFromXmlAttribute (Type containingType, string xmlAttribute, string xmlNamespace, out Type type, out string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -87,15 +120,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetInteropFieldTypeAndNameFromXmlElement">
+      <MemberSignature Language="C#" Value="public static void GetInteropFieldTypeAndNameFromXmlElement (Type containingType, string xmlElement, string xmlNamespace, out Type type, out string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void GetInteropFieldTypeAndNameFromXmlElement(class System.Type containingType, string xmlElement, string xmlNamespace, class System.Type type, string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInteropFieldTypeAndNameFromXmlElement">
-      <MemberSignature Language="C#" Value="public static void GetInteropFieldTypeAndNameFromXmlElement (Type containingType, string xmlElement, string xmlNamespace, out Type type, out string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -115,15 +149,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetInteropTypeFromXmlElement">
+      <MemberSignature Language="C#" Value="public static Type GetInteropTypeFromXmlElement (string xmlElement, string xmlNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetInteropTypeFromXmlElement(string xmlElement, string xmlNamespace) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInteropTypeFromXmlElement">
-      <MemberSignature Language="C#" Value="public static Type GetInteropTypeFromXmlElement (string xmlElement, string xmlNamespace);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -132,21 +167,33 @@
         <Parameter Name="xmlNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xmlElement">To be added: an object of type 'string'</param>
-        <param name="xmlNamespace">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method returns values set up through <see cref="M:System.Runtime.Remoting.SoapServices.RegisterInteropXmlElement(System.String,System.String,System.Type)" /> and <see cref="M:System.Runtime.Remoting.SoapServices.PreLoad(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Type" /> that should be used during deserialization of an unrecognized object type with the given XML element name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of object associated with the specified XML element name and namespace.</para>
+        </returns>
+        <param name="xmlElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element name of the unknown object type. </param>
+        <param name="xmlNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML namespace of the unknown object type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetInteropTypeFromXmlType">
+      <MemberSignature Language="C#" Value="public static Type GetInteropTypeFromXmlType (string xmlType, string xmlTypeNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetInteropTypeFromXmlType(string xmlType, string xmlTypeNamespace) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInteropTypeFromXmlType">
-      <MemberSignature Language="C#" Value="public static Type GetInteropTypeFromXmlType (string xmlType, string xmlTypeNamespace);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -155,21 +202,33 @@
         <Parameter Name="xmlTypeNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xmlType">To be added: an object of type 'string'</param>
-        <param name="xmlTypeNamespace">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method returns values set up through <see cref="M:System.Runtime.Remoting.SoapServices.RegisterInteropXmlType(System.String,System.String,System.Type)" /> and <see cref="M:System.Runtime.Remoting.SoapServices.PreLoad(System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the object <see cref="T:System.Type" /> that should be used during deserialization of an unrecognized object type with the given XML type name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of object associated with the specified XML type name and namespace.</para>
+        </returns>
+        <param name="xmlType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML type of the unknown object type. </param>
+        <param name="xmlTypeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML type namespace of the unknown object type. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetSoapActionFromMethodBase">
+      <MemberSignature Language="C#" Value="public static string GetSoapActionFromMethodBase (System.Reflection.MethodBase mb);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetSoapActionFromMethodBase(class System.Reflection.MethodBase mb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSoapActionFromMethodBase">
-      <MemberSignature Language="C#" Value="public static string GetSoapActionFromMethodBase (System.Reflection.MethodBase mb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -177,20 +236,31 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the given <see cref="T:System.Reflection.MethodBase" /> has not been registered with any SOAPAction value, the <see cref="M:System.Runtime.Remoting.SoapServices.GetSoapActionFromMethodBase(System.Reflection.MethodBase)" /> method returns the SOAPAction automatically cached with the <see cref="T:System.Reflection.MethodBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the SOAPAction value associated with the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAPAction value associated with the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </returns>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> that contains the method for which a SOAPAction is requested. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetTypeAndMethodNameFromSoapAction">
+      <MemberSignature Language="C#" Value="public static bool GetTypeAndMethodNameFromSoapAction (string soapAction, out string typeName, out string methodName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool GetTypeAndMethodNameFromSoapAction(string soapAction, string typeName, string methodName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetTypeAndMethodNameFromSoapAction">
-      <MemberSignature Language="C#" Value="public static bool GetTypeAndMethodNameFromSoapAction (string soapAction, out string typeName, out string methodName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -207,15 +277,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetXmlElementForInteropType">
+      <MemberSignature Language="C#" Value="public static bool GetXmlElementForInteropType (Type type, out string xmlElement, out string xmlNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool GetXmlElementForInteropType(class System.Type type, string xmlElement, string xmlNamespace) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetXmlElementForInteropType">
-      <MemberSignature Language="C#" Value="public static bool GetXmlElementForInteropType (Type type, out string xmlElement, out string xmlNamespace);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -232,15 +303,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetXmlNamespaceForMethodCall">
       <MemberSignature Language="C#" Value="public static string GetXmlNamespaceForMethodCall (System.Reflection.MethodBase mb);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetXmlNamespaceForMethodCall(class System.Reflection.MethodBase mb) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -248,20 +320,28 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the XML namespace used during remote calls of the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML namespace used during remote calls of the specified method.</para>
+        </returns>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> of the method for which the XML namespace was requested. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetXmlNamespaceForMethodResponse">
       <MemberSignature Language="C#" Value="public static string GetXmlNamespaceForMethodResponse (System.Reflection.MethodBase mb);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetXmlNamespaceForMethodResponse(class System.Reflection.MethodBase mb) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -269,20 +349,28 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the XML namespace used during the generation of responses to the remote call to the method specified in the given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML namespace used during the generation of responses to a remote method call.</para>
+        </returns>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> of the method for which the XML namespace was requested. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetXmlTypeForInteropType">
+      <MemberSignature Language="C#" Value="public static bool GetXmlTypeForInteropType (Type type, out string xmlType, out string xmlTypeNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool GetXmlTypeForInteropType(class System.Type type, string xmlType, string xmlTypeNamespace) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetXmlTypeForInteropType">
-      <MemberSignature Language="C#" Value="public static bool GetXmlTypeForInteropType (Type type, out string xmlType, out string xmlTypeNamespace);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -299,15 +387,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsClrTypeNamespace">
+      <MemberSignature Language="C#" Value="public static bool IsClrTypeNamespace (string namespaceString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsClrTypeNamespace(string namespaceString) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsClrTypeNamespace">
-      <MemberSignature Language="C#" Value="public static bool IsClrTypeNamespace (string namespaceString);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -315,20 +404,32 @@
         <Parameter Name="namespaceString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="namespaceString">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method is used by the SoapSuds tool to determine whether an XML namespace represents a common language runtime type or a type from a non-common language runtime system.</para>
+          <para>For more information about SoapSuds, see <format type="text/html"><a href="40F6F8C8-B80C-4E9F-A920-31BCD0CF45C5">[&lt;topic://cpgrfsoapsudsutilitysoapsudsexe&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether the specified namespace is native to the common language runtime.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the given namespace is native to the common language runtime; otherwise, false.</para>
+        </returns>
+        <param name="namespaceString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to check in the common language runtime. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsSoapActionValidForMethodBase">
+      <MemberSignature Language="C#" Value="public static bool IsSoapActionValidForMethodBase (string soapAction, System.Reflection.MethodBase mb);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsSoapActionValidForMethodBase(string soapAction, class System.Reflection.MethodBase mb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsSoapActionValidForMethodBase">
-      <MemberSignature Language="C#" Value="public static bool IsSoapActionValidForMethodBase (string soapAction, System.Reflection.MethodBase mb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -337,21 +438,30 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="soapAction">To be added: an object of type 'string'</param>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the specified SOAPAction is acceptable for a given <see cref="T:System.Reflection.MethodBase" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified SOAPAction is acceptable for a given <see cref="T:System.Reflection.MethodBase" />; otherwise, false.</para>
+        </returns>
+        <param name="soapAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SOAPAction to check against the given <see cref="T:System.Reflection.MethodBase" />. </param>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> the specified SOAPAction is checked against. </param>
       </Docs>
+    </Member>
+    <Member MemberName="PreLoad">
+      <MemberSignature Language="C#" Value="public static void PreLoad (System.Reflection.Assembly assembly);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PreLoad(class System.Reflection.Assembly assembly) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PreLoad">
-      <MemberSignature Language="C#" Value="public static void PreLoad (System.Reflection.Assembly assembly);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -359,19 +469,27 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the .NET Framework is parsing an XML stream, it needs to know how to convert the XML read from the stream into common language runtime types. The information that specifies how the .NET Framework should generate and parse an XML stream is stored in custom attributes that are located in the <see cref="N:System.Runtime.Remoting.Metadata" /> namespace. There are two ways to specify this information in a configuration file: either by explicitly specifying the mappings, or by specifying which object types to preload. The custom attributes are read during the preloading process and the information in them is made available to the SOAP parser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Preloads every <see cref="T:System.Type" /> found in the specified <see cref="T:System.Reflection.Assembly" /> from the information found in the <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> associated with each type.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Assembly" /> for each type of which to call <see cref="M:System.Runtime.Remoting.SoapServices.PreLoad(System.Type)" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="PreLoad">
+      <MemberSignature Language="C#" Value="public static void PreLoad (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PreLoad(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PreLoad">
-      <MemberSignature Language="C#" Value="public static void PreLoad (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -379,19 +497,27 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the .NET Framework is parsing an XML stream, it needs to know how to convert the XML read from the stream into common language runtime types. The information that specifies how the .NET Framework should generate and parse an XML stream is stored in custom attributes that are located in the <see cref="N:System.Runtime.Remoting.Metadata" /> namespace. There are two ways to specify this information in a configuration file: either by explicitly specifying the mappings, or by specifying which object types to preload. The custom attributes are read during the preloading process and the information in them is made available to the SOAP parser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Preloads the given <see cref="T:System.Type" /> based on values set in a <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> on the type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to preload. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterInteropXmlElement">
+      <MemberSignature Language="C#" Value="public static void RegisterInteropXmlElement (string xmlElement, string xmlNamespace, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterInteropXmlElement(string xmlElement, string xmlNamespace, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterInteropXmlElement">
-      <MemberSignature Language="C#" Value="public static void RegisterInteropXmlElement (string xmlElement, string xmlNamespace, Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -401,21 +527,28 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="xmlElement">To be added: an object of type 'string'</param>
-        <param name="xmlNamespace">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the given XML element name and namespace with a run-time type that should be used for deserialization.</para>
+        </summary>
+        <param name="xmlElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element name to use in deserialization. </param>
+        <param name="xmlNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML namespace to use in deserialization. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The run-time <see cref="T:System.Type" /> to use in deserialization. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterInteropXmlType">
+      <MemberSignature Language="C#" Value="public static void RegisterInteropXmlType (string xmlType, string xmlTypeNamespace, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterInteropXmlType(string xmlType, string xmlTypeNamespace, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterInteropXmlType">
-      <MemberSignature Language="C#" Value="public static void RegisterInteropXmlType (string xmlType, string xmlTypeNamespace, Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -425,21 +558,28 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="xmlType">To be added: an object of type 'string'</param>
-        <param name="xmlTypeNamespace">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the given XML type name and namespace with the run-time type that should be used for deserialization.</para>
+        </summary>
+        <param name="xmlType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML type to use in deserialization. </param>
+        <param name="xmlTypeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML namespace to use in deserialization. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The run-time <see cref="T:System.Type" /> to use in deserialization. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterSoapActionForMethodBase">
+      <MemberSignature Language="C#" Value="public static void RegisterSoapActionForMethodBase (System.Reflection.MethodBase mb);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterSoapActionForMethodBase(class System.Reflection.MethodBase mb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterSoapActionForMethodBase">
-      <MemberSignature Language="C#" Value="public static void RegisterSoapActionForMethodBase (System.Reflection.MethodBase mb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -447,19 +587,28 @@
         <Parameter Name="mb" Type="System.Reflection.MethodBase" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAPAction of the specified method is contained in the <see cref="P:System.Runtime.Remoting.Metadata.SoapMethodAttribute.SoapAction" /> property, or is read off the wire. The current method associates the SOAPAction with the <see cref="T:System.Reflection.MethodBase" /> for use in channel sinks.</para>
+          <para>The SOAPAction HTTP request header field indicates the intent of the SOAP HTTP request. The value is a URI identifying the intent. SOAP places no restrictions on the format or specificity of the URI or that it is resolvable. An HTTP client must use this header field when issuing a SOAP HTTP request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the specified <see cref="T:System.Reflection.MethodBase" /> with the SOAPAction cached with it.</para>
+        </summary>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> of the method to associate with the SOAPAction cached with it. </param>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterSoapActionForMethodBase">
+      <MemberSignature Language="C#" Value="public static void RegisterSoapActionForMethodBase (System.Reflection.MethodBase mb, string soapAction);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterSoapActionForMethodBase(class System.Reflection.MethodBase mb, string soapAction) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterSoapActionForMethodBase">
-      <MemberSignature Language="C#" Value="public static void RegisterSoapActionForMethodBase (System.Reflection.MethodBase mb, string soapAction);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -468,89 +617,115 @@
         <Parameter Name="soapAction" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="mb">To be added: an object of type 'Reflection.MethodBase'</param>
-        <param name="soapAction">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAPAction HTTP request header field indicates the intent of the SOAP HTTP request. The value is a URI identifying the intent. SOAP places no restrictions on the format or specificity of the URI or that it is resolvable. An HTTP client must use this header field when issuing a SOAP HTTP request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the provided SOAPAction value with the given <see cref="T:System.Reflection.MethodBase" /> for use in channel sinks.</para>
+        </summary>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodBase" /> to associate with the provided SOAPAction. </param>
+        <param name="soapAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SOAPAction value to associate with the given <see cref="T:System.Reflection.MethodBase" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlNsForClrType">
       <MemberSignature Language="C#" Value="public static string XmlNsForClrType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string XmlNsForClrType" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. All XML namespaces for a common language runtime class start with the <see cref="T:System.String" /> that the current property returns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML namespace prefix for common language runtime types.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="XmlNsForClrTypeWithAssembly">
       <MemberSignature Language="C#" Value="public static string XmlNsForClrTypeWithAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string XmlNsForClrTypeWithAssembly" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. If a common language runtime class has an assembly but no namespace, the current property returns the default XML namespace that is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default XML namespace prefix that should be used for XML encoding of a common language runtime class that has an assembly, but no native namespace.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="XmlNsForClrTypeWithNs">
       <MemberSignature Language="C#" Value="public static string XmlNsForClrTypeWithNs { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string XmlNsForClrTypeWithNs" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. If a common language runtime class is part of the mscorlib assembly, the XML namespace returned by the current property is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML namespace prefix that should be used for XML encoding of a common language runtime class that is part of the mscorlib.dll file.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="XmlNsForClrTypeWithNsAndAssembly">
       <MemberSignature Language="C#" Value="public static string XmlNsForClrTypeWithNsAndAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string XmlNsForClrTypeWithNsAndAssembly" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WSDL and SOAP protocols encode common language runtime classes into XML namespaces. The current property specifies the format for the XML namespaces. If a common language runtime class has an assembly and a common language runtime namespace, the current property returns the default XML namespace that is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default XML namespace prefix that should be used for XML encoding of a common language runtime class that has both a common language runtime namespace and an assembly.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
 	public sealed class MediaTypeWithQualityHeaderValue : MediaTypeHeaderValue
@@ -65,7 +67,40 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out MediaTypeWithQualityHeaderValue parsedValue)
 		{
-			return TryParse (input, out parsedValue, () => new MediaTypeWithQualityHeaderValue ());
+			var lexer = new Lexer (input);
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		static bool TryParseElement (Lexer lexer, out MediaTypeWithQualityHeaderValue parsedValue, out Token t)
+		{
+			parsedValue = null;
+
+			string media;
+			List<NameValueHeaderValue> parameters = null;
+			var token = TryParseMediaType (lexer, out media);
+			if (token == null) {
+				t = Token.Empty;
+				return false;
+			}
+
+			t = token.Value;
+			if (t == Token.Type.SeparatorSemicolon && (!NameValueHeaderValue.TryParseParameters (lexer, out parameters, out t) || t != Token.Type.End))
+				return false;
+
+			parsedValue = new MediaTypeWithQualityHeaderValue ();
+			parsedValue.media_type = media;
+			parsedValue.parameters = parameters;
+			return true;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<MediaTypeWithQualityHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
 		}
 	}
 }

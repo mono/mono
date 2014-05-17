@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPermission" FullName="System.Net.WebPermission" FullNameSP="System_Net_WebPermission" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable WebPermission extends System.Security.CodeAccessPermission" />
   <TypeSignature Language="C#" Value="public sealed class WebPermission : System.Security.CodeAccessPermission, System.Security.Permissions.IUnrestrictedPermission" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit WebPermission extends System.Security.CodeAccessPermission implements class System.Security.Permissions.IUnrestrictedPermission" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +10,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -18,244 +21,203 @@
       <InterfaceName>System.Security.Permissions.IUnrestrictedPermission</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.MonoTODO("Most private members that include functionallity are not implemented!")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Controls access to Internet resources.</para>
-    </summary>
     <remarks>
-      <para>The XML encoding of a <see cref="T:System.Net.WebPermission" /> instance
-      is defined below in EBNF format. The following conventions are used:</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Net.WebPermission" /> provides a set of methods and properties to control access to Internet resources. You can use a <see cref="T:System.Net.WebPermission" /> to provide either restricted or unrestricted access to your resource, based on the <see cref="T:System.Security.Permissions.PermissionState" /> that is set when the <see cref="T:System.Net.WebPermission" /> is created.</para>
+      <para>Create a <see cref="T:System.Net.WebPermission" /> instance by calling its constructor using one of the following sets of parameters: </para>
       <list type="bullet">
         <item>
-          <term>
-            <para> All non-literals in the grammar below are shown in normal type.</para>
-          </term>
+          <para>No parameters. The default <see cref="T:System.Security.Permissions.PermissionState" /> is <see cref="F:System.Security.Permissions.PermissionState.None" />.</para>
         </item>
         <item>
-          <term>
-            <para> All literals are in bold font. </para>
-          </term>
+          <para>A <see cref="T:System.Security.Permissions.PermissionState" />. Specify either <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> to allow any URI to be used in the target class, or <see cref="F:System.Security.Permissions.PermissionState.None" /> to allow access only to URIs that you specify through the use of the <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" /> method.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Net.NetworkAccess" /> value and a URI string. The specified URI has permissions granted by the <see cref="T:System.Net.NetworkAccess" /> value.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Net.NetworkAccess" /> specifier and URI regular expression.</para>
         </item>
       </list>
-      <para> The following meta-language symbols are used: </para>
-      <list type="bullet">
-        <item>
-          <term>
-            
-            '*' represents a meta-language symbol suffixing an
-            expression that can appear zero or more times.</term>
-        </item>
-        <item>
-          <term>
-            
-            '?' represents a meta-language symbol suffixing an
-            expression that can appear zero or one time.</term>
-        </item>
-        <item>
-          <term>
-            
-            '+' represents a meta-language symbol suffixing an
-            expression that can appear one or more times.</term>
-        </item>
-        <item>
-          <term>
-            
-            '(',')' is used to group literals, non-literals or a
-            mixture of literals and non-literals.</term>
-        </item>
-        <item>
-          <term>
-            
-            '|' denotes an exclusive disjunction between two
-            expressions.</term>
-        </item>
-        <item>
-          <term>
-            
-            '::= ' denotes a production rule where a left hand
-            non-literal is replaced by a right hand expression containing literals,
-            non-literals or both.</term>
-        </item>
-      </list>
-      <para> BuildVersion refers to the build version of the shipping CLI. This is
-      a dotted build number such as '2412.0'.</para>
-      <para>ECMAPubKeyToken ::= <see langword="b77a5c561934e089" /></para>
-      <para>HostName refers to a host name such as <c>www.contoso.com</c> . </para>
-      <para>Portnumber denotes a <see cref="T:System.Int32" /> value indicating a port. </para>
-      <para>TransportProtocol ::= <see langword="1" /> |
-<see langword="2" /> | <see langword="3 " /> /*1= UDP , 2 = TCP, 3 = both */ </para>
-      <c>
-        <para>WebPermissionXML ::= </para>
-        <para>
-          <see langword="&lt;IPermission " />
-        </para>
-        <para>
-          <see langword="class=&quot; " />
-        </para>
-        <para>
-          <see langword="System.Net.WebPermission," />
-        </para>
-        <para>
-          <see langword="System," />
-        </para>
-        <para>
-          <see langword="Version=1.0." />BuildVersion<see langword="," /></para>
-        <para>
-          <see langword="Culture=neutral," />
-        </para>
-        <para>
-          <see langword="PublicKeyToken=" />ECMAPubKeyToken<see langword="&quot; " /></para>
-        <para>
-          <see langword="version=&quot;1&quot; " />
-        </para>
-        <para>(</para>
-        <para>
-          <see langword="Unrestricted=&quot;true&quot;/&gt; " />
-        </para>
-        <para>)</para>
-        <para>|</para>
-        <para>&gt;</para>
-        <para>(<see langword="&lt;ConnectAccess&gt; " /></para>
-        <para>(</para>
-        <para>
-          <see langword="&lt;URI&gt;" />HostName<see langword="#" />PortNumber<see langword="#" />TransportProtocol<see langword="&lt;/URI&gt; " /></para>
-        <para>)+</para>
-        <para>
-          <see langword="&lt;/ConnectAccess&gt; " />
-        </para>
-        <para>
-          <see langword="&lt;/IPermission&gt; " />
-        </para>
-        <para>)</para>
-        <para>|</para>
-        <para>&gt;</para>
-        <para>(<see langword="&lt;AcceptAccess&gt; " /></para>
-        <para>(</para>
-        <para>
-          <see langword="&lt;URI&gt;" />HostName<see langword="#" />PortNumber<see langword="#" />TransportProtocol<see langword="&lt;/URI&gt; " /></para>
-        <para>)+<see langword=" " /></para>
-        <para>
-          <see langword="&lt;/AcceptAccess&gt; " />
-        </para>
-        <para>
-          <see langword="&lt;/IPermission&gt; " />
-        </para>
-        <para>)</para>
-        <para>|</para>
-        <para>
-          <see langword="/&gt; " />
-        </para>
-      </c>
+      <para>The <see cref="P:System.Net.WebPermission.ConnectList" /> and <see cref="P:System.Net.WebPermission.AcceptList" /> hold the URIs to which you have granted access permission. To add a URI to either of these lists, use <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" />. If you pass <see cref="F:System.Net.NetworkAccess.Accept" /> as the <see cref="T:System.Net.NetworkAccess" /> parameter, the URI will be added to the <see cref="P:System.Net.WebPermission.AcceptList" />. <see cref="T:System.Net.WebPermission" /> will allow connections to your target class with URIs matching the <see cref="P:System.Net.WebPermission.AcceptList" />.</para>
+      <block subset="none" type="note">
+        <para>To deny access to an Internet resource, you must deny access to all the possible paths to that resource. This requires calling <see cref="M:System.Net.WebPermission.#ctor(System.Security.Permissions.PermissionState)" /> with state parameter set to <see cref="M:System.Security.CodeAccessPermission.Deny" />. A better approach is to allow access to the specific resource only. For more information about this subject, refer to the <format type="text/html"><a href="6B4D2E01-C504-4AC3-B50E-D6F5E7F5DF25">[&lt;topic://cpcondeny&gt;]</a></format> topic.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>You need to deny access using only the resource canonical path. There is no need to use all the path's syntactical variations.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>User name and default port information is stripped from the <see cref="T:System.Uri" /> before the comparison with the regular expression argument that is supplied to the <see cref="M:System.Net.WebPermission.#ctor(System.Net.NetworkAccess,System.Text.RegularExpressions.Regex)" /> constructor. If the regular expression contains user information or the default port number, then all incoming <see cref="T:System.Uri" />s will fail to match the regular expression.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls rights to access HTTP Internet resources.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public WebPermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Net.WebPermission" /> class. This constructor creates an empty permission that does not grant any rights.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Net.WebPermission" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.PermissionState state)" />
       <MemberSignature Language="C#" Value="public WebPermission (System.Security.Permissions.PermissionState state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.PermissionState state) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <param name="state">
-          <para>A <see cref="T:System.Security.Permissions.PermissionState" /> value. </para>
-        </param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Net.WebPermission" /> class with the specified <see cref="T:System.Security.Permissions.PermissionState" />
-value.</para>
-        </summary>
         <remarks>
-          <block subset="none" type="note">
-            <para>This constructor creates either fully restricted (<see cref="F:System.Security.Permissions.PermissionState.None" />) 
-      or <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> access to Internet
-      resources.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="state" /> parameter is either <see cref="F:System.Security.Permissions.PermissionState.None" /> or <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />, respectively yielding fully restricted or fully unrestricted access to all security variables. If you specify <see cref="F:System.Security.Permissions.PermissionState.None" />, then you can give access to individual URIs using <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" />.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Net.WebPermission" /> class that passes all demands or fails all demands.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Permissions.PermissionState" /> value. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Net.NetworkAccess access, string uriString)" />
       <MemberSignature Language="C#" Value="public WebPermission (System.Net.NetworkAccess access, string uriString);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Net.NetworkAccess access, string uriString) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="access" Type="System.Net.NetworkAccess" />
         <Parameter Name="uriString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="access">A <see cref="T:System.Net.NetworkAccess" /> value indicating the type of access to secure. </param>
-        <param name="uriString">A <see cref="T:System.String" /> that represents the URI to grant access rights to. <block subset="none" type="note">For more information on the format of this string, see <see cref="T:System.Uri" />.</block></param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Net.WebPermission" /> class that secures
-   access to the specified
-   URI.</para>
-        </summary>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uriString" /> is <see langword="null" /> .</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a <see cref="T:System.Net.WebPermission" /> and grants its target permission to either make a remote host connection or accept a remote host connection using the URI described by the <paramref name="uriString" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.WebPermission" /> class with the specified access rights for the specified URI.</para>
+        </summary>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A NetworkAccess value that indicates what kind of access to grant to the specified URI. <see cref="F:System.Net.NetworkAccess.Accept" /> indicates that the application is allowed to accept connections from the Internet on a local resource. <see cref="F:System.Net.NetworkAccess.Connect" /> indicates that the application is allowed to connect to specific Internet resources. </param>
+        <param name="uriString">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI string to which access rights are granted. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public WebPermission (System.Net.NetworkAccess access, System.Text.RegularExpressions.Regex uriRegex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Net.NetworkAccess access, class System.Text.RegularExpressions.Regex uriRegex) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="access" Type="System.Net.NetworkAccess" />
         <Parameter Name="uriRegex" Type="System.Text.RegularExpressions.Regex" />
       </Parameters>
       <Docs>
-        <param name="access">To be added.</param>
-        <param name="uriRegex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a <see cref="T:System.Net.WebPermission" /> and grants its target permission to either make a remote host connection or accept a remote host connection using the URI described by the <paramref name="uriRegex" /> parameter.</para>
+          <block subset="none" type="note">
+            <para>It is recommended that you create <paramref name="uriRegex" /> using the <see cref="F:System.Text.RegularExpressions.RegexOptions.IgnoreCase" />, <see cref="F:System.Text.RegularExpressions.RegexOptions.Compiled" />, and <see cref="F:System.Text.RegularExpressions.RegexOptions.Singleline" /> flags.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>A candidate URI string is checked against the list of relevant regular expressions (<see cref="P:System.Net.WebPermission.AcceptList" /> or <see cref="P:System.Net.WebPermission.ConnectList" />) in two ways. First, the candidate URI string is checked against the appropriate list; then, if there is no match, the candidate URI string is converted into a <see cref="T:System.Uri" /> and checked against the appropriate list.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.WebPermission" /> class with the specified access rights for the specified URI regular expression.</para>
+        </summary>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkAccess" /> value that indicates what kind of access to grant to the specified URI. <see cref="F:System.Net.NetworkAccess.Accept" /> indicates that the application is allowed to accept connections from the Internet on a local resource. <see cref="F:System.Net.NetworkAccess.Connect" /> indicates that the application is allowed to connect to specific Internet resources. </param>
+        <param name="uriRegex">
+          <attribution license="cc4" from="Microsoft" modified="false" />A regular expression that describes the URI to which access is to be granted. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AcceptList">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator AcceptList { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IEnumerator AcceptList" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets a list of local resources permitted by this <see cref="T:System.Net.WebPermission" />. The class to which you have applied <see cref="T:System.Net.WebPermission" /> only has permission to receive an incoming connection to local resources found in this list.</para>
+          <block subset="none" type="note">
+            <para>You can add URIs to this list using <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" />.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>A candidate URI string is checked against the list of relevant regular expressions (<see cref="P:System.Net.WebPermission.AcceptList" /> or <see cref="P:System.Net.WebPermission.ConnectList" />) in two ways. First, the candidate URI string is checked against the appropriate list; then, if there is no match, the candidate URI string is converted into a <see cref="T:System.Uri" /> and checked against the appropriate list.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns an enumeration of a single accept permissions held by this <see cref="T:System.Net.WebPermission" />. The possible objects types contained in the returned enumeration are <see cref="T:System.String" /> and <see cref="T:System.Text.RegularExpressions.Regex" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddPermission">
       <MemberSignature Language="C#" Value="public void AddPermission (System.Net.NetworkAccess access, string uriString);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddPermission(valuetype System.Net.NetworkAccess access, string uriString) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -264,19 +226,35 @@ value.</para>
         <Parameter Name="uriString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="access">To be added.</param>
-        <param name="uriString">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you have specified <see cref="F:System.Security.Permissions.PermissionState.None" /> as the <see cref="T:System.Security.Permissions.PermissionState" />, use <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" /> to permit the use of <paramref name="uriString" /> in the target class. The way that <paramref name="uriString" /> can be used by the target class is specified by <paramref name="access" />. Specify <see cref="F:System.Net.NetworkAccess.Accept" /> as the access parameter to add the URI specified by the <paramref name="uriString" /> parameter to the list of URI accept strings, or specify <see cref="F:System.Net.NetworkAccess.Connect" /> as the access parameter to add the URI to the list of URI connect strings.</para>
+          <block subset="none" type="note">
+            <para>Calling <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" /> on <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> <see cref="T:System.Net.WebPermission" /> will have no effect, because permission is granted to all URIs.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>A candidate URI string is checked against the list of relevant regular expressions (<see cref="P:System.Net.WebPermission.AcceptList" /> or <see cref="P:System.Net.WebPermission.ConnectList" />) in two ways. First, the candidate URI string is checked against the appropriate list; then, if there is no match, the candidate URI string is converted into a <see cref="T:System.Uri" /> and checked against the appropriate list.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified URI string with the specified access rights to the current <see cref="T:System.Net.WebPermission" />.</para>
+        </summary>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkAccess" /> that specifies the access rights that are granted to the URI. </param>
+        <param name="uriString">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that describes the URI to which access rights are granted. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddPermission">
       <MemberSignature Language="C#" Value="public void AddPermission (System.Net.NetworkAccess access, System.Text.RegularExpressions.Regex uriRegex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddPermission(valuetype System.Net.NetworkAccess access, class System.Text.RegularExpressions.Regex uriRegex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -285,69 +263,99 @@ value.</para>
         <Parameter Name="uriRegex" Type="System.Text.RegularExpressions.Regex" />
       </Parameters>
       <Docs>
-        <param name="access">To be added.</param>
-        <param name="uriRegex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you have specified <see cref="F:System.Security.Permissions.PermissionState.None" /> as the <see cref="T:System.Security.Permissions.PermissionState" />, use <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" /> to allow the use of <paramref name="uriRegex" /> in the target class. Specify <see cref="F:System.Net.NetworkAccess.Accept" /> as the <paramref name="access" /> parameter to add the URI specified by the <paramref name="uriRegex" /> parameter to the list of URI accept strings, or specify <see cref="F:System.Net.NetworkAccess.Connect" /> as the access parameter to add the URI to the list of URI connect strings.</para>
+          <block subset="none" type="note">
+            <para>Calling <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" /> on an <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> <see cref="T:System.Net.WebPermission" /> instance will have no effect as permission is granted to all URIs.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>It is recommended that you create <paramref name="uriRegex" /> using the <see cref="F:System.Text.RegularExpressions.RegexOptions.IgnoreCase" />, <see cref="F:System.Text.RegularExpressions.RegexOptions.Compiled" />, and <see cref="F:System.Text.RegularExpressions.RegexOptions.Singleline" /> flags.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>A candidate URI string is checked against the list of relevant regular expressions (<see cref="P:System.Net.WebPermission.AcceptList" /> or <see cref="P:System.Net.WebPermission.ConnectList" />) in two ways. First, the candidate URI string is checked against the appropriate list; then, if there is no match, the candidate URI string is converted into a <see cref="T:System.Uri" /> and checked against the appropriate list.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified URI with the specified access rights to the current <see cref="T:System.Net.WebPermission" />.</para>
+        </summary>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A NetworkAccess that specifies the access rights that are granted to the URI. </param>
+        <param name="uriRegex">
+          <attribution license="cc4" from="Microsoft" modified="false" />A regular expression that describes the set of URIs to which access rights are granted. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConnectList">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator ConnectList { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IEnumerator ConnectList" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets a list of remote resources that are permitted by this <see cref="T:System.Net.WebPermission" />. The class to which you have applied <see cref="T:System.Net.WebPermission" /> only has permission to connect with resources found in this list.</para>
+          <block subset="none" type="note">
+            <para>You can add URIs to this list using <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" />.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>A candidate URI string is checked against the list of relevant regular expressions (<see cref="P:System.Net.WebPermission.AcceptList" /> or <see cref="P:System.Net.WebPermission.ConnectList" />) in two ways. First, the candidate URI string is checked against the appropriate list; then, if there is no match, the candidate URI string is converted into a <see cref="T:System.Uri" /> and checked against the appropriate list.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns an enumeration of a single connect permissions held by this <see cref="T:System.Net.WebPermission" />. The possible objects types contained in the returned enumeration are <see cref="T:System.String" /> and <see cref="T:System.Text.RegularExpressions.Regex" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Copy">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission Copy()" />
       <MemberSignature Language="C#" Value="public override System.Security.IPermission Copy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission Copy() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.IPermission" /> returned by this method represents the same access to resources as the original <see cref="T:System.Net.WebPermission" />. This method overrides <see cref="M:System.Security.CodeAccessPermission.Copy" /> and is implemented to support the <see cref="T:System.Security.IPermission" /> interface.</para>
+        </remarks>
         <summary>
-          <para>Returns a new <see cref="T:System.Net.WebPermission" /> object containing the same values as the current
-   instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of a <see cref="T:System.Net.WebPermission" />.</para>
         </summary>
         <returns>
-          <para> A new <see cref="T:System.Net.WebPermission" /> instance
-   containing the same values as the current instance.
-   </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Net.WebPermission" /> class that has the same values as the original. </para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>The object returned by this method represents the same access to resources as
-         the current instance.</para>
-            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.Copy" qualify="true" /> and is implemented to
-      support the <see cref="T:System.Security.IPermission" /> interface.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromXml">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void FromXml(class System.Security.SecurityElement securityElement)" />
       <MemberSignature Language="C#" Value="public override void FromXml (System.Security.SecurityElement securityElement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void FromXml(class System.Security.SecurityElement securityElement) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -355,22 +363,6 @@ value.</para>
         <Parameter Name="securityElement" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="securityElement">
-          <para>A <see cref="T:System.Security.SecurityElement" /> instance containing the XML encoding to use to reconstruct the state of a <see cref="T:System.Net.WebPermission" /> object.</para>
-        </param>
-        <summary>
-          <para>Reconstructs the state of a <see cref="T:System.Net.WebPermission" /> object using the specified XML
-   encoding.</para>
-        </summary>
-        <remarks>
-          <para>The state of the current instance is changed to the state encoded in
-   <paramref name="securityElement" />.</para>
-          <block subset="none" type="note">
-            <para>For the XML encoding for this class, see the <see cref="T:System.Net.WebPermission" /> class
-      page.</para>
-            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.FromXml(System.Security.SecurityElement)" qualify="true" /> .</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="securityElement " />is <see langword="null" />.</para>
@@ -379,17 +371,30 @@ value.</para>
           <para>
             <paramref name="securityElement " />does not contain the encoding for a <see cref="T:System.Net.WebPermission" /> instance.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebPermission.FromXml(System.Security.SecurityElement)" /> method reconstructs a <see cref="T:System.Net.WebPermission" /> from an XML encoding that is defined by the <see cref="T:System.Security.SecurityElement" /> class.</para>
+          <para>Use the <see cref="M:System.Net.WebPermission.ToXml" /> method to XML-encode the <see cref="T:System.Net.WebPermission" />, including state information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs a <see cref="T:System.Net.WebPermission" /> from an XML encoding.</para>
+        </summary>
+        <param name="securityElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding from which to reconstruct the <see cref="T:System.Net.WebPermission" />. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Intersect">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission Intersect(class System.Security.IPermission target)" />
       <MemberSignature Language="C#" Value="public override System.Security.IPermission Intersect (System.Security.IPermission target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission Intersect(class System.Security.IPermission target) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
@@ -397,43 +402,39 @@ value.</para>
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">A <see cref="T:System.Net.WebPermission" /> instance to intersect with the current instance.</param>
-        <summary>
-          <para>Returns a new <see cref="T:System.Net.WebPermission" /> object that is the intersection of the current
-   instance and the specified object. </para>
-        </summary>
-        <returns>
-          <para>A new <see cref="T:System.Net.WebPermission" /> instance that represents the intersection of the
-   current instance and <paramref name="target" />. If the intersection is
-   empty, returns <see langword="null" />. If the
-   current instance is unrestricted, returns a copy of <paramref name="target" />. If
-<paramref name="target" /> is unrestricted, returns a copy of the current instance.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>The intersection of two permissions is a permission that secures the
-         resources and operations secured by both permissions. Specifically, it
-         represents the minimum permission such that any demand that passes both
-         permissions will also pass their intersection.</para>
-            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.Intersect(System.Security.IPermission)" qualify="true" /> and is implemented to
-      support the <see cref="T:System.Security.IPermission" /> interface.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="target " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="target" /> is not <see langword="null" /> and is not of type <see cref="T:System.Net.WebPermission" /> .</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Net.WebPermission.Intersect(System.Security.IPermission)" /> returns a <see cref="T:System.Net.WebPermission" /> that contains those permissions that are common in both <paramref name="target" /> and the current instance.</para>
+          <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.Intersect(System.Security.IPermission)" /> and is implemented to support the <see cref="T:System.Security.IPermission" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the logical intersection of two <see cref="T:System.Net.WebPermission" /> instances.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Net.WebPermission" /> that represents the intersection of the current instance and the <paramref name="target" /> parameter. If the intersection is empty, the method returns null.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebPermission" /> to compare with the current instance. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSubsetOf">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool IsSubsetOf(class System.Security.IPermission target)" />
       <MemberSignature Language="C#" Value="public override bool IsSubsetOf (System.Security.IPermission target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsSubsetOf(class System.Security.IPermission target) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -441,94 +442,98 @@ value.</para>
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">A <see cref="T:System.Net.WebPermission" /> instance that is to be tested for the subset relationship.</param>
-        <summary>
-          <para>Determines whether the current instance is a subset of the specified
-      object.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance is a subset of <paramref name="target" /> ;
-   otherwise,<see langword=" false" />. If target is null, return
-<see langword="false" />. If the current instance is unrestricted, and
-<paramref name="target" /> is not, returns <see langword="false" />. If <paramref name="target" /> is 
-   unrestricted, returns <see langword="true" />.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>The current instance is a subset of <paramref name="target" /> if the current instance
-      specifies a set of accesses to resources that is wholly contained by
-   <paramref name="target" />. For example, a permission that represents read access to a file
-      is a subset of a permission that represents read and write access to the file. </para>
-            <para>If this method returns <see langword="true" /> , the 
-   current instance describes access to internet resources that is also
-   described by <paramref name="target" />
-   . </para>
-            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.IsSubsetOf(System.Security.IPermission)" qualify="true" /> and is implemented to
-support the <see cref="T:System.Security.IPermission" /> interface.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="target " />is not of type <see cref="T:System.Net.WebPermission" />.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the current <see cref="T:System.Net.WebPermission" /> specifies a set of associated resources that is wholly contained by the <paramref name="target" /> parameter, then the current <see cref="T:System.Net.WebPermission" /> is a subset of <paramref name="target" />. This method overrides <see cref="M:System.Net.WebPermission.IsSubsetOf(System.Security.IPermission)" /> and is implemented to support the <see cref="T:System.Security.IPermission" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current <see cref="T:System.Net.WebPermission" /> is a subset of the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance is a subset of the <paramref name="target" /> parameter; otherwise, false. If the target is null, the method returns true for an empty current permission that is not unrestricted and false otherwise.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebPermission" /> to compare to the current <see cref="T:System.Net.WebPermission" />. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsUnrestricted">
       <MemberSignature Language="C#" Value="public bool IsUnrestricted ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsUnrestricted() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="T:System.Net.WebPermission" /> is <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />, then the target class can use all URIs. Otherwise, specific permission must be given for any URI you want to use with the target class.</para>
+          <block subset="none" type="note">
+            <para>Use <see cref="M:System.Net.WebPermission.AddPermission(System.Net.NetworkAccess,System.String)" /> to add a URI and specify its permissions.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks the overall permission state of the <see cref="T:System.Net.WebPermission" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Net.WebPermission" /> was created with the <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> <see cref="T:System.Security.Permissions.PermissionState" />; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToXml">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.SecurityElement ToXml()" />
       <MemberSignature Language="C#" Value="public override System.Security.SecurityElement ToXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.SecurityElement ToXml() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Net.WebPermission.FromXml(System.Security.SecurityElement)" /> method to restore the state information from a <see cref="T:System.Security.SecurityElement" />.</para>
+        </remarks>
         <summary>
-          <para>Returns the XML encoding of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of a <see cref="T:System.Net.WebPermission" /> and its current state.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Security.SecurityElement" /> containing the XML encoding of the state of the
-   current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.SecurityElement" /> that contains an XML-encoded representation of the <see cref="T:System.Net.WebPermission" />, including state information.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>For the XML encoding for this class, see the <see cref="T:System.Net.WebPermission" /> class page.</para>
-            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.ToXml" qualify="true" /> .</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Union">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission Union(class System.Security.IPermission target)" />
       <MemberSignature Language="C#" Value="public override System.Security.IPermission Union (System.Security.IPermission target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission Union(class System.Security.IPermission target) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
@@ -536,36 +541,27 @@ support the <see cref="T:System.Security.IPermission" /> interface.</para>
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">The <see cref="T:System.Net.WebPermission" /> instance to combine with the current instance.</param>
-        <summary>
-          <para>Returns a new <see cref="T:System.Net.WebPermission" /> object that is the union of the current instance and
-   the specified object.</para>
-        </summary>
-        <returns>
-          <para>A new <see cref="T:System.Net.WebPermission" /> instance that represents the union of the current
-   instance and <paramref name="target" />. If the current instance
-   or <paramref name="target" /> is unrestricted, returns a <see cref="T:System.Net.WebPermission" /> instance that is unrestricted.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>The result of a call to <see cref="M:System.Net.WebPermission.Union(System.Security.IPermission)" /> is a permission that represents all of
-      the access to permissions represented by the current instance as well as the
-      permissions represented by <paramref name="target" />. Any demand that passes either the
-      current instance or <paramref name="target " />passes their union.</para>
-            <para>This method overrides <see cref="M:System.Security.CodeAccessPermission.Union(System.Security.IPermission)" qualify="true" /> and is implemented to
-   support the <see cref="T:System.Security.IPermission" /> interface.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="target " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="target" /> is not <see langword="null" /> and is not of type <see cref="T:System.Net.WebPermission" /> .</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Net.WebPermission.Union(System.Security.IPermission)" /> returns a <see cref="T:System.Net.WebPermission" /> that contains all the permissions in both <paramref name="target" /> and the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the logical union between two instances of the <see cref="T:System.Net.WebPermission" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebPermission" /> that represents the union of the current instance and the <paramref name="target" /> parameter. If either WebPermission is <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />, the method returns a <see cref="T:System.Net.WebPermission" /> that is <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />. If the target is null, the method returns a copy of the current <see cref="T:System.Net.WebPermission" />.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebPermission" /> to combine with the current <see cref="T:System.Net.WebPermission" />. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

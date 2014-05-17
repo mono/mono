@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IChannelFactory&lt;TChannel&gt;" FullName="System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt;">
+  <TypeSignature Language="C#" Value="public interface IChannelFactory&lt;TChannel&gt; : System.ServiceModel.Channels.IChannelFactory" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IChannelFactory`1&lt;TChannel&gt; implements class System.ServiceModel.Channels.IChannelFactory, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TChannel" />
+  </TypeParameters>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IChannelFactory</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="TChannel">To be added.</typeparam>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implementing the <see cref="T:System.ServiceModel.Channels.IChannelFactory`1" /> contract allows users to create multiple channels of a given type without having to specify the channel type each time. In other words, defining the channel type as a generic parameter for the channel factory implementing the <see cref="T:System.ServiceModel.Channels.IChannelFactory`1" /> interface means that it is not necessary to pass the type into the <see cref="Overload:System.ServiceModel.Channels.IChannelFactory`1.CreateChannel" /> methods. If users want to create different channel types, they can create additional channel factories for each type of channel required. The <see cref="M:System.ServiceModel.Channels.IChannelFactory`1.CreateChannel(System.ServiceModel.EndpointAddress,System.Uri)" /> overload allows you to distinguish the address to which the message is initially sent from the ultimate destination. For a discussion of addressing, see the <format type="text/html"><a href="13f269e3-ebb1-433c-86cf-54fbd866a627">Addresses</a></format> topic.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface that must be implemented by channel factories that create type-specific channels.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public TChannel CreateChannel (System.ServiceModel.EndpointAddress to);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !TChannel CreateChannel(class System.ServiceModel.EndpointAddress to) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="to" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Channels.IChannelFactory`1.CreateChannel(System.ServiceModel.EndpointAddress,System.Uri)" /> overload to distinguish the address to which the message is initially sent from the ultimate destination when you want to do manual routing. Note that any channels created by this channel factory are closed when the channel factory is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a channel of a specified type to a specified endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> to the specified endpoint address.</para>
+        </returns>
+        <param name="to">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateChannel">
+      <MemberSignature Language="C#" Value="public TChannel CreateChannel (System.ServiceModel.EndpointAddress to, Uri via);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !TChannel CreateChannel(class System.ServiceModel.EndpointAddress to, class System.Uri via) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="to" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="via" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transport address specified by the <paramref name="via" /> is the location to which a message should initially be sent on its way to some other remote address specified by the <paramref name="to" /> at which the service is located. In most Internet scenarios, the <paramref name="via" /> URI is the same as the <see cref="P:System.ServiceModel.EndpointAddress.Uri" /> of the final <paramref name="to" /> address of the service. You only distinguish between these two addresses when you want to do some kind of manual routing. Note that any channels created by this channel factory are closed when the channel factory is closed. For a discussion of addressing, see the <format type="text/html"><a href="13f269e3-ebb1-433c-86cf-54fbd866a627">Addresses</a></format> topic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a channel of a specified type to a specified endpoint address and transport address to which messages are sent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel of type <paramref name="TChannel" /> to the specified endpoint address and transport address.</para>
+        </returns>
+        <param name="to">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
+        <param name="via">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the transport address to which the message is sent.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

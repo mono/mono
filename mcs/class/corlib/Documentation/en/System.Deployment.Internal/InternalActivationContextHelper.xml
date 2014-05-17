@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InternalActivationContextHelper" FullName="System.Deployment.Internal.InternalActivationContextHelper">
   <TypeSignature Language="C#" Value="public static class InternalActivationContextHelper" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit InternalActivationContextHelper extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,12 +17,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is a temporary helper class used to access internal members of an <see cref="T:System.ActivationContext" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to data from an <see cref="T:System.ActivationContext" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetActivationContextData">
       <MemberSignature Language="C#" Value="public static object GetActivationContextData (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetActivationContextData(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -33,14 +42,22 @@
         <Parameter Name="appInfo" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="appInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contents of the application manifest from an <see cref="T:System.ActivationContext" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application manifest that is contained by the <see cref="T:System.ActivationContext" /> object.</para>
+        </returns>
+        <param name="appInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing the manifest.</param>
       </Docs>
     </Member>
     <Member MemberName="GetApplicationComponentManifest">
       <MemberSignature Language="C#" Value="public static object GetApplicationComponentManifest (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetApplicationComponentManifest(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,14 +70,22 @@
         <Parameter Name="appInfo" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="appInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the manifest of the last deployment component in an <see cref="T:System.ActivationContext" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The manifest of the last deployment component in the <see cref="T:System.ActivationContext" /> object.</para>
+        </returns>
+        <param name="appInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing the manifest.</param>
       </Docs>
     </Member>
     <Member MemberName="GetApplicationManifestBytes">
       <MemberSignature Language="C#" Value="public static byte[] GetApplicationManifestBytes (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetApplicationManifestBytes(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,14 +98,22 @@
         <Parameter Name="appInfo" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="appInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a byte array containing the raw content of the application manifest..</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array containing the application manifest as raw data.</para>
+        </returns>
+        <param name="appInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to get bytes from.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDeploymentComponentManifest">
       <MemberSignature Language="C#" Value="public static object GetDeploymentComponentManifest (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetDeploymentComponentManifest(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,14 +126,22 @@
         <Parameter Name="appInfo" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="appInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the manifest of the first deployment component in an <see cref="T:System.ActivationContext" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The manifest of the first deployment component in the <see cref="T:System.ActivationContext" /> object.</para>
+        </returns>
+        <param name="appInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing the manifest.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDeploymentManifestBytes">
       <MemberSignature Language="C#" Value="public static byte[] GetDeploymentManifestBytes (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetDeploymentManifestBytes(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,14 +154,22 @@
         <Parameter Name="appInfo" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="appInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a byte array containing the raw content of the deployment manifest.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array containing the deployment manifest as raw data.</para>
+        </returns>
+        <param name="appInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to get bytes from.</param>
       </Docs>
     </Member>
     <Member MemberName="IsFirstRun">
       <MemberSignature Language="C#" Value="public static bool IsFirstRun (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsFirstRun(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -133,14 +182,22 @@
         <Parameter Name="appInfo" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="appInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this is the first time this <see cref="T:System.ActivationContext" /> object has been run.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ActivationContext" /> indicates it is running for the first time; otherwise, false.</para>
+        </returns>
+        <param name="appInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to examine.</param>
       </Docs>
     </Member>
     <Member MemberName="PrepareForExecution">
       <MemberSignature Language="C#" Value="public static void PrepareForExecution (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PrepareForExecution(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,9 +210,13 @@
         <Parameter Name="appInfo" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <param name="appInfo">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs an <see cref="T:System.ActivationContext" /> to get ready to be run.</para>
+        </summary>
+        <param name="appInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to inform.</param>
       </Docs>
     </Member>
   </Members>

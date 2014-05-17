@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IErrorHandler" FullName="System.ServiceModel.Dispatcher.IErrorHandler">
+  <TypeSignature Language="C#" Value="public interface IErrorHandler" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IErrorHandler" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To explicitly control the behavior of the application when an exception is thrown, implement the <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> interface and add it to the <see cref="T:System.ServiceModel.Dispatcher" />’s <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers" /> property. <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> enables you to explicitly control the SOAP fault generated, decide whether to send it back to the client, and perform associated tasks, such as logging. Error handlers are called in the order in which they were added to the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers" /> property.</para>
+      <para>Implement the <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault(System.Exception,System.ServiceModel.Channels.MessageVersion,System.ServiceModel.Channels.Message@)" /> method to control the fault message that is returned to the client. </para>
+      <para>Implement the <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method to ensure error-related behaviors, including error logging, assuring a fail fast, shutting down the application, and so on.</para>
+      <block subset="none" type="note">
+        <para>Because the <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method can be called from many different places there are no guarantees made about which thread the method is called on. Do not depend on <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method being called on the operation thread.</para>
+      </block>
+      <para>All <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault(System.Exception,System.ServiceModel.Channels.MessageVersion,System.ServiceModel.Channels.Message@)" /> implementations are called first, prior to sending a response message. When all <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault(System.Exception,System.ServiceModel.Channels.MessageVersion,System.ServiceModel.Channels.Message@)" /> implementations have been called and return, and if <paramref name="fault" /> is non-null, it is sent back to the client according to the operation contract. If <paramref name="fault" /> is null after all implementations have been called, the response message is controlled by the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults" /> property value.</para>
+      <block subset="none" type="note">
+        <para>Exceptions can occur after all <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault(System.Exception,System.ServiceModel.Channels.MessageVersion,System.ServiceModel.Channels.Message@)" /> implementations are called and a response message is handed to the channel. If a channel exception occurs (for example, difficulty serializing the message) <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> objects are notified. In this case, you should still make sure that your development environment catches and displays such exceptions to you or makes use of tracing to discover the problem. For more information about tracing, see <format type="text/html"><a href="7676b9bb-cbd1-41fd-9a93-cc615af6e2d0">Using Tracing to Troubleshoot Your Application</a></format>.</para>
+      </block>
+      <para>After the response message has been sent, all <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> implementations are called in the same order. </para>
+      <para>Typically, an <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> implementation is added to the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers" /> property on the service (and the client in the case of duplex communication). </para>
+      <para>You can add the <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> to the runtime by implementing a behavior (either an <see cref="T:System.ServiceModel.Description.IServiceBehavior" />, <see cref="T:System.ServiceModel.Description.IEndpointBehavior" />, <see cref="T:System.ServiceModel.Description.IContractBehavior" />, or <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> object) and use the behavior programmatically, from a configuration file or with a custom attribute to attach your <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" />.</para>
+      <para>For more information about using behaviors to modify the runtime, see <format type="text/html"><a href="149b99b6-6eb6-4f45-be22-c967279677d9">Attaching Extensions Using Behaviors</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows an implementer to control the fault message returned to the caller and optionally perform custom error processing such as logging.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="HandleError">
+      <MemberSignature Language="C#" Value="public bool HandleError (Exception exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool HandleError(class System.Exception exception) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exception" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="exception">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method to implement error-related behaviors such as error logging, system notifications, shutting down the application, and so on, and return a value that specifies whether the exception has been handled appropriately. </para>
+          <block subset="none" type="note">
+            <para>Because the <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method can be called from many different places there are no guarantees made about which thread the method is called on. Do not depend on <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method being called on the operation thread.</para>
+          </block>
+          <para>All <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> implementations are called. By default (when the return value is false), if there is an exception, the dispatcher aborts any session and aborts the <see cref="T:System.ServiceModel.InstanceContext" /> if the <see cref="T:System.ServiceModel.InstanceContextMode" /> is anything other than <see cref="F:System.ServiceModel.InstanceContextMode.Single" />.  The exception is then considered unhandled and any state is considered corrupt.</para>
+          <para>Return true from <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> to prevent this default behavior. If any error handler returns true it instructs indigo2 that it is safe to continue using state associated with the failed request. </para>
+          <para>If no error handler returns true from the <see cref="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" /> method the exception is considered unhandled and the default response applies, potentially resulting in an aborted <see cref="T:System.ServiceModel.InstanceContext" /> and channel when communicating on a session channel or the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property is not set to <see cref="F:System.ServiceModel.InstanceContextMode.Single" />. </para>
+          <para>The <paramref name="error" /> parameter is never null and contains the exception object that was thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables error-related processing and returns a value that indicates whether the dispatcher aborts the session and the instance context in certain cases. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if indigo1 should not abort the session (if there is one) and instance context if the instance context is not <see cref="F:System.ServiceModel.InstanceContextMode.Single" />; otherwise, false. The default is false.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ProvideFault">
+      <MemberSignature Language="C#" Value="public void ProvideFault (Exception exception, System.ServiceModel.Channels.MessageVersion version, ref System.ServiceModel.Channels.Message fault);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ProvideFault(class System.Exception exception, class System.ServiceModel.Channels.MessageVersion version, class System.ServiceModel.Channels.Message fault) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exception" Type="System.Exception" />
+        <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
+        <Parameter Name="fault" Type="System.ServiceModel.Channels.Message&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="exception">To be added.</param>
+        <param name="version">To be added.</param>
+        <param name="fault">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

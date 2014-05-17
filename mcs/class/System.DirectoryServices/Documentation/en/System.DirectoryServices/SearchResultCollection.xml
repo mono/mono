@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SearchResultCollection" FullName="System.DirectoryServices.SearchResultCollection">
   <TypeSignature Language="C#" Value="public class SearchResultCollection : System.MarshalByRefObject, System.Collections.ICollection, System.Collections.IEnumerable, System.IDisposable" />
   <AssemblyInfo>
@@ -95,10 +96,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="results">To be added.</param>
         <param name="index">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all <see cref="T:System.DirectoryServices.SearchResult" /> objects in this collection to the specific array, starting at the specified index in the target array.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -111,10 +115,16 @@
         <Parameter Name="result" Type="System.DirectoryServices.SearchResult" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="result">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if a specified <see cref="T:System.DirectoryServices.SearchResult" /> object is in this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified property belongs to this collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -127,10 +137,17 @@
         <Parameter Name="result" Type="System.DirectoryServices.SearchResult" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="result">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the first occurrence of the specified <see cref="T:System.DirectoryServices.SearchResult" /> object in this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first matching object. Returns -1 if no member of this collection is identical to the <see cref="T:System.DirectoryServices.SearchResult" /> object.</para>
+        </returns>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DirectoryServices.SearchResult" /> object to search for in this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -141,9 +158,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that you can use to iterate through this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that you can use to iterate through this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -154,8 +177,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.DirectoryServices.SearchResultCollection.Dispose" /> method, it allows the resources that are used by the <see cref="T:System.DirectoryServices.SearchResultCollection" /> to be reallocated for other purposes. For more information about <see cref="M:System.DirectoryServices.SearchResultCollection.Dispose" />, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format>.</para>
+          <para>The garbage collector does not release memory for a <see cref="T:System.DirectoryServices.SearchResultCollection" /> object. Therefore, an application must call the <see cref="M:System.DirectoryServices.SearchResultCollection.Dispose" /> method explicitly to prevent a memory leak. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources that are used by the <see cref="T:System.DirectoryServices.SearchResultCollection" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -165,9 +195,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of <see cref="T:System.DirectoryServices.SearchResult" /> objects in this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertiesLoaded">
@@ -177,9 +210,12 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.DirectoryServices.DirectorySearcher" /> properties that were specified before the search was executed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Handle">
@@ -189,9 +225,16 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The  <see cref="T:System.DirectoryServices.DirectorySearcher" /> that created this collection calls the <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adsi/adsi/idirectorysearch_executesearch.asp">IDirectorySearch::ExecuteSearch</see> method, which makes the query results available to the T:System.DirectoryServices.SearchResultCollection object. For more information, see the <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adsi/adsi/idirectorysearch_executesearch.asp">IDirectorySearch::ExecuteSearch</see> topic in the MSDN Library at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+          <para>Each time that a query is performed, a handle for the results of that query is associated with its  <see cref="T:System.DirectoryServices.SearchResultCollection" /> object. This handle corresponds to the search handle in ADSI. This handle persists until you call the <see cref="M:System.DirectoryServices.SearchResultCollection.Dispose" /> method on the <see cref="T:System.DirectoryServices.SearchResultCollection" /> object, so you must call <see cref="M:System.DirectoryServices.SearchResultCollection.Dispose" /> to prevent a memory leak. The garbage collector does not free memory for this particular object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the handle that is returned by the <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adsi/adsi/idirectorysearch_executesearch.asp">IDirectorySearch::ExecuteSearch</see> method that performs the actual search. For more information, see the <see cref="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/adsi/adsi/idirectorysearch_executesearch.asp">IDirectorySearch::ExecuteSearch</see> topic in the MSDN Library at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -212,7 +255,13 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Due to implementation restrictions, the <see cref="T:System.DirectoryServices.SearchResultCollection" /> class cannot release all of its unmanaged resources when it is garbage collected. To prevent a memory leak, you must call the <see cref="M:System.DirectoryServices.SearchResultCollection.Dispose" /> method when the <see cref="T:System.DirectoryServices.SearchResultCollection" /> object is no longer needed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.SearchResultCollection" /> class contains the <see cref="T:System.DirectoryServices.SearchResult" /> instances that the Active Directory hierarchy returned during a <see cref="T:System.DirectoryServices.DirectorySearcher" /> query.</para>
+    </summary>
   </Docs>
 </Type>

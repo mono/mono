@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TimeZone" FullName="System.TimeZone">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class TimeZone" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit TimeZone extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,63 +14,104 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Provides support for the differences in time from the time zone and UTC.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A time zone is a geographical region in which the same standard time is used.</para>
+      <block subset="none" type="note">
+        <para>Whenever possible, use the <see cref="T:System.TimeZoneInfo" /> class instead of the <see cref="T:System.TimeZone" /> class. </para>
+      </block>
+      <para>You can use the <see cref="T:System.TimeZone" /> class to retrieve information about the current time zone, and to convert times from local time to Coordinated Universal Time (UTC) or vice versa. However, you cannot use the <see cref="T:System.TimeZone" /> class to represent time zones other than the local zone or to handle date and time conversions from one time zone to another. For this purpose, use the <see cref="T:System.TimeZoneInfo" /> class. You can use this class to retrieve information on any time zone defined on the local system, to create custom time zones, and to convert times from one time zone to another.</para>
+      <para>The <see cref="T:System.TimeZone" /> class supports only a single daylight saving time adjustment rule for the local time zone. As a result, the <see cref="T:System.TimeZone" /> class can accurately report daylight saving time information or convert between UTC and local time only for the period in which the latest adjustment rule is in effect. In contrast, the <see cref="T:System.TimeZoneInfo" /> class supports multiple adjustment rules, which makes it possible to work with historic time zone data. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a time zone.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TimeZone ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.TimeZone" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CurrentTimeZone">
       <MemberSignature Language="C#" Value="public static TimeZone CurrentTimeZone { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.TimeZone CurrentTimeZone" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.TimeZone</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TimeZone'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.TimeZone.CurrentTimeZone" /> property corresponds to the <see cref="P:System.TimeZoneInfo.Local" /> property. Whenever possible, use the <see cref="P:System.TimeZoneInfo.Local" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time zone of the current computer.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="DaylightName">
+      <MemberSignature Language="C#" Value="public abstract string DaylightName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DaylightName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DaylightName">
-      <MemberSignature Language="C#" Value="public abstract string DaylightName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If daylight saving time is not used in the time zone, an empty string ("") is returned.</para>
+          <para>The <see cref="P:System.TimeZone.DaylightName" /> property corresponds to the <see cref="P:System.TimeZoneInfo.DaylightName" /> property. Whenever possible, use the <see cref="P:System.TimeZoneInfo.DaylightName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the daylight saving time zone name.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaylightChanges">
+      <MemberSignature Language="C#" Value="public abstract System.Globalization.DaylightTime GetDaylightChanges (int year);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Globalization.DaylightTime GetDaylightChanges(int32 year) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaylightChanges">
-      <MemberSignature Language="C#" Value="public abstract System.Globalization.DaylightTime GetDaylightChanges (int year);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DaylightTime</ReturnType>
       </ReturnValue>
@@ -76,20 +119,32 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="year">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Globalization.DaylightTime'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only one daylight saving time period per year is supported.</para>
+          <para>If daylight saving time is not used in the current time zone, the return value is a <see cref="T:System.Globalization.DaylightTime" /> object, where the value of <see cref="P:System.Globalization.DaylightTime.Start" /> and <see cref="P:System.Globalization.DaylightTime.End" /> is <see cref="F:System.DateTime.MinValue" />, and the value of <see cref="P:System.Globalization.DaylightTime.Delta" /> is a <see cref="T:System.TimeSpan" /> initialized to 0 ticks.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the daylight saving time period for a particular year.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.DaylightTime" /> object that contains the start and end date for daylight saving time in <paramref name="year" />.</para>
+        </returns>
+        <param name="year">
+          <attribution license="cc4" from="Microsoft" modified="false" />The year that the daylight saving time period applies to. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetUtcOffset">
+      <MemberSignature Language="C#" Value="public abstract TimeSpan GetUtcOffset (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.TimeSpan GetUtcOffset(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetUtcOffset">
-      <MemberSignature Language="C#" Value="public abstract TimeSpan GetUtcOffset (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -97,20 +152,40 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the offset, or difference, between the <paramref name="time" /> parameter and Coordinated Universal Time (UTC). That is:</para>
+          <para>
+            <paramref name="time" /> = UTC + offset</para>
+          <para>The method interprets the time zone of <paramref name="time" /> based on its <see cref="P:System.DateTime.Kind" /> property. If the value of the <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Local" /> or <see cref="F:System.DateTimeKind.Unspecified" />, the method returns the offset of the local time zone. If the value of the <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Utc" />, the method returns an offset equal to <see cref="F:System.TimeSpan.Zero" />.</para>
+          <para>If the local time zone observes daylight saving time, <see cref="M:System.TimeZone.GetUtcOffset(System.DateTime)" /> applies the current adjustment rule to <paramref name="time" /> when determining the offset of the local time zone. That is, the offset returned by <see cref="M:System.TimeZone.GetUtcOffset(System.DateTime)" /> reflects whether <paramref name="time" /> falls in the time zone's standard time or its daylight saving time. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.TimeZone.GetUtcOffset(System.DateTime)" /> method recognizes only the current daylight saving time adjustment rule for the local time zone. As a result, it is guaranteed to accurately return the UTC offset of a local time only during the period in which the latest adjustment rule is in effect. It may return inaccurate results if <paramref name="time" /> is a historic date and time value that was subject to a previous adjustment rule.</para>
+          </block>
+          <para>The <see cref="M:System.TimeZone.GetUtcOffset(System.DateTime)" /> method corresponds to the <see cref="M:System.TimeZoneInfo.GetUtcOffset(System.DateTime)" /> method. Whenever possible, use the <see cref="M:System.TimeZoneInfo.GetUtcOffset(System.DateTime)" /> method.</para>
+          <para>Because the date and time value represented by <paramref name="time" /> and this value's offset from UTC are not tightly coupled, a local or unspecified date and time value can return a different offset value when run on different computers or when run on the same computer under different time zones. If this behavior is undesirable, use a <see cref="T:System.DateTimeOffset" /> value instead. The <see cref="T:System.DateTimeOffset" /> data type tightly couples a date and time value with its offset from UTC. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the Coordinated Universal Time (UTC) offset for the specified local time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Coordinated Universal Time (UTC) offset from <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />A date and time value.</param>
       </Docs>
+    </Member>
+    <Member MemberName="IsDaylightSavingTime">
+      <MemberSignature Language="C#" Value="public virtual bool IsDaylightSavingTime (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsDaylightSavingTime(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDaylightSavingTime">
-      <MemberSignature Language="C#" Value="public virtual bool IsDaylightSavingTime (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -118,20 +193,32 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The year to which the daylight saving time period applies is derived from the <paramref name="time" /> parameter.</para>
+          <para>Because the <see cref="T:System.TimeZone" /> class supports a single daylight saving time adjustment rule, the <see cref="M:System.TimeZone.IsDaylightSavingTime(System.DateTime)" /> method applies the current adjustment rule to any date, regardless of whether the adjustment rule was in effect on that date. Assuming that the operating system itself has accurate historic daylight saving time data, a more accurate result is available by using the <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> method. Whenever possible, use the <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified date and time is within a daylight saving time period.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="time" /> is in a daylight saving time period; otherwise, false.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />A date and time. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsDaylightSavingTime">
+      <MemberSignature Language="C#" Value="public static bool IsDaylightSavingTime (DateTime time, System.Globalization.DaylightTime daylightTimes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDaylightSavingTime(valuetype System.DateTime time, class System.Globalization.DaylightTime daylightTimes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDaylightSavingTime">
-      <MemberSignature Language="C#" Value="public static bool IsDaylightSavingTime (DateTime time, System.Globalization.DaylightTime daylightTimes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -140,38 +227,57 @@
         <Parameter Name="daylightTimes" Type="System.Globalization.DaylightTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added: an object of type 'DateTime'</param>
-        <param name="daylightTimes">To be added: an object of type 'Globalization.DaylightTime'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> method provides the same functionality as this overload of the <see cref="M:System.TimeZone.IsDaylightSavingTime(System.DateTime,System.Globalization.DaylightTime)" /> method. Whenever possible, use the <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified date and time is within the specified daylight saving time period.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="time" /> is in <paramref name="daylightTimes" />; otherwise, false.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />A date and time. </param>
+        <param name="daylightTimes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A daylight saving time period. </param>
       </Docs>
+    </Member>
+    <Member MemberName="StandardName">
+      <MemberSignature Language="C#" Value="public abstract string StandardName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StandardName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="StandardName">
-      <MemberSignature Language="C#" Value="public abstract string StandardName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.TimeZone.StandardName" /> property corresponds to the <see cref="P:System.TimeZoneInfo.StandardName" /> property. Whenever possible, use the <see cref="P:System.TimeZoneInfo.StandardName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the standard time zone name.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToLocalTime">
       <MemberSignature Language="C#" Value="public virtual DateTime ToLocalTime (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.DateTime ToLocalTime(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -179,20 +285,85 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">A DateTime object which is assumed to be UTC.</param>
-        <summary>Converts a UTC DateTime into the local time for the given time zone.</summary>
-        <returns>A DateTime object adjusted for the object's time zone.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the relationship between the <paramref name="time" /> parameter and the <see cref="T:System.DateTime" /> value returned by this method.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="time" /> parameter </para>
+                </term>
+                <description>
+                  <para>Behavior</para>
+                </description>
+                <description>
+                  <para>Return value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A Coordinated Universal Time (UTC) time (<see cref="F:System.DateTimeKind.Utc" />).</para>
+              </term>
+              <description>
+                <para>Converts the time from UTC to the local time.</para>
+              </description>
+              <description>
+                <para>A <see cref="T:System.DateTime" /> object whose value is the local time that corresponds to <paramref name="time" />.   </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A local time (<see cref="F:System.DateTimeKind.Local" />).</para>
+              </term>
+              <description>
+                <para>No conversion necessary.</para>
+              </description>
+              <description>
+                <para>The same <see cref="T:System.DateTime" /> value represented by the <paramref name="time" /> parameter.   </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An unspecified time (<see cref="F:System.DateTimeKind.Unspecified" />).</para>
+              </term>
+              <description>
+                <para>Assumes that the time is UTC and converts it from UTC to the local time.</para>
+              </description>
+              <description>
+                <para>A <see cref="T:System.DateTime" /> object whose value is the local time that corresponds to <paramref name="time" />.   </para>
+              </description>
+            </item>
+          </list>
+          <para>If the local time zone observes daylight saving time, <see cref="M:System.TimeZone.ToLocalTime(System.DateTime)" /> applies the current adjustment rule to <paramref name="time" /> when performing the conversion. </para>
+          <block subset="none" type="note">
+            <para>   The <see cref="M:System.TimeZone.ToLocalTime(System.DateTime)" /> method recognizes only the current daylight saving time adjustment rule for the local time zone. As a result, it is guaranteed to accurately return the local time corresponding to a particular UTC time only during the period in which the latest adjustment rule is in effect. It may return inaccurate results if <paramref name="time" /> is a historic date and time value that was subject to a previous adjustment rule.</para>
+          </block>
+          <para>The <see cref="M:System.TimeZone.ToLocalTime(System.DateTime)" /> method corresponds to the <see cref="M:System.TimeZoneInfo.ConvertTimeFromUtc(System.DateTime,System.TimeZoneInfo)" /> method with its <paramref name="destinationTimeZone" /> parameter set to <see cref="P:System.TimeZoneInfo.Local" />. Whenever possible, use the <see cref="M:System.TimeZoneInfo.ConvertTimeFromUtc(System.DateTime,System.TimeZoneInfo)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the local time that corresponds to a specified date and time value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object whose value is the local time that corresponds to <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Coordinated Universal Time (UTC) time. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToUniversalTime">
       <MemberSignature Language="C#" Value="public virtual DateTime ToUniversalTime (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.DateTime ToUniversalTime(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -200,21 +371,27 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="time">To be added: an object of type 'DateTime'</param>
-        <summary>Converts a DateTime local to the time zone into UTC.</summary>
-        <returns>To be added: an object of type 'DateTime'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the local time zone observes daylight saving time, <see cref="M:System.TimeZone.ToUniversalTime(System.DateTime)" /> applies the current adjustment rule to the <paramref name="time" /> parameter when performing the conversion. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.TimeZone.ToUniversalTime(System.DateTime)" /> method recognizes only the current daylight saving time adjustment rule for the local time zone. As a result, it is guaranteed to accurately return the Coordinated Universal Time (UTC) corresponding to a particular local time only during the period in which the latest adjustment rule is in effect. It may return inaccurate results if <paramref name="time" /> is a historic date and time value that was subject to a previous adjustment rule.</para>
+          </block>
+          <para>If the <paramref name="time" /> parameter is an ambiguous time, the method assumes that it is a standard time. (An ambiguous time is one that can map either to a standard time or to a daylight saving time in the local time zone.) If <paramref name="time" /> is an invalid time, the method simply subtracts the local time from the local time zone's UTC offset to return UTC. (An invalid time is one that does not exist because of the application of daylight saving time adjustment rules.)</para>
+          <para>Because <paramref name="time" /> is interpreted in relation to the current time zone on the current system, the date and time returned by this method can differ if an application is run on different computers or on the same computer with different time zones. For cases in which a date and time value must represent a single, unambiguous point in time, use a <see cref="T:System.DateTimeOffset" /> value to represent the local time.</para>
+          <para>The <see cref="M:System.TimeZone.ToUniversalTime(System.DateTime)" /> method corresponds to the <see cref="M:System.TimeZoneInfo.ConvertTimeToUtc(System.DateTime)" /> method overload with a <see cref="T:System.DateTime" /> parameter whose <see cref="P:System.DateTime.Kind" /> property does not equal <see cref="F:System.DateTimeKind.Utc" />. Whenever possible, use the <see cref="M:System.TimeZoneInfo.ConvertTimeToUtc(System.DateTime)" /> method overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the Coordinated Universal Time (UTC) that corresponds to a specified time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> object whose value is the Coordinated Universal Time (UTC) that corresponds to <paramref name="time" />.</para>
+        </returns>
+        <param name="time">
+          <attribution license="cc4" from="Microsoft" modified="false" />A date and time. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

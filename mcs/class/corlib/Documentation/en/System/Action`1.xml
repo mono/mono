@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Action&lt;T&gt;" FullName="System.Action&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public delegate void Action&lt;in T&gt;(T obj);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Action`1&lt;- T&gt; extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="obj" Type="T" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <param name="obj">To be added.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Action`1" /> delegate to pass a method as a parameter without explicitly declaring a custom delegate. The encapsulated method must correspond to the method signature that is defined by this delegate. This means that the encapsulated method must have one parameter that is passed to it by value, and it must not return a value. (In C#, the method must return void. In Visual Basic, it must be defined by the Sub…End Sub construct. It can also be a method that returns a value that is ignored.) Typically, such a method is used to perform an operation.</para>
+      <block subset="none" type="note">
+        <para>To reference a method that has one parameter and returns a value, use the generic <see cref="T:System.Func`2" /> delegate instead.</para>
+      </block>
+      <para>When you use the <see cref="T:System.Action`1" /> delegate, you do not have to explicitly define a delegate that encapsulates a method with a single parameter. For example, the following code explicitly declares a delegate named DisplayMessage and assigns a reference to either the <see cref="M:System.Console.WriteLine" /> method or the ShowWindowsMessage method to its delegate instance. </para>
+      <para>code reference: System.Action~1#1</para>
+      <para>The following example simplifies this code by instantiating the <see cref="T:System.Action`1" /> delegate instead of explicitly defining a new delegate and assigning a named method to it.</para>
+      <para>code reference: System.Action~1#2</para>
+      <para>You can also use the <see cref="T:System.Action`1" /> delegate with anonymous methods in C#, as the following example illustrates. (For an introduction to anonymous methods, see <format type="text/html"><a href="a62441fa-f0a3-4acb-9aa6-93762a635275">Anonymous Methods (C# Programming Guide)</a></format>.)</para>
+      <para>code reference: System.Action~1#3</para>
+      <para>You can also assign a lambda expression to an <see cref="T:System.Action`1" /> delegate instance, as the following example illustrates. (For an introduction to lambda expressions, see <format type="text/html"><a href="57e3ba27-9a82-4067-aca7-5ca446b7bf93">Lambda Expressions (C# Programming Guide)</a></format>.)</para>
+      <para>code reference: System.Action~1#4</para>
+      <para>The <see cref="M:System.Collections.Generic.List`1.ForEach(System.Action{`0})" /> and <see cref="M:System.Array.ForEach``1(``0[],System.Action{``0})" /> methods each take an <see cref="T:System.Action`1" /> delegate as a parameter. The method encapsulated by the delegate allows you to perform an action on each element in the array or list. The example uses the <see cref="M:System.Collections.Generic.List`1.ForEach(System.Action{`0})" /> method to provide an illustration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a method that has a single parameter and does not return a value.</para>
+    </summary>
+  </Docs>
+</Type>

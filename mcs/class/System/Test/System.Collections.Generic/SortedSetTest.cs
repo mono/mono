@@ -394,6 +394,14 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
+		public void ExceptWithItself ()
+		{
+			var set = new SortedSet<int> (new [] { 1, 5 });
+			set.ExceptWith (set);
+			Assert.AreEqual (0, set.Count);
+		}
+
+		[Test]
 		public void ViewExceptWith ()
 		{
 			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
@@ -419,6 +427,14 @@ namespace MonoTests.System.Collections.Generic
 			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
 			set.SymmetricExceptWith (new [] { 5, 7, 3, 7, 11, 7, 5, 2 });
 			Assert.IsTrue (set.SequenceEqual (new [] { 1, 2, 9, 11 }));
+		}
+
+		[Test]
+		public void SymetricExceptWithItself ()
+		{
+			var set = new SortedSet<int> (new [] { 1, 5 });
+			set.SymmetricExceptWith (set);
+			Assert.AreEqual (0, set.Count);
 		}
 
 		[Test]

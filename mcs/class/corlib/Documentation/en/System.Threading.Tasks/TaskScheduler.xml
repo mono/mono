@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TaskScheduler" FullName="System.Threading.Tasks.TaskScheduler">
   <TypeSignature Language="C#" Value="public abstract class TaskScheduler" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TaskScheduler extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,25 +10,47 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerDisplay("Id={Id}")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerTypeProxy(typeof(System.Threading.Tasks.TaskScheduler/TaskSchedulerDebuggerView))</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Threading.Tasks.TaskScheduler" /> acts as the extension point for all pluggable scheduling logic. This includes mechanisms such as how to schedule a task for execution, and how scheduled tasks should be exposed to debuggers. </para>
+      <para>For more information and code examples, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+      <para>Several sample task schedulers are available on Code Gallery: <see cref="http://go.microsoft.com/fwlink/?LinkID=165717">Samples for Parallel Programming with the .NET Framework 4</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an object that handles the low-level work of queuing tasks onto threads.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TaskScheduler ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Threading.Tasks.TaskScheduler" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Current">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.TaskScheduler Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Threading.Tasks.TaskScheduler Current" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,13 +59,21 @@
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When not called from within a task, <see cref="P:System.Threading.Tasks.TaskScheduler.Current" /> will return the <see cref="P:System.Threading.Tasks.TaskScheduler.Default" /> scheduler.</para>
+          <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Threading.Tasks.TaskScheduler" /> associated with the currently executing task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.TaskScheduler Default { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Threading.Tasks.TaskScheduler Default" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -50,13 +82,20 @@
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default <see cref="T:System.Threading.Tasks.TaskScheduler" /> instance that is provided by the .NET Framework.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromCurrentSynchronizationContext">
       <MemberSignature Language="C#" Value="public static System.Threading.Tasks.TaskScheduler FromCurrentSynchronizationContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.TaskScheduler FromCurrentSynchronizationContext() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,13 +105,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All <see cref="T:System.Threading.Tasks.Task" /> instances queued to the returned scheduler will be executed through a call to the <see cref="M:System.Threading.SynchronizationContext.Post(System.Threading.SendOrPostCallback,System.Object)" /> method on that context.</para>
+          <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.TaskScheduler" /> associated with the current <see cref="T:System.Threading.SynchronizationContext" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.TaskScheduler" /> associated with the current <see cref="T:System.Threading.SynchronizationContext" />, as determined by <see cref="P:System.Threading.SynchronizationContext.Current" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetScheduledTasks">
       <MemberSignature Language="C#" Value="protected abstract System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&gt; GetScheduledTasks ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class System.Threading.Tasks.Task&gt; GetScheduledTasks() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -82,13 +132,43 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A class derived from <see cref="T:System.Threading.Tasks.TaskScheduler" /> implements this method in order to support integration with debuggers. This method will only be invoked by the .NET Framework when the debugger requests access to the data. The enumerable returned will be traversed by debugging utilities to access the tasks currently queued to this scheduler, enabling the debugger to provide a representation of this information in the user interface.</para>
+          <para>It is important to note that, when this method is called, all other threads in the process will be frozen. Therefore, it's important to avoid synchronization with other threads that may lead to blocking. If synchronization is necessary, and you are unable to acquire the lock in this method, then you should throw an exception so that the debugger does not hang. The following example shows one possible approach in C#:</para>
+          <code>protected override IEnumerable&lt;Task&gt; GetScheduledTasks()
+{
+    bool lockTaken = false;
+    try
+    {
+        Monitor.TryEnter(_syncObj, ref lockTaken);
+        if (lockTaken)
+        {
+            return _tasks.ToArray();
+        }
+        else throw new NotSupportedException();
+    }
+    finally
+    {
+    if (lockTaken) Monitor.Exit(_syncObj);
+    }}</code>
+          <para>Additionally, this method and the enumerable returned must not modify any globally visible state.</para>
+          <para>The returned enumerable should never be null. If there are currently no queued tasks, an empty enumerable should be returned instead.</para>
+          <para>Developers who are implementing custom debuggers shouldn't call this method directly, but should use the internal wrapper method GetScheduledTasksForDebugger instead: internal Task[] GetScheduledTasksForDebugger(). This wrapper method returns an array of tasks instead of an enumerable. To retrieve a list of active schedulers, use the internal method internal static TaskScheduler[] GetTaskSchedulersForDebugger(). This static method returns an array of all active <see cref="T:System.Threading.Tasks.TaskScheduler" /> instances. You can then use GetScheduledTasksForDebugger on each scheduler instance to retrieve its list of scheduled tasks. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For debugger support only, generates an enumerable of <see cref="T:System.Threading.Tasks.Task" /> instances currently queued to the scheduler waiting to be executed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable that allows a debugger to traverse the tasks currently queued to this scheduler.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
       <MemberSignature Language="C#" Value="public int Id { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Id" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -97,13 +177,20 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique ID for this <see cref="T:System.Threading.Tasks.TaskScheduler" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaximumConcurrencyLevel">
       <MemberSignature Language="C#" Value="public virtual int MaximumConcurrencyLevel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaximumConcurrencyLevel" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -112,13 +199,20 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the maximum concurrency level this <see cref="T:System.Threading.Tasks.TaskScheduler" /> is able to support.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QueueTask">
       <MemberSignature Language="C#" Value="protected abstract void QueueTask (System.Threading.Tasks.Task task);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void QueueTask(class System.Threading.Tasks.Task task) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -130,13 +224,24 @@
         <Parameter Name="task" Type="System.Threading.Tasks.Task" />
       </Parameters>
       <Docs>
-        <param name="task">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> A class derived from <see cref="T:System.Threading.Tasks.TaskScheduler" /> implements this method to accept tasks being scheduled on the scheduler.</para>
+          <para> A typical implementation would store the task in an internal data structure, which would be serviced by threads that would execute those tasks at some time in the future.</para>
+          <para>  This method is only meant to be called by the .NET Framework and should not be called directly by the derived class. This is necessary for maintaining the consistency of the system.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queues a <see cref="T:System.Threading.Tasks.Task" /> to the scheduler. </para>
+        </summary>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.Task" /> to be queued.</param>
       </Docs>
     </Member>
     <Member MemberName="TryDequeue">
       <MemberSignature Language="C#" Value="protected virtual bool TryDequeue (System.Threading.Tasks.Task task);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool TryDequeue(class System.Threading.Tasks.Task task) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -148,14 +253,26 @@
         <Parameter Name="task" Type="System.Threading.Tasks.Task" />
       </Parameters>
       <Docs>
-        <param name="task">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+          <para>This method may execute in a finally block; therefore it should return as quickly as possible so that any resources such as <see cref="T:System.Threading.CancellationTokenRegistration" /> objects can be disposed of in a timely manner.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to dequeue a <see cref="T:System.Threading.Tasks.Task" /> that was previously queued to this scheduler.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean denoting whether the <paramref name="task" /> argument was successfully dequeued.</para>
+        </returns>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.Task" /> to be dequeued.</param>
       </Docs>
     </Member>
     <Member MemberName="TryExecuteTask">
       <MemberSignature Language="C#" Value="protected bool TryExecuteTask (System.Threading.Tasks.Task task);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance bool TryExecuteTask(class System.Threading.Tasks.Task task) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -167,14 +284,27 @@
         <Parameter Name="task" Type="System.Threading.Tasks.Task" />
       </Parameters>
       <Docs>
-        <param name="task">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> Scheduler implementations are provided with <see cref="T:System.Threading.Tasks.Task" /> instances to be executed through either the <see cref="M:System.Threading.Tasks.TaskScheduler.QueueTask(System.Threading.Tasks.Task)" /> method or the <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTaskInline(System.Threading.Tasks.Task,System.Boolean)" /> method. When the scheduler deems it appropriate to run the provided task, <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTask(System.Threading.Tasks.Task)" /> should be used to do so. TryExecuteTask handles all aspects of executing a task, including action invocation, exception handling, state management, and lifecycle control.</para>
+          <para> <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTask(System.Threading.Tasks.Task)" /> must only be used for tasks provided to this scheduler by the .NET Framework infrastructure. It should not be used to execute arbitrary tasks obtained through custom mechanisms.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to execute the provided <see cref="T:System.Threading.Tasks.Task" /> on this scheduler.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean that is true if <paramref name="task" /> was successfully executed, false if it was not. A common reason for execution failure is that the task had previously been executed or is in the process of being executed by another thread.</para>
+        </returns>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.Tasks.Task" /> object to be executed.</param>
       </Docs>
     </Member>
     <Member MemberName="TryExecuteTaskInline">
       <MemberSignature Language="C#" Value="protected abstract bool TryExecuteTaskInline (System.Threading.Tasks.Task task, bool taskWasPreviouslyQueued);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool TryExecuteTaskInline(class System.Threading.Tasks.Task task, bool taskWasPreviouslyQueued) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -187,15 +317,30 @@
         <Parameter Name="taskWasPreviouslyQueued" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="task">To be added.</param>
-        <param name="taskWasPreviouslyQueued">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A class derived from <see cref="T:System.Threading.Tasks.TaskScheduler" /> implements this function to support inline execution of a task on a thread that initiates a wait on that task object. Inline execution is optional, and the request may be rejected by returning false. However, the more tasks that can be inlined, the better the scheduler will scale. In fact, a scheduler that inlines too little may be prone to deadlocks. A proper implementation should ensure that a request executing under the policies guaranteed by the scheduler can successfully inline. For example, if a scheduler uses a dedicated thread to execute tasks, any inlining requests from that thread should succeed.</para>
+          <para>If a scheduler decides to perform the inline execution, it should do so by calling to the base TaskScheduler's <see cref="M:System.Threading.Tasks.TaskScheduler.TryExecuteTask(System.Threading.Tasks.Task)" /> method with the provided task object, propagating the return value. It may also be appropriate for the scheduler to remove an inlined task from its internal data structures if it decides to honor the inlining request. Note, however, that under some circumstances a scheduler may be asked to inline a task that was not previously provided to it with the <see cref="M:System.Threading.Tasks.TaskScheduler.QueueTask(System.Threading.Tasks.Task)" /> method.</para>
+          <para>The derived scheduler is responsible for making sure that the calling thread is suitable for executing the given task as far as its own scheduling and execution policies are concerned.</para>
+          <para>For more information, see <format type="text/html"><a href="638f8ea5-21db-47a2-a934-86e1e961bf65">Task Schedulers</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the provided <see cref="T:System.Threading.Tasks.Task" /> can be executed synchronously in this call, and if it can, executes it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value indicating whether the task was executed inline.</para>
+        </returns>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.Task" /> to be executed.</param>
+        <param name="taskWasPreviouslyQueued">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean denoting whether or not task has previously been queued. If this parameter is True, then the task may have been previously queued (scheduled); if False, then the task is known not to have been queued, and this call is being made in order to execute the task inline without queuing it.</param>
       </Docs>
     </Member>
     <Member MemberName="UnobservedTaskException">
       <MemberSignature Language="C#" Value="public static event EventHandler&lt;System.Threading.Tasks.UnobservedTaskExceptionEventArgs&gt; UnobservedTaskException;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Threading.Tasks.UnobservedTaskExceptionEventArgs&gt; UnobservedTaskException" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -204,8 +349,21 @@
         <ReturnType>System.EventHandler&lt;System.Threading.Tasks.UnobservedTaskExceptionEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This application domain-wide event provides a mechanism to prevent exception escalation policy (which, by default, terminates the process) from triggering. </para>
+          <para>To make it easier for developers to write asynchronous code based on tasks, the net_v45 changes the default exception behavior for unobserved exceptions. Although unobserved exceptions still raise the <see cref="E:System.Threading.Tasks.TaskScheduler.UnobservedTaskException" /> exception, the process does not terminate by default. Instead, the exception is handled by the runtime after the event is raised, regardless of whether an event handler observes the exception. This behavior can be configured. Starting with the net_v45, you can use the <format type="text/html"><a href="cea7e588-8b8d-48d2-9ad5-8feaf3642c18">&lt;ThrowUnobservedTaskExceptions&gt;</a></format> configuration element to revert to the behavior of the net_v40_long and terminate the process:</para>
+          <code>&lt;configuration&gt; 
+   &lt;runtime&gt; 
+      &lt;ThrowUnobservedTaskExceptions enabled="true"/&gt; 
+   &lt;/runtime&gt; 
+&lt;/configuration&gt;
+</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a faulted task's unobserved exception is about to trigger exception escalation policy, which, by default, would terminate the process.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

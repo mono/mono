@@ -52,7 +52,7 @@ public class DirectoryTest
 	public void EnumerateFilesListSymlinks ()
 	{
 		if (!RunningOnUnix)
-			return;
+			Assert.Ignore ("Not running on Unix.");
 
 		var afile = Path.Combine (TempFolder, "afile.src");
 		var bfile = Path.Combine (TempFolder, "bfile.src");
@@ -369,7 +369,7 @@ public class DirectoryTest
 	public void ExistsAccessDenied ()
 	{
 		if (!RunningOnUnix)
-			return; // this test does not work on Windows.
+			Assert.Ignore ("Not running on Unix."); // this test does not work on Windows.
 
 		string path = TempFolder + DSC + "ExistsAccessDenied";
 
@@ -1577,7 +1577,7 @@ public class DirectoryTest
 	{
 		if (!RunningOnUnix)
 			// on Windows, backslash is used as directory separator
-			return;
+			Assert.Ignore ("Not running on Unix.");
 
 		string dir = Path.Combine (TempFolder, @"sub\dir");
 		Directory.CreateDirectory (dir);
@@ -1628,7 +1628,7 @@ public class DirectoryTest
 	{
 		if (!RunningOnUnix)
 			// on Windows, backslash is used as directory separator
-			return;
+			Assert.Ignore ("Not running on Unix.");
 
 		string file = Path.Combine (TempFolder, @"doc\temp1.file");
 		File.Create (file).Close ();

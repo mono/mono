@@ -8,6 +8,7 @@ System.Runtime.Serialization/DataContractResolverTest.cs
 System.Runtime.Serialization/DataContractSerializerTest_DuplicateQName.cs
 System.Runtime.Serialization/DataContractSerializerTest_NullableWithDictionary.cs
 System.Runtime.Serialization/DataContractSerializerTest_InvalidCharacters.cs
+System.Runtime.Serialization/DataContractSerializerTest.cs
 System.Runtime.Serialization/KnownTypeAttributeTest.cs
 System.Runtime.Serialization/XmlObjectSerializerTest.cs
 System.Runtime.Serialization/XsdDataContractExporterTest.cs

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignSurface" FullName="System.ComponentModel.Design.DesignSurface">
   <TypeSignature Language="C#" Value="public class DesignSurface : IDisposable, IServiceProvider" />
   <AssemblyInfo>
@@ -16,8 +17,210 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.DesignSurface" /> class implements what the user perceives as a designer. <see cref="T:System.ComponentModel.Design.DesignSurface" /> is the user interface the user manipulates to change design-time features. <see cref="T:System.ComponentModel.Design.DesignSurface" /> provides a completely self-contained design surface.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.DesignSurface" /> class may be used as a stand-alone designer, or it may be coupled with the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class to provide a common implementation for an application that hosts multiple <see cref="T:System.ComponentModel.Design.DesignSurface" /> objects.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.DesignSurface" /> class can be used by itself, or the user can derive a new class from it and augment the behavior.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.DesignSurface" /> class provides several design-time services automatically. The <see cref="T:System.ComponentModel.Design.DesignSurface" /> class adds all of its services in its constructor. Most of these services can be overridden by replacing them in the protected <see cref="P:System.ComponentModel.Design.DesignSurface.ServiceContainer" /> property. To replace a service, override the constructor, call base, and make any changes through the protected <see cref="P:System.ComponentModel.Design.DesignSurface.ServiceContainer" /> property. All services that are added to the service container and that implement <see cref="T:System.IDisposable" /> are disposed when the design surface is disposed. The default set of replaceable services that the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class provides is shown in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Service</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IExtenderProviderService" />
+            </para>
+          </term>
+          <description>
+            <para>Enables objects that are not part of the container’s components collection to provide their own extender providers.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IExtenderListService" />
+            </para>
+          </term>
+          <description>
+            <para>Used by <see cref="T:System.ComponentModel.TypeDescriptor" /> to get a list of extender providers. With this service, extender providers can live outside of the container.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" />
+            </para>
+          </term>
+          <description>
+            <para>Provides designer metadata hooks. This is the primary interface for metadata filtering.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.ISelectionService" />
+            </para>
+          </term>
+          <description>
+            <para>Provides a way to select components in the designer.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IReferenceService" />
+            </para>
+          </term>
+          <description>
+            <para>Provides a way to get a name for objects, even when those objects are not sited.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.DesignSurface" />
+            </para>
+          </term>
+          <description>
+            <para>Offers the design surface itself as a service.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.DesignerOptionService" /> </para>
+          </term>
+          <description>
+            <para>Provides a base class for getting and setting option values for a designer.</para>
+          </description>
+        </item>
+      </list>
+      <para>The following table shows the non-replaceable services provided by default.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Service</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IComponentChangeService" />
+            </para>
+          </term>
+          <description>
+            <para>Raises events as changes are made to components.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IDesignerHost" />
+            </para>
+          </term>
+          <description>
+            <para>Controls access to types, services, and transactions. Master interface for designers.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.IContainer" />
+            </para>
+          </term>
+          <description>
+            <para>Owns the set of components that are being designed. Each designer has an <see cref="T:System.ComponentModel.IContainer" /> that owns the components.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IServiceContainer" />
+            </para>
+          </term>
+          <description>
+            <para>Derives from <see cref="T:System.IServiceProvider" /> and provides a way to add and remove services from the designer.</para>
+          </description>
+        </item>
+      </list>
+      <para>In addition to these services, the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class also provides a single service that is available through a component’s site. This service is unique for each component. The following table shows the services that cannot be replaced.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Service</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IDictionaryService" />
+            </para>
+          </term>
+          <description>
+            <para>A generic dictionary of key/value pairs that can be used to store arbitrary data about a component.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.INestedContainer" />
+            </para>
+          </term>
+          <description>
+            <para>A container that enables a component to add additional child components to the designer. These components will be part of the design surface, but will not participate in serialization. This is useful when you want to design a control that is capable of exposing a region of itself in a designer, but you do not want the region to participate in serialization.</para>
+          </description>
+        </item>
+      </list>
+      <para>In addition to <see cref="T:System.ComponentModel.ISite" />, the site also implements the following interfaces. </para>
+      <block subset="none" type="note">
+        <para>Check for the existence of these interfaces, rather than use indiscriminate casting, because other site implementations may not implement them.</para>
+      </block>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Service</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.IServiceContainer" />
+            </para>
+          </term>
+          <description>
+            <para>Provides a way to get to the container of site-specific services. For example, <see cref="T:System.ComponentModel.Design.IDictionaryService" /> is a site-specific service. With this service, you can add additional site-specific services.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Presents a user interface for designing components.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +231,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +248,16 @@
         <Parameter Name="parentProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="parentProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <paramref name="parentProvide " />is present, designers contained within the surface can retrieve services from the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class.</para>
+        </summary>
+        <param name="parentProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent service provider, or null if there is no parent used to resolve services.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +270,19 @@
         <Parameter Name="rootComponentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="rootComponentType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you use the <see cref="M:System.ComponentModel.Design.DesignSurface.#ctor(System.Type)" /> constructor, it creates a simple designer loader that, in turn, creates a component of the given type and then ends the loading process. This is a straightforward way to create a designer, under the assumption that all saving of state will be done externally. Internally, this calls <see cref="Overload:System.ComponentModel.Design.DesignSurface.BeginLoad" /> and passes the root component type.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.#ctor(System.Type)" /> overload is not affected by <see cref="T:System.Windows.Forms.Design.DesignerOptions" />. The <see cref="T:System.Windows.Forms.Design.DesignerOptions" /> must be in the service container before the design surface loads. If you need access to <see cref="T:System.Windows.Forms.Design.DesignerOptions" />, call the empty constructor, add the <see cref="T:System.Windows.Forms.Design.DesignerOptions" /> to the <see cref="P:System.ComponentModel.Design.DesignSurface.ServiceContainer" /> and call <see cref="M:System.ComponentModel.Design.DesignSurface.BeginLoad(System.Type)" /> with <paramref name="rootComponentType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class.</para>
+        </summary>
+        <param name="rootComponentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of root component to create.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -73,10 +296,18 @@
         <Parameter Name="rootComponentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="parentProvider">To be added.</param>
-        <param name="rootComponentType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using the <see cref="M:System.ComponentModel.Design.DesignSurface.#ctor(System.IServiceProvider,System.Type)" /> constructor creates a simple designer loader that creates a component of the given type and then ends the loading process. This is a straightforward way to create a designer, under the assumption that all saving of state will be done externally. Internally, this calls <see cref="Overload:System.ComponentModel.Design.DesignSurface.BeginLoad" /> and passes the root component type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class.</para>
+        </summary>
+        <param name="parentProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent service provider, or null if there is no parent used to resolve services.</param>
+        <param name="rootComponentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of root component to create.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginLoad">
@@ -92,9 +323,17 @@
         <Parameter Name="loader" Type="System.ComponentModel.Design.Serialization.DesignerLoader" />
       </Parameters>
       <Docs>
-        <param name="loader">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Designer loading can be asynchronous, so the loading may continue to progress after this call has returned. Attach an event handler to the <see cref="E:System.ComponentModel.Design.IDesignerHost.LoadComplete" /> event to be notified when the design surface has completed loading.</para>
+          <para>After <see cref="Overload:System.ComponentModel.Design.DesignSurface.BeginLoad" /> is called, you can immediately obtain the view for the designer, because designer loaders must provide at least the root component when loading asynchronously.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the loading process with the given designer loader.</para>
+        </summary>
+        <param name="loader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The designer loader to use for loading the designer.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginLoad">
@@ -110,9 +349,20 @@
         <Parameter Name="rootComponentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="rootComponentType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <paramref name="rootComponentType" /> is specified, a default designer loader that simply creates an instance of <paramref name="rootComponentType" /> will be used. Designer loading can be asynchronous, so the loading may continue to progress after this call has returned. Attach an event handler to the <see cref="E:System.ComponentModel.Design.IDesignerHost.LoadComplete" /> event to be notified when the design surface has completed loading.</para>
+          <para>After <see cref="M:System.ComponentModel.Design.DesignSurface.BeginLoad(System.Type)" /> is called, you can immediately obtain the view for the designer, because designer loaders must provide at least the root component when loading asynchronously.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.BeginLoad(System.Type)" /> method creates an instance of the component type and initializes a designer for this instance. The <see cref="E:System.ComponentModel.Design.DesignSurface.Loaded" /> event is raised before this method returns.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the loading process.</para>
+        </summary>
+        <param name="rootComponentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of component to create in design mode.</param>
       </Docs>
     </Member>
     <Member MemberName="ComponentContainer">
@@ -125,9 +375,15 @@
         <ReturnType>System.ComponentModel.IContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.DesignSurface.ComponentContainer" /> property holds all objects that are currently in design mode. When components are added to <see cref="P:System.ComponentModel.Design.DesignSurface.ComponentContainer" />, their designer, if any, is loaded. The component is sited with a site that provides full access to the design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.IContainer" /> implementation within the design surface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateComponent">
@@ -148,10 +404,20 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.CreateComponent(System.Type)" /> method is called by the design surface’s <see cref="Overload:System.ComponentModel.Design.IDesignerHost.CreateComponent" /> method to create an instance of a component. The component should be created and added to the public container on the design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created component.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of component to create.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDesigner">
@@ -168,11 +434,25 @@
         <Parameter Name="rootDesigner" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="rootDesigner">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.CreateDesigner(System.ComponentModel.IComponent,System.Boolean)" /> method is called by the design surface’s <see cref="T:System.ComponentModel.IContainer" /> when a component is added to the container. This method creates a designer, but does not initialize it. When it returns, the designer is initialized by the container.</para>
+          <para>
+            <see cref="M:System.ComponentModel.Design.DesignSurface.CreateDesigner(System.ComponentModel.IComponent,System.Boolean)" /> can create two different types of designers: root designers and normal designers. A root designer is a designer for the root component in the design surface, which by definition is the first component added to the container. Root designers differ from normal designers because they are responsible for the user interface presented to the end user. Root designers typically coordinate with the rest of the designers on a design surface to provide this interface.</para>
+          <para>The default implementation of this method delegates to <see cref="T:System.ComponentModel.TypeDescriptor" />, passing in <see cref="T:System.ComponentModel.Design.IRootDesigner" /> as the designer type for root designers, or <see cref="T:System.ComponentModel.Design.IDesigner" /> for normal designers. You can override this method to request a specific type of designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a designer when a component is added to the container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested designer, or null if no matching designer could be found.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component for which the designer should be created.</param>
+        <param name="rootDesigner">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a root designer; false to create a normal designer.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
@@ -188,10 +468,20 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="type" /> is an <see cref="T:System.ComponentModel.IComponent" />, <see cref="M:System.ComponentModel.Design.DesignSurface.CreateInstance(System.Type)" /> searches for a constructor of type <see cref="T:System.ComponentModel.IContainer" /> first, followed by an empty constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the given type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to create.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateNestedContainer">
@@ -207,10 +497,20 @@
         <Parameter Name="owningComponent" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="owningComponent">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding a component to a nested container creates its designer and makes it eligible for all services available from the design surface. Components added to nested containers do not participate in serialization. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a container suitable for nesting controls or components.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The nested container.</para>
+        </returns>
+        <param name="owningComponent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that manages the nested container.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateNestedContainer">
@@ -227,11 +527,23 @@
         <Parameter Name="containerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="owningComponent">To be added.</param>
-        <param name="containerName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding a component to a nested container creates its designer and makes it eligible for all services available from the design surface. Components added to nested containers do not participate in serialization. </para>
+          <para>You can provide an additional name for the <see cref="M:System.ComponentModel.Design.DesignSurface.CreateNestedContainer(System.ComponentModel.IComponent,System.String)" /> method by passing a value into <paramref name="containerName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a container suitable for nesting controls or components.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The nested container.</para>
+        </returns>
+        <param name="owningComponent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that manages the nested container.</param>
+        <param name="containerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An additional name for the nested container.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -245,8 +557,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The public <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose" /> method follows the standard <see cref="T:System.IDisposable" /> pattern. Calling this method destroys the design surface. The protected version of this method is virtual and follows the normal <see cref="T:System.IDisposable" /> pattern. </para>
+          <block subset="none" type="note">
+            <para>Because <see cref="T:System.ComponentModel.Design.DesignSurface" /> does not have any native code to clean up, it does not have a finalizer that calls <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose(System.Boolean)" />. If you need to call <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose(System.Boolean)" />, you must add a finalizer yourself.</para>
+          </block>
+          <para>Call <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.Design.DesignSurface" />. The <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose" /> method leaves the <see cref="T:System.ComponentModel.Design.DesignSurface" /> in an unusable state. After calling <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.Design.DesignSurface" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Design.DesignSurface" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.Design.DesignSurface" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Design.DesignSurface" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the <see cref="T:System.ComponentModel.Design.DesignSurface" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -262,9 +587,21 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The public <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose" /> method follows the standard <see cref="T:System.IDisposable" /> pattern. Calling this method destroys the design surface. The protected version of this method is virtual and follows the normal <see cref="T:System.IDisposable" /> pattern. </para>
+          <block subset="none" type="note">
+            <para>Because <see cref="T:System.ComponentModel.Design.DesignSurface" /> does not have any native code to clean up, it does not have a finalizer that calls <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose(System.Boolean)" />. If you need to call <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose(System.Boolean)" />, you must add a finalizer yourself.</para>
+          </block>
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.Design.DesignSurface" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the <see cref="T:System.ComponentModel.Design.DesignSurface" />.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="Disposed">
@@ -277,8 +614,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The surface is only disposed when the public <see cref="M:System.ComponentModel.Design.DesignSurface.Dispose" /> method on <see cref="T:System.ComponentModel.Design.DesignSurface" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the design surface is disposed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Flush">
@@ -292,8 +635,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.Flush" /> method can be called to push changes made to the design surface down to the serializer. This ensures that the design surface and its serialized state are synchronized. The actual implementation of this method is forwarded to the designer loader associated with design surface. The designer loader may choose to defer changes until <see cref="M:System.ComponentModel.Design.DesignSurface.Flush" /> is called, or it may choose to keep the serialized data up to date with all user changes. The <see cref="M:System.ComponentModel.Design.DesignSurface.Flush" /> method ensures that regardless of the model the designer loader chooses to use, the serialized state is synchronized with the actual design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes changes to the design surface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Flushed">
@@ -306,8 +655,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The designer loader is flushed first, and then the <see cref="E:System.ComponentModel.Design.DesignSurface.Flushed" /> event is raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a call is made to the <see cref="M:System.ComponentModel.Design.DesignSurface.Flush" /> method of <see cref="T:System.ComponentModel.Design.DesignSurface" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -323,10 +678,20 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.GetService(System.Type)" /> method retrieves a service in the design surface’s service container. In addition, this will forward to any service provider that was given to the design surface at construction time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a service from the service container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements, or is a derived class of, <paramref name="serviceType" />, or null if the service does not exist in the service container.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="IsLoaded">
@@ -339,9 +704,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the design surface is currently loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Loaded">
@@ -354,8 +722,18 @@
         <ReturnType>System.ComponentModel.Design.LoadedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ComponentModel.Design.DesignSurface.Loaded" /> event is raised for successful loads as well as unsuccessful ones. If code in this event handler throws an exception, the designer is unloaded.</para>
+          <para>The <see cref="T:System.ComponentModel.Design.LoadedEventArgs" /> object can be used to determine if loading succeeded, and it can also provide a list of errors that occurred during the load. </para>
+          <block subset="none" type="note">
+            <para>Errors can occur for successful loads as well, provided that the serialization system can tolerate errors.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the designer load has completed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadErrors">
@@ -368,9 +746,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of loading errors or a void collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Loading">
@@ -383,8 +764,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the designer is about to be loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnLoaded">
@@ -400,9 +784,13 @@
         <Parameter Name="e" Type="System.ComponentModel.Design.LoadedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.DesignSurface.Loaded" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.LoadedEventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnLoading">
@@ -418,9 +806,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.DesignSurface.Loading" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnUnloaded">
@@ -436,9 +828,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.DesignSurface.Unloaded" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnUnloading">
@@ -454,9 +850,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.DesignSurface.Unloading" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnViewActivate">
@@ -472,9 +872,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.DesignSurface.ViewActivated" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="ServiceContainer">
@@ -487,9 +891,15 @@
         <ReturnType>System.ComponentModel.Design.ServiceContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At construction time, <see cref="T:System.ComponentModel.Design.DesignSurface" /> adds default services into this service container. You can leave the default services in their present state, or you can remove them and replace them with your own. The default services are all demand-created, so there is no loss in performance for adding them at construction time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the service container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unloaded">
@@ -502,8 +912,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a designer has finished unloading.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unloading">
@@ -516,8 +929,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a designer unloads, the entire state for that designer is destroyed, including the designer’s view. The view should be unparented at this time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a designer is about to unload.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="View">
@@ -530,9 +949,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.Design.DesignSurface.BeginLoad" /> method must be called beforehand to start the loading process. It is possible to return a view before the designer loader finishes loading because the root designer, which supplies the view, is the first object created by the designer loader. If a view is unavailable, <see cref="Overload:System.ComponentModel.Design.DesignSurface.BeginLoad" /> raises an exception. </para>
+          <para>The notion of a view technology is obsolete. But, it remains in the interfaces for root designers for backward compatibility. Its use is hidden from anyone using <see cref="T:System.ComponentModel.Design.DesignSurface" /> objects. The <see cref="P:System.ComponentModel.Design.DesignSurface.View" /> property hides view technologies by passing the supported technologies back into the root designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the view for the root designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ViewActivated">
@@ -545,8 +971,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to support the <see cref="M:System.ComponentModel.Design.IDesignerHost.Activate" /> method, your event handler should activate the window for this design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="M:System.ComponentModel.Design.IDesignerHost.Activate" /> method has been called on <see cref="T:System.ComponentModel.Design.IDesignerHost" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

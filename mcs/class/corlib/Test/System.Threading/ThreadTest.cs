@@ -837,6 +837,13 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Test]
+		public void GetNamedDataSlotTest ()
+		{
+			Assert.IsNotNull (Thread.GetNamedDataSlot ("te#st"), "#1");
+			Assert.AreSame (Thread.GetNamedDataSlot ("te#st"), Thread.GetNamedDataSlot ("te#st"), "#2");
+		}
+
 		void CheckIsRunning (string s, Thread t)
 		{
 			int c = counter;

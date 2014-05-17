@@ -1,50 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509ChainStatus" FullName="System.Security.Cryptography.X509Certificates.X509ChainStatus">
   <TypeSignature Language="C#" Value="public struct X509ChainStatus" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit X509ChainStatus extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This structure is used in conjunction with the <see cref="P:System.Security.Cryptography.X509Certificates.X509Chain.ChainStatus" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a simple structure for storing X509 chain status and error information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Status">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509ChainStatusFlags Status { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509ChainStatusFlags Status { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Cryptography.X509Certificates.X509ChainStatusFlags Status" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The flag can be used to determine the details of a chain error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the status of the X509 chain.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StatusInformation">
-      <MemberSignature Language="C#" Value="public string StatusInformation { set; get; }" />
+      <MemberSignature Language="C#" Value="public string StatusInformation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StatusInformation" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a localized string that provides a description of the <see cref="P:System.Security.Cryptography.X509Certificates.X509Chain.ChainStatus" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a description of the <see cref="P:System.Security.Cryptography.X509Certificates.X509Chain.ChainStatus" /> value.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

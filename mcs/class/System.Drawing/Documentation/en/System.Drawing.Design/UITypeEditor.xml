@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UITypeEditor" FullName="System.Drawing.Design.UITypeEditor">
   <TypeSignature Language="C#" Value="public class UITypeEditor" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,43 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Drawing.Design.UITypeEditor" /> class provides a base class that you can derive from and extend to implement a custom type editor for the design-time environment. Typically, your custom type editor interacts with the <see cref="T:System.Windows.Forms.PropertyGrid" /> control. </para>
+      <para>Custom type editors are useful in situations where a text-box value editor is insufficient to effectively select the values of certain types.</para>
+      <para>To implement a custom design-time UI type editor, you must perform the following steps: </para>
+      <list type="bullet">
+        <item>
+          <para>Define a class that derives from <see cref="T:System.Drawing.Design.UITypeEditor" />.</para>
+        </item>
+        <item>
+          <para>Override the <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method to handle the user interface, user input processing, and value assignment.</para>
+        </item>
+        <item>
+          <para>Override the <see cref="M:System.Drawing.Design.UITypeEditor.GetEditStyle" /> method to inform the Properties window of the type of editor style that the editor will use.</para>
+        </item>
+      </list>
+      <para>You can add additional support for painting a value's representation in the Properties window by performing the following steps: </para>
+      <list type="bullet">
+        <item>
+          <para>Override the <see cref="M:System.Drawing.Design.UITypeEditor.GetPaintValueSupported" /> method to indicate that the editor supports displaying the value's representation.</para>
+        </item>
+        <item>
+          <para>Override the <see cref="M:System.Drawing.Design.UITypeEditor.PaintValue(System.Object,System.Drawing.Graphics,System.Drawing.Rectangle)" /> method to implement the display of the value's representation.</para>
+        </item>
+        <item>
+          <para>Override the <see cref="T:System.Drawing.Design.UITypeEditor" /> constructor method if the editor should have initialization behavior.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Drawing.Design.UITypeEditor" /> class does not support right-to-left (RTL) layouts.</para>
+      </block>
+      <para>For more information about enhancing design-time support, see <format type="text/html"><a href="d6ac8a6a-42fd-4bc8-bf33-b212811297e2">Extending Design-Time Support</a></format>. For more information on implementing a <see cref="T:System.Drawing.Design.UITypeEditor" />, see <format type="text/html"><a href="f068b4ea-6e8c-4c0b-aefd-188b337240da">User Interface Type Editors Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class that can be used to design value editors that can provide a user interface (UI) for representing and editing the values of objects of the supported data types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +59,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Design.UITypeEditor" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,11 +81,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IServiceProvider'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method launches the user interface for value editing, and is called by the Properties window when a user attempts to edit the value of a type that this editor is configured to edit the value of. A service provider is provided so that the editor can obtain any required services.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Edits the value of the specified object using the editor style indicated by the <see cref="M:System.Drawing.Design.UITypeEditor.GetEditStyle" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new value of the object.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IServiceProvider" /> that this editor can use to obtain services. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to edit. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,12 +115,24 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'ComponentModel.ITypeDescriptorContext'</param>
-        <param name="provider">To be added: an object of type 'IServiceProvider'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A service provider is provided so that the editor can obtain any required services.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Edits the specified object's value using the editor style indicated by the <see cref="M:System.Drawing.Design.UITypeEditor.GetEditStyle" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new value of the object. If the value of the object has not changed, this should return the same object it was passed.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to gain additional context information. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IServiceProvider" /> that this editor can use to obtain services. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to edit. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,9 +147,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'UITypeEditorEditStyle'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a <see cref="T:System.Drawing.Design.UITypeEditor" /> does not override and implement this method, <see cref="M:System.Drawing.Design.UITypeEditor.GetEditStyle" /> will return <see cref="F:System.Drawing.Design.UITypeEditorEditStyle.None" /> by default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the editor style used by the <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Design.UITypeEditorEditStyle" /> enumeration value that indicates the style of editor used by the current <see cref="T:System.Drawing.Design.UITypeEditor" />. By default, this method will return <see cref="F:System.Drawing.Design.UITypeEditorEditStyle.None" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,10 +175,17 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'ComponentModel.ITypeDescriptorContext'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'UITypeEditorEditStyle'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the editor style used by the <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Design.UITypeEditorEditStyle" /> value that indicates the style of editor used by the <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method. If the <see cref="T:System.Drawing.Design.UITypeEditor" /> does not support this method, then <see cref="M:System.Drawing.Design.UITypeEditor.GetEditStyle" /> will return <see cref="F:System.Drawing.Design.UITypeEditorEditStyle.None" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to gain additional context information. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -122,9 +200,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this editor supports painting a representation of an object's value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.Drawing.Design.UITypeEditor.PaintValue(System.Object,System.Drawing.Graphics,System.Drawing.Rectangle)" /> is implemented; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,10 +225,17 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'ComponentModel.ITypeDescriptorContext'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified context supports painting a representation of an object's value within the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.Drawing.Design.UITypeEditor.PaintValue(System.Object,System.Drawing.Graphics,System.Drawing.Rectangle)" /> is implemented; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to gain additional context information. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,9 +252,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether drop-down editors should be resizable by the user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaintValue">
@@ -176,9 +270,16 @@
         <Parameter Name="e" Type="System.Drawing.Design.PaintValueEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'PaintValueEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Editors should paint within the boundaries of the specified rectangle. This rectangle indicates the area of the Properties window to draw a representation of the value within.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints a representation of the value of an object using the specified <see cref="T:System.Drawing.Design.PaintValueEventArgs" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Design.PaintValueEventArgs" /> that indicates what to paint and where to paint it. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,11 +298,20 @@
         <Parameter Name="rectangle" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <param name="canvas">To be added: an object of type 'Drawing.Graphics'</param>
-        <param name="rectangle">To be added: an object of type 'Drawing.Rectangle'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Editors should paint within the boundaries of the specified rectangle. This rectangle indicates the area of the Properties window to draw a representation of the value within.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints a representation of the value of the specified object to the specified canvas.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose value this type editor will display. </param>
+        <param name="canvas">
+          <attribution license="cc4" from="Microsoft" modified="false" />A drawing canvas on which to paint the representation of the object's value. </param>
+        <param name="rectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> within whose boundaries to paint the value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

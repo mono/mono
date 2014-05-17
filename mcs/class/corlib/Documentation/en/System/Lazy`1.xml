@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Lazy&lt;T&gt;" FullName="System.Lazy&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class Lazy&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Lazy`1&lt;T&gt; extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -13,29 +15,179 @@
   <Interfaces />
   <Attributes>
     <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerDisplay("ThreadSafetyMode={Mode}, IsValueCreated={IsValueCreated}, IsValueFaulted={IsValueFaulted}, Value={ValueForDebugDisplay}")</AttributeName>
+    </Attribute>
+    <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use lazy initialization to defer the creation of a large or resource-intensive object, or the execution of a resource-intensive task, particularly when such creation or execution might not occur during the lifetime of the program.</para>
+      <para>To prepare for lazy initialization, you create an instance of <see cref="T:System.Lazy`1" />. The type argument of the <see cref="T:System.Lazy`1" /> object that you create specifies the type of the object that you want to initialize lazily. The constructor that you use to create the <see cref="T:System.Lazy`1" /> object determines the characteristics of the initialization. Lazy initialization occurs the first time the <see cref="P:System.Lazy`1.Value" /> property is accessed. </para>
+      <para>In most cases, choosing a constructor depends on your answers to two questions: </para>
+      <list type="bullet">
+        <item>
+          <para>Will the lazily initialized object be accessed from more than one thread? If so, the <see cref="T:System.Lazy`1" /> object might create it on any thread. You can use one of the simple constructors whose default behavior is to create a thread-safe <see cref="T:System.Lazy`1" /> object, so that only one instance of the lazily instantiated object is created no matter how many threads try to access it. To create a <see cref="T:System.Lazy`1" /> object that is not thread safe, you must use a constructor that enables you to specify no thread safety. </para>
+          <block subset="none" type="note">
+            <para>Making the <see cref="T:System.Lazy`1" /> object thread safe does not protect the lazily initialized object. If multiple threads can access the lazily initialized object, you must make its properties and methods safe for multithreaded access. </para>
+          </block>
+        </item>
+        <item>
+          <para>Does lazy initialization require a lot of code, or does the lazily initialized object have a default constructor that does everything you need and doesn't throw exceptions? If you need to write initialization code or if exceptions need to be handled, use one of the constructors that takes a factory method. Write your initialization code in the factory method. </para>
+        </item>
+      </list>
+      <para>The following table shows which constructor to choose, based on these two factors: </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Object will be accessed by </para>
+            </term>
+            <description>
+              <para>If no initialization code is required (default constructor), use </para>
+            </description>
+            <description>
+              <para>If initialization code is required, use </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Multiple threads </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Lazy`1.#ctor" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.Lazy`1.#ctor(System.Func{`0})" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>One thread </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Lazy`1.#ctor(System.Boolean)" /> with <paramref name="isThreadSafe" /> set to false. </para>
+          </description>
+          <description>
+            <para>
+              <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Boolean)" /> with <paramref name="isThreadSafe" /> set to false. </para>
+          </description>
+        </item>
+      </list>
+      <para>You can use a lambda expression to specify the factory method. This keeps all the initialization code in one place. The lambda expression captures the context, including any arguments you pass to the lazily initialized object's constructor. </para>
+      <para>Exception caching  When you use factory methods, exceptions are cached. That is, if the factory method throws an exception the first time a thread tries to access the <see cref="P:System.Lazy`1.Value" /> property of the <see cref="T:System.Lazy`1" /> object, the same exception is thrown on every subsequent attempt. This ensures that every call to the <see cref="P:System.Lazy`1.Value" /> property produces the same result and avoids subtle errors that might arise if different threads get different results. The <see cref="T:System.Lazy`1" /> stands in for an actual T that otherwise would have been initialized at some earlier point, usually during startup. A failure at that earlier point is usually fatal. If there is a potential for a recoverable failure, we recommend that you build the retry logic into the initialization routine (in this case, the factory method), just as you would if you weren’t using lazy initialization.</para>
+      <para>Alternative to locking  In certain situations, you might want to avoid the overhead of the <see cref="T:System.Lazy`1" /> object's default locking behavior. In rare situations, there might be a potential for deadlocks. In such cases, you can use the <see cref="M:System.Lazy`1.#ctor(System.Threading.LazyThreadSafetyMode)" /> or <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)" /> constructor, and specify <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" />. This enables the <see cref="T:System.Lazy`1" /> object to create a copy of the lazily initialized object on each of several threads if the threads call the <see cref="P:System.Lazy`1.Value" /> property simultaneously. The <see cref="T:System.Lazy`1" /> object ensures that all threads use the same instance of the lazily initialized object and discards the instances that are not used. Thus, the cost of reducing the locking overhead is that your program might sometimes create and discard extra copies of an expensive object. In most cases, this is unlikely. The examples for the <see cref="M:System.Lazy`1.#ctor(System.Threading.LazyThreadSafetyMode)" /> and <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)" /> constructors demonstrate this behavior. </para>
+      <block subset="none" type="note">
+        <para>When you specify <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" />, exceptions are never cached, even if you specify a factory method. </para>
+      </block>
+      <para>Equivalent constructors  In addition to enabling the use of <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" />, the <see cref="M:System.Lazy`1.#ctor(System.Threading.LazyThreadSafetyMode)" /> and <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)" /> constructors can duplicate the functionality of the other constructors. The following table shows the parameter values that produce equivalent behavior. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>To create a <see cref="T:System.Lazy`1" /> object that is</para>
+            </term>
+            <description>
+              <para>For constructors that have a LazyThreadSafetyMode <paramref name="mode" /> parameter, set <paramref name="mode" /> to</para>
+            </description>
+            <description>
+              <para>For constructors that have a Boolean <paramref name="isThreadSafe" /> parameter, set <paramref name="isThreadSafe" /> to</para>
+            </description>
+            <description>
+              <para>For constructors with no thread safety parameters</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Fully thread safe; uses locking to ensure that only one thread initializes the value.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="F:System.Threading.LazyThreadSafetyMode.ExecutionAndPublication" />
+            </para>
+          </description>
+          <description>
+            <para>true</para>
+          </description>
+          <description>
+            <para>All such constructors are fully thread safe.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Not thread safe.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="F:System.Threading.LazyThreadSafetyMode.None" />
+            </para>
+          </description>
+          <description>
+            <para>false</para>
+          </description>
+          <description>
+            <para>Not applicable.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Fully thread safe; threads race to initialize the value.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" />
+            </para>
+          </description>
+          <description>
+            <para>Not applicable.</para>
+          </description>
+          <description>
+            <para>Not applicable.</para>
+          </description>
+        </item>
+      </list>
+      <para>Other capabilities  For information about the use of <see cref="T:System.Lazy`1" /> with thread-static fields, or as the backing store for properties, see <format type="text/html"><a href="56b4ae5c-4745-44ff-ad78-ffe4fcde6b9b">Lazy Initialization</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for lazy initialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Lazy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance that is created with this constructor may be used concurrently from multiple threads.</para>
+          <para>The thread safety mode of a <see cref="T:System.Lazy`1" /> instance that is initialized with this constructor is <see cref="F:System.Threading.LazyThreadSafetyMode.ExecutionAndPublication" />. The thread safety mode describes the behavior when multiple threads try to initialize the <see cref="T:System.Lazy`1" /> instance.</para>
+          <para>A <see cref="T:System.Lazy`1" /> instance that is created with this constructor does not cache exceptions. For more information, see the<see cref="T:System.Lazy`1" /> class or the <see cref="T:System.Threading.LazyThreadSafetyMode" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Lazy`1" /> class. When lazy initialization occurs, the default constructor of the target type is used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Lazy (bool isThreadSafe);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool isThreadSafe) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -44,13 +196,22 @@
         <Parameter Name="isThreadSafe" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isThreadSafe">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread safety mode of a <see cref="T:System.Lazy`1" /> instance that is initialized with this constructor is <see cref="F:System.Threading.LazyThreadSafetyMode.ExecutionAndPublication" /> if <paramref name="isThreadSafe" /> is true; otherwise, the mode is <see cref="F:System.Threading.LazyThreadSafetyMode.None" />. The thread safety mode describes the behavior when multiple threads try to initialize the <see cref="T:System.Lazy`1" /> instance. To specify the <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" /> mode, use the <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)" /> or <see cref="M:System.Lazy`1.#ctor(System.Threading.LazyThreadSafetyMode)" /> constructor.</para>
+          <para>A <see cref="T:System.Lazy`1" /> instance that is created with this constructor does not cache exceptions. For more information, see the<see cref="T:System.Lazy`1" /> class or the <see cref="T:System.Threading.LazyThreadSafetyMode" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Lazy`1" /> class. When lazy initialization occurs, the default constructor of the target type and the specified initialization mode are used.</para>
+        </summary>
+        <param name="isThreadSafe">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to make this instance usable concurrently by multiple threads; false to make the instance usable by only one thread at a time. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Lazy (Func&lt;T&gt; valueFactory);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Func`1&lt;!T&gt; valueFactory) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,6 +227,7 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Lazy (System.Threading.LazyThreadSafetyMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Threading.LazyThreadSafetyMode mode) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -74,13 +236,22 @@
         <Parameter Name="mode" Type="System.Threading.LazyThreadSafetyMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread safety mode of a <see cref="T:System.Lazy`1" /> instance describes the behavior when multiple threads try to initialize the <see cref="T:System.Lazy`1" /> instance. </para>
+          <para>A <see cref="T:System.Lazy`1" /> instance that is created with this constructor does not cache exceptions. For more information, see the <see cref="T:System.Lazy`1" /> class or the <see cref="T:System.Threading.LazyThreadSafetyMode" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Lazy`1" /> class that uses the default constructor of <paramref name="T" /> and the specified thread-safety mode.</para>
+        </summary>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the thread safety mode. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Lazy (Func&lt;T&gt; valueFactory, bool isThreadSafe);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Func`1&lt;!T&gt; valueFactory, bool isThreadSafe) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -98,6 +269,7 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Lazy (Func&lt;T&gt; valueFactory, System.Threading.LazyThreadSafetyMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Func`1&lt;!T&gt; valueFactory, valuetype System.Threading.LazyThreadSafetyMode mode) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -115,6 +287,7 @@
     </Member>
     <Member MemberName="IsValueCreated">
       <MemberSignature Language="C#" Value="public bool IsValueCreated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsValueCreated" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -123,13 +296,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When lazy initialization occurs for a <see cref="T:System.Lazy`1" /> instance, it may result in either a value being created or an exception being thrown. If an exception is thrown, subsequent behavior of the <see cref="T:System.Lazy`1" /> instance depends on whether exception caching is in effect. If the <see cref="T:System.Lazy`1" /> instance was created by using a constructor that does not specify an initialization function, then exception caching is not in effect. A subsequent attempt to initialize the <see cref="T:System.Lazy`1" /> might succeed, and after successful initialization the <see cref="P:System.Lazy`1.IsValueCreated" /> property returns true. If the <see cref="T:System.Lazy`1" /> instance was created with an initialization function (specified by the <paramref name="valueFactory" /> parameter of the <see cref="T:System.Lazy`1" /> constructor), then exception caching is controlled by the thread safety mode.</para>
+          <list type="bullet">
+            <item>
+              <para>If the mode is <see cref="F:System.Threading.LazyThreadSafetyMode.ExecutionAndPublication" /> or <see cref="F:System.Threading.LazyThreadSafetyMode.None" />, there is no second chance to initialize the <see cref="T:System.Lazy`1" /> instance. If an exception occurs and is unhandled in the initialization function, that exception is cached and rethrown on subsequent accesses of the <see cref="P:System.Lazy`1.Value" /> property. No value is created if an exception is thrown, so in such cases <see cref="P:System.Lazy`1.IsValueCreated" /> returns false.</para>
+            </item>
+            <item>
+              <para>If the mode is <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" />, the first thread that succeeds in running the initialization function (or the default constructor) creates the value for the <see cref="T:System.Lazy`1" /> instance. If the initialization function throws an exception on one thread, other threads can still try to initialize the <see cref="T:System.Lazy`1" /> instance. Until the value is created, the <see cref="P:System.Lazy`1.IsValueCreated" /> property returns false.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a value has been created for this <see cref="T:System.Lazy`1" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -139,13 +327,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method does not cause initialization.</para>
+          <para>The <see cref="P:System.Lazy`1.Value" /> property can be null after lazy initialization if the factory method that was specified for the <paramref name="valueFactory" /> parameter of the <see cref="M:System.Lazy`1.#ctor(System.Func{`0})" />, <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)" />, or <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Boolean)" /> constructor returns null. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a string representation of the <see cref="P:System.Lazy`1.Value" /> property for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of calling the <see cref="M:System.Object.ToString" /> method on the <see cref="P:System.Lazy`1.Value" /> property for this instance, if the value has been created (that is, if the <see cref="P:System.Lazy`1.IsValueCreated" /> property returns true). Otherwise, a string indicating that the value has not been created. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="C#" Value="public T Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T Value" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -159,9 +358,16 @@
         <ReturnType>T</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Lazy`1.IsValueCreated" /> property is false, accessing the <see cref="P:System.Lazy`1.Value" /> property forces initialization.</para>
+          <para>In addition to the exceptions that are listed, the <see cref="P:System.Lazy`1.Value" /> property can throw any unhandled exception that is thrown by the factory method that was passed to the <paramref name="valueFactory" /> parameter of the <see cref="M:System.Lazy`1.#ctor(System.Func{`0})" />, <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Threading.LazyThreadSafetyMode)" />, or <see cref="M:System.Lazy`1.#ctor(System.Func{`0},System.Boolean)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the lazily initialized value of the current <see cref="T:System.Lazy`1" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

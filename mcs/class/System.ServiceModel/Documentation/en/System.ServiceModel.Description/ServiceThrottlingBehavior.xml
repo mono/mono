@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceThrottlingBehavior" FullName="System.ServiceModel.Description.ServiceThrottlingBehavior">
+  <TypeSignature Language="C#" Value="public class ServiceThrottlingBehavior : System.ServiceModel.Description.IServiceBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceThrottlingBehavior extends System.Object implements class System.ServiceModel.Description.IServiceBehavior" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Description.IServiceBehavior</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.ServiceThrottlingBehavior" /> class to control various throughput settings that help prevent your application from running out of memory.</para>
+      <para>The <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentCalls" /> property limits the number of messages that currently process across a <see cref="T:System.ServiceModel.ServiceHost" />.</para>
+      <para>The <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentInstances" /> property limits the number of <see cref="T:System.ServiceModel.InstanceContext" /> objects that execute at one time across a <see cref="T:System.ServiceModel.ServiceHost" />.</para>
+      <para>The <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentSessions" /> property limits the number of sessions a <see cref="T:System.ServiceModel.ServiceHost" /> object can accept. </para>
+      <para>Because run-time load balancing requires experience running the application, using the <see cref="T:System.ServiceModel.Description.ServiceThrottlingBehavior" /> through an application configuration file is the most common method of modifying execution to maximize service performance.</para>
+      <block subset="none" type="note">
+        <para>A trace is written every time the value of these properties is reached. The first trace is written as a warning.</para>
+      </block>
+      <para>You can also set the values of this attribute by using the <format type="text/html"><a href="a337d064-1e64-4209-b4a9-db7fdb7e3eaf">&lt;serviceThrottling&gt;</a></format> element in an application configuration file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures run-time throughput settings that enable you to tune service performance.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceThrottlingBehavior ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the constructor when adding a configured <see cref="T:System.ServiceModel.Description.ServiceThrottlingBehavior" /> programmatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceThrottlingBehavior" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxConcurrentCalls">
+      <MemberSignature Language="C#" Value="public int MaxConcurrentCalls { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxConcurrentCalls" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentCalls" /> property specifies the maximum number of messages actively processing across a <see cref="T:System.ServiceModel.ServiceHost" /> object. Each channel can have one pending message that does not count against the value of <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentCalls" /> until indigo1 begins to process it. </para>
+          <para>You can also set the values of this attribute by using the <format type="text/html"><a href="a337d064-1e64-4209-b4a9-db7fdb7e3eaf">&lt;serviceThrottling&gt;</a></format> element in an application configuration file.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentCalls" /> should be set to less than the SQL connection pool size in queued scenarios.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the maximum number of messages actively processing across a <see cref="T:System.ServiceModel.ServiceHost" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxConcurrentInstances">
+      <MemberSignature Language="C#" Value="public int MaxConcurrentInstances { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxConcurrentInstances" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentInstances" /> property specifies the maximum number of <see cref="T:System.ServiceModel.InstanceContext" /> objects in the service. It is important to keep in mind the relationship between the <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentInstances" /> property and the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> property. If <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> is <see cref="F:System.ServiceModel.InstanceContextMode.PerSession" />, the resulting value is the total number of sessions. If <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode" /> is <see cref="F:System.ServiceModel.InstanceContextMode.PerCall" />, the resulting value is the number of concurrent calls. If a message arrives while the maximum number of <see cref="T:System.ServiceModel.InstanceContext" /> objects already exist, the message is held until an <see cref="T:System.ServiceModel.InstanceContext" /> object closes.</para>
+          <para>You can also set the values of this attribute by using the <format type="text/html"><a href="a337d064-1e64-4209-b4a9-db7fdb7e3eaf">&lt;serviceThrottling&gt;</a></format> element in an application configuration file.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the maximum number of <see cref="T:System.ServiceModel.InstanceContext" /> objects in the service that can execute at one time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxConcurrentSessions">
+      <MemberSignature Language="C#" Value="public int MaxConcurrentSessions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxConcurrentSessions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentSessions" /> property specifies the maximum number of sessions a <see cref="T:System.ServiceModel.ServiceHost" /> object can accept. It is important to understand that sessions in this case does not mean only channels that support reliable sessions (for example, <see cref="T:System.ServiceModel.NetNamedPipeBinding" /> supports sessions but does not include reliable sessions). </para>
+          <para>Each listener object can have one pending channel session that does not count against the value of <see cref="P:System.ServiceModel.Description.ServiceThrottlingBehavior.MaxConcurrentSessions" /> until indigo2 accepts the channel session and begins processing messages on it. This property is most useful in scenarios that make use of sessions.</para>
+          <para>When this property is set to a value less than the number of client threads, the requests from multiple clients may get queued in the same socket connection. The requests from the client that has not created a session with the service will be blocked till the service closes its session with the other clients if number of open sessions on the service has reached MaxConcurrentSessions. The client requests that are not served get timed out and the service closes the session abruptly. </para>
+          <para>To avoid this situation, run the client threads from different app domains so that the request messages go into different socket connections.</para>
+          <para />
+          <para>You can also set the values of this attribute by using the <format type="text/html"><a href="a337d064-1e64-4209-b4a9-db7fdb7e3eaf">&lt;serviceThrottling&gt;</a></format> element in an application configuration file.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the maximum number of sessions a <see cref="T:System.ServiceModel.ServiceHost" /> object can accept at one time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.AddBindingParameters">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.AddBindingParameters (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase, System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase, class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+        <Parameter Name="endpoints" Type="System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures the bindings to support the service behavior.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host for the service.</param>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoints exposed by the service.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding parameters to be configured to support the service behavior.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.ApplyDispatchBehavior (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures the service to support the service behavior.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description to be configured.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host for the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IServiceBehavior.Validate">
+      <MemberSignature Language="C#" Value="void IServiceBehavior.Validate (System.ServiceModel.Description.ServiceDescription description, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IServiceBehavior.Validate(class System.ServiceModel.Description.ServiceDescription description, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="description" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates that the service and host can support the service behavior.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description to be validated by the service behavior.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host to be validated by the service behavior.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

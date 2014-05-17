@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageSecurityOverHttp" FullName="System.ServiceModel.MessageSecurityOverHttp">
+  <TypeSignature Language="C#" Value="public class MessageSecurityOverHttp" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageSecurityOverHttp extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This object is accessed from the binding by means of the <see cref="P:System.ServiceModel.WSDualHttpBinding.Security" /> property, which returns a <see cref="T:System.ServiceModel.WSDualHttpSecurity" /> object. The <see cref="P:System.ServiceModel.WSDualHttpSecurity.Message" /> property provides a reference to the <see cref="T:System.ServiceModel.MessageSecurityOverHttp" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables setting message-level security properties on the wsDualHttpBinding binding.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AlgorithmSuite">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.SecurityAlgorithmSuite AlgorithmSuite { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.SecurityAlgorithmSuite AlgorithmSuite" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.SecurityAlgorithmSuite</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is most relevant when working with a non-indigo1 platform that uses a set of algorithms that are different than the default. You should be aware of the strengths and weaknesses of the relevant algorithms when making modifications to this setting.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the algorithm suite used for security messages at the SOAP level. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCredentialType">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.MessageCredentialType ClientCredentialType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.MessageCredentialType ClientCredentialType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.MessageCredentialType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used to set the MessageCredentialType that is used to authenticate the caller at the service. Valid types are:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.MessageCredentialType.Certificate" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.MessageCredentialType.IssuedToken" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.MessageCredentialType.None" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.MessageCredentialType.UserName" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.MessageCredentialType.Windows" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the type of client credential used for client authentication in the wsHttpBinding or wsDualHttpBinding bindings.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsSecureConversationEnabled">
+      <MemberSignature Language="C#" Value="protected virtual bool IsSecureConversationEnabled ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool IsSecureConversationEnabled() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only used in extensibility scenarios to indicate whether an instance of a class derived from <see cref="T:System.ServiceModel.MessageSecurityOverHttp" /> is configured to perform secure conversation as described in WS-SecurityConversation. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns true, unless overridden in a derived class.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateServiceCredential">
+      <MemberSignature Language="C#" Value="public bool NegotiateServiceCredential { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool NegotiateServiceCredential" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to true, requires WS-Trust and WS-SecureConversation to be supported by the client and the service. Setting this property to false does not require WS-Trust or WS-SecureConversation to be supported.</para>
+          <para>For Anonymous, Username or Certificate client credential types, setting this property to false implies that the service certificate must be available at the client out of band and that the client must specify the service's certificate to use.</para>
+          <para>In the case of Windows credentials, setting this property to false causes an authentication based on KerberosToken. This requires that the client and service be part of a Kerberos domain. This mode is interoperable with SOAP stacks that implement the Kerberos token profile from OASIS. Setting this property to true causes a SOAP negotiation that tunnels SPNego exchange over SOAP messages. This mode is not interoperable.</para>
+          <para>This property indicates whether the service credential is negotiated automatically between the client and the service. If this property is true, then such negotiation occurs. If this property is false, then the service credentials must be specified at the client before communication with the service can occur.</para>
+          <para>If this property is set to false, and the binding is configured to use Windows as a client credential type, the service account must be associated with a Service Principal Name (SPN). To do this, run the service under the NETWORK SERVICE account, or LOCAL SYSTEM account. Alternatively, use the SetSpn.exe tool to create an SPN for the service account. In either case, the client must use the correct SPN in the <format type="text/html"><a href="3f3b85d3-20f2-4cd8-8a6a-ee18befbd165">&lt;servicePrincipalName&gt;</a></format> element, or by using the <see cref="T:System.ServiceModel.EndpointAddress" /> constructor. crdefault <format type="text/html"><a href="a4c8f52c-5b30-45c4-a545-63244aba82be">Specifying the Identity</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the service credential is provisioned at the client out of band or is obtained from the service through a process of negotiation.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

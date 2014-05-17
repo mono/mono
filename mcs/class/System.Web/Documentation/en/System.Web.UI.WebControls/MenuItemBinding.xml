@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MenuItemBinding" FullName="System.Web.UI.WebControls.MenuItemBinding">
   <TypeSignature Language="C#" Value="public sealed class MenuItemBinding : ICloneable, System.Web.UI.IDataSourceViewSchemaAccessor, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -24,9 +25,181 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source where each data item contains multiple fields (such as an XML element with several attributes), if no menu item bindings are defined, a menu item displays the value returned by the ToString() method of the data item by default. In the case of an XML element, the menu item displays the element name, which shows the underlying structure of the menu, but is not very useful otherwise. You can bind the properties of a menu item to a specific field by specifying menu item bindings. A <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object defines the relationship between each data item and the menu item it is binding to.</para>
+      <block subset="none" type="note">
+        <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control, menu item bindings have no effect. Binding is performed automatically using the site map provider.</para>
+      </block>
+      <para>The <see cref="T:System.Web.UI.WebControls.Menu" /> control stores its <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects in the <see cref="P:System.Web.UI.WebControls.Menu.DataBindings" /> property and applies the bindings to the data source to create a one-to-one relationship between the menu hierarchy and the data source hierarchy. For each data item in the data source, the <see cref="T:System.Web.UI.WebControls.Menu" /> control attempts to match the data item to a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object to create the corresponding <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+      <para>When creating a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object, you must specify the criteria for binding. The criteria indicate when a data item should be bound to a menu item. You can specify the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" />, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" />, or both.</para>
+      <para>A menu item depth specifies the menu level that gets bound. For example, the following <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> declaration binds the Name and ID fields of the data source to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> and <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> properties, respectively, of all nodes with a depth of 0:</para>
+      <code>&lt;asp:MenuItemBinding Depth="0" TextField="Name" ValueField="ID"&gt;</code>
+      <para>A data member specifies the type of the data item in the underlying data source, but can represent different information depending on the data source. Each data item in a hierarchical data source (represented by an <see cref="T:System.Web.UI.IHierarchyData" /> object) exposes a <see cref="P:System.Web.UI.IHierarchyData.Type" /> property, which specifies the type of the data item. For example, the data member for an XML element specifies the name of the element. When a data source contains multiple data item types, the data member specifies which data item type to use. The following <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> declaration binds the &lt;Book&gt; elements of an <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control to all the menu items in the menu, regardless of the location in the hierarchy:</para>
+      <code>&lt;asp:MenuItemBinding DataMember="Book" TextField="Title" ValueField= "ISBN"&gt;</code>
+      <para>Sometimes you might need to create a menu item binding that specifies both a depth and a data member. This is often used when the data source contains items at different levels that have the same data member value. For example, you can have &lt;Item&gt; elements that appear at different levels within an XML file. The following <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> declarations show how to specify menu item bindings that apply to identical data members at different menu depths:</para>
+      <para>&lt;asp:MenuItemBinding DataMember="Item" Depth="1" TextField="Title"&gt;</para>
+      <para>&lt;asp:MenuItemBinding DataMember="Item" Depth="2" TextField="ISBN"&gt;</para>
+      <para>If a menu item binding is defined without a depth and a data member, the menu item binding is applied to all menu items within the menu. This is commonly used when all data items have the same properties and should be displayed identically, regardless of the menu depth.</para>
+      <para>After the binding criteria are established, you can then bind a property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object that can be bound to a value. You can bind to a field of a data item or to a static value. When bound to a static value, all <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied share the same value. Properties bound to fields contain the values of the corresponding field from the data source.</para>
+      <block subset="none" type="note">
+        <para>You can selectively override a bound property in a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object by setting the corresponding property directly.</para>
+      </block>
+      <para>The following table lists the properties of the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> class that allow you to bind a property of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data item.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrlField" />
+            </para>
+          </term>
+          <description>
+            <para>The field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrlField" />
+            </para>
+          </term>
+          <description>
+            <para>The field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" />
+            </para>
+          </term>
+          <description>
+            <para>The field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTipField" />
+            </para>
+          </term>
+          <description>
+            <para>The field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ValueField" />
+            </para>
+          </term>
+          <description>
+            <para>The field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+      </list>
+      <para>The following table lists the properties of the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> class that allow you to bind a property of the <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a static value.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrl" /> </para>
+          </term>
+          <description>
+            <para>The static value to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrl" /> </para>
+          </term>
+          <description>
+            <para>The static value to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> </para>
+          </term>
+          <description>
+            <para>The static value to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Text" /> </para>
+          </term>
+          <description>
+            <para>The static value to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTip" /> </para>
+          </term>
+          <description>
+            <para>The static value to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Value" /> </para>
+          </term>
+          <description>
+            <para>The static value to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. </para>
+          </description>
+        </item>
+      </list>
+      <para>If conflicting <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects are defined, the <see cref="T:System.Web.UI.WebControls.Menu" /> control applies the menu item bindings in the following order of precedence: </para>
+      <list type="ordered">
+        <item>
+          <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches both a depth and a data member.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches the data member only.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches the depth only.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines neither the depth nor the data member. (This type of menu item binding is applied to all menu items in the menu.) </para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that does not have a match in the data source. In this case, the value returned by the ToString() method of the data item is then bound to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> and <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> properties of the menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> class also allows you to format the text displayed in a menu item by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.FormatString" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the relationship between a data item and the menu item it is binding to in a <see cref="T:System.Web.UI.WebControls.Menu" /> control. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +207,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> class. It is often used when dynamically populating the <see cref="P:System.Web.UI.WebControls.Menu.DataBindings" /> collection of a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +233,41 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When creating a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object, you must specify the criteria for binding. The criteria indicate when a data item should be bound to a menu item. You can specify the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>When the data source contains multiple elements or tables, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property to specify the element or table to bind to a menu item. A data member specifies the type of the data item in the underlying data source, but can represent different information depending on the data source. Each data item in a hierarchical data source (represented by a <see cref="T:System.Web.UI.IHierarchyData" /> object) exposes a <see cref="P:System.Web.UI.IHierarchyData.Type" /> property, which specifies the type of the data item. For example, the data member for an XML element specifies the name of the element. The following <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> declaration binds the &lt;Book&gt; elements of an <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control to all the menu items in the menu, regardless of the location in the hierarchy: </para>
+          <code>&lt;asp:MenuItemBinding DataMember="Book" TextField="Title" ValueField= "ISBN"&gt;</code>
+          <para>Sometimes you might need to create a menu item binding that specifies both a depth and a data member. This is often used when the data source contains items at different levels that have the same data member value. For example, you can have &lt;Item&gt; elements that appear at different levels within an XML file. The following <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> declarations show how to specify menu item bindings that apply to identical data members at different menu depths:</para>
+          <para>&lt;asp:MenuItemBinding DataMember="Item" Depth="1" TextField="Title"&gt;</para>
+          <para>&lt;asp:MenuItemBinding DataMember="Item" Depth="2" TextField="ISBN"&gt;</para>
+          <para>If a menu item binding is defined without a depth or a data member, the menu item binding is applied to all menu items within the menu. This is commonly used when all data items have the same properties and should be displayed identically, regardless of the menu depth.</para>
+          <para>After the binding criteria are established, you can then bind a property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object that can be bound to a value. You can bind to a field of a data item or to a static value. When bound to a static value, all <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied share the same value. Properties bound to fields contain the values of the field from the data source.</para>
+          <para>If conflicting <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects are defined, the <see cref="T:System.Web.UI.WebControls.Menu" /> control applies the menu item bindings in the following order of precedence: </para>
+          <list type="ordered">
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches both a depth and a data member.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches the data member only.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches the depth only.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines neither the depth nor the data member. (This type of menu item binding is applied to all menu items in the menu.) </para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that does not have a match in the data source. In this case, the value returned by the ToString() method of the data item is then bound to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> and <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> properties of the menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data member to bind to a menu item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +285,41 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When creating a <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object, you must specify the criteria for binding. The criteria indicate when a data item should be bound to a menu item. You can specify the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property to specify the menu depth at which to apply the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object. For example, the following <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> declaration binds the Name and ID fields of the data source to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> and <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> properties, respectively, of all menu items with a depth of 0:</para>
+          <code>&lt;asp:MenuItemBinding Depth="0" TextField="Name" ValueField="ID"&gt;</code>
+          <para>Sometimes you might need to create a menu item binding that specifies both a depth and a data member. This is often used when the data source contains items at different levels that have the same data member value. For example, you can have &lt;Item&gt; elements that appear at different levels within an XML file. The following <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> declarations show how to specify menu item bindings that apply to identical data members at different menu depths:</para>
+          <para>&lt;asp:MenuItemBinding DataMember="Item" Depth="1" TextField="Title"&gt;</para>
+          <para>&lt;asp:MenuItemBinding DataMember="Item" Depth="2" TextField="ISBN"&gt;</para>
+          <para>If a menu item binding is defined without a depth and a data member, the menu item binding is applied to all menu items within the menu. This is commonly used when all data items have the same properties and should be displayed identically, regardless of the menu depth.</para>
+          <para>After the binding criteria are established, you can then bind a property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object that can be bound to a value. You can bind to a field of a data item or to a static value. When bound to a static value, all <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied share the same value. Properties bound to fields contain the values of the field from the data source.</para>
+          <para>If conflicting <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> objects are defined, the <see cref="T:System.Web.UI.WebControls.Menu" /> control applies the menu item bindings in the following order of precedence: </para>
+          <list type="ordered">
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches both a depth and a data member.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches the data member only.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines and matches the depth only.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that defines neither the depth nor the data member. (This type of menu item binding is applied to all menu items in the menu.) </para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object that does not have a match in the data source. In this case, the value returned by the ToString() method of the data item is then bound to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> and <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> properties of the menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the menu depth to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,10 +337,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Enabled" /> property to set the <see cref="P:System.Web.UI.WebControls.MenuItem.Enabled" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This setting is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. When this property is set to false, the menu item is disabled and no pop-out image that indicates child items is displayed. Setting this property to false for a menu item essentially makes the menu item the end of that node, where no further levels are shown off of that node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied is enabled, allowing the item to display a pop-out image and any child menu items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -120,10 +367,23 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.EnabledField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Enabled" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+          <block subset="none" type="note">
+            <para> You can override the enabling of an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.Enabled" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Enabled" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.EnabledField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.EnabledField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Enabled" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -144,10 +404,96 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItemBinding.FormatString" /> property is used to provide a custom format for a menu item's text. The format string can consist of a literal string, a placeholder, or both. The literal string is displayed verbatim, while the placeholder is replaced with the value that is bound to the menu item's text.</para>
+          <para>The placeholder is split into two parts, separated by a colon, in the form {<paramref name="A" />:<paramref name="Bxx" />}. For example, {0:F2} displays a fixed-point number with two decimal places.</para>
+          <block subset="none" type="note">
+            <para>The placeholder string must be enclosed in braces to indicate that it is a placeholder and not a literal string. Any text outside the braces is displayed as literal text.</para>
+          </block>
+          <para>Keeping to the standard formatting string syntax, the value before the colon (<paramref name="A" /> in the general example) specifies the parameter index in a zero-based list of parameters. Because only one value can be displayed in each menu item, the parameter index can be set only to 0.</para>
+          <para>The character after the colon (<paramref name="B" /> in the general example) specifies the display format for the value. The following table lists the common formats.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Format character </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>C</para>
+              </term>
+              <description>
+                <para>Displays numeric values in currency format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>D</para>
+              </term>
+              <description>
+                <para>Displays numeric values in decimal format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E</para>
+              </term>
+              <description>
+                <para>Displays numeric values in scientific (exponential) format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F</para>
+              </term>
+              <description>
+                <para>Displays numeric values in fixed format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>G</para>
+              </term>
+              <description>
+                <para>Displays numeric values in general format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>N</para>
+              </term>
+              <description>
+                <para>Displays numeric values in number format.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>X</para>
+              </term>
+              <description>
+                <para>Displays numeric values in hexadecimal format.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The format characters are not case-sensitive, except for X, which displays the hexadecimal characters in the case specified.</para>
+          </block>
+          <para>The value after the format character (<paramref name="xx" /> in the general example) specifies the number of significant digits or decimal places to display.</para>
+          <para>For more information on formatting strings, see <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Overview</a></format>.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that specifies the display format for the text of a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -171,10 +517,23 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrl" /> property to specify the URL of a custom image to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This image is shared with all <see cref="T:System.Web.UI.WebControls.MenuItem" /> objects to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. The image is displayed next to a menu item's text and can be in any file format (.jpg, .gif, .bmp, and so on), as long as the client's browser supports that format.</para>
+          <block subset="none" type="note">
+            <para>You can override the image for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property directly.</para>
+          </block>
+          <para>Instead of using this property to display the same image in each menu item, you can also use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrlField" /> property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data source. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image that is displayed next to the text of a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -195,10 +554,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrlField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field. The image is displayed next to a menu item's text and can be in any file format (.jpg, .gif, .bmp, and so on), as long as the client's browser supports that format.</para>
+          <block subset="none" type="note">
+            <para> You can override the image for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>Instead of using this property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field, you can also bind it to a static value by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrl" /> property. This allows you to display the same image in each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ImageUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -222,10 +595,23 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrl" /> property to specify the URL to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This URL is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. When the user clicks the menu item, the user is taken to the specified URL.</para>
+          <block subset="none" type="note">
+            <para>You can override the URL for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property directly.</para>
+          </block>
+          <para>Instead of using this property to navigate to the same URL in each menu item, you can also bind the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data source by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrlField" /> property. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to link to when a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -246,10 +632,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrlField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field. The user is taken to the corresponding URL when the menu item is clicked.</para>
+          <block subset="none" type="note">
+            <para>You can override the URL for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>Instead of using this property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field, you can also bind it to a static value by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrl" /> property. This allows you to navigate to the same URL from each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.NavigateUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.NavigateUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,10 +673,23 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrl" /> property to specify the URL of a <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This URL is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>You can override the URL for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property directly.</para>
+          </block>
+          <para>You can bind the <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data source by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrlField" /> property. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image that indicates the presence of a dynamic submenu for a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -297,10 +710,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrlField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field. The image at the corresponding URL is displayed for each menu item.</para>
+          <block subset="none" type="note">
+            <para>You can override the URL for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>Instead of using this property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field, you can also bind it to a static value by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrl" /> property. This allows you to navigate to the same URL from each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.PopOutImageUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.PopOutImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -318,10 +745,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Selectable" /> property to set the <see cref="P:System.Web.UI.WebControls.MenuItem.Selectable" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This setting is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. When this property is set to false, the menu item is not "clickable" but any child items are displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied can be selected, or is "clickable."</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -342,10 +775,23 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SelectableField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Selectable" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+          <block subset="none" type="note">
+            <para> You can override the enabling of an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.Selectable" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Selectable" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SelectableField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SelectableField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Selectable" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -369,10 +815,23 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrl" /> property to specify the URL of a <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This URL is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>You can override the URL for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property directly.</para>
+          </block>
+          <para>Instead of using this property to indicate the same URL in each menu item, you can also bind the <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data source by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrlField" /> property. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL to an image displayed below the text of a menu item (to separate it from other menu items) for a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -393,10 +852,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrlField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field. The image at the corresponding URL is displayed for each menu item.</para>
+          <block subset="none" type="note">
+            <para>You can override the URL for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>Instead of using this property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field, you can also bind it to a static value by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrl" /> property. This allows you to navigate to the same URL from each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrl" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrlField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.SeparatorImageUrlField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.SeparatorImageUrl" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -413,9 +886,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.MenuItemBinding.System#ICloneable#Clone" /> method is a helper function that creates a copy of the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object from which this method is called.</para>
+          <block subset="none" type="note">
+            <para>This method is used primarily by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents a copy of the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IDataSourceViewSchemaAccessor.DataSourceViewSchema">
@@ -428,9 +913,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> instance is cast to an <see cref="T:System.Web.UI.IDataSourceViewSchemaAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IDataSourceViewSchemaAccessor.DataSourceViewSchema" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -443,9 +934,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is saving changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -462,8 +956,11 @@
       </Parameters>
       <Docs>
         <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the node's previously saved view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -477,9 +974,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the view state changes to an <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the view state changes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -493,8 +996,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this method has been called on a server control, the <see cref="P:System.Web.UI.Control.IsTrackingViewState" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object to track changes to its view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -509,10 +1018,79 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> property to specify the window or frame in which to display the Web content linked to a menu item when that menu item is clicked.</para>
+          <block subset="none" type="note">
+            <para>Setting this property overrides the <see cref="P:System.Web.UI.WebControls.Menu.Target" /> property of the <see cref="T:System.Web.UI.WebControls.Menu" /> control for the menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. You can selectively override this property by setting the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property of each menu item directly.</para>
+          </block>
+          <para>Target values must begin with a letter in the range of A through Z (case-insensitive), except for certain special values that begin with an underscore, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search</para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine if the _search value is supported.  For example, Microsoft Internet Explorer 5.0 and later support the _search target value.</para>
+          </block>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> property renders as a target attribute. The target attribute on anchor elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object must be XHTML 1.1 compliant. For more information, refer to the topic <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+            <para>When creating accessible Web pages, it is strongly recommended you avoid using the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> property to target another window. For more information, see <format type="text/html"><a href="9b5f3e05-e88d-4248-a5f4-9e64850fa0ae">ASP.NET Accessibility</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target window or frame in which to display the Web page content associated with a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -533,10 +1111,73 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TargetField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property specifies the window or frame in which to display the Web content linked to a menu item when that menu item is clicked. Values must begin with a letter in the range of A through Z (case-insensitive), except for certain special values that begin with an underscore, as shown in the following table. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> property renders as a target attribute. The target attribute on anchor elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> must be XHTML 1.1 compliant. For more information, refer to the topic <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+            <para>When creating accessible Web pages, it is strongly recommended you avoid using the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> property to target another window. For more information, see <format type="text/html"><a href="9b5f3e05-e88d-4248-a5f4-9e64850fa0ae">ASP.NET Accessibility</a></format>.</para>
+          </block>
+          <para>Note that setting this property overrides the <see cref="P:System.Web.UI.WebControls.Menu.Target" /> property of the <see cref="T:System.Web.UI.WebControls.Menu" /> control for this menu item. Setting the <see cref="P:System.Web.UI.WebControls.Menu.Target" /> property to open a new window can make it difficult for users of assistive technology devices to use the page.</para>
+          <block subset="none" type="note">
+            <para>You can override enabling an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Target" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TargetField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TargetField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Target" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -557,10 +1198,25 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Text" /> property to specify the text to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This text is displayed in a menu item and is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>You can override the text for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property directly.</para>
+          </block>
+          <para>Instead of using this property to display the same text in each menu item, you can also bind the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data source by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> property. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Text" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> property takes precedence.</para>
+          </block>
+          <para>You cannot create empty nodes in a <see cref="T:System.Web.UI.WebControls.Menu" /> control by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Text" /> or <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> properties to the empty string (""). Setting these properties to the empty string has the same effect as not setting the properties. In that case, the <see cref="T:System.Web.UI.WebControls.Menu" /> control creates a default binding using the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property. For more information, see <format type="text/html"><a href="f9219396-a0fa-481f-894d-e3d9c67d64f2">Accessing Data with ASP.NET</a></format>.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed for the menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -581,10 +1237,25 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field. This text is displayed in the menu items.</para>
+          <block subset="none" type="note">
+            <para>You can override the text for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>You cannot create empty nodes in a <see cref="T:System.Web.UI.WebControls.Menu" /> control by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Text" /> or <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> properties to the empty string (""). Setting these properties to the empty string has the same effect as not setting the properties. In that case, the <see cref="T:System.Web.UI.WebControls.Menu" /> control creates a default binding using the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property. For more information, see <format type="text/html"><a href="f9219396-a0fa-481f-894d-e3d9c67d64f2">Accessing Data with ASP.NET</a></format>.</para>
+          <para>Instead of using this property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field, you can also bind it to a static value by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Text" /> property. This allows you to display the same text in each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Text" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.TextField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -605,10 +1276,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTip" /> property to specify the text to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This ToolTip is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. When the user positions the mouse pointer over a menu item, the specified text is displayed.</para>
+          <block subset="none" type="note">
+            <para>You can override the ToolTip for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property directly.</para>
+          </block>
+          <para>Instead of using this property to specify the same ToolTip for each menu item, you can also bind the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data source by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTipField" /> property. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTip" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTipField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTipField" /> property takes precedence.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ToolTip text for a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -629,10 +1314,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTipField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field. The specified text is displayed when the user positions the mouse pointer over a menu item.</para>
+          <block subset="none" type="note">
+            <para>You can override the text for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>Instead of using this property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field, you can also bind it to a static value by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTip" /> property. This allows you to display the same ToolTip for each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTip" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTipField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ToolTipField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.ToolTip" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -653,10 +1352,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Value" /> property to specify the value to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. This value is shared with all menu items to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied. The specified value is not displayed in a menu item and is used to store any additional data about a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied, such as data used for handling postback events.</para>
+          <block subset="none" type="note">
+            <para>You can override the value for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property directly.</para>
+          </block>
+          <para>Instead of using this property to specify the same value for each menu item, you can also bind the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field of a data source by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ValueField" /> property. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Value" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ValueField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ValueField" /> property takes precedence.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a nondisplayed value used to store any additional data about a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied, such as data used for handling postback events.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -677,10 +1390,24 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.Menu" /> control is bound to a data source, use the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ValueField" /> property to specify the name of the field to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object. When rendered, the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied contains the corresponding value from the field. The specified value is not displayed in a menu item and is used to store any additional data about a menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied, such as data used for handling postback events.</para>
+          <block subset="none" type="note">
+            <para>You can override the value for an individual menu item by setting its <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property directly.</para>
+          </block>
+          <para>If the data source contains multiple tables or attributes, you must first establish the binding criteria by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Depth" /> property, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.DataMember" /> property, or both.</para>
+          <para>Instead of using this property to bind the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to a field, you can also bind it to a static value by setting the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Value" /> property. This allows you to specify the same value for each menu item to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.Value" /> and <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ValueField" /> properties are both set, the <see cref="P:System.Web.UI.WebControls.MenuItemBinding.ValueField" /> property takes precedence.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the field from the data source to bind to the <see cref="P:System.Web.UI.WebControls.MenuItem.Value" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> object to which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is applied.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

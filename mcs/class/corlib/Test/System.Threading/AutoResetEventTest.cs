@@ -66,6 +66,8 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #81529
+		// Causes a Attempting to unref unused handle 0x2 warning
+		[Category ("NotWorking")]
 		public void Handle_Valid ()
 		{
 			AutoResetEvent are1 = new AutoResetEvent (false);

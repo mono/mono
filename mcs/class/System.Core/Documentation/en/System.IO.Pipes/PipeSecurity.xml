@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PipeSecurity" FullName="System.IO.Pipes.PipeSecurity">
+  <TypeSignature Language="C#" Value="public class PipeSecurity : System.Security.AccessControl.NativeObjectSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PipeSecurity extends System.Security.AccessControl.NativeObjectSecurity" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Security.AccessControl.NativeObjectSecurity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.Pipes.PipeSecurity" /> class specifies the access rights for a pipe and how access attempts are audited.  This class represents access and audit rights as a set of rules. Each access rule is represented by a <see cref="T:System.IO.Pipes.PipeAccessRule" /> object, while each audit rule is represented by a <see cref="T:System.IO.Pipes.PipeAuditRule" /> object.</para>
+      <para>The <see cref="T:System.IO.Pipes.PipeSecurity" /> class is an abstraction of the underlying Microsoft Windows file security system. In this system, each pipe has a discretionary access control list (DACL), which controls access to the pipe, and a system access control list (SACL), which specifies the access control attempts that are audited.  The <see cref="T:System.IO.Pipes.PipeAccessRule" /> and <see cref="T:System.IO.Pipes.PipeAuditRule" /> classes are abstractions of the access control entries (ACEs) that comprise DACLs and SACLs.      </para>
+      <para>The <see cref="T:System.IO.Pipes.PipeSecurity" /> class hides many of the details of DACLs and SACLs; you do not have to worry about ACE ordering or null DACLS.</para>
+      <para>Use the <see cref="T:System.IO.Pipes.PipeSecurity" /> class to retrieve, add, or change the access rules that represent the DACL and SACL of a pipe.</para>
+      <para>To persist new or changed access or audit rules to a pipe, use the <see cref="M:System.IO.Pipes.PipeStream.SetAccessControl(System.IO.Pipes.PipeSecurity)" /> method. To retrieve access or audit rules from an existing file, use the <see cref="M:System.IO.Pipes.PipeStream.GetAccessControl" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the access control and audit security for a pipe.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PipeSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an empty <see cref="T:System.IO.Pipes.PipeSecurity" /> object that is not based on an existing pipe. You can then populate the object with access control information and apply it to a pipe.</para>
+          <para>You can add access or audit rules to the <see cref="T:System.IO.Pipes.PipeSecurity" /> object using the <see cref="M:System.IO.Pipes.PipeSecurity.AddAccessRule(System.IO.Pipes.PipeAccessRule)" /> method. You can remove access or audit rules using the <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAccessRule(System.IO.Pipes.PipeAccessRule)" /> method.</para>
+          <para>To persist new or changed access or audit rules to a pipe, use the <see cref="M:System.IO.Pipes.PipeStream.SetAccessControl(System.IO.Pipes.PipeSecurity)" /> method. To retrieve access or audit rules from an existing file, use the <see cref="M:System.IO.Pipes.PipeStream.GetAccessControl" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Pipes.PipeSecurity" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRightType">
+      <MemberSignature Language="C#" Value="public override Type AccessRightType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AccessRightType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that derive from the <see cref="T:System.Security.AccessControl.ObjectSecurity" /> class override the <see cref="P:System.Security.AccessControl.ObjectSecurity.AccessRightType" /> property and return the type they use to represent access rights. When you work with arrays or collections that contain multiple types of security objects, use this property to determine the correct enumeration type to use with each security object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the securable object that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRuleFactory">
+      <MemberSignature Language="C#" Value="public override System.Security.AccessControl.AccessRule AccessRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.AccessControl.AccessRule AccessRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AccessRule</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="identityReference" Type="System.Security.Principal.IdentityReference" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="isInherited" Type="System.Boolean" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The recommended way to create access control rules is to use the constructors of the <see cref="T:System.IO.Pipes.PipeAccessRule" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AccessRule" /> class with the specified values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AccessRule" /> object that this method creates.</para>
+        </returns>
+        <param name="identityReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity that the access rule applies to. It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask of this rule. The access mask is a 32-bit collection of anonymous bits, the meaning of which is defined by the individual integrators</param>
+        <param name="isInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this rule is inherited from a parent container; otherwise false.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.InheritanceFlags" /> values that specifies the inheritance properties of the access rule.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.PropagationFlags" /> values that specifies whether inherited access rules are automatically propagated. The propagation flags are ignored if <paramref name="inheritanceFlags" /> is set to <see cref="F:System.Security.AccessControl.InheritanceFlags.None" />.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the valid access control type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRuleType">
+      <MemberSignature Language="C#" Value="public override Type AccessRuleType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AccessRuleType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that derive from the <see cref="T:System.Security.AccessControl.ObjectSecurity" /> class override the <see cref="P:System.Security.AccessControl.ObjectSecurity.AccessRuleType" /> property and return the type they use to represent access rights. When you work with arrays or collections that contain multiple types of security objects, use this property to determine the correct enumeration type to use with each security object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the object that is associated with the access rules of the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAccessRule">
+      <MemberSignature Language="C#" Value="public void AddAccessRule (System.IO.Pipes.PipeAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAccessRule(class System.IO.Pipes.PipeAccessRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAccessRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.AddAccessRule(System.IO.Pipes.PipeAccessRule)" /> method adds a new rule to the list of rules that a <see cref="T:System.IO.Pipes.PipeSecurity" /> object contains.If an access control list (ACL) already exists for the specified rule, the <see cref="M:System.IO.Pipes.PipeSecurity.AddAccessRule(System.IO.Pipes.PipeAccessRule)" /> method will still add the rule, with one exception: a <see cref="T:System.IO.Pipes.PipeAccessRule" /> object that is created using the <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> value supersedes an object that is created using the <see cref="F:System.Security.AccessControl.AccessControlType.Allow" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an access rule to the Discretionary Access Control List (DACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAuditRule">
+      <MemberSignature Language="C#" Value="public void AddAuditRule (System.IO.Pipes.PipeAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAuditRule(class System.IO.Pipes.PipeAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAuditRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.AddAuditRule(System.IO.Pipes.PipeAuditRule)" /> method adds a new audit rule to the list of rules that a <see cref="T:System.IO.Pipes.PipeSecurity" /> object contains.</para>
+          <para>If an audit rule already exists for the specified rule, the <see cref="M:System.IO.Pipes.PipeSecurity.AddAuditRule(System.IO.Pipes.PipeAuditRule)" /> method will still add the rule.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an audit rule to the System Access Control List (SACL)that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AuditRuleFactory">
+      <MemberSignature Language="C#" Value="public override sealed System.Security.AccessControl.AuditRule AuditRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.AccessControl.AuditRule AuditRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AuditFlags flags) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AuditRule</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="identityReference" Type="System.Security.Principal.IdentityReference" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="isInherited" Type="System.Boolean" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The recommended way to create audit rules is to use the constructors of the <see cref="T:System.IO.Pipes.PipeAuditRule" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AuditRule" /> class with the specified values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AuditRule" /> object that this method creates.</para>
+        </returns>
+        <param name="identityReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity that the access rule applies to. It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask of this rule. The access mask is a 32-bit collection of anonymous bits, the meaning of which is defined by the individual integrators</param>
+        <param name="isInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this rule is inherited from a parent container; otherwise, false..</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.InheritanceFlags" /> values that specifies the inheritance properties of the access rule.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.PropagationFlags" /> values that specifies whether inherited access rules are automatically propagated. The propagation flags are ignored if <paramref name="inheritanceFlags" /> is set to <see cref="F:System.Security.AccessControl.InheritanceFlags.None" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AuditFlags" /> values that specifies the valid access control type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AuditRuleType">
+      <MemberSignature Language="C#" Value="public override Type AuditRuleType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AuditRuleType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that derive from the <see cref="T:System.Security.AccessControl.ObjectSecurity" /> class override the <see cref="P:System.Security.AccessControl.ObjectSecurity.AuditRuleType" /> property and return the type they use to represent access rights. When you work with arrays or collections that contain multiple types of security objects, use this property to determine the correct enumeration type to use with each security object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> object associated with the audit rules of the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Persist">
+      <MemberSignature Language="C#" Value="protected void Persist (System.Runtime.InteropServices.SafeHandle handle);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance void Persist(class System.Runtime.InteropServices.SafeHandle handle) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handle" Type="System.Runtime.InteropServices.SafeHandle" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the specified sections of the security descriptor that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object to permanent storage.</para>
+        </summary>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle of the securable object that the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object is associated with.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Persist">
+      <MemberSignature Language="C#" Value="protected void Persist (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance void Persist(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the specified sections of the security descriptor that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object to permanent storage.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the securable object that the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object is associated with.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRule">
+      <MemberSignature Language="C#" Value="public bool RemoveAccessRule (System.IO.Pipes.PipeAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAccessRule(class System.IO.Pipes.PipeAccessRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAccessRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAccessRule(System.IO.Pipes.PipeAccessRule)" /> method removes either all matching <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> access rules or all matching <see cref="F:System.Security.AccessControl.AccessControlType.Allow" /> access rules from the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object. For example, you can use this method to remove all <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> access rules for a user by passing a <see cref="T:System.IO.Pipes.PipeAccessRule" /> object created using the <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> value, the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value, and a user account. The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAccessRule(System.IO.Pipes.PipeAccessRule)" /> method removes any deny rules that specify the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value or the <see cref="F:System.IO.Pipes.PipeAccessRights.Write" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an access rule from the Discretionary Access Control List (DACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation is successful; otherwise, false.</para>
+        </returns>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRuleSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAccessRuleSpecific (System.IO.Pipes.PipeAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAccessRuleSpecific(class System.IO.Pipes.PipeAccessRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAccessRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAccessRule(System.IO.Pipes.PipeAccessRule)" /> method removes either all matching <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> access rules or all matching <see cref="F:System.Security.AccessControl.AccessControlType.Allow" /> access rules from the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object. For example, you can use this method to remove all <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> access rules for a user by passing a <see cref="T:System.IO.Pipes.PipeAccessRule" /> object created using the <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> value, the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value, and a user account. The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAccessRule(System.IO.Pipes.PipeAccessRule)" /> method removes any deny rules that specify the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value or the <see cref="F:System.IO.Pipes.PipeAccessRights.Write" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified access rule from the Discretionary Access Control List (DACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRule">
+      <MemberSignature Language="C#" Value="public bool RemoveAuditRule (System.IO.Pipes.PipeAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAuditRule(class System.IO.Pipes.PipeAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAuditRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAuditRule(System.IO.Pipes.PipeAuditRule)" /> method removes either all matching <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> audit rules or all matching <see cref="F:System.Security.AccessControl.AccessControlType.Allow" /> audit rules from the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.  For example, you can use this method to remove all <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> audit rules for a user by passing a <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> object created using the <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> value, the <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> value, and a user account.  When you do this, the <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAuditRule(System.IO.Pipes.PipeAuditRule)" /> method removes any deny rules that specify the <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> value or the <see cref="F:System.Security.AccessControl.AuditFlags.Success" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an audit rule from the System Access Control List (SACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the audit rule was removed; otherwise, false</para>
+        </returns>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRuleAll">
+      <MemberSignature Language="C#" Value="public void RemoveAuditRuleAll (System.IO.Pipes.PipeAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAuditRuleAll(class System.IO.Pipes.PipeAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAuditRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAuditRuleAll(System.IO.Pipes.PipeAuditRule)" /> method removes all audit rules for the specified user.  It ignores all values in the <see cref="T:System.IO.Pipes.PipeAuditRule" /> object except the user account.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all audit rules that have the same security identifier as the specified audit rule from the System Access Control List (SACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRuleSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAuditRuleSpecific (System.IO.Pipes.PipeAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAuditRuleSpecific(class System.IO.Pipes.PipeAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAuditRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAuditRuleSpecific(System.IO.Pipes.PipeAuditRule)" /> method removes the specified matching <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> audit rule or the specified matching <see cref="F:System.Security.AccessControl.AccessControlType.Allow" /> audit rule from the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.  For example, you can use this method to remove a specified <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> audit rule for a user by passing a <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> object created using the <see cref="F:System.Security.AccessControl.AccessControlType.Deny" /> value, the <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> value, and a user account.  When you do this, the <see cref="M:System.IO.Pipes.PipeSecurity.RemoveAuditRuleSpecific(System.IO.Pipes.PipeAuditRule)" /> method removes only a deny rule that specifies the <see cref="F:System.Security.AccessControl.AuditFlags.Failure" /> value.  It does not remove any deny rules that specify the <see cref="F:System.Security.AccessControl.AuditFlags.Success" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified audit rule from the System Access Control List (SACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ResetAccessRule">
+      <MemberSignature Language="C#" Value="public void ResetAccessRule (System.IO.Pipes.PipeAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResetAccessRule(class System.IO.Pipes.PipeAccessRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAccessRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.ResetAccessRule(System.IO.Pipes.PipeAccessRule)" /> method adds the specified access control list (ACL) rule or overwrites any identical ACL rules that match the <paramref name="rule" /> parameter.  For example, if the <paramref name="rule" /> parameter specifies a <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value and the <see cref="M:System.IO.Pipes.PipeSecurity.ResetAccessRule(System.IO.Pipes.PipeAccessRule)" /> method finds an identical ACL rule that specifies the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value, the identical rule will be overwritten.  If the <see cref="M:System.IO.Pipes.PipeSecurity.ResetAccessRule(System.IO.Pipes.PipeAccessRule)" /> method finds an identical ACL rule that specifies the <see cref="F:System.IO.Pipes.PipeAccessRights.Write" /> value, the identical rule will also be overwritten. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules in the Discretionary Access Control List (DACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object and then adds the specified access rule.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAccessRule">
+      <MemberSignature Language="C#" Value="public void SetAccessRule (System.IO.Pipes.PipeAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessRule(class System.IO.Pipes.PipeAccessRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAccessRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.SetAccessRule(System.IO.Pipes.PipeAccessRule)" /> method adds the specified access control list (ACL) rule or overwrites any identical ACL rules that match the <see cref="T:System.IO.Pipes.PipeAccessRights" /> value of the <paramref name="rule" /> parameter.  For example, if the <paramref name="rule" /> parameter specifies a <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value and the <see cref="M:System.IO.Pipes.PipeSecurity.SetAccessRule(System.IO.Pipes.PipeAccessRule)" /> method finds an identical ACL rule that specifies the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value, the identical rule will be overwritten.  If the <see cref="M:System.IO.Pipes.PipeSecurity.SetAccessRule(System.IO.Pipes.PipeAccessRule)" /> method finds an identical ACL rule that specifies the <see cref="F:System.IO.Pipes.PipeAccessRights.Write" /> value, the identical rule will not be overwritten. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an access rule in the Discretionary Access Control List (DACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The rule to set.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAuditRule">
+      <MemberSignature Language="C#" Value="public void SetAuditRule (System.IO.Pipes.PipeAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAuditRule(class System.IO.Pipes.PipeAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.IO.Pipes.PipeAuditRule" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.Pipes.PipeSecurity.SetAuditRule(System.IO.Pipes.PipeAuditRule)" /> method adds the specified audit rule or overwrites any identical audit rules that match the <see cref="T:System.IO.Pipes.PipeAccessRights" /> value of the <paramref name="rule" /> parameter.  For example, if the <paramref name="rule" /> parameter specifies a <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value and the <see cref="M:System.IO.Pipes.PipeSecurity.SetAuditRule(System.IO.Pipes.PipeAuditRule)" /> method finds an identical audit rule that specifies the <see cref="F:System.IO.Pipes.PipeAccessRights.Read" /> value, the identical rule will be overwritten.  If the <see cref="M:System.IO.Pipes.PipeSecurity.SetAuditRule(System.IO.Pipes.PipeAuditRule)" /> method finds an identical audit rule that specifies the <see cref="F:System.IO.Pipes.PipeAccessRights.Write" /> value, the identical rule will not be overwritten. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an audit rule in the System Access Control List (SACL) that is associated with the current <see cref="T:System.IO.Pipes.PipeSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The rule to set.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CustomAttributeBuilder" FullName="System.Reflection.Emit.CustomAttributeBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CustomAttributeBuilder : System.Runtime.InteropServices._CustomAttributeBuilder" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi beforefieldinit CustomAttributeBuilder extends System.Object implements class System.Runtime.InteropServices._CustomAttributeBuilder" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,34 +18,66 @@
       <InterfaceName>System.Runtime.InteropServices._CustomAttributeBuilder</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._CustomAttributeBuilder))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the CustomAttributeBuilder object returned by the constructor to describe the custom attribute. Associate the CustomAttribute with a builder instance by calling the SetCustomAttribute method on that builder instance. For example, create a CustomAttributeBuilder to describe an instance of AssemblyCultureAttribute by supplying the constructor of <see cref="T:System.Reflection.AssemblyCultureAttribute" /> and its argument. Then call <see cref="M:System.Reflection.Emit.AssemblyBuilder.SetCustomAttribute(System.Reflection.ConstructorInfo,System.Byte[])" /> on an AssemblyBuilder to establish the association.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Helps build custom attributes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CustomAttributeBuilder (System.Reflection.ConstructorInfo con, object[] constructorArgs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.ConstructorInfo con, object[] constructorArgs) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
         <Parameter Name="constructorArgs" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="constructorArgs">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements of the <paramref name="constructorArgs" /> array are restricted to element types. They can be byte, sbyte, int, uint, long, ulong, float, double, String, char, bool, an enum, a type, any of the previous types that was cast to an object, or a single-dimension, zero-based array of any of the previous types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the CustomAttributeBuilder class given the constructor for the custom attribute and the arguments to the constructor.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="constructorArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments to the constructor of the custom attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CustomAttributeBuilder (System.Reflection.ConstructorInfo con, object[] constructorArgs, System.Reflection.FieldInfo[] namedFields, object[] fieldValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.ConstructorInfo con, object[] constructorArgs, class System.Reflection.FieldInfo[] namedFields, object[] fieldValues) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
@@ -52,22 +86,36 @@
         <Parameter Name="fieldValues" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="constructorArgs">To be added: an object of type 'object []'</param>
-        <param name="namedFields">To be added: an object of type 'Reflection.FieldInfo []'</param>
-        <param name="fieldValues">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements of the <paramref name="constructorArgs" /> and <paramref name="fieldValues" /> arrays are restricted to element types. They can be byte, sbyte, int, uint, long, ulong, float, double, String, char, bool, an enum, a type, any of the previous types that was cast to an object, or a single-dimension, zero-based array of any of the previous types.</para>
+          <block subset="none" type="note">
+            <para>Do not include private fields in <paramref name="namedFields" />. Doing so will cause <see cref="T:System.Reflection.CustomAttributeFormatException" /> to be thrown when the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" /> method is later called on the completed type.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the CustomAttributeBuilder class given the constructor for the custom attribute, the arguments to the constructor, and a set of named field/value pairs.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="constructorArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments to the constructor of the custom attribute. </param>
+        <param name="namedFields">
+          <attribution license="cc4" from="Microsoft" modified="false" />Named fields of the custom attribute. </param>
+        <param name="fieldValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />Values for the named fields of the custom attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CustomAttributeBuilder (System.Reflection.ConstructorInfo con, object[] constructorArgs, System.Reflection.PropertyInfo[] namedProperties, object[] propertyValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.ConstructorInfo con, object[] constructorArgs, class System.Reflection.PropertyInfo[] namedProperties, object[] propertyValues) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
@@ -76,22 +124,36 @@
         <Parameter Name="propertyValues" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="constructorArgs">To be added: an object of type 'object []'</param>
-        <param name="namedProperties">To be added: an object of type 'Reflection.PropertyInfo []'</param>
-        <param name="propertyValues">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements of the <paramref name="constructorArgs" /> and <paramref name="propertyValues" /> arrays are restricted to element types. They can be byte, sbyte, int, uint, long, ulong, float, double, String, char, bool, an enum, a type, any of the previous types that was cast to an object, or a single-dimension, zero-based array of any of the previous types.</para>
+          <block subset="none" type="note">
+            <para>Do not include private properties in <paramref name="namedProperties" />. Doing so will cause <see cref="T:System.Reflection.CustomAttributeFormatException" /> to be thrown when the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" /> method is later called on the completed type.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the CustomAttributeBuilder class given the constructor for the custom attribute, the arguments to the constructor, and a set of named property or value pairs.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="constructorArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments to the constructor of the custom attribute. </param>
+        <param name="namedProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />Named properties of the custom attribute. </param>
+        <param name="propertyValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />Values for the named properties of the custom attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CustomAttributeBuilder (System.Reflection.ConstructorInfo con, object[] constructorArgs, System.Reflection.PropertyInfo[] namedProperties, object[] propertyValues, System.Reflection.FieldInfo[] namedFields, object[] fieldValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.ConstructorInfo con, object[] constructorArgs, class System.Reflection.PropertyInfo[] namedProperties, object[] propertyValues, class System.Reflection.FieldInfo[] namedFields, object[] fieldValues) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CustomAttributeBuilder (System.Reflection.ConstructorInfo con, object[] constructorArgs, System.Reflection.PropertyInfo[] namedProperties, object[] propertyValues, System.Reflection.FieldInfo[] namedFields, object[] fieldValues);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="con" Type="System.Reflection.ConstructorInfo" />
@@ -102,24 +164,40 @@
         <Parameter Name="fieldValues" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added: an object of type 'Reflection.ConstructorInfo'</param>
-        <param name="constructorArgs">To be added: an object of type 'object []'</param>
-        <param name="namedProperties">To be added: an object of type 'Reflection.PropertyInfo []'</param>
-        <param name="propertyValues">To be added: an object of type 'object []'</param>
-        <param name="namedFields">To be added: an object of type 'Reflection.FieldInfo []'</param>
-        <param name="fieldValues">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements of the <paramref name="constructorArgs" />, <paramref name="propertyValues" />, or <paramref name="fieldValues" /> arrays are restricted to element types. They can be byte, sbyte, int, uint, long, ulong, float, double, String, char, bool, an enum, a type, any of the previous types that was cast to an object, or a single-dimension, zero-based array of any of the previous types.</para>
+          <block subset="none" type="note">
+            <para>Do not include private properties or fields in <paramref name="namedProperties" /> or <paramref name="namedFields" />. Doing so will cause <see cref="T:System.Reflection.CustomAttributeFormatException" /> to be thrown when the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" /> method is later called on the completed type.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the CustomAttributeBuilder class given the constructor for the custom attribute, the arguments to the constructor, a set of named property or value pairs, and a set of named field or value pairs.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute. </param>
+        <param name="constructorArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments to the constructor of the custom attribute. </param>
+        <param name="namedProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />Named properties of the custom attribute. </param>
+        <param name="propertyValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />Values for the named properties of the custom attribute. </param>
+        <param name="namedFields">
+          <attribution license="cc4" from="Microsoft" modified="false" />Named fields of the custom attribute. </param>
+        <param name="fieldValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />Values for the named fields of the custom attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._CustomAttributeBuilder.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.GetIDsOfNames">
-      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -139,15 +217,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._CustomAttributeBuilder.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -157,21 +236,31 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._CustomAttributeBuilder.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -183,15 +272,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.Invoke">
+      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._CustomAttributeBuilder.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._CustomAttributeBuilder.Invoke">
-      <MemberSignature Language="C#" Value="void _CustomAttributeBuilder.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -217,22 +307,6 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._CustomAttributeBuilder))</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

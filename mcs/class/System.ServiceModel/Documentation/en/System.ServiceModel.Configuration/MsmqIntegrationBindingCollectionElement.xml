@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MsmqIntegrationBindingCollectionElement" FullName="System.ServiceModel.Configuration.MsmqIntegrationBindingCollectionElement">
+  <TypeSignature Language="C#" Value="public class MsmqIntegrationBindingCollectionElement : System.ServiceModel.Configuration.StandardBindingCollectionElement&lt;System.ServiceModel.MsmqIntegration.MsmqIntegrationBinding,System.ServiceModel.Configuration.MsmqIntegrationBindingElement&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi MsmqIntegrationBindingCollectionElement extends System.ServiceModel.Configuration.StandardBindingCollectionElement`2&lt;class System.ServiceModel.MsmqIntegration.MsmqIntegrationBinding, class System.ServiceModel.Configuration.MsmqIntegrationBindingElement&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.StandardBindingCollectionElement&lt;System.ServiceModel.MsmqIntegration.MsmqIntegrationBinding,System.ServiceModel.Configuration.MsmqIntegrationBindingElement&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="TStandardBinding">System.ServiceModel.MsmqIntegration.MsmqIntegrationBinding</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="TBindingConfiguration">System.ServiceModel.Configuration.MsmqIntegrationBindingElement</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of MsmqIntegrationBindingElements.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MsmqIntegrationBindingCollectionElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of <see cref="T:System.ServiceModel.Configuration.MsmqIntegrationBindingCollectionElement" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SubMenuStyleCollection" FullName="System.Web.UI.WebControls.SubMenuStyleCollection">
   <TypeSignature Language="C#" Value="public class SubMenuStyleCollection : System.Web.UI.StateManagedCollection" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class is used to store and manage a collection of <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> objects in a <see cref="T:System.Web.UI.WebControls.Menu" /> control. The <see cref="T:System.Web.UI.WebControls.Menu" /> control uses the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class as the underlying data type of the <see cref="P:System.Web.UI.WebControls.Menu.LevelSubMenuStyles" /> property.</para>
+      <para>The <see cref="P:System.Web.UI.WebControls.Menu.LevelSubMenuStyles" /> property provides additional style choices in addition to the <see cref="P:System.Web.UI.WebControls.Menu.StaticMenuStyle" /> and <see cref="P:System.Web.UI.WebControls.Menu.DynamicMenuStyle" /> properties. The first style in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection corresponds to the submenu style for the first level of the menu. The second style in the collection corresponds to the submenu style for the second level of the menu, and so on. The <see cref="P:System.Web.UI.WebControls.Menu.LevelSubMenuStyles" /> property is most often used to generate a navigation menu, like a Web site map, where menu items at a certain level should have the same appearance, regardless of whether they have submenus.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class inherits most of its members from the <see cref="T:System.Web.UI.StateManagedCollection" /> class. For more information on the inherited members, see the <see cref="T:System.Web.UI.StateManagedCollection" /> collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> objects in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -24,11 +33,21 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.OnInsert(System.Int32,System.Object)" /> and <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> methods are called before the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is added to the collection, and the <see cref="M:System.Web.UI.StateManagedCollection.OnInsertComplete(System.Int32,System.Object)" /> method is called after the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is added.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a submenu style to the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position in the collection at which the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance was inserted.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,11 +63,21 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate the <paramref name="style" /> parameter before the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection is checked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection contains a specific <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is found in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection; otherwise, false. If null is passed as the <paramref name="style" /> parameter, false is returned.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance to locate in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +95,17 @@
       </Parameters>
       <Docs>
         <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> objects are copied to the destination array in the same order in which the enumerator iterates through the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the contents of a <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection to an array, starting at a specified array index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,11 +121,25 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.CreateKnownType(System.Int32)" /> method is a helper function that is used to create an <see cref="T:System.Object" /> of the data type that corresponds to the specified index. The index is often determined by using the <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.GetKnownTypes" /> method to create an array of supported data types and then searching the array for the desired data type.</para>
+          <para>The <paramref name="index" /> parameter is not used in this implementation of the method and is ignored. You should always pass in null for this parameter. This implementation of the method always returns an empty <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object.</para>
+          <block subset="none" type="note">
+            <para>This method is used only by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Object" /> of the data type that corresponds to the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an empty <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the data type to create. This parameter is not used in this implementation of the method; therefore, you should always pass in null.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,10 +153,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.GetKnownTypes" /> method is a helper function that is used to create an array of data types supported by the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class. The array is often searched to determine the index of a desired data type. The index is then passed to the <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.CreateKnownType(System.Int32)" /> method to create an <see cref="T:System.Object" /> of the corresponding data type.</para>
+          <block subset="none" type="note">
+            <para>This method is used only by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an array of <see cref="T:System.Type" /> objects that contains the supported data types of the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that contains the data types supported by the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,11 +184,21 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate the <paramref name="style" /> parameter before the index is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the location of a specified <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object if it is found in the list; otherwise, -1.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to locate in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,11 +215,20 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If index is -1, <paramref name="style" /> is inserted at the beginning of the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection. If index equals the number of items in the collection, <paramref name="style" /> is appended to the end of the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate the style parameter before it is added to the collection. The <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.OnInsert(System.Int32,System.Object)" /> method is called before the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object is inserted into the collection, and the <see cref="M:System.Web.UI.StateManagedCollection.OnInsertComplete(System.Int32,System.Object)" /> method is called after the object is inserted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object into the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object should be inserted.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to insert into the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -183,10 +264,18 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnValidate(System.Object)" /> method is called to validate the style parameter before it is used to locate the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to remove from the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnRemove(System.Int32,System.Object)" /> method is called before the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object is removed, and the <see cref="M:System.Web.UI.StateManagedCollection.OnRemoveComplete(System.Int32,System.Object)" /> method is called after the object is removed from the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of the specified <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object from the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+        </summary>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,10 +291,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.StateManagedCollection.OnRemove(System.Int32,System.Object)" /> method is called before the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object is removed from the collection, and the <see cref="M:System.Web.UI.StateManagedCollection.OnRemoveComplete(System.Int32,System.Object)" /> method is called after the object is removed from the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object at the specified location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index location of the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,10 +317,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.SetDirtyObject(System.Object)" /> method is called internally by the <see cref="M:System.Web.UI.IStateManager.SaveViewState" />, <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.Add(System.Web.UI.WebControls.SubMenuStyle)" />, and <see cref="M:System.Web.UI.WebControls.SubMenuStyleCollection.Insert(System.Int32,System.Web.UI.WebControls.SubMenuStyle)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs a <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object contained by the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection to record its entire state to view state.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that should serialize itself completely.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

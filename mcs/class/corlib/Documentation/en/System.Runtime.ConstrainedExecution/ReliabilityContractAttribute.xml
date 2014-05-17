@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ReliabilityContractAttribute" FullName="System.Runtime.ConstrainedExecution.ReliabilityContractAttribute">
   <TypeSignature Language="C#" Value="public sealed class ReliabilityContractAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ReliabilityContractAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,63 +17,84 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.ConstrainedExecution.ReliabilityContractAttribute" /> attribute provides a mechanism for you to document your code, and to indicate what type of reliability guarantees you can make in the face of exceptional conditions that could potentially lead to an inconsistent state. In this context, exceptional conditions are defined as asynchronous exceptions that can be generated at run time by the common language runtime, such as aborted threads, out-of-memory situations, and stack overflows. You can apply the <see cref="T:System.Runtime.ConstrainedExecution.ReliabilityContractAttribute" /> attribute to assemblies, types, and methods. </para>
+      <para>Use this attribute with the <see cref="T:System.Runtime.ConstrainedExecution.Consistency" /> enumeration to define a reliability contract by documenting the level of reliability in a particular piece of code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a contract for reliability between the author of some code, and the developers who have a dependency on that code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ReliabilityContractAttribute (System.Runtime.ConstrainedExecution.Consistency consistencyGuarantee, System.Runtime.ConstrainedExecution.Cer cer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.ConstrainedExecution.Consistency consistencyGuarantee, valuetype System.Runtime.ConstrainedExecution.Cer cer) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="consistencyGuarantee" Type="System.Runtime.ConstrainedExecution.Consistency" />
         <Parameter Name="cer" Type="System.Runtime.ConstrainedExecution.Cer" />
       </Parameters>
       <Docs>
-        <param name="consistencyGuarantee">To be added.</param>
-        <param name="cer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.ConstrainedExecution.ReliabilityContractAttribute" /> class with the specified <see cref="T:System.Runtime.ConstrainedExecution.Consistency" /> guarantee and <see cref="T:System.Runtime.ConstrainedExecution.Cer" /> value.</para>
+        </summary>
+        <param name="consistencyGuarantee">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.ConstrainedExecution.Consistency" /> values. </param>
+        <param name="cer">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.ConstrainedExecution.Cer" /> values. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Cer">
+      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Cer Cer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.ConstrainedExecution.Cer Cer" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Cer">
-      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Cer Cer { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.ConstrainedExecution.Cer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value that determines the behavior of a method, type, or assembly when called under a Constrained Execution Region (CER). </para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ConsistencyGuarantee">
+      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Consistency ConsistencyGuarantee { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.ConstrainedExecution.Consistency ConsistencyGuarantee" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ConsistencyGuarantee">
-      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Consistency ConsistencyGuarantee { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.ConstrainedExecution.Consistency</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the <see cref="T:System.Runtime.ConstrainedExecution.Consistency" /> reliability contract. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

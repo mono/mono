@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompressedStack" FullName="System.Threading.CompressedStack">
   <TypeSignature Language="C#" Value="public sealed class CompressedStack : System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit CompressedStack extends System.Object implements class System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -15,41 +17,51 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The compressed stack is a compact representation of all the code access security information on the call stack, such as <see cref="M:System.Security.CodeAccessPermission.Deny" /> and <see cref="M:System.Security.CodeAccessPermission.Assert" /> actions. For example, if a <see cref="M:System.Security.CodeAccessPermission.Deny" /> action is two stack frames up from the current frame and there are no other code access security annotations between there and the current frame, the compressed stack records only that information, without having to serialize the entire call stack. </para>
+      <para>The <see cref="T:System.Threading.CompressedStack" /> class is used internally by the <see cref="T:System.Security.SecurityContext" /> class. For example, the <see cref="M:System.Security.SecurityContext.Capture" /> method captures the compressed stack for the current call stack, along with impersonation and culture information. The <see cref="T:System.Security.SecurityContext" /> class is used in turn by the <see cref="T:System.Threading.ExecutionContext" /> class to flow context across threads, for example when scheduling thread pool tasks.</para>
+      <para>This class is not used in ordinary application programming.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for setting and capturing the compressed stack on the current thread. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Capture">
       <MemberSignature Language="C#" Value="public static System.Threading.CompressedStack Capture ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.CompressedStack Capture() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.CompressedStack</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateCopy">
-      <MemberSignature Language="C#" Value="public System.Threading.CompressedStack CreateCopy ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.CompressedStack</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Captures all the code access security information on the call stack, such as <see cref="M:System.Security.CodeAccessPermission.Deny" /> and <see cref="M:System.Security.CodeAccessPermission.Assert" /> actions, in a compressed format. For example, if a <see cref="M:System.Security.CodeAccessPermission.Deny" /> action is two stack frames up from the current frame and there are no other code access security annotations between there and the current frame, the compressed stack records only that information, without having to serialize the entire call stack. </para>
+          <para>The captured compressed stack can be applied to another thread.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Captures the compressed stack from the current thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CompressedStack" /> object.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="CreateCopy">
+      <MemberSignature Language="C#" Value="public System.Threading.CompressedStack CreateCopy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.CompressedStack CreateCopy() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -59,29 +71,79 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetCompressedStack">
-      <MemberSignature Language="C#" Value="public static System.Threading.CompressedStack GetCompressedStack ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.CompressedStack</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful for creating a copy of the current compressed stack to apply to another thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current compressed stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CompressedStack" /> object representing the current compressed stack.</para>
+        </returns>
       </Docs>
-      <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetCompressedStack">
+      <MemberSignature Language="C#" Value="public static System.Threading.CompressedStack GetCompressedStack ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.CompressedStack GetCompressedStack() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Security.SecurityCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.CompressedStack</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If security is enabled, the current compressed stack is returned. If security is disabled, <see cref="M:System.Threading.CompressedStack.GetCompressedStack" /> returns an empty <see cref="T:System.Threading.CompressedStack" /> object.</para>
+          <block subset="none" type="note">
+            <para>This method uses <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> to prevent it from being called from untrusted code; only the immediate caller is required to have <see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" /> permission. For important limitations on using the LinkDemand member, see <format type="text/html"><a href="1ab877f2-70f4-4e0d-8116-943999dfe8f5">Demand vs. LinkDemand</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member also makes a link demand for the ECMA public key, which is not a valid cryptographic key but a pseudo key. Within the .NET Framework the link demand for the ECMA pseudo key is automatically converted to a link demand for the Microsoft public key. The security exception is based on the Microsoft public key, not the ECMA pseudo key.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the compressed stack for the current thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.CompressedStack" /> for the current thread.</para>
+        </returns>
+      </Docs>
+      <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
     <Member MemberName="GetObjectData">
       <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Security.SecurityCritical</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -90,20 +152,36 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.CompressedStack.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> sets a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the logical call context information. During deserialization, the execution context object is reconstituted from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> transmitted over the stream.</para>
+          <para>For more information, see <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the logical context information needed to recreate an instance of this execution context.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object to be populated with serialization information. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> structure representing the destination context of the serialization. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Run">
+      <MemberSignature Language="C#" Value="public static void Run (System.Threading.CompressedStack compressedStack, System.Threading.ContextCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Run(class System.Threading.CompressedStack compressedStack, class System.Threading.ContextCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Run">
-      <MemberSignature Language="C#" Value="public static void Run (System.Threading.CompressedStack compressedStack, System.Threading.ContextCallback callback, object state);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Security.SecurityCritical</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -113,17 +191,22 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="compressedStack">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The compressed stack is returned to its previous state when the method completes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs a method in the specified compressed stack on the current thread.</para>
+        </summary>
+        <param name="compressedStack">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CompressedStack" /> to set.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.ContextCallback" /> that represents the method to be run in the specified security context.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be passed to the callback method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

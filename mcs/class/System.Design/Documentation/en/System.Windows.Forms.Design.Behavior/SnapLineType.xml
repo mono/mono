@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SnapLineType" FullName="System.Windows.Forms.Design.Behavior.SnapLineType">
   <TypeSignature Language="C#" Value="public enum SnapLineType" />
   <AssemblyInfo>
@@ -8,8 +9,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLineType" /> enumeration can be specified when creating an instance of the <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the orientation and relative location of a snapline.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Baseline">
@@ -22,7 +29,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A horizontal snapline typically associated with a primary internal feature of a control; for example, the base of the text string in a <see cref="T:System.Windows.Forms.Label" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Bottom">
@@ -35,7 +45,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A horizontal snapline typically aligned to the bottom edge of a control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Horizontal">
@@ -48,7 +61,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A horizontal snapline typically not associated with an edge of a control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Left">
@@ -61,7 +77,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A vertical snapline typically aligned to the left edge of a control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Right">
@@ -74,7 +93,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A vertical snapline typically aligned to the right edge of a control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Top">
@@ -87,7 +109,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A horizontal snapline typically aligned to the top edge of a control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Vertical">
@@ -100,7 +125,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A vertical snapline typically not associated with an edge of a control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

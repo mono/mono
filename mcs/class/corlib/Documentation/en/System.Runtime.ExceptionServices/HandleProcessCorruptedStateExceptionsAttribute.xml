@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="HandleProcessCorruptedStateExceptionsAttribute" FullName="System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute">
+  <TypeSignature Language="C#" Value="public sealed class HandleProcessCorruptedStateExceptionsAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit HandleProcessCorruptedStateExceptionsAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple=false, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Corrupted process state exceptions are exceptions that indicate that the state of a process has been corrupted. We do not recommend executing your application in this state.</para>
+      <para>By default, the common language runtime (CLR) does not deliver these exceptions to managed code, and the try/catch blocks (and other exception-handling clauses) are not invoked for them. If you are absolutely sure that you want to maintain your handling of these exceptions, you must apply the <see cref="T:System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute" /> attribute to the method whose exception-handling clauses you want to execute. The CLR delivers the corrupted process state exception to applicable exception clauses only in methods that have both the <see cref="T:System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> attributes. </para>
+      <para>You can also add the <format type="text/html"><a href="e0a55ddc-bfa8-4f3e-ac14-d1fc3330e4bb">&lt;legacyCorruptedStateExceptionsPolicy&gt; element</a></format> to your application's configuration file. This will ensure that corrupted state exceptions are delivered to your exception handlers without the <see cref="T:System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute" /> or <see cref="T:System.Security.SecurityCriticalAttribute" /> attribute. This configuration element has no effect on applications that were compiled in versions previous to the net_v40_long but are running in the net_v40_short or later; corrupted state exceptions will continue to be delivered for those applications. The <see cref="T:System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute" /> attribute is ignored when it is encountered in partially trusted or transparent code, because a trusted host should not allow an untrusted add-in to catch and ignore these serious exceptions.</para>
+      <para>For more information about corrupted process state exceptions, see the entry <see cref="http://go.microsoft.com/fwlink/?LinkID=179681">Handling Corrupted State Exceptions</see> in the CLR Inside Out blog.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables managed code to handle exceptions that indicate a corrupted process state.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public HandleProcessCorruptedStateExceptionsAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

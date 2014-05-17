@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionHeaderItem" FullName="System.ComponentModel.Design.DesignerActionHeaderItem">
   <TypeSignature Language="C#" Value="public sealed class DesignerActionHeaderItem : System.ComponentModel.Design.DesignerActionTextItem" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Like the <see cref="T:System.ComponentModel.Design.DesignerActionTextItem" /> base class, <see cref="T:System.ComponentModel.Design.DesignerActionHeaderItem" /> represents individual static text items in a smart tag panel. However, <see cref="T:System.ComponentModel.Design.DesignerActionHeaderItem" /> entries are displayed using bold text. Typically, a header item is used to create a heading for a group of items in a panel. Clicking on a header item causes no action.</para>
+      <para>Individual panel items are associated together to form a panel by calling the <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method of the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a static header item on a smart tag panel. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +31,16 @@
         <Parameter Name="displayName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="displayName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets both the <see cref="P:System.ComponentModel.Design.DesignerActionItem.DisplayName" /> and the <see cref="P:System.ComponentModel.Design.DesignerActionItem.Category" /> properties to the value of the <paramref name="displayName" /> parameter and sets the <see cref="P:System.ComponentModel.Design.DesignerActionItem.Description" /> property to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionHeaderItem" /> class using the provided name string.</para>
+        </summary>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to be displayed in the header.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +54,18 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="displayName">To be added.</param>
-        <param name="category">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.ComponentModel.Design.DesignerActionItem.Description" /> property to null. The <see cref="P:System.ComponentModel.Design.DesignerActionItem.Category" /> property is case-sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionHeaderItem" /> class using the provided name and category strings.</para>
+        </summary>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to be displayed in the header.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive <see cref="T:System.String" /> that defines the groupings of panel entries.</param>
       </Docs>
     </Member>
   </Members>

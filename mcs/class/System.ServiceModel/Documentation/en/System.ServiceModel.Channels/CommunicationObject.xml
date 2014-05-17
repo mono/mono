@@ -1,0 +1,993 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CommunicationObject" FullName="System.ServiceModel.Channels.CommunicationObject">
+  <TypeSignature Language="C#" Value="public abstract class CommunicationObject : System.ServiceModel.ICommunicationObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CommunicationObject extends System.Object implements class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.ICommunicationObject</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> class implements the <see cref="T:System.ServiceModel.ICommunicationObject" /> interface for all communication objects in Indigo1. The method implementations handle parameter validation, raise events that notify the occurrence of state transitions, provide the means to associated additional processing with these state transitions, and ensure that such state changes are coordinated.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common base implementation for the basic state machine common to all communication-oriented objects in the system, including channels, listeners, and the channel and listener factories.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected CommunicationObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected CommunicationObject (object mutex);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(object mutex) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="mutex" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="mutex">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> class with the mutually exclusive lock to protect the state transitions specified.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Abort">
+      <MemberSignature Language="C#" Value="public void Abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Abort() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method indicates that any unfinished work should be ignored or ungracefully terminated before returning. The <see cref="M:System.ServiceModel.Channels.CommunicationObject.Abort" /> method can be used to cancel any outstanding operations, including outstanding calls to <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" />.</para>
+          <para>To gracefully transition a <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> from any state other than <see cref="F:System.ServiceModel.CommunicationState.Closed" /> into the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state, call <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> or one of its asynchronous versions, <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a communication object to transition immediately from its current state into the closing state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginClose">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginClose (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginClose(class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method causes the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state, into the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state within a default interval of time. The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages). This method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object was initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to close a communication object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginClose">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginClose (TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginClose(valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method causes the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state, into the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state with in a specified interval of time.  The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages). This method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object was initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to close a communication object with a specified timeout.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginOpen">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginOpen (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginOpen(class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state.</para>
+          <para>To insert processing after a communication object transitions to a closing state due to the invocation of a synchronous <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> operation, use the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to open a communication object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginOpen">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginOpen (TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginOpen(valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.BeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state.</para>
+          <para>To insert processing after a communication object transitions to a closing state due to the invocation of a synchronous <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> operation, use the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to open a communication object within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method causes a <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state, into the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state. The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages. </para>
+          <para>The <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> enters the <see cref="F:System.ServiceModel.CommunicationState.Closing" /> state and remains in it after the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method is called until the transition to the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state is completed. The transition consists of making successive calls to <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosing" />, <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClose(System.TimeSpan)" />, and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosed" />.  </para>
+          <para>There is also an asynchronous version of the close method that is initiated by calling <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a communication object to transition from its current state into the closed state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public void Close (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method causes a <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state, into the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state within a specified interval of time. The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages. </para>
+          <para>The <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> enters the <see cref="F:System.ServiceModel.CommunicationState.Closing" /> state and remains in it after the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method is called until the transition to the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state is completed. The transition consists of making successive calls to <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosing" />, <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClose(System.TimeSpan)" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosed" />. </para>
+          <para>There is also an asynchronous version of the close method that is initiated by calling <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a communication object to transition from its current state into the closed state within a specified interval of time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Closed">
+      <MemberSignature Language="C#" Value="public event EventHandler Closed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Closed" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ServiceModel.Channels.CommunicationObject.Closed" /> event is raised by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosing" /> method which is called by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndClose(System.IAsyncResult)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a communication object transitions into the closed state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Closing">
+      <MemberSignature Language="C#" Value="public event EventHandler Closing;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Closing" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ServiceModel.Channels.CommunicationObject.Closing" /> event is raised by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosing" /> method which is called by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> and <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a communication object transitions into the closing state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultCloseTimeout">
+      <MemberSignature Language="C#" Value="protected abstract TimeSpan DefaultCloseTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan DefaultCloseTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the default interval of time provided for a close operation to complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultOpenTimeout">
+      <MemberSignature Language="C#" Value="protected abstract TimeSpan DefaultOpenTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan DefaultOpenTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the default interval of time provided for an open operation to complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndClose">
+      <MemberSignature Language="C#" Value="public void EndClose (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndClose(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A synchronous version of this method is provided by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to close a communication object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndOpen">
+      <MemberSignature Language="C#" Value="public void EndOpen (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndOpen(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A synchronous version of this method is provided by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to open a communication object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Fault">
+      <MemberSignature Language="C#" Value="protected void Fault ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void Fault() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ServiceModel.Channels.CommunicationObject.Faulted" /> event is raised by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnFaulted" /> method which is called by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.Fault" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a communication object to transition from its current state into the faulted state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Faulted">
+      <MemberSignature Language="C#" Value="public event EventHandler Faulted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Faulted" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ServiceModel.Channels.CommunicationObject.Faulted" /> event is raised by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnFaulted" /> method which is called by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.Fault" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a communication object transitions into the faulted state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCommunicationObjectType">
+      <MemberSignature Language="C#" Value="protected virtual Type GetCommunicationObjectType ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Type GetCommunicationObjectType() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of communication object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of communication object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDisposed">
+      <MemberSignature Language="C#" Value="protected bool IsDisposed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDisposed" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object is considered disposed when the <see cref="E:System.ServiceModel.Channels.CommunicationObject.Closed" /> event occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the communication object has been disposed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnAbort">
+      <MemberSignature Language="C#" Value="protected abstract void OnAbort ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnAbort() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.Abort" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnAbort" /> if the communication object is not already in a <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts processing on a communication object after it transitions to the closing state due to the invocation of a synchronous abort operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnBeginClose">
+      <MemberSignature Language="C#" Value="protected abstract IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.IAsyncResult OnBeginClose(valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+          <para>To insert processing after a communication object transitions to a closing state due to the invocation of a synchronous <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> operation, use the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClose(System.TimeSpan)" />method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts processing after a communication object transitions to the closing state due to the invocation of an asynchronous close operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on close operation. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="OnBeginOpen">
+      <MemberSignature Language="C#" Value="protected abstract IAsyncResult OnBeginOpen (TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.IAsyncResult OnBeginOpen(valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="state">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To insert processing after a communication object transitions to a opening state due to the invocation of a synchronous <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> operation, use the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts processing on a communication object after it transitions to the opening state due to the invocation of an asynchronous open operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on open operation. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="OnClose">
+      <MemberSignature Language="C#" Value="protected abstract void OnClose (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnClose(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClose(System.TimeSpan)" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+          <para>To insert processing after a communication object transitions to a closing state due to the invocation of an asynchronous <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> operation, use the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts processing on a communication object after it transitions to the closing state due to the invocation of a synchronous close operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnClosed">
+      <MemberSignature Language="C#" Value="protected virtual void OnClosed ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnClosed() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosed" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+          <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndClose(System.IAsyncResult)" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosed" /> (and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnEndClose(System.IAsyncResult)" /> if the communication object is not already in a <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked during the transition of a communication object into the closing state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnClosing">
+      <MemberSignature Language="C#" Value="protected virtual void OnClosing ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnClosing() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnClosing" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked during the transition of a communication object into the closing state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndClose">
+      <MemberSignature Language="C#" Value="protected abstract void OnEndClose (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnEndClose(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndClose(System.IAsyncResult)" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnEndClose(System.IAsyncResult)" /> if the communication object is not already in a <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation on the close of a communication object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndOpen">
+      <MemberSignature Language="C#" Value="protected abstract void OnEndOpen (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnEndOpen(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndOpen(System.IAsyncResult)" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnEndOpen(System.IAsyncResult)" /> (and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpened" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation on the open of a communication object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnFaulted">
+      <MemberSignature Language="C#" Value="protected virtual void OnFaulted ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnFaulted() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ServiceModel.Channels.CommunicationObject.Faulted" /> event is raised by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnFaulted" /> method which is called by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.Fault" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts processing on a communication object after it transitions to the faulted state due to the invocation of a synchronous fault operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnOpen">
+      <MemberSignature Language="C#" Value="protected abstract void OnOpen (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnOpen(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpen(System.TimeSpan)" /> (after calling <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> and before calling <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpened" />) if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state.</para>
+          <para>To insert processing as a communication object transitions to a opening state due to the invocation of an asynchronous <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> operation, use the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts processing on a communication object after it transitions into the opening state which must complete within a specified interval of time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnOpened">
+      <MemberSignature Language="C#" Value="protected virtual void OnOpened ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnOpened() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This provides a way to add processing when it is called by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndOpen(System.IAsyncResult)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked during the transition of a communication object into the opened state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnOpening">
+      <MemberSignature Language="C#" Value="protected virtual void OnOpening ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnOpening() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This provides a way to add processing when it is called by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> and <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginOpen" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked during the transition of a communication object into the opening state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public void Open ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Open() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> is instantiated, it begins in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state. In the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, the object can be configured (for example, properties can be set, or events can be registered), but it is not yet usable to send or receive messages. When called, the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method causes a <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to enter into the <see cref="F:System.ServiceModel.CommunicationState.Opening" /> state and calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" />, <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" />, and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpened" />. The <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpened" /> method completes the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method by setting the state of the object to the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+          <para>In the </para>
+          <para>
+            <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state, the <see cref="T:System.ServiceModel.Channels.CommunicationObject" />is usable (for example, messages can be received), but it is no longer configurable.</para>
+          <para>There is also an asynchronous version of the open method that is initiated by calling <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> and completed by calling <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndOpen(System.IAsyncResult)" />. </para>
+          <format type="text/html">
+            <h2>Credentials Capture with Windows Authentication</h2>
+          </format>
+          <para>When using Windows authentication, credentials used by the service are based on the current context thread. The credentials are obtained when the Open method is called. </para>
+          <block subset="none" type="note">
+            <para>For asynchronous calls, credentials are captured when the <see cref="M:System.ServiceModel.Channels.CommunicationObject.BeginOpen(System.AsyncCallback,System.Object)" /> is invoked. However, the actual credentials cannot be guaranteed. That is, the credentials of the caller may be switched to another identity. For more information, see <format type="text/html"><a href="01e7d0b8-10f9-45c3-a4c5-53d44dc61eb8">Message Security with a Windows Client</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a communication object to transition from the created state into the opened state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public void Open (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Open(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> is instantiated, it begins in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state. In the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, the object can be configured (for example, properties can be set, or events can be registered), but it is not yet usable to send or receive messages. When called, the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method causes a <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to enter into the <see cref="F:System.ServiceModel.CommunicationState.Opening" /> state and calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" />, <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" />, and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpened" />.  The <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpened" /> method completes the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method by setting the state of the object to the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+          <para>In the </para>
+          <para>
+            <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state, the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> is usable (for example, messages can be received), but it is no longer configurable.</para>
+          <para>There is also an asynchronous version of the open method that is initiated by calling <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginOpen" /> and completed by calling <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndOpen(System.IAsyncResult)" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a communication object to transition from the created state into the opened state within a specified interval of time.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Opened">
+      <MemberSignature Language="C#" Value="public event EventHandler Opened;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Opened" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ServiceModel.Channels.CommunicationObject.Opened" /> event is raised by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> method which is called by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.EndOpen(System.IAsyncResult)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a communication object transitions into the opened state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Opening">
+      <MemberSignature Language="C#" Value="public event EventHandler Opening;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Opening" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.ServiceModel.Channels.CommunicationObject.Opening" /> event is raised by the <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> method which is called by the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a communication object transitions into the opening state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="State">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.CommunicationState State { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.CommunicationState State" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.CommunicationState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the current state of the communication object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ThisLock">
+      <MemberSignature Language="C#" Value="protected object ThisLock { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object ThisLock" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the mutually exclusive lock that protects the class instance during a state transition.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ThrowIfDisposed">
+      <MemberSignature Language="C#" Value="protected void ThrowIfDisposed ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ThrowIfDisposed() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No exception is thrown if the communication object is in a <see cref="F:System.ServiceModel.CommunicationState.Created" />, <see cref="F:System.ServiceModel.CommunicationState.Opening" /> or <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state. A communication object is disposed once <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Close" /> is called on it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the communication object is disposed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ThrowIfDisposedOrImmutable">
+      <MemberSignature Language="C#" Value="protected void ThrowIfDisposedOrImmutable ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ThrowIfDisposedOrImmutable() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Since an object is immutable after <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> is called on it, the only state that is both mutable and not disposed is the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the communication object the <see cref="P:System.ServiceModel.Channels.CommunicationObject.State" /> property is not set to the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ThrowIfDisposedOrNotOpen">
+      <MemberSignature Language="C#" Value="protected void ThrowIfDisposedOrNotOpen ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ThrowIfDisposedOrNotOpen() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the communication object is not in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

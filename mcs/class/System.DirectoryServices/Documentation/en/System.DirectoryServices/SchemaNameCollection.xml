@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SchemaNameCollection" FullName="System.DirectoryServices.SchemaNameCollection">
   <TypeSignature Language="C#" Value="public class SchemaNameCollection : System.Collections.IList, System.Collections.ICollection, System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -83,10 +84,17 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a specified schema name to this collection.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified property value. If the object is not found, the return value is -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The schema name to add to this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -97,8 +105,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all objects from this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -111,9 +122,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="index">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the schema name that is at a specified index from this collection.          </para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the schema name to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -124,9 +139,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that you can use to iterate through this collection.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that you can used to iterate through this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -139,9 +160,12 @@
         <Parameter Name="coll" Type="System.DirectoryServices.SchemaNameCollection" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="coll">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a set of specified schema names to this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -154,9 +178,12 @@
         <Parameter Name="coll" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="coll">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a set of specified schema names to this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -169,10 +196,16 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="s">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether this collection contains a specified schema name.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is true if the specified property belongs to this collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -186,10 +219,13 @@
         <Parameter Name="pos" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="copy_to">To be added.</param>
         <param name="pos">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the schema names from this collection to an array, starting at a particular index of the array.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -202,10 +238,16 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="s">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of a specified schema name in this collection.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified schema name, or -1 if the schema name was not found in the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -219,10 +261,16 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="pos">To be added.</param>
         <param name="s">To be added.</param>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="index" /> parameter equals the number of items in the collection, this method appends the value to the end of the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a schema name into this collection at a specified index.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -235,9 +283,12 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="s">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a specified schema name from this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -247,9 +298,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.DirectoryServices.SchemaNameCollection.Count" /> property gets the number of objects in this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -270,7 +324,10 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a list of the schema names that the <see cref="P:System.DirectoryServices.DirectoryEntries.SchemaFilter" /> property of a <see cref="T:System.DirectoryServices.DirectoryEntries" /> object can use.          </para>
+    </summary>
   </Docs>
 </Type>

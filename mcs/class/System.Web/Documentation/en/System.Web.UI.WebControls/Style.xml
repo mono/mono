@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Style" FullName="System.Web.UI.WebControls.Style">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Style : System.ComponentModel.Component, System.Web.UI.IStateManager" />
   <AssemblyInfo>
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.Style" /> class encapsulates the properties that control the appearance of a Web server control and can be applied to multiple Web server controls to provide a common appearance. You can specify the background color and font color of a control by setting the <see cref="P:System.Web.UI.WebControls.WebControl.BackColor" /> and <see cref="P:System.Web.UI.WebControls.WebControl.ForeColor" /> properties, respectively. On controls that can display a border, you can control the border width, the border style, and the border color by setting the <see cref="P:System.Web.UI.WebControls.WebControl.BorderWidth" />, <see cref="P:System.Web.UI.WebControls.WebControl.BorderStyle" />, and <see cref="P:System.Web.UI.WebControls.WebControl.BorderColor" /> properties. The size of a Web server control can also be specified by using the <see cref="P:System.Web.UI.WebControls.WebControl.Height" /> and <see cref="P:System.Web.UI.WebControls.WebControl.Width" /> properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the style of a Web server control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +39,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class using default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +61,16 @@
         <Parameter Name="bag" Type="System.Web.UI.StateBag" />
       </Parameters>
       <Docs>
-        <param name="bag">a <see cref="T:System.Web.UI.StateBag" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class using the <see cref="T:System.Web.UI.StateBag" /> specified by the <paramref name="bag" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class with the specified state bag information.</para>
+        </summary>
+        <param name="bag">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.StateBag" /> that represents the state bag in which to store style information. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,9 +87,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To render attributes and styles for a Web server control on the client, you typically call the <see cref="M:System.Web.UI.HtmlTextWriter.AddAttribute(System.String,System.String)" /> and <see cref="M:System.Web.UI.HtmlTextWriter.AddStyleAttribute(System.String,System.String)" /> methods to insert each attribute and style individually to the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream. To simplify the process, this method encapsulates all calls to the <see cref="M:System.Web.UI.HtmlTextWriter.AddAttribute(System.String,System.String)" /> and <see cref="M:System.Web.UI.HtmlTextWriter.AddStyleAttribute(System.String,System.String)" /> methods for every attribute and style associated with the Web server control. All attributes and styles are inserted into the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream in a single method call.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds HTML attributes and styles that need to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriter" />. This method is primarily used by control developers.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,10 +114,18 @@
         <Parameter Name="owner" Type="System.Web.UI.WebControls.WebControl" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <param name="owner">a <see cref="T:System.Web.UI.WebControls.WebControl" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To render attributes and styles for a Web server control on the client, you typically call the <see cref="M:System.Web.UI.HtmlTextWriter.AddAttribute(System.String,System.String)" /> and <see cref="M:System.Web.UI.HtmlTextWriter.AddStyleAttribute(System.String,System.String)" /> methods to insert each attribute and style individually to the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream. To simplify the process, this method encapsulates all calls to the <see cref="M:System.Web.UI.HtmlTextWriter.AddAttribute(System.String,System.String)" /> and <see cref="M:System.Web.UI.HtmlTextWriter.AddStyleAttribute(System.String,System.String)" /> methods for every attribute and style associated with the Web Server control. All attributes and styles are inserted into the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream in a single method call. This method is typically overridden by control developers in derived classes to insert the appropriate attributes and styles to the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for the class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds HTML attributes and styles that need to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> and Web server control. This method is primarily used by control developers.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WebControl" /> or <see cref="T:System.Web.UI.WebControls.WebControl" /> derived object that represents the Web server control associated with the <see cref="T:System.Web.UI.WebControls.Style" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,9 +140,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.BackColor" /> property to specify the background color of the Web server control. This property is set using a <see cref="T:System.Drawing.Color" /> object.</para>
+          <block subset="none" type="note">
+            <para>This property will render only for certain controls. For example, <see cref="T:System.Web.UI.WebControls.Table" />, <see cref="T:System.Web.UI.WebControls.Panel" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.Calendar" />, and <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> will render this property. It will also work for <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, <see cref="T:System.Web.UI.WebControls.RadioButtonList" /> and <see cref="T:System.Web.UI.WebControls.DataList" /> if their RepeatLayout property is RepeatLayout.Table, and not RepeatLayout.Flow.</para>
+          </block>
+          <para>In general, only controls that render as a &lt;table&gt; tag can display a background color in HTML 3.2, whereas almost any control can in HTML 4.0.</para>
+          <para>For controls that render as a &lt;span&gt; tag (including <see cref="T:System.Web.UI.WebControls.Label" />, all validation controls, and list controls with their RepeatLayout property set to RepeatLayout.Flow), this property will work in Microsoft Internet Explorer version 5 or later, but not for Microsoft Internet Explorer version 4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,9 +179,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.BorderColor" /> property to specify the border color of the Web server control. This property is set using a <see cref="T:System.Drawing.Color" /> object.</para>
+          <block subset="none" type="note">
+            <para>This property will render only for certain controls. For example, <see cref="T:System.Web.UI.WebControls.Table" />, <see cref="T:System.Web.UI.WebControls.Panel" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.Calendar" />, and <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> will render this property. It will also work for <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, <see cref="T:System.Web.UI.WebControls.RadioButtonList" />, and <see cref="T:System.Web.UI.WebControls.DataList" /> if their RepeatLayout property is RepeatLayout.Table and not RepeatLayout.Flow. However, it is rendered as the bordercolor attribute, which may not work in all browsers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border color of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,9 +216,110 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'BorderStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.BorderStyle" /> property to specify the border style for the Web server control. This property is set using one of the <see cref="T:System.Web.UI.WebControls.BorderStyle" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Border Style </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet </para>
+              </term>
+              <description>
+                <para>The border style is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>None </para>
+              </term>
+              <description>
+                <para>No border </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Dotted </para>
+              </term>
+              <description>
+                <para>A dotted line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Dashed </para>
+              </term>
+              <description>
+                <para>A dashed line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Solid </para>
+              </term>
+              <description>
+                <para>A solid line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Double </para>
+              </term>
+              <description>
+                <para>A solid double line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Groove </para>
+              </term>
+              <description>
+                <para>A grooved border for a sunken border appearance. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Ridge </para>
+              </term>
+              <description>
+                <para>A ridged border for a raised border appearance. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Inset </para>
+              </term>
+              <description>
+                <para>An inset border for a sunken control appearance. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Outset </para>
+              </term>
+              <description>
+                <para>An outset border for a raised control appearance. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This property will not render on some browsers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,9 +342,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Unit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.BorderWidth" /> property to specify a border width for a control.</para>
+          <block subset="none" type="note">
+            <para>This property does not work with all Web server controls. It only applies to controls that display as a table, such as <see cref="T:System.Web.UI.WebControls.Table" /> and <see cref="T:System.Web.UI.WebControls.DataGrid" />.</para>
+          </block>
+          <para>This property is set with a <see cref="T:System.Web.UI.WebControls.Unit" /> object. If the <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property of the <see cref="T:System.Web.UI.WebControls.Unit" /> contains a negative number, an exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>The border width can only be expressed in pixels for browsers earlier than Microsoft Internet Explorer version 5. All unit types are supported in Microsoft Internet Explorer version 5 and later. Refer to the specific control for details.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border width of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,9 +382,21 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.Web.UI.WebControls.Style" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Style.CopyFrom(System.Web.UI.WebControls.Style)" /> method to duplicate the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> into the instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class that this method is called from.</para>
+          <para>When a style is registered using <see cref="M:System.Web.UI.IStyleSheet.RegisterStyle(System.Web.UI.WebControls.Style,System.Web.UI.IUrlResolutionService)" />, and then copied using <see cref="M:System.Web.UI.WebControls.Style.CopyFrom(System.Web.UI.WebControls.Style)" />, only the <see cref="P:System.Web.UI.WebControls.Style.CssClass" /> property is copied to the destination, not all the individual properties. This could lead to unexpected results if you then copy or examine the properties of the destination style. For example, if you are using <see cref="M:System.Web.UI.WebControls.FontInfo.CopyFrom(System.Web.UI.WebControls.FontInfo)" /> to copy font information from the <see cref="P:System.Web.UI.WebControls.Style.Font" /> property of a <see cref="T:System.Web.UI.WebControls.Style" /> that is registered, you will not get the individual settings of the font from the style. </para>
+          <block subset="none" type="note">
+            <para>All properties, including those that have been set in the current instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class, will be replaced by the associated property in the <see cref="T:System.Web.UI.WebControls.Style" /> specified by the <paramref name="s" /> parameter.</para>
+            <para />
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Duplicates the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> into the instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class that this method is called from.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> that represents the style to copy. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -230,9 +411,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.CssClass" /> property to specify the CSS class to render on the client for the Web server control. This property will render on browsers for all controls. It will always be rendered as the class attribute, regardless of the browser.</para>
+          <para>For example, suppose you have the following Web server control declaration: </para>
+          <code>&lt;asp:TextBox id="TextBox1" ForeColor="Red" CssClass="class1" /&gt;</code>
+          <para>The following HTML is rendered on the client for the previous Web server control declaration: </para>
+          <code>&lt;input type=text class="class1" style="ForeColor:red"&gt;</code>
+          <block subset="none" type="note">
+            <para>On browsers that do not support CSS, setting the <see cref="P:System.Web.UI.WebControls.Style.CssClass" /> property will have no effect.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cascading style sheet (CSS) class rendered by the Web server control on the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -261,10 +455,18 @@
         <Parameter Name="urlResolver" Type="System.Web.UI.IUrlResolutionService" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <param name="urlResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Style.FillStyleAttributes(System.Web.UI.CssStyleCollection,System.Web.UI.IUrlResolutionService)" /> method to add the style properties of an object to the specified <see cref="T:System.Web.UI.CssStyleCollection" /> object. The object that you specify must implement <see cref="T:System.Web.UI.IUrlResolutionService" />. All classes derived from <see cref="T:System.Web.UI.Control" /> implement <see cref="T:System.Web.UI.IUrlResolutionService" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified object's style properties to a <see cref="T:System.Web.UI.CssStyleCollection" /> object.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.CssStyleCollection" /> object to which to add the style properties. </param>
+        <param name="urlResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.IUrlResolutionService" /> -implemented object that contains the context information for the current location (URL). </param>
       </Docs>
     </Member>
     <Member MemberName="Font">
@@ -274,9 +476,20 @@
         <ReturnType>System.Web.UI.WebControls.FontInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontInfo'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.Font" /> property to specify the font properties of the Web server control. This property includes subproperties that can be accessed declaratively in the form of <paramref name="Property-Subproperty" /> (for example Font-Bold) or programmatically in the form of <paramref name="Property.Subproperty" /> (for example Font.Bold).</para>
+          <para>All but one subproperty will render in browsers prior to Microsoft Internet Explorer version 4 for all controls. They are: <see cref="P:System.Web.UI.WebControls.FontInfo.Bold" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Italic" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Name" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Names" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Underline" />, and <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> (but only named font sizes, such as Small, Smaller, and so on, will work).</para>
+          <block subset="none" type="note">
+            <para>Although these subproperties render in browsers prior to Microsoft Internet Explorer version 4, the HTML that is rendered is different than in later browsers. Instead of rendering as style attributes, these subproperties are rendered as HTML elements, such as &lt;b&gt; and &lt;font&gt;.</para>
+          </block>
+          <para>One subproperty that will not render on some browsers is <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the font properties associated with the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -299,9 +512,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.ForeColor" /> property to specify the foreground color of the Web server control. The foreground color is usually the color of the text. This property will render on browsers earlier than Microsoft Internet Explorer version 4 for all controls, except the <see cref="T:System.Web.UI.WebControls.Image" />, <see cref="T:System.Web.UI.WebControls.AdRotator" />, <see cref="T:System.Web.UI.WebControls.HyperLink" /> and <see cref="T:System.Web.UI.WebControls.LinkButton" />.</para>
+          <block subset="none" type="note">
+            <para>On browsers that do not support styles, this property is rendered as a FONT element.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color (typically the color of the text) of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -333,9 +555,18 @@
       </Parameters>
       <Docs>
         <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Style.GetStyleAttributes(System.Web.UI.IUrlResolutionService)" /> method to retrieve the <see cref="T:System.Web.UI.CssStyleCollection" /> object for a specified <see cref="T:System.Web.UI.IUrlResolutionService" />-implemented object. All classes derived from <see cref="T:System.Web.UI.Control" /> implement <see cref="T:System.Web.UI.IUrlResolutionService" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Web.UI.CssStyleCollection" /> object for the specified <see cref="T:System.Web.UI.IUrlResolutionService" />-implemented object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.CssStyleCollection" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Height">
@@ -346,9 +577,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Unit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.Height" /> property to specify or determine the height of the Web server control. This property is set with a <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -374,9 +611,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A protected property. Gets a value indicating whether any style elements have been defined in the state bag.</para>
+        </summary>
       </Docs>
       <Attributes>
         <Attribute>
@@ -394,9 +634,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.IsTrackingViewState" /> property to determine whether any style elements have been defined in the state bag. This property is primarily used by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether any style elements have been defined in the state bag.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -417,9 +663,13 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the previously saved state.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The previously saved state. </param>
       </Docs>
     </Member>
     <Member MemberName="MergeWith">
@@ -432,9 +682,19 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.Web.UI.WebControls.Style" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.Style.MergeWith(System.Web.UI.WebControls.Style)" /> method to combine the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> with the instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class that this method is called from.</para>
+          <block subset="none" type="note">
+            <para>All properties, except those that have already been set on the current instance of the Style class, will be replaced by the corresponding property of the <see cref="T:System.Web.UI.WebControls.Style" /> specified by the <paramref name="s" /> parameter.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> with the instance of the <see cref="T:System.Web.UI.WebControls.Style" /> class that this method is called from.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> that represents the style to combine. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -462,9 +722,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.RegisteredCssClass" /> property to retrieve the CSS class that is registered with the control.</para>
+          <para>A style is registered on the current page with a <see cref="M:System.Web.UI.IStyleSheet.RegisterStyle(System.Web.UI.WebControls.Style,System.Web.UI.IUrlResolutionService)" /> method, which looks for a &lt;head runat="server" &gt; element on the page where the properties in the current instance are placed in an embedded style sheet, represented by a &lt;style&gt; element, under a class name unique to the associated control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cascading style sheet (CSS) class that is registered with the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -475,8 +742,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove any defined style elements from the state bag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes any defined style elements from the state bag.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -495,9 +768,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A protected method. Saves any state that has been modified after the <see cref="M:System.Web.UI.WebControls.Style.TrackViewState" /> method was invoked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the saved state. The default is null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetBit">
@@ -514,9 +793,13 @@
         <Parameter Name="bit" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bit">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A protected internal method. Sets an internal bitmask field that indicates the style properties that are stored in the state bag.</para>
+        </summary>
+        <param name="bit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitmask value.</param>
       </Docs>
     </Member>
     <Member MemberName="SetDirty">
@@ -530,8 +813,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Style.SetDirty" /> method is called directly by the <see cref="M:System.Web.UI.WebControls.StyleCollection.SetDirtyObject(System.Object)" /> method of a <see cref="T:System.Web.UI.WebControls.StyleCollection" />, to mark a <see cref="T:System.Web.UI.WebControls.Style" /> object so that its state is recorded in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the <see cref="T:System.Web.UI.WebControls.Style" /> so that its state will be recorded in view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -545,9 +834,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.Style" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a server control is tracking its view state changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.LoadViewState">
@@ -564,9 +859,16 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.Style" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the previously saved state.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The previously saved state.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.SaveViewState">
@@ -581,9 +883,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.Style" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the object containing state changes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the saved state. The default is null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -598,8 +909,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.Style" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts tracking state changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -610,9 +927,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -630,8 +953,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A protected method. Marks the beginning for tracking state changes on the control. Any changes made after tracking has begun will be tracked and saved as part of the control view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ViewState">
@@ -653,9 +979,15 @@
         <ReturnType>System.Web.UI.StateBag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The private field name for the state bag is case sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state bag that holds the style elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Width">
@@ -666,9 +998,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Unit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Style.Width" /> property to specify or determine the width of the Web server control. This property is set with a <see cref="T:System.Web.UI.WebControls.Unit" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

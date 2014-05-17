@@ -3,8 +3,8 @@
 
 struct Foo
 {
-	int bar;
-	int baz;
+	public int bar;
+	public int baz;
 
 	public int Bar {
 		get { return bar; }

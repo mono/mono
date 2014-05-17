@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XsdDataContractExporter" FullName="System.Runtime.Serialization.XsdDataContractExporter">
+  <TypeSignature Language="C#" Value="public class XsdDataContractExporter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi XsdDataContractExporter extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> class when you have created a Web service that incorporates data represented by common language runtime (CLR) types and when you need to export XML schemas for each type to be consumed by other Web services. That is, <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> transforms a set of CLR types into XML schemas. (For more information about the types that can be used, see <format type="text/html"><a href="7381b200-437a-4506-9556-d77bf1bc3f34">Types Supported by the Data Contract Serializer</a></format>.) The schemas can then be exposed through a Web Services Description Language (WSDL) document for use by others who need to interoperate with your service. </para>
+      <para>Conversely, if you are creating a Web service that must interoperate with an existing Web service, use the <see cref="T:System.Runtime.Serialization.XsdDataContractImporter" /> to transform XML schemas and create the CLR types that represent the data in a selected programming language. </para>
+      <para>The <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> generates an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object that contains the collection of schemas. Access the set of schemas through the <see cref="M:System.Xml.Schema.XmlSchemaSet.Schemas" /> property.</para>
+      <block subset="none" type="note">
+        <para>To quickly generate XML schema definition (XSD) files that other Web services can consume, use the <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" />. </para>
+      </block>
+      <format type="text/html">
+        <h2>Exporting Schemas Into an XmlSchemaSet</h2>
+      </format>
+      <para>To create an instance of the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class that contains XML schema files, you should be aware of the following.</para>
+      <para>The set of types you are exporting are recorded as an internal set of data contracts. Thus, you can call the <see cref="Overload:System.Runtime.Serialization.XsdDataContractExporter.CanExport" /> method multiple times to add new types to the schema set without degrading performance because only the new types will be added to the set. During the <see cref="M:System.Runtime.Serialization.XsdDataContractExporter.Export(System.Collections.Generic.IList{System.Reflection.Assembly})" /> operation, the existing schemas are compared to the new schemas being added. If there are conflicts, an exception will be thrown. A conflict is usually detected if two types with the same data contract name but different contracts (different members) are exported by the same <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> instance.</para>
+      <format type="text/html">
+        <h2>Using the Exporter</h2>
+      </format>
+      <para>A recommended way of using this class is as follows:</para>
+      <list type="ordered">
+        <item>
+          <para>Use one of the <see cref="Overload:System.Runtime.Serialization.XsdDataContractExporter.CanExport" /> overloads to determine whether the specified type or set of types can be exported. Use one of the overloads that is appropriate to your requirements.</para>
+        </item>
+        <item>
+          <para>Call the corresponding <see cref="Overload:System.Runtime.Serialization.XsdDataContractExporter.Export" /> method.</para>
+        </item>
+        <item>
+          <para>Retrieve the schemas from the <see cref="P:System.Runtime.Serialization.XsdDataContractExporter.Schemas" /> property.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows the transformation of a set of dnprdnshort types that are used in data contracts into an XML schema file (.xsd). </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XsdDataContractExporter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XsdDataContractExporter (System.Xml.Schema.XmlSchemaSet schemas);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Schema.XmlSchemaSet schemas) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this overload when you have an existing <see cref="T:System.Xml.Schema.XmlSchemaSet" /> to which you want to add new schemas. After you construct a <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> with this overload, call the <see cref="M:System.Runtime.Serialization.XsdDataContractExporter.Export(System.Collections.Generic.IList{System.Reflection.Assembly})" /> method to add new types to the existing set. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.XsdDataContractExporter" /> class with the specified set of schemas.  </para>
+        </summary>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that contains the schemas to be exported. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CanExport">
+      <MemberSignature Language="C#" Value="public bool CanExport (System.Collections.Generic.ICollection&lt;System.Reflection.Assembly&gt; assemblies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CanExport(class System.Collections.Generic.ICollection`1&lt;class System.Reflection.Assembly&gt; assemblies) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblies" Type="System.Collections.Generic.ICollection&lt;System.Reflection.Assembly&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the set of .common language runtime (CLR) types contained in a set of assemblies can be exported. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the types can be exported; otherwise, false.</para>
+        </returns>
+        <param name="assemblies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.ICollection`1" />   of <see cref="T:System.Reflection.Assembly" /> that contains the assemblies with the types to export.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CanExport">
+      <MemberSignature Language="C#" Value="public bool CanExport (System.Collections.Generic.ICollection&lt;Type&gt; types);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CanExport(class System.Collections.Generic.ICollection`1&lt;class System.Type&gt; types) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="types" Type="System.Collections.Generic.ICollection&lt;System.Type&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the set of .common language runtime (CLR) types contained in a <see cref="T:System.Collections.Generic.ICollection`1" /> can be exported. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the types can be exported; otherwise, false.</para>
+        </returns>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.ICollection`1" />   that contains the specified types to export.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CanExport">
+      <MemberSignature Language="C#" Value="public bool CanExport (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CanExport(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the specified common language runtime (CLR) type can be exported. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the type can be exported; otherwise, false. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to export. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Export">
+      <MemberSignature Language="C#" Value="public void Export (System.Collections.Generic.ICollection&lt;System.Reflection.Assembly&gt; assemblies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Export(class System.Collections.Generic.ICollection`1&lt;class System.Reflection.Assembly&gt; assemblies) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblies" Type="System.Collections.Generic.ICollection&lt;System.Reflection.Assembly&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transforms the types contained in the specified collection of assemblies. </para>
+        </summary>
+        <param name="assemblies">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.ICollection`1" />   (of <see cref="T:System.Reflection.Assembly" />) that contains the types to export.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Export">
+      <MemberSignature Language="C#" Value="public void Export (System.Collections.Generic.ICollection&lt;Type&gt; types);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Export(class System.Collections.Generic.ICollection`1&lt;class System.Type&gt; types) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="types" Type="System.Collections.Generic.ICollection&lt;System.Type&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transforms the types contained in the <see cref="T:System.Collections.Generic.ICollection`1" /> passed to this method.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />A  <see cref="T:System.Collections.Generic.ICollection`1" /> (of <see cref="T:System.Type" />) that contains the types to export.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Export">
+      <MemberSignature Language="C#" Value="public void Export (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Export(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.Runtime.Serialization.XsdDataContractExporter.CanExport(System.Collections.Generic.IList{System.Type})" /> to determine whether the type can be exported. After calling the <see cref="M:System.Runtime.Serialization.XsdDataContractExporter.Export(System.Type)" /> method, the schema can be retrieved through the <see cref="P:System.Runtime.Serialization.XsdDataContractExporter.Schemas" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transforms the specified dnprdnshort type into an XML schema definition language (XSD) schema. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to transform into an XML schema. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRootElementName">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlQualifiedName GetRootElementName (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlQualifiedName GetRootElementName(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the top-level name and namespace for the <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlQualifiedName" /> that represents the top-level name and namespace for this <see cref="T:System.Type" />, which is written to the stream when writing this object. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to query.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchemaType">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaType GetSchemaType (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchemaType GetSchemaType(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaType</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The main purpose of this method is to allow anonymous types in XML schema to be represented. Because anonymous types do not have a contract name and namespace, they cannot be looked up using the <see cref="M:System.Runtime.Serialization.XsdDataContractExporter.GetSchemaTypeName(System.Type)" />. This method returns the <see cref="T:System.Xml.Schema.XmlSchemaType" /> definition for such types. The types for which the <see cref="M:System.Runtime.Serialization.XsdDataContractExporter.GetSchemaTypeName(System.Type)" /> method returns a valid name, this method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML schema type for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchemaType" /> that contains the XML schema. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to return a schema for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchemaTypeName">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlQualifiedName GetSchemaTypeName (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlQualifiedName GetSchemaTypeName(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the contract name and contract namespace for the <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlQualifiedName" /> that represents the contract name of the type and its namespace.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that was exported. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Options">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.ExportOptions Options { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Serialization.ExportOptions Options" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Serialization.ExportOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.Runtime.Serialization.ExportOptions" /> that contains options that can be set for the export operation. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Schemas">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet Schemas { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaSet Schemas" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of exported XML schemas. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

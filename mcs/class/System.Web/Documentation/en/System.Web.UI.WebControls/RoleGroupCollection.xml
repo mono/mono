@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RoleGroupCollection" FullName="System.Web.UI.WebControls.RoleGroupCollection">
   <TypeSignature Language="C#" Value="public sealed class RoleGroupCollection : System.Collections.CollectionBase" />
   <AssemblyInfo>
@@ -14,9 +15,20 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" /> class manages the list of role groups associated with a particular <see cref="T:System.Web.UI.WebControls.LoginView" /> template. Each role group defines the content and controls to display to a particular group of users on your Web site. It is possible to assign several role groups to the same template.</para>
+      <para>To find the role group in the collection that a particular user belongs to, you can use the <see cref="M:System.Web.UI.WebControls.RoleGroupCollection.GetMatchingRoleGroup(System.Security.Principal.IPrincipal)" /> method to search the collection by user name.</para>
+      <block subset="none" type="note">
+        <para>The order of the roles in the <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" /> collection is important because matching is done sequentially based on the first role found.</para>
+      </block>
+      <para>You must configure role management to use the <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" /> class to manage a list of role groups. For more information, see <format type="text/html"><a href="a0d2f19d-a2a7-496d-88b6-30133f8ea3d6">Understanding Role Management</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a sequential list of role groups that the <see cref="T:System.Web.UI.WebControls.LoginView" /> control uses to determine which control template to display to users based on their role. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +36,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +57,14 @@
         <Parameter Name="group" Type="System.Web.UI.WebControls.RoleGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a role group to the end of the collection.</para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.RoleGroup" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,11 +80,18 @@
         <Parameter Name="group" Type="System.Web.UI.WebControls.RoleGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the collection contains the specified role group.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified role group is a member of the collection; otherwise false.</para>
+        </returns>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.RoleGroup" /> to look for in the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,11 +108,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.RoleGroupCollection.CopyTo(System.Web.UI.WebControls.RoleGroup[],System.Int32)" /> method to copy the contents of the collection into the specified zero-based array. Items are copied starting at the specified index of the target array. After the items are in an array, you can use array syntax to access the items in the <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the items from the <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" /> collection to a compatible one-dimensional array of <see cref="T:System.Web.UI.WebControls.RoleGroup" /> objects, starting at the specified index in the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based array of <see cref="T:System.Web.UI.WebControls.RoleGroup" /> objects that receives the items copied from the collection.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the target array at which the array starts receiving the copied items.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -102,11 +136,23 @@
         <Parameter Name="user" Type="System.Security.Principal.IPrincipal" />
       </Parameters>
       <Docs>
-        <param name="user">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.RoleGroupCollection.GetMatchingRoleGroup(System.Security.Principal.IPrincipal)" /> method searches the role group collection and returns the first role group that contains the specified user account. The method searches the collection in the order role groups are added to the collection, and returns only the first matching role group.</para>
+          <para>If the specified user account is not part of any of the role groups in the collection, null is returned.</para>
+          <para>You must configure role management to use the <see cref="M:System.Web.UI.WebControls.RoleGroupCollection.GetMatchingRoleGroup(System.Security.Principal.IPrincipal)" /> method. For more information, see <format type="text/html"><a href="a0d2f19d-a2a7-496d-88b6-30133f8ea3d6">Understanding Role Management</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the first role group that contains the specified user account.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.RoleGroup" /> representing the first role group in the collection that contains the specified user account. If the user is not part of a role group in the collection, it returns null.</para>
+        </returns>
+        <param name="user">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Principal.IPrincipal" /> that represents the user account to find the role group collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,11 +168,21 @@
         <Parameter Name="group" Type="System.Web.UI.WebControls.RoleGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.RoleGroupCollection.IndexOf(System.Web.UI.WebControls.RoleGroup)" /> method performs a linear search; therefore the average execution time depends on the number of members in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the collection and returns the zero-based index of the first occurrence of the specified <see cref="T:System.Web.UI.WebControls.RoleGroup" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="group" /> within the entire <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" />, if found; otherwise, -1.</para>
+        </returns>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.RoleGroup" /> to locate in the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,11 +199,19 @@
         <Parameter Name="group" Type="System.Web.UI.WebControls.RoleGroup" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.RoleGroupCollection.Insert(System.Int32,System.Web.UI.WebControls.RoleGroup)" /> method inserts the specified <see cref="T:System.Web.UI.WebControls.RoleGroup" /> at the specified location. Role groups that follow the insertion point move down in the collection to accommodate the new element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Web.UI.WebControls.RoleGroup" /> to the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to insert the role group. </param>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The role group to insert. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -183,10 +247,17 @@
         <Parameter Name="group" Type="System.Web.UI.WebControls.RoleGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first instance of the specified <see cref="T:System.Web.UI.WebControls.RoleGroup" /> object is removed from the <see cref="T:System.Web.UI.WebControls.RoleGroupCollection" /> collection. Groups that follow the removed group all move up in the index to fill the vacated spot. If there is more than one instance of the specified <see cref="T:System.Web.UI.WebControls.RoleGroup" /> object, only the first instance is removed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the first occurrence of the specified role group from the collection.</para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.RoleGroup" /> to remove from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

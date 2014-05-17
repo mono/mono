@@ -36,6 +36,7 @@ typedef struct _MonoDebugList			MonoDebugList;
 typedef enum {
 	MONO_DEBUG_FORMAT_NONE,
 	MONO_DEBUG_FORMAT_MONO,
+	/* Deprecated, the mdb debugger is not longer supported. */
 	MONO_DEBUG_FORMAT_DEBUGGER
 } MonoDebugFormat;
 
@@ -104,6 +105,8 @@ struct _MonoDebugSourceLocation {
 	uint32_t il_offset;
 };
 
+MONO_API mono_bool mono_debug_enabled (void);
+
 /*
  * These bits of the MonoDebugLocalInfo's "index" field are flags specifying
  * where the variable is actually stored.
@@ -146,11 +149,6 @@ struct _MonoDebugVarInfo {
 #define MONO_DEBUGGER_MINOR_VERSION			6
 #define MONO_DEBUGGER_MAGIC				0x7aff65af4253d427ULL
 
-extern MonoSymbolTable *mono_symbol_table;
-extern MonoDebugFormat mono_debug_format;
-extern int32_t mono_debug_debugger_version;
-extern int32_t _mono_debug_using_mono_debugger;
-
 MONO_API void mono_debug_list_add (MonoDebugList **list, const void* data);
 MONO_API void mono_debug_list_remove (MonoDebugList **list, const void* data);
 
@@ -162,8 +160,6 @@ MONO_API void mono_debug_close_image (MonoImage *image);
 
 MONO_API void mono_debug_domain_unload (MonoDomain *domain);
 MONO_API void mono_debug_domain_create (MonoDomain *domain);
-
-MONO_API mono_bool mono_debug_using_mono_debugger (void);
 
 MONO_API MonoDebugMethodAddress *
 mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDomain *domain);

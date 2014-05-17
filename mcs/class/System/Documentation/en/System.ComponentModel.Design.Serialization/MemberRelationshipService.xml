@@ -1,35 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemberRelationshipService" FullName="System.ComponentModel.Design.Serialization.MemberRelationshipService">
   <TypeSignature Language="C#" Value="public abstract class MemberRelationshipService" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MemberRelationshipService extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Designers serialize themselves to code through an engine that searches through the live property values of objects and generates those values as code. So, for example, the text of a button is generated in the following format.</para>
+      <code>this.okButton.Text = "OK";</code>
+      <para>One of the limitations of this scheme is that it is difficult to retrieve a property from another location. For example, it is very difficult to emit code in the following format, because the only thing the code generator can rely on is the value in the property.</para>
+      <code>this.titleLabel.Text = this.Text;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for relating one member to another.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected MemberRelationshipService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.MemberRelationshipService" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetRelationship">
       <MemberSignature Language="C#" Value="protected virtual System.ComponentModel.Design.Serialization.MemberRelationship GetRelationship (System.ComponentModel.Design.Serialization.MemberRelationship source);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance valuetype System.ComponentModel.Design.Serialization.MemberRelationship GetRelationship(valuetype System.ComponentModel.Design.Serialization.MemberRelationship source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.Serialization.MemberRelationship</ReturnType>
@@ -38,17 +57,29 @@
         <Parameter Name="source" Type="System.ComponentModel.Design.Serialization.MemberRelationship" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation stores relationships in a dictionary using weak references, so the relationship table does not keep objects alive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a relationship to the given source relationship.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A relationship to <paramref name="source" />, or <see cref="F:System.ComponentModel.Design.Serialization.MemberRelationship.Empty" /> if no relationship exists.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source relationship.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public System.ComponentModel.Design.Serialization.MemberRelationship this[System.ComponentModel.Design.Serialization.MemberRelationship source] { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.ComponentModel.Design.Serialization.MemberRelationship this[System.ComponentModel.Design.Serialization.MemberRelationship source] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ComponentModel.Design.Serialization.MemberRelationship Item(valuetype System.ComponentModel.Design.Serialization.MemberRelationship)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.Serialization.MemberRelationship</ReturnType>
@@ -64,10 +95,12 @@
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public System.ComponentModel.Design.Serialization.MemberRelationship this[object owner, System.ComponentModel.MemberDescriptor member] { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.ComponentModel.Design.Serialization.MemberRelationship this[object owner, System.ComponentModel.MemberDescriptor member] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ComponentModel.Design.Serialization.MemberRelationship Item(object, class System.ComponentModel.MemberDescriptor)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.Serialization.MemberRelationship</ReturnType>
@@ -86,9 +119,11 @@
     </Member>
     <Member MemberName="SetRelationship">
       <MemberSignature Language="C#" Value="protected virtual void SetRelationship (System.ComponentModel.Design.Serialization.MemberRelationship source, System.ComponentModel.Design.Serialization.MemberRelationship relationship);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void SetRelationship(valuetype System.ComponentModel.Design.Serialization.MemberRelationship source, valuetype System.ComponentModel.Design.Serialization.MemberRelationship relationship) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -98,17 +133,27 @@
         <Parameter Name="relationship" Type="System.ComponentModel.Design.Serialization.MemberRelationship" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="relationship">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.MemberRelationshipService.SetRelationship(System.ComponentModel.Design.Serialization.MemberRelationship,System.ComponentModel.Design.Serialization.MemberRelationship)" /> method clears any existing relationship if the relationship parameter is <see cref="F:System.ComponentModel.Design.Serialization.MemberRelationship.Empty" />. The default implementation stores relationships in a dictionary using weak references so the relationship table does not keep objects alive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a relationship between the source object and target relationship.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source relationship.</param>
+        <param name="relationship">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relationship to set into the source.</param>
       </Docs>
     </Member>
     <Member MemberName="SupportsRelationship">
       <MemberSignature Language="C#" Value="public abstract bool SupportsRelationship (System.ComponentModel.Design.Serialization.MemberRelationship source, System.ComponentModel.Design.Serialization.MemberRelationship relationship);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool SupportsRelationship(valuetype System.ComponentModel.Design.Serialization.MemberRelationship source, valuetype System.ComponentModel.Design.Serialization.MemberRelationship relationship) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -118,11 +163,19 @@
         <Parameter Name="relationship" Type="System.ComponentModel.Design.Serialization.MemberRelationship" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="relationship">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the given relationship is supported.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a relationship between the given two objects is supported; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source relationship.</param>
+        <param name="relationship">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relationship to set into the source.</param>
       </Docs>
     </Member>
   </Members>

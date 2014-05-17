@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExecutionContext" FullName="System.Threading.ExecutionContext">
-  <TypeSignature Language="C#" Value="public sealed class ExecutionContext : System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="C#" Value="public sealed class ExecutionContext : IDisposable, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit ExecutionContext extends System.Object implements class System.IDisposable, class System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,54 +12,118 @@
   </Base>
   <Interfaces>
     <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+    <Interface>
       <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.ExecutionContext" /> class provides a single container for all information relevant to a logical thread of execution. This includes security context, call context, and synchronization context.</para>
+      <para>The <see cref="T:System.Threading.ExecutionContext" /> class provides the functionality for user code to capture and transfer this context across user-defined asynchronous points. The common language runtime ensures that the <see cref="T:System.Threading.ExecutionContext" /> is consistently transferred across runtime-defined asynchronous points within the managed process. </para>
+      <para>An execution context is the managed equivalent of a COM apartment. Within an application domain, the entire execution context must be transferred whenever a thread is transferred. This situation occurs during transfers made by the <see cref="M:System.Threading.Thread.Start" /> method, most thread pool operations, and Windows Forms thread marshaling through the Windows message pump. It does not occur in unsafe thread pool operations (such as the <see cref="M:System.Threading.ThreadPool.UnsafeQueueUserWorkItem(System.Threading.WaitCallback,System.Object)" /> method), which do not transfer the compressed stack. Wherever the compressed stack flows, the managed principal, synchronization, locale, and user context also flow. The <see cref="T:System.Threading.ExecutionContext" /> class provides the <see cref="M:System.Threading.ExecutionContext.Capture" /> and <see cref="M:System.Threading.ExecutionContext.CreateCopy" /> methods to get the execution context and the <see cref="M:System.Threading.ExecutionContext.Run(System.Threading.ExecutionContext,System.Threading.ContextCallback,System.Object)" /> method to set the execution context for the current thread.</para>
+      <para>An <see cref="T:System.Threading.ExecutionContext" /> that is associated with a thread cannot be set on another thread. Attempting to do so will result in an exception being thrown. To propagate the <see cref="T:System.Threading.ExecutionContext" /> from one thread to another, make a copy of the <see cref="T:System.Threading.ExecutionContext" />.</para>
+      <para>Internally, the <see cref="T:System.Threading.ExecutionContext" /> stores all data that is associated with the <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" />. This allows the <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> data to be propagated when the <see cref="T:System.Threading.ExecutionContext" /> is copied and transferred.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages the execution context for the current thread. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Capture">
       <MemberSignature Language="C#" Value="public static System.Threading.ExecutionContext Capture ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.ExecutionContext Capture() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.ExecutionContext</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The captured execution context can be used as the <paramref name="executionContext" /> parameter for the <see cref="M:System.Threading.ExecutionContext.Run(System.Threading.ExecutionContext,System.Threading.ContextCallback,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Captures the execution context from the current thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Threading.ExecutionContext" /> object representing the execution context for the current thread.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateCopy">
       <MemberSignature Language="C#" Value="public System.Threading.ExecutionContext CreateCopy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.ExecutionContext CreateCopy() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.ExecutionContext</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful for propagating an execution context from one thread to another.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current execution context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Threading.ExecutionContext" /> object representing the current execution context.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Threading.ExecutionContext" />. The Dispose method leaves the <see cref="T:System.Threading.ExecutionContext" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Threading.ExecutionContext" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Threading.ExecutionContext" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Threading.ExecutionContext" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Threading.ExecutionContext" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Threading.ExecutionContext" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -66,55 +132,85 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.ExecutionContext.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> sets a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the logical call context information. During deserialization, the execution context object is reconstituted from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> transmitted over the stream.</para>
+          <para>For more information, see <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the logical context information needed to recreate an instance of the current execution context.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object to be populated with serialization information. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> structure representing the destination context of the serialization. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsFlowSuppressed">
+      <MemberSignature Language="C#" Value="public static bool IsFlowSuppressed ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsFlowSuppressed() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsFlowSuppressed">
-      <MemberSignature Language="C#" Value="public static bool IsFlowSuppressed ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.ExecutionContext.IsFlowSuppressed" /> method is used by infrastructure components to determine whether to transfer the <see cref="T:System.Threading.ExecutionContext" /> during asynchronous operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the flow of the execution context is currently suppressed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the flow is suppressed; otherwise, false. </para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="RestoreFlow">
+      <MemberSignature Language="C#" Value="public static void RestoreFlow ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RestoreFlow() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RestoreFlow">
-      <MemberSignature Language="C#" Value="public static void RestoreFlow ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.ExecutionContext.RestoreFlow" /> reverses the effect of a prior <see cref="M:System.Threading.ExecutionContext.SuppressFlow" /> method call.</para>
+          <para>This method is called by the <see cref="M:System.Threading.AsyncFlowControl.Undo" /> method of the <see cref="T:System.Threading.AsyncFlowControl" /> structure returned by the <see cref="M:System.Threading.ExecutionContext.SuppressFlow" /> method.  You should use the <see cref="M:System.Threading.AsyncFlowControl.Undo" /> method to restore the flow of the execution context, not the <see cref="M:System.Threading.ExecutionContext.RestoreFlow" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the flow of the execution context across asynchronous threads.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Run">
+      <MemberSignature Language="C#" Value="public static void Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Run(class System.Threading.ExecutionContext executionContext, class System.Threading.ContextCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Run">
-      <MemberSignature Language="C#" Value="public static void Run (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, object state);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -124,35 +220,52 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="executionContext">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The execution context is returned to its previous state when the method completes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs a method in a specified execution context on the current thread.</para>
+        </summary>
+        <param name="executionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.ExecutionContext" /> to set.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.ContextCallback" /> delegate that represents the method to be run in the provided execution context.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to pass to the callback method.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SuppressFlow">
+      <MemberSignature Language="C#" Value="public static System.Threading.AsyncFlowControl SuppressFlow ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.AsyncFlowControl SuppressFlow() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SuppressFlow">
-      <MemberSignature Language="C#" Value="public static System.Threading.AsyncFlowControl SuppressFlow ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.AsyncFlowControl</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to suppress the flow of the <see cref="T:System.Threading.ExecutionContext" /> on the current thread. </para>
+          <para>You must use the <see cref="M:System.Threading.AsyncFlowControl.Undo" /> method on the returned <see cref="T:System.Threading.AsyncFlowControl" /> structure to restore the flow of the <see cref="T:System.Threading.ExecutionContext" />.</para>
+          <para>This method is protected with a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> for <see cref="F:System.Security.Permissions.SecurityPermissionFlag.Infrastructure" /> permission. A fully trusted component can call this method to suppress the flow of the <see cref="T:System.Threading.ExecutionContext" /> during asynchronous calls. While the flow is suppressed, the <see cref="M:System.Security.SecurityContext.Capture" /> method returns null. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suppresses the flow of the execution context across asynchronous threads.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Threading.AsyncFlowControl" /> structure for restoring the flow.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

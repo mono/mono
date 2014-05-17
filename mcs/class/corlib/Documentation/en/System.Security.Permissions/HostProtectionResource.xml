@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HostProtectionResource" FullName="System.Security.Permissions.HostProtectionResource">
   <TypeSignature Language="C#" Value="public enum HostProtectionResource" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed HostProtectionResource extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,175 +19,225 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies categories of functionality potentially harmful to the host if invoked by a method or class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
       <MemberSignature Language="C#" Value="All" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource All = int32(511)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exposes all host resources.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ExternalProcessMgmt">
       <MemberSignature Language="C#" Value="ExternalProcessMgmt" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource ExternalProcessMgmt = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Might create or destroy other processes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ExternalThreading">
       <MemberSignature Language="C#" Value="ExternalThreading" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource ExternalThreading = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates or manipulates threads other than its own, which might be harmful to the host.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MayLeakOnAbort">
       <MemberSignature Language="C#" Value="MayLeakOnAbort" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource MayLeakOnAbort = int32(256)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Might cause a resource leak on termination, if not protected by a safe handle or some other means of ensuring the release of resources.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exposes no host resources.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SecurityInfrastructure">
       <MemberSignature Language="C#" Value="SecurityInfrastructure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource SecurityInfrastructure = int32(64)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exposes the security infrastructure.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SelfAffectingProcessMgmt">
       <MemberSignature Language="C#" Value="SelfAffectingProcessMgmt" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource SelfAffectingProcessMgmt = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Might exit the current process, terminating the server.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SelfAffectingThreading">
       <MemberSignature Language="C#" Value="SelfAffectingThreading" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource SelfAffectingThreading = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Manipulates threads in a way that only affects user code.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SharedState">
       <MemberSignature Language="C#" Value="SharedState" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource SharedState = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exposes state that might be shared between threads.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Synchronization">
       <MemberSignature Language="C#" Value="Synchronization" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource Synchronization = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exposes synchronization.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="UI">
       <MemberSignature Language="C#" Value="UI" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.HostProtectionResource UI = int32(128)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exposes the user interface.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

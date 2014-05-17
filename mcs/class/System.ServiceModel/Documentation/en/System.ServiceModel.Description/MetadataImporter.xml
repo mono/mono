@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MetadataImporter" FullName="System.ServiceModel.Description.MetadataImporter">
+  <TypeSignature Language="C#" Value="public abstract class MetadataImporter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MetadataImporter extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use an implementation of the <see cref="T:System.ServiceModel.Description.MetadataImporter" /> abstract class to import service metadata. Types that derive from the <see cref="T:System.ServiceModel.Description.MetadataImporter" /> class implement support for importing metadata formats that take advantage of the WS-Policy import logic in indigo1. </para>
+      <para>A <see cref="T:System.ServiceModel.Description.MetadataImporter" /> implementation collects the policy expressions attached to the service metadata in a <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> object. The <see cref="T:System.ServiceModel.Description.MetadataImporter" /> then processes the policies as part of importing the metadata by calling the implementations of the <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> interface in the <see cref="P:System.ServiceModel.Description.MetadataImporter.PolicyImportExtensions" /> property. </para>
+      <para>You can add support for importing new policy assertions to a <see cref="T:System.ServiceModel.Description.MetadataImporter" /> by adding your own implementation of the <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> interface to the <see cref="P:System.ServiceModel.Description.MetadataImporter.PolicyImportExtensions" /> property on a <see cref="T:System.ServiceModel.Description.MetadataImporter" /> instance. Alternatively, you can register your policy import extension in your application configuration file.</para>
+      <para>The <see cref="T:System.ServiceModel.Description.WsdlImporter" /> type is the implementation of the <see cref="T:System.ServiceModel.Description.MetadataImporter" /> abstract class included with indigo2. The <see cref="T:System.ServiceModel.Description.WsdlImporter" /> type imports WSDL metadata with attached policies that are bundled in a <see cref="T:System.ServiceModel.Description.MetadataSet" /> object.</para>
+      <para>You can add support for importing WSDL extensions by implementing the <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> interface and then adding your implementation to the <see cref="P:System.ServiceModel.Description.WsdlImporter.WsdlImportExtensions" /> property on your <see cref="T:System.ServiceModel.Description.WsdlImporter" /> instance. The <see cref="T:System.ServiceModel.Description.WsdlImporter" /> can also load implementations of the <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> interface registered in your application configuration file.</para>
+      <block subset="none" type="note">
+        <para>Because the <see cref="T:System.ServiceModel.Description.MetadataImporter" /> constructor is internal, you cannot derive from <see cref="T:System.ServiceModel.Description.MetadataImporter" /> in this version.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Imports metadata into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Errors">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.MetadataConversionError&gt; Errors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.MetadataConversionError&gt; Errors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.MetadataConversionError&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property after importing metadata and before using the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether there were errors importing the metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportAllContracts">
+      <MemberSignature Language="C#" Value="public abstract System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ContractDescription&gt; ImportAllContracts ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ContractDescription&gt; ImportAllContracts() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ContractDescription&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a collection of contracts imported from the metadata. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contracts imported from the metadata.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportAllEndpoints">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Description.ServiceEndpointCollection ImportAllEndpoints ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Description.ServiceEndpointCollection ImportAllEndpoints() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the <see cref="M:System.ServiceModel.Description.MetadataImporter.ImportAllEndpoints" /> method to return all endpoints in the imported metadata. Metadata that has been imported as service endpoints cannot be used to create a runtime or export metadata because the imported endpoints contain no managed type information. To use the metadata to create a client or service runtime or to generate metadata, you must first generate and compile code from the metadata and use that type information to create a new <see cref="T:System.ServiceModel.Description.ContractDescription" /> object using <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns all endpoints in the metadata. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects that are published by a service.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="KnownContracts">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;System.Xml.XmlQualifiedName,System.ServiceModel.Description.ContractDescription&gt; KnownContracts { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.Dictionary`2&lt;class System.Xml.XmlQualifiedName, class System.ServiceModel.Description.ContractDescription&gt; KnownContracts" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;System.Xml.XmlQualifiedName,System.ServiceModel.Description.ContractDescription&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataImporter.KnownContracts" /> property to add or remove contract descriptions and their associated XML names that the importer can reference.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of contracts by name that the importer knows about.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PolicyImportExtensions">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IPolicyImportExtension&gt; PolicyImportExtensions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.KeyedByTypeCollection`1&lt;class System.ServiceModel.Description.IPolicyImportExtension&gt; PolicyImportExtensions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IPolicyImportExtension&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.MetadataImporter.PolicyImportExtensions" /> property to add or remove policy importers that are invoked to process policy assertions in the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of policy importers that the importer calls to process policy assertions.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="State">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;object,object&gt; State { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.Dictionary`2&lt;object, object&gt; State" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;System.Object,System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the State property to add or remove objects used in the importing of metadata. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of objects used in the importing of metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,19 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISettingsProviderService" FullName="System.Configuration.ISettingsProviderService">
   <TypeSignature Language="C#" Value="public interface ISettingsProviderService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISettingsProviderService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Configuration.IPersistComponentSettings" /> interface enables controls and components hosted in an application to persist their application settings in a manner largely transparent to the application. However, in some cases, the application or environment may need to override the settings provider natively used by a component with one of its own choosing. The <see cref="T:System.Configuration.ISettingsProviderService" /> interface enables the creation of a lightweight service that communicates such an alternate settings provider, typically offered through the owning <see cref="T:System.ComponentModel.Container" />. </para>
+      <para>
+        <see cref="T:System.Configuration.ISettingsProviderService" /> is commonly used by design-time tools and debuggers that provide special support for application settings. To make such an arrangement function seamlessly, the <see cref="T:System.Configuration.ApplicationSettingsBase" /> class contains constructors that take a reference to the owning component. These constructors automatically query for compatible settings providers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for defining an alternate application settings provider.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetSettingsProvider">
       <MemberSignature Language="C#" Value="public System.Configuration.SettingsProvider GetSettingsProvider (System.Configuration.SettingsProperty property);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Configuration.SettingsProvider GetSettingsProvider(class System.Configuration.SettingsProperty property) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.SettingsProvider</ReturnType>
       </ReturnValue>
@@ -21,15 +37,22 @@
         <Parameter Name="property" Type="System.Configuration.SettingsProperty" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Configuration.ISettingsProviderService.GetSettingsProvider(System.Configuration.SettingsProperty)" /> method enables an <see cref="T:System.Configuration.ISettingsProviderService" /> to offer its serialization services to any sited component. This method determines if the associated settings provider can persist the specified application settings property type. If it can, this method returns a reference to that settings provider; otherwise it returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the settings provider compatible with the specified settings property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If found, the <see cref="T:System.Configuration.SettingsProvider" /> that can persist the specified settings property; otherwise, null.</para>
+        </returns>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.SettingsProperty" /> that requires serialization.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

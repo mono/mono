@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WS2007HttpBindingElement" FullName="System.ServiceModel.Configuration.WS2007HttpBindingElement">
+  <TypeSignature Language="C#" Value="public class WS2007HttpBindingElement : System.ServiceModel.Configuration.WSHttpBindingElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WS2007HttpBindingElement extends System.ServiceModel.Configuration.WSHttpBindingElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.WSHttpBindingElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an interoperable binding that derives from <see cref="T:System.ServiceModel.WSHttpBinding" /> and provides support for the correct versions of the <see cref="P:System.ServiceModel.WSHttpBinding.Security" />, <see cref="T:System.ServiceModel.ReliableSession" />, and <see cref="P:System.ServiceModel.WSHttpBindingBase.TransactionFlow" /> binding elements.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WS2007HttpBindingElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.WS2007HttpBindingElement" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

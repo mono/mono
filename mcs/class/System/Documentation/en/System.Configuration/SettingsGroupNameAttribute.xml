@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsGroupNameAttribute" FullName="System.Configuration.SettingsGroupNameAttribute">
   <TypeSignature Language="C#" Value="public sealed class SettingsGroupNameAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SettingsGroupNameAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -14,42 +17,69 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A application settings class, derived from <see cref="T:System.Configuration.ApplicationSettingsBase" />, defines one or more properties that belong to the same application settings property group. By default, the group is assigned the name of the settings class. However, <see cref="T:System.Configuration.SettingsGroupNameAttribute" /> can be used to explicitly specify a name for the property group. This name can be helpful in organizing large sets of properties, for assistance in design-time programming tools and run-time administrative tools, and so on. The associated settings provider may even use this name to organize settings in the data store.</para>
+      <para>The <see cref="T:System.Configuration.SettingsGroupNameAttribute" /> can only be applied at the class level.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a name for application settings property group. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SettingsGroupNameAttribute (string groupName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string groupName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="groupName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="groupName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the theoretical maximum length of the <paramref name="groupName" /> parameter is constrained by the upper bounds of an <see cref="T:System.Int32" />, practical limits, determined by usability and quota limitations imposed by the settings provider, will be much smaller. </para>
+          <block subset="none" type="note">
+            <para>The settings group name does not need to be unique.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SettingsGroupNameAttribute" /> class.</para>
+        </summary>
+        <param name="groupName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the name of the application settings property group.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GroupName">
       <MemberSignature Language="C#" Value="public string GroupName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string GroupName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.SettingsGroupNameAttribute.GroupName" /> property value is set by the <see cref="M:System.Configuration.SettingsGroupNameAttribute.#ctor(System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the application settings property group.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

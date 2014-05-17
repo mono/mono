@@ -1,0 +1,2027 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="Complex" FullName="System.Numerics.Complex">
+  <TypeSignature Language="C#" Value="public struct Complex : IEquatable&lt;System.Numerics.Complex&gt;, IFormattable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit Complex extends System.ValueType implements class System.IEquatable`1&lt;valuetype System.Numerics.Complex&gt;, class System.IFormattable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Numerics</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Numerics.Complex&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IFormattable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A complex number is a number that comprises a real number part and an imaginary number part. A complex number <math>z</math> is usually written in the form <math>z = x + yi</math>, where x and y are real numbers, and i is the imaginary unit that has the property i<superscript>2</superscript> = -1. The real part of the complex number is represented by x, and the imaginary part of the complex number is represented by y.</para>
+      <para>The <see cref="T:System.Numerics.Complex" /> type uses the Cartesian coordinate system (real, imaginary) when instantiating and manipulating complex numbers. A complex number can be represented as a point in a two-dimensional coordinate system, which is known as the complex plane. The real part of the complex number is positioned on the x-axis (the horizontal axis), and the imaginary part is positioned on the y-axis (the vertical axis). </para>
+      <para>Any point in the complex plane can also be expressed based on its absolute value, by using the polar coordinate system., In polar coordinates, a point is characterized by two numbers:</para>
+      <list type="bullet">
+        <item>
+          <para>Its magnitude, which is the distance of the point from the origin (that is, 0,0, or the point at which the x-axis and the y-axis intersect).</para>
+        </item>
+        <item>
+          <para>Its phase, which is the angle between the real axis and the line drawn from the origin to the point. </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Instantiating a Complex Number</h2>
+      </format>
+      <para>You can assign a value to a complex number in one of the following ways:</para>
+      <list type="bullet">
+        <item>
+          <para>By passing two <see cref="T:System.Double" /> values to its constructor. The first value represents the real part of the complex number, and the second value represents its imaginary part. These values represent the position of the complex number in the two-dimensional Cartesian coordinate system.</para>
+        </item>
+        <item>
+          <para>By calling the static (Shared in Visual Basic) <see cref="M:System.Numerics.Complex.FromPolarCoordinates(System.Double,System.Double)" /> method to create a complex number from its polar coordinates.</para>
+        </item>
+        <item>
+          <para>By assigning a <see cref="T:System.Byte" />, <see cref="T:System.SByte" />, <see cref="T:System.Int16" />, <see cref="T:System.UInt16" />, <see cref="T:System.Int32" />, <see cref="T:System.UInt32" />, <see cref="T:System.Int64" />, <see cref="T:System.UInt64" />, <see cref="T:System.Single" />, or <see cref="T:System.Double" /> value to a <see cref="T:System.Numerics.Complex" /> object. The value becomes the real part of the complex number, and its imaginary part equals 0.</para>
+        </item>
+        <item>
+          <para>By casting (in C#) or converting (in Visual Basic) a <see cref="T:System.Decimal" /> or <see cref="T:System.Numerics.BigInteger" /> value to a <see cref="T:System.Numerics.Complex" /> object. The value becomes the real part of the complex number, and its imaginary part equals 0. </para>
+        </item>
+        <item>
+          <para>By assigning the complex number that is returned by a method or operator to a <see cref="T:System.Numerics.Complex" /> object. For example, <see cref="M:System.Numerics.Complex.Add(System.Numerics.Complex,System.Numerics.Complex)" /> is a static method that returns a complex number that is the sum of two complex numbers, and the <see cref="M:System.Numerics.Complex.op_Addition(System.Numerics.Complex,System.Numerics.Complex)" /> operator adds two complex numbers and returns the result.</para>
+        </item>
+      </list>
+      <para>The following example demonstrates each of these five ways of assigning a value to a complex number.</para>
+      <para>code reference: System.Numerics.Complex.Class#2</para>
+      <format type="text/html">
+        <h2>Operations with Complex Numbers</h2>
+      </format>
+      <para>The <see cref="T:System.Numerics.Complex" /> structure in the .NET Framework includes members that provide the following functionality:</para>
+      <list type="bullet">
+        <item>
+          <para>Methods to compare two complex numbers to determine whether they are equal.</para>
+        </item>
+        <item>
+          <para>Operators to perform arithmetic operations on complex numbers. <see cref="T:System.Numerics.Complex" /> operators enable you to perform addition, subtraction, multiplication, division, and unary negation with complex numbers.</para>
+        </item>
+        <item>
+          <para>Methods to perform other numerical operations on complex numbers. In addition to the four basic arithmetic operations, you can raise a complex number to a specified power, find the square root of a complex number, and get the absolute value of a complex number.</para>
+        </item>
+        <item>
+          <para>Methods to perform trigonometric operations on complex numbers. For example, you can calculate the tangent of an angle represented by a complex number.</para>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Precision and Complex Numbers</h2>
+      </format>
+      <para>The real and imaginary parts of a complex number are represented by two double-precision floating-point values. This means that <see cref="T:System.Numerics.Complex" /> values, like double-precision floating-point values, can lose precision as a result of numerical operations. This means that strict comparisons for equality of two <see cref="T:System.Numerics.Complex" /> values may fail, even if the difference between the two values is due to a loss of precision. For more information, see <see cref="T:System.Double" />.</para>
+      <para>For example, performing exponentiation on the logarithm of a number should return the original number. However, in some cases, the loss of precision of floating-point values can cause slight differences between the two values, as the following example illustrates.</para>
+      <para>code reference: System.Numerics.Complex.Class#5</para>
+      <para>Similarly, the following example, which calculates the square root of a <see cref="T:System.Numerics.Complex" /> number, produces slightly different results on the 32-bit and IA64 versions of the .NET Framework.</para>
+      <para>code reference: System.Numerics.Complex.Class#6</para>
+      <format type="text/html">
+        <h2>Complex Numbers, Infinity, and NaN</h2>
+      </format>
+      <para>The real and imaginary parts of a complex number are represented by <see cref="T:System.Double" /> values. In addition to ranging from <see cref="F:System.Double.MinValue" /> to <see cref="F:System.Double.MaxValue" />, the real or imaginary part of a complex number can have a value of <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.NaN" />. <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NegativeInfinity" />, and <see cref="F:System.Double.NaN" /> all propagate in any arithmetic or trigonometric operation.  </para>
+      <para>In the following example, division by <see cref="F:System.Numerics.Complex.Zero" /> produces a complex number whose real and imaginary parts are both <see cref="F:System.Double.NaN" />. As a result, performing multiplication with this value also produces a complex number whose real and imaginary parts are <see cref="F:System.Double.NaN" />. Similarly, performing a multiplication that overflows the range of the <see cref="T:System.Double" /> type produces a complex number whose real part is <see cref="F:System.Double.NaN" /> and whose imaginary part is <see cref="F:System.Double.PositiveInfinity" />. Subsequently performing division with this complex number returns a complex number whose real part is <see cref="F:System.Double.NaN" /> and whose imaginary part is <see cref="F:System.Double.PositiveInfinity" />. </para>
+      <para>code reference: System.Numerics.Complex.Class#3</para>
+      <para>Mathematical operations with complex numbers that are invalid or that overflow the range of the <see cref="T:System.Double" /> data type do not throw an exception. Instead, they return a <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.NaN" /> under the following conditions:</para>
+      <list type="bullet">
+        <item>
+          <para>The division of a positive number by zero returns <see cref="F:System.Double.PositiveInfinity" />.</para>
+        </item>
+        <item>
+          <para>Any operation that overflows the upper bound of the <see cref="T:System.Double" /> data type returns <see cref="F:System.Double.PositiveInfinity" />.</para>
+        </item>
+        <item>
+          <para>The division of a negative number by zero returns <see cref="F:System.Double.NegativeInfinity" />.</para>
+        </item>
+        <item>
+          <para>Any operation that overflows the lower bound of the <see cref="T:System.Double" /> data type returns <see cref="F:System.Double.NegativeInfinity" />.</para>
+        </item>
+        <item>
+          <para>The division of a zero by zero returns <see cref="F:System.Double.NaN" />.</para>
+        </item>
+        <item>
+          <para>Any operation that is performed on operands whose values are <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.NaN" /> returns <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.NaN" />, depending on the specific operation. </para>
+        </item>
+      </list>
+      <para>Note that this applies to any intermediate calculations performed by a method. For example, the multiplication of new Complex(9e308, 9e308) and new Complex(2.5, 3.5) uses the formula <math>(ac - bd) + (ad + bc)i</math>. The calculation of the real component that results from the multiplication evaluates the expression <math>9e308 * 2.5 - 9e308 * 3.5</math>. Each intermediate multiplication in this expression returns <see cref="F:System.Double.PositiveInfinity" />, and the attempt to subtract <see cref="F:System.Double.PositiveInfinity" /> from <see cref="F:System.Double.PositiveInfinity" /> returns <see cref="F:System.Double.NaN" />.</para>
+      <format type="text/html">
+        <h2>Formatting a Complex Number</h2>
+      </format>
+      <para>By default, the string representation of a complex number takes the form (real, imaginary), where real and imaginary are the string representations of the <see cref="T:System.Double" /> values that form the complex number's real and imaginary components. Some overloads of the <see cref="Overload:System.Numerics.Complex.ToString" /> method allow customization of the string representations of these <see cref="T:System.Double" /> values to reflect the formatting conventions of a particular culture or to appear in a particular format defined by a standard or custom numeric format string. (For more information, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>.)</para>
+      <para>One of the more common ways of expressing the string representation of a complex number takes the form <math>a + bi</math>, where <math>a</math> is the complex number's real component, and <math>b</math> is the complex number's imaginary component. In electrical engineering, a complex number is most commonly expressed as <math>a + bj</math>. You can return the string representation of a complex number in either of these two forms. To do this, define a custom format provider by implementing the <see cref="T:System.ICustomFormatter" /> and <see cref="T:System.IFormatProvider" /> interfaces, and then call the <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" /> method. </para>
+      <para>The following example defines a ComplexFormatter class that represents a complex number as a string in the form of either <math>a + bi</math> or <math>a + bj</math>. </para>
+      <para>code reference: System.Numerics.Complex.Class#1</para>
+      <para>The following example then uses this custom formatter to display the string representation of a complex number.</para>
+      <para>code reference: System.Numerics.Complex.Class#4</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a complex number.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Complex (double real, double imaginary);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(float64 real, float64 imaginary) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="real" Type="System.Double" />
+        <Parameter Name="imaginary" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="real" /> or <paramref name="imaginary" /> arguments may lose precision if they are data types that require an explicit cast to <see cref="T:System.Double" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Numerics.Complex" /> structure using the specified real and imaginary values.</para>
+        </summary>
+        <param name="real">
+          <attribution license="cc4" from="Microsoft" modified="false" />The real part of the complex number.</param>
+        <param name="imaginary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The imaginary part of the complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="C#" Value="public static double Abs (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Abs(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute value of a complex number is equivalent to its <see cref="P:System.Numerics.Complex.Magnitude" /> property. The absolute value of a real number <math>a + bi</math> is calculated as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If <math>b = 0</math>, the result is 0.</para>
+            </item>
+            <item>
+              <para>If <math>a &gt; b</math>, the result is <math>a *</math> <see cref="M:System.Math.Sqrt(System.Double)" /><math>(1 + b</math><superscript>2</superscript><math>/a</math><superscript>2</superscript><math>)</math>.</para>
+            </item>
+            <item>
+              <para>If <math>b &gt; a</math>, the result is <math>b * </math><see cref="M:System.Math.Sqrt(System.Double)" /><math>(1 + a</math><superscript>2</superscript><math>/b</math><superscript>2</superscript><math>)</math>.</para>
+            </item>
+          </list>
+          <para>If the calculation of the absolute value results in an overflow, the method returns either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />. If either the <see cref="P:System.Numerics.Complex.Real" /> or <see cref="P:System.Numerics.Complex.Imaginary" /> property is <see cref="F:System.Double.NaN" /> and the other property is neither <see cref="F:System.Double.PositiveInfinity" /> nor <see cref="F:System.Double.NegativeInfinity" />, the method returns <see cref="F:System.Double.NaN" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the absolute value (or magnitude) of a complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute value of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Acos">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Acos (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Acos(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Acos(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Acos(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Acos(System.Numerics.Complex)" /> method uses the following formula:</para>
+          <para>
+            <math>(-</math>
+            <see cref="F:System.Numerics.Complex.ImaginaryOne" />
+            <math>) * </math>
+            <see cref="M:System.Numerics.Complex.Log(System.Numerics.Complex)" />
+            <math>(</math>
+            <paramref name="value" />
+            <math> + </math>
+            <see cref="F:System.Numerics.Complex.ImaginaryOne" /> <math>*</math> <see cref="M:System.Numerics.Complex.Sqrt(System.Numerics.Complex)" /><math>(</math><see cref="F:System.Numerics.Complex.One" /><math> - </math><paramref name="value" /><math> * </math><paramref name="value" /><math>)))</math></para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the angle that is the arc cosine of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The angle, measured in radians, which is the arc cosine of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number that represents a cosine.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Add (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Add(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The addition of a complex number, <math>a + bi</math>, and a second complex number, <math>c + di</math>, takes the following form: </para>
+          <para>
+            <math>(a + c) + (b + d)i. </math>
+          </para>
+          <para>If the method call results in an overflow in either the real or imaginary component, the value of the component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>Languages that do not support custom operators can use the <see cref="M:System.Numerics.Complex.Add(System.Numerics.Complex,System.Numerics.Complex)" /> method to perform addition with complex numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds two complex numbers and returns the result.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first complex number to add.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second complex number to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Asin">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Asin (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Asin(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Asin(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Asin(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Asin(System.Numerics.Complex)" /> method uses the following formula:</para>
+          <para>
+            <math>-</math>
+            <see cref="F:System.Numerics.Complex.ImaginaryOne" />
+            <math> * </math>
+            <see cref="M:System.Numerics.Complex.Log(System.Numerics.Complex)" />
+            <math>(</math>
+            <see cref="F:System.Numerics.Complex.ImaginaryOne" />
+            <math> * value + </math>
+            <see cref="M:System.Numerics.Complex.Sqrt(System.Numerics.Complex)" />
+            <math>(</math>
+            <see cref="F:System.Numerics.Complex.One" />
+            <math> - value * value))</math>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the angle that is the arc sine of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The angle which is the arc sine of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Atan">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Atan (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Atan(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Atan(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Atan(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Atan(System.Numerics.Complex)" /> method uses the following formula:</para>
+          <para>
+            <see cref="F:System.Numerics.Complex.ImaginaryOne" />
+            <math> / new Complex(2.0, 0.0)) * (</math>
+            <see cref="M:System.Numerics.Complex.Log(System.Numerics.Complex)" />
+            <math>(</math>
+            <see cref="F:System.Numerics.Complex.One" />
+            <math> - </math>
+            <see cref="F:System.Numerics.Complex.ImaginaryOne" />
+            <math> * value) - </math>
+            <see cref="M:System.Numerics.Complex.Log(System.Numerics.Complex)" />
+            <math>(</math>
+            <see cref="F:System.Numerics.Complex.One" />
+            <math> + ImaginaryOne * value)</math>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the angle that is the arc tangent of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The angle that is the arc tangent of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Conjugate">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Conjugate (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Conjugate(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The conjugate of a complex number inverts the sign of the imaginary component; that is, it applies unary negation to the imaginary component. If <math>a + bi</math> is a complex number, its conjugate is <math>a - bi</math>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the conjugate of a complex number and returns the result.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The conjugate of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Cos">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Cos (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Cos(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Cos(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Cos(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Cos(System.Numerics.Complex)" /> method uses the following formula to calculate the cosine of the complex number <math>a + bi</math>:</para>
+          <para>
+            <math>(</math>
+            <see cref="M:System.Math.Cos(System.Double)" />
+            <math>(a) * </math>
+            <see cref="M:System.Math.Cosh(System.Double)" />
+            <math>(b), -(</math>
+            <see cref="M:System.Math.Sin(System.Double)" />
+            <math>(a) * </math>
+            <see cref="M:System.Math.Sinh(System.Double)" />
+            <math>(b)))</math>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the cosine of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cosine of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Cosh">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Cosh (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Cosh(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Cosh(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Cosh(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Cosh(System.Numerics.Complex)" /> method uses the following formula to calculate the hyperbolic cosine of the complex number <math>a + bi</math>:</para>
+          <para>(<see cref="M:System.Math.Cosh(System.Double)" />(a) * <see cref="M:System.Math.Cos(System.Double)" />(b), <see cref="M:System.Math.Sinh(System.Double)" />(a) * <see cref="M:System.Math.Sin(System.Double)" />(b))</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hyperbolic cosine of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hyperbolic cosine of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Divide">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Divide (System.Numerics.Complex dividend, System.Numerics.Complex divisor);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Divide(valuetype System.Numerics.Complex dividend, valuetype System.Numerics.Complex divisor) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dividend" Type="System.Numerics.Complex" />
+        <Parameter Name="divisor" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The division of a complex number, <math>a + bi</math>, by a second complex number, number, <math>c + di</math>, takes the following form:</para>
+          <para>
+            <math>((ac + bd) / (c</math>
+            <superscript>2</superscript>
+            <math> + d</math>
+            <superscript>2</superscript>
+            <math>)) + ((bc - ad) / (c</math>
+            <superscript>2</superscript>
+            <math> + d</math>
+            <superscript>2</superscript>
+            <math>)i</math>
+          </para>
+          <para>If the calculation of the quotient results in an overflow in either the real or imaginary component, the value of that component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Divide(System.Numerics.Complex,System.Numerics.Complex)" /> method can be used by languages that do not support custom operators. Its behavior is identical to division using the division operator.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Divides one complex number by another and returns the result.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The quotient of the division.</para>
+        </returns>
+        <param name="dividend">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complex number to be divided.</param>
+        <param name="divisor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complex number to divide by.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Equals(System.Numerics.Complex)" /> method provides the <see cref="T:System.IEquatable`1" /> implementation for the <see cref="T:System.Numerics.Complex" /> structure. It performs slightly better than <see cref="M:System.Numerics.Complex.Equals(System.Object)" /> method because it does not have to convert its parameter to a complex number.</para>
+          <para>Two complex numbers are equal if their real parts are equal and their imaginary parts are equal. The <see cref="M:System.Numerics.Complex.Equals(System.Numerics.Complex)" /> method is equivalent to the following expression:</para>
+          <para>code reference: System.Numerics.Complex.Equals#1</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current instance and a specified complex number have the same value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this complex number and <paramref name="value" /> have the same value; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complex number to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two complex numbers are equal if their real parts are equal and their imaginary parts are equal. The <see cref="M:System.Numerics.Complex.Equals(System.Object)" /> method is equivalent to the following expression:</para>
+          <para>code reference: System.Numerics.Complex.Equals#2</para>
+          <para>If the <paramref name="obj" /> parameter is not a <see cref="T:System.Numerics.Complex" /> object, but it is a data type for which an implicit conversion is defined, the <see cref="M:System.Numerics.Complex.Equals(System.Object)" /> method converts <paramref name="obj" /> to a <see cref="T:System.Numerics.Complex" /> object whose real part is equal to the value of <paramref name="obj" /> and whose imaginary part is equal to zero before it performs the comparison. The following example illustrates this by finding that a complex number and a double-precision floating-point value are equal.</para>
+          <para>code reference: System.Numerics.Complex.Equals#6</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current instance and a specified object have the same value. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="obj" /> parameter is a <see cref="T:System.Numerics.Complex" /> object or a type capable of implicit conversion to a <see cref="T:System.Numerics.Complex" /> object, and its value is equal to the current <see cref="T:System.Numerics.Complex" /> object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Exp">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Exp (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Exp(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="Overload:System.Numerics.Complex.Pow" /> method to calculate the powers of other bases.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Exp(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Exp(System.Double)" /> method for real numbers. <see cref="M:System.Numerics.Complex.Exp(System.Numerics.Complex)" /> is the inverse of <see cref="Overload:System.Numerics.Complex.Log" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns e raised to the power specified by a complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number e raised to the power <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number that specifies a power.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FromPolarCoordinates">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex FromPolarCoordinates (double magnitude, double phase);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex FromPolarCoordinates(float64 magnitude, float64 phase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="magnitude" Type="System.Double" />
+        <Parameter Name="phase" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.FromPolarCoordinates(System.Double,System.Double)" /> method instantiates a complex number based on its polar coordinates. </para>
+          <para>Because there are multiple representations of a point on a complex plane, the return value of the <see cref="M:System.Numerics.Complex.FromPolarCoordinates(System.Double,System.Double)" /> method is normalized. The magnitude is normalized to a positive number, and the phase is normalized to a value in the range of -<see cref="F:System.Math.PI" /> to <see cref="F:System.Math.PI" />. As a result, the values of the <see cref="P:System.Numerics.Complex.Phase" /> and <see cref="P:System.Numerics.Complex.Magnitude" /> properties of the resulting complex number may not equal the original values of the <paramref name="magnitude" /> and <paramref name="phase" /> parameters.</para>
+          <para>To convert a value from degrees to radians for the <paramref name="phase" /> parameter, multiply it by <see cref="F:System.Math.PI" />/180.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a complex number from a point's polar coordinates.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A complex number.</para>
+        </returns>
+        <param name="magnitude">
+          <attribution license="cc4" from="Microsoft" modified="false" />The magnitude, which is the distance from the origin (the intersection of the x-axis and the y-axis) to the number.</param>
+        <param name="phase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The phase, which is the angle from the line to the horizontal axis, measured in radians.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the current <see cref="T:System.Numerics.Complex" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Imaginary">
+      <MemberSignature Language="C#" Value="public double Imaginary { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 Imaginary" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Given a complex number <math>a + bi</math>, the <see cref="P:System.Numerics.Complex.Imaginary" /> property returns the value of <math>b</math>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the imaginary component of the current <see cref="T:System.Numerics.Complex" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ImaginaryOne">
+      <MemberSignature Language="C#" Value="public static readonly System.Numerics.Complex ImaginaryOne;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Numerics.Complex ImaginaryOne" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.Numerics.Complex" /> instance with a real number equal to zero and an imaginary number equal to one.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Log">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Log (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Log(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Log(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Log(System.Double)" /> method for real numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the natural (base e) logarithm of a specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The natural (base e) logarithm of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Log">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Log (System.Numerics.Complex value, double baseValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Log(valuetype System.Numerics.Complex value, float64 baseValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+        <Parameter Name="baseValue" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Log(System.Numerics.Complex,System.Double)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Log(System.Double,System.Double)" /> method for real numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the logarithm of a specified complex number in a specified base.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The logarithm of <paramref name="value" /> in base <paramref name="baseValue" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+        <param name="baseValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base of the logarithm.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Log10">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Log10 (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Log10(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Log10(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Log10(System.Double)" /> method for real numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the base-10 logarithm of a specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base-10 logarithm of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Magnitude">
+      <MemberSignature Language="C#" Value="public double Magnitude { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 Magnitude" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Numerics.Complex.Magnitude" /> property is equivalent to the absolute value of a complex number. It specifies the distance from the origin (the intersection of the x-axis and the y-axis in the Cartesian coordinate system) to the two-dimensional point represented by a complex number. The absolute value is calculated as follows:</para>
+          <para>
+            <math>| a + bi | = </math>
+            <see cref="M:System.Math.Sqrt(System.Double)" />
+            <math>(a2 + b2) </math>
+          </para>
+          <para>If the calculation of the absolute value results in an overflow, this property returns either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />. </para>
+          <para>The <see cref="P:System.Numerics.Complex.Magnitude" /> and the <see cref="P:System.Numerics.Complex.Phase" /> properties define the position of a point that represents a complex number in the polar coordinate system.</para>
+          <para>You can instantiate a complex number based on its polar coordinates instead of its Cartesian coordinates by calling the <see cref="M:System.Numerics.Complex.FromPolarCoordinates(System.Double,System.Double)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the magnitude (or absolute value) of a complex number.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Multiply">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Multiply (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Multiply(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The multiplication of a complex number, <math>a + bi</math>, and a second complex number, <math>c + di</math>, takes the following form: </para>
+          <para>
+            <math>(ac - bd) + (ad + bc)i</math>
+          </para>
+          <para>If the multiplication results in an overflow in either the real or imaginary component, the value of that component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Multiply(System.Numerics.Complex,System.Numerics.Complex)" /> method is implemented for languages that do not support custom operators. Its behavior is identical to multiplication using the multiplication operator.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the product of two complex numbers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The product of the <paramref name="left" /> and <paramref name="right" /> parameters.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first complex number to multiply.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second complex number to multiply.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Negate">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Negate (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Negate(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The additive inverse of a complex number is a complex number that produces a value of <see cref="F:System.Numerics.Complex.Zero" /> when it is added to the original complex number. This method returns a complex number in which the real and imaginary components of the original complex number are multiplied by -1.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Negate(System.Numerics.Complex)" /> method is implemented for languages that do not support custom operators. Its behavior is identical to negation using the unary negation operator, <see cref="M:System.Numerics.Complex.op_UnaryNegation(System.Numerics.Complex)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the additive inverse of a specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the <see cref="P:System.Numerics.Complex.Real" /> and <see cref="P:System.Numerics.Complex.Imaginary" /> components of the <paramref name="value" /> parameter multiplied by -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="One">
+      <MemberSignature Language="C#" Value="public static readonly System.Numerics.Complex One;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Numerics.Complex One" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.Numerics.Complex" /> instance with a real number equal to one and an imaginary number equal to zero.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Addition (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Addition(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.op_Addition(System.Numerics.Complex,System.Numerics.Complex)" /> method defines the addition operation for complex numbers. It enables code such as the following:</para>
+          <para>code reference: System.Numerics.Complex.Add#3</para>
+          <para>The addition of a complex number, <math>a + bi</math>, and a second complex number, <math>c + di</math>, takes the following form: </para>
+          <para>
+            <math>(a + c) + (b + d)i</math>
+          </para>
+          <para>If the method call results in an overflow in either the real or imaginary component, the value of that component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>Languages that do not support custom operators can call the <see cref="M:System.Numerics.Complex.Add(System.Numerics.Complex,System.Numerics.Complex)" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds two complex numbers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first value to add.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second value to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Division">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Division (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Division(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.op_Division(System.Numerics.Complex,System.Numerics.Complex)" /> method defines the division operation for complex numbers. It enables code such as the following:</para>
+          <para>code reference: System.Numerics.Complex.Divide#2</para>
+          <para>The division of a complex number, <math>a + bi</math>, and a second complex number, <math>c + di</math>, takes the following form:</para>
+          <para>
+            <math>((ac + bd) / (c</math>
+            <superscript>2</superscript>
+            <math> + d</math>
+            <superscript>2</superscript>
+            <math>)) + ((bc - ad) / (c</math>
+            <superscript>2</superscript>
+            <math> + d</math>
+            <superscript>2</superscript>
+            <math>)i</math>
+          </para>
+          <para>If the division results in an overflow in either the real or imaginary component, the value of that component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>Languages that do not support custom operators and operator overloading can call the <see cref="M:System.Numerics.Complex.Divide(System.Numerics.Complex,System.Numerics.Complex)" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Divides a specified complex number by another specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of dividing <paramref name="left" /> by <paramref name="right" />.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to be divided.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to divide by.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.op_Equality(System.Numerics.Complex,System.Numerics.Complex)" /> method defines the operation of the equality operator for <see cref="T:System.Numerics.Complex" /> values. It enables code such as the following:</para>
+          <para>code reference: System.Numerics.Complex.Equals#9</para>
+          <para>Languages that do not support custom operators can call the <see cref="M:System.Numerics.Complex.Equals(System.Numerics.Complex)" /> method instead.</para>
+          <para>Two complex numbers are equal if their real parts are equal and their imaginary parts are equal. The <see cref="M:System.Numerics.Complex.op_Equality(System.Numerics.Complex,System.Numerics.Complex)" /> method is equivalent to the following expression:</para>
+          <para>code reference: System.Numerics.Complex.Equals#3</para>
+          <para>Note that, because of differences in precision, two complex numbers that are apparently equivalent can be considered unequal. For more information and a possible workaround, see the <see cref="M:System.Numerics.Complex.Equals(System.Numerics.Complex)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether two complex numbers are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first complex number to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second complex number to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Explicit (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Explicit(valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Decimal" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Explicit (System.Numerics.BigInteger value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Explicit(valuetype System.Numerics.BigInteger value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.BigInteger" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (byte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(unsigned int8 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(int8 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (ushort value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(unsigned int16 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt16" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Implicit (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Implicit(unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.op_Equality(System.Numerics.Complex,System.Numerics.Complex)" /> method defines the operation of the inequality operator for complex numbers. It enables code such as the following: </para>
+          <para>code reference: System.Numerics.Complex.Inequality#1</para>
+          <para>Languages that do not support custom operators can test for inequality by calling the <see cref="M:System.Numerics.Complex.Equals(System.Numerics.Complex)" /> method and reversing its value.</para>
+          <para>Note that, because of differences in precision, two complex numbers that are apparently equivalent can be considered unequal. One possible workaround is to implement a comparison method that returns true only if the difference between the two real and imaginary parts of the complex numbers exceeds a certain threshold (such as .01% of the value of the real or imaginary component of one of the complex numbers). For more information, see the <see cref="M:System.Numerics.Complex.Equals(System.Numerics.Complex)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether two complex numbers are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second value to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Multiply">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Multiply (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Multiply(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.op_Multiply(System.Numerics.Complex,System.Numerics.Complex)" /> method defines the operation of the multiplication operator for complex numbers. It enables code such as the following:</para>
+          <para>code reference: System.Numerics.Complex.Multiply#2</para>
+          <para>The multiplication of a complex number, <math>a + bi</math>, and a second complex number, <math>c + di</math>, takes the following form: </para>
+          <para>
+            <math>(ac - bd) + (ad + bc)i</math>
+          </para>
+          <para>If the multiplication results in an overflow in either the real or imaginary component, the value of that component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>Languages that do not support custom operators can call the <see cref="M:System.Numerics.Complex.Multiply(System.Numerics.Complex,System.Numerics.Complex)" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiplies two specified complex numbers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The product of <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first value to multiply.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second value to multiply.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_Subtraction (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_Subtraction(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.op_Subtraction(System.Numerics.Complex,System.Numerics.Complex)" /> method defines the operation of the subtraction operator for complex numbers. It enables code such as the following:</para>
+          <para>code reference: System.Numerics.Complex.Subtract#2</para>
+          <para>If the method call results in an overflow in either the real or imaginary component, the value of that component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>The subtraction of a complex number, <math>c + di</math>, from another complex number, <math>a + bi</math>, takes the following form: </para>
+          <para>
+            <math>(a - c) + (b - d)i</math>
+          </para>
+          <para>Languages that do not support custom operators can call the <see cref="M:System.Numerics.Complex.Subtract(System.Numerics.Complex,System.Numerics.Complex)" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subtracts a complex number from another complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of subtracting <paramref name="right" /> from <paramref name="left" />.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to subtract from (the minuend).</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to subtract (the subtrahend).</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_UnaryNegation">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex op_UnaryNegation (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Numerics.Complex op_UnaryNegation(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.op_UnaryNegation(System.Numerics.Complex)" /> method defines the operation of the unary negation (additive inverse) operator for complex numbers. It enables code such as the following: </para>
+          <para>code reference: System.Numerics.Complex.Negate#2</para>
+          <para>The resulting complex number produces a value of <see cref="F:System.Numerics.Complex.Zero" /> 0 (zero) when it is added to the original complex number. Languages that do not support custom operators can call the <see cref="M:System.Numerics.Complex.Negate(System.Numerics.Complex)" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the additive inverse of a specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the <see cref="P:System.Numerics.Complex.Real" /> and <see cref="P:System.Numerics.Complex.Imaginary" /> components of the <paramref name="value" /> parameter multiplied by -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to negate.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Phase">
+      <MemberSignature Language="C#" Value="public double Phase { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 Phase" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a complex number <math>a + bi</math>, the phase is computed as <see cref="M:System.Math.Atan2(System.Double,System.Double)" /><math>(b, a)</math>.</para>
+          <para>You can identify a complex number by its Cartesian coordinates on the complex plane or by its polar coordinates. The phase (argument) of a complex number is the angle to the real axis of a line drawn from the point of origin (the intersection of the x-axis and the y-axis) to the point represented by the complex number. The magnitude (represented by the <see cref="P:System.Numerics.Complex.Magnitude" /> property) is the distance from the point of origin to the point that is represented by the complex number. </para>
+          <para>You can instantiate a complex number based on its polar coordinates instead of its Cartesian coordinates by calling the <see cref="M:System.Numerics.Complex.FromPolarCoordinates(System.Double,System.Double)" /> method.</para>
+          <para>To convert the phase from radians to degrees, multiply it by 180/<see cref="F:System.Math.PI" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the phase of a complex number.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Pow">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Pow (System.Numerics.Complex value, double power);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Pow(valuetype System.Numerics.Complex value, float64 power) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+        <Parameter Name="power" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="value" /> is <see cref="F:System.Numerics.Complex.Zero" />, the method returns <see cref="F:System.Numerics.Complex.Zero" />. For other values, if <paramref name="power" /> is 0, the method returns <see cref="F:System.Numerics.Complex.One" />, and if <paramref name="power" /> is 1, it returns <paramref name="value" />. </para>
+          <para>This method corresponds to the <see cref="M:System.Math.Pow(System.Double,System.Double)" /> method for primitive numeric types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a specified complex number raised to a power specified by a double-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complex number <paramref name="value" /> raised to the power <paramref name="power" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number to be raised to a power.</param>
+        <param name="power">
+          <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number that specifies a power.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Pow">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Pow (System.Numerics.Complex value, System.Numerics.Complex power);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Pow(valuetype System.Numerics.Complex value, valuetype System.Numerics.Complex power) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+        <Parameter Name="power" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a specified complex number raised to a power specified by a complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complex number <paramref name="value" /> raised to the power <paramref name="power" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number to be raised to a power.</param>
+        <param name="power">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number that specifies a power.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Real">
+      <MemberSignature Language="C#" Value="public double Real { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 Real" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Given a complex number <math>a + bi</math>, the <see cref="P:System.Numerics.Complex.Real" /> property returns the value of <math>a</math>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the real component of the current <see cref="T:System.Numerics.Complex" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Reciprocal">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Reciprocal (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Reciprocal(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reciprocal, or multiplicative inverse, of a number x is a number y where x multiplied by y yields 1. The reciprocal of a complex number is the complex number that produces <see cref="F:System.Numerics.Complex.One" /> when the two numbers are multiplied. If a complex number is represented by <math>a +bi</math>, its reciprocal is represented by the expression <math>a/(a</math><superscript>2</superscript><math>+b</math><superscript>2</superscript><math>) + -b/(a</math><superscript>2</superscript><math> + b</math><superscript>2</superscript><math>)</math>.</para>
+          <para>If value is <see cref="F:System.Numerics.Complex.Zero" />, the method returns <see cref="F:System.Numerics.Complex.Zero" />. Otherwise, it returns the result of the expression <see cref="F:System.Numerics.Complex.One" />/<paramref name="value" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the multiplicative inverse of a complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reciprocal of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Sin">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Sin (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Sin(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Sin(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Sin(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Sin(System.Numerics.Complex)" /> method uses the following formula to calculate the sine of the complex number <math>a + bi</math>:</para>
+          <para>
+            <math>(</math>
+            <see cref="M:System.Math.Sin(System.Double)" />
+            <math>(a) * </math>
+            <see cref="M:System.Math.Cosh(System.Double)" />
+            <math>(b), </math>
+            <see cref="M:System.Math.Cos(System.Double)" />
+            <math>(a) * </math>
+            <see cref="M:System.Math.Sinh(System.Double)" />
+            <math>(b))</math>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the sine of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sine of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Sinh">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Sinh (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Sinh(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Sinh(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Sinh(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Sinh(System.Numerics.Complex)" /> method uses the following formula to calculate the hyperbolic sine of the complex number <math>a + bi</math>:</para>
+          <para>
+            <math>(</math>
+            <see cref="M:System.Math.Sinh(System.Double)" />
+            <math>(a) * </math>
+            <see cref="M:System.Math.Cos(System.Double)" />
+            <math>(b), </math>
+            <see cref="M:System.Math.Cosh(System.Double)" />
+            <math>(a) * </math>
+            <see cref="M:System.Math.Sin(System.Double)" />
+            <math>(b))</math>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hyperbolic sine of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hyperbolic sine of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Sqrt">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Sqrt (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Sqrt(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The square root of the complex number <paramref name="value" /> is calculated by using the following formula:</para>
+          <para>
+            <see cref="M:System.Numerics.Complex.FromPolarCoordinates(System.Double,System.Double)" />
+            <math>(</math>
+            <see cref="M:System.Math.Sqrt(System.Double)" />
+            <math>(</math>
+            <paramref name="value" />
+            <math>.</math>
+            <see cref="P:System.Numerics.Complex.Magnitude" />
+            <math>), </math>
+            <paramref name="value" />
+            <math>.</math>
+            <see cref="P:System.Numerics.Complex.Phase" />
+            <math>/2.0)</math>
+          </para>
+          <para>The <see cref="M:System.Numerics.Complex.Sqrt(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Sqrt(System.Double)" /> method for real numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the square root of a specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The square root of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Subtract">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Subtract (System.Numerics.Complex left, System.Numerics.Complex right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Subtract(valuetype System.Numerics.Complex left, valuetype System.Numerics.Complex right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Numerics.Complex" />
+        <Parameter Name="right" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subtraction of a complex number, <math>c + di</math>, from another complex number, <math>a + bi</math>, takes the following form: </para>
+          <para>
+            <math>(a - c) + (b - d)i</math>
+          </para>
+          <para>If the method call results in an overflow in either the real or imaginary component, the value of that component is either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
+          <para>Languages that do not support custom operators can use the <see cref="M:System.Numerics.Complex.Subtract(System.Numerics.Complex,System.Numerics.Complex)" /> method to perform subtraction using complex numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subtracts one complex number from another and returns the result.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of subtracting <paramref name="right" /> from <paramref name="left" />.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to subtract from (the minuend).</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to subtract (the subtrahend).</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Tan">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Tan (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Tan(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Tan(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Tan(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Tan(System.Numerics.Complex)" /> method uses the following formula to calculate the tangent of the complex number <paramref name="value" />:</para>
+          <para>
+            <see cref="M:System.Numerics.Complex.Sin(System.Numerics.Complex)" />
+            <math>(</math>
+            <paramref name="value" />
+            <math>) / </math>
+            <see cref="M:System.Numerics.Complex.Cos(System.Numerics.Complex)" />
+            <math>(</math>
+            <paramref name="value" />
+            <math>)</math>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the tangent of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tangent of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Tanh">
+      <MemberSignature Language="C#" Value="public static System.Numerics.Complex Tanh (System.Numerics.Complex value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Numerics.Complex Tanh(valuetype System.Numerics.Complex value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Numerics.Complex" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Numerics.Complex.Tanh(System.Numerics.Complex)" /> method for complex numbers corresponds to the <see cref="M:System.Math.Tanh(System.Double)" /> method for real numbers.</para>
+          <para>The <see cref="M:System.Numerics.Complex.Tanh(System.Numerics.Complex)" /> method uses the following formula to calculate the hyperbolic tangent of the complex number <paramref name="value" />:</para>
+          <para>
+            <see cref="M:System.Numerics.Complex.Sinh(System.Numerics.Complex)" />
+            <math>(</math>
+            <paramref name="value" />
+            <math>) / </math>
+            <see cref="M:System.Numerics.Complex.Cosh(System.Numerics.Complex)" />
+            <math>(</math>
+            <paramref name="value" />
+            <math>)</math>
+          </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hyperbolic tangent of the specified complex number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hyperbolic tangent of <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A complex number.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default string representation of a complex number displays the number using its Cartesian coordinates in the form (a, b), where a is the real part of the complex number, and b is its imaginary part. Both a and b are formatted using the general format specifier ("G") and the conventions of the current system culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of the current complex number to its equivalent string representation in Cartesian form.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current instance in Cartesian form.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the complex number returned by this method displays the number using its Cartesian coordinates in the form (a, b), where a is the real part of the complex number, and b is its imaginary part. Both a and b are formatted using the general format specifier ("G") and the conventions of the culture defined by <paramref name="provider" />. </para>
+          <para>The <paramref name="provider" /> parameter is an <see cref="T:System.IFormatProvider" /> implementation. Its <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method returns a <see cref="T:System.Globalization.NumberFormatInfo" /> object that provides culture-specific information about the format of the real and imaginary numbers in the returned string. If <paramref name="provider" /> is null, the returned string is formatted using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of the current culture. </para>
+          <para>The <paramref name="provider" /> parameter can be one of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="T:System.Globalization.CultureInfo" /> object that represents the culture that supplies formatting information </para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Globalization.NumberFormatInfo" /> object that supplies formatting information.</para>
+            </item>
+            <item>
+              <para>A custom object that implements the <see cref="T:System.IFormatProvider" /> interface. Its <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method returns the <see cref="T:System.Globalization.NumberFormatInfo" /> object that supplies formatting information.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of the current complex number to its equivalent string representation in Cartesian form by using the specified culture-specific formatting information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current instance in Cartesian form, as specified by <paramref name="provider" />.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (string format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(string format) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the complex number returned by this method displays the number using its Cartesian coordinates in the form (a, b), where a is the real part of the complex number, and b is its imaginary part. Both a and b are formatted using the format string specified by <paramref name="format" />. The <paramref name="format" /> parameter can be any valid standard numeric format specifier, or any combination of custom numeric format specifiers. If <paramref name="format" /> is equal to <see cref="F:System.String.Empty" /> or is null, the real and imaginary parts of the complex number are formatted with the general format specifier ("G"). If <paramref name="format" /> is any other value, the method throws a <see cref="T:System.FormatException" />.</para>
+          <para>The .NET Framework provides extensive formatting support, which is described in greater detail in the following topics:</para>
+          <list type="bullet">
+            <item>
+              <para>For more information about numeric format strings, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>. </para>
+            </item>
+            <item>
+              <para>For more information about formatting in the .NET Framework, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>.</para>
+            </item>
+          </list>
+          <para>The format of the returned string is determined by the <see cref="T:System.Globalization.NumberFormatInfo" /> object for the current culture. Depending on the <paramref name="format" /> parameter, this object controls symbols such as the negative sign, the group separator, and the decimal point symbol in the output string. To provide formatting information for cultures other than the current culture, call the <see cref="M:System.Numerics.Complex.ToString(System.String,System.IFormatProvider)" /> overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of the current complex number to its equivalent string representation in Cartesian form by using the specified format for its real and imaginary parts.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current instance in Cartesian form.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom numeric format string.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(string format, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="provider" Type="System.IFormatProvider" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the complex number returned by this method displays the number using its Cartesian coordinates in the form (a, b), where a is the real part of the complex number, and b is its imaginary part. Both a and b are formatted using the format string specified by <paramref name="format" />. The <paramref name="format" /> parameter can be any valid standard numeric format specifier, or any combination of custom numeric format specifiers. If <paramref name="format" /> is equal to <see cref="F:System.String.Empty" /> or is null, the real and imaginary parts of the complex number are formatted with the general format specifier ("G"). If <paramref name="format" /> is any other value, the method throws a <see cref="T:System.FormatException" />.</para>
+          <para>The .NET Framework provides extensive formatting support, which is described in greater detail in the following topics:</para>
+          <list type="bullet">
+            <item>
+              <para>For more information about numeric format strings, see <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> and <format type="text/html"><a href="6f74fd32-6c6b-48ed-8241-3c2b86dea5f4">Custom Numeric Format Strings</a></format>. </para>
+            </item>
+            <item>
+              <para>For more information about formatting in the .NET Framework, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>.</para>
+            </item>
+          </list>
+          <para>The <paramref name="provider" /> parameter is an <see cref="T:System.IFormatProvider" /> implementation. Its <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method returns a <see cref="T:System.Globalization.NumberFormatInfo" /> object that provides culture-specific information about the format of the real and imaginary numbers in the returned string. Depending on the <paramref name="format" /> parameter, this object controls symbols such as the negative sign, the group separator, and the decimal point symbol in the output string. If <paramref name="provider" /> is null, the returned string is formatted using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of the current culture.</para>
+          <para>The <paramref name="provider" /> parameter can be one of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="T:System.Globalization.CultureInfo" /> object that represents the culture that supplies formatting information </para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.Globalization.NumberFormatInfo" /> object that supplies formatting information.</para>
+            </item>
+            <item>
+              <para>A custom object that implements the <see cref="T:System.IFormatProvider" /> interface. Its <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method returns the <see cref="T:System.Globalization.NumberFormatInfo" /> object that supplies formatting information.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of the current complex number to its equivalent string representation in Cartesian form by using the specified format and culture-specific format information for its real and imaginary parts.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current instance in Cartesian form, as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom numeric format string.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Zero">
+      <MemberSignature Language="C#" Value="public static readonly System.Numerics.Complex Zero;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.Numerics.Complex Zero" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Numerics.Complex</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Numerics.Complex.Zero" /> property is most frequently used to compare a <see cref="T:System.Numerics.Complex" /> value to zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.Numerics.Complex" /> instance with a real number equal to zero and an imaginary number equal to zero.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -139,11 +139,11 @@ sgen_memgov_try_calculate_minor_collection_allowance (gboolean overwrite)
 	if (debug_print_allowance) {
 		mword old_major = last_collection_old_num_major_sections * major_collector.section_size;
 
-		SGEN_LOG (1, "Before collection: %td bytes (%td major, %td LOS)",
-				old_major + last_collection_old_los_memory_usage, old_major, last_collection_old_los_memory_usage);
-		SGEN_LOG (1, "After collection: %td bytes (%td major, %td LOS)",
-				new_heap_size, new_major, last_collection_los_memory_usage);
-		SGEN_LOG (1, "Allowance: %td bytes", minor_collection_allowance);
+		SGEN_LOG (1, "Before collection: %ld bytes (%ld major, %ld LOS)",
+				  (long)(old_major + last_collection_old_los_memory_usage), (long)old_major, (long)last_collection_old_los_memory_usage);
+		SGEN_LOG (1, "After collection: %ld bytes (%ld major, %ld LOS)",
+				  (long)new_heap_size, (long)new_major, (long)last_collection_los_memory_usage);
+		SGEN_LOG (1, "Allowance: %ld bytes", (long)minor_collection_allowance);
 	}
 
 	if (major_collector.have_computed_minor_collection_allowance)
@@ -215,12 +215,12 @@ log_timming (GGTimingInfo *info)
 	full_timing_buff [0] = '\0';
 
 	if (!info->is_overflow)
-	        sprintf (full_timing_buff, "total %.2fms, bridge %.2fms", info->stw_time / 1000.0f, (int)info->bridge_time / 1000.0f);
+	        sprintf (full_timing_buff, "total %.2fms, bridge %.2fms", info->stw_time / 10000.0f, (int)info->bridge_time / 10000.0f);
 	if (info->generation == GENERATION_OLD)
 	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) pause %.2fms, %s major %dK/%dK los %dK/%dK",
 	                info->is_overflow ? "_OVERFLOW" : "",
 	                info->reason ? info->reason : "",
-	                (int)info->total_time / 1000.0f,
+	                (int)info->total_time / 10000.0f,
 	                full_timing_buff,
 	                major_collector.section_size * num_major_sections / 1024,
 	                major_collector.section_size * last_major_num_sections / 1024,
@@ -230,7 +230,7 @@ log_timming (GGTimingInfo *info)
 	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) pause %.2fms, %s promoted %dK major %dK los %dK",
 	        		info->is_overflow ? "_OVERFLOW" : "",
 	                info->reason ? info->reason : "",
-	                (int)info->total_time / 1000.0f,
+	                (int)info->total_time / 10000.0f,
 	                full_timing_buff,
 	                (num_major_sections - last_major_num_sections) * major_collector.section_size / 1024,
 	                major_collector.section_size * num_major_sections / 1024,
@@ -390,6 +390,7 @@ sgen_memgov_init (glong max_heap, glong soft_limit, gboolean debug_allowance, do
 		soft_heap_limit = soft_limit;
 
 	debug_print_allowance = debug_allowance;
+	minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
 
 	if (max_heap == 0)
 		return;
@@ -405,13 +406,12 @@ sgen_memgov_init (glong max_heap, glong soft_limit, gboolean debug_allowance, do
 	}
 	max_heap_size = max_heap - sgen_nursery_size;
 
-	minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
-
 	if (allowance_ratio)
 		default_allowance_nursery_size_ratio = allowance_ratio;
 
 	if (save_target)
 		save_target_ratio = save_target;
+	minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
 }
 
 #endif

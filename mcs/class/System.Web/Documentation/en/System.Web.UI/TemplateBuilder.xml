@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplateBuilder" FullName="System.Web.UI.TemplateBuilder">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class TemplateBuilder : System.Web.UI.ControlBuilder, System.Web.UI.ITemplate" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To use a custom <see cref="T:System.Web.UI.TemplateBuilder" /> class for a control, create a custom <see cref="T:System.Web.UI.ControlBuilder" /> for the control, and then return the custom <see cref="T:System.Web.UI.TemplateBuilder" /> control from the <see cref="M:System.Web.UI.ControlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports the page parser in building a template and the child controls it contains.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.TemplateBuilder" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +56,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used during design time to build the template and its child controls. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the instance of the <see cref="T:System.Web.UI.TemplateBuilder" /> class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Init">
@@ -66,14 +82,23 @@
         <Parameter Name="attribs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="parser">a <see cref="T:System.Web.UI.TemplateParser" /></param>
-        <param name="parentBuilder">a <see cref="T:System.Web.UI.ControlBuilder" /></param>
-        <param name="type">a <see cref="T:System.Type" /></param>
-        <param name="tagName">a <see cref="T:System.String" /></param>
-        <param name="ID">a <see cref="T:System.String" /></param>
-        <param name="attribs">a <see cref="T:System.Collections.IDictionary" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the template builder when a Web request is made.</para>
+        </summary>
+        <param name="parser">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.TemplateParser" /> responsible for parsing the control. </param>
+        <param name="parentBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.ControlBuilder" /> responsible for building the control. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> assigned to the control that the builder will create. </param>
+        <param name="tagName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the tag to build. This allows the builder to support multiple tag types. </param>
+        <param name="ID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.UI.ControlBuilder.ID" /> assigned to the control. </param>
+        <param name="attribs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> that holds all the specified tag attributes. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,9 +115,16 @@
         <Parameter Name="container" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="container">To be added: an object of type 'Control'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.TemplateBuilder.InstantiateIn(System.Web.UI.Control)" /> method is required when implementing the <see cref="T:System.Web.UI.ITemplate" /> interface. The <see cref="M:System.Web.UI.TemplateBuilder.InstantiateIn(System.Web.UI.Control)" /> method is used only in design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the <see cref="T:System.Web.UI.Control" /> object that child controls and templates belong to in design time.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to contain the instances of controls from the inline template.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -107,9 +139,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.TemplateBuilder.SetTagInnerText(System.String)" /> method needs to be called when we are in design time. The <see cref="M:System.Web.UI.TemplateBuilder.NeedsTagInnerText" /> method returns the value of the <see cref="P:System.Web.UI.ControlBuilder.InDesigner" /> property of the base <see cref="T:System.Web.UI.ControlBuilder" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the control builder needs to get its inner text.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control builder needs to get its inner text. The default is false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,9 +167,16 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.TemplateBuilder.SetTagInnerText(System.String)" /> method overrides the base class's <see cref="M:System.Web.UI.ControlBuilder.SetTagInnerText(System.String)" /> method and sets the value of the <see cref="P:System.Web.UI.TemplateBuilder.Text" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the inner text of the template tag.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The inner text of the template.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,9 +191,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.TemplateBuilder.Text" /> property is used by the designer to specify or determine the text that appears between the opening and closing tags of the template.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text between the opening and closing tags of the template.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

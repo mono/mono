@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlReflectionMember" FullName="System.Xml.Serialization.XmlReflectionMember">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlReflectionMember" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlReflectionMember extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,125 +15,216 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class is not used directly. Instead, it is used: </para>
+      <list type="bullet">
+        <item>
+          <para>To initialize <see cref="T:System.Xml.Serialization.XmlSerializer" /> objects while the .NET Framework is initializing a SOAP Web service or client.</para>
+        </item>
+        <item>
+          <para>By the <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> class while <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> creates <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects from classes that are identified as SOAP Web services.</para>
+        </item>
+      </list>
+      <para>During reflection of a SOAP Web service method, arrays of <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> objects are produced that represent the contents of WSDL message definitions. An array is produced for each of the following items that belong to a SOAP Web service method:</para>
+      <list type="bullet">
+        <item>
+          <para>Input parameters.</para>
+        </item>
+        <item>
+          <para>Output parameters and return values.</para>
+        </item>
+        <item>
+          <para>Request SOAP headers via attributes.</para>
+        </item>
+        <item>
+          <para>Response SOAP headers via attributes. </para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Xml.Serialization.SoapReflectionImporter" /> and <see cref="T:System.Xml.Serialization.XmlReflectionImporter" /> classes translate an <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> array into an <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> that contains an <see cref="T:System.Xml.Serialization.XmlMemberMapping" /> collection, for further processing.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides mappings between code entities in .NET Framework Web service methods and the content of Web Services Description Language (WSDL) messages that are defined for SOAP Web services. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlReflectionMember ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsReturnValue">
-      <MemberSignature Language="C#" Value="public bool IsReturnValue { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IsReturnValue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReturnValue" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to use the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class and its properties directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> represents a Web service method return value, as opposed to an output parameter. </para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="MemberName">
+      <MemberSignature Language="C#" Value="public string MemberName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MemberName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MemberName">
-      <MemberSignature Language="C#" Value="public string MemberName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web service method member may be an input parameter, an output parameter, a return type, an input header, or an output header.</para>
+          <para>You do not need to use the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class and its properties directly.</para>
+          <para>See the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class for the cases when a member corresponds to a &lt;part&gt; element defined in a Web Services Description Language (WSDL) document. Note, however, that with a wrapped binding between a WSDL operation and a .NET Framework method (indicated by the <see cref="F:System.Web.Services.Protocols.SoapParameterStyle.Wrapped" /> enumeration member), the method parameters and return value do not appear in the WSDL document.</para>
+          <para>When a Web service method is being reflected, the return type's <see cref="P:System.Xml.Serialization.XmlReflectionMember.MemberName" /> property becomes the method name (made unique from other member names, if necessary) with "Result" appended.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the Web service method member for this mapping. </para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="MemberType">
+      <MemberSignature Language="C#" Value="public Type MemberType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type MemberType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MemberType">
-      <MemberSignature Language="C#" Value="public Type MemberType { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web service method member's code entity may be an input parameter, an output parameter, a return type, or a SOAP header attribute.</para>
+          <para>You do not need to use the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class and its properties directly.</para>
+          <para>See the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class for the cases when a member corresponds to a part element defined in a Web Services Description Language (WSDL) document. Note, however, that with a wrapped binding between a WSDL operation and a .NET Framework method (indicated by the <see cref="F:System.Web.Services.Protocols.SoapParameterStyle.Wrapped" /> enumeration member), the method parameters and return value do not appear in the WSDL document. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the Web service method member code entity that is represented by this mapping. </para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="OverrideIsNullable">
+      <MemberSignature Language="C#" Value="public bool OverrideIsNullable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool OverrideIsNullable" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OverrideIsNullable">
-      <MemberSignature Language="C#" Value="public bool OverrideIsNullable { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This setting overrides the <see cref="P:System.Xml.Serialization.XmlElementAttribute.IsNullable" /> property of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> attribute. It is set to true only when a SOAP header's type is neither <see cref="T:System.Web.Services.Protocols.SoapHeader" /> nor <see cref="T:System.Web.Services.Protocols.SoapUnknownHeader" />.</para>
+          <para>You do not need to use the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class and its properties directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates that the value of the corresponding XML element definition's isNullable attribute is false.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SoapAttributes">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapAttributes SoapAttributes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.SoapAttributes SoapAttributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SoapAttributes">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapAttributes SoapAttributes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.SoapAttributes</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapAttributes'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web service method member's code entity may be an input parameter, an output parameter, a return type, an input SOAP header attribute, or an output SOAP header attribute.</para>
+          <para>You do not need to use the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class and its properties directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Xml.Serialization.SoapAttributes" /> with the collection of SOAP-related attributes that have been applied to the member code entity. </para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlAttributes">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAttributes XmlAttributes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlAttributes XmlAttributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlAttributes">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAttributes XmlAttributes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlAttributes</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlAttributes'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web service method member's code entity may be an input parameter, an output parameter, a return type, an input SOAP header attribute, or an output SOAP header attribute.</para>
+          <para>You do not need to use the <see cref="T:System.Xml.Serialization.XmlReflectionMember" /> class and its properties directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.Xml.Serialization.XmlAttributes" /> with the collection of <see cref="T:System.Xml.Serialization.XmlSerializer" />-related attributes that have been applied to the member code entity. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

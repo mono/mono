@@ -1,6 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Data.OleDb">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Data.OleDb" /> namespace is the.NET Framework Data Provider for OLE DB.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The.NET Framework Data Provider for OLE DB describes a collection of classes used to access an OLE DB data source in the managed space. Using the <see cref="T:System.Data.OleDb.OleDbDataAdapter" />, you can fill a memory-resident <see cref="T:System.Data.DataSet" /> that you can use to query and update the data source.</para>
+      <para>For information about how to use this namespace, see the <see cref="T:System.Data.OleDb.OleDbDataAdapter" />, <see cref="T:System.Data.OleDb.OleDbDataReader" />, <see cref="T:System.Data.OleDb.OleDbCommand" />, and <see cref="T:System.Data.OleDb.OleDbConnection" /> classes.</para>
+      <para> </para>
+    </remarks>
   </Docs>
 </Namespace>

@@ -468,6 +468,8 @@ match_class (MonoMethodDesc *desc, int pos, MonoClass *klass)
 gboolean
 mono_method_desc_full_match (MonoMethodDesc *desc, MonoMethod *method)
 {
+	if (!desc->klass)
+		return FALSE;
 	if (!match_class (desc, strlen (desc->klass), method->klass))
 		return FALSE;
 
@@ -573,7 +575,7 @@ dis_one (GString *str, MonoDisHelper *dh, MonoMethod *method, const unsigned cha
 		size_t len2;
 		char *blob2 = NULL;
 
-		if (!method->klass->image->dynamic) {
+		if (!method->klass->image->dynamic && !method->dynamic) {
 			token = read32 (ip);
 			blob = mono_metadata_user_string (method->klass->image, mono_metadata_token_index (token));
 

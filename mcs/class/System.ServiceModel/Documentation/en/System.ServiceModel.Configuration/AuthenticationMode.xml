@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AuthenticationMode" FullName="System.ServiceModel.Configuration.AuthenticationMode">
+  <TypeSignature Language="C#" Value="public enum AuthenticationMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AuthenticationMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the authentication setting used for message exchange.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AnonymousForCertificate">
+      <MemberSignature Language="C#" Value="AnonymousForCertificate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode AnonymousForCertificate = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The certificate of the responder is available out-of-band to the initiator.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is anonymous, and that the responder is authenticated.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AnonymousForSslNegotiated">
+      <MemberSignature Language="C#" Value="AnonymousForSslNegotiated" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode AnonymousForSslNegotiated = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is anonymous.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CertificateOverTransport">
+      <MemberSignature Language="C#" Value="CertificateOverTransport" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode CertificateOverTransport = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated by an X.509 version 3 certificate, and that the responder is authenticated by SSL over HTTPS.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IssuedToken">
+      <MemberSignature Language="C#" Value="IssuedToken" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode IssuedToken = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator and responder are authenticated by XML symmetric key tokens.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IssuedTokenForCertificate">
+      <MemberSignature Language="C#" Value="IssuedTokenForCertificate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode IssuedTokenForCertificate = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated by an XML symmetric key token, and that the responder is authenticated by an X.509 version 3 certificate.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IssuedTokenForSslNegotiated">
+      <MemberSignature Language="C#" Value="IssuedTokenForSslNegotiated" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode IssuedTokenForSslNegotiated = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated by an XML symmetric key token, and that the responder is authenticated by the SOAP implementation of SSL.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IssuedTokenOverTransport">
+      <MemberSignature Language="C#" Value="IssuedTokenOverTransport" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode IssuedTokenOverTransport = int32(6)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated by an XML symmetric key token, and that the responder is authenticated by SSL over HTTPS.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Kerberos">
+      <MemberSignature Language="C#" Value="Kerberos" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode Kerberos = int32(7)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator and responder are authenticated using the Kerberos protocol.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="KerberosOverTransport">
+      <MemberSignature Language="C#" Value="KerberosOverTransport" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode KerberosOverTransport = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated using the Kerberos protocol, and the responder is authenticated by SSL over HTTPS.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MutualCertificate">
+      <MemberSignature Language="C#" Value="MutualCertificate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode MutualCertificate = int32(9)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator and responder are authenticated with X.509 version 3 certificates.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MutualCertificateDuplex">
+      <MemberSignature Language="C#" Value="MutualCertificateDuplex" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode MutualCertificateDuplex = int32(10)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator and responder are authenticated with X.509 version 3 certificates.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MutualSslNegotiated">
+      <MemberSignature Language="C#" Value="MutualSslNegotiated" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode MutualSslNegotiated = int32(11)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator and responder mutually authenticate each other using X509 version 3 certificates, and the responder's certificate is available from the SOAP SSL negotiation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SecureConversation">
+      <MemberSignature Language="C#" Value="SecureConversation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode SecureConversation = int32(12)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that WS-SecureConversation authentication is used.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SspiNegotiated">
+      <MemberSignature Language="C#" Value="SspiNegotiated" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode SspiNegotiated = int32(13)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator and responder obtain a shared security context using the Security Service Provider Interface (SSPI).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SspiNegotiatedOverTransport">
+      <MemberSignature Language="C#" Value="SspiNegotiatedOverTransport" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode SspiNegotiatedOverTransport = int32(17)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated by a security context using the Security Service Provider Interface (SSPI), and the responder is authenticated by SSL over HTTPS.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UserNameForCertificate">
+      <MemberSignature Language="C#" Value="UserNameForCertificate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode UserNameForCertificate = int32(14)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated using a username token, and the responder's certificate is available to the initiator out-of-band.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UserNameForSslNegotiated">
+      <MemberSignature Language="C#" Value="UserNameForSslNegotiated" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode UserNameForSslNegotiated = int32(15)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated using a username token, and that the responder is authenticated by the SOAP implementation of SSL.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UserNameOverTransport">
+      <MemberSignature Language="C#" Value="UserNameOverTransport" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Configuration.AuthenticationMode UserNameOverTransport = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the initiator is authenticated using a username token, and that the responder is authenticated by SSL over HTTPS.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

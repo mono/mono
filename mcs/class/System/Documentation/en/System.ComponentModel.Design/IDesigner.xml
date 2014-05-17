@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesigner" FullName="System.ComponentModel.Design.IDesigner">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDesigner : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesigner implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces>
@@ -19,45 +22,77 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.IDesigner" /> interface provides an interface through which you can implement basic services for a designer. A designer can modify the behavior of a component at design time, and may provide its own services and behavior. A designer is only active at design-time, and must be associated with a type of component using a <see cref="T:System.ComponentModel.DesignerAttribute" /> in order to be loaded when a component of the associated type is created at design time.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.IDesigner" /> interface provides methods and properties that you can implement in order to provide custom behavior at design time.</para>
+      <para>Implement the <see cref="M:System.ComponentModel.Design.IDesigner.Initialize(System.ComponentModel.IComponent)" /> method of a designer to perform actions when a component is created. This can be useful if a component should have a special configuration at design-time, or if its configuration should change depending on conditions that the designer can determine.</para>
+      <para>A designer can provide menu commands on the shortcut menu that is displayed when a user right-clicks a component or control in the design-time environment. You can implement the <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" /> property to define a get accessor that returns a <see cref="T:System.ComponentModel.Design.DesignerVerbCollection" /> containing the <see cref="T:System.ComponentModel.Design.DesignerVerb" /> objects for generating menu commands.</para>
+      <para>A designer for a component that appears in the component tray can perform a default action when the component is double-clicked. Implement the <see cref="M:System.ComponentModel.Design.IDesigner.DoDefaultAction" /> method to specify the behavior to perform when the component is double-clicked.</para>
+      <para>A designer can also use the available design-time services to perform a variety of tasks, including surveying the current design-time environment for components and their properties, reading and setting the values of properties of components, managing the toolbox, managing selected components, or displaying a user interface that can be used to configure values or to apply further processing.</para>
+      <para>To implement a designer for a control that can be sited on a form, you can inherit from the <see cref="T:System.Windows.Forms.Design.ControlDesigner" /> class. Controls whose associated designer does not derive from <see cref="T:System.Windows.Forms.Design.ControlDesigner" /> are displayed in the component tray. The <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> and <see cref="T:System.Windows.Forms.Design.ControlDesigner" /> classes implement the <see cref="T:System.ComponentModel.Design.IDesigner" /> interface and provide additional design-time support that may be of use to authors of designers. For more information, see the reference documentation for these classes.</para>
+      <para>For an overview of creating design components, please see <format type="text/html"><a href="d6ac8a6a-42fd-4bc8-bf33-b212811297e2">Extending Design-Time Support</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the basic framework for building a custom designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Component">
       <MemberSignature Language="C#" Value="public System.ComponentModel.IComponent Component { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.IComponent Component" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ComponentModel.IComponent'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base component that this designer is designing.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DoDefaultAction">
       <MemberSignature Language="C#" Value="public void DoDefaultAction ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DoDefaultAction() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when a user double-clicks the representation of a component in the component tray.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the default action for this designer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Initialize">
       <MemberSignature Language="C#" Value="public void Initialize (System.ComponentModel.IComponent component);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Initialize(class System.ComponentModel.IComponent component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -65,30 +100,41 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the designer with the specified component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to associate with this designer. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Verbs">
       <MemberSignature Language="C#" Value="public System.ComponentModel.Design.DesignerVerbCollection Verbs { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.Design.DesignerVerbCollection Verbs" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.DesignerVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DesignerVerbCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the design time verbs supported by the component associated with the designer. The verbs returned by this method are typically displayed by the design-time environment in a right-click menu. When a user selects one of the verbs, the event handler of the corresponding <see cref="T:System.ComponentModel.Design.DesignerVerb" /> is invoked.</para>
+          <block subset="none" type="note">
+            <para>A design-time environment typically provides a <ui>Properties...</ui> entry on a component's right-click menu. To avoid duplicate titles for menu entries, no verb with a title of "Properties..." should be included in a <see cref="T:System.ComponentModel.Design.DesignerVerbCollection" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the design-time verbs supported by the designer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

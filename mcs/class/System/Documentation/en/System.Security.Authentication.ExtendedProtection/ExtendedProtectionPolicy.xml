@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ExtendedProtectionPolicy" FullName="System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy">
+  <TypeSignature Language="C#" Value="public class ExtendedProtectionPolicy : System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ExtendedProtectionPolicy extends System.Object implements class System.Runtime.Serialization.ISerializable" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.TypeConverter(typeof(System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicyTypeConverter))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.MonoTODO</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Any classes that expose the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class should not allow the setting of null policies, should supply a default policy, or should require an explicit policy to be created and set by the application developer or administrator.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class represents the extended protection policy used by the server to validate incoming client connections. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExtendedProtectionPolicy (System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Not implemented.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="policyEnforcement" Type="System.Security.Authentication.ExtendedProtection.PolicyEnforcement" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this constructor is used to initialize a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class, the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.PolicyEnforcement" /> property is set to the <paramref name="policyEnforcement" /> parameter and the  <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.ProtectionScenario" /> property is set to <see cref="F:System.Security.Authentication.ExtendedProtection.ProtectionScenario.TransportSelected" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class that specifies when the extended protection policy should be enforced.</para>
+        </summary>
+        <param name="policyEnforcement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.PolicyEnforcement" /> value that indicates when the extended protection policy should be enforced.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ExtendedProtectionPolicy (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface for the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class.</para>
+          <para>The <see cref="M:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.System#Runtime#Serialization#ISerializable#GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> method can be used to serialize an <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> object. This serialized object can then be used with <see cref="M:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> to construct a new <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class from a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that contains the required data to populate the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" />.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> instance that contains the information that is required to serialize the new <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> instance.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains the source of the serialized stream that is associated with the new <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> instance.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExtendedProtectionPolicy (System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement, System.Security.Authentication.ExtendedProtection.ChannelBinding customChannelBinding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement, class System.Security.Authentication.ExtendedProtection.ChannelBinding customChannelBinding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="policyEnforcement" Type="System.Security.Authentication.ExtendedProtection.PolicyEnforcement" />
+        <Parameter Name="customChannelBinding" Type="System.Security.Authentication.ExtendedProtection.ChannelBinding" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this constructor is used to initialize a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class, the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.PolicyEnforcement" /> property is set to the <paramref name="policyEnforcement" /> parameter, the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.CustomChannelBinding" /> property is set to the <paramref name="customChannelBinding" /> parameter, and the  <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.ProtectionScenario" /> property is set to <see cref="F:System.Security.Authentication.ExtendedProtection.ProtectionScenario.TransportSelected" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class that specifies when the extended protection policy should be enforced and the channel binding token (CBT) to be used.</para>
+        </summary>
+        <param name="policyEnforcement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.PolicyEnforcement" /> value that indicates when the extended protection policy should be enforced.</param>
+        <param name="customChannelBinding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.ChannelBinding" /> that contains a custom channel binding to use for validation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExtendedProtectionPolicy (System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement, System.Security.Authentication.ExtendedProtection.ProtectionScenario protectionScenario, System.Collections.ICollection customServiceNames);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement, valuetype System.Security.Authentication.ExtendedProtection.ProtectionScenario protectionScenario, class System.Collections.ICollection customServiceNames) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="policyEnforcement" Type="System.Security.Authentication.ExtendedProtection.PolicyEnforcement" />
+        <Parameter Name="protectionScenario" Type="System.Security.Authentication.ExtendedProtection.ProtectionScenario" />
+        <Parameter Name="customServiceNames" Type="System.Collections.ICollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this constructor is used to initialize a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class, the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.PolicyEnforcement" /> property is set to the <paramref name="policyEnforcement" /> parameter, the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.ProtectionScenario" /> property is set to the <paramref name="protectionScenario" /> parameter, and the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.CustomServiceNames" /> property is set to the <paramref name="customServiceNames" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class that specifies when the extended protection policy should be enforced, the kind of protection enforced by the policy, and a custom Service Provider Name (SPN) list that is used to match against a client's SPN.</para>
+        </summary>
+        <param name="policyEnforcement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.PolicyEnforcement" /> value that indicates when the extended protection policy should be enforced.</param>
+        <param name="protectionScenario">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.ProtectionScenario" /> value that indicates the kind of protection enforced by the policy.</param>
+        <param name="customServiceNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ICollection" /> that contains the custom SPN list that is used to match against a client's SPN.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExtendedProtectionPolicy (System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement, System.Security.Authentication.ExtendedProtection.ProtectionScenario protectionScenario, System.Security.Authentication.ExtendedProtection.ServiceNameCollection customServiceNames);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Authentication.ExtendedProtection.PolicyEnforcement policyEnforcement, valuetype System.Security.Authentication.ExtendedProtection.ProtectionScenario protectionScenario, class System.Security.Authentication.ExtendedProtection.ServiceNameCollection customServiceNames) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="policyEnforcement" Type="System.Security.Authentication.ExtendedProtection.PolicyEnforcement" />
+        <Parameter Name="protectionScenario" Type="System.Security.Authentication.ExtendedProtection.ProtectionScenario" />
+        <Parameter Name="customServiceNames" Type="System.Security.Authentication.ExtendedProtection.ServiceNameCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this constructor is used to initialize a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class, the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.PolicyEnforcement" /> property is set to the <paramref name="policyEnforcement" /> parameter, the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.ProtectionScenario" /> property is set to the <paramref name="protectionScenario" /> parameter, and the <see cref="P:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.CustomServiceNames" /> property is set to the <paramref name="customServiceNames" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> class that specifies when the extended protection policy should be enforced, the kind of protection enforced by the policy, and a custom Service Provider Name (SPN) list that is used to match against a client's SPN.</para>
+        </summary>
+        <param name="policyEnforcement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.PolicyEnforcement" /> value that indicates when the extended protection policy should be enforced.</param>
+        <param name="protectionScenario">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.ProtectionScenario" /> value that indicates the kind of protection enforced by the policy.</param>
+        <param name="customServiceNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> that contains the custom SPN list that is used to match against a client's SPN.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CustomChannelBinding">
+      <MemberSignature Language="C#" Value="public System.Security.Authentication.ExtendedProtection.ChannelBinding CustomChannelBinding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Authentication.ExtendedProtection.ChannelBinding CustomChannelBinding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ChannelBinding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This read-only property represents a custom channel binding token to use for validation. This is used in advanced scenarios when the CBT is provided by a custom outer channel. An example scenario might use this property in combination with <see cref="T:System.Net.Security.SslStream" /> and <see cref="T:System.Net.Security.NegotiateStream" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a custom channel binding token (CBT) to use for validation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CustomServiceNames">
+      <MemberSignature Language="C#" Value="public System.Security.Authentication.ExtendedProtection.ServiceNameCollection CustomServiceNames { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Authentication.ExtendedProtection.ServiceNameCollection CustomServiceNames" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ServiceNameCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This read-only property indicates the custom SPN list that is used to match against a client's SPN. By default, the server will determine a default SPN list according to its registered endpoints. For scenarios which require SPN checking, this property can be specified using a using a constructor to override the default list used to match against the client’s SPN.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom Service Provider Name (SPN) list used to match against a client's SPN.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OSSupportsExtendedProtection">
+      <MemberSignature Language="C#" Value="public static bool OSSupportsExtendedProtection { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool OSSupportsExtendedProtection" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The changes to support extended protection are currently available for applications on Windows 7 and Windows Server 2008 R2. The extended protection features will be made available as updates for Windows Vista and Windows Server 2008. The extended protection features are not available on earlier versions of Windows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the operating system supports integrated windows authentication with extended protection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PolicyEnforcement">
+      <MemberSignature Language="C#" Value="public System.Security.Authentication.ExtendedProtection.PolicyEnforcement PolicyEnforcement { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Authentication.ExtendedProtection.PolicyEnforcement PolicyEnforcement" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.PolicyEnforcement</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This read-only property indicates when extended protection policy should be enforced (always, when supported by clients, or never).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets when the extended protection policy should be enforced.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionScenario">
+      <MemberSignature Language="C#" Value="public System.Security.Authentication.ExtendedProtection.ProtectionScenario ProtectionScenario { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Authentication.ExtendedProtection.ProtectionScenario ProtectionScenario" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ProtectionScenario</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This read-only property indicates the kind of protection enforced by the policy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the kind of protection enforced by the extended protection policy.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.Serialization.ISerializable.GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.System#Runtime#Serialization#ISerializable#GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> method can be used to serialize an <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> object. This serialized object can then be used with <see cref="M:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> to construct a new <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the required data to serialize an <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object that holds the serialized data for an <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> object.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains the destination of the serialized stream that is associated with the new <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation for the extended protection policy instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> instance that contains the representation of the <see cref="T:System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

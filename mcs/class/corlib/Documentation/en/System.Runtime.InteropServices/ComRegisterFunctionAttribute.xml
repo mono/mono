@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComRegisterFunctionAttribute" FullName="System.Runtime.InteropServices.ComRegisterFunctionAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ComRegisterFunctionAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ComRegisterFunctionAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,24 +23,52 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to methods.</para>
+      <para>
+        <see cref="T:System.Runtime.InteropServices.ComRegisterFunctionAttribute" /> enables you to add arbitrary registration code to accommodate the requirements of COM clients. For example, you can update the registry using registration functions from the <see cref="N:Microsoft.Win32" /> namespace. If you provide a registration method, you must also apply <see cref="T:System.Runtime.InteropServices.ComUnregisterFunctionAttribute" /> to an unregistration method, which reverses the operations done in the registration method.</para>
+      <para>The common language runtime calls the method with this attribute when its containing assembly is registered (directly or indirectly) with the <format type="text/html"><a href="E190E342-36EF-4651-A0B4-0E8C2C0281CB">[&lt;topic://cpgrfassemblyregistrationtoolregasmexe&gt;]</a></format>or through the <see cref="M:System.Runtime.InteropServices.RegistrationServices.RegisterAssembly(System.Reflection.Assembly,System.Runtime.InteropServices.AssemblyRegistrationFlags)" /> method.</para>
+      <para>This attribute can be applied only to methods that have the following characteristics:</para>
+      <list type="bullet">
+        <item>
+          <para>Scope: Any (public, private, and so on).</para>
+        </item>
+        <item>
+          <para>Type: static.</para>
+        </item>
+        <item>
+          <para>Parameters: Accepts a single <see cref="T:System.Type" /> parameter or a <see cref="T:System.String" /> parameter type.</para>
+        </item>
+        <item>
+          <para>Return type: void.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the method to call when you register an assembly for use from COM; this enables the execution of user-written code during the registration process.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ComRegisterFunctionAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComRegisterFunctionAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

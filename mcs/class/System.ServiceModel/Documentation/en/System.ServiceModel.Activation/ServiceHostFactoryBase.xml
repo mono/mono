@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceHostFactoryBase" FullName="System.ServiceModel.Activation.ServiceHostFactoryBase">
+  <TypeSignature Language="C#" Value="public abstract class ServiceHostFactoryBase" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ServiceHostFactoryBase extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The managed hosting environments that support this interface are Internet Information Services (IIS) or Windows Process Activation Services (WAS). Implement a factory that derives from this class when you have implemented a custom derivative of <see cref="T:System.ServiceModel.ServiceHostBase" /> in these hosting environments. If you have implemented a custom derivative of <see cref="T:System.ServiceModel.ServiceHost" />, consider deriving from <see cref="T:System.ServiceModel.Activation.ServiceHostFactory" /> instead.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base implementation for the factory that allows application code to participate in the creation of service hosts in managed hosting environments where the host instance is created dynamically in response to incoming messages.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ServiceHostFactoryBase ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Activation.ServiceHostFactoryBase" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateServiceHost">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.ServiceHostBase CreateServiceHost (string constructorString, Uri[] baseAddresses);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.ServiceHostBase CreateServiceHost(string constructorString, class System.Uri[] baseAddresses) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ServiceHostBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="constructorString" Type="System.String" />
+        <Parameter Name="baseAddresses" Type="System.Uri[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a <see cref="T:System.ServiceModel.ServiceHostBase" /> with a specific base address using custom initiation data. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.ServiceHostBase" /> object with the specified base addresses and initialized with the custom initiation data.</para>
+        </returns>
+        <param name="constructorString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialization data that is passed to the <see cref="T:System.ServiceModel.ServiceHostBase" /> instance being constructed by the factory. </param>
+        <param name="baseAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Array" /> of type <see cref="T:System.Uri" /> that contains the base addresses of the host.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -66,6 +66,7 @@
 ./Mono.Security.Protocol.Ntlm/MessageBase.cs
 ./Mono.Security.Protocol.Ntlm/NtlmAuthLevel.cs
 ./Mono.Security.Protocol.Ntlm/NtlmFlags.cs
+./Mono.Security.Protocol.Ntlm/NtlmSettings.cs
 ./Mono.Security.Protocol.Ntlm/Type1Message.cs
 ./Mono.Security.Protocol.Ntlm/Type2Message.cs
 ./Mono.Security.Protocol.Ntlm/Type3Message.cs

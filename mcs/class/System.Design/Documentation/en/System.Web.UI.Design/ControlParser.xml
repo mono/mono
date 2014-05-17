@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlParser" FullName="System.Web.UI.Design.ControlParser">
   <TypeSignature Language="C#" Value="public sealed class ControlParser" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The T:System.Web.UI.Design.ControlParser class provides methods that can create a T:System.Web.UI.Control control or T:System.Web.UI.ITemplate interface by parsing a string of markup representing a control or control template.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for creating a Web server <see cref="T:System.Web.UI.Control" /> control or <see cref="T:System.Web.UI.ITemplate" /> interface from a string of markup that represents a persisted control or template.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ParseControl">
@@ -25,11 +32,23 @@
         <Parameter Name="controlText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="controlText">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseControl(System.ComponentModel.Design.IDesignerHost,System.String)" /> method accesses the string representing the register directives on the ASP.NET Web page using the services of the designer host. Designer host services are acquired through the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.ReferenceManager" /> property of the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> object, or if that is not available, the <see cref="T:System.Web.UI.Design.IWebFormReferenceManager" /> service.</para>
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseControl(System.ComponentModel.Design.IDesignerHost,System.String)" /> method throws an exception if the parser cannot build the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a control from the specified markup using the specified designer host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.Control" /> that controlText represents; otherwise, null, if the parser cannot build the control.</para>
+        </returns>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> instance that is the designer host for the page. </param>
+        <param name="controlText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTML markup for the control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,12 +67,25 @@
         <Parameter Name="directives" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="controlText">To be added.</param>
-        <param name="directives">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseControl(System.ComponentModel.Design.IDesignerHost,System.String,System.String)" /> method accesses the string representing the register directives on the ASP.NET Web page using the services of the designer host. Designer host services are acquired through the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.ReferenceManager" /> property of the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> object, or if that is not available, the <see cref="T:System.Web.UI.Design.IWebFormReferenceManager" /> service.</para>
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseControl(System.ComponentModel.Design.IDesignerHost,System.String,System.String)" /> method throws an exception if the parser cannot build the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a control from the specified markup using the specified designer host and directives.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.Control" /> that <paramref name="controlText" /> represents.</para>
+        </returns>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> instance that is the designer host for the page.</param>
+        <param name="controlText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the HTML markup for the control.</param>
+        <param name="directives">
+          <attribution license="cc4" from="Microsoft" modified="false" />The page directives to include in the code for the control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -74,11 +106,23 @@
         <Parameter Name="controlText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="controlText">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseControls(System.ComponentModel.Design.IDesignerHost,System.String)" /> method accesses the string representing the register directives on the ASP.NET Web page using the services of the designer host. Designer host services are acquired through the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.ReferenceManager" /> property of the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> object, or if that is not available, the <see cref="T:System.Web.UI.Design.IWebFormReferenceManager" /> service.</para>
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseControls(System.ComponentModel.Design.IDesignerHost,System.String)" /> method throws an exception if the parser cannot build the controls from the <paramref name="controlText" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an array of controls from the specified markup using the specified designer host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.UI.Control" /> elements, parsed from <paramref name="controlText" />; otherwise, null, if the parser cannot build the controls.</para>
+        </returns>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> instance that is the designer host for the page.</param>
+        <param name="controlText">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents a collection of markup for controls.</param>
       </Docs>
     </Member>
     <Member MemberName="ParseTemplate">
@@ -92,11 +136,22 @@
         <Parameter Name="templateText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="templateText">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseTemplate(System.ComponentModel.Design.IDesignerHost,System.String)" /> method accesses the string representing the register directives on the ASP.NET Web page using the services of the designer host. Designer host services are acquired through the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.ReferenceManager" /> property of the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> object, or if that is not available, the <see cref="T:System.Web.UI.Design.IWebFormReferenceManager" /> service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Web.UI.ITemplate" /> interface from the specified template markup.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.ITemplate" /> instance created by parsing <paramref name="templateText" />.</para>
+        </returns>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> instance that is the designer host for the page. </param>
+        <param name="templateText">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the template markup. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,12 +170,24 @@
         <Parameter Name="directives" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="templateText">To be added.</param>
-        <param name="directives">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ControlParser.ParseTemplate(System.ComponentModel.Design.IDesignerHost,System.String,System.String)" /> method accesses the string representing the register directives on the ASP.NET Web page using the services of the designer host. Designer host services are acquired through the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.ReferenceManager" /> property of the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> object, or if that is not available, the <see cref="T:System.Web.UI.Design.IWebFormReferenceManager" /> service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the specified template markup and creates an <see cref="T:System.Web.UI.ITemplate" /> interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.ITemplate" /> instance created by parsing <paramref name="templateText" />.</para>
+        </returns>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> instance that is the designer host for the page. </param>
+        <param name="templateText">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the template markup. </param>
+        <param name="directives">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any directives to add to the beginning of the code for the template. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

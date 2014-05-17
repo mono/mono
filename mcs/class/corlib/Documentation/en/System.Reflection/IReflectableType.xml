@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IReflectableType" FullName="System.Reflection.IReflectableType">
+  <TypeSignature Language="C#" Value="public interface IReflectableType" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IReflectableType" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a type that you can reflect over.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetTypeInfo">
+      <MemberSignature Language="C#" Value="public System.Reflection.TypeInfo GetTypeInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.TypeInfo GetTypeInfo() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.TypeInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an object that represents this type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents this type.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

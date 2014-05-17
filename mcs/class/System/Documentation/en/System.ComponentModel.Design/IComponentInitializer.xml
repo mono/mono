@@ -1,20 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComponentInitializer" FullName="System.ComponentModel.Design.IComponentInitializer">
   <TypeSignature Language="C#" Value="public interface IComponentInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IComponentInitializer" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.IComponentInitializer" /> interface can be implemented by any designer, which is a component that also implements <see cref="T:System.ComponentModel.Design.IDesigner" />, which receives a recommended set of default values for the component it is designing. <see cref="T:System.ComponentModel.Design.IComponentInitializer" /> is queried during new component creation. Recommended default values for the component's properties are passed in as name/value pairs in a dictionary.</para>
+      <para>This design provides two customization points: the toolbox item itself can be replaced or changed to perform custom actions, or the designer for a component can be changed to provide a custom action. A designer that implements <see cref="T:System.ComponentModel.Design.IComponentInitializer" /> should not depend on either of its methods—<see cref="M:System.ComponentModel.Design.IComponentInitializer.InitializeNewComponent(System.Collections.IDictionary)" /> or <see cref="M:System.ComponentModel.Design.IComponentInitializer.InitializeExistingComponent(System.Collections.IDictionary)" />—being called, because toolbox items are not obligated to call these methods.</para>
+      <para>For an overview of creating design components, see <format type="text/html"><a href="d6ac8a6a-42fd-4bc8-bf33-b212811297e2">Extending Design-Time Support</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of recommended default values during component creation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InitializeExistingComponent">
       <MemberSignature Language="C#" Value="public void InitializeExistingComponent (System.Collections.IDictionary defaultValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void InitializeExistingComponent(class System.Collections.IDictionary defaultValues) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -23,16 +36,28 @@
         <Parameter Name="defaultValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="defaultValues">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.IComponentInitializer.InitializeExistingComponent(System.Collections.IDictionary)" /> method is called when a designer will re-initialize an existing component. For example, <see cref="M:System.ComponentModel.Design.IComponentInitializer.InitializeExistingComponent(System.Collections.IDictionary)" /> is commonly called after a drag-and-drop operation. The <paramref name="defaultValues" /> parameter is a dictionary containing name/value pairs of default values that should be applied to properties of the associated component. This dictionary may be null if no default values have been specified.</para>
+          <block subset="none" type="note">
+            <para>When implementing this method, generally you should not modify the component properties beyond those recommendations found in <paramref name="defaultValue" />. The existing component may already have had its properties set by the user or other design-time code.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores an instance of a component to its default state.</para>
+        </summary>
+        <param name="defaultValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of default property values, which are name/value pairs, with which to reset the component's state.</param>
       </Docs>
     </Member>
     <Member MemberName="InitializeNewComponent">
       <MemberSignature Language="C#" Value="public void InitializeNewComponent (System.Collections.IDictionary defaultValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void InitializeNewComponent(class System.Collections.IDictionary defaultValues) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -41,9 +66,17 @@
         <Parameter Name="defaultValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="defaultValues">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.IComponentInitializer.InitializeNewComponent(System.Collections.IDictionary)" /> method is called after a new component is created. It is typically called by the toolbox item itself and is used to configure the component’s default values.</para>
+          <para>This dictionary may be null if no default values are specified. If the dictionary is null, the component properties should be left in their implicit default states.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new component using a set of recommended values.</para>
+        </summary>
+        <param name="defaultValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of default property values, which are name/value pairs, with which to initialize the component's state.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceModelEnhancedConfigurationElementCollection&lt;TConfigurationElement&gt;" FullName="System.ServiceModel.Configuration.ServiceModelEnhancedConfigurationElementCollection&lt;TConfigurationElement&gt;">
+  <TypeSignature Language="C#" Value="public abstract class ServiceModelEnhancedConfigurationElementCollection&lt;TConfigurationElement&gt; : System.ServiceModel.Configuration.ServiceModelConfigurationElementCollection&lt;TConfigurationElement&gt;, System.Collections.ICollection where TConfigurationElement : ConfigurationElementnew()" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ServiceModelEnhancedConfigurationElementCollection`1&lt;.ctor (class System.Configuration.ConfigurationElement) TConfigurationElement&gt; extends System.ServiceModel.Configuration.ServiceModelConfigurationElementCollection`1&lt;!TConfigurationElement&gt; implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TConfigurationElement">
+      <Constraints>
+        <ParameterAttribute>DefaultConstructorConstraint</ParameterAttribute>
+        <BaseTypeName>System.Configuration.ConfigurationElement</BaseTypeName>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.ServiceModelConfigurationElementCollection&lt;TConfigurationElement&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="ConfigurationElementType">TConfigurationElement</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.ICollection</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="TConfigurationElement">To be added.</typeparam>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract base class for a <see cref="T:System.Configuration.ConfigurationElementCollection" /> looking for a merge semantic similar to an <see cref="F:System.Configuration.ConfigurationElementCollectionType.AddRemoveClearMap" /> that allows duplicates, but throws an exception when duplicates are found in the same configuration scope (e.g. same configuration file).</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="BaseAdd">
+      <MemberSignature Language="C#" Value="protected override void BaseAdd (System.Configuration.ConfigurationElement element);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void BaseAdd(class System.Configuration.ConfigurationElement element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Configuration.ConfigurationElement" /> to this collection.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationElement" /> to add.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ThrowOnDuplicate">
+      <MemberSignature Language="C#" Value="protected override bool ThrowOnDuplicate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ThrowOnDuplicate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value that indicates whether an attempt to add a duplicate <see cref="T:System.Configuration.ConfigurationElement" /> to this collection causes an exception to be thrown. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="StreamUpgradeInitiator" FullName="System.ServiceModel.Channels.StreamUpgradeInitiator">
+  <TypeSignature Language="C#" Value="public abstract class StreamUpgradeInitiator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit StreamUpgradeInitiator extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An example of a stream upgrade is to build a compression stream directly on top of the transport stream. This class is used with <see cref="T:System.ServiceModel.Channels.StreamUpgradeAcceptor" /> and <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> to implement a custom stream upgrade.  </para>
+      <para>For a detailed description of the upgrade process, see <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To implement a custom upgrade initiator, inherit from this abstract base class. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected StreamUpgradeInitiator ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeInitiator" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginInitiateUpgrade">
+      <MemberSignature Language="C#" Value="public abstract IAsyncResult BeginInitiateUpgrade (System.IO.Stream stream, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginInitiateUpgrade(class System.IO.Stream stream, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.InitiateUpgrade(System.IO.Stream)" /> and returns. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This abstract method can be implemented to do asynchronous processing that initiates an upgrade.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.IAsyncResult" /> to be passed into the <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.EndInitiateUpgrade(System.IAsyncResult)" /> method.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to be upgraded.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to call when the <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.InitiateUpgrade(System.IO.Stream)" /> has completed.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />State information about the status of the asynchronous call.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndInitiateUpgrade">
+      <MemberSignature Language="C#" Value="public abstract System.IO.Stream EndInitiateUpgrade (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream EndInitiateUpgrade(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about using this method, see the remarks in <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.InitiateUpgrade(System.IO.Stream)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is the asynchronous callback method that is called after <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.BeginInitiateUpgrade(System.IO.Stream,System.AsyncCallback,System.Object)" /> has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the upgraded stream.</para>
+        </returns>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult returned from the <see cref="M:System.ServiceModel.Channels.StreamUpgradeInitiator.BeginInitiateUpgrade(System.IO.Stream,System.AsyncCallback,System.Object)" /> method. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNextUpgrade">
+      <MemberSignature Language="C#" Value="public abstract string GetNextUpgrade ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetNextUpgrade() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a set of upgrade content types supported by the upgrade provider in the order in which they are expected. Upgrade providers that support a single upgrade return only a single value. Upgrade providers that support multiple upgrades return the values in order (for example, compression content type followed by the security content type).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the content type of the next upgrade to be performed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the content type of the next upgrade.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="InitiateUpgrade">
+      <MemberSignature Language="C#" Value="public abstract System.IO.Stream InitiateUpgrade (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream InitiateUpgrade(class System.IO.Stream stream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be called multiple times for each upgrade supported by the upgrade provider. For example, an upgrade provider that supports compression and security would call this method twice: first to upgrade the default transport streaming for compression, and second to upgrade the security. Subsequent calls to this method should pass in the upgrade stream from the previous call.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates the upgrade of the stream by requesting the other end of its connection to upgrade the channel transport layer. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the upgraded stream.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to be upgraded.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

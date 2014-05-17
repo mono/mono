@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MemoryMappedFileRights" FullName="System.IO.MemoryMappedFiles.MemoryMappedFileRights">
+  <TypeSignature Language="C#" Value="public enum MemoryMappedFileRights" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MemoryMappedFileRights extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can specify access rights when you use the <see cref="Overload:System.IO.MemoryMappedFiles.MemoryMappedFile.OpenExisting" /> method to open an existing memory-mapped file. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies access rights to a memory-mapped file that is not associated with a file on disk.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AccessSystemSecurity">
+      <MemberSignature Language="C#" Value="AccessSystemSecurity" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights AccessSystemSecurity = int32(16777216)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to get or set permissions on a file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangePermissions">
+      <MemberSignature Language="C#" Value="ChangePermissions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights ChangePermissions = int32(262144)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to change the security and audit rules associated with a file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyOnWrite">
+      <MemberSignature Language="C#" Value="CopyOnWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights CopyOnWrite = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to read and write to a file with the restriction that write operations will not be seen by other processes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="Delete" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights Delete = int32(65536)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to delete a file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Execute">
+      <MemberSignature Language="C#" Value="Execute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights Execute = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to run an application file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FullControl">
+      <MemberSignature Language="C#" Value="FullControl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights FullControl = int32(983055)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to exert full control over a file, and to modify access control and audit rules. This value represents the right to do anything with a file and is the combination of all rights in this enumeration.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="Read" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights Read = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a file as read-only.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadExecute">
+      <MemberSignature Language="C#" Value="ReadExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights ReadExecute = int32(12)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a folder or file as read-only, and to run application files. This right includes the <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileRights.Read" /> right and the <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileRights.Execute" /> right.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadPermissions">
+      <MemberSignature Language="C#" Value="ReadPermissions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights ReadPermissions = int32(131072)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy access and audit rules from a file. This does not include the right to read data, file system attributes, or extended file system attributes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadWrite">
+      <MemberSignature Language="C#" Value="ReadWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights ReadWrite = int32(6)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a file, and the right to add data to a file or remove data from a file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadWriteExecute">
+      <MemberSignature Language="C#" Value="ReadWriteExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights ReadWriteExecute = int32(14)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy a file, the right to add data to a file or remove data from a file, and the right to run an application file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TakeOwnership">
+      <MemberSignature Language="C#" Value="TakeOwnership" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights TakeOwnership = int32(524288)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to change the owner of a file.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="Write" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights Write = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to add data to a file or remove data from a file.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

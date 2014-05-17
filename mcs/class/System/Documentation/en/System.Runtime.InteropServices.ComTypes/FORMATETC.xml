@@ -1,86 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FORMATETC" FullName="System.Runtime.InteropServices.ComTypes.FORMATETC">
   <TypeSignature Language="C#" Value="public struct FORMATETC" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit FORMATETC extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.InteropServices.ComTypes.FORMATETC" /> structure encompass a target device, the aspect or view of the data, and a storage medium indicator. Instead of a Clipboard format, OLE uses a FORMATETC data structure instead. This structure is used as a parameter in OLE functions and methods that require data format information.</para>
+      <para>For more information about the FORMATETC structure, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a generalized Clipboard format. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="cfFormat">
       <MemberSignature Language="C#" Value="public short cfFormat;" />
+      <MemberSignature Language="ILAsm" Value=".field public int16 cfFormat" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>OLE recognizes three formats: </para>
+          <list type="bullet">
+            <item>
+              <para>Standard interchange formats, such as CF_TEXT.</para>
+            </item>
+            <item>
+              <para>Private application formats understood only by the application offering the format, or by other applications offering similar features.</para>
+            </item>
+            <item>
+              <para>OLE formats, which are used to create linked or embedded objects.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the particular clipboard format of interest.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="dwAspect">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.DVASPECT dwAspect;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.DVASPECT dwAspect" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single clipboard format can support multiple aspects or views of the object. Most data and presentation transfer and caching methods pass aspect information. For example, a caller might request an object's iconic picture, using the metafile clipboard format to retrieve it. Note that only one <see cref="T:System.Runtime.InteropServices.ComTypes.DVASPECT" /> value can be used in <see cref="F:System.Runtime.InteropServices.ComTypes.FORMATETC.dwAspect" />. That is, <see cref="F:System.Runtime.InteropServices.ComTypes.FORMATETC.dwAspect" /> cannot be the result of a BOOLEAN OR operation on several <see cref="T:System.Runtime.InteropServices.ComTypes.DVASPECT" /> values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies one of the <see cref="T:System.Runtime.InteropServices.ComTypes.DVASPECT" /> enumeration constants that indicates how much detail should be contained in the rendering.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="lindex">
       <MemberSignature Language="C#" Value="public int lindex;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 lindex" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The most common value is -1, which identifies all of the data. For the aspects <see cref="F:System.Runtime.InteropServices.ComTypes.DVASPECT.DVASPECT_THUMBNAIL" /> and <see cref="F:System.Runtime.InteropServices.ComTypes.DVASPECT.DVASPECT_ICON" />, <see cref="F:System.Runtime.InteropServices.ComTypes.FORMATETC.lindex" /> is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies part of the aspect when the data must be split across page boundaries. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ptd">
       <MemberSignature Language="C#" Value="public IntPtr ptd;" />
+      <MemberSignature Language="ILAsm" Value=".field public native int ptd" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A null value is used whenever the specified data format is independent of the target device or when the caller does not care what device is used. In the latter case, if the data requires a target device, the object should pick an appropriate default device (often the display for visual components). Data obtained from an object with a null target device, such as most metafiles, is independent of the target device. The resulting data is usually the same as it would be if the user chose the <ui>Save As</ui> command from the <ui>File</ui> menu and selected an interchange format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a pointer to a DVTARGETDEVICE structure containing information about the target device that the data is being composed for. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="tymed">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.TYMED tymed;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.TYMED tymed" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.TYMED</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data can be transferred using whatever medium makes sense for the object. For example, data can be passed using global memory, a disk file, or structured storage objects. For more information, see the <see cref="T:System.Runtime.InteropServices.ComTypes.TYMED" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies one of the <see cref="T:System.Runtime.InteropServices.ComTypes.TYMED" /> enumeration constants, which indicates the type of storage medium used to transfer the object's data. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

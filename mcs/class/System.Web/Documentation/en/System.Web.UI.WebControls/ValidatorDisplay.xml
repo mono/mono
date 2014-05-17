@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ValidatorDisplay" FullName="System.Web.UI.WebControls.ValidatorDisplay">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum ValidatorDisplay" />
   <AssemblyInfo>
@@ -12,8 +13,24 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ValidatorDisplay" /> enumeration represents the different display behaviors of error messages in validation controls.</para>
+      <para>
+        <see cref="F:System.Web.UI.WebControls.ValidatorDisplay.None" /> specifies that you only want to display the error message in a <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control. The error message will not display in the validation control.</para>
+      <para>
+        <see cref="F:System.Web.UI.WebControls.ValidatorDisplay.Static" /> specifies that you don't want the layout of the Web page to change when validator controls display error messages. Space on the page is allocated for the error messages when displaying the page. The validator contents are physically part of the page; therefore, multiple validators for the same input control must occupy different locations on the page.</para>
+      <para>
+        <see cref="F:System.Web.UI.WebControls.ValidatorDisplay.Dynamic" /> specifies that you want to dynamically place error messages on the Web page when validation fails. Space for the validation content is not allocated on the page; therefore, the page dynamically changes to display the error message. This allows multiple validators to share the same physical location on the page. In order to keep the page layout from changing when an error message is displayed, the HTML element containing the validator must be sized large enough to accommodate the maximum size of the validator.</para>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure validation controls so that they generate markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the display behavior of error messages in validation controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Dynamic">
@@ -25,8 +42,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validator content dynamically added to the page when validation fails.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +62,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validator content never displayed inline.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +82,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validator content physically part of the page layout.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

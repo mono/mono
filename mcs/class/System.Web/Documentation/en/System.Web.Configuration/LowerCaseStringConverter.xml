@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LowerCaseStringConverter" FullName="System.Web.Configuration.LowerCaseStringConverter">
   <TypeSignature Language="C#" Value="public sealed class LowerCaseStringConverter : System.ComponentModel.TypeConverter" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.LowerCaseStringConverter" /> class allows an object to be converted to a lowercase string. This class also provides support to verify that an object type can be converted to a lowercase string before the conversion is made. </para>
+      <para>The methods of <see cref="T:System.Web.Configuration.LowerCaseStringConverter" /> take as a parameter an object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface. This interface provides contextual information about a component. Typically, this interface is used at design time to provide information about a design-time container. The <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> is commonly used in type conversion.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support to convert an object to a lowercase string. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Configuration.LowerCaseStringConverter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,12 +49,23 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="ctx">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses an object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface as the <paramref name="ctx" /> parameter. This interface provides contextual information about a component. Typically, this interface is used at design time to provide information about a design-time container. The <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> is commonly used in type conversion. Override this method in a derived class if custom behavior is required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an object can be converted to a lowercase string based on the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the parameters describe an object that can be converted to a lowercase string object; otherwise, false.</para>
+        </returns>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to convert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,12 +82,23 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="ctx">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses an object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface as the <paramref name="ctx" /> parameter. This interface provides contextual information about a component. Typically, this interface is used at design time to provide information about a design-time container. The <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> is commonly used in type conversion. Override this method in a derived class if custom behavior is required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an object can be converted to a lowercase string based on the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the parameters describe an object that can be converted to a lowercase string object; otherwise, false.</para>
+        </returns>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to convert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -83,13 +116,25 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="ctx">To be added.</param>
-        <param name="ci">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses an object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface as the <paramref name="ctx" /> parameter. This interface provides contextual information about a component. Typically, this interface is used at design time to provide information about a design-time container. The <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> is commonly used in type conversion. The <paramref name="ci" /> parameter object provides the culture-related information. The <paramref name="data" /> parameter object acts as both the object to convert and the resulting object once the method is complete. Override this method in a derived class if custom behavior is required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an object from its original value to a lowercase string based on the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A lowercase string object.</para>
+        </returns>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface.</param>
+        <param name="ci">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.Globalization.CultureInfo" /> class.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,14 +153,27 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="ctx">To be added.</param>
-        <param name="ci">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses an object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface as the <paramref name="ctx" /> parameter. This interface provides contextual information about a component. Typically, this interface is used at design time to provide information about a design-time container. The <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> is commonly used in type conversion. The <paramref name="ci" /> parameter object provides the culture-related information. The <paramref name="value" /> object acts as both the object to convert and the resulting object once the method is complete. Override this method in a derived class if custom behavior is required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an object to a lowercase string based on the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A lowercase string object.</para>
+        </returns>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface.</param>
+        <param name="ci">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.Globalization.CultureInfo" /> class.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to convert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

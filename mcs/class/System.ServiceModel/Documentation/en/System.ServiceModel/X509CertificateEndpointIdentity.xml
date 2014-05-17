@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="X509CertificateEndpointIdentity" FullName="System.ServiceModel.X509CertificateEndpointIdentity">
+  <TypeSignature Language="C#" Value="public class X509CertificateEndpointIdentity : System.ServiceModel.EndpointIdentity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit X509CertificateEndpointIdentity extends System.ServiceModel.EndpointIdentity" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.EndpointIdentity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a certificate identity for the service endpoint. Clients that attempt to communicate with that service endpoint should authenticate the service based on the certificate provided in the endpoint identity.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public X509CertificateEndpointIdentity (System.Security.Cryptography.X509Certificates.X509Certificate2 cert);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Cryptography.X509Certificates.X509Certificate2 cert) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="cert" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
+      </Parameters>
+      <Docs>
+        <param name="cert">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="certificate" /> is added to a collection of certificates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of a <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> class using an existing certificate.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public X509CertificateEndpointIdentity (System.Security.Cryptography.X509Certificates.X509Certificate2 primaryCertificate, System.Security.Cryptography.X509Certificates.X509Certificate2Collection supportingCertificates);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Cryptography.X509Certificates.X509Certificate2 primaryCertificate, class System.Security.Cryptography.X509Certificates.X509Certificate2Collection supportingCertificates) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="primaryCertificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
+        <Parameter Name="supportingCertificates" Type="System.Security.Cryptography.X509Certificates.X509Certificate2Collection" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="primaryCertificate" /> and <paramref name="supportingCertificates" /> are added to a collection of certificates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> class using the primary (leaf) certificate and certificates that are part of its trust chain.</para>
+        </summary>
+        <param name="primaryCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The primary certificate representing the service's identity.</param>
+        <param name="supportingCertificates">
+          <attribution license="cc4" from="Microsoft" modified="false" />The certificates that are part of the trust chain of the primary certificate.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Certificates">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509Certificate2Collection Certificates { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509Certificate2Collection Certificates" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection contains the <paramref name="primaryCertificate" /> used to create the <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> as well as any <paramref name="supportingCertificates" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of certificates for this identity.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IConnectionPoint" FullName="System.Runtime.InteropServices.ComTypes.IConnectionPoint">
   <TypeSignature Language="C#" Value="public interface IConnectionPoint" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IConnectionPoint" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,14 +17,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, see the existing documentation for IConnectionPoint in the MSDN library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the IConnectionPoint interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Advise">
       <MemberSignature Language="C#" Value="public void Advise (object pUnkSink, out int pdwCookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Advise(object pUnkSink, int32 pdwCookie) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -37,14 +51,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="EnumConnections">
+      <MemberSignature Language="C#" Value="public void EnumConnections (out System.Runtime.InteropServices.ComTypes.IEnumConnections ppEnum);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EnumConnections(class System.Runtime.InteropServices.ComTypes.IEnumConnections ppEnum) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EnumConnections">
-      <MemberSignature Language="C#" Value="public void EnumConnections (out System.Runtime.InteropServices.ComTypes.IEnumConnections ppEnum);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -57,14 +72,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetConnectionInterface">
+      <MemberSignature Language="C#" Value="public void GetConnectionInterface (out Guid pIID);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetConnectionInterface(valuetype System.Guid pIID) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetConnectionInterface">
-      <MemberSignature Language="C#" Value="public void GetConnectionInterface (out Guid pIID);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -77,14 +93,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetConnectionPointContainer">
+      <MemberSignature Language="C#" Value="public void GetConnectionPointContainer (out System.Runtime.InteropServices.ComTypes.IConnectionPointContainer ppCPC);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetConnectionPointContainer(class System.Runtime.InteropServices.ComTypes.IConnectionPointContainer ppCPC) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetConnectionPointContainer">
-      <MemberSignature Language="C#" Value="public void GetConnectionPointContainer (out System.Runtime.InteropServices.ComTypes.IConnectionPointContainer ppCPC);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -97,14 +114,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Unadvise">
+      <MemberSignature Language="C#" Value="public void Unadvise (int dwCookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Unadvise(int32 dwCookie) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unadvise">
-      <MemberSignature Language="C#" Value="public void Unadvise (int dwCookie);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -112,15 +130,18 @@
         <Parameter Name="dwCookie" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dwCookie">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the existing documentation for IConnectionPoint::Unadvise in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates an advisory connection previously established through the <see cref="M:System.Runtime.InteropServices.ComTypes.IConnectionPoint.Advise(System.Object,System.Int32@)" /> method.</para>
+        </summary>
+        <param name="dwCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection cookie previously returned from the <see cref="M:System.Runtime.InteropServices.ComTypes.IConnectionPoint.Advise(System.Object,System.Int32@)" /> method. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SplitterCancelEventArgs" FullName="System.Windows.Forms.SplitterCancelEventArgs">
   <TypeSignature Language="C#" Value="public class SplitterCancelEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for splitter events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,13 +28,20 @@
         <Parameter Name="splitY" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="mouseCursorX">To be added.</param>
-        <param name="mouseCursorY">To be added.</param>
-        <param name="splitX">To be added.</param>
-        <param name="splitY">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.SplitterCancelEventArgs" /> class with the specified coordinates of the mouse pointer and the upper left corner of the <see cref="T:System.Windows.Forms.SplitContainer" />.</para>
+        </summary>
+        <param name="mouseCursorX">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X coordinate of the mouse pointer in client coordinates. </param>
+        <param name="mouseCursorY">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Y coordinate of the mouse pointer in client coordinates. </param>
+        <param name="splitX">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X coordinate of the upper left corner of the <see cref="T:System.Windows.Forms.SplitContainer" /> in client coordinates. </param>
+        <param name="splitY">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Y coordinate of the upper left corner of the <see cref="T:System.Windows.Forms.SplitContainer" /> in client coordinates. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +54,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the X coordinate of the mouse pointer in client coordinates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +73,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Y coordinate of the mouse pointer in client coordinates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +92,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the X coordinate of the upper left corner of the <see cref="T:System.Windows.Forms.SplitContainer" /> in client coordinates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +111,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Y coordinate of the upper left corner of the <see cref="T:System.Windows.Forms.SplitContainer" /> in client coordinates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

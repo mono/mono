@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DataProtectionSecurityStateEncoder" FullName="System.ServiceModel.Security.DataProtectionSecurityStateEncoder">
+  <TypeSignature Language="C#" Value="public class DataProtectionSecurityStateEncoder : System.ServiceModel.Security.SecurityStateEncoder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DataProtectionSecurityStateEncoder extends System.ServiceModel.Security.SecurityStateEncoder" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Security.SecurityStateEncoder</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used for encoding the security state as represented by a <newTerm>Stateful Security Context Token</newTerm> when the message is sent, and for decoding the security context when the message arrives at a recipient.</para>
+      <para>The encoding can either be in the current user scope (whereby only processes running as the user account can decode the security state) or it can be in the local machine scope (whereby all processes running on the machine can decode the security state). By default, the encoding is in the current user scope.</para>
+      <para>This class is used by the server when sending the security state in the <newTerm>Stateful Security Context Token</newTerm> issued to the client.</para>
+      <para>DataProtection based on the CurrentUser scope requires the current user to have a user profile. If the user has a roaming profile, then the security state encoded by the user process running on one machine can be decoded by a user process running on a different machine.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides encoding and decoding mechanisms for the security state using the Windows DataProtection API functionality. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataProtectionSecurityStateEncoder ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of this class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataProtectionSecurityStateEncoder (bool useCurrentUserProtectionScope);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool useCurrentUserProtectionScope) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="useCurrentUserProtectionScope" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of this class.  </para>
+        </summary>
+        <param name="useCurrentUserProtectionScope">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether to use the current user protection scope.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DataProtectionSecurityStateEncoder (bool useCurrentUserProtectionScope, byte[] entropy);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool useCurrentUserProtectionScope, unsigned int8[] entropy) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="useCurrentUserProtectionScope" Type="System.Boolean" />
+        <Parameter Name="entropy" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of this class.  </para>
+        </summary>
+        <param name="useCurrentUserProtectionScope">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether to use the current user protection scope.</param>
+        <param name="entropy">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that specifies the entropy, which indicates additional randomness that the encoder could use to encode the security state.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="DecodeSecurityState">
+      <MemberSignature Language="C#" Value="protected override byte[] DecodeSecurityState (byte[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance unsigned int8[] DecodeSecurityState(unsigned int8[] data) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes the security state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the decoded security state.</para>
+        </returns>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents the encoded security state.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EncodeSecurityState">
+      <MemberSignature Language="C#" Value="protected override byte[] EncodeSecurityState (byte[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance unsigned int8[] EncodeSecurityState(unsigned int8[] data) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes the security state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the encoded security state.</para>
+        </returns>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array representing the decoded security state.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEntropy">
+      <MemberSignature Language="C#" Value="public byte[] GetEntropy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetEntropy() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the randomness of this encoder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Byte" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Information returned by this method includes the <see cref="P:System.ServiceModel.Security.DataProtectionSecurityStateEncoder.UseCurrentUserProtectionScope" /> and <see cref="M:System.ServiceModel.Security.DataProtectionSecurityStateEncoder.GetEntropy" /> values of the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.ServiceModel.Security.DataProtectionSecurityStateEncoder" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.ServiceModel.Security.DataProtectionSecurityStateEncoder" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="UseCurrentUserProtectionScope">
+      <MemberSignature Language="C#" Value="public bool UseCurrentUserProtectionScope { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseCurrentUserProtectionScope" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether to use the current user protection scope. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

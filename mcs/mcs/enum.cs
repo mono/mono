@@ -66,7 +66,7 @@ namespace Mono.CSharp {
 
 			var underlying = ((Enum) Parent).UnderlyingType;
 			if (expr != null) {
-				expr = expr.ImplicitConversionRequired (rc, underlying, Location);
+				expr = expr.ImplicitConversionRequired (rc, underlying);
 				if (expr != null && !IsValidEnumType (expr.Type)) {
 					Enum.Error_1008 (Location, Report);
 					expr = null;

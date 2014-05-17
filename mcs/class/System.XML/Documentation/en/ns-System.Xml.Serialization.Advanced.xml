@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Xml.Serialization.Advanced">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The System.Xml.Serialization.Advanced namespace contains classes that allow you to customize the code generated from a Web Services Description Language (WSDL) document.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>One example of using the code generation feature is the <ui>Add Web Reference</ui> dialog box of Visual Studio. Another example is the <format type="text/html"><a href="b9210348-8bc2-4367-8c91-d1a04b403e88">Web Services Description Language Tool (Wsdl.exe)</a></format>. </para>
+    </remarks>
   </Docs>
 </Namespace>

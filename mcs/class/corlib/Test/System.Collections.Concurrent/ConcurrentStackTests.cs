@@ -125,7 +125,6 @@ namespace MonoTests.System.Collections.Concurrent
 			Assert.IsTrue(stack.IsEmpty, "#4");
 		}
 		
-		//[Ignore]
 		[Test()]
 		public void EnumerateTestCase()
 		{
@@ -230,6 +229,13 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		public void TryPopRangeEmpty ()
+		{
+			stack = new ConcurrentStack<int>();
+			Assert.AreEqual (0, stack.TryPopRange (new int [1]));
+		}
+
+		[Test]
 		public void TryPopRangeTestWithOneElement ()
 		{
 			int[] values = new int[1];
@@ -283,6 +289,17 @@ namespace MonoTests.System.Collections.Concurrent
 		public void TryPopRange_NullArray ()
 		{
 			stack.TryPopRange (null);
+		}
+		
+		[Test]
+		public void PushRangeTestCase()
+		{
+			var testStack = new ConcurrentStack<int>();
+			
+			var testData = new int[] { 1, 2, 3, 4, 5 };			
+			testStack.PushRange (testData);
+			
+			Assert.AreEqual (testData.Length, testStack.Count);
 		}
 	}
 }

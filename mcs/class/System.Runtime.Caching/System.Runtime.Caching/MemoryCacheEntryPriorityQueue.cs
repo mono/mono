@@ -88,8 +88,10 @@ namespace System.Runtime.Caching
 					newSize = halfTheSize + (heapCount / 3);
 				}
 
-				if ((heapCount < halfTheSize) && newSize > -1)
+				if ((heapCount < halfTheSize) && newSize > -1) {
 					Array.Resize <MemoryCacheEntry> (ref heap, newSize);
+					heapSize = newSize;
+				}
 			}
 			
 			return heap;
@@ -197,11 +199,11 @@ namespace System.Runtime.Caching
 					break;
 				
 				heap [index] = parent;
+				heap [parentIndex] = item;
+				
 				index = parentIndex;
 				parentIndex = (index - 1) >> 1;
 			}
-
-			heap [index] = item;
 		}
 	}
 }

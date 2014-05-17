@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ParallelMergeOptions" FullName="System.Linq.ParallelMergeOptions">
+  <TypeSignature Language="C#" Value="public enum ParallelMergeOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ParallelMergeOptions extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use NotBuffered for queries that will be consumed and output as streams, this has the lowest latency between beginning query execution and elements being yielded. For some queries, such as those involving a sort (OrderBy, OrderByDescending), buffering is essential and a hint of NotBuffered or AutoBuffered will be ignored. However, queries that are created by using the AsOrdered operator can be streamed as long as no further sorting is performed within the query itself.</para>
+      <para>Use AutoBuffered for most cases; this is the default. It strikes a balance between latency and overall performance. </para>
+      <para>Use FullyBuffered for queries when the entire output can be processed before the information is needed. This option offers the best performance when all of the output can be accumulated before yielding any information, though it is not suitable for stream processing or showing partial results mid-query.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the preferred type of <newTerm>output merge</newTerm> to use in a query. In other words, it indicates how PLINQ should merge the results from the various partitions back into a single result sequence. This is a hint only, and may not be respected by the system when parallelizing all queries.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AutoBuffered">
+      <MemberSignature Language="C#" Value="AutoBuffered" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.ParallelMergeOptions AutoBuffered = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.ParallelMergeOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a merge with output buffers of a size chosen by the system. Results will accumulate into an output buffer before they are available to the consumer of the query.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.ParallelMergeOptions Default = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.ParallelMergeOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the default merge type, which is AutoBuffered.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FullyBuffered">
+      <MemberSignature Language="C#" Value="FullyBuffered" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.ParallelMergeOptions FullyBuffered = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.ParallelMergeOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a merge with full output buffers. The system will accumulate all of the results before making any of them available to the consumer of the query.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotBuffered">
+      <MemberSignature Language="C#" Value="NotBuffered" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.ParallelMergeOptions NotBuffered = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.ParallelMergeOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a merge without output buffers. As soon as result elements have been computed, make that element available to the consumer of the query.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

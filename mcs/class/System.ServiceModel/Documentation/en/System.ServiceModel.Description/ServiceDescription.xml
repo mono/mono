@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceDescription" FullName="System.ServiceModel.Description.ServiceDescription">
+  <TypeSignature Language="C#" Value="public class ServiceDescription" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceDescription extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The information contained in the <see cref="T:System.ServiceModel.Description.ServiceDescription" /> is used by the indigo1 system to building the run-time components for the service.</para>
+      <para>Use this method when adding custom behaviors to extend <see cref="T:System.ServiceModel.ServiceHost" />. Programmatically, you must <see cref="M:System.Collections.ObjectModel.Collection`1.Add(`0)" /> the custom service behavior to the <see cref="P:System.ServiceModel.Description.ServiceDescription.Behaviors" /> prior to when you call the <see cref="M:System.ServiceModel.ICommunicationObject.Open" /> method on the <see cref="T:System.ServiceModel.ServiceHost" /> object.</para>
+      <para>The <see cref="M:System.ServiceModel.Description.ServiceDescription.GetService(System.Object)" /> and <see cref="M:System.ServiceModel.Description.ServiceDescription.GetService(System.Type)" /> methods are available to reflect on behaviors using the indigo1 programming model when replacing <see cref="T:System.ServiceModel.ServiceHostBase" /> with you own hosting mechanism. </para>
+      <para>Export metadata about a service endpoint by passing <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> as a parameter to <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />. After calling this method, or one of the other export methods provided by <see cref="T:System.ServiceModel.Description.WsdlExporter" />, use the <see cref="P:System.ServiceModel.Description.WsdlExporter.GeneratedWsdlDocuments" /> property to return the collection of <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a complete, in-memory description of the service, including all the endpoints for the service and specifications for their respective addresses, bindings, contracts and behaviors.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceDescription ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceDescription" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceDescription (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ServiceEndpoint&gt; endpoints);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; endpoints) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="endpoints" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceDescription" /> class from a specified enumeration of service endpoints.</para>
+        </summary>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IEnumerable`1" /> of type <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> used to initialize the service description.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Behaviors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IServiceBehavior&gt; Behaviors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.KeyedByTypeCollection`1&lt;class System.ServiceModel.Description.IServiceBehavior&gt; Behaviors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.KeyedByTypeCollection&lt;System.ServiceModel.Description.IServiceBehavior&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when adding custom behaviors to extend <see cref="T:System.ServiceModel.ServiceHost" />. Programmatically, you must <see cref="M:System.Collections.ObjectModel.Collection`1.Add(`0)" /> the custom service behavior to the <see cref="P:System.ServiceModel.Description.ServiceDescription.Behaviors" /> prior to when you call the <see cref="M:System.ServiceModel.ICommunicationObject.Open" /> method on the <see cref="T:System.ServiceModel.ServiceHost" /> object.</para>
+          <para>The type of behavior that is accessible from the description hierarchy is scoped to the specific level. From the <see cref="T:System.ServiceModel.Description.ServiceDescription" /> the <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> is accessible. </para>
+          <para>If you want access to the <see cref="T:System.ServiceModel.Description.IEndpointBehavior" /> associated with an endpoint instead, you can obtain the endpoints for the service using the <see cref="P:System.ServiceModel.Description.ServiceDescription.Endpoints" /> property. Then retrieve the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> from the collection with the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.Find" /> method that employs the relevant search criteria, and call the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.Behaviors" />  property to obtain the collection of the <see cref="T:System.ServiceModel.Description.IEndpointBehavior" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the behaviors associated with the service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConfigurationName">
+      <MemberSignature Language="C#" Value="public string ConfigurationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConfigurationName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This name is not coupled to our configuration model. This is used by service host base to wire up the service. The configuration name is a required string attribute for the <format type="text/html"><a href="13123dd6-c4a9-4a04-a984-df184b851788">&lt;service&gt;</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the &lt;service&gt; configuration element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Endpoints">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpointCollection Endpoints { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.ServiceEndpointCollection Endpoints" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The endpoints in the <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> returned by this method each contain the address, binding, contract, and behavior information required to communicate with the service. To access this information, you must retrieve the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> from the collection with the <see cref="Overload:System.ServiceModel.Description.ServiceEndpointCollection.Find" /> method that employs the relevant search criteria. Then the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> properties can be used to access the information. For example, the <see cref="T:System.ServiceModel.Description.ContractDescription" /> is accessed by the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.Contract" /> property.</para>
+          <para>Export metadata about a service endpoint by passing <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> as a parameter to <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of endpoints from the service description.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetService">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceDescription GetService (object wellKnown);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceDescription GetService(object wellKnown) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceDescription</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="wellKnown" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="wellKnown">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to reflect on behaviors using the indigo1 programming model when replacing <see cref="T:System.ServiceModel.ServiceHostBase" /> with you own hosting mechanism. </para>
+          <para>
+            <see cref="M:System.ServiceModel.Description.ServiceDescription.GetService(System.Object)" /> initializes the <see cref="P:System.ServiceModel.Description.ServiceDescription.Name" />, <see cref="P:System.ServiceModel.Description.ServiceDescription.Namespace" />, and <see cref="P:System.ServiceModel.Description.ServiceDescription.ConfigurationName" /> properties, and ensures that the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> is attached to the service and adds any relevant service behaviors to <see cref="P:System.ServiceModel.Description.ServiceDescription.Behaviors" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a service description initialized with a specified service object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> for the service object provided.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetService">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceDescription GetService (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceDescription GetService(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceDescription</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to reflect on behaviors using the indigo1 programming model when replacing <see cref="T:System.ServiceModel.ServiceHostBase" /> with you own hosting mechanism. </para>
+          <para>
+            <see cref="M:System.ServiceModel.Description.ServiceDescription.GetService(System.Type)" /> initializes the <see cref="P:System.ServiceModel.Description.ServiceDescription.Name" />, <see cref="P:System.ServiceModel.Description.ServiceDescription.Namespace" />, and <see cref="P:System.ServiceModel.Description.ServiceDescription.ConfigurationName" /> properties, reflects on the type for any the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> objects and adds them to <see cref="P:System.ServiceModel.Description.ServiceDescription.Behaviors" />, and ensures that the <see cref="T:System.ServiceModel.ServiceBehaviorAttribute" /> is attached to the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a service description initialized with a specified service type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> for the service type provided.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the name is null, this property returns the name of the service type. If service type is also null, it returns the default service name.</para>
+          <para>When exporting WSDL metadata, the <see cref="P:System.ServiceModel.Description.ServiceDescription.Name" /> maps to the Web Service Development Language (WSDL) &lt;service&gt; element local name part of the (qualified) name attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When exporting WSDL metadata, the <see cref="P:System.ServiceModel.Description.ServiceDescription.Namespace" /> maps to the Web Service Development Language (WSDL) &lt;service&gt; element namespace name part of the (qualified) name attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace for the service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceType">
+      <MemberSignature Language="C#" Value="public Type ServiceType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ServiceType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the service.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectoryObjectSecurity" FullName="System.Security.AccessControl.DirectoryObjectSecurity">
   <TypeSignature Language="C#" Value="public abstract class DirectoryObjectSecurity : System.Security.AccessControl.ObjectSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DirectoryObjectSecurity extends System.Security.AccessControl.ObjectSecurity" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,45 +12,62 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the ability to control access to directory objects without direct manipulation of Access Control Lists (ACLs).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected DirectoryObjectSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected DirectoryObjectSecurity (System.Security.AccessControl.CommonSecurityDescriptor securityDescriptor);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Security.AccessControl.CommonSecurityDescriptor securityDescriptor) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="securityDescriptor" Type="System.Security.AccessControl.CommonSecurityDescriptor" />
       </Parameters>
       <Docs>
-        <param name="securityDescriptor">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> class with the specified security descriptor.</para>
+        </summary>
+        <param name="securityDescriptor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security descriptor to be associated with the new <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" />object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AccessRuleFactory">
+      <MemberSignature Language="C#" Value="public virtual System.Security.AccessControl.AccessRule AccessRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type, Guid objectType, Guid inheritedObjectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.AccessControl.AccessRule AccessRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AccessControlType type, valuetype System.Guid objectType, valuetype System.Guid inheritedObjectType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AccessRuleFactory">
-      <MemberSignature Language="C#" Value="public virtual System.Security.AccessControl.AccessRule AccessRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type, Guid objectType, Guid inheritedObjectType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.AccessRule</ReturnType>
       </ReturnValue>
@@ -63,27 +82,42 @@
         <Parameter Name="inheritedObjectType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="identityReference">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="isInherited">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="inheritedObjectType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AccessRule" /> class with the specified values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AccessRule" /> object that this method creates.</para>
+        </returns>
+        <param name="identityReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity to which the access rule applies.  It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask of this rule. The access mask is a 32-bit collection of anonymous bits, the meaning of which is defined by the individual integrators.</param>
+        <param name="isInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this rule is inherited from a parent container.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the inheritance properties of the access rule.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether inherited access rules are automatically propagated. The propagation flags are ignored if <paramref name="inheritanceFlags" /> is set to <see cref="F:System.Security.AccessControl.InheritanceFlags.None" />.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the valid access control type.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of objects to which the new access rule applies.</param>
+        <param name="inheritedObjectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of child objects which can inherit the new access rule.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AddAccessRule">
+      <MemberSignature Language="C#" Value="protected void AddAccessRule (System.Security.AccessControl.ObjectAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void AddAccessRule(class System.Security.AccessControl.ObjectAccessRule rule) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddAccessRule">
-      <MemberSignature Language="C#" Value="protected void AddAccessRule (System.Security.AccessControl.ObjectAccessRule rule);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -91,19 +125,27 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding an access rule might cause existing access rules in the DACL to be merged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified access rule to the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to add.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AddAuditRule">
+      <MemberSignature Language="C#" Value="protected void AddAuditRule (System.Security.AccessControl.ObjectAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void AddAuditRule(class System.Security.AccessControl.ObjectAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddAuditRule">
-      <MemberSignature Language="C#" Value="protected void AddAuditRule (System.Security.AccessControl.ObjectAuditRule rule);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -111,19 +153,27 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding an audit rule might cause existing audit rules in the SACL to be merged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified audit rule to the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to add.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AuditRuleFactory">
+      <MemberSignature Language="C#" Value="public virtual System.Security.AccessControl.AuditRule AuditRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags, Guid objectType, Guid inheritedObjectType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.AccessControl.AuditRule AuditRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AuditFlags flags, valuetype System.Guid objectType, valuetype System.Guid inheritedObjectType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AuditRuleFactory">
-      <MemberSignature Language="C#" Value="public virtual System.Security.AccessControl.AuditRule AuditRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags, Guid objectType, Guid inheritedObjectType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.AuditRule</ReturnType>
       </ReturnValue>
@@ -138,27 +188,42 @@
         <Parameter Name="inheritedObjectType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="identityReference">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="isInherited">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="flags">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="inheritedObjectType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AuditRule" /> class with the specified values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AuditRule" /> object that this method creates.</para>
+        </returns>
+        <param name="identityReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity to which the audit rule applies.  It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask of this rule. The access mask is a 32-bit collection of anonymous bits, the meaning of which is defined by the individual integrators.</param>
+        <param name="isInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this rule is inherited from a parent container.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the inheritance properties of the audit rule.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether inherited audit rules are automatically propagated. The propagation flags are ignored if <paramref name="inheritanceFlags" /> is set to <see cref="F:System.Security.AccessControl.InheritanceFlags.None" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the conditions for which the rule is audited.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of objects to which the new audit rule applies.</param>
+        <param name="inheritedObjectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the class of child objects which can inherit the new audit rule.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAccessRules">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.AuthorizationRuleCollection GetAccessRules (bool includeExplicit, bool includeInherited, Type targetType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.AuthorizationRuleCollection GetAccessRules(bool includeExplicit, bool includeInherited, class System.Type targetType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.AuthorizationRuleCollection</ReturnType>
       </ReturnValue>
@@ -168,22 +233,32 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="includeExplicit">To be added.</param>
-        <param name="includeInherited">To be added.</param>
-        <param name="targetType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the access rules associated with the specified security identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of access rules associated with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
+        <param name="includeExplicit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include access rules explicitly set for the object.</param>
+        <param name="includeInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include inherited access rules.</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security identifier for which to retrieve access rules. This must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAuditRules">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.AuthorizationRuleCollection GetAuditRules (bool includeExplicit, bool includeInherited, Type targetType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.AuthorizationRuleCollection GetAuditRules(bool includeExplicit, bool includeInherited, class System.Type targetType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.AuthorizationRuleCollection</ReturnType>
       </ReturnValue>
@@ -193,22 +268,32 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="includeExplicit">To be added.</param>
-        <param name="includeInherited">To be added.</param>
-        <param name="targetType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the audit rules associated with the specified security identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of audit rules associated with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
+        <param name="includeExplicit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include audit rules explicitly set for the object.</param>
+        <param name="includeInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include inherited audit rules.</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security identifier for which to retrieve audit rules. This must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="ModifyAccess">
+      <MemberSignature Language="C#" Value="protected override bool ModifyAccess (System.Security.AccessControl.AccessControlModification modification, System.Security.AccessControl.AccessRule rule, out bool modified);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool ModifyAccess(valuetype System.Security.AccessControl.AccessControlModification modification, class System.Security.AccessControl.AccessRule rule, bool modified) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ModifyAccess">
-      <MemberSignature Language="C#" Value="protected override bool ModifyAccess (System.Security.AccessControl.AccessControlModification modification, System.Security.AccessControl.AccessRule rule, out bool modified);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -226,14 +311,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ModifyAudit">
+      <MemberSignature Language="C#" Value="protected override bool ModifyAudit (System.Security.AccessControl.AccessControlModification modification, System.Security.AccessControl.AuditRule rule, out bool modified);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool ModifyAudit(valuetype System.Security.AccessControl.AccessControlModification modification, class System.Security.AccessControl.AuditRule rule, bool modified) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ModifyAudit">
-      <MemberSignature Language="C#" Value="protected override bool ModifyAudit (System.Security.AccessControl.AccessControlModification modification, System.Security.AccessControl.AuditRule rule, out bool modified);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -251,14 +337,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAccessRule">
       <MemberSignature Language="C#" Value="protected bool RemoveAccessRule (System.Security.AccessControl.ObjectAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance bool RemoveAccessRule(class System.Security.AccessControl.ObjectAccessRule rule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -266,20 +353,32 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Access removal is accomplished by using a complex algorithm that might add access control rules in addition to removing them.</para>
+          <para>This method fails to remove the access rule and returns false if the inheritance rules associated with the access rule are too complex for the removal algorithm to succeed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes access rules that contain the same security identifier and access mask as the specified access rule from the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the access rule was successfully removed; otherwise, false.</para>
+        </returns>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAccessRuleAll">
       <MemberSignature Language="C#" Value="protected void RemoveAccessRuleAll (System.Security.AccessControl.ObjectAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void RemoveAccessRuleAll(class System.Security.AccessControl.ObjectAccessRule rule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -287,19 +386,24 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules that have the same security identifier as the specified access rule from the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAccessRuleSpecific">
       <MemberSignature Language="C#" Value="protected void RemoveAccessRuleSpecific (System.Security.AccessControl.ObjectAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void RemoveAccessRuleSpecific(class System.Security.AccessControl.ObjectAccessRule rule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -307,19 +411,24 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules that exactly match the specified access rule from the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRule">
+      <MemberSignature Language="C#" Value="protected bool RemoveAuditRule (System.Security.AccessControl.ObjectAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance bool RemoveAuditRule(class System.Security.AccessControl.ObjectAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveAuditRule">
-      <MemberSignature Language="C#" Value="protected bool RemoveAuditRule (System.Security.AccessControl.ObjectAuditRule rule);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -327,20 +436,32 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Audit removal is accomplished by using a complex algorithm that might add audit control rules in addition to removing them.</para>
+          <para>This method fails to remove the audit rule and returns false if the inheritance rules associated with the audit rule are too complex for the removal algorithm to succeed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes audit rules that contain the same security identifier and access mask as the specified audit rule from the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the audit rule was successfully removed; otherwise, false.</para>
+        </returns>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAuditRuleAll">
       <MemberSignature Language="C#" Value="protected void RemoveAuditRuleAll (System.Security.AccessControl.ObjectAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void RemoveAuditRuleAll(class System.Security.AccessControl.ObjectAuditRule rule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -348,19 +469,24 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all audit rules that have the same security identifier as the specified audit rule from the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAuditRuleSpecific">
       <MemberSignature Language="C#" Value="protected void RemoveAuditRuleSpecific (System.Security.AccessControl.ObjectAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void RemoveAuditRuleSpecific(class System.Security.AccessControl.ObjectAuditRule rule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -368,19 +494,24 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all audit rules that exactly match the specified audit rule from the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResetAccessRule">
       <MemberSignature Language="C#" Value="protected void ResetAccessRule (System.Security.AccessControl.ObjectAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ResetAccessRule(class System.Security.AccessControl.ObjectAccessRule rule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -388,19 +519,24 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules in the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object and then adds the specified access rule.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to reset.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetAccessRule">
       <MemberSignature Language="C#" Value="protected void SetAccessRule (System.Security.AccessControl.ObjectAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void SetAccessRule(class System.Security.AccessControl.ObjectAccessRule rule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -408,19 +544,24 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules that contain the same security identifier and qualifier as the specified access rule in the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object and then adds the specified access rule.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to set.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SetAuditRule">
+      <MemberSignature Language="C#" Value="protected void SetAuditRule (System.Security.AccessControl.ObjectAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void SetAuditRule(class System.Security.AccessControl.ObjectAuditRule rule) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetAuditRule">
-      <MemberSignature Language="C#" Value="protected void SetAuditRule (System.Security.AccessControl.ObjectAuditRule rule);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -428,15 +569,15 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.ObjectAuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all audit rules that contain the same security identifier and qualifier as the specified audit rule in the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.DirectoryObjectSecurity" /> object and then adds the specified audit rule.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to set.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1808,4 +1808,14 @@ namespace System.Windows.Forms {
 		public const string XNSpotLocation = "spotLocation";
 		public const string XNFontSet = "fontSet";
 	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	internal struct XineramaScreenInfo
+	{
+		public int screen_number;
+		public short x_org;
+		public short y_org;
+		public short width;
+		public short height;
+	}
 }

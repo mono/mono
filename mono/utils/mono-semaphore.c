@@ -33,7 +33,10 @@
 #    define WAIT_BLOCK(a,b) sem_timedwait (a, b)
 #  endif
 
+#ifndef NSEC_PER_SEC
 #define NSEC_PER_SEC 1000000000
+#endif
+
 int
 mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 {
@@ -52,7 +55,7 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 		return mono_sem_wait (sem, alertable);
 
 #ifdef USE_MACH_SEMA
-	memset (&t, 0, sizeof (TIMESPEC));
+	memset (&t, 0, sizeof (t));
 #else
 	gettimeofday (&t, NULL);
 #endif
@@ -81,7 +84,7 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 		if (alertable)
 			return -1;
 #ifdef USE_MACH_SEMA
-		memset (&current, 0, sizeof (TIMESPEC));
+		memset (&current, 0, sizeof (current));
 #else
 		gettimeofday (&current, NULL);
 #endif

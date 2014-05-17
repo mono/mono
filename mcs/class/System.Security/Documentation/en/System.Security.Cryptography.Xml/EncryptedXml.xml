@@ -1,69 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EncryptedXml" FullName="System.Security.Cryptography.Xml.EncryptedXml">
   <TypeSignature Language="C#" Value="public class EncryptedXml" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EncryptedXml extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class is the main class used for XML encryption in the .NET Framework. XML Encryption is a standards-based, interoperable way to encrypt all or part of an XML document or any arbitrary data. The .NET Framework XML encryption classes implement the World Wide Web Consortium (W3C) specification for XML encryption located at http://www.w3.org/TR/xmlenc-core/.</para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class whenever you need to share encrypted XML data between applications or organizations in a standard way. Any data encrypted using this class can be decrypted by any implementation of the W3C specification for XML encryption.  </para>
+      <para>XML encryption replaces any plain text XML element or document with the &lt;EncryptedData&gt; element, which contains an encrypted (or cipher text) representation of plain text XML or any arbitrary data. The &lt;EncryptedData&gt; element can optionally contain information about where to find a key that will decrypt the cipher text, and which cryptographic algorithm was used to encrypt the plain text.</para>
+      <para>The &lt;EncryptedKey&gt; element is similar to the &lt;EncryptedData&gt; element in style and usage, except that it allows you to encrypt a key that will decrypt the value of the &lt;EncryptedData&gt; element. Note that the &lt;EncryptedKey&gt; element and the &lt;EncryptedData&gt; element will never contain an unencrypted key.</para>
+      <para>Use one of the following methods to exchange key information:  </para>
+      <list type="bullet">
+        <item>
+          <para>Do not include any key information. If you choose this option, both parties must agree on an algorithm and key before they exchange encrypted data.</para>
+        </item>
+        <item>
+          <para>Include the location of the key in the Uniform Resource Identifier (URI) attribute of the &lt;RetrievalMethod&gt; element. Both parties must agree on the key location ahead of time and this location must be kept secret. </para>
+        </item>
+        <item>
+          <para>Include a string name that maps to a key in the &lt;KeyName&gt; element. Both parties must agree on the key name mapping before they exchange encrypted data and this mapping must be kept secret.</para>
+        </item>
+        <item>
+          <para>Include an encrypted key in the &lt;EncryptedKey&gt; element. Both parties must agree on the key that decrypts the encrypted key before they exchange encrypted data. You can optionally include a name or location of the key that will decrypt the key in the &lt;EncryptedKey&gt; element.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the process model for implementing XML encryption.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EncryptedXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default constructor for the main class for XML encryption in the .NET Framework.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EncryptedXml (System.Xml.XmlDocument document);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlDocument document) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="document" Type="System.Xml.XmlDocument" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create an <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object when you want to specify the XML document to encrypt.  The <paramref name="document" /> parameter comprises the XML elements that later form the encrypted XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class using the specified XML document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDocument" /> object used to initialize the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EncryptedXml (System.Xml.XmlDocument document, System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlDocument document, class System.Security.Policy.Evidence evidence) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="document" Type="System.Xml.XmlDocument" />
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <param name="evidence">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create an <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object when you want to specify the XML document to encrypt and provide security evidence. The <paramref name="document" /> parameter comprises the XML elements that later form the encrypted XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class using the specified XML document and evidence.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDocument" /> object used to initialize the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object.</param>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Policy.Evidence" /> object associated with the <see cref="T:System.Xml.XmlDocument" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddKeyNameMapping">
       <MemberSignature Language="C#" Value="public void AddKeyNameMapping (string keyName, object keyObject);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddKeyNameMapping(string keyName, object keyObject) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -72,35 +131,54 @@
         <Parameter Name="keyObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="keyName">To be added.</param>
-        <param name="keyObject">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.AddKeyNameMapping(System.String,System.Object)" /> method allows you to map a symmetric key or an asymmetric key to a string name. This method adds the values of the <paramref name="keyName" /> and <paramref name="keyObject" /> parameters to a table of valid key name mappings.</para>
+          <para>Use the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.ClearKeyNameMappings" /> method to clear the key name mappings table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a mapping between a key name and a symmetric key or an asymmetric key.</para>
+        </summary>
+        <param name="keyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to map to <paramref name="keyObject" />.</param>
+        <param name="keyObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The symmetric key to map to <paramref name="keyName" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ClearKeyNameMappings">
       <MemberSignature Language="C#" Value="public void ClearKeyNameMappings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ClearKeyNameMappings() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to clear all key name mapping that you have set using the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.AddKeyNameMapping(System.String,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets all key name mapping.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DecryptData">
       <MemberSignature Language="C#" Value="public byte[] DecryptData (System.Security.Cryptography.Xml.EncryptedData encryptedData, System.Security.Cryptography.SymmetricAlgorithm symAlg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] DecryptData(class System.Security.Cryptography.Xml.EncryptedData encryptedData, class System.Security.Cryptography.SymmetricAlgorithm symAlg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -109,36 +187,62 @@
         <Parameter Name="symAlg" Type="System.Security.Cryptography.SymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="encryptedData">To be added.</param>
         <param name="symAlg">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptData(System.Security.Cryptography.Xml.EncryptedData,System.Security.Cryptography.SymmetricAlgorithm)" /> method to decrypt an <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element using a symmetric key.</para>
+          <para>Note that the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptData(System.Security.Cryptography.Xml.EncryptedData,System.Security.Cryptography.SymmetricAlgorithm)" /> method only decrypts top-level &lt;EncryptedData&gt; tags.  In cases where one or more &lt;EncryptedData&gt; tags have been encrypted and are contained within higher level &lt;EncryptedData&gt; tags, you can call the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptDocument" /> method separately for each one.  See the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptDocument" /> method for a code example.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts an &lt;EncryptedData&gt; element using the specified symmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the raw decrypted plain text.</para>
+        </returns>
+        <param name="encryptedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to decrypt.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DecryptDocument">
       <MemberSignature Language="C#" Value="public void DecryptDocument ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DecryptDocument() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptDocument" /> method decrypts all &lt;EncryptedData&gt; elements of the XML document loaded during initialization. After you call this method, all &lt;EncryptedData&gt; elements in the document are replaced with plain text versions.</para>
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptDocument" /> method decrypts only top-level &lt;EncryptedData&gt; elements.  If you need to decrypt a super-encrypted document (a document that is encrypted more than once), you must call the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptDocument" /> method repeatedly until all the &lt;EncryptedData&gt; elements have been decrypted.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptDocument" /> method decrypts only valid XML data. To decrypt arbitrary data, use the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptData(System.Security.Cryptography.Xml.EncryptedData,System.Security.Cryptography.SymmetricAlgorithm)" /> method.</para>
+          </block>
+          <para>To use XML Encryption with X.509 certificates, you must have the Microsoft Enhanced Cryptographic Provider installed and the X.509 certificate must use the Enhanced Provider. If you do not have the Microsoft Enhanced Cryptographic Provider installed or the X.509 certificate does not use the Enhanced Provider, a <see cref="T:System.Security.Cryptography.CryptographicException" /> with an "Unknown Error" will be thrown when you decrypt an XML document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts all &lt;EncryptedData&gt; elements of the XML document that were specified during initialization of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DecryptEncryptedKey">
       <MemberSignature Language="C#" Value="public virtual byte[] DecryptEncryptedKey (System.Security.Cryptography.Xml.EncryptedKey encryptedKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] DecryptEncryptedKey(class System.Security.Cryptography.Xml.EncryptedKey encryptedKey) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -146,19 +250,32 @@
         <Parameter Name="encryptedKey" Type="System.Security.Cryptography.Xml.EncryptedKey" />
       </Parameters>
       <Docs>
-        <param name="encryptedKey">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptEncryptedKey(System.Security.Cryptography.Xml.EncryptedKey)" /> method decrypts an encrypted key contained within the &lt;EncryptedKey&gt; element of an XML document.</para>
+          <para>This recursive method finds the key represented by the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object. Note that an <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object can contain another <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object that specifies its <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the key represented by the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the key.</para>
+        </returns>
+        <param name="encryptedKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object that contains the key to retrieve.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DecryptKey">
       <MemberSignature Language="C#" Value="public static byte[] DecryptKey (byte[] keyData, System.Security.Cryptography.SymmetricAlgorithm symAlg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] DecryptKey(unsigned int8[] keyData, class System.Security.Cryptography.SymmetricAlgorithm symAlg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -167,20 +284,32 @@
         <Parameter Name="symAlg" Type="System.Security.Cryptography.SymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
         <param name="symAlg">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptKey(System.Byte[],System.Security.Cryptography.RSA,System.Boolean)" /> method decrypts an encrypted key contained within the &lt;EncryptedKey&gt; element of an XML document. This method accepts a value for the <paramref name="symmetricAlgorithm" /> parameter that represents either the Triple DES algorithm or the AES key wrap algorithm (also called Rijndael).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts an &lt;EncryptedKey&gt; element using a symmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the plain text key.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes that represents an encrypted &lt;EncryptedKey&gt; element.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DecryptKey">
       <MemberSignature Language="C#" Value="public static byte[] DecryptKey (byte[] keyData, System.Security.Cryptography.RSA rsa, bool fOAEP);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] DecryptKey(unsigned int8[] keyData, class System.Security.Cryptography.RSA rsa, bool fOAEP) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -190,53 +319,82 @@
         <Parameter Name="fOAEP" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <param name="rsa">To be added.</param>
         <param name="fOAEP">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.DecryptKey(System.Byte[],System.Security.Cryptography.RSA,System.Boolean)" /> method decrypts an encrypted key contained within the &lt;EncryptedKey&gt; element of an XML document. This method accepts a value for the <paramref name="rsa" /> parameter that represents either the RSA PKCS#1 v1.5 algorithm or the RSA PKCS#1 type 2 algorithm (also called OAEP padding).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts an &lt;EncryptedKey&gt; element using an asymmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the plain text key.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes that represents an encrypted &lt;EncryptedKey&gt; element.</param>
+        <param name="rsa">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asymmetric key used to decrypt <paramref name="keyData" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DocumentEvidence">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence DocumentEvidence { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence DocumentEvidence { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.Evidence DocumentEvidence" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the XML document used to create the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object has any security evidence, you should add the evidence to the <see cref="P:System.Security.Cryptography.Xml.EncryptedXml.DocumentEvidence" /> property.  If you do not set this property, any associated <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> objects will not be dereferenced because they will not be granted the required permission set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the evidence of the <see cref="T:System.Xml.XmlDocument" /> object from which the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object is constructed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encoding">
-      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding Encoding" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>UTF-8 encoding is the default encoding for XML encryption. You can use this property to specify other types of encoding from the <see cref="T:System.Text.Encoding" /> class, such as UTF-16 or ASCII.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the encoding used for XML encryption.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encrypt">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.EncryptedData Encrypt (System.Xml.XmlElement inputElement, System.Security.Cryptography.X509Certificates.X509Certificate2 certificate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Cryptography.Xml.EncryptedData Encrypt(class System.Xml.XmlElement inputElement, class System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Xml.EncryptedData</ReturnType>
       </ReturnValue>
@@ -245,20 +403,35 @@
         <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
       </Parameters>
       <Docs>
-        <param name="inputElement">To be added.</param>
-        <param name="certificate">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.Encrypt(System.Xml.XmlElement,System.Security.Cryptography.X509Certificates.X509Certificate2)" /> method is a convenient way to encrypt the outer XML of an element using a certificate. This method generates a 256-bit Advanced Encryption Standard (AES) session key to encrypt an XML element and then encrypts and signs the AES key using the <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> object. The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.Encrypt(System.Xml.XmlElement,System.Security.Cryptography.X509Certificates.X509Certificate2)" /> method then returns the resulting XML as an <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element.</para>
+          <para>If you need more control over the encryption, so you can place the encrypted information into a &lt;CipherReference&gt; element or specify whether the entire XML element or just its contents should be encrypted, use the <see cref="Overload:System.Security.Cryptography.Xml.EncryptedXml.EncryptData" /> method overloads.</para>
+          <para>To use XML Encryption with X.509 certificates, you must have the Microsoft Enhanced Cryptographic Provider installed and the X.509 certificate must use the Enhanced Provider. If you do not have the Microsoft Enhanced Cryptographic Provider installed or the X.509 certificate does not use the Enhanced Provider, a <see cref="T:System.Security.Cryptography.CryptographicException" /> with an "Unknown Error" will be thrown when you decrypt an XML document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts the outer XML of an element using the specified X.509 certificate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element that represents the encrypted XML data.</para>
+        </returns>
+        <param name="inputElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element to encrypt.</param>
+        <param name="certificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The X.509 certificate to use for encryption.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encrypt">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.Xml.EncryptedData Encrypt (System.Xml.XmlElement inputElement, string keyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Cryptography.Xml.EncryptedData Encrypt(class System.Xml.XmlElement inputElement, string keyName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.Xml.EncryptedData</ReturnType>
       </ReturnValue>
@@ -267,20 +440,34 @@
         <Parameter Name="keyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="inputElement">To be added.</param>
-        <param name="keyName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a convenient way to encrypt the outer XML of an element using a key name. If you need more control over the encryption, so you can place the encrypted information into a &lt;CipherReference&gt; element or specify whether the entire XML element or just its contents should be encrypted, use the <see cref="Overload:System.Security.Cryptography.Xml.EncryptedXml.EncryptData" /> method overloads.</para>
+          <para>For a list of all supported algorithms, see the list of constant fields associated with the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts the outer XML of an element using the specified key in the key mapping table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that represents the encrypted XML data.</para>
+        </returns>
+        <param name="inputElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element to encrypt.</param>
+        <param name="keyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A key name that can be found in the key mapping table.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EncryptData">
       <MemberSignature Language="C#" Value="public byte[] EncryptData (byte[] plainText, System.Security.Cryptography.SymmetricAlgorithm symAlg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] EncryptData(unsigned int8[] plainText, class System.Security.Cryptography.SymmetricAlgorithm symAlg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -291,18 +478,29 @@
       <Docs>
         <param name="plainText">To be added.</param>
         <param name="symAlg">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned byte array can be placed into a &lt;CipherValue&gt; element. This method assumes that the data specified in the <paramref name="plaintext" /> parameter is a byte array that contains XML data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts data in the specified byte array using the specified symmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array of encrypted data.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EncryptData">
       <MemberSignature Language="C#" Value="public byte[] EncryptData (System.Xml.XmlElement inputElement, System.Security.Cryptography.SymmetricAlgorithm symAlg, bool content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] EncryptData(class System.Xml.XmlElement inputElement, class System.Security.Cryptography.SymmetricAlgorithm symAlg, bool content) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -312,21 +510,34 @@
         <Parameter Name="content" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inputElement">To be added.</param>
         <param name="symAlg">To be added.</param>
-        <param name="content">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned byte array data is the value of the &lt;CipherValue&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts the specified element or its contents using the specified symmetric algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the encrypted data.</para>
+        </returns>
+        <param name="inputElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element or its contents to encrypt.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to encrypt only the contents of the element; false to encrypt the entire element.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EncryptKey">
       <MemberSignature Language="C#" Value="public static byte[] EncryptKey (byte[] keyData, System.Security.Cryptography.SymmetricAlgorithm symAlg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] EncryptKey(unsigned int8[] keyData, class System.Security.Cryptography.SymmetricAlgorithm symAlg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -335,20 +546,33 @@
         <Parameter Name="symAlg" Type="System.Security.Cryptography.SymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
         <param name="symAlg">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.EncryptKey(System.Byte[],System.Security.Cryptography.SymmetricAlgorithm)" /> method to encrypt the key that a recipient uses to decrypt an &lt;EncryptedData&gt; element. This method accepts a value for the <paramref name="symmetricAlgorithm" /> parameter that represents either the Triple DES algorithm or the AES key wrap algorithm (also called Rijndael).</para>
+          <para>Note that this method does not automatically place the encrypted key within an &lt;EncryptedKey&gt; element.  You must manually create the &lt;EncryptedKey&gt; element within your document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts a key using a symmetric algorithm that a recipient uses to decrypt an &lt;EncryptedData&gt; element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the encrypted value of the <paramref name="keyData" /> parameter.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to encrypt.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EncryptKey">
       <MemberSignature Language="C#" Value="public static byte[] EncryptKey (byte[] keyData, System.Security.Cryptography.RSA rsa, bool fOAEP);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] EncryptKey(unsigned int8[] keyData, class System.Security.Cryptography.RSA rsa, bool fOAEP) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -358,21 +582,35 @@
         <Parameter Name="fOAEP" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <param name="rsa">To be added.</param>
         <param name="fOAEP">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.EncryptKey(System.Byte[],System.Security.Cryptography.RSA,System.Boolean)" /> method to encrypt the key that a recipient uses to decrypt an &lt;EncryptedData&gt; element. This method accepts a value for <paramref name="rsa" /> that represents either the RSA PKCS#1 v1.5 algorithm or the RSA PKCS#1 type 2 algorithm (also called OAEP). </para>
+          <para>Note that this method does not automatically place the encrypted key within an &lt;EncryptedKey&gt; element.  You must manually create the &lt;EncryptedKey&gt; element within your document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts the key that a recipient uses to decrypt an &lt;EncryptedData&gt; element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the encrypted value of the <paramref name="keyData" /> parameter.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to encrypt.</param>
+        <param name="rsa">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asymmetric key used to encrypt <paramref name="keyData" />.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDecryptionIV">
       <MemberSignature Language="C#" Value="public virtual byte[] GetDecryptionIV (System.Security.Cryptography.Xml.EncryptedData encryptedData, string symAlgUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] GetDecryptionIV(class System.Security.Cryptography.Xml.EncryptedData encryptedData, string symAlgUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -381,20 +619,33 @@
         <Parameter Name="symAlgUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="encryptedData">To be added.</param>
         <param name="symAlgUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Given an <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object, this method retrieves the decryption initialization vector (IV). The default behavior retrieves the IV as the first bytes of the <see cref="P:System.Security.Cryptography.Xml.CipherData.CipherValue" /> byte array.</para>
+          <para>For a list of Uniform Resource Identifier (URI) values supported by the <paramref name="symmetricAlgorithmUri" /> parameter, see the list of constant fields associated with the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the decryption initialization vector (IV) from an <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the decryption initialization vector (IV).</para>
+        </returns>
+        <param name="encryptedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that contains the initialization vector (IV) to retrieve.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDecryptionKey">
       <MemberSignature Language="C#" Value="public virtual System.Security.Cryptography.SymmetricAlgorithm GetDecryptionKey (System.Security.Cryptography.Xml.EncryptedData encryptedData, string symAlgUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.Cryptography.SymmetricAlgorithm GetDecryptionKey(class System.Security.Cryptography.Xml.EncryptedData encryptedData, string symAlgUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.SymmetricAlgorithm</ReturnType>
       </ReturnValue>
@@ -403,20 +654,32 @@
         <Parameter Name="symAlgUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="encryptedData">To be added.</param>
         <param name="symAlgUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Given an <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object, this method looks for the decryption key that can be used to retrieve the plain text data. If a key name is specified, the method looks for the symmetric algorithm or asymmetric algorithm that is associated with the key name as defined in the key name mapping. Otherwise, if a retrieval method or an <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object is specified, the method loads the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object and calls the <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.GetDecryptionKey(System.Security.Cryptography.Xml.EncryptedData,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the decryption key from the specified <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Cryptography.SymmetricAlgorithm" /> object associated with the decryption key.</para>
+        </returns>
+        <param name="encryptedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that contains the decryption key to retrieve.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetIdElement">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement GetIdElement (System.Xml.XmlDocument document, string idValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlElement GetIdElement(class System.Xml.XmlDocument document, string idValue) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -425,68 +688,106 @@
         <Parameter Name="idValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="document">To be added.</param>
-        <param name="idValue">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.GetIdElement(System.Xml.XmlDocument,System.String)" /> method determines how to resolve internal Uniform Resource Identifiers (URIs). It looks for elements with a specified value or for elements with an ID attribute that has a specified value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines how to resolve internal Uniform Resource Identifier (URI) references.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> object that contains an ID indicating how internal Uniform Resource Identifiers (URIs) are to be resolved.</para>
+        </returns>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDocument" /> object that contains an element with an ID value.</param>
+        <param name="idValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the ID value.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Mode">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.CipherMode Mode { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.CipherMode Mode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Cryptography.CipherMode Mode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cipher Block Chaining (CBC) mode is the default cipher mode for XML encryption. You can use this property to specify other cipher modes of the <see cref="T:System.Security.Cryptography.CipherMode" /> enumeration, such as Cipher Feedback (CFB) mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cipher mode used for XML encryption.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Padding">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.PaddingMode Padding { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.PaddingMode Padding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Cryptography.PaddingMode Padding" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.PaddingMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ISO-10126 padding is the default padding mode for XML encryption. You can use this property to specify other padding modes of the <see cref="T:System.Security.Cryptography.PaddingMode" /> enumeration, such as ANSI X9.23 or PKCS#5.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the padding mode used for XML encryption.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Recipient">
-      <MemberSignature Language="C#" Value="public string Recipient { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Recipient { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Recipient" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can access the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object referenced by a key name by examining the <see cref="P:System.Security.Cryptography.Xml.EncryptedKey.CarriedKeyName" /> property.</para>
+          <para>Use the <see cref="P:System.Security.Cryptography.Xml.EncryptedXml.Recipient" /> property to identify the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> element that the current recipient can decrypt to retrieve a decryption key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the recipient of the encrypted key information.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReplaceData">
       <MemberSignature Language="C#" Value="public void ReplaceData (System.Xml.XmlElement inputElement, byte[] decryptedData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReplaceData(class System.Xml.XmlElement inputElement, unsigned int8[] decryptedData) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -495,19 +796,29 @@
         <Parameter Name="decryptedData" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="inputElement">To be added.</param>
-        <param name="decryptedData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.ReplaceData(System.Xml.XmlElement,System.Byte[])" /> method replaces an &lt;EncryptedData&gt; element with the value of the <paramref name="decryptedData" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces an &lt;EncryptedData&gt; element with a specified decrypted sequence of bytes.</para>
+        </summary>
+        <param name="inputElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The &lt;EncryptedData&gt; element to replace.</param>
+        <param name="decryptedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The decrypted data to replace <paramref name="inputElement" /> with.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReplaceElement">
       <MemberSignature Language="C#" Value="public static void ReplaceElement (System.Xml.XmlElement inputElement, System.Security.Cryptography.Xml.EncryptedData encryptedData, bool content);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ReplaceElement(class System.Xml.XmlElement inputElement, class System.Security.Cryptography.Xml.EncryptedData encryptedData, bool content) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -517,287 +828,437 @@
         <Parameter Name="content" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inputElement">To be added.</param>
-        <param name="encryptedData">To be added.</param>
-        <param name="content">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.EncryptedXml.ReplaceElement(System.Xml.XmlElement,System.Security.Cryptography.Xml.EncryptedData,System.Boolean)" /> method replaces the <paramref name="inputElement" /> parameter with the value specified by the <paramref name="encryptedData" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the specified element with the specified <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</para>
+        </summary>
+        <param name="inputElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element to replace with an &lt;EncryptedData&gt; element.</param>
+        <param name="encryptedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object to replace the <paramref name="inputElement" /> parameter with.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to replace only the contents of the element; false to replace the entire element.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Resolver">
-      <MemberSignature Language="C#" Value="public System.Xml.XmlResolver Resolver { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.XmlResolver Resolver { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlResolver Resolver" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlResolver</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property contains an <see cref="T:System.Xml.XmlResolver" /> object used to resolve external XML resources such as entities, document type definitions (DTDs), or schemas.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.XmlResolver" /> object used by the Document Object Model (DOM) to resolve external XML references.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncAES128KeyWrapUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncAES128KeyWrapUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncAES128KeyWrapUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncAES128KeyWrapUrl" /> field is "http://www.w3.org/2001/04/xmlenc#kw-aes128".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the 128-bit Advanced Encryption Standard (AES) Key Wrap algorithm (also known as the Rijndael Key Wrap algorithm). This field is constant. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncAES128Url">
       <MemberSignature Language="C#" Value="public const string XmlEncAES128Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncAES128Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncAES128Url" /> field is "http://www.w3.org/2001/04/xmlenc#aes128-cbc".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the 128-bit Advanced Encryption Standard (AES) algorithm (also known as the Rijndael algorithm). This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncAES192KeyWrapUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncAES192KeyWrapUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncAES192KeyWrapUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncAES192KeyWrapUrl" /> field is "http://www.w3.org/2001/04/xmlenc#kw-aes192".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the 192-bit Advanced Encryption Standard (AES) Key Wrap algorithm (also known as the Rijndael Key Wrap algorithm). This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncAES192Url">
       <MemberSignature Language="C#" Value="public const string XmlEncAES192Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncAES192Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncAES192Url" /> field is "http://www.w3.org/2001/04/xmlenc#aes192-cbc".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the 192-bit Advanced Encryption Standard (AES) algorithm (also known as the Rijndael algorithm). This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncAES256KeyWrapUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncAES256KeyWrapUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncAES256KeyWrapUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncAES256KeyWrapUrl" /> field is "http://www.w3.org/2001/04/xmlenc#kw-aes256".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the 256-bit Advanced Encryption Standard (AES) Key Wrap algorithm (also known as the Rijndael Key Wrap algorithm). This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncAES256Url">
       <MemberSignature Language="C#" Value="public const string XmlEncAES256Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncAES256Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncAES256Url" /> field is "http://www.w3.org/2001/04/xmlenc#aes256-cbc".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the 256-bit Advanced Encryption Standard (AES) algorithm (also known as the Rijndael algorithm). This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncDESUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncDESUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncDESUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncDESUrl" /> field is "http://www.w3.org/2001/04/xmlenc#des-cbc".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the Digital Encryption Standard (DES) algorithm. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncElementContentUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncElementContentUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncElementContentUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncElementContentUrl" /> field is "http://www.w3.org/2001/04/xmlenc#Content".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for XML encryption element content. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncElementUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncElementUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncElementUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncElementUrl" /> field is "http://www.w3.org/2001/04/xmlenc#Element".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for an XML encryption element. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncEncryptedKeyUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncEncryptedKeyUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncEncryptedKeyUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncEncryptedKeyUrl" /> field is "http://www.w3.org/2001/04/xmlenc#EncryptedKey".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the XML encryption &lt;EncryptedKey&gt; element. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncNamespaceUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncNamespaceUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncNamespaceUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncNamespaceUrl" /> field is "http://www.w3.org/2001/04/xmlenc#".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for XML encryption syntax and processing. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncRSA15Url">
       <MemberSignature Language="C#" Value="public const string XmlEncRSA15Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncRSA15Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncRSA15Url" /> field is "http://www.w3.org/2001/04/xmlenc#rsa-1_5".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the RSA Public Key Cryptography Standard (PKCS) Version 1.5 algorithm. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncRSAOAEPUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncRSAOAEPUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncRSAOAEPUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncRSAOAEPUrl" /> field is "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the RSA Optimal Asymmetric Encryption Padding (OAEP) encryption algorithm. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncSHA256Url">
       <MemberSignature Language="C#" Value="public const string XmlEncSHA256Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncSHA256Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncSHA256Url" /> field is "http://www.w3.org/2001/04/xmlenc#sha256".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the SHA-256 algorithm. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncSHA512Url">
       <MemberSignature Language="C#" Value="public const string XmlEncSHA512Url;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncSHA512Url" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncSHA512Url" /> field is "http://www.w3.org/2001/04/xmlenc#sha512".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the SHA-512 algorithm. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncTripleDESKeyWrapUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncTripleDESKeyWrapUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncTripleDESKeyWrapUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncTripleDESKeyWrapUrl" /> field is "http://www.w3.org/2001/04/xmlenc#kw-tripledes".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the TRIPLEDES key wrap algorithm. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlEncTripleDESUrl">
       <MemberSignature Language="C#" Value="public const string XmlEncTripleDESUrl;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string XmlEncTripleDESUrl" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Security.Cryptography.Xml.EncryptedXml.XmlEncTripleDESUrl" /> field is "http://www.w3.org/2001/04/xmlenc#tripledes-cbc".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the namespace Uniform Resource Identifier (URI) for the Triple DES algorithm. This field is constant.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

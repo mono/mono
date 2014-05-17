@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IConfigMapPathFactory" FullName="System.Web.Configuration.IConfigMapPathFactory">
   <TypeSignature Language="C#" Value="public interface IConfigMapPathFactory" />
   <AssemblyInfo>
@@ -6,8 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Configuration.IConfigMapPathFactory" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Maps the configuration file virtual and physical paths.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Create">
@@ -24,11 +32,23 @@
         <Parameter Name="physicalPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="physicalPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Configuration.IConfigMapPathFactory.Create(System.String,System.String)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the interface for the mapping between configuration-file virtual and physical paths. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.IConfigMapPath" /> object associated with the specified configuration-file path mapping.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration-file virtual path.</param>
+        <param name="physicalPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration-file physical path.</param>
       </Docs>
     </Member>
   </Members>

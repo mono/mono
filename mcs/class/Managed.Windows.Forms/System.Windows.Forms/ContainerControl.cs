@@ -322,7 +322,7 @@ namespace System.Windows.Forms {
 
 		internal void SendControlFocus (Control c)
 		{
-			if (c.IsHandleCreated) {
+			if (c != null && c.IsHandleCreated) {
 				XplatUI.SetFocus (c.window.Handle);
 			}
 		}

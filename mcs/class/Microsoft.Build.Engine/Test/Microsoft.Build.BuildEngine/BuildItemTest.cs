@@ -285,6 +285,40 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void GetMetadata_UnescapedItemSpec ()
+		{
+			string itemInclude = "a;b;c";
+			string escapedItemInclude = Utilities.Escape (itemInclude);
+
+			item = new BuildItem ("name", itemInclude);
+			Assert.IsTrue (item.GetMetadata ("FullPath").EndsWith (escapedItemInclude), "#1a");
+			Assert.IsTrue (item.GetEvaluatedMetadata ("FullPath").EndsWith (itemInclude), "#1b");
+
+			Assert.AreEqual (itemInclude, item.GetMetadata ("FileName"), "#2b");
+			Assert.AreEqual (itemInclude, item.GetEvaluatedMetadata ("FileName"), "#2b");
+
+			Assert.AreEqual (itemInclude, item.GetMetadata ("Identity"), "#3a");
+			Assert.AreEqual (itemInclude, item.GetEvaluatedMetadata ("Identity"), "#3b");
+		}
+
+		[Test]
+		public void GetMetadata_EscapedItemSpec ()
+		{
+			string itemInclude = "a;b;c";
+			string escapedItemInclude = Utilities.Escape (itemInclude);
+
+			item = new BuildItem ("name", escapedItemInclude);
+			Assert.IsTrue (item.GetMetadata ("FullPath").EndsWith (escapedItemInclude), "#1a");
+			Assert.IsTrue (item.GetEvaluatedMetadata ("FullPath").EndsWith (itemInclude), "#1b");
+
+			Assert.AreEqual (escapedItemInclude, item.GetMetadata ("FileName"), "#2b");
+			Assert.AreEqual (itemInclude, item.GetEvaluatedMetadata ("FileName"), "#2b");
+
+			Assert.AreEqual (escapedItemInclude, item.GetMetadata ("Identity"), "#3a");
+			Assert.AreEqual ("a;b;c", item.GetEvaluatedMetadata ("Identity"), "#3b");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestGetMetadata2 ()
 		{

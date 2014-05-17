@@ -1,53 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SendPacketsElement" FullName="System.Net.Sockets.SendPacketsElement">
   <TypeSignature Language="C#" Value="public class SendPacketsElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SendPacketsElement extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used to enhance the <see cref="T:System.Net.Sockets.Socket" /> class for use by server applications that use asynchronous network I/O to achieve the highest performance. The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used with the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" /> property to get or set a data buffer or file to be sent using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an element in a <see cref="T:System.Net.Sockets.SendPacketsElement" /> array.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SendPacketsElement (byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] buffer) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.SendPacketsElement.#ctor(System.Byte[])" /> constructor initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class with a byte array of data. The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used with the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" /> property to get or set a data buffer or file to be sent using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class using the specified buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array of data to send using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SendPacketsElement (string filepath);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filepath) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="filepath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filepath">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.SendPacketsElement.#ctor(System.String)" /> constructor initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class with a filename of a file. The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used with the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" /> property to get or set a data buffer or file to be sent using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+          <para>Universal Naming Convention (UNC) paths are supported by the <paramref name="filepath" /> parameter. If the file is in the current working directory, no path information needs to be specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class using the specified file.</para>
+        </summary>
+        <param name="filepath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filename of the file to be transmitted using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SendPacketsElement (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
@@ -55,18 +85,29 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.SendPacketsElement.#ctor(System.Byte[],System.Int32,System.Int32)" /> constructor initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class with a byte array of data. The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used with the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" /> property to get or set a data buffer or file to be sent using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class using the specified buffer, buffer offset, and count.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array of data to send using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset, in bytes, from the beginning of the <paramref name="buffer" /> to the location in the <paramref name="buffer" /> to start sending the data specified in the <paramref name="buffer" /> parameter.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send starting from the <paramref name="offset" /> parameter. If <paramref name="count" /> is zero, no bytes are sent.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SendPacketsElement (string filepath, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filepath, int32 offset, int32 count) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="filepath" Type="System.String" />
@@ -74,18 +115,30 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="filepath">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.SendPacketsElement.#ctor(System.String,System.Int32,System.Int32)" /> constructor initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class with a filename of a file. The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used with the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" /> property to get or set a data buffer or file to be sent using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+          <para>Universal Naming Convention (UNC) paths are supported by the <paramref name="filepath" /> parameter. If the file is in the current working directory, no path information needs to be specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class using the specified filename path, offset, and count.</para>
+        </summary>
+        <param name="filepath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filename of the file to be transmitted using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset, in bytes, from the beginning of the file to the location in the file to start sending the file specified in the <paramref name="filepath" /> parameter.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send starting from the <paramref name="offset" /> parameter. If <paramref name="count" /> is zero, the entire file is sent. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SendPacketsElement (byte[] buffer, int offset, int count, bool endOfPacket);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] buffer, int32 offset, int32 count, bool endOfPacket) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="buffer" Type="System.Byte[]" />
@@ -94,19 +147,31 @@
         <Parameter Name="endOfPacket" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="endOfPacket">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.SendPacketsElement.#ctor(System.Byte[],System.Int32,System.Int32,System.Boolean)" /> constructor initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class with a byte array of data. The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used with the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" /> property to get or set a data buffer or file to be sent using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class using the specified buffer, buffer offset, and count with an option to combine this element with the next element in a single send request from the sockets layer to the transport. </para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array of data to send using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset, in bytes, from the beginning of the <paramref name="buffer" /> to the location in the <paramref name="buffer" /> to start sending the data specified in the <paramref name="buffer" /> parameter.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number bytes to send starting from the <paramref name="offset" /> parameter. If <paramref name="count" /> is zero, no bytes are sent.</param>
+        <param name="endOfPacket">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that specifies that this element should not be combined with the next element in a single send request from the sockets layer to the transport. This flag is used for granular control of the content of each message on a datagram or message-oriented socket. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SendPacketsElement (string filepath, int offset, int count, bool endOfPacket);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filepath, int32 offset, int32 count, bool endOfPacket) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="filepath" Type="System.String" />
@@ -115,87 +180,140 @@
         <Parameter Name="endOfPacket" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="filepath">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="endOfPacket">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.SendPacketsElement.#ctor(System.String,System.Int32,System.Int32,System.Boolean)" /> constructor initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class with a filename of a file. The <see cref="T:System.Net.Sockets.SendPacketsElement" /> class is used with the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" /> property to get or set a data buffer or file to be sent using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</para>
+          <para>Universal Naming Convention (UNC) paths are supported by the <paramref name="filepath" /> parameter. If the file is in the current working directory, no path information needs to be specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class using the specified filename path, buffer offset, and count with an option to combine this element with the next element in a single send request from the sockets layer to the transport. </para>
+        </summary>
+        <param name="filepath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filename of the file to be transmitted using the <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset, in bytes, from the beginning of the file to the location in the file to start sending the file specified in the <paramref name="filepath" /> parameter.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send starting from the <paramref name="offset" /> parameter. If <paramref name="count" /> is zero, the entire file is sent.</param>
+        <param name="endOfPacket">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that specifies that this element should not be combined with the next element in a single send request from the sockets layer to the transport. This flag is used for granular control of the content of each message on a datagram or message-oriented socket.</param>
       </Docs>
     </Member>
     <Member MemberName="Buffer">
       <MemberSignature Language="C#" Value="public byte[] Buffer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Buffer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="P:System.Net.Sockets.SendPacketsElement.Buffer" /> property is a zero-length array if the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class was not initialized with a <paramref name="buffer" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the buffer to be sent if the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class was initialized with a <paramref name="buffer" /> parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="P:System.Net.Sockets.SendPacketsElement.Count" /> property is zero if the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class was not initialized with a <paramref name="count" /> parameter.</para>
+          <para>If <see cref="P:System.Net.Sockets.SendPacketsElement.Count" /> is zero for a file, the entire file is sent. If <see cref="P:System.Net.Sockets.SendPacketsElement.Count" /> is zero for a buffer, no bytes are sent.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the count of bytes to be sent. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndOfPacket">
       <MemberSignature Language="C#" Value="public bool EndOfPacket { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EndOfPacket" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="P:System.Net.Sockets.SendPacketsElement.EndOfPacket" /> property is false if the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class was not initialized with an <paramref name="endOfPacket" /> parameter set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value that indicates if this element should not be combined with the next element in a single send request from the sockets layer to the transport.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FilePath">
       <MemberSignature Language="C#" Value="public string FilePath { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FilePath" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Universal Naming Convention (UNC) paths are supported by the <see cref="P:System.Net.Sockets.SendPacketsElement.FilePath" /> property. If the file is in the current working directory, no path information needs to be specified.</para>
+          <para>The default value for the <see cref="P:System.Net.Sockets.SendPacketsElement.FilePath" /> property is an empty string if the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class was not initialized with a <paramref name="filepath" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the filename of the file to send if the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class was initialized with a <paramref name="filepath" /> parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Offset">
       <MemberSignature Language="C#" Value="public int Offset { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Offset" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="P:System.Net.Sockets.SendPacketsElement.Offset" /> property is zero if the <see cref="T:System.Net.Sockets.SendPacketsElement" /> class was not initialized with an <paramref name="offset" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the offset, in bytes, from the beginning of the data buffer or file to the location in the buffer or file to start sending the data. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

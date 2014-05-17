@@ -69,15 +69,15 @@ namespace System
 		public static TimeZone CurrentTimeZone {
 			get {
 				long now = DateTime.GetNow ();
-				TimeZone tz;
+				TimeZone tz = currentTimeZone;
 				
 				lock (tz_lock) {
-					if (currentTimeZone == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
-						currentTimeZone = new CurrentSystemTimeZone (now);
+					if (tz == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
+						tz = new CurrentSystemTimeZone (now);
 						timezone_check = now;
+
+						currentTimeZone = tz;
 					}
-					
-					tz = currentTimeZone;
 				}
 				
 				return tz;
@@ -174,6 +174,11 @@ namespace System
 			}
 
 			return DateTime.SpecifyKind (new DateTime (time.Ticks - offset.Ticks), DateTimeKind.Utc);
+		}
+
+		internal static void ClearCachedData ()
+		{
+			currentTimeZone = null;
 		}
 
 		//
@@ -357,10 +362,20 @@ namespace System
 			if (time.Kind == DateTimeKind.Utc)
 				return TimeSpan.Zero;
 
-			if (IsDaylightSavingTime (time))
+			if (IsDaylightSavingTime (time) && !IsAmbiguousTime (time))
 				return utcOffsetWithDLS;
 
 			return utcOffsetWithOutDLS;
+		}
+
+		private bool IsAmbiguousTime (DateTime time)
+		{
+			if (time.Kind == DateTimeKind.Utc)
+				return false;
+
+			DaylightTime changes = GetDaylightChanges (time.Year);
+
+			return time < changes.End && time >= changes.End - changes.Delta;
 		}
 
 		void IDeserializationCallback.OnDeserialization (object sender)

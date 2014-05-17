@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessagePropertyDescriptionCollection" FullName="System.ServiceModel.Description.MessagePropertyDescriptionCollection">
+  <TypeSignature Language="C#" Value="public class MessagePropertyDescriptionCollection : System.Collections.ObjectModel.KeyedCollection&lt;string,System.ServiceModel.Description.MessagePropertyDescription&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessagePropertyDescriptionCollection extends System.Collections.ObjectModel.KeyedCollection`2&lt;string, class System.ServiceModel.Description.MessagePropertyDescription&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.ObjectModel.KeyedCollection&lt;System.String,System.ServiceModel.Description.MessagePropertyDescription&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.String</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!1">System.ServiceModel.Description.MessagePropertyDescription</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables you to find <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" /> objects by name.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" /> objects.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetKeyForItem">
+      <MemberSignature Language="C#" Value="protected override string GetKeyForItem (System.ServiceModel.Description.MessagePropertyDescription item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance string GetKeyForItem(class System.ServiceModel.Description.MessagePropertyDescription item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.ServiceModel.Description.MessagePropertyDescription" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.XmlQualifiedName" /> for a <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlQualifiedName" /> of the <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" />.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MessagePropertyDescription" /> to locate.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

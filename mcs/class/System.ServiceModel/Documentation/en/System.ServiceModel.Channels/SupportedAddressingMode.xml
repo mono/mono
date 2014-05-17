@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SupportedAddressingMode" FullName="System.ServiceModel.Channels.SupportedAddressingMode">
+  <TypeSignature Language="C#" Value="public enum SupportedAddressingMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SupportedAddressingMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used to specify the capability of a server, which, in turn, imposes a requirement on its clients.</para>
+      <para>indigo1 has a variety of addressing controls for specifying where messages should be sent. For example, there is the logical <see cref="P:System.ServiceModel.Channels.MessageHeaders.To" /> address for the message destination, the physical ("Via") address, used by the transport, at which a service listens, and the <see cref="P:System.ServiceModel.Channels.MessageHeaders.ReplyTo" /> address of the endpoint that provides the address of the client endpoint.</para>
+      <para>In the most basic case, when two parties exchange messages between themselves only, it is not necessary to specify these addresses separately. But because exchanges can involve other message destinations, you must be able to specify when addresses must be explicitly provided. Even between just two parties this ability is sometimes required, as with dual HTTP where the server must create its own HTTP request. The following kinds of relationships are defined by the <see cref="T:System.ServiceModel.Channels.SupportedAddressingMode" /> enumeration to capture these messaging patterns:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Anonymous" /> addresses are the most basic form of addressing. Anonymous addressing is used when there is a default path for a response. TCP is a bi-directional communication transport and the response to a TCP message can be sent back to the other side of the socket that sent the original message. Similarly, the request-reply model of HTTP sends responses through the HTTP reply channel. Neither of these responses requires specifying where the response messages are going. When a server requires anonymous responses from the client, it uses the <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Anonymous" /> value of the enumeration. The indigo2 system-provided <see cref="T:System.ServiceModel.NetTcpBinding" />, <see cref="T:System.ServiceModel.BasicHttpBinding" /> and <see cref="T:System.ServiceModel.WSHttpBinding" /> bindings always use <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Anonymous" /> addresses.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.NonAnonymous" /> addresses are used when sending the response requires creating a new channel for communication. The indigo2 system-provided <see cref="T:System.ServiceModel.WSDualHttpBinding" /> binding uses a <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.NonAnonymous" /> address. With dual HTTP, the client creates an HTTP request to send a message and then the server must create its own HTTP request to send a response. Because the server is initiating the send, it must have a specific endpoint to establish the connection. You must provide the server the address of an endpoint for its response. Similarly, if a service must respond to a one-way message that it received, it also requires a <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.NonAnonymous" /> address because there is no back channel available for communication. If the server sends a message back, a completely separate operation from that used to send the first message is required.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Mixed" /> is a third form of addressing which combines <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Anonymous" /> and <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.NonAnonymous" /> addresses depending on the message that is being sent. A typical example of mixed-mode addressing is the use of a dedicated machine for processing fault or acknowledgment messages. If the standard exchange sequence for replies is HTTP or TCP, the responses use <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Anonymous" /> addressing but the faults use non-anonymous addressing. While indigo2 does not provide <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Mixed" /> addressing functionality in one of its standard bindings, it is possible to write a channel that allows the service to send responses directly on the back-channel (when the response address is <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Anonymous" />) or on a separate channel (when the response address is <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.NonAnonymous" />). In such a case, the binding element of the channel is used to set <see cref="T:System.ServiceModel.Channels.SupportedAddressingMode" /> to <see cref="F:System.ServiceModel.Channels.SupportedAddressingMode.Mixed" />.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a service supports sending responses to anonymous addresses only, to non-anonymous addresses only, or to both.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Anonymous">
+      <MemberSignature Language="C#" Value="Anonymous" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.SupportedAddressingMode Anonymous = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.SupportedAddressingMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server only supports anonymous addresses and clients must provide an anonymous response address.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Mixed">
+      <MemberSignature Language="C#" Value="Mixed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.SupportedAddressingMode Mixed = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.SupportedAddressingMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server supports both anonymous and non-anonymous addresses and clients may choose to use either or both.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NonAnonymous">
+      <MemberSignature Language="C#" Value="NonAnonymous" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.SupportedAddressingMode NonAnonymous = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.SupportedAddressingMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server only supports non-anonymous addresses and clients must provide a non-anonymous response address.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

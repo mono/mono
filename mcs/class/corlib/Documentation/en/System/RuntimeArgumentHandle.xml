@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RuntimeArgumentHandle" FullName="System.RuntimeArgumentHandle">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct RuntimeArgumentHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit RuntimeArgumentHandle extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,18 +14,20 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>
-      <para>A handle that represents a variable-length argument list.</para>
-    </summary>
-    <remarks>
-      <para>This class has no members. It exists solely to support methods that take a variable number of arguments (such as can be written in C/C++).</para>
-    </remarks>
-  </Docs>
-  <Members />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This structure has no members other than those that it inherits from the <see cref="T:System.Object" /> and <see cref="T:System.ValueType" /> classes. It exists only to support C/C++ programming language functions that take a variable number of parameters. An instance of the structure is passed to the <see cref="T:System.ArgIterator" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>References a variable-length argument list.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

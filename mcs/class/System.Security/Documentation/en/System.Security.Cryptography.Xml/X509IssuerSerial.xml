@@ -1,50 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509IssuerSerial" FullName="System.Security.Cryptography.Xml.X509IssuerSerial">
   <TypeSignature Language="C#" Value="public struct X509IssuerSerial" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit X509IssuerSerial extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> structure represents the &lt;X509IssuerSerial&gt; element of an XML digital signature defined by the XML digital signature specification. The &lt;X509IssuerSerial&gt; element is the subelement of the &lt;X509Data&gt; element that contains an X.509v3 certificate issuer's distinguished name and serial number pair. The distinguished name and serial number pair help identify a specific X.509v3 certificate.</para>
+      <para>The issuer of an X.509 certificate is the name of the certification authority that issued the certificate. Certification authorities assign each certificate they issue a unique serial number for identification purposes.  </para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> structure to specify a certificate issuer's distinguished name and serial number pair when using the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class.  You can add an <see cref="T:System.Security.Cryptography.Xml.X509IssuerSerial" /> structure to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class using the <see cref="P:System.Security.Cryptography.Xml.KeyInfoX509Data.IssuerSerials" /> property.  Alternatively, you can add string values that represent the X.509 certificate issuer's distinguished name and serial number pair using the <see cref="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddIssuerSerial(System.String,System.String)" /> method.</para>
+      <para>For more information about the &lt;X509IssuerSerial&gt; element, see the World Wide Web Consortium (W3C) specification at www.w3.org/TR/xmldsig-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;X509IssuerSerial&gt; element of an XML digital signature.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IssuerName">
-      <MemberSignature Language="C#" Value="public string IssuerName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string IssuerName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string IssuerName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.X509IssuerSerial.IssuerName" /> property represents an X.509 certificate issuer's distinguished name specified in the &lt;X509IssuerSerial&gt; element.</para>
+          <para>For more information about the &lt;X509IssuerSerial&gt; element, see the World Wide Web Consortium (W3C) specification at www.w3.org/TR/xmldsig-core/.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an X.509 certificate issuer's distinguished name.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SerialNumber">
-      <MemberSignature Language="C#" Value="public string SerialNumber { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SerialNumber { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SerialNumber" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.X509IssuerSerial.SerialNumber" /> property represents an X.509 certificate issuer's serial number specified in the &lt;X509IssuerSerial&gt; element.</para>
+          <para>For more information about the &lt;X509IssuerSerial&gt; element, see the World Wide Web Consortium (W3C) specification at www.w3.org/TR/xmldsig-core/.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an X.509 certificate issuer's serial number.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

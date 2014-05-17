@@ -1,85 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SourceSwitch" FullName="System.Diagnostics.SourceSwitch">
   <TypeSignature Language="C#" Value="public class SourceSwitch : System.Diagnostics.Switch" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SourceSwitch extends System.Diagnostics.Switch" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Diagnostics.Switch</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Diagnostics.TraceSource.Switch" /> property of the <see cref="T:System.Diagnostics.TraceSource" /> class is a <see cref="T:System.Diagnostics.SourceSwitch" /> object. The <see cref="T:System.Diagnostics.SourceSwitch" /> class provides a <see cref="P:System.Diagnostics.SourceSwitch.Level" /> property to test the event level of the switch. The <see cref="P:System.Diagnostics.SourceSwitch.Level" /> property gets or sets the switch's <see cref="T:System.Diagnostics.TraceLevel" /> value.</para>
+      <para>You can set the event level of a <see cref="T:System.Diagnostics.SourceSwitch" /> through the application configuration file and then use the configured <see cref="T:System.Diagnostics.SourceSwitch" /> level in your application. Alternatively, you can create a <see cref="T:System.Diagnostics.SourceSwitch" /> in your code and set the level directly, to instrument a specific section of code.</para>
+      <para>To configure a <see cref="T:System.Diagnostics.SourceSwitch" />, edit the configuration file that corresponds to the name of your application. Within this file, you can set a switch's value or clear all the switches previously set by the application. The configuration file should be formatted as shown in the following example. </para>
+      <code>&lt;switches&gt;
+  &lt;add name="SourceSwitch" value="Verbose"&gt;&lt;/add&gt;
+&lt;/switches&gt;</code>
+      <para>The switch is used to check whether a trace should be propagated or ignored. Each <see cref="T:System.Diagnostics.TraceSource" /> trace method calls the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method before calling the listeners. If the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method returns false, the trace is ignored and the trace method exits. If the <see cref="M:System.Diagnostics.SourceSwitch.ShouldTrace(System.Diagnostics.TraceEventType)" /> method returns true, the trace is passed to the listeners.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a multilevel switch to control tracing and debug output without recompiling your code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SourceSwitch (string displayName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string displayName) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="displayName" Type="System.String" />
       </Parameters>
       <Docs>
         <param name="displayName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="name" /> parameter is used to set the value of the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property.</para>
+          <para>To set the level of your <see cref="T:System.Diagnostics.SourceSwitch" />, edit the configuration file that corresponds to the name of your application. Within this file, you can add a switch and set its value, remove a switch, or clear all the switches previously set by the application. To add a source switch, the configuration file should be formatted as shown in the following example. </para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;switches&gt;
+      &lt;add name="SourceSwitch" value="Verbose" &gt;&lt;/add&gt;
+    &lt;/switches&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SourceSwitch" /> class, specifying the name of the source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SourceSwitch (string displayName, string defaultSwitchValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string displayName, string defaultSwitchValue) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="displayName" Type="System.String" />
         <Parameter Name="defaultSwitchValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="displayName">To be added.</param>
-        <param name="defaultSwitchValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="displayName" /> parameter is used to set the value of the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property; the <paramref name="defaultSwitchValue" /> parameter is saved as a field and used to initialize the <see cref="P:System.Diagnostics.Switch.Value" /> property on first reference. </para>
+          <block subset="none" type="note">
+            <para>If the switch is defined in a configuration file and the value attribute is specified, the configuration file value takes precedence and the <paramref name="defaultSwitchValue" /> is ignored.</para>
+          </block>
+          <para>To set the level of your <see cref="T:System.Diagnostics.SourceSwitch" />, edit the configuration file that corresponds to the name of your application. Within this file, you can add a switch and set its value, remove a switch, or clear all the switches previously set by the application. To add a source switch, the configuration file should be formatted as shown in the following example. </para>
+          <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;switches&gt;
+      &lt;add name="SourceSwitch" value="Verbose" &gt;&lt;/add&gt;
+    &lt;/switches&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SourceSwitch" /> class, specifying the display name and the default value for the source switch.</para>
+        </summary>
+        <param name="displayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source switch. </param>
+        <param name="defaultSwitchValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default value for the switch. </param>
       </Docs>
     </Member>
     <Member MemberName="Level">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceLevels Level { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceLevels Level { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.SourceLevels Level" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets its value from the <see cref="P:System.Diagnostics.Switch.SwitchSetting" /> property. Setting this property also modifies the <see cref="P:System.Diagnostics.Switch.SwitchSetting" /> property. </para>
+          <block subset="none" type="note">
+            <para>For extensibility, the <see cref="P:System.Diagnostics.SourceSwitch.Level" /> property can be set to any integer, rather than being limited to a <see cref="T:System.Diagnostics.SourceLevels" /> enumeration value. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the level of the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnValueChanged">
       <MemberSignature Language="C#" Value="protected override void OnValueChanged ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void OnValueChanged() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.SourceSwitch.OnValueChanged" /> method converts the new value of the <see cref="P:System.Diagnostics.Switch.Value" /> property to the integer representation of the matching field in the <see cref="T:System.Diagnostics.SourceLevels" /> enumeration, and then uses this integer to set the <see cref="P:System.Diagnostics.Switch.SwitchSetting" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked when the value of the <see cref="P:System.Diagnostics.Switch.Value" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShouldTrace">
       <MemberSignature Language="C#" Value="public bool ShouldTrace (System.Diagnostics.TraceEventType eventType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool ShouldTrace(valuetype System.Diagnostics.TraceEventType eventType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -88,10 +161,23 @@
         <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
       </Parameters>
       <Docs>
-        <param name="eventType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the Trace methods in the <see cref="T:System.Diagnostics.TraceSource" /> class to determine whether listeners should be called to write a trace.</para>
+          <block subset="none" type="note">
+            <para>Application code should not call this method; it is intended to be called only by methods in the <see cref="T:System.Diagnostics.TraceSource" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if trace listeners should be called, based on the trace event type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the trace listeners should be called; otherwise, false.</para>
+        </returns>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values.</param>
       </Docs>
     </Member>
   </Members>

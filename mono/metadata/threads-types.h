@@ -54,11 +54,7 @@ typedef struct _MonoInternalThread MonoInternalThread;
 
 typedef void (*MonoThreadCleanupFunc) (MonoInternalThread* thread);
 
-gpointer mono_create_thread (WapiSecurityAttributes *security,
-							 guint32 stacksize, WapiThreadStart start,
-							 gpointer param, guint32 create, gsize *tid) MONO_INTERNAL;
-
-MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, gboolean no_detach, guint32 stack_size) MONO_INTERNAL;
+MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size) MONO_INTERNAL;
 
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func) MONO_INTERNAL;
 
@@ -140,6 +136,7 @@ gint16 ves_icall_System_Threading_Thread_VolatileRead2 (void *ptr) MONO_INTERNAL
 gint32 ves_icall_System_Threading_Thread_VolatileRead4 (void *ptr) MONO_INTERNAL;
 gint64 ves_icall_System_Threading_Thread_VolatileRead8 (void *ptr) MONO_INTERNAL;
 void * ves_icall_System_Threading_Thread_VolatileReadIntPtr (void *ptr) MONO_INTERNAL;
+void * ves_icall_System_Threading_Thread_VolatileReadObject (void *ptr) MONO_INTERNAL;
 double ves_icall_System_Threading_Thread_VolatileReadDouble (void *ptr) MONO_INTERNAL;
 float ves_icall_System_Threading_Thread_VolatileReadFloat (void *ptr) MONO_INTERNAL;
 
@@ -148,11 +145,26 @@ void ves_icall_System_Threading_Thread_VolatileWrite2 (void *ptr, gint16) MONO_I
 void ves_icall_System_Threading_Thread_VolatileWrite4 (void *ptr, gint32) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_VolatileWrite8 (void *ptr, gint64) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_VolatileWriteIntPtr (void *ptr, void *) MONO_INTERNAL;
-void ves_icall_System_Threading_Thread_VolatileWriteObject (void *ptr, void *) MONO_INTERNAL;
+void ves_icall_System_Threading_Thread_VolatileWriteObject (void *ptr, MonoObject *) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_VolatileWriteFloat (void *ptr, float) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_VolatileWriteDouble (void *ptr, double) MONO_INTERNAL;
 
+gint8 ves_icall_System_Threading_Volatile_Read1 (void *ptr) MONO_INTERNAL;
+gint16 ves_icall_System_Threading_Volatile_Read2 (void *ptr) MONO_INTERNAL;
+gint32 ves_icall_System_Threading_Volatile_Read4 (void *ptr) MONO_INTERNAL;
+gint64 ves_icall_System_Threading_Volatile_Read8 (void *ptr) MONO_INTERNAL;
+void * ves_icall_System_Threading_Volatile_ReadIntPtr (void *ptr) MONO_INTERNAL;
+double ves_icall_System_Threading_Volatile_ReadDouble (void *ptr) MONO_INTERNAL;
+float ves_icall_System_Threading_Volatile_ReadFloat (void *ptr) MONO_INTERNAL;
 MonoObject* ves_icall_System_Threading_Volatile_Read_T (void *ptr) MONO_INTERNAL;
+
+void ves_icall_System_Threading_Volatile_Write1 (void *ptr, gint8) MONO_INTERNAL;
+void ves_icall_System_Threading_Volatile_Write2 (void *ptr, gint16) MONO_INTERNAL;
+void ves_icall_System_Threading_Volatile_Write4 (void *ptr, gint32) MONO_INTERNAL;
+void ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64) MONO_INTERNAL;
+void ves_icall_System_Threading_Volatile_WriteIntPtr (void *ptr, void *) MONO_INTERNAL;
+void ves_icall_System_Threading_Volatile_WriteFloat (void *ptr, float) MONO_INTERNAL;
+void ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double) MONO_INTERNAL;
 void ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value) MONO_INTERNAL;
 
 void ves_icall_System_Threading_Thread_MemoryBarrier (void) MONO_INTERNAL;
@@ -174,7 +186,6 @@ void     mono_thread_destroy_tls (uint32_t tls_offset) MONO_INTERNAL;
 void     mono_thread_destroy_domain_tls (MonoDomain *domain) MONO_INTERNAL;
 void mono_thread_free_local_slot_values (int slot, MonoBoolean thread_local) MONO_INTERNAL;
 void mono_thread_current_check_pending_interrupt (void) MONO_INTERNAL;
-void mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize) MONO_INTERNAL;
 
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state) MONO_INTERNAL;
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state) MONO_INTERNAL;
@@ -228,5 +239,12 @@ void mono_threads_perform_thread_dump (void) MONO_INTERNAL;
 MonoThread *mono_thread_attach_full (MonoDomain *domain, gboolean force_attach) MONO_INTERNAL;
 
 void mono_thread_init_tls (void) MONO_INTERNAL;
+
+/* Can't include utils/mono-threads.h because of the THREAD_INFO_TYPE wizardry */
+void mono_threads_add_joinable_thread (gpointer tid) MONO_INTERNAL;
+void mono_threads_join_threads (void) MONO_INTERNAL;
+void mono_thread_join (gpointer tid) MONO_INTERNAL;
+
+void mono_thread_detach_internal (MonoInternalThread *thread) MONO_INTERNAL;
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

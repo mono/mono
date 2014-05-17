@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecureConversationSecurityTokenParameters" FullName="System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters">
+  <TypeSignature Language="C#" Value="public class SecureConversationSecurityTokenParameters : System.ServiceModel.Security.Tokens.SecurityTokenParameters" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi SecureConversationSecurityTokenParameters extends System.ServiceModel.Security.Tokens.SecurityTokenParameters" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Security.Tokens.SecurityTokenParameters</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is a collection of token properties and methods, and is used in creating security binding elements and tokens.</para>
+      <para>Secure conversations involve the exchange of multiple messages, and use a security context to ensure security. A security context is shared among the communicating parties for the lifetime of a communications session.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the parameters for a secure conversation security token.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecureConversationSecurityTokenParameters ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance property values are set to their defaults:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.InclusionMode" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode.AlwaysToRecipient" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.ReferenceStyle" /> is set to <see cref="F:System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle.Internal" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys" /> is set to true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecureConversationSecurityTokenParameters (System.ServiceModel.Channels.SecurityBindingElement element);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.SecurityBindingElement element) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="element" Type="System.ServiceModel.Channels.SecurityBindingElement" />
+      </Parameters>
+      <Docs>
+        <param name="element">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="bootstrapSecurityBindingElement" /> specifies the security binding element to use when securing the messages exchanged as part of the secure conversation token issuance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> class from the properties of a specified <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SecureConversationSecurityTokenParameters (System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters source);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters source) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="source" Type="System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" />
+      </Parameters>
+      <Docs>
+        <param name="source">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor clones a new instance from an existing one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> class from another instance of this class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecureConversationSecurityTokenParameters (System.ServiceModel.Channels.SecurityBindingElement element, bool requireCancellation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.SecurityBindingElement element, bool requireCancellation) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="element" Type="System.ServiceModel.Channels.SecurityBindingElement" />
+        <Parameter Name="requireCancellation" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="element">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="bootstrapSecurityBindingElement" /> specifies the security binding element to use when securing the messages exchanged as part of the secure conversation token issuance. If <paramref name="requireCancellation" /> is true, a session-based security context token is issued; otherwise, a cookie-based security context token is issued.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> class from the properties of a specified <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" />.</para>
+        </summary>
+        <param name="requireCancellation">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to require cancellation; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecureConversationSecurityTokenParameters (System.ServiceModel.Channels.SecurityBindingElement element, bool requireCancellation, System.ServiceModel.Security.ChannelProtectionRequirements requirements);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.SecurityBindingElement element, bool requireCancellation, class System.ServiceModel.Security.ChannelProtectionRequirements requirements) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="element" Type="System.ServiceModel.Channels.SecurityBindingElement" />
+        <Parameter Name="requireCancellation" Type="System.Boolean" />
+        <Parameter Name="requirements" Type="System.ServiceModel.Security.ChannelProtectionRequirements" />
+      </Parameters>
+      <Docs>
+        <param name="element">To be added.</param>
+        <param name="requirements">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="bootstrapSecurityBindingElement" /> specifies the security binding element to use when securing the messages exchanged as part of the secure conversation token issuance. If <paramref name="requireCancellation" /> is true, a session-based security context token is issued; otherwise, a cookie-based security context token is issued.</para>
+          <para>
+            <paramref name="bootstrapProtectionRequirements" /> indicates the protection requirements of the messages exchanged as part of the secure conversation token issuance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> class from the properties of a specified <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> with specified <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" />.</para>
+        </summary>
+        <param name="requireCancellation">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to require cancellation; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BootstrapProtectionRequirements">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.ChannelProtectionRequirements BootstrapProtectionRequirements { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.ChannelProtectionRequirements BootstrapProtectionRequirements" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.ChannelProtectionRequirements</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bootstrap protection requirements.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BootstrapSecurityBindingElement">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.SecurityBindingElement BootstrapSecurityBindingElement { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.SecurityBindingElement BootstrapSecurityBindingElement" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.SecurityBindingElement</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the bootstrap security binding element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CloneCore">
+      <MemberSignature Language="C#" Value="protected override System.ServiceModel.Security.Tokens.SecurityTokenParameters CloneCore ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.ServiceModel.Security.Tokens.SecurityTokenParameters CloneCore() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenParameters</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone" /> and <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> methods follow the Core design pattern.</para>
+          <para>
+            <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> is an abstract class which is overridden by <see cref="M:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.CloneCore" />.</para>
+          <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.CloneCore" /> method calls the <see cref="M:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.#ctor(System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clones another instance of this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters" /> instance that represents the copy.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateKeyIdentifierClause">
+      <MemberSignature Language="C#" Value="protected override System.IdentityModel.Tokens.SecurityKeyIdentifierClause CreateKeyIdentifierClause (System.IdentityModel.Tokens.SecurityToken token, System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle referenceStyle);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.IdentityModel.Tokens.SecurityKeyIdentifierClause CreateKeyIdentifierClause(class System.IdentityModel.Tokens.SecurityToken token, valuetype System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle referenceStyle) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SecurityKeyIdentifierClause</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.IdentityModel.Tokens.SecurityToken" />
+        <Parameter Name="referenceStyle" Type="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a key identifier clause using the <see cref="M:System.IdentityModel.Tokens.SecurityToken.CreateKeyIdentifierClause``1" /> method, with <paramref name="referenceStyle" /> as a generic parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a key identifier clause for a token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key identifier clause for a token.</para>
+        </returns>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token.</param>
+        <param name="referenceStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference style of the security token.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="HasAsymmetricKey">
+      <MemberSignature Language="C#" Value="protected override bool HasAsymmetricKey { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasAsymmetricKey" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asymmetric keys are used in public-key cryptography, which uses two keys, a public key and a private key, which are related mathematically. The public key is distributed widely, but the private key is kept secret. In public-key cryptography, there is no need to exchange a common key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the security token has an asymmetric key.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeSecurityTokenRequirement">
+      <MemberSignature Language="C#" Value="protected override void InitializeSecurityTokenRequirement (System.IdentityModel.Selectors.SecurityTokenRequirement requirement);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance void InitializeSecurityTokenRequirement(class System.IdentityModel.Selectors.SecurityTokenRequirement requirement) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="requirement" Type="System.IdentityModel.Selectors.SecurityTokenRequirement" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following properties of the <see cref="T:System.IdentityModel.Selectors.SecurityTokenRequirement" /> are initialized:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.TokenType" /> = <see cref="P:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenTypes.SecureConversation" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.RequireCryptographicToken" /> = true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement.SupportSecurityContextCancellationProperty" /> property in <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.Properties" /> is set to <see cref="P:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.RequireCancellation" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement.SecureConversationSecurityBindingElement" /> property in <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.Properties" /> is set to <see cref="P:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.BootstrapSecurityBindingElement" />.</para>
+            </item>
+            <item>
+              <para>The <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" /> property in <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.Properties" /> is set to a clone of the current instance.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IdentityModel.Selectors.SecurityTokenRequirement.KeyType" /> = <see cref="F:System.IdentityModel.Tokens.SecurityKeyType.SymmetricKey" />.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a security token requirement.</para>
+        </summary>
+        <param name="requirement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The requirement of the security token.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RequireCancellation">
+      <MemberSignature Language="C#" Value="public bool RequireCancellation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RequireCancellation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When Windows authentication is used in combination with a security context token, indigo2 does not populate the <see cref="P:System.ServiceModel.ServiceSecurityContext.WindowsIdentity" /> property with the actual caller's identity, but instead sets the property to anonymous. Because indigo2 security must re-create the content of the service security context for every request from the incoming security context token, the server does not keep track of the security session in the memory. Because it is impossible to serialize the <see cref="T:System.Security.Principal.WindowsIdentity" /> instance into the security context token, the <see cref="P:System.ServiceModel.ServiceSecurityContext.WindowsIdentity" /> property returns an anonymous identity.</para>
+          <para>The following configuration exhibits this behavior.</para>
+          <code>&lt;customBinding&gt;
+  &lt;binding name="Cancellation"&gt;
+       &lt;textMessageEncoding /&gt;
+        &lt;security 
+            requireSecurityContextCancellation="false"&gt;
+              &lt;secureConversationBootstrap 
+                 requireSecurityContextCancellation="true" /&gt;
+      &lt;/security&gt;
+    &lt;httpTransport /&gt;
+  &lt;/binding&gt;
+&lt;/customBinding&gt;</code>
+          <para>For more information about security context tokens, see <format type="text/html"><a href="640676b6-c75a-4ff7-aea4-b1a1524d71b2">How To: Create a Security Context Token for a Secure Session</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether cancellation is required.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsClientAuthentication">
+      <MemberSignature Language="C#" Value="protected override bool SupportsClientAuthentication { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsClientAuthentication" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token supports client authentication.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsClientWindowsIdentity">
+      <MemberSignature Language="C#" Value="protected override bool SupportsClientWindowsIdentity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsClientWindowsIdentity" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token supports a Windows identity for authentication.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsServerAuthentication">
+      <MemberSignature Language="C#" Value="protected override bool SupportsServerAuthentication { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsServerAuthentication" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the token supports server authentication.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method displays the following data: the result of performing this method on the base class, <see cref="P:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.RequireCancellation" />, and, if non-null, <see cref="P:System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters.BootstrapSecurityBindingElement" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a text representation of this instance of the class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of this instance of the class.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

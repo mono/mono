@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParameterizedThreadStart" FullName="System.Threading.ParameterizedThreadStart">
   <TypeSignature Language="C#" Value="public delegate void ParameterizedThreadStart(object obj);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ParameterizedThreadStart extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -8,6 +10,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="obj" Type="System.Object" />
   </Parameters>
@@ -16,13 +23,21 @@
   </ReturnValue>
   <Docs>
     <param name="obj">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a managed thread is created, the method that executes on the thread is represented by a <see cref="T:System.Threading.ThreadStart" /> delegate or a <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate that is passed to the <see cref="Overload:System.Threading.Thread.#ctor" /> constructor. The thread does not begin executing until the <see cref="Overload:System.Threading.Thread.Start" /> method is called. The <see cref="T:System.Threading.ThreadStart" /> or <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate is invoked on the thread, and execution begins at the first line of the method represented by the delegate. In the case of the <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate, the object that is passed to the <see cref="M:System.Threading.Thread.Start(System.Object)" /> method is passed to the delegate. </para>
+      <block subset="none" type="note">
+        <para>Visual Basic and C# users can omit the <see cref="T:System.Threading.ThreadStart" /> or <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate constructor when creating a thread. In Visual Basic, use the AddressOf operator when passing your method to the <see cref="Overload:System.Threading.Thread.#ctor" /> constructor; for example, Dim t As New Thread(AddressOf ThreadProc). In C#, simply specify the name of the thread procedure. The compiler selects the correct delegate constructor.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>When you create a <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate for an instance method in C++, the first parameter of the constructor is the instance variable. For a static method, the first parameter of the constructor is zero. For a static method, the delegate constructor requires only one parameter: the address of the callback method, qualified by the class name.</para>
+      </block>
+      <para>The <see cref="T:System.Threading.ParameterizedThreadStart" /> delegate and the <see cref="M:System.Threading.Thread.Start(System.Object)" /> method overload make it easy to pass data to a thread procedure, but this technique is not type safe because any object can be passed to <see cref="M:System.Threading.Thread.Start(System.Object)" />. A more robust way to pass data to a thread procedure is to put both the thread procedure and the data fields into a worker object. For more information, see <format type="text/html"><a href="52b32222-e185-4f42-91a7-eaca65c0ab6d">Creating Threads</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that executes on a <see cref="T:System.Threading.Thread" />.</para>
+    </summary>
   </Docs>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

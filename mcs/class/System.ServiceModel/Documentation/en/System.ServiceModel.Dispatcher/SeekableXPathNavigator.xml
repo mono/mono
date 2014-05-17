@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SeekableXPathNavigator" FullName="System.ServiceModel.Dispatcher.SeekableXPathNavigator">
+  <TypeSignature Language="C#" Value="public abstract class SeekableXPathNavigator : System.Xml.XPath.XPathNavigator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SeekableXPathNavigator extends System.Xml.XPath.XPathNavigator" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Xml.XPath.XPathNavigator</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The SOAP messages passed between parts of the indigo1 system are handled by various components of the system that must inspect these messages to determine what actions to take in processing them. The XPath engine is a component that queries messages for this purpose and it requires a navigator to read SOAP messages and other XML documents. A navigator provides a cursor that moves from node to node tracking where the XML document is actually being read.</para>
+      <para>The XPath engine works with a <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" />, which extends the <see cref="T:System.Xml.XPath.XPathNavigator" /> class by adding a <see cref="P:System.ServiceModel.Dispatcher.SeekableXPathNavigator.CurrentPosition" /> property. This property allows positions within the XML document to be saved and loaded quickly without having to clone the navigator, an expensive memory allocation that the <see cref="T:System.Xml.XPath.XPathNavigator" /> requires for such an operation. The XPath engine must frequently record the position of the cursor in the course of executing queries on XML documents, so the <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> provides an important optimization for message processing. </para>
+      <para>Note that the value of the <see cref="P:System.ServiceModel.Dispatcher.SeekableXPathNavigator.CurrentPosition" /> property is implementation-specific and may not map to node position or character position. Its value is only meaningful to the <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> implementation (and instance) that supplied it.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides read-only, random access to data contained in XML documents and enables efficient querying for specified nodes.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SeekableXPathNavigator ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ComparePosition">
+      <MemberSignature Language="C#" Value="public abstract System.Xml.XmlNodeOrder ComparePosition (long first, long second);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Xml.XmlNodeOrder ComparePosition(int64 first, int64 second) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlNodeOrder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="first" Type="System.Int64" />
+        <Parameter Name="second" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="first">To be added.</param>
+        <param name="second">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a value that describes the document order of the two specified positions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Xml.XmlNodeOrder" /> values that describes the relation of <paramref name="firstPosition" /> to <paramref name="secondPosition" /> in the document.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentPosition">
+      <MemberSignature Language="C#" Value="public abstract long CurrentPosition { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 CurrentPosition" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set operation moves the navigator to the position associated with the value specified. The get operation returns a value associated with the current position of the navigator.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets or sets a value associated with the node in the data where the XPath navigator is positioned.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetLocalName">
+      <MemberSignature Language="C#" Value="public abstract string GetLocalName (long node_position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetLocalName(int64 node_position) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node_position" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="node_position">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the local name of the node at the position specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local name of the node at the specified position. <see cref="F:System.String.Empty" /> is returned if the node does not have a local name, for example if the current position references a text node.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetName">
+      <MemberSignature Language="C#" Value="public abstract string GetName (long node_position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetName(int64 node_position) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node_position" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="node_position">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name is the name of the XML element at <paramref name="nodePosition" /> and typically includes a namespace prefix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the name of the node at the specified position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the node at <paramref name="nodePosition" />. <see cref="F:System.String.Empty" /> is returned if the node does not have a name.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNamespace">
+      <MemberSignature Language="C#" Value="public abstract string GetNamespace (long node_position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetNamespace(int64 node_position) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node_position" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="node_position">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the namespace of the node at the specified position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace of the node at <paramref name="nodePosition" />. <see cref="F:System.String.Empty" /> is returned if the node does not have a namespace.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNodeType">
+      <MemberSignature Language="C#" Value="public abstract System.Xml.XPath.XPathNodeType GetNodeType (long node_position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Xml.XPath.XPathNodeType GetNodeType(int64 node_position) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XPath.XPathNodeType</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node_position" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="node_position">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the type of the node at the specified position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Xml.XPath.XPathNodeType" /> values that indicate the type of the XML node.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public abstract string GetValue (long node_position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetValue(int64 node_position) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node_position" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="node_position">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For elements, this method returns the concatenation of all text descendents of the node at the specified position, similar to the <see cref="P:System.Xml.XmlElement.InnerText" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the text value of the node at the specified position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text value of the node at <paramref name="nodePosition" />. <see cref="F:System.String.Empty" /> is returned if the node does not have a text value.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

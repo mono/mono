@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpApplication" FullName="System.Web.HttpApplication">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HttpApplication : System.ComponentModel.IComponent, System.Web.IHttpAsyncHandler" />
   <AssemblyInfo>
@@ -25,24 +26,102 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Base class for all ASP.NET applications.</summary>
-    <remarks>This class is the base class for ASP.NET applications.  
-
-An application exists on a directory, and if such directory contains a Global.asax file, the contents of that file are used to create a derived type of HttpApplication.   The runtime will create one or more classes derived from HttpApplication to handle incoming requests for a directory (an application).  The number of live instances at any given time  is typically capped by the number of available threads on the thread pool and the instances are reused across different clients and incoming requests.
-
-<para>
-   HttpApplication implements the <see cref="T:System.Web.IHttpHandler" /> and <see cref="T:System.Web.IHttpAsyncHandler" /> which are used to drive the execution of incoming requests.   Handing of a request is initiated by  invoking the <see cref="M:System.Web.IHttpHandler.ProcessRequest()" /> method for a synchronous operation or <see cref="M:System.Web.IHttpAsyncHandler.BeginProcessRequest" /> to initiate a processing asynchronously. 
-</para><para>
-   The application will load and initialize all of the modules listed in the system.web/httpModules section in the machine.config and web.config files.  The modules work by hooking up to different stages of the HTTP processing pipeline described below.
-</para><para>
-   The application execution pipeline is made up of a number of steps to which HTTP Modules can hook up. HTTP Modules are types that implement the <see cref="T:System.Web.IHttpModule" /> interface and they hook up to or or more of the stages of the Http Application pipeline synchronously (by adding their handler to one of HttpApplication's events) or asynchronously by using one or more of the AddOn methods of HttpApplication.
-</para><para>
-   Steps are executed in order and the application will only move to the next stage of execution when all of the hooks (synchronous and asynchronous) have been executed for the given stage.  
-</para><list type="table"><listheader><term>Stage</term><description>Description</description></listheader><item><term>BeginRequest</term><description>The first stage of the pipeline processing.</description></item><item><term>AuthenticateRequest</term><description>Authentication stage.  For example the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> hooks up to this stage to implement forms authentication.</description></item><item><term>AuthorizeRequest</term><description>The autorization stage.  For example the <see cref="T:System.Web.Security.UrlAuthorizationModule" /> uses this synchronously.</description></item><item><term>ResolveRequestCache</term><description>Caching is handled at this stage.  For example Mono's internal OutputCacheModule hooks up to this event to provide caching functionality (if the page has enabled caching).</description></item><item><term>AcquireRequestState</term><description>Allows session state providers to be written.  Mono provides three session state providers: InProc, StateServer and SQLServer based on the data from the "system.web/sessionState" section on machine.config and web.config.</description></item><item><term>PreRequestHandlerExecute</term><description>An even to hook up before the actual request is handled by the application handler</description></item><item><term>Application handler.</term><description>This is where user-defined code is executed.</description></item><item><term>PostRequestHandlerExecute</term><description>Executed immediately after the application request has been executed.</description></item><item><term>ReleaseRequestState</term><description>Invoked to release any resources associated with the session state.</description></item><item><term>UpdateRequestCache</term><description>Should be used to update the cache if any.</description></item><item><term>EndRequest</term><description>The last step of the request processing.  Unlike the previous stages, this stage will always be executed regardless of whether a module called <see cref="M:System.Web.HttpApplication.CompleteRequest()" /> or not.</description></item></list><para>
-   If buffering is enabled (the default) the page will be flushed after the EndRequest stage has been completed. 
-</para><para>
-   Two other events are triggered: before writing the HTTP headers (<see cref="E:System.Web.HttpApplication.PreSendRequestHeaders" />) and one before the content of the HTTP request is sent (<see cref="E:System.Web.HttpApplication.PreSendRequestContent" />).
-</para></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instances of the <see cref="T:System.Web.HttpApplication" /> class are created in the ASP.NET infrastructure, not by the user directly. One instance of the <see cref="T:System.Web.HttpApplication" /> class is used to process many requests in its lifetime. However, it can process only one request at a time. Thus, member variables can be used to store per-request data.</para>
+      <para>An application raises events that can be handled by custom modules that implement the <see cref="T:System.Web.IHttpModule" /> interface or by event handler code that is defined in the Global.asax file. Custom modules that implement the <see cref="T:System.Web.IHttpModule" /> interface can be put in the App_Code folder or in a DLL in the Bin folder. </para>
+      <para> <see cref="T:System.Web.HttpApplication" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+      <block subset="none" type="note">
+        <para>When running IIS 7.0 in Integrated mode, custom modules in the App_Code folder or Bin folder apply to all requests in the request pipeline. Event handler code in the Global.asax file only applies to requests that are mapped to an ASP.NET handler.</para>
+      </block>
+      <para>The application events are raised in the following order:</para>
+      <list type="ordered">
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.BeginRequest" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.AuthenticateRequest" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.AuthorizeRequest" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.ResolveRequestCache" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" />
+              </para>
+          <para>After the <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" /> event and before the <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" /> event, an event handler (which is a page that corresponds to the request URL) is created. When a server is running IIS 7.0 in Integrated mode and at least the .NET Framework version 3.0, the <see cref="E:System.Web.HttpApplication.MapRequestHandler" /> event is raised. When a server is running IIS 7.0 in Classic mode or an earlier version of IIS, this event cannot be handled.</para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.AcquireRequestState" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" />
+              </para>
+          <para>The event handler is executed.</para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.ReleaseRequestState" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" />
+              </para>
+          <para>After the <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" /> event is raised, any existing response filters will filter the output.</para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.UpdateRequestCache" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" />
+              </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.LogRequest" />. </para>
+          <para>This event is supported in IIS 7.0 Integrated mode and at least the .NET Framework 3.0 </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.PostLogRequest" />
+              </para>
+          <para>This event is supported IIS 7.0 Integrated mode and at least the .NET Framework 3.0 </para>
+        </item>
+        <item>
+          <para> <see cref="E:System.Web.HttpApplication.EndRequest" />
+              </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the methods, properties, and events that are common to all application objects in an ASP.NET application. This class is the base class for applications that are defined by the user in the Global.asax file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -51,8 +130,11 @@ An application exists on a directory, and if such directory contains a Global.as
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Initializes the HttpApplication class.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpApplication" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,8 +149,15 @@ An application exists on a directory, and if such directory contains a Global.as
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event is raised after the event handler has been created.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET acquires the current state (for example, session state) that is associated with the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,10 +175,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.AcquireRequestState" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.AcquireRequestState" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,8 +208,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnAuthenticateRequestAsync">
@@ -129,10 +226,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -157,8 +259,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnAuthorizeRequestAsync">
@@ -172,10 +277,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -200,8 +310,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnBeginRequestAsync">
@@ -215,10 +328,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.BeginRequest" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.BeginRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.BeginRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.BeginRequest" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.BeginRequest" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -243,8 +361,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.BeginRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.BeginRequest" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnEndRequestAsync">
@@ -258,10 +379,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.EndRequest" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.EndRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.EndRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.EndRequest" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.EndRequest" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -286,8 +412,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.EndRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.EndRequest" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnLogRequestAsync">
@@ -304,10 +433,18 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> <see cref="M:System.Web.HttpApplication.AddOnLogRequestAsync(System.Web.BeginEventHandler,System.Web.EndEventHandler)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.LogRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.LogRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.LogRequest" />.</param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.LogRequest" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnLogRequestAsync">
@@ -325,11 +462,17 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="beginHandler">To be added.</param>
-        <param name="endHandler">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.LogRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.LogRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="beginHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.LogRequest" />.</param>
+        <param name="endHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.LogRequest" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The associated state to add to the asynchronous <see cref="E:System.Web.HttpApplication.LogRequest" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnMapRequestHandlerAsync">
@@ -346,10 +489,18 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> <see cref="M:System.Web.HttpApplication.AddOnMapRequestHandlerAsync(System.Web.BeginEventHandler,System.Web.EndEventHandler)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.MapRequestHandler" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.MapRequestHandler" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.MapRequestHandler" />.</param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.MapRequestHandler" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnMapRequestHandlerAsync">
@@ -367,11 +518,17 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="beginHandler">To be added.</param>
-        <param name="endHandler">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.MapRequestHandler" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.MapRequestHandler" /> event handlers for the current request.</para>
+        </summary>
+        <param name="beginHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.MapRequestHandler" />.</param>
+        <param name="endHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.MapRequestHandler" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The associated state to add to the asynchronous <see cref="E:System.Web.HttpApplication.MapRequestHandler" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostAcquireRequestStateAsync">
@@ -388,10 +545,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" />. </param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostAcquireRequestStateAsync">
@@ -412,8 +574,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostAuthenticateRequestAsync">
@@ -430,10 +595,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" />. </param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostAuthenticateRequestAsync">
@@ -454,8 +624,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostAuthorizeRequestAsync">
@@ -472,10 +645,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" />. </param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostAuthorizeRequestAsync">
@@ -496,8 +674,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostLogRequestAsync">
@@ -514,10 +695,18 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> <see cref="M:System.Web.HttpApplication.AddOnPostLogRequestAsync(System.Web.BeginEventHandler,System.Web.EndEventHandler)" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostLogRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostLogRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostLogRequest" />.</param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostLogRequest" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostLogRequestAsync">
@@ -535,11 +724,17 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="beginHandler">To be added.</param>
-        <param name="endHandler">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostLogRequest" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostLogRequest" /> event handlers for the current request.</para>
+        </summary>
+        <param name="beginHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostLogRequest" />.</param>
+        <param name="endHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostLogRequest" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The associated state to add to the asynchronous <see cref="E:System.Web.HttpApplication.PostLogRequest" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostMapRequestHandlerAsync">
@@ -556,10 +751,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" />. </param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostMapRequestHandlerAsync">
@@ -580,8 +780,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostMapRequestHandler" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostReleaseRequestStateAsync">
@@ -598,10 +801,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" />. </param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostReleaseRequestStateAsync">
@@ -622,8 +830,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostReleaseRequestState" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostRequestHandlerExecuteAsync">
@@ -637,10 +848,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -665,8 +881,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostRequestHandlerExecute" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostResolveRequestCacheAsync">
@@ -683,10 +902,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" />. </param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostResolveRequestCacheAsync">
@@ -707,8 +931,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostResolveRequestCache" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostUpdateRequestCacheAsync">
@@ -725,10 +952,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" />. </param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPostUpdateRequestCacheAsync">
@@ -749,8 +981,11 @@ An application exists on a directory, and if such directory contains a Global.as
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnPreRequestHandlerExecuteAsync">
@@ -764,11 +999,15 @@ An application exists on a directory, and if such directory contains a Global.as
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>
-Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -793,8 +1032,11 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.PreRequestHandlerExecute" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnReleaseRequestStateAsync">
@@ -808,10 +1050,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -836,8 +1083,11 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnResolveRequestCacheAsync">
@@ -851,10 +1101,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.ResolveRequestCache" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.ResolveRequestCache" /> event handler to the collection of asynchronous <see cref="E:System.Web.HttpApplication.ResolveRequestCache" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.ResolveRequestCache" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.ResolveRequestCache" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -879,8 +1134,11 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.ResolveRequestCache" /> event handler to the collection of asynchronous <see cref="E:System.Web.HttpApplication.ResolveRequestCache" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddOnUpdateRequestCacheAsync">
@@ -894,10 +1152,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <Parameter Name="eh" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="bh">To be added.</param>
-        <param name="eh">To be added.</param>
-        <summary>Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.UpdateRequestCache" /> event.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.UpdateRequestCache" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.UpdateRequestCache" /> event handlers for the current request.</para>
+        </summary>
+        <param name="bh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.BeginEventHandler" /> that starts asynchronous processing of the <see cref="E:System.Web.HttpApplication.UpdateRequestCache" />. </param>
+        <param name="eh">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.EndEventHandler" /> that ends asynchronous processing of the <see cref="E:System.Web.HttpApplication.UpdateRequestCache" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -922,8 +1185,11 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <param name="bh">To be added.</param>
         <param name="eh">To be added.</param>
         <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="E:System.Web.HttpApplication.UpdateRequestCache" /> event to the collection of asynchronous <see cref="E:System.Web.HttpApplication.UpdateRequestCache" /> event handlers for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Application">
@@ -933,9 +1199,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Web.HttpApplicationState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpApplicationState'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current state of an application consists of a key/value dictionary of application-wide objects that you can use to store both .NET Framework objects and scalar values that are related to multiple Web requests from multiple clients.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of an application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -958,8 +1230,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event signals that the configured authentication mechanism has authenticated the current request. Subscribing to the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event ensures that the request will be authenticated before processing the attached module or event handler.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a security module has established the identity of the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -974,8 +1253,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event signals that ASP.NET has authorized the current request. Subscribing to the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event ensures that the request will be authenticated and authorized before processing the attached module or event handler. </para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a security module has verified user authorization.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -990,8 +1276,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.BeginRequest" /> event signals the creation of any given new request. This event is always raised and is always the first event to occur during the processing of a request.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs as the first event in the HTTP pipeline chain of execution when ASP.NET responds to a request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1006,12 +1299,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Stops the execution of the request pipeline.</summary>
         <remarks>This methods stops the execution of the HttpApplication pipeline and completes the request.
 
 <para>
    If this method is invoked at any stage in the pipeline processing (described in more detail in <see cref="T:System.Web.HttpApplication" />) the remaining steps of the pipeline are not executed.  The only step executed is the EndRequest step.
 </para></remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes ASP.NET to bypass all events and filtering in the HTTP pipeline chain of execution and directly execute the <see cref="E:System.Web.HttpApplication.EndRequest" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1025,9 +1321,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Web.HttpContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpContext'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets HTTP-specific information about the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1050,8 +1349,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Notifies the application that it is being disposed.</summary>
-        <remarks>This method will notify all loaded modules that they are being stopped by invoking their <see cref="M:System.Web.IHttpModule.Dispose()" /> method.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpApplication.Request" />, <see cref="P:System.Web.HttpApplication.Response" />, <see cref="P:System.Web.HttpApplication.Session" />, and <see cref="P:System.Web.HttpApplication.Application" /> properties are not available for use when the <see cref="M:System.Web.HttpApplication.Dispose" /> method executes.</para>
+          <para>The <see cref="M:System.Web.HttpApplication.Dispose" /> method calls the <see cref="M:System.Web.IHttpModule.Dispose" /> method on each of the registered <see cref="P:System.Web.Configuration.SystemWebSectionGroup.HttpModules" /> in the application instance and raises the <see cref="E:System.Web.HttpApplication.Disposed" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes the <see cref="T:System.Web.HttpApplication" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1066,8 +1372,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create a <see cref="E:System.Web.HttpApplication.Disposed" /> delegate, you identify the method that handles the event. To associate the event with your event handler, add an instance of the <see cref="E:System.Web.HttpApplication.Disposed" /> delegate to the event. The event handler is called whenever the event occurs, unless you remove the <see cref="E:System.Web.HttpApplication.Disposed" /> delegate.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the application is disposed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1082,8 +1395,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.EndRequest" /> event is always raised when the <see cref="M:System.Web.HttpApplication.CompleteRequest" /> method is called.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs as the last event in the HTTP pipeline chain of execution when ASP.NET responds to a request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1098,8 +1418,18 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exception that raises the <see cref="E:System.Web.HttpApplication.Error" /> event can be accessed by a call to the <see cref="M:System.Web.HttpServerUtility.GetLastError" /> method. If your application generates custom error output, suppress the default error message that is generated by ASP.NET by a call to the <see cref="M:System.Web.HttpServerUtility.ClearError" /> method.</para>
+          <block subset="none" type="note">
+            <para>If your Web application contains XML Web services, you cannot use the <see cref="E:System.Web.HttpApplication.Error" /> event for global exception handling of those services. The HTTP handler for XML Web services consumes any exception that occurs in an XML Web service and converts it to a SOAP fault before the <see cref="E:System.Web.HttpApplication.Error" /> being called. To handle XML Web service exceptions, build a SOAP extension to process Web service exceptions in a custom global exception handler.</para>
+          </block>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an unhandled exception is thrown.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1114,9 +1444,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.ComponentModel.EventHandlerList" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of event handler delegates that process all application events.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1134,11 +1467,22 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <Parameter Name="custom" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'HttpContext'</param>
-        <param name="custom">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can override <see cref="M:System.Web.HttpApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)" /> to add a new method for calculating custom vary-by values that are based on the current request. The implementation has to call the base class for custom values that it does not recognize. For more information, see <format type="text/html"><a href="b6c73735-a3cd-4d19-ba4d-0431881b0db0">How to: Cache Versions of a Page Using Custom Strings</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an application-wide implementation of the <see cref="P:System.Web.UI.PartialCachingAttribute.VaryByCustom" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <paramref name="custom" /> parameter is "browser", the browser's <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Type" />; otherwise, null.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> object that contains information about the current Web request. </param>
+        <param name="custom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom string that specifies which cached response is used to respond to the current request. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1153,8 +1497,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a derived class, you can override the <see cref="M:System.Web.HttpApplication.Init" /> method to add custom one-time initialization code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes custom initialization code after all event handler modules have been added.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1171,8 +1521,16 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.LogRequest" /> event is raised even if an error occurs. You can provide an event handler for the <see cref="E:System.Web.HttpApplication.LogRequest" /> event to provide custom logging for the request.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para> <see cref="E:System.Web.HttpApplication.LogRequest" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs just before ASP.NET performs any logging for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MapRequestHandler">
@@ -1185,8 +1543,16 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.MapRequestHandler" /> event is used by the ASP.NET infrastructure to determine the request handler for the current request. For more information, see <format type="text/html"><a href="d5633f9a-03fb-4ccc-a799-dc67d656fa60">How to: Register HTTP Handlers</a></format>.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para> <see cref="E:System.Web.HttpApplication.MapRequestHandler" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the handler is selected to respond to the request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Modules">
@@ -1196,9 +1562,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Web.HttpModuleCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpModuleCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of modules for the current application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1223,8 +1592,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" /> event is raised after the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event has occurred. Functionality that subscribes to the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event can access any data that is processed by the <see cref="E:System.Web.HttpApplication.PostAcquireRequestState" />.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the request state (for example, session state) that is associated with the current request has been obtained.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostAuthenticateRequest">
@@ -1237,8 +1613,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" /> event is raised after the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event has occurred. Functionality that subscribes to the <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" /> event can access any data that is processed by the <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" />.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a security module has established the identity of the user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostAuthorizeRequest">
@@ -1251,8 +1634,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> event signals that ASP.NET has authorized the current request. Subscribing to the <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> event ensures authentication and authorization of the request before processing the attached module or event handler.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user for the current request has been authorized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostLogRequest">
@@ -1265,8 +1655,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para> <see cref="E:System.Web.HttpApplication.PostLogRequest" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET has completed processing all the event handlers for the <see cref="E:System.Web.HttpApplication.LogRequest" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostMapRequestHandler">
@@ -1279,8 +1676,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET has mapped the current request to the appropriate event handler.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostReleaseRequestState">
@@ -1293,8 +1696,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET has completed executing all request event handlers and the request state data has been stored.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostRequestHandlerExecute">
@@ -1305,8 +1714,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the ASP.NET event handler (for example, a page or an XML Web service) finishes execution.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1323,8 +1738,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET bypasses execution of the current event handler and allows a caching module to serve a request from the cache.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostUpdateRequestCache">
@@ -1337,8 +1758,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" /> event is raised after the <see cref="E:System.Web.HttpApplication.UpdateRequestCache" /> event has occurred. When the <see cref="E:System.Web.HttpApplication.PostUpdateRequestCache" /> is raised, ASP.NET has completed processing code and the content of the cache is finalized.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET finishes updating caching modules and storing responses that are used to serve subsequent requests from the cache.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreRequestHandlerExecute">
@@ -1349,8 +1777,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs just before ASP.NET starts executing an event handler (for example, a page or an XML Web service).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1365,9 +1799,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Event invoked before the contents of the HTTP contents is sent
-</summary>
-        <remarks>This event is triggered before the actual HTTP content is sent. Unlike most other events in the HttpApplication, this event is not available to be executed asynchronously.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.HttpApplication.PreSendRequestContent" /> event may occur multiple times.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs just before ASP.NET sends content to the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1382,8 +1822,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Event invoked before the contents of the HTTP request headers are sent.</summary>
-        <remarks>This event is triggered before the actual HTTP headers are sent.  Unlike most other events in the HttpApplication, this event is not available to be executed asynchronously.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs just before ASP.NET sends HTTP headers to the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1398,8 +1844,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event is raised, the application is finished with the request and ASP.NET is signaled to store the request state.</para>
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after ASP.NET finishes executing all request event handlers. This event causes state modules to save the current state data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1413,9 +1866,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Web.HttpRequest</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpRequest'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the intrinsic request object for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1438,8 +1894,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET finishes an authorization event to let the caching modules serve requests from the cache, bypassing execution of the event handler (for example, a page or an XML Web service).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1453,9 +1915,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Web.HttpResponse</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpResponse'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the intrinsic response object for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1477,9 +1942,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Web.HttpServerUtility</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpServerUtility'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the intrinsic server object for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1501,9 +1969,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Web.SessionState.HttpSessionState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SessionState.HttpSessionState'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the intrinsic session object that provides access to session data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1526,9 +1997,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.ComponentModel.ISite" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a site interface for an <see cref="T:System.ComponentModel.IComponent" /> implementation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1559,12 +2033,22 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <Parameter Name="extraData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="cb">To be added.</param>
-        <param name="extraData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates an asynchronous call to the HTTP event handler.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that contains information about the status of the process.</para>
+          <para />
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> that provides references to intrinsic server objects that are used to service HTTP requests.</param>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> to call when the asynchronous method call is complete. If the <paramref name="cb" /> parameter is null, the delegate is not called.</param>
+        <param name="extraData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any extra data that is required to process the request.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.IHttpAsyncHandler.EndProcessRequest">
@@ -1581,9 +2065,16 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.HttpApplication.System#Web#IHttpAsyncHandler#EndProcessRequest(System.IAsyncResult)" /> method to raise any exceptions that are caught during the asynchronous process.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an asynchronous process End method when the process finishes.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> that contains information about the status of the process. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.IHttpHandler.IsReusable">
@@ -1597,9 +2088,15 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To explicitly set the IsReusable property to true or false, provide code that overrides the IsReusable property accessor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value indicating whether another request can use the <see cref="T:System.Web.IHttpHandler" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.IHttpHandler.ProcessRequest">
@@ -1616,9 +2113,16 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that inherit the <see cref="T:System.Web.IHttpModule" /> and <see cref="T:System.Web.IHttpHandler" /> interfaces are provided as a reference to an <see cref="T:System.Web.HttpContext" /> object for the current HTTP request. The object provides access to the intrinsic Request, Response, and Server objects for the request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables processing of HTTP Web requests by a custom HTTP handler that implements the <see cref="T:System.Web.IHttpHandler" /> interface.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> that provides references to the intrinsic server objects that are used to service HTTP requests.</param>
       </Docs>
     </Member>
     <Member MemberName="UpdateRequestCache">
@@ -1629,8 +2133,14 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when ASP.NET finishes executing an event handler in order to let caching modules store responses that will be used to serve subsequent requests from the cache.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1645,9 +2155,12 @@ Registers asynchronous handlers for the <see cref="E:System.Web.HttpApplication.
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Principal.IPrincipal" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the intrinsic user object for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

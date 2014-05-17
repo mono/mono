@@ -6,13 +6,15 @@ etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
 if INSTALL_4_0
-symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config
+symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config etc/mono/4.0/Browsers/Compat.browser etc/mono/4.5/Browsers/Compat.browser
 endif
 
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 etc/mono/browscap.ini: $(top_srcdir)/data/browscap.ini
-etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/net_2_0/Browsers/Compat.browser
+etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
+etc/mono/4.0/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
+etc/mono/4.5/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
 etc/mono/4.0/machine.config: $(top_srcdir)/data/net_4_0/machine.config
 etc/mono/4.0/web.config: $(top_srcdir)/data/net_4_0/web.config
 etc/mono/4.5/machine.config: $(top_srcdir)/data/net_4_5/machine.config
@@ -23,37 +25,13 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
-if MOONLIGHT
-moon-do-basic: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw
-
-moon-do-basic-clean:
-	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw clean
-endif
-
 if ONLY_MONOTOUCH
 build_profiles = monotouch
 else
-if ONLY_MOONLIGHT
-build_profiles = moonlight_raw
-test_profiles = moonlight_raw
+if ONLY_XAMMAC
+build_profiles = xammac
 else
-
 build_profiles = 
-
-if MOONLIGHT
-build_profiles += moonlight_raw
-
-moon-do-moonlight-raw: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' all-profiles
-
-moon-do-moonlight-raw-clean:
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' clean-profiles
-
-moon-do-build: moon-do-moonlight-raw moon-do-basic
-moon-do-clean: moon-do-moonlight-raw-clean moon-do-basic-clean
-
-endif
 
 if INSTALL_2_0
 build_profiles += net_2_0 net_3_5
@@ -66,7 +44,7 @@ al_profile = net_4_0
 endif
 
 if INSTALL_4_5
-build_profiles += net_4_5
+build_profiles += net_4_5 xbuild_12
 al_profile = net_4_5
 endif
 
@@ -76,6 +54,10 @@ endif
 
 if INSTALL_MONOTOUCH
 build_profiles += monotouch monotouch_runtime
+endif
+
+if INSTALL_XAMMAC
+build_profiles += xammac
 endif
 
 test_profiles = $(build_profiles)
@@ -154,6 +136,8 @@ mcs-compileall: mono-wrapper etc/mono/config
       fi; \
 	  if [ "net_3_5" = "$$profile" ]; then \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
+	  elif [ "xbuild_12" = "$$profile" ]; then \
+		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_4_5$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
 	  else \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
 	  fi; \
@@ -186,7 +170,7 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	d=`cd ../support && pwd`; \
 	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@t
 	if test -z "$(libgdiplus_loc)"; then :; else \
-	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@tt; \
+	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" os="!windows"/>,' $@t > $@tt; \
 	  mv -f $@tt $@t; fi
 	mv -f $@t $@
 

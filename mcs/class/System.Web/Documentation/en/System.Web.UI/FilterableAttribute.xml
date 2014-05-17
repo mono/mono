@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FilterableAttribute" FullName="System.Web.UI.FilterableAttribute">
   <TypeSignature Language="C#" Value="public sealed class FilterableAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.FilterableAttribute" /> attribute is applied to a property to specify whether the property supports device filtering. When a property supports device filtering, you can override the value of a property for a specific device by specifying a device filter. By default, properties are filterable, so a control developer could prevent device filtering on a property by setting the <see cref="T:System.Web.UI.FilterableAttribute" /> attribute to false. For more information, see <format type="text/html"><a href="a7f55dfa-290b-45f8-bf8f-d5a4540bae61">Customizing for Specific Devices</a></format>.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class, see the <see cref="M:System.Web.UI.FilterableAttribute.#ctor(System.Boolean)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether the property to which the attribute is applied supports device filtering. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +35,39 @@
         <Parameter Name="filterable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="filterable">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class. The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.FilterableAttribute.Filterable" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="filterable" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class.</para>
+        </summary>
+        <param name="filterable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the property to which the attribute is applied supports device filtering; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,9 +80,18 @@
         <ReturnType>System.Web.UI.FilterableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.FilterableAttribute.Default" /> field represents a predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object with default property settings. This field is often used when comparing a <see cref="T:System.Web.UI.FilterableAttribute" /> object to the predefined object.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="F:System.Web.UI.FilterableAttribute.Default" /> field is identical to the <see cref="T:System.Web.UI.FilterableAttribute" /> object represented by the <see cref="F:System.Web.UI.FilterableAttribute.Yes" /> field.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object with default property settings. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,11 +107,32 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.FilterableAttribute.Equals(System.Object)" /> method to determine whether the current instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class is equal to the specified object. For the objects to be equal, they must meet the following criteria:</para>
+          <list type="ordered">
+            <item>
+              <para>The object contained in the <paramref name="obj" /> parameter must be a <see cref="T:System.Web.UI.FilterableAttribute" /> object.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Web.UI.FilterableAttribute.Filterable" /> property of both objects must be equal.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This method is used primarily by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class is equal to the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object contained in the <paramref name="obj" /> parameter is equal to the current instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with this instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +145,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.FilterableAttribute.Filterable" /> property to determine whether the property to which the <see cref="T:System.Web.UI.FilterableAttribute" /> attribute is applied supports device filtering. When a property supports device filtering, you can override the value of a property for a specific device by specifying a device filter. For more information, see <format type="text/html"><a href="a7f55dfa-290b-45f8-bf8f-d5a4540bae61">Customizing for Specific Devices</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the property to which the <see cref="T:System.Web.UI.FilterableAttribute" /> attribute is applied supports device filtering.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,10 +168,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -111,10 +191,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.FilterableAttribute.IsDefaultAttribute" /> method is a helper method used by ASP.NET to determine whether the current instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class is equal to the <see cref="T:System.Web.UI.FilterableAttribute" /> object contained in the <see cref="F:System.Web.UI.FilterableAttribute.Default" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current instance of the <see cref="T:System.Web.UI.FilterableAttribute" /> class is equal to the <see cref="F:System.Web.UI.FilterableAttribute.Default" /> attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance of <see cref="T:System.Web.UI.FilterableAttribute" /> is equal to <see cref="F:System.Web.UI.FilterableAttribute.Default" />; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -131,10 +220,22 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.FilterableAttribute.IsObjectFilterable(System.Object)" /> method to determine whether the specified <see cref="T:System.Object" /> supports device filtering.</para>
+          <block subset="none" type="note">
+            <para>An object supports device filtering if its data type supports device filtering. For more information, see the <see cref="M:System.Web.UI.FilterableAttribute.IsTypeFilterable(System.Type)" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> supports device filtering.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Object" /> contained in the <paramref name="instance" /> parameter supports device filtering; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,10 +252,19 @@
       </Parameters>
       <Docs>
         <param name="propDesc">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.FilterableAttribute.IsPropertyFilterable(System.ComponentModel.PropertyDescriptor)" /> method to determine whether a property supports device filtering. To use this method, you must pass in a <see cref="T:System.ComponentModel.PropertyDescriptor" /> object that contains the properties of the property to test.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a property supports device filtering.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property represented by the <see cref="T:System.ComponentModel.PropertyDescriptor" /> object contained in the <paramref name="propertyDescriptor" /> parameter supports device filtering; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,11 +280,21 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.FilterableAttribute.IsTypeFilterable(System.Type)" /> method to determine whether the specified type supports device filtering. A type supports device filtering if it has a <see cref="T:System.Web.UI.FilterableAttribute" /> attribute applied to it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified data type supports device filtering.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data type contained in the <paramref name="type" /> parameter supports device filtering; otherwise, false.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the data type to test.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -187,9 +307,15 @@
         <ReturnType>System.Web.UI.FilterableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.FilterableAttribute.No" /> field represents a predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object that indicates that a property does not support device filtering. This field is often used when comparing a <see cref="T:System.Web.UI.FilterableAttribute" /> object to the predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object that indicates that a property does not support device filtering. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,9 +328,18 @@
         <ReturnType>System.Web.UI.FilterableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.FilterableAttribute.Yes" /> field represents a predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object that indicates that a property supports device filtering. This field is often used when comparing a <see cref="T:System.Web.UI.FilterableAttribute" /> object to the predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object.</para>
+          <block subset="none" type="note">
+            <para>This is the default <see cref="T:System.Web.UI.FilterableAttribute" /> object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a predefined <see cref="T:System.Web.UI.FilterableAttribute" /> object that indicates that a property supports device filtering. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

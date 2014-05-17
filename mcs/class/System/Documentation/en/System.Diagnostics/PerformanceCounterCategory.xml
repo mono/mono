@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PerformanceCounterCategory" FullName="System.Diagnostics.PerformanceCounterCategory">
   <TypeSignature Language="C#" Value="public sealed class PerformanceCounterCategory" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit PerformanceCounterCategory extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,112 +16,180 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>Creating or deleting a performance counter requires synchronization of the underlying code by using a named mutex. If a highly privileged application locks the named mutex, attempts to create or delete a performance counter causes the application to stop responding until the lock is released. To help avoid this problem, never grant <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> permission to untrusted code. In addition, <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> permission potentially allows other permissions to be bypassed and should only be granted to highly trusted code. </para>
+      </block>
+      <para>The <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> instance's <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property is displayed in the Performance Object field of the Performance Viewer application's Add Counter dialog box.</para>
+      <para>The <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> class provides several methods for interacting with counters and categories on the computer. The <see cref="Overload:System.Diagnostics.PerformanceCounterCategory.Create" /> methods enable you to define custom categories. The <see cref="M:System.Diagnostics.PerformanceCounterCategory.Delete(System.String)" /> method provides a way to remove categories from the computer. The <see cref="M:System.Diagnostics.PerformanceCounterCategory.GetCategories" /> method enables you to view the list of categories, while <see cref="M:System.Diagnostics.PerformanceCounterCategory.ReadCategory" /> retrieves all the counter and instance data associated with a single category.</para>
+      <para>A performance counter publishes performance data about an application. Categories include physical components (such as processors, disks, and memory) and system objects (such as processes and threads). System counters that are related to the same performance object are grouped into a category that indicates their common focus. When you create an instance of the <see cref="T:System.Diagnostics.PerformanceCounter" /> class, you first indicate the category with which the component will interact, and then you choose a counter from that category.</para>
+      <para>For example, one Windows counter category is the Memory category. System counters within this category track memory data such as the number of bytes available and the number of bytes cached. If you wanted to work with the bytes cached in your application, you would create an instance of the <see cref="T:System.Diagnostics.PerformanceCounter" /> component, connect it to the Memory category, and then pick the appropriate counter (in this case, Cached Bytes) from that category.</para>
+      <para>Although your system makes many more counter categories available, the categories that you will probably interact with most frequently are the Cache, Memory, Objects, PhysicalDisk, Process, Processor, Server, System, and Thread categories.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="M:System.Diagnostics.PerformanceCounter.RemoveInstance" /> method in the <see cref="T:System.Diagnostics.PerformanceCounter" /> class will release the counter and, if the reuse option is selected for that category, the instance of the counter will be reused. This could cause a race condition if another process or even another part of the code is trying to write to the counter instance.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>It is strongly recommended that new performance counter categories be created during the installation of the application, not during the execution of the application. This allows time for the operating system to refresh its list of registered performance counter categories. If the list has not been refreshed, the attempt to use the category will fail.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>Performance counter categories installed with the dnprdnlong use separate shared memory, with each performance counter category having its own memory. You can specify the size of separate shared memory by creating a DWORD named FileMappingSize in the registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\&lt;category name&gt;\Performance. The FileMappingSize value is set to the shared memory size of the category. The default size is 131072 decimal. If the FileMappingSize value is not present, the fileMappingSize attribute value for the performanceCounters element specified in the Machine.config file is used, causing additional overhead for configuration file processing. You can realize a performance improvement for application startup by setting the file mapping size in the registry. For more information about the file mapping size, see <format type="text/html"><a href="a71f605b-c7d9-4501-a5c3-abcbb964a43f">&lt;performanceCounters&gt; Element</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a performance object, which defines a category of performance counters.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PerformanceCounterCategory ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property must be set before associating this <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> instance with a performance object on the server. Otherwise, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> class, leaves the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property empty, and sets the <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> property to the local computer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PerformanceCounterCategory (string categoryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string categoryName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> class, sets the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property to the specified value, and sets the <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> property to the local computer.</para>
+        </summary>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category, or performance object, with which to associate this <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> instance. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PerformanceCounterCategory (string categoryName, string machineName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string categoryName, string machineName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="categoryName" Type="System.String" />
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <param name="machineName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> class and sets the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> and <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> properties to the specified values.</para>
+        </summary>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category, or performance object, with which to associate this <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> instance. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The computer on which the performance counter category and its associated counters exist. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CategoryHelp">
       <MemberSignature Language="C#" Value="public string CategoryHelp { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CategoryHelp" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the category's help text.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CategoryName">
+      <MemberSignature Language="C#" Value="public string CategoryName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CategoryName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CategoryName">
-      <MemberSignature Language="C#" Value="public string CategoryName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the performance object that defines this category.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CategoryType">
       <MemberSignature Language="C#" Value="public System.Diagnostics.PerformanceCounterCategoryType CategoryType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.PerformanceCounterCategoryType CategoryType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategoryType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryType" /> property indicates whether the <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> object can have multiple instances. The possible values are <see cref="F:System.Diagnostics.PerformanceCounterCategoryType.MultiInstance" />, <see cref="F:System.Diagnostics.PerformanceCounterCategoryType.SingleInstance" />, or <see cref="F:System.Diagnostics.PerformanceCounterCategoryType.Unknown" />. </para>
+          <para>There are two types of performance counter categories: single-instance and multi-instance. By default, a category is single-instance when it is created and becomes multi-instance when another instance is added. Categories are created when an application is set up, and instances are added at run time. In the .NET Framework versions 1.0 and 1.1, it is not necessary to know if a performance counter category is multi-instance or single-instance. In the dnprdnext, the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" /> enumeration is used to indicate whether a performance counter can have multiple instances.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the performance counter category type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CounterExists">
       <MemberSignature Language="C#" Value="public bool CounterExists (string counterName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CounterExists(string counterName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -126,19 +197,37 @@
         <Parameter Name="counterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="counterName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must set the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property before calling this method. Otherwise, an exception is thrown.</para>
+          <para>If you have not set the <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> property, this method uses the local computer (".").</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified counter is registered to this category, which is indicated by the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> and <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the counter is registered to the category that is specified by the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> and <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> properties; otherwise, false.</para>
+        </returns>
+        <param name="counterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter to look for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CounterExists">
       <MemberSignature Language="C#" Value="public static bool CounterExists (string counterName, string categoryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool CounterExists(string counterName, string categoryName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -147,20 +236,37 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="counterName">To be added: an object of type 'string'</param>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified counter is registered to the specified category on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the counter is registered to the specified category on the local computer; otherwise, false.</para>
+        </returns>
+        <param name="counterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter to look for. </param>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category, or performance object, with which the specified performance counter is associated. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CounterExists">
       <MemberSignature Language="C#" Value="public static bool CounterExists (string counterName, string categoryName, string machineName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool CounterExists(string counterName, string categoryName, string machineName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -170,21 +276,44 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="counterName">To be added: an object of type 'string'</param>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <param name="machineName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified counter is registered to the specified category on a remote computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the counter is registered to the specified category on the specified computer; otherwise, false.</para>
+        </returns>
+        <param name="counterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter to look for. </param>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category, or performance object, with which the specified performance counter is associated. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the computer on which the performance counter category and its associated counters exist. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.PerformanceCounterCategory Create (string categoryName, string categoryHelp, System.Diagnostics.CounterCreationDataCollection counterData);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.PerformanceCounterCategory Create(string categoryName, string categoryHelp, class System.Diagnostics.CounterCreationDataCollection counterData) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use another overload that uses PerformanceCounterCategoryType instead")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategory</ReturnType>
       </ReturnValue>
@@ -194,28 +323,37 @@
         <Parameter Name="counterData" Type="System.Diagnostics.CounterCreationDataCollection" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <param name="categoryHelp">To be added: an object of type 'string'</param>
-        <param name="counterData">To be added: an object of type 'CounterCreationDataCollection'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PerformanceCounterCategory'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the custom performance counter category containing the specified counters on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new custom category, or performance object.</para>
+        </returns>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system. </param>
+        <param name="categoryHelp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the custom category. </param>
+        <param name="counterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.CounterCreationDataCollection" /> that specifies the counters to create as part of the new category. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use another overload that uses PerformanceCounterCategoryType instead")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.PerformanceCounterCategory Create (string categoryName, string categoryHelp, System.Diagnostics.PerformanceCounterCategoryType categoryType, System.Diagnostics.CounterCreationDataCollection counterData);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.PerformanceCounterCategory Create(string categoryName, string categoryHelp, valuetype System.Diagnostics.PerformanceCounterCategoryType categoryType, class System.Diagnostics.CounterCreationDataCollection counterData) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategory</ReturnType>
@@ -227,18 +365,51 @@
         <Parameter Name="counterData" Type="System.Diagnostics.CounterCreationDataCollection" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added.</param>
-        <param name="categoryHelp">To be added.</param>
-        <param name="categoryType">To be added.</param>
-        <param name="counterData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="categoryType" /> parameter specifies whether the performance counter category is single-instance or multi-instance. By default, a category is single-instance when it is created and becomes multi-instance when another instance is added. Categories are created when an application is set up, and instances are added at run time. In the  .NET Framework versions 1.0 and 1.1, it is not necessary to know if a performance counter category is multi-instance or single-instance. In the dnprdnext, the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" /> enumeration is used to indicate whether a performance counter can have multiple instances.</para>
+          <para>Performance counter categories installed with the dnprdnlong use separate shared memory, with each performance counter category having its own memory.  You can specify the size of separate shared memory by creating a DWORD named FileMappingSize in the registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\&lt;category name&gt;\Performance. The FileMappingSize value is set to the shared memory size of the category. The default size is 131072 decimal. If the FileMappingSize value is not present, the fileMappingSize attribute value for the performanceCounters element specified in the Machine.config file is used, causing additional overhead for configuration file processing. You can realize a performance improvement for application startup by setting the file mapping size in the registry.</para>
+          <block subset="none" type="note">
+            <para>It is strongly recommended that new performance counter categories be created during the installation of the application, not during the execution of the application. This allows time for the operating system to refresh its list of registered performance counter categories. If the list has not been refreshed, the attempt to use the category will fail.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the custom performance counter category containing the specified counters on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new custom category, or performance object.</para>
+        </returns>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system.</param>
+        <param name="categoryHelp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the custom category.</param>
+        <param name="categoryType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" />  values. </param>
+        <param name="counterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.CounterCreationDataCollection" /> that specifies the counters to create as part of the new category.</param>
       </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.PerformanceCounterCategory Create (string categoryName, string categoryHelp, string counterName, string counterHelp);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.PerformanceCounterCategory Create(string categoryName, string categoryHelp, string counterName, string counterHelp) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use another overload that uses PerformanceCounterCategoryType instead")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategory</ReturnType>
       </ReturnValue>
@@ -249,29 +420,39 @@
         <Parameter Name="counterHelp" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <param name="categoryHelp">To be added: an object of type 'string'</param>
-        <param name="counterName">To be added: an object of type 'string'</param>
-        <param name="counterHelp">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PerformanceCounterCategory'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a custom performance counter category containing a single counter of type NumberOfItems32 on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new system category, or performance object.</para>
+        </returns>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system. </param>
+        <param name="categoryHelp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the custom category. </param>
+        <param name="counterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a new counter, of type NumberOfItems32, to create as part of the new category. </param>
+        <param name="counterHelp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the counter that is associated with the new custom category. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use another overload that uses PerformanceCounterCategoryType instead")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.PerformanceCounterCategory Create (string categoryName, string categoryHelp, System.Diagnostics.PerformanceCounterCategoryType categoryType, string counterName, string counterHelp);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.PerformanceCounterCategory Create(string categoryName, string categoryHelp, valuetype System.Diagnostics.PerformanceCounterCategoryType categoryType, string counterName, string counterHelp) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategory</ReturnType>
@@ -284,19 +465,48 @@
         <Parameter Name="counterHelp" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added.</param>
-        <param name="categoryHelp">To be added.</param>
-        <param name="categoryType">To be added.</param>
-        <param name="counterName">To be added.</param>
-        <param name="counterHelp">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="categoryType" /> parameter specifies whether the performance counter category is single-instance or multi-instance. By default, a category is single-instance when it is created and becomes multi-instance when another instance is added. Categories are created when an application is set up, and instances are added at run time. In the .NET Framework versions 1.0 and 1.1, it is not necessary to know if a performance counter category is multi-instance or single-instance. In the dnprdnext, the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" /> enumeration is used to indicate whether a performance counter can have multiple instances.</para>
+          <para>Performance counter categories installed with the dnprdnlong use separate shared memory, with each performance counter category having its own memory. You can specify the size of separate shared memory by creating a DWORD named FileMappingSize in the registry key HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\&lt;category name&gt;\Performance. The FileMappingSize value is set to the shared memory size of the category. The default size is 131072 decimal. If the FileMappingSize value is not present, the fileMappingSize attribute value for the performanceCounters element specified in the Machine.config file is used, causing additional overhead for configuration file processing. You can realize a performance improvement for application startup by setting the file mapping size in the registry.</para>
+          <block subset="none" type="note">
+            <para>It is strongly recommended that new performance counter categories be created during the installation of the application, not during the execution of the application. This allows time for the operating system to refresh its list of registered performance counter categories. If the list has not been refreshed, the attempt to use the category will fail.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the custom performance counter category containing a single counter of type <see cref="F:System.Diagnostics.PerformanceCounterType.NumberOfItems32" /> on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new system category, or performance object.</para>
+        </returns>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system.</param>
+        <param name="categoryHelp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the custom category.</param>
+        <param name="categoryType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" />  values specifying whether the category is <see cref="F:System.Diagnostics.PerformanceCounterCategoryType.MultiInstance" />, <see cref="F:System.Diagnostics.PerformanceCounterCategoryType.SingleInstance" />, or <see cref="F:System.Diagnostics.PerformanceCounterCategoryType.Unknown" />.</param>
+        <param name="counterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a new counter to create as part of the new category.</param>
+        <param name="counterHelp">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description of the counter that is associated with the new custom category.</param>
       </Docs>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="public static void Delete (string categoryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Delete(string categoryName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -304,18 +514,32 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can delete only custom performance counter categories from the system. You cannot delete a counter from a category. To do so, delete the category and recreate the category with the counters you want to retain. To avoid an exception, confirm that the category exists before you attempt to delete it.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the category and its associated counters from the local computer.</para>
+        </summary>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to delete. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="C#" Value="public static bool Exists (string categoryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists(string categoryName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -323,19 +547,36 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use of the <see cref="M:System.Diagnostics.PerformanceCounterCategory.Exists(System.String)" /> method can result in a noticeable performance penalty while all performance counters on the machine are checked for availability. If you are only writing to a performance counter, you can avoid the global search for performance counters by creating the performance counter when the application is installed and assuming the category exists when accessing the counter. There is no way to avoid the performance counter search when reading from performance counters.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the category is registered on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category is registered; otherwise, false.</para>
+        </returns>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category to look for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="C#" Value="public static bool Exists (string categoryName, string machineName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists(string categoryName, string machineName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -344,37 +585,70 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <param name="machineName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use of the <see cref="M:System.Diagnostics.PerformanceCounterCategory.Exists(System.String,System.String)" /> method can result in a noticeable performance penalty while all performance counters on the machine are checked for availability. If you are only writing to a performance counter, you can avoid the global search for performance counters by creating the performance counter when the application is installed and assuming the category exists when accessing the counter. There is no way to avoid the performance counter search when reading from performance counters.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the category is registered on the specified computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category is registered; otherwise, false.</para>
+        </returns>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category to look for. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the computer to examine for the category. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCategories">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.PerformanceCounterCategory[] GetCategories ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.PerformanceCounterCategory[] GetCategories() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategory[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PerformanceCounterCategory []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a list of the performance counter categories that are registered on the local computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> objects indicating the categories that are registered on the local computer.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCategories">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.PerformanceCounterCategory[] GetCategories (string machineName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.PerformanceCounterCategory[] GetCategories(string machineName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterCategory[]</ReturnType>
       </ReturnValue>
@@ -382,36 +656,69 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="machineName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PerformanceCounterCategory []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve the categories on the local computer, use another overload or pass "." as the <paramref name="machineName" /> parameter.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a list of the performance counter categories that are registered on the specified computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> objects indicating the categories that are registered on the specified computer.</para>
+        </returns>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The computer to look on. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCounters">
       <MemberSignature Language="C#" Value="public System.Diagnostics.PerformanceCounter[] GetCounters ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Diagnostics.PerformanceCounter[] GetCounters() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounter[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PerformanceCounter []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about performance object instances, see the <see cref="T:System.Diagnostics.PerformanceCounter" /> class overview.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a list of the counters in a performance counter category that contains exactly one instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounter" /> objects indicating the counters that are associated with this single-instance performance counter category.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCounters">
       <MemberSignature Language="C#" Value="public System.Diagnostics.PerformanceCounter[] GetCounters (string instanceName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Diagnostics.PerformanceCounter[] GetCounters(string instanceName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounter[]</ReturnType>
       </ReturnValue>
@@ -419,36 +726,69 @@
         <Parameter Name="instanceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="instanceName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PerformanceCounter []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To represent a single-instance category, pass an empty string ("") for the <paramref name="instanceName" /> parameter.</para>
+          <para>For more information about performance object instances, see the <see cref="T:System.Diagnostics.PerformanceCounter" /> class overview.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a list of the counters in a performance counter category that contains one or more instances.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounter" /> objects indicating the counters that are associated with the specified object instance of this performance counter category.</para>
+        </returns>
+        <param name="instanceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance for which to retrieve the list of associated counters. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetInstanceNames">
       <MemberSignature Language="C#" Value="public string[] GetInstanceNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetInstanceNames() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the list of performance object instances that are associated with this category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings representing the performance object instance names that are associated with this category or, if the category contains only one performance object instance, a single-entry array that contains an empty string ("").</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InstanceExists">
       <MemberSignature Language="C#" Value="public bool InstanceExists (string instanceName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool InstanceExists(string instanceName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -456,19 +796,36 @@
         <Parameter Name="instanceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="instanceName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload of <see cref="M:System.Diagnostics.PerformanceCounterCategory.InstanceExists(System.String)" /> is not static. It requires you to create a <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> object and to set the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified performance object instance exists in the category that is identified by this <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> object's <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category contains the specified performance object instance; otherwise, false.</para>
+        </returns>
+        <param name="instanceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance in this performance counter category to search for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InstanceExists">
       <MemberSignature Language="C#" Value="public static bool InstanceExists (string instanceName, string categoryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool InstanceExists(string instanceName, string categoryName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -477,20 +834,38 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="instanceName">To be added: an object of type 'string'</param>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is not possible to determine whether a performance object instance exists on a computer without specifying a specific category to look in.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a specified category on the local computer contains the specified performance object instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category contains the specified performance object instance; otherwise, false.</para>
+        </returns>
+        <param name="instanceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance to search for. </param>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The performance counter category to search. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InstanceExists">
       <MemberSignature Language="C#" Value="public static bool InstanceExists (string instanceName, string categoryName, string machineName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool InstanceExists(string instanceName, string categoryName, string machineName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -500,52 +875,93 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="instanceName">To be added: an object of type 'string'</param>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <param name="machineName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is not possible to determine whether a performance object instance exists on a computer without specifying a specific category to look in.</para>
+          <para>You can use "." to specify the local computer.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a specified category on a specified computer contains the specified performance object instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category contains the specified performance object instance; otherwise, false.</para>
+        </returns>
+        <param name="instanceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance to search for. </param>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The performance counter category to search. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the computer on which to look for the category instance pair. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MachineName">
+      <MemberSignature Language="C#" Value="public string MachineName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MachineName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MachineName">
-      <MemberSignature Language="C#" Value="public string MachineName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the computer on which this category exists.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadCategory">
       <MemberSignature Language="C#" Value="public System.Diagnostics.InstanceDataCollectionCollection ReadCategory ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Diagnostics.InstanceDataCollectionCollection ReadCategory() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Diagnostics.InstanceDataCollectionCollection</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'InstanceDataCollectionCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must set the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property before you call <see cref="M:System.Diagnostics.PerformanceCounterCategory.ReadCategory" />.</para>
+          <para>Reading the entire category at once can be as efficient as reading a single counter because of the way that the system provides the data.</para>
+          <block subset="none" type="note">
+            <para>To read performance counters in Windows Vista and later, Windows XP Professional x64 Edition, or Windows Server 2003, you must either be a member of the Performance Monitor Users group or have administrative privileges. </para>
+            <para>To avoid having to elevate your privileges to access performance counters in Windows Vista and later, add yourself to the Performance Monitor Users group.</para>
+            <para>In Windows Vista and later, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. To execute the code that accesses performance counters, you must first elevate your privileges from standard user to administrator. You can do this when you start an application by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads all the counter and performance object instance data that is associated with this performance counter category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Diagnostics.InstanceDataCollectionCollection" /> that contains the counter and performance object instance data for the category.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

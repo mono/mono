@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessorArchitecture" FullName="System.Reflection.ProcessorArchitecture">
   <TypeSignature Language="C#" Value="public enum ProcessorArchitecture" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ProcessorArchitecture extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,85 +16,128 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Not all combinations of <see cref="T:System.Reflection.PortableExecutableKinds" /> and <see cref="T:System.Reflection.ImageFileMachine" /> describe valid PE file types. <see cref="T:System.Reflection.ProcessorArchitecture" /> is the set of combinations of <see cref="T:System.Reflection.PortableExecutableKinds" /> and <see cref="T:System.Reflection.ImageFileMachine" /> that describe valid PE file types for managed code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the processor and bits-per-word of the platform targeted by an executable.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Amd64">
       <MemberSignature Language="C#" Value="Amd64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ProcessorArchitecture Amd64 = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit AMD processor only.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Arm">
+      <MemberSignature Language="C#" Value="Arm" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ProcessorArchitecture Arm = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ARM processor.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IA64">
       <MemberSignature Language="C#" Value="IA64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ProcessorArchitecture IA64 = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit Intel processor only.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MSIL">
       <MemberSignature Language="C#" Value="MSIL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ProcessorArchitecture MSIL = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Neutral with respect to processor and bits-per-word.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ProcessorArchitecture None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unknown or unspecified combination of processor and bits-per-word.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="X86">
       <MemberSignature Language="C#" Value="X86" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ProcessorArchitecture X86 = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ProcessorArchitecture</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit Intel processor, either native or in the Windows on Windows environment on a 64-bit platform (WOW64).</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

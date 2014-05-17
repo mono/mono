@@ -62,11 +62,11 @@ seq_point: len:38 clob:c
 throw: src1:i len:24
 rethrow: src1:i len:20
 start_handler: len:20
-endfinally: len:20
+endfinally: len:32
 call_handler: len:16 clob:c
 endfilter: src1:i len:16
 
-ckfinite: dest:f src1:f len:64
+ckfinite: dest:f src1:f len:112
 ceq: dest:i len:12
 cgt: dest:i len:12
 cgt.un: dest:i len:12
@@ -94,6 +94,7 @@ lcall_membase: dest:l src1:b len:16 clob:c
 vcall: len:20 clob:c
 vcall_reg: src1:i len:8 clob:c
 vcall_membase: src1:b len:16 clob:c
+tailcall: len:160 clob:c
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -108,7 +109,7 @@ storei4_membase_imm: dest:b len:20
 storei4_membase_reg: dest:b src1:i len:20
 storei8_membase_imm: dest:b 
 storei8_membase_reg: dest:b src1:i 
-storer4_membase_reg: dest:b src1:f len:12
+storer4_membase_reg: dest:b src1:f len:60
 storer8_membase_reg: dest:b src1:f len:24
 store_memindex: dest:b src1:i src2:i len:4
 storei1_memindex: dest:b src1:i src2:i len:4
@@ -122,7 +123,7 @@ loadu2_membase: dest:i src1:b len:4
 loadi4_membase: dest:i src1:b len:4
 loadu4_membase: dest:i src1:b len:4
 loadi8_membase: dest:i src1:b
-loadr4_membase: dest:f src1:b len:8
+loadr4_membase: dest:f src1:b len:56
 loadr8_membase: dest:f src1:b len:24
 load_memindex: dest:i src1:b src2:i len:4
 loadi1_memindex: dest:i src1:b src2:i len:4
@@ -176,24 +177,28 @@ float_rem: dest:f src1:f src2:f len:16
 float_rem_un: dest:f src1:f src2:f len:16
 float_neg: dest:f src1:f len:4
 float_not: dest:f src1:f len:4
-float_conv_to_i1: dest:i src1:f len:40
-float_conv_to_i2: dest:i src1:f len:40
-float_conv_to_i4: dest:i src1:f len:40
-float_conv_to_i8: dest:l src1:f len:40
+float_conv_to_i1: dest:i src1:f len:88
+float_conv_to_i2: dest:i src1:f len:88
+float_conv_to_i4: dest:i src1:f len:88
+float_conv_to_i8: dest:l src1:f len:88
 float_conv_to_r4: dest:f src1:f len:8
-float_conv_to_u4: dest:i src1:f len:40
-float_conv_to_u8: dest:l src1:f len:40
-float_conv_to_u2: dest:i src1:f len:40
-float_conv_to_u1: dest:i src1:f len:40
+float_conv_to_u4: dest:i src1:f len:88
+float_conv_to_u8: dest:l src1:f len:88
+float_conv_to_u2: dest:i src1:f len:88
+float_conv_to_u1: dest:i src1:f len:88
 float_conv_to_i: dest:i src1:f len:40
 float_ceq: dest:i src1:f src2:f len:16
 float_cgt: dest:i src1:f src2:f len:16
 float_cgt_un: dest:i src1:f src2:f len:20
 float_clt: dest:i src1:f src2:f len:16
 float_clt_un: dest:i src1:f src2:f len:20
+float_cneq: dest:y src1:f src2:f len:20
+float_cge: dest:y src1:f src2:f len:20
+float_cle: dest:y src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
 setfret: src1:f len:12
 aot_const: dest:i len:16
+objc_get_selector: dest:i len:32
 sqrt: dest:f src1:f len:4
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4
@@ -227,8 +232,8 @@ int_not: dest:i src1:i len:4
 int_conv_to_i1: dest:i src1:i len:8
 int_conv_to_i2: dest:i src1:i len:8
 int_conv_to_i4: dest:i src1:i len:4
-int_conv_to_r4: dest:f src1:i len:36
-int_conv_to_r8: dest:f src1:i len:36
+int_conv_to_r4: dest:f src1:i len:84
+int_conv_to_r8: dest:f src1:i len:84
 int_conv_to_u4: dest:i src1:i
 int_conv_to_r_un: dest:f src1:i len:56
 int_conv_to_u2: dest:i src1:i len:8
@@ -260,6 +265,8 @@ arm_rsc_imm: dest:i src1:i len:4
 # Linear IR opcodes
 dummy_use: src1:i len:0
 dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_r8const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -289,6 +296,12 @@ int_cgt: dest:i len:12
 int_cgt_un: dest:i len:12
 int_clt: dest:i len:12
 int_clt_un: dest:i len:12
+
+int_cneq: dest:i len:12
+int_cge: dest:i len:12
+int_cle: dest:i len:12
+int_cge_un: dest:i len:12
+int_cle_un: dest:i len:12
 
 cond_exc_ieq: len:16
 cond_exc_ine_un: len:16
@@ -333,3 +346,7 @@ gc_liveness_def: len:0
 gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
+
+atomic_exchange_i4: dest:i src1:i src2:i len:64
+atomic_cas_i4: dest:i src1:i src2:i src3:i len:64
+atomic_add_new_i4: dest:i src1:i src2:i len:64

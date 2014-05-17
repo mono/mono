@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DialogResult" FullName="System.Windows.Forms.DialogResult">
   <TypeSignature Language="C#" Value="public enum DialogResult" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Windows.Forms.Button.DialogResult" /> property and the <see cref="M:System.Windows.Forms.Form.ShowDialog" /> method use this enumeration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies identifiers to indicate the return value of a dialog box.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abort">
@@ -25,7 +32,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog box return value is Abort (usually sent from a button labeled Abort).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +49,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog box return value is Cancel (usually sent from a button labeled Cancel).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +66,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog box return value is Ignore (usually sent from a button labeled Ignore).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +83,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog box return value is No (usually sent from a button labeled No).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,7 +100,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Nothing is returned from the dialog box. This means that the modal dialog continues running.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,7 +117,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog box return value is OK (usually sent from a button labeled OK).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,7 +134,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog box return value is Retry (usually sent from a button labeled Retry).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,7 +151,10 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog box return value is Yes (usually sent from a button labeled Yes).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

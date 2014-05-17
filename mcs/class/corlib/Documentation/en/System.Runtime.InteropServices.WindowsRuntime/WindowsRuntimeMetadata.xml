@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WindowsRuntimeMetadata" FullName="System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMetadata">
+  <TypeSignature Language="C#" Value="public static class WindowsRuntimeMetadata" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit WindowsRuntimeMetadata extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Unlike the .NET Framework, assembly identity isn’t important for wrt types. In the wrt, Windows Metadata files (.WinMD files) contain only metadata, not code. Types can move from one Windows Metadata file to another in a service pack release, so it’s important to be able to locate the Windows Metadata files that are associated with a namespace. </para>
+      <block subset="none" type="note">
+        <para>Sub-namespaces don’t imply containment. That is, namespace A.B isn't contained in namespace A. </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an event for resolving reflection-only type requests for types that are provided by Windows Metadata files, and methods for performing the resolution. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="DesignerNamespaceResolve">
+      <MemberSignature Language="C#" Value="public static event EventHandler&lt;System.Runtime.InteropServices.WindowsRuntime.DesignerNamespaceResolveEventArgs&gt; DesignerNamespaceResolve;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Runtime.InteropServices.WindowsRuntime.DesignerNamespaceResolveEventArgs&gt; DesignerNamespaceResolve" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.Runtime.InteropServices.WindowsRuntime.DesignerNamespaceResolveEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the resolution of a Windows Metadata file fails in the design environment. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReflectionOnlyNamespaceResolve">
+      <MemberSignature Language="C#" Value="public static event EventHandler&lt;System.Runtime.InteropServices.WindowsRuntime.NamespaceResolveEventArgs&gt; ReflectionOnlyNamespaceResolve;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Runtime.InteropServices.WindowsRuntime.NamespaceResolveEventArgs&gt; ReflectionOnlyNamespaceResolve" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.Runtime.InteropServices.WindowsRuntime.NamespaceResolveEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this event is raised and handled, it is not raised again for the lifetime of the application domain. The list of files that defines the namespace cannot be changed. This event is analogous to the <see cref="E:System.AppDomain.ReflectionOnlyAssemblyResolve" /> event for managed assemblies. </para>
+          <para>See the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.NamespaceResolveEventArgs" /> class.</para>
+          <block subset="none" type="note">
+            <para>The event handler for this event should not throw exceptions. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the resolution of a Windows Metadata file fails in the reflection-only context. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ResolveNamespace">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;string&gt; ResolveNamespace (string namespaceName, System.Collections.Generic.IEnumerable&lt;string&gt; packageGraphFilePaths);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;string&gt; ResolveNamespace(string namespaceName, class System.Collections.Generic.IEnumerable`1&lt;string&gt; packageGraphFilePaths) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespaceName" Type="System.String" />
+        <Parameter Name="packageGraphFilePaths" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method overload is equivalent to calling the <see cref="M:System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMetadata.ResolveNamespace(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})" /> method overload and specifying null for the <paramref name="windowsSdkFilePath" /> parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates the Windows Metadata files for the specified namespace, given the specified locations to search. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable list of strings that represent the Windows Metadata files that define <paramref name="namespaceName" />. </para>
+        </returns>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to resolve. </param>
+        <param name="packageGraphFilePaths">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application paths to search for Windows Metadata files, or null to search only for Windows Metadata files from the operating system installation. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="ResolveNamespace">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;string&gt; ResolveNamespace (string namespaceName, string windowsSdkFilePath, System.Collections.Generic.IEnumerable&lt;string&gt; packageGraphFilePaths);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;string&gt; ResolveNamespace(string namespaceName, string windowsSdkFilePath, class System.Collections.Generic.IEnumerable`1&lt;string&gt; packageGraphFilePaths) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespaceName" Type="System.String" />
+        <Parameter Name="windowsSdkFilePath" Type="System.String" />
+        <Parameter Name="packageGraphFilePaths" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path you specify for <paramref name="windowsSdkFilePath" /> is searched only for namespaces that begin with Windows. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates the Windows Metadata files for the specified namespace, given the specified locations to search. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable list of strings that represent the Windows Metadata files that define <paramref name="namespaceName" />. </para>
+        </returns>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to resolve. </param>
+        <param name="windowsSdkFilePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to search for Windows Metadata files provided by the SDK, or null to search for Windows Metadata files from the operating system installation. </param>
+        <param name="packageGraphFilePaths">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application paths to search for Windows Metadata files. </param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

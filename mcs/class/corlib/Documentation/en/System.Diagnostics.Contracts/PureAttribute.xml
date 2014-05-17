@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PureAttribute" FullName="System.Diagnostics.Contracts.PureAttribute">
   <TypeSignature Language="C#" Value="public sealed class PureAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit PureAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -17,25 +19,30 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Marks a method or type to indicate that it has no side effects.</summary>
-    <remarks><para>
-Only methods marked Pure may be used within code contract definitions. This is to ensure that checking a contract causes no side-effects.
-</para>
-<para>
-Methods within the System.Diagnostics.Contracts namespace are always considered to be pure. Some delegates are always considered to be pure, such as <see cref="T:System.Predicate&lt;T&gt;" /> and <see cref="T:System.Comparison&lt;T&gt;" />.
-</para></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Methods and types that are marked with this attribute can be used in calls to <see cref="T:System.Diagnostics.Contracts.Contract" /> methods. Pure methods do not make any visible state changes. This attribute is not enforced by the current analysis tools; you should use this attribute only if you are sure that the methods are pure. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a type or method is pure, that is, it does not make any visible state changes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PureAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>Construct a PureAttribute.</summary>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.PureAttribute" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

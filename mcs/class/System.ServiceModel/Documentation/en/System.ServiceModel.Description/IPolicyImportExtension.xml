@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IPolicyImportExtension" FullName="System.ServiceModel.Description.IPolicyImportExtension">
+  <TypeSignature Language="C#" Value="public interface IPolicyImportExtension" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPolicyImportExtension" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> interface to search WSDL information exposed by a particular endpoint for custom policy assertions about endpoint capabilities or requirements. Typically, a policy importer searches for a specific assertion and either inserts a binding element, configures a binding element, or modifies the contract to support the requirements of the assertion. </para>
+      <para>Unlike its counterpart, <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" />, <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> does not require implementation by a <see cref="T:System.ServiceModel.Channels.BindingElement" /> object; you can load it using the client configuration section shown in the Examples section or programmatically by adding it to the <see cref="T:System.ServiceModel.Description.WsdlImporter" /> constructor.</para>
+      <para>indigo1 passes two objects to the <see cref="M:System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy(System.ServiceModel.Description.MetadataImporter,System.ServiceModel.Description.PolicyConversionContext)" /> method, a <see cref="T:System.ServiceModel.Description.MetadataImporter" /> and a <see cref="T:System.ServiceModel.Description.PolicyConversionContext" />. Typically the <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> object already contains the policy assertions for each binding scope. </para>
+      <para>An <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> implementation performs the following steps:</para>
+      <list type="ordered">
+        <item>
+          <para>Locates the custom policy assertion for which it is responsible by calling either the <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" />, <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" />, or <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> methods, depending upon the scope.</para>
+        </item>
+        <item>
+          <para>Removes the policy assertion from the assertion collection. The <see cref="M:System.ServiceModel.Description.PolicyAssertionCollection.Remove(System.String,System.String)" /> method locates, returns, and removes the assertion in one step.</para>
+        </item>
+        <item>
+          <para>Modify the binding stack or the contract by either adding a required custom <see cref="T:System.ServiceModel.Channels.BindingElement" /> to the <see cref="P:System.ServiceModel.Description.PolicyConversionContext.BindingElements" /> property or by modifying the <see cref="P:System.ServiceModel.Description.PolicyConversionContext.Contract" /> property. </para>
+        </item>
+      </list>
+      <para>Step 2 is important. After all policy importers have been called, indigo2 checks for the existence of any policy assertions that remain. If one exists, indigo2 assumes that the policy import was unsuccessful and does not import the associated binding.</para>
+      <block subset="none" type="note">
+        <para>A malicious metadata supplier can attempt to send malformed XML as part of metadata in an attempt to exploit a policy importer. It is strongly recommended that custom policy importers be robust to all forms of XML that can be passed to it.</para>
+      </block>
+      <para>Custom <see cref="T:System.ServiceModel.Description.MetadataImporter" /> implementations must implement their own <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> object to extract the policy assertions attached to the custom metadata format.</para>
+      <para>If you want to export and import custom WSDL elements that are not policy assertions, see <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> and <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" />.</para>
+      <block subset="none" type="note">
+        <para>You can use custom policy importers and exporters with the <format type="text/html"><a href="1abf3d9f-b420-46f1-b628-df238751f308">ServiceModel Metadata Utility Tool (Svcutil.exe)</a></format> by using the same configuration elements in a configuration file and the /svcutilConfig:&lt;configFile&gt; option.</para>
+      </block>
+      <para> </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a method for objects that import custom policy assertions about bindings.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ImportPolicy">
+      <MemberSignature Language="C#" Value="public void ImportPolicy (System.ServiceModel.Description.MetadataImporter importer, System.ServiceModel.Description.PolicyConversionContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ImportPolicy(class System.ServiceModel.Description.MetadataImporter importer, class System.ServiceModel.Description.PolicyConversionContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="importer" Type="System.ServiceModel.Description.MetadataImporter" />
+        <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement the ImportPolicy method to obtain policy assertions and perform some modification of the imported contract or binding to support the assertion. Typically, a policy importer responds to finding a custom policy assertion by configuring or inserting a binding element into the binding being imported. </para>
+          <para>indigo1 passes two objects to the <see cref="M:System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy(System.ServiceModel.Description.MetadataImporter,System.ServiceModel.Description.PolicyConversionContext)" /> method, a <see cref="T:System.ServiceModel.Description.MetadataImporter" /> and a <see cref="T:System.ServiceModel.Description.PolicyConversionContext" />. Typically the <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> object already contains the policy assertions for each binding scope. </para>
+          <para>An <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> implementation performs the following steps:</para>
+          <list type="ordered">
+            <item>
+              <para>Locates the custom policy assertion for which it is responsible by calling either the <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" />, <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" />, or <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> methods, depending upon the scope.</para>
+            </item>
+            <item>
+              <para>Removes the policy assertion from the assertion collection. The <see cref="M:System.ServiceModel.Description.PolicyAssertionCollection.Remove(System.String,System.String)" /> method locates, returns, and removes the assertion in one step.</para>
+            </item>
+            <item>
+              <para>Modifies the binding stack or the contract by either adding a required custom <see cref="T:System.ServiceModel.Channels.BindingElement" /> to the <see cref="P:System.ServiceModel.Description.PolicyConversionContext.BindingElements" /> property or by modifying the <see cref="P:System.ServiceModel.Description.PolicyConversionContext.Contract" /> property. </para>
+            </item>
+          </list>
+          <para>Step 2 is important. After all policy importers have been called, indigo2 checks for the existence of any policy assertions that remain. If one exists, indigo2 assumes that the policy import was unsuccessful and does not import the associated binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a method that can import custom policy assertions and add implementing binding elements.</para>
+        </summary>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataImporter" /> object in use.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> that contains both the policy assertions that can be imported and the collections of binding elements to which implementing binding elements can be added.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

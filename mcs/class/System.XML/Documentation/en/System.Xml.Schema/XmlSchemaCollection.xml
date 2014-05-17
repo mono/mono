@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaCollection" FullName="System.Xml.Schema.XmlSchemaCollection">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class XmlSchemaCollection : System.Collections.ICollection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlSchemaCollection extends System.Object implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -21,44 +24,78 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Schemas are loaded using the <see cref="M:System.Xml.Schema.XmlSchemaCollection.Add(System.String,System.String)" /> method, at which time the schema is associated with a namespace Uniform Resource Identifier (URI). For XML Schemas, this will typically be the targetNamespace property of the schema.</para>
+      <para>Although this class stores both XML Schemas and XDR schemas, any method and property that takes or returns an <see cref="T:System.Xml.Schema.XmlSchema" /> applies to XML Schemas only.</para>
+      <para>This version of the product supports the World Wide Web Consortium (W3C) XML Schema recommendation located at http://www.w3.org/TR/xmlschema-1 and http://www.w3.org/TR/xmlschema-2. An XML Schema must reference the W3C Schema namespace http://www.w3.org/2001/XMLSchema in its schema element. See the <see cref="M:System.Xml.Schema.XmlSchemaCollection.Add(System.String,System.String)" /> method for an example.</para>
+      <para>XmlSchemaCollection can be used by <see cref="T:System.Xml.XmlValidatingReader" /> for efficient data validation.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the Microsoft .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a cache of XML Schema definition language (XSD) and XML-Data Reduced (XDR) schemas. The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class class is obsolete. Use <see cref="T:System.Xml.Schema.XmlSchemaSet" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlSchemaCollection class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public XmlSchemaCollection (System.Xml.XmlNameTable nameTable);" />
+      <MemberSignature Language="C#" Value="public XmlSchemaCollection (System.Xml.XmlNameTable nametable);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlNameTable nametable) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="nameTable" Type="System.Xml.XmlNameTable" />
-      </Parameters>
-      <Docs>
-        <param name="nameTable">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="nametable" Type="System.Xml.XmlNameTable" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlSchemaCollection class with the specified <see cref="T:System.Xml.XmlNameTable" />. The XmlNameTable is used when loading schemas.</para>
+        </summary>
+        <param name="nametable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNameTable to use. </param>
+      </Docs>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(class System.Xml.Schema.XmlSchema schema) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -66,19 +103,40 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added: an object of type 'XmlSchema'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The targetNamespace attribute is used to identify this schema.</para>
+          <para>If the schema being added contains references to other namespaces (through include and import elements), the trust level of the application determines how these other namespaces are resolved. (In the .NET Framework version 1.0, a default <see cref="T:System.Xml.XmlUrlResolver" /> was always used).</para>
+          <para>Fully trusted code: A default XmlUrlResolver with no user credentials is used to resolve any external resources. The schemas for these other namespaces are loaded for validation purposes only. Unlike the original schema, these other schemas are not explicitly added to the schema collection. As a result, they are not accessible using any of the collection methods or properties. If these external resources are located on a network resource that requires authentication, use an overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an XmlResolver with the necessary credentials.</para>
+          <para>Semi-trusted code: External references are not resolved.</para>
+          <block subset="none" type="note">
+            <para>If the XmlSchemaCollection is being accessed using the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property, the Add method uses the XmlResolver specified by the <see cref="P:System.Xml.XmlValidatingReader.XmlResolver" /> property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the <see cref="T:System.Xml.Schema.XmlSchema" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlSchema object.</para>
+        </returns>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlSchema to add to the collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (System.Xml.Schema.XmlSchemaCollection schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Xml.Schema.XmlSchemaCollection schema) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -86,18 +144,35 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchemaCollection" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added: an object of type 'XmlSchemaCollection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the schema being added contains references to other namespaces (through include and import elements or the x-schema attribute), the trust level of the application determines how these other namespaces are resolved. (In the .NET Framework version 1.0, a default <see cref="T:System.Xml.XmlUrlResolver" /> was always used).</para>
+          <para>Fully trusted code: A default XmlUrlResolver with no user credentials is used to resolve any external resources. The schemas for these other namespaces are loaded for validation purposes only. Unlike the original schema, these other schemas are not explicitly added to the schema collection. As a result, they are not accessible using any of the collection methods or properties. If these external resources are located on a network resource that requires authentication, use an overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an XmlResolver with the necessary credentials.</para>
+          <para>Semi-trusted code: External references are not resolved.</para>
+          <block subset="none" type="note">
+            <para>If the XmlSchemaCollection is being accessed using the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property, the Add method uses the XmlResolver specified by the <see cref="P:System.Xml.XmlValidatingReader.XmlResolver" /> property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds all the namespaces defined in the given collection (including their associated schemas) to this collection.</para>
+        </summary>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlSchemaCollection you want to add to this collection. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (string ns, string uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(string ns, string uri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -106,20 +181,44 @@
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <param name="uri">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="ns" /> has already been associated with another schema in the collection, the schema being added replaces the original schema in the collection. For example, in the following C# code, authors.xsd is removed from the collection and names.xsd is added.</para>
+          <code> schemaColl.Add("urn:author", "authors.xsd");
+ schemaColl.Add("urn:author", "names.xsd");</code>
+          <para>If <paramref name="ns" /> is null and the schema being added is an XML Schema, the Add method uses the targetNamespace defined in the XML Schema to identify the schema in the collection. If the schema being added contains references to other namespaces (through include and import elements or the x-schema attribute), the trust level of the application determines how these other namespaces are resolved. (In the .NET Framework version 1.0, a default <see cref="T:System.Xml.XmlUrlResolver" /> was always used).</para>
+          <para>Fully trusted code: A default XmlUrlResolver with no user credentials is used to resolve any external resources. The schemas for these other namespaces are loaded for validation purposes only. Unlike the original schema, these other schemas are not explicitly added to the schema collection. As a result, they are not accessible using any of the collection methods or properties. If these external resources are located on a network resource that requires authentication, use an overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an XmlResolver with the necessary credentials.</para>
+          <para>Semi-trusted code: External references are not resolved.</para>
+          <block subset="none" type="note">
+            <para>If the XmlSchemaCollection is being accessed using the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property, the Add method uses the XmlResolver specified by the <see cref="P:System.Xml.XmlValidatingReader.XmlResolver" /> property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the schema located by the given URL into the schema collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> added to the schema collection; null if the schema being added is an XDR schema or if there are compilation errors in the schema. </para>
+        </returns>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the targetNamespace. </param>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL that specifies the schema to load. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (string ns, System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(string ns, class System.Xml.XmlReader reader) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -128,20 +227,44 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <param name="reader">To be added: an object of type 'System.Xml.XmlReader'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="ns" /> has already been associated with another schema in the collection, the schema being added replaces the original schema in the collection.</para>
+          <para>If <paramref name="ns" /> is null and the schema being added is an XML Schema, the Add method uses the targetNamespace defined in the XML Schema to identify the schema in the collection.</para>
+          <para>If the schema being added contains references to other namespaces (through include and import elements or the x-schema attribute), the trust level of the application determines how these other namespaces are resolved. (In the .NET Framework version 1.0, a default <see cref="T:System.Xml.XmlUrlResolver" /> was always used).</para>
+          <para>Fully trusted code: A default XmlUrlResolver with no user credentials is used to resolve any external resources. The schemas for these other namespaces are loaded for validation purposes only. Unlike the original schema, these other schemas are not explicitly added to the schema collection. As a result, they are not accessible using any of the collection methods or properties. If these external resources are located on a network resource that requires authentication, use an overload that takes an <see cref="T:System.Xml.XmlResolver" /> as one of its arguments and specify an XmlResolver with the necessary credentials.</para>
+          <para>Semi-trusted code: External references are not resolved.</para>
+          <block subset="none" type="note">
+            <para>If the XmlSchemaCollection is being accessed using the <see cref="P:System.Xml.XmlValidatingReader.Schemas" /> property, the Add method uses the XmlResolver specified by the <see cref="P:System.Xml.XmlValidatingReader.XmlResolver" /> property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the schema contained in the <see cref="T:System.Xml.XmlReader" /> to the schema collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> added to the schema collection; null if the schema being added is an XDR schema or if there are compilation errors in the schema.</para>
+        </returns>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the targetNamespace. </param>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlReader" /> containing the schema to add. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (System.Xml.Schema.XmlSchema schema, System.Xml.XmlResolver resolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(class System.Xml.Schema.XmlSchema schema, class System.Xml.XmlResolver resolver) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -150,20 +273,37 @@
         <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The targetNamespace attribute is used to identify this schema.</para>
+          <para>If the schema contains include and import elements that reference other namespaces, the schemas for these other namespaces are loaded for validation purposes only. Unlike the original schema, these other schemas are not explicitly added to the schema collection. As a result, they are not accessible using any of the collection methods or properties.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the <see cref="T:System.Xml.Schema.XmlSchema" /> to the collection. The specified <see cref="T:System.Xml.XmlResolver" /> is used to resolve any external references.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlSchema added to the schema collection.</para>
+        </returns>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlSchema to add to the collection. </param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> used to resolve namespaces referenced in include and import elements. If this is null, external references are not resolved. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema Add (string ns, System.Xml.XmlReader reader, System.Xml.XmlResolver resolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchema Add(string ns, class System.Xml.XmlReader reader, class System.Xml.XmlResolver resolver) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -173,21 +313,41 @@
         <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
-        <param name="reader">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="ns" /> has already been associated with another schema in the collection, the schema being added replaces the original schema in the collection.</para>
+          <para>If <paramref name="ns" /> is null and the schema being added is an XML Schema, the Add method uses the targetNamespace attribute defined in the XML Schema to identify the schema in the collection.</para>
+          <para>If the schema being added contains references to other namespaces (through include and import elements or the x-schema attribute), the schemas for these other namespaces are loaded for validation purposes only. Unlike the original schema, these other schemas are not explicitly added to the schema collection. As a result, they are not accessible using any of the collection methods or properties.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the schema contained in the <see cref="T:System.Xml.XmlReader" /> to the schema collection. The specified <see cref="T:System.Xml.XmlResolver" /> is used to resolve any external resources.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> added to the schema collection; null if the schema being added is an XDR schema or if there are compilation errors in the schema.</para>
+        </returns>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the targetNamespace. </param>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlReader" /> containing the schema to add. </param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlResolver" /> used to resolve namespaces referenced in include and import elements or x-schema attribute (XDR schemas). If this is null, external references are not resolved. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Contains">
       <MemberSignature Language="C#" Value="public bool Contains (string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Contains(string ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -195,19 +355,33 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a schema with the specified namespace is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a schema with the specified namespace is in the collection; otherwise, false.</para>
+        </returns>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the target namespace. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Contains">
       <MemberSignature Language="C#" Value="public bool Contains (System.Xml.Schema.XmlSchema schema);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Contains(class System.Xml.Schema.XmlSchema schema) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -215,19 +389,33 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added: an object of type 'XmlSchema'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the targetNamespace of the specified <see cref="T:System.Xml.Schema.XmlSchema" /> is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a schema in the collection with the same targetNamespace; otherwise, false.</para>
+        </returns>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlSchema object. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CopyTo">
       <MemberSignature Language="C#" Value="public void CopyTo (System.Xml.Schema.XmlSchema[] array, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(class System.Xml.Schema.XmlSchema[] array, int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -236,52 +424,87 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'XmlSchema[]'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the XmlSchema objects from this collection into the given array starting at the given index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to copy the objects to. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in <paramref name="array" /> where copying will begin. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of namespaces defined in this collection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaCollectionEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchemaCollectionEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaCollectionEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlSchemaCollectionEnumerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides support for the "for each" style iteration over the collection of schemas.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for iterating over all schemas in the current collection.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchema this[string ns] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchema Item(string)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchema</ReturnType>
       </ReturnValue>
@@ -294,30 +517,42 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NameTable">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNameTable NameTable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNameTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlNameTable'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default XmlNameTable used by the XmlSchemaCollection when loading new schemas.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.ICollection.CopyTo">
       <MemberSignature Language="C#" Value="void ICollection.CopyTo (Array array, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.ICollection.CopyTo(class System.Array array, int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -326,96 +561,146 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Schema.XmlSchemaCollection.CopyTo(System.Xml.Schema.XmlSchema[],System.Int32)" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to copy the objects to. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in <paramref name="array" /> where copying will begin. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.ICollection.Count">
       <MemberSignature Language="C#" Value="int System.Collections.ICollection.Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 System.Collections.ICollection.Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Xml.Schema.XmlSchemaCollection.Count" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
       <MemberSignature Language="C#" Value="bool System.Collections.ICollection.IsSynchronized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool System.Collections.ICollection.IsSynchronized" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Xml.Schema.XmlSchemaCollection.System.Collections.ICollection.IsSynchronized" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
       <MemberSignature Language="C#" Value="object System.Collections.ICollection.SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.ICollection.SyncRoot" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Xml.Schema.XmlSchemaCollection.System.Collections.ICollection.SyncRoot" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Schema.XmlSchemaCollection.GetEnumerator" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Collections.IEnumerator" /> for the collection.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ValidationEventHandler">
       <MemberSignature Language="C#" Value="public event System.Xml.Schema.ValidationEventHandler ValidationEventHandler;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.Schema.ValidationEventHandler ValidationEventHandler" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.ValidationEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>These events occur when the schemas are added to the collection. If an event handler is not provided, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown on any validation errors where the <see cref="P:System.Xml.Schema.ValidationEventArgs.Severity" /> is XmlSeverityType.Error. To specify an event handler, define a callback function and add it to the ValidationEventHandler.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> class is obsolete in the .NET Framework version 2.0 and has been replaced by the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an event handler for receiving information about the XDR and XML schema validation errors.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

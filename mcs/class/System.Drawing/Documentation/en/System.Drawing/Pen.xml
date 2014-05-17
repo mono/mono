@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Pen" FullName="System.Drawing.Pen">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable" />
   <AssemblyInfo>
@@ -20,8 +21,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Drawing.Pen" /> draws a line of specified width and style. Use the <see cref="T:System.Drawing.Drawing2D.DashStyle" /> property to draw several varieties of dashed lines. The line drawn by a <see cref="T:System.Drawing.Pen" /> can be filled in a variety of fill styles, including solid colors and textures. The fill style depends on brush or texture that is used as the fill object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an object used to draw lines and curves. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,9 +39,17 @@
         <Parameter Name="brush" Type="System.Drawing.Brush" />
       </Parameters>
       <Docs>
-        <param name="brush">To be added: an object of type 'Brush'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Drawing.Pen.Brush" /> property determines how the <see cref="T:System.Drawing.Pen" /> draws lines. Lines are drawn as if they are filled rectangles, with the characteristics of the specified <see cref="T:System.Drawing.Brush" />.</para>
+          <para>The <see cref="P:System.Drawing.Pen.Width" /> property of the new <see cref="T:System.Drawing.Pen" /> is set to 1 (the default).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Pen" /> class with the specified <see cref="T:System.Drawing.Brush" />.</para>
+        </summary>
+        <param name="brush">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Brush" /> that determines the fill properties of this <see cref="T:System.Drawing.Pen" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,9 +64,16 @@
         <Parameter Name="color" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="color">To be added: an object of type 'Color'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> property is set to the color specified by the <paramref name="color" /> parameter. The <see cref="P:System.Drawing.Pen.Width" /> property is set to 1 (the default).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Pen" /> class with the specified color.</para>
+        </summary>
+        <param name="color">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Color" /> structure that indicates the color of this <see cref="T:System.Drawing.Pen" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,10 +89,20 @@
         <Parameter Name="width" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="brush">To be added: an object of type 'Brush'</param>
-        <param name="width">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Brush" /> is set to the color specified in the <paramref name="brush" /> parameter, the <see cref="P:System.Drawing.Pen.Width" /> property is set to the value specified in the <paramref name="width" /> parameter, and the units are set to <see cref="F:System.Drawing.GraphicsUnit.World" />.</para>
+          <para>Note that the <paramref name="brush" /> parameter also specifies the <see cref="T:System.Drawing.Color" /> property of this <see cref="T:System.Drawing.Pen" />.</para>
+          <para>A <paramref name="width" /> of 0 will result in the <see cref="T:System.Drawing.Pen" /> drawing as if the width were 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Pen" /> class with the specified <see cref="T:System.Drawing.Brush" /> and <see cref="P:System.Drawing.Pen.Width" />.</para>
+        </summary>
+        <param name="brush">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Brush" /> that determines the characteristics of this <see cref="T:System.Drawing.Pen" />. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the new <see cref="T:System.Drawing.Pen" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,10 +118,18 @@
         <Parameter Name="width" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="color">To be added: an object of type 'Color'</param>
-        <param name="width">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> property is set to the color specified by the <paramref name="color" /> parameter. The <see cref="P:System.Drawing.Pen.Width" /> property is set to the value specified in the <paramref name="width" /> parameter. A <paramref name="width" /> of 0 will result in the <see cref="T:System.Drawing.Pen" /> drawing as if the width were 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Pen" /> class with the specified <see cref="T:System.Drawing.Color" /> and <see cref="P:System.Drawing.Pen.Width" /> properties.</para>
+        </summary>
+        <param name="color">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Color" /> structure that indicates the color of this <see cref="T:System.Drawing.Pen" />. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating the width of this <see cref="T:System.Drawing.Pen" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,9 +145,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.PenAlignment'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property determines how the <see cref="T:System.Drawing.Pen" /> draws closed curves and polygons. The <see cref="T:System.Drawing.Drawing2D.PenAlignment" /> enumeration specifies five values; however, only two values—<see cref="F:System.Drawing.Drawing2D.PenAlignment.Center" /> and <see cref="F:System.Drawing.Drawing2D.PenAlignment.Inset" />—will change the appearance of a drawn line. <see cref="F:System.Drawing.Drawing2D.PenAlignment.Center" /> is the default value for this property and specifies that the width of the pen is centered on the outline of the curve or polygon. A value of <see cref="F:System.Drawing.Drawing2D.PenAlignment.Inset" /> for this property specifies that the width of the pen is inside the outline of the curve or polygon. The other three values, <see cref="F:System.Drawing.Drawing2D.PenAlignment.Right" />, <see cref="F:System.Drawing.Drawing2D.PenAlignment.Left" />, and <see cref="F:System.Drawing.Drawing2D.PenAlignment.Outset" />, will result in a pen that is centered.</para>
+          <para>A <see cref="T:System.Drawing.Pen" /> that has its alignment set to <see cref="F:System.Drawing.Drawing2D.PenAlignment.Inset" /> will yield unreliable results, sometimes drawing in the inset position and sometimes in the centered position. Also, an inset pen cannot be used to draw compound lines and cannot draw dashed lines with <see cref="F:System.Drawing.Drawing2D.DashCap.Triangle" /> dash caps.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alignment for this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,9 +170,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Brush'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigning this property causes the pen to draw filled lines and curves. It overrides the <see cref="T:System.Drawing.Color" /> property of the <see cref="T:System.Drawing.Pen" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Drawing.Brush" /> that determines attributes of this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +193,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that can be cast to a <see cref="T:System.Drawing.Pen" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,9 +217,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Color'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color of this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -176,9 +238,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A compound line is made up of alternating parallel lines and spaces of varying widths. The values in the array specify the starting points of each component of the compound line relative to the pen's width. The first value in the array specifies where the first component (a line) begins as a fraction of the distance across the width of the pen. The second value in the array specifies the beginning of the next component (a space) as a fraction of the distance across the width of the pen. The final value in the array specifies where the last component ends.</para>
+          <para>Suppose you want a pen to draw two parallel lines where the width of the first line is 20 percent of the pen's width, the width of the space that separates the two lines is 50 percent of the pen' s width, and the width of the second line is 30 percent of the pen's width. Start by creating a <see cref="T:System.Drawing.Pen" /> and an array of real numbers. Set the compound array by passing the array with the values 0.0, 0.2, 0.7, and 1.0 to this property.</para>
+          <para>Do not set this property if the <see cref="T:System.Drawing.Pen" /> has its <see cref="P:System.Drawing.Pen.Alignment" /> property set to <see cref="F:System.Drawing.Drawing2D.PenAlignment.Inset" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an array of values that specifies a compound pen. A compound pen draws a compound line made up of parallel lines and spaces.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +264,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.CustomLineCap'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom cap to use at the end of lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,9 +285,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.CustomLineCap'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom cap to use at the beginning of lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -230,9 +306,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.DashCap'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not set this property to <see cref="F:System.Drawing.Drawing2D.DashCap.Triangle" /> if the <see cref="T:System.Drawing.Pen" /> has its <see cref="P:System.Drawing.Pen.Alignment" /> property set to <see cref="F:System.Drawing.Drawing2D.PenAlignment.Inset" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cap style used at the end of the dashes that make up dashed lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,9 +330,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the distance from the start of a line to the beginning of a dash pattern.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -266,9 +351,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigning a value other than null to this property will set the <see cref="T:System.Drawing.Drawing2D.DashStyle" /> property for this <see cref="T:System.Drawing.Pen" /> to <see cref="F:System.Drawing.Drawing2D.DashStyle.Custom" />.</para>
+          <para>The elements in the <paramref name="dashArray" /> array set the length of each dash and space in the dash pattern. The first element sets the length of a dash, the second element sets the length of a space, the third element sets the length of a dash, and so on. Consequently, each element should be a non-zero positive number.</para>
+          <para>The length of each dash and space in the dash pattern is the product of the element value in the array and the width of the <see cref="T:System.Drawing.Pen" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an array of custom dashes and spaces.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -284,9 +377,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.DashStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value of <see cref="F:System.Drawing.Drawing2D.DashStyle.Custom" /> for this property specifies that a custom pattern of dashes and spaces, defined by the <see cref="P:System.Drawing.Pen.DashPattern" /> property, makes up lines drawn with this <see cref="T:System.Drawing.Pen" />. If the value of this property is <see cref="F:System.Drawing.Drawing2D.DashStyle.Custom" /> and the value of the <see cref="P:System.Drawing.Pen.DashPattern" /> property is null, the pen draws solid lines.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style used for dashed lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -301,8 +400,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Drawing.Pen.Dispose" /> allows the resources used by this <see cref="T:System.Drawing.Brush" /> to be reallocated for other purposes.</para>
+          <para>Call <see cref="M:System.Drawing.Pen.Dispose" /> when you are finished using the <see cref="T:System.Drawing.Pen" />. The <see cref="M:System.Drawing.Pen.Dispose" /> method leaves the <see cref="T:System.Drawing.Pen" /> in an unusable state. After calling <see cref="M:System.Drawing.Pen.Dispose" />, you must release all references to the <see cref="T:System.Drawing.Pen" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Drawing.Pen" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Drawing.Pen.Dispose" /> before you release your last reference to the <see cref="T:System.Drawing.Pen" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Drawing.Pen" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -318,9 +427,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.LineCap'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cap style used at the end of lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -352,9 +464,18 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.LineJoin'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A line join is the common area that is formed by two lines whose ends meet or overlap. There are three line join styles: miter, bevel, and round.  When you specify a line join style for a <see cref="T:System.Drawing.Pen" /> object, that join style will be applied to all the connected lines in any <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> object drawn using that pen.The following illustration shows the results of the beveled line join example.</para>
+          <mediaLink>
+            <image />
+          </mediaLink>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the join style for the ends of two consecutive lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -370,9 +491,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The miter length is the distance from the intersection of the line walls on the inside of the join to the intersection of the line walls outside of the join. The miter length can be large when the angle between two lines is small. The miter limit is the maximum allowed ratio of miter length to stroke width. The default value is 10.0f.</para>
+          <para>If the miter length of the join of the intersection exceeds the limit of the join, then the join will be beveled to keep it within the limit of the join of the intersection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the limit of the thickness of the join on a mitered corner.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -389,9 +517,16 @@
         <Parameter Name="matrix" Type="System.Drawing.Drawing2D.Matrix" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Drawing2D.Matrix'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method prepends the multiplication matrix specified in the <paramref name="matrix" /> parameter to the transformation matrix for the multiplication operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiplies the transformation matrix for this <see cref="T:System.Drawing.Pen" /> by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" />.</para>
+        </summary>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> object by which to multiply the transformation matrix. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -409,10 +544,18 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Drawing2D.Matrix'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the <see cref="T:System.Drawing.Drawing2D.MatrixOrder" /> enumeration element (either prepend or append) specified by the <paramref name="order" /> parameter to carry out the multiplication operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiplies the transformation matrix for this <see cref="T:System.Drawing.Pen" /> by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> in the specified order.</para>
+        </summary>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> by which to multiply the transformation matrix. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />The order in which to perform the multiplication operation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -426,9 +569,15 @@
         <ReturnType>System.Drawing.Drawing2D.PenType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.PenType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Pen" /> can draw solid lines, filled lines, or textured lines, depending on the style specified by a member of the <see cref="T:System.Drawing.Drawing2D.PenType" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style of lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -443,8 +592,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the geometric transformation matrix for this <see cref="T:System.Drawing.Pen" /> to identity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -461,9 +617,16 @@
         <Parameter Name="angle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="angle">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the shape of a pen is circular, a rotation does not have any visible effect unless the pen is scaled in the x- or y-axis direction.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rotates the local geometric transformation by the specified angle. This method prepends the rotation to the transformation.</para>
+        </summary>
+        <param name="angle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The angle of rotation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -481,10 +644,18 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="angle">To be added: an object of type 'float'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the shape of a pen is circular, a rotation does not have any visible effect unless the pen is scaled in the x- or y-axis direction.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rotates the local geometric transformation by the specified angle in the specified order.</para>
+        </summary>
+        <param name="angle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The angle of rotation. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.MatrixOrder" /> that specifies whether to append or prepend the rotation matrix. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -502,10 +673,15 @@
         <Parameter Name="sy" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="sx">To be added: an object of type 'float'</param>
-        <param name="sy">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales the local geometric transformation by the specified factors. This method prepends the scaling matrix to the transformation.</para>
+        </summary>
+        <param name="sx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which to scale the transformation in the x-axis direction. </param>
+        <param name="sy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which to scale the transformation in the y-axis direction. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -524,11 +700,17 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="sx">To be added: an object of type 'float'</param>
-        <param name="sy">To be added: an object of type 'float'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales the local geometric transformation by the specified factors in the specified order.</para>
+        </summary>
+        <param name="sx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which to scale the transformation in the x-axis direction. </param>
+        <param name="sy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which to scale the transformation in the y-axis direction. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.MatrixOrder" /> that specifies whether to append or prepend the scaling matrix. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -547,11 +729,17 @@
         <Parameter Name="dashCap" Type="System.Drawing.Drawing2D.DashCap" />
       </Parameters>
       <Docs>
-        <param name="startCap">To be added: an object of type 'Drawing2D.LineCap'</param>
-        <param name="endCap">To be added: an object of type 'Drawing2D.LineCap'</param>
-        <param name="dashCap">To be added: an object of type 'Drawing2D.DashCap'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the values that determine the style of cap used to end lines drawn by this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
+        <param name="startCap">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.LineCap" /> that represents the cap style to use at the beginning of lines drawn with this <see cref="T:System.Drawing.Pen" />. </param>
+        <param name="endCap">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.LineCap" /> that represents the cap style to use at the end of lines drawn with this <see cref="T:System.Drawing.Pen" />. </param>
+        <param name="dashCap">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.LineCap" /> that represents the cap style to use at the beginning or end of dashed lines drawn with this <see cref="T:System.Drawing.Pen" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -567,9 +755,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.LineCap'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cap style used at the beginning of lines drawn with this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -585,9 +776,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.Matrix'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property defines an elliptical shape for the pen tip. This ellipse is obtained from the default circular shape by applying the transformation matrix. Note that the translation portion of the matrix is ignored. Because the matrix returned and by the <see cref="P:System.Drawing.Pen.Transform" /> property is a copy of the pen's geometric transform, you should dispose of the matrix when you no longer need it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a copy of the geometric transformation for this <see cref="T:System.Drawing.Pen" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -605,10 +802,15 @@
         <Parameter Name="dy" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="dx">To be added: an object of type 'float'</param>
-        <param name="dy">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the local geometric transformation by the specified dimensions. This method prepends the translation to the transformation.</para>
+        </summary>
+        <param name="dx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the translation in x. </param>
+        <param name="dy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the translation in y. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -627,11 +829,17 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="dx">To be added: an object of type 'float'</param>
-        <param name="dy">To be added: an object of type 'float'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the local geometric transformation by the specified dimensions in the specified order.</para>
+        </summary>
+        <param name="dx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the translation in x. </param>
+        <param name="dy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the translation in y. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />The order (prepend or append) in which to apply the translation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -647,9 +855,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can access the unit of measure of the <see cref="T:System.Drawing.Graphics" /> object using its <see cref="P:System.Drawing.Graphics.PageUnit" /> property. The unit of measure is typically pixels. A <see cref="P:System.Drawing.Pen.Width" /> of 0 will result in the <see cref="T:System.Drawing.Pen" /> drawing as if the <see cref="P:System.Drawing.Pen.Width" /> were 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of this <see cref="T:System.Drawing.Pen" />, in units of the <see cref="T:System.Drawing.Graphics" /> object used for drawing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

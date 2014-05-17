@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IXmlJsonWriterInitializer" FullName="System.Runtime.Serialization.Json.IXmlJsonWriterInitializer">
+  <TypeSignature Language="C#" Value="public interface IXmlJsonWriterInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlJsonWriterInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.XmlDictionaryWriter" /> objects created by the <see cref="Overload:System.Runtime.Serialization.Json.JsonReaderWriterFactory.CreateJsonWriter" /> methods implement this interface and when created are immediately ready to write JSON-encoded data. But if a user wants to reuse the same <see cref="T:System.Xml.XmlDictionaryWriter" /> object to write a new JSON document to another output stream, then the writer must be initialized to the appropriate stream by using the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonWriterInitializer.SetOutput(System.IO.Stream,System.Text.Encoding,System.Boolean)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the interface for initializing a JavaScript Object Notation (JSON) writer when reusing them to write to a particular output stream.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="SetOutput">
+      <MemberSignature Language="C#" Value="public void SetOutput (System.IO.Stream stream, System.Text.Encoding encoding, bool ownsStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetOutput(class System.IO.Stream stream, class System.Text.Encoding encoding, bool ownsStream) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="ownsStream" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlDictionaryWriter" /> objects created by the <see cref="Overload:System.Runtime.Serialization.Json.JsonReaderWriterFactory.CreateJsonWriter" /> methods implement this interface and when created are immediately ready to write JSON-encoded data. But if a user wants to reuse the same <see cref="T:System.Xml.XmlDictionaryWriter" /> object to write a new JSON document to another output stream, then the writer must be initialized to the appropriate stream by using the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonWriterInitializer.SetOutput(System.IO.Stream,System.Text.Encoding,System.Boolean)" /> method.</para>
+          <para>The writers created by <see cref="T:System.Runtime.Serialization.Json.JsonReaderWriterFactory" /> can handle the UTF-8 and the UTF-16 (big- or little-endian) encodings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes (or reinitializes) a JavaScript Object Notation (JSON) writer to a specified output stream with specified character encoding.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output <see cref="T:System.IO.Stream" /> to which the writer writes. </param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> that specifies the character encoding of the output stream.</param>
+        <param name="ownsStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, the output stream is closed by the writer when done; otherwise false.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DebugInfoGenerator" FullName="System.Runtime.CompilerServices.DebugInfoGenerator">
+  <TypeSignature Language="C#" Value="public abstract class DebugInfoGenerator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DebugInfoGenerator extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Generates debug information for lambda expressions in an expression tree.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected DebugInfoGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.DebugInfoGenerator" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePdbGenerator">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.DebugInfoGenerator CreatePdbGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.DebugInfoGenerator CreatePdbGenerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.DebugInfoGenerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a program database (PDB) symbol generator.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A PDB symbol generator.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="MarkSequencePoint">
+      <MemberSignature Language="C#" Value="public abstract void MarkSequencePoint (System.Linq.Expressions.LambdaExpression method, int ilOffset, System.Linq.Expressions.DebugInfoExpression sequencePoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MarkSequencePoint(class System.Linq.Expressions.LambdaExpression method, int32 ilOffset, class System.Linq.Expressions.DebugInfoExpression sequencePoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Linq.Expressions.LambdaExpression" />
+        <Parameter Name="ilOffset" Type="System.Int32" />
+        <Parameter Name="sequencePoint" Type="System.Linq.Expressions.DebugInfoExpression" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks a sequence point in Microsoft intermediate language (MSIL) code.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lambda expression that is generated.</param>
+        <param name="ilOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset within MSIL code at which to mark the sequence point.</param>
+        <param name="sequencePoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />Debug information that corresponds to the sequence point.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

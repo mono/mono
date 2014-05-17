@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractPublicPropertyNameAttribute" FullName="System.Diagnostics.Contracts.ContractPublicPropertyNameAttribute">
   <TypeSignature Language="C#" Value="public sealed class ContractPublicPropertyNameAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractPublicPropertyNameAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -17,12 +19,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Specifies a public property name associated with a field, allowing a less-visible field to be used in contracts within a method.</summary>
-    <remarks />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you apply the <see cref="T:System.Diagnostics.Contracts.ContractPublicPropertyNameAttribute" /> attribute to a field, that field can be used in the code contracts for a method when the field has less visibility than the method. There must be a visible property that is equivalent to the value of the field. For example, you can use this attribute if the method is public, but the field is private. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a field can be used in method contracts when the field has less visibility than the method. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractPublicPropertyNameAttribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -31,13 +40,18 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">The name of the public property associated with this field.</param>
-        <summary>Construct a ContractPublicPropertyNameAttribute, specifying the name of the public property associated with this field.</summary>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.ContractPublicPropertyNameAttribute" /> class. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property name to apply to the field.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -46,9 +60,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The name of the public property associated with this field.</summary>
         <value>The name of the public property associated with this field.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the property name to be applied to the field.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

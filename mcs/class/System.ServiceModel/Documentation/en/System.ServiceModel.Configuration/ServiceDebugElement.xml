@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceDebugElement" FullName="System.ServiceModel.Configuration.ServiceDebugElement">
+  <TypeSignature Language="C#" Value="public sealed class ServiceDebugElement : System.ServiceModel.Configuration.BehaviorExtensionElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ServiceDebugElement extends System.ServiceModel.Configuration.BehaviorExtensionElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.BehaviorExtensionElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you set the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.IncludeExceptionDetailInFaults" /> property to true programmatically, you can enable the flow of managed exception information to the client for debugging purposes, as well as the publication of HTML information files for users browsing the service in Web browsers.</para>
+      <block subset="none" type="note">
+        <para>Returning managed exception information to services can be a security risk. This is because exception details expose information about the internal client implementation that could be used by unauthorized services.</para>
+      </block>
+      <para>The <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageEnabled" /> and <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageEnabled" /> properties instruct the service to publish HTML help files when the service is viewed using an HTML browser.</para>
+      <para>The <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageUrl" /> and <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageUrl" /> properties control the location of the HTML help page that is viewed.</para>
+      <para>To enable or disable one of the <see cref="T:System.ServiceModel.Configuration.ServiceDebugElement" /> features using a configuration file, you must:</para>
+      <list type="ordered">
+        <item>
+          <para>Add a behaviorConfiguration attribute to the <format type="text/html"><a href="13123dd6-c4a9-4a04-a984-df184b851788">&lt;service&gt;</a></format> element for your indigo2 service. (Endpoint behaviors are configured on &lt;endpoint&gt; elements; service behaviors on <format type="text/html"><a href="13123dd6-c4a9-4a04-a984-df184b851788">&lt;service&gt;</a></format> elements.)</para>
+        </item>
+        <item>
+          <para>Add to or create a <format type="text/html"><a href="5aed9062-cc36-4b72-b9dd-a3018b8ffafc">&lt;serviceBehaviors&gt;</a></format> section and add a <format type="text/html"><a href="b90ca3bc-3c22-4174-b903-e3a39898bd27">&lt;behavior&gt;</a></format> element to that with the name that matches the behaviorConfiguration attribute value from step 1. (Endpoint behaviors are configured using an <format type="text/html"><a href="fb851947-e8dd-4f8c-8323-26fae90b09c3">&lt;endpointBehaviors&gt;</a></format> element; service behaviors are configured using a <format type="text/html"><a href="5aed9062-cc36-4b72-b9dd-a3018b8ffafc">&lt;serviceBehaviors&gt;</a></format> element.</para>
+        </item>
+        <item>
+          <para>Add a <format type="text/html"><a href="6d7ea986-f232-49fe-842c-f934d9966889">&lt;serviceDebug&gt;</a></format> element to the <format type="text/html"><a href="b90ca3bc-3c22-4174-b903-e3a39898bd27">&lt;behavior&gt;</a></format> element from step 2 and enable or disable the various properties appropriate to your scenario.</para>
+        </item>
+      </list>
+      <para>For a specific example, see the Example section.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies debugging and help information features for a indigo1 service. This class cannot be inherited.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceDebugElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ServiceDebugElement" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BehaviorType">
+      <MemberSignature Language="C#" Value="public override Type BehaviorType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type BehaviorType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of this behavior element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBehavior">
+      <MemberSignature Language="C#" Value="protected override object CreateBehavior ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance object CreateBehavior() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpHelpPageBinding">
+      <MemberSignature Language="C#" Value="public string HttpHelpPageBinding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string HttpHelpPageBinding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpHelpPageBinding", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.StringValidator(MinLength=0)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is not set, the default binding (HttpTransportBindingElement) is used for service help page access as appropriate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string value that specifies the binding to be used when HTTP is utilized to access the service help page.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpHelpPageBindingConfiguration">
+      <MemberSignature Language="C#" Value="public string HttpHelpPageBindingConfiguration { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string HttpHelpPageBindingConfiguration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpHelpPageBindingConfiguration", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.StringValidator(MinLength=0)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that points to an XML section defining additional configuration information for the binding specified in <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageBinding" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpHelpPageEnabled">
+      <MemberSignature Language="C#" Value="public bool HttpHelpPageEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HttpHelpPageEnabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpHelpPageEnabled", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can set this property to false to disable the publication of an HTML help page visible to HTML browsers.</para>
+          <para>To ensure the HTML help page is published at the location controlled by the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageUrl" /> property, you must set this property to true. In addition, one of the following conditions must also be met:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageUrl" /> property is an absolute address that supports the HTTP protocol scheme.</para>
+            </item>
+            <item>
+              <para>There is a base address for the service that supports the HTTP protocol scheme.</para>
+            </item>
+          </list>
+          <para>Although an exception is thrown if an absolute address that does not support the HTTP protocol scheme is assigned to the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageUrl" /> property, any other scenario in which neither of the preceding criteria is met results in no exception and no HTML help page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether indigo1 publishes an HTML help page at the address specified by the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageUrl" /> property.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpHelpPageUrl">
+      <MemberSignature Language="C#" Value="public Uri HttpHelpPageUrl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri HttpHelpPageUrl" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpHelpPageUrl", Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to enable the use of a custom HTML help file that is returned from an HTTP/Get request, for example, from an HTML browser. The location of the HTML help file is resolved as follows.</para>
+          <list type="ordered">
+            <item>
+              <para>If the value of this property is a relative address, the location of the HTML help file is the value of the service base address that supports HTTP requests, plus this property value.</para>
+            </item>
+            <item>
+              <para>If the value of this property is an absolute address and supports HTTP requests, the location of the HTML help file is the value of this property.</para>
+            </item>
+            <item>
+              <para>If the value of this property is absolute but does not support HTTP requests, an exception is thrown.</para>
+            </item>
+          </list>
+          <para>This property is valid only when the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpHelpPageEnabled" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location at which the HTML help file is published.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpsHelpPageBinding">
+      <MemberSignature Language="C#" Value="public string HttpsHelpPageBinding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string HttpsHelpPageBinding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpsHelpPageBinding", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.StringValidator(MinLength=0)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is not set, the default binding (HttpsTransportBindingElement) is used for service help page access as appropriate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string value that specifies the binding to be used when HTTPS is utilized to access the service help page.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpsHelpPageBindingConfiguration">
+      <MemberSignature Language="C#" Value="public string HttpsHelpPageBindingConfiguration { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string HttpsHelpPageBindingConfiguration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpsHelpPageBindingConfiguration", DefaultValue=Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.StringValidator(MinLength=0)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that points to an XML section defining additional configuration information for the binding specified in <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageBinding" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpsHelpPageEnabled">
+      <MemberSignature Language="C#" Value="public bool HttpsHelpPageEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HttpsHelpPageEnabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpsHelpPageEnabled", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can set this property to false to disable the publication of an HTML help page visible to HTML browsers.</para>
+          <para>To ensure the HTML help page is published at the location controlled by the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageUrl" /> property, you must set this property to true. In addition, one of the following conditions must also be met:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageUrl" /> property is an absolute address that supports the HTTPS protocol scheme.</para>
+            </item>
+            <item>
+              <para>There is a base address for the service that supports the HTTPS protocol scheme.</para>
+            </item>
+            <item>
+              <para>Although an exception is thrown if an absolute address that does not support the HTTPS protocol scheme is assigned to the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageUrl" /> property, any other scenario in which neither of the preceding criteria is met results in no exception and no HTML help page.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether indigo1 returns an HTML help file over HTTPS at the address specified by the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageUrl" /> property.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HttpsHelpPageUrl">
+      <MemberSignature Language="C#" Value="public Uri HttpsHelpPageUrl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri HttpsHelpPageUrl" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("httpsHelpPageUrl", Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to enable the use of a custom HTML help file that is returned from an HTTPS/Get request, for example, from an HTML browser. The location of the HTML help file is resolved as follows.</para>
+          <list type="ordered">
+            <item>
+              <para>If the value of this property is a relative address, the location of the HTML help file is the value of the service base address that supports HTTPS requests, plus this property value.</para>
+            </item>
+            <item>
+              <para>If the value of this property is an absolute address and supports HTTPS requests, the location of the HTML help file is the value of this property.</para>
+            </item>
+            <item>
+              <para>If the value of this property is absolute but does not support HTTPS requests, an exception is thrown.</para>
+            </item>
+          </list>
+          <para>This property is valid only when the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.HttpsHelpPageEnabled" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location at which an HTML help file is published for retrieval using HTTPS.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeExceptionDetailInFaults">
+      <MemberSignature Language="C#" Value="public bool IncludeExceptionDetailInFaults { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeExceptionDetailInFaults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("includeExceptionDetailInFaults", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you set the <see cref="P:System.ServiceModel.Configuration.ServiceDebugElement.IncludeExceptionDetailInFaults" /> property to true programmatically, you can enable the flow of managed exception information to the client for debugging purposes, as well as the publication of HTML information files for users browsing the service in Web browsers.</para>
+          <block subset="none" type="note">
+            <para>Returning managed exception information to services can be a security risk. This is because exception details expose information about the internal client implementation that could be used by unauthorized services.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to include managed exception information in the detail of SOAP faults returned to the client for debugging purposes.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1872,9 +1872,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected void CenterToScreen() {
-			Size	DisplaySize;
-			int	w;
-			int	h;
+			int w;
+			int h;
 
 			// MS creates the handle here.
 			if (TopLevel) {
@@ -1894,8 +1893,14 @@ namespace System.Windows.Forms {
 				h = DefaultSize.Height;
 			}
 
-			XplatUI.GetDisplaySize(out DisplaySize);
-			this.Location = new Point(DisplaySize.Width / 2 - w / 2, DisplaySize.Height / 2 - h / 2);
+			Rectangle workingArea;
+			if (Owner == null) {
+				workingArea = Screen.FromPoint (MousePosition).WorkingArea;
+			} else {
+				workingArea = Screen.FromControl (Owner).WorkingArea;
+			}
+			this.Location = new Point (workingArea.Left + workingArea.Width / 2 - w / 2,
+				workingArea.Top + workingArea.Height / 2 - h / 2);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1978,10 +1983,12 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose(bool disposing)
 		{
-			for (int i = 0; i < owned_forms.Count; i++)
-				((Form)owned_forms[i]).Owner = null;
+			if (owned_forms != null) {
+				for (int i = 0; i < owned_forms.Count; i++)
+					((Form)owned_forms[i]).Owner = null;
 
-			owned_forms.Clear ();
+				owned_forms.Clear ();
+			}
 			Owner = null;
 			base.Dispose (disposing);
 			

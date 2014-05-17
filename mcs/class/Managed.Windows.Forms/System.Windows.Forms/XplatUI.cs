@@ -427,6 +427,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public static Screen[] AllScreens {
+			get {
+				return driver.AllScreens;
+			}
+		}
+
 		public static bool ThemesEnabled {
 			get {
 				return XplatUI.driver.ThemesEnabled;

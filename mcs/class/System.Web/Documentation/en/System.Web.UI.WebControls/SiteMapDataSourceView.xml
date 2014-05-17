@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SiteMapDataSourceView" FullName="System.Web.UI.WebControls.SiteMapDataSourceView">
   <TypeSignature Language="C#" Value="public class SiteMapDataSourceView : System.Web.UI.DataSourceView" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control enables ASP.NET data-bound controls, such as the <see cref="T:System.Web.UI.WebControls.TreeView" /> and <see cref="T:System.Web.UI.WebControls.Menu" /> controls, to bind to site map data. The <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class is used by controls developers but it is not used by page developers nor in page code.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> returns a <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> for a specified hierarchical path when the <see cref="M:System.Web.UI.HierarchicalDataSourceView.Select" /> method is called. Like all hierarchical data source view objects, the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> is not named; rather, its is identified by its unique hierarchical path.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> is a wrapper class on a <see cref="T:System.Web.SiteMapNodeCollection" /> collection. The <see cref="T:System.Web.SiteMapNodeCollection" /> class implements the <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> interface, which the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class returns from a call to Select method. Because the <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> and <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> work with <see cref="T:System.Web.SiteMapNode" /> objects, the view maintains an internal <see cref="T:System.Web.SiteMapNodeCollection" /> to contain them. The collection is initialized using the view's constructors and accessed with the <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.Select" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a strongly typed <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> object for the <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,12 +32,20 @@
         <Parameter Name="node" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
         <param name="viewName">To be added.</param>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class is a wrapper class on a <see cref="T:System.Web.SiteMapNodeCollection" /> object. Creating a <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> using the <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.#ctor(System.Web.UI.WebControls.SiteMapDataSource,System.String,System.Web.SiteMapNode)" /> constructor initializes the internal node collection with a single <see cref="T:System.Web.SiteMapNode" /> object. The site map structure is navigated using the node as a point of reference.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named instance of the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class, adding the single specified node to the internal collection of nodes.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> that the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> is associated with.</param>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> to add to the internal <see cref="T:System.Web.SiteMapNodeCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,12 +60,20 @@
         <Parameter Name="collection" Type="System.Web.SiteMapNodeCollection" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
         <param name="viewName">To be added.</param>
-        <param name="collection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class is a wrapper class on a <see cref="T:System.Web.SiteMapNodeCollection" /> object. Creating a <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> using the <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.#ctor(System.Web.UI.WebControls.SiteMapDataSource,System.String,System.Web.SiteMapNodeCollection)" /> constructor initializes the internal node collection with the <see cref="T:System.Web.SiteMapNodeCollection" /> that is passed to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named instance of the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class, setting the internal collection of nodes to the specified node collection.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> that the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> is associated with.</param>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.SiteMapNodeCollection" /> of nodes that the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> provides a view of. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,10 +92,20 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to retrieve a set of nodes that represents the site navigation structure for the current ASP.NET application. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method directly; instead, use the publicly exposed <see cref="Overload:System.Web.UI.WebControls.SiteMapDataSourceView.Select" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of the <see cref="T:System.Web.SiteMapNode" /> objects that represents the site navigation structure for the current user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNodeCollection" /> that represents the site navigation structure for the current user.</para>
+        </returns>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> that is used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
     </Member>
     <Member MemberName="OnDataSourceViewChanged">
@@ -83,10 +118,11 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -102,11 +138,21 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.Select(System.Web.UI.DataSourceSelectArguments)" /> method calls the <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method, passing the <paramref name="arguments" /> parameter. The <see cref="Overload:System.Web.UI.WebControls.SiteMapDataSourceView.Select" /> method is used by controls developers but it is not used by page developers nor in page code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of the <see cref="T:System.Web.SiteMapNode" /> objects that represents the site navigation structure for the current user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNodeCollection" /> that represents the site navigation structure for the current user. </para>
+        </returns>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> that is used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

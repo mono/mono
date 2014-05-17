@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallbackDebugBehavior" FullName="System.ServiceModel.Description.CallbackDebugBehavior">
+  <TypeSignature Language="C#" Value="public class CallbackDebugBehavior : System.ServiceModel.Description.IEndpointBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CallbackDebugBehavior extends System.Object implements class System.ServiceModel.Description.IEndpointBehavior" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Description.IEndpointBehavior</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Set the <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> property to true from an application configuration file or programmatically to enable the flow of managed exception information in a client callback object back to the service for debugging purposes. </para>
+      <block subset="none" type="note">
+        <para>Returning managed exception information to services can be a security risk because exception details expose information about the internal client implementation that could be used by unauthorized services. In addition, although the <see cref="T:System.ServiceModel.Description.CallbackDebugBehavior" /> properties can also be set programmatically, it can be easy to forget to disable <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> when deploying. </para>
+      </block>
+      <para>Because of the security issues involved, it is strongly recommended that:</para>
+      <list type="bullet">
+        <item>
+          <para>You use an application configuration file to set the value of the <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> property to true.</para>
+        </item>
+        <item>
+          <para>You only do so only in controlled debugging scenarios.</para>
+        </item>
+      </list>
+      <para>crabout the security issues related to managed exception information, see <format type="text/html"><a href="a9696563-d404-4905-942d-1e0834c26dea">Specifying and Handling Faults in Contracts and Services</a></format>.</para>
+      <para>You can also set the values of this attribute by using the <format type="text/html"><a href="4073feda-1857-4be4-9947-227afb847ced">&lt;callbackDebug&gt;</a></format> element in a client application configuration file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables service debugging for a indigo1 callback object.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CallbackDebugBehavior (bool includeExceptionDetailInFaults);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool includeExceptionDetailInFaults) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="includeExceptionDetailInFaults" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructor creates a <see cref="T:System.ServiceModel.Description.CallbackDebugBehavior" /> object in which the value of the <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> property is the value of <paramref name="includeExceptionDetailInFaults" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.CallbackDebugBehavior" /> class.  </para>
+        </summary>
+        <param name="includeExceptionDetailInFaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />Controls whether a indigo2 callback object includes managed exception information in the detail of the SOAP faults sent back to the service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeExceptionDetailInFaults">
+      <MemberSignature Language="C#" Value="public bool IncludeExceptionDetailInFaults { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeExceptionDetailInFaults" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> property to true from an application configuration file or programmatically to enable the flow of managed exception information in a client callback object back to the service for debugging purposes. </para>
+          <block subset="none" type="note">
+            <para>Returning managed exception information to services can be a security risk because exception details expose information about the internal client implementation that could be used by unauthorized services. In addition, although the <see cref="T:System.ServiceModel.Description.CallbackDebugBehavior" /> properties can also be set programmatically, it can be easy to forget to disable <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> when deploying. </para>
+          </block>
+          <para>Because of the security issues involved, it is strongly recommended that:</para>
+          <list type="bullet">
+            <item>
+              <para>You use an application configuration file to set the value of the <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> property to true.</para>
+            </item>
+            <item>
+              <para>You only do so only in controlled debugging scenarios.</para>
+            </item>
+          </list>
+          <para>crabout the security issues related to managed exception information, see <format type="text/html"><a href="a9696563-d404-4905-942d-1e0834c26dea">Specifying and Handling Faults in Contracts and Services</a></format>.</para>
+          <procedure>
+            <format type="text/html">
+              <h2>To enable or disable a feature of CallbackDebugBehavior using a configuration file</h2>
+            </format>
+            <steps>
+              <step>
+                <para>Add a behaviorConfiguration attribute to the client <format type="text/html"><a href="13aa23b7-2f08-4add-8dbf-a99f8127c017">&lt;endpoint&gt;</a></format> element for your indigo2 client application. The <see cref="T:System.ServiceModel.Description.CallbackDebugBehavior" /> behavior is an endpoint behavior. Endpoint behaviors are configured on &lt;endpoint&gt; elements; service behaviors are configured on <format type="text/html"><a href="13123dd6-c4a9-4a04-a984-df184b851788">&lt;service&gt;</a></format> elements.</para>
+              </step>
+              <step>
+                <para>Add to or create an <format type="text/html"><a href="fb851947-e8dd-4f8c-8323-26fae90b09c3">&lt;endpointBehaviors&gt;</a></format> section and add a <format type="text/html"><a href="b90ca3bc-3c22-4174-b903-e3a39898bd27">&lt;behavior&gt;</a></format> element to that with the name that matches the behaviorConfiguration attribute value from step 1. Endpoint behaviors are added for use in a client <format type="text/html"><a href="13aa23b7-2f08-4add-8dbf-a99f8127c017">&lt;endpoint&gt;</a></format> element using an <format type="text/html"><a href="fb851947-e8dd-4f8c-8323-26fae90b09c3">&lt;endpointBehaviors&gt;</a></format> element.</para>
+              </step>
+              <step>
+                <para>Add a <format type="text/html"><a href="4073feda-1857-4be4-9947-227afb847ced">&lt;callbackDebug&gt;</a></format> element to the <format type="text/html"><a href="b90ca3bc-3c22-4174-b903-e3a39898bd27">&lt;behavior&gt;</a></format> element from step 2 and enable or disable the various properties appropriate to your scenario.</para>
+              </step>
+            </steps>
+          </procedure>
+          <para>For a specific example, see the Example section. You can also set the values of this attribute by using the <format type="text/html"><a href="4073feda-1857-4be4-9947-227afb847ced">&lt;callbackDebug&gt;</a></format> element in a client application configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that controls whether client callback objects return managed exception information in SOAP faults back to the service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.AddBindingParameters (System.ServiceModel.Description.ServiceEndpoint endpoint, System.ServiceModel.Channels.BindingParameterCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters(class System.ServiceModel.Description.ServiceEndpoint endpoint, class System.ServiceModel.Channels.BindingParameterCollection parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+        <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Channels.BindingParameterCollection)" /> method to support the behavior.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.ApplyClientBehavior (System.ServiceModel.Description.ServiceEndpoint endpoint, System.ServiceModel.Dispatcher.ClientRuntime behavior);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior(class System.ServiceModel.Description.ServiceEndpoint endpoint, class System.ServiceModel.Dispatcher.ClientRuntime behavior) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+        <Parameter Name="behavior" Type="System.ServiceModel.Dispatcher.ClientRuntime" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns the value of the <see cref="P:System.ServiceModel.Description.CallbackDebugBehavior.IncludeExceptionDetailInFaults" /> property to the <see cref="P:System.ServiceModel.Dispatcher.ChannelDispatcher.IncludeExceptionDetailInFaults" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.ClientRuntime)" /> to support the behavior.</para>
+        </summary>
+        <param name="behavior">
+          <attribution license="cc4" from="Microsoft" modified="false" />The client runtime to be customized.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.ApplyDispatchBehavior (System.ServiceModel.Description.ServiceEndpoint endpoint, System.ServiceModel.Dispatcher.EndpointDispatcher dispatcher);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior(class System.ServiceModel.Description.ServiceEndpoint endpoint, class System.ServiceModel.Dispatcher.EndpointDispatcher dispatcher) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+        <Parameter Name="dispatcher" Type="System.ServiceModel.Dispatcher.EndpointDispatcher" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">To be added.</param>
+        <param name="dispatcher">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an <see cref="T:System.InvalidOperationException" />; this behavior can only be used in a client application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.EndpointDispatcher)" /> to support the behavior.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IEndpointBehavior.Validate">
+      <MemberSignature Language="C#" Value="void IEndpointBehavior.Validate (System.ServiceModel.Description.ServiceEndpoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IEndpointBehavior.Validate(class System.ServiceModel.Description.ServiceEndpoint endpoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements <see cref="M:System.ServiceModel.Description.IEndpointBehavior.Validate(System.ServiceModel.Description.ServiceEndpoint)" /> to support the behavior.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XmlBinaryWriterSession" FullName="System.Xml.XmlBinaryWriterSession">
+  <TypeSignature Language="C#" Value="public class XmlBinaryWriterSession" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlBinaryWriterSession extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Session objects (this class together with <see cref="T:System.Xml.XmlBinaryReaderSession" />) enable dynamic string atomization that can span an entire conversation. These session objects manage dynamic dictionaries. For more information about dynamic dictionaries see <see cref="T:System.Xml.XmlDictionary" />.</para>
+      <para>Due to asynchronous processing, it is possible for messages that arrive synchronously to be processed in a different order than the order in which they were sent. String atomization that spans messages must ensure the messages are processed in the original order or the atomized strings must be conveyed using a different mechanism.</para>
+      <para>To use them, you create a session object and pass it to the constructor or initializer for a binary XML reader or writer. </para>
+      <para>To reuse a dynamic dictionary pass the same session object to all subsequent readers and writers.</para>
+      <para>The session object can be reset to allow pooling.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables using a dynamic dictionary to compress common strings that appear in a message and maintain state.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlBinaryWriterSession ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of this class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears out the internal collections.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TryAdd">
+      <MemberSignature Language="C#" Value="public virtual bool TryAdd (System.Xml.XmlDictionaryString value, out int key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryAdd(class System.Xml.XmlDictionaryString value, int32 key) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Xml.XmlDictionaryString" />
+        <Parameter Name="key" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="key">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

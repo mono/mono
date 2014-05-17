@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="HttpTransportSecurity" FullName="System.ServiceModel.HttpTransportSecurity">
+  <TypeSignature Language="C#" Value="public sealed class HttpTransportSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit HttpTransportSecurity extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by <see cref="P:System.ServiceModel.WSHttpSecurity.Transport" /> to set the transport-level security settings for a binding.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the transport-level security settings for the <see cref="T:System.ServiceModel.WSHttpBinding" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public HttpTransportSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.HttpTransportSecurity" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCredentialType">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.HttpClientCredentialType ClientCredentialType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.HttpClientCredentialType ClientCredentialType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.HttpClientCredentialType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value can be one of the following enumeration members:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Basic" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Certificate" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Digest" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.None" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Ntlm" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Windows" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of client credential to be used for authentication.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExtendedProtectionPolicy">
+      <MemberSignature Language="C#" Value="public System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy ExtendedProtectionPolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy ExtendedProtectionPolicy" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the extended protection policy.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProxyCredentialType">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.HttpProxyCredentialType ProxyCredentialType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.HttpProxyCredentialType ProxyCredentialType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.HttpProxyCredentialType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value can be one of the following enumeration members:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Basic" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Digest" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.None" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Ntlm" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.HttpClientCredentialType.Windows" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of client credential to be used for authentication against the proxy.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Realm">
+      <MemberSignature Language="C#" Value="public string Realm { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Realm" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <newTerm>authentication realm</newTerm> is a string that contains at least the name of the host performing the authentication and can additionally indicate the collection of users who might have access. An example might be "registered_someone@example.com". The authentication realm is displayed to a user to show which one of several possible user names and passwords can be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the authentication realm for digest or basic authentication.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

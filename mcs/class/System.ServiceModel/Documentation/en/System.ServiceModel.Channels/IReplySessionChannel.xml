@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IReplySessionChannel" FullName="System.ServiceModel.Channels.IReplySessionChannel">
+  <TypeSignature Language="C#" Value="public interface IReplySessionChannel : System.ServiceModel.Channels.IReplyChannel, System.ServiceModel.Channels.ISessionChannel&lt;System.ServiceModel.Channels.IInputSession&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IReplySessionChannel implements class System.ServiceModel.Channels.IChannel, class System.ServiceModel.Channels.IReplyChannel, class System.ServiceModel.Channels.ISessionChannel`1&lt;class System.ServiceModel.Channels.IInputSession&gt;, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IReplyChannel</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.ISessionChannel&lt;System.ServiceModel.Channels.IInputSession&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.IReplySessionChannel" /> interface indicates that an <see cref="T:System.ServiceModel.Channels.IReplyChannel" /> implements <see cref="T:System.ServiceModel.Channels.IInputSession" /> semantics. </para>
+      <para>The <see cref="T:System.ServiceModel.Channels.IInputSession" /> associated with its <see cref="T:System.ServiceModel.Channels.IReplySessionChannel" /> can be retrieved through the <see cref="P:System.ServiceModel.Channels.ISessionChannel`1.Session" /> property. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface to associate a reply channel with a session</para>
+    </summary>
+  </Docs>
+  <Members />
+</Type>

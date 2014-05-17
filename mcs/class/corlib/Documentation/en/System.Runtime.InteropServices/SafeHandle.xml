@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SafeHandle" FullName="System.Runtime.InteropServices.SafeHandle">
   <TypeSignature Language="C#" Value="public abstract class SafeHandle : System.Runtime.ConstrainedExecution.CriticalFinalizerObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi abstract beforefieldinit SafeHandle extends System.Runtime.ConstrainedExecution.CriticalFinalizerObject implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,61 +16,59 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>SafeHandles provide a typesafe mechanism to encapsulate operating system handles.</summary>
-    <remarks>
-      <para>
-In the past, developers used the <see cref="T:System.IntPtr" /> as an opaque value that typically mapped to operating system handles.    There were two major problems with this: there was no type safety and on sandboxed setups it was possible to create an attack depending on handle reuse while some code executed in the underlying operating system.
-</para>
-      <para>
-SafeHandles are derived from this class and have to provide the proper mechanism for disposing a handle (file handles would close th underling operating system descriptor for example) and so so by overwritting the ReleaseHandle method. 
-</para>
-      <para>
-SafeHandles and its derived types are passed in Platform Invocation calls (DllImports) and the runtime will transform the actual type-safe SafeHandle into the opaque handle (the runtime will call DangerousGetHandle () transparently).
-</para>
-      <para>
-In P/Invoke, SafeHandles can be passed as parameters and as reference parameters.  They can be returned from methods and passed in structures.   There is one limitation though: SafeHandles contained in ref structures will not have their values modified on the structure (In .NET or in Mono).
-</para>
-      <para>
-For an up-to-date description of all the features of SafeHandles in Mono see the <see cref="http://www.mono-project.com/SafeHandles" /> page.
-</para>
-    </remarks>
     <since>.NET 2.0</since>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class provides critical finalization of handle resources, preventing handles from being reclaimed prematurely by garbage collection and from being recycled by Windows to reference unintended unmanaged objects. Before the .NET Framework version 2.0, all operating system handles could only be encapsulated in the <see cref="T:System.IntPtr" /> managed wrapper object. </para>
+      <para>The <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class contains a finalizer that ensures that the handle is closed and is guaranteed to run, even during unexpected <see cref="T:System.AppDomain" /> unloads when a host may not trust the consistency of the state of the <see cref="T:System.AppDomain" />. </para>
+      <para>For more information about the benefits of using a <see cref="T:System.Runtime.InteropServices.SafeHandle" />, see <format type="text/html"><a href="3c515c3e-6f52-4a6a-883d-82cacad23478">Safe Handles and Critical Finalization</a></format>. </para>
+      <para>This class is abstract because you cannot create a generic handle. To implement <see cref="T:System.Runtime.InteropServices.SafeHandle" />, you must create a derived class. To create <see cref="T:System.Runtime.InteropServices.SafeHandle" /> derived classes, you must know how to create and free an operating system handle. This process is different for different handle types because some use CloseHandle, while others use more specific methods such as UnmapViewOfFile or FindClose. For this reason, you must create a derived class of <see cref="T:System.Runtime.InteropServices.SafeHandle" /> for each operating system handle type; such as MySafeRegistryHandle, MySafeFileHandle, and MySpecialSafeFileHandle. Some of these derived classes are prewritten and provided for you in the <see cref="N:Microsoft.Win32.SafeHandles" /> namespace.</para>
+      <block subset="none" type="note">
+        <para>Writing your own classes derived from <see cref="T:System.Runtime.InteropServices.SafeHandle" /> is an advanced programming feature. A set of prewritten classes derived from <see cref="T:System.Runtime.InteropServices.SafeHandle" /> is provided as abstract derivations, and this set is located in the <see cref="N:Microsoft.Win32.SafeHandles" /> namespace. These classes are designed to provide common functionality supporting file and operating system handles.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a wrapper class for operating system handles. This class must be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(native int invalidHandleValue, bool ownsHandle) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="invalidHandleValue" Type="System.IntPtr" />
-        <Parameter Name="ownsHandle" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="invalidHandleValue">To be added.</param>
-        <param name="ownsHandle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="invalidHandleValue" Type="System.IntPtr" />
+        <Parameter Name="ownsHandle" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="ownsHandle" /> parameter is false, <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> is never called; thus, it is not recommended to use this parameter value as your code may leak resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class with the specified invalid handle value.</para>
+        </summary>
+        <param name="invalidHandleValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of an invalid handle (usually 0 or -1).  Your implementation of <see cref="P:System.Runtime.InteropServices.SafeHandle.IsInvalid" /> should return true for this value.</param>
+        <param name="ownsHandle">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to reliably let <see cref="T:System.Runtime.InteropServices.SafeHandle" /> release the handle during the finalization phase; otherwise, false (not recommended). </param>
+      </Docs>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -78,10 +78,38 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose" /> method allows the resources to be freed. This might not happen immediately if other threads are using the same safe handle object, but will happen as soon as that is no longer the case. Although most classes that use the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class do not need to provide a finalizer, this is sometimes necessary (for example, to flush out file buffers or to write some data back into memory). In this case, the class can provide a finalizer that is guaranteed to run before the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> critical finalizer runs.</para>
+          <para>Call the <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose" /> method when you are finished using the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose" /> before you release your last reference to the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object's <see cref="M:System.Runtime.InteropServices.SafeHandle.Finalize" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the handle for releasing and freeing resources.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DangerousAddRef">
       <MemberSignature Language="C#" Value="public void DangerousAddRef (ref bool success);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DangerousAddRef(bool success) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -93,49 +121,46 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DangerousGetHandle">
+      <MemberSignature Language="C#" Value="public IntPtr DangerousGetHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance native int DangerousGetHandle() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="DangerousGetHandle">
-      <MemberSignature Language="C#" Value="public IntPtr DangerousGetHandle ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to retrieve the actual handle value from an instance of the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> derived class. This method is needed for backwards compatibility because many properties in the .NET Framework return IntPtr handle types. IntPtr handle types are platform-specific types used to represent a pointer or a handle.</para>
+          <block subset="none" type="note">
+            <para>Using the <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousGetHandle" /> method can pose security risks because, if the handle has been marked as invalid with <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandleAsInvalid" />, <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousGetHandle" /> still returns the original, potentially stale handle value. The returned handle can also be recycled at any point. At best, this means the handle might suddenly stop working. At worst, if the handle or the resource that the handle represents is exposed to untrusted code, this can lead to a recycling security attack on the reused or returned handle. For example, an untrusted caller can query data on the handle just returned and receive information for an entirely unrelated resource. See the <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousAddRef(System.Boolean@)" /> and the <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousRelease" /> methods for more information about using the <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousGetHandle" /> methodsafely.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="F:System.Runtime.InteropServices.SafeHandle.handle" /> field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An IntPtr representing the value of the <see cref="F:System.Runtime.InteropServices.SafeHandle.handle" /> field. If the handle has been marked invalid with <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandleAsInvalid" />, this method still returns the original handle value, which can be a stale value.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="DangerousRelease">
       <MemberSignature Language="C#" Value="public void DangerousRelease ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DangerousRelease() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -145,18 +170,28 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousRelease" /> method is the counterpart to <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousAddRef(System.Boolean@)" />. You should always match a call to the <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousRelease" /> method with a successful call to <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousAddRef(System.Boolean@)" />.</para>
+          <block subset="none" type="note">
+            <para>This method is intended for advanced users and must always be used carefully. To avoid leaking handle resources, always call this method inside a constrained execution region (CER), where a thread abort cannot interrupt processing. In the same way that unmatched <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousAddRef(System.Boolean@)" /> calls can cause resource leaks, unmatched <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousRelease" /> calls can cause invalid handle states to become visible to other threads. Do not expose <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousAddRef(System.Boolean@)" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousRelease" /> calls to untrusted code.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Manually decrements the reference counter on a <see cref="T:System.Runtime.InteropServices.SafeHandle" /> instance.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -166,10 +201,38 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose" /> method allows the resources to be freed. This might not happen immediately if other threads are using the same instance of the safe handle, but will happen as soon as that is no longer the case. Although most classes using <see cref="T:System.Runtime.InteropServices.SafeHandle" /> do not need to provide a finalizer, this is sometimes necessary (for example, to flush out file buffers or to write some data back into memory). In this case, they can provide a finalizer that is guaranteed to run before the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> critical finalizer runs.</para>
+          <para>Call the <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose" /> method when you are finished using the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object. The <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> method leaves the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object in an unusable state.</para>
+          <block subset="none" type="note">
+            <para>Always call the <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> or <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose" /> method before you release your last reference to the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object's <see cref="M:System.Runtime.InteropServices.SafeHandle.Finalize" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -177,63 +240,68 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should never explicitly call the <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose(System.Boolean)" /> method with the <paramref name="disposing" /> parameter set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class specifying whether to perform a normal dispose operation.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true for a normal dispose operation; false to finalize the handle.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~SafeHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~SafeHandle ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.InteropServices.SafeHandle.Finalize" /> method is the destructor for the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> class. Application code should not call this method directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees all resources associated with the handle.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="handle">
+      <MemberSignature Language="C#" Value="protected IntPtr handle;" />
+      <MemberSignature Language="ILAsm" Value=".field family native int handle" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="handle">
-      <MemberSignature Language="C#" Value="protected IntPtr handle;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not expose the handle publicly (that is, outside of the derived class).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the handle to be wrapped.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsClosed">
       <MemberSignature Language="C#" Value="public bool IsClosed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsClosed" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -243,18 +311,33 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.InteropServices.SafeHandle.IsClosed" /> method returns a value indicating whether the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object's handle is no longer associated with a native resource. This differs from the definition of the <see cref="P:System.Runtime.InteropServices.SafeHandle.IsInvalid" /> property, which computes whether a given handle is always considered invalid. The <see cref="P:System.Runtime.InteropServices.SafeHandle.IsClosed" /> method returns a true value in the following cases:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandleAsInvalid" /> method was called.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Runtime.InteropServices.SafeHandle.Dispose" /> method or <see cref="M:System.Runtime.InteropServices.SafeHandle.Close" /> method was called and there are no references to the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object on other threads.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the handle is closed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsInvalid">
       <MemberSignature Language="C#" Value="public abstract bool IsInvalid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInvalid" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -264,19 +347,26 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ReleaseHandle">
-      <MemberSignature Language="C#" Value="protected abstract bool ReleaseHandle ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
-      <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived classes must implement the <see cref="P:System.Runtime.InteropServices.SafeHandle.IsInvalid" /> property so that the common language runtime can determine whether critical finalization is required. Derived classes must provide an implementation that suits the general type of handle they support (0 or -1 is invalid). These classes can then be further derived for specific safe handle types.</para>
+          <para>Unlike the <see cref="P:System.Runtime.InteropServices.SafeHandle.IsClosed" /> property, which reports whether the <see cref="T:System.Runtime.InteropServices.SafeHandle" /> object has finished using the underlying handle, the <see cref="P:System.Runtime.InteropServices.SafeHandle.IsInvalid" /> property calculates whether the given handle value is always considered invalid. Therefore, the <see cref="P:System.Runtime.InteropServices.SafeHandle.IsInvalid" /> property always returns the same value for any one handle value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether the handle value is invalid.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ReleaseHandle">
+      <MemberSignature Language="C#" Value="protected abstract bool ReleaseHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool ReleaseHandle() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -286,10 +376,41 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> method is guaranteed to be called only once and only if the handle is valid as defined by the <see cref="P:System.Runtime.InteropServices.SafeHandle.IsInvalid" /> property. Implement this method in your <see cref="T:System.Runtime.InteropServices.SafeHandle" /> derived classes to execute any code that is required to free the handle. Because one of the functions of <see cref="T:System.Runtime.InteropServices.SafeHandle" /> is to guarantee prevention of resource leaks, the code in your implementation of <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> must never fail. The garbage collector calls <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> after normal finalizers have been run for objects that were garbage collected at the same time. The garbage collector guarantees the resources to invoke this method and that the method will not be interrupted while it is in progress. This method will be prepared as a constrained execution region (CER) at instance construction time (along with all the methods in its statically determinable call graph). Although this prevents thread abort interrupts, you must still be careful not to introduce any fault paths in your overridden <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> method. In particular, apply the <see cref="T:System.Runtime.ConstrainedExecution.ReliabilityContractAttribute" /> attribute to any methods you call from <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" />. In most cases this code should be:</para>
+          <para>ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)</para>
+          <para>Additionally, for simple cleanup (for example, calling the Win32 API CloseHandle on a file handle) you can check the return value for the single platform invoke call. For complex cleanup, you may have a lot of program logic and many method calls, some of which might fail. You must ensure that your program logic has fallback code for each of those cases.</para>
+          <para>If <see cref="M:System.Runtime.InteropServices.SafeHandle.ReleaseHandle" /> returns false for any reason, it generates a <format type="text/html"><a href="44cd98ba-95e5-40a1-874d-e8e163612c51">ReleaseHandleFailed</a></format> Managed Debugging Assistant.  This helps you detect cases where your attempt to release resources fails.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, executes the code required to free the handle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the handle is released successfully; otherwise, in the event of a catastrophic failure, false. In this case, it generates a <format type="text/html"><a href="44cd98ba-95e5-40a1-874d-e8e163612c51">ReleaseHandleFailed</a></format> Managed Debugging Assistant.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="SetHandle">
       <MemberSignature Language="C#" Value="protected void SetHandle (IntPtr handle);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void SetHandle(native int handle) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -297,10 +418,22 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandle(System.IntPtr)" /> method only if you need to support a pre-existing handle (for example, if the handle is returned in a structure) because the .NET Framework COM interop infrastructure does not support marshaling output handles in a structure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the handle to the specified pre-existing handle.</para>
+        </summary>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The pre-existing handle to use. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SetHandleAsInvalid">
+      <MemberSignature Language="C#" Value="public void SetHandleAsInvalid ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetHandleAsInvalid() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -310,27 +443,21 @@ For an up-to-date description of all the features of SafeHandles in Mono see the
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SetHandleAsInvalid">
-      <MemberSignature Language="C#" Value="public void SetHandleAsInvalid ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandleAsInvalid" /> method only when you know that your handle no longer references a resource. Doing so does not change the value of the <see cref="F:System.Runtime.InteropServices.SafeHandle.handle" /> field; it only marks the handle as closed. The handle might then contain a potentially stale value. The effect of this call is that no attempt is made to free the resources.</para>
+          <para>As with the <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandle(System.IntPtr)" /> method, use <see cref="M:System.Runtime.InteropServices.SafeHandle.SetHandleAsInvalid" /> only if you need to support a pre-existing handle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks a handle as no longer used.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
 </Type>

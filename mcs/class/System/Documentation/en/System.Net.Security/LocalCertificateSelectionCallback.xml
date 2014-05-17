@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LocalCertificateSelectionCallback" FullName="System.Net.Security.LocalCertificateSelectionCallback">
   <TypeSignature Language="C#" Value="public delegate System.Security.Cryptography.X509Certificates.X509Certificate LocalCertificateSelectionCallback(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed LocalCertificateSelectionCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -23,9 +26,15 @@
     <param name="localCertificates">To be added.</param>
     <param name="remoteCertificate">To be added.</param>
     <param name="acceptableIssuers">To be added.</param>
-    <summary>To be added.</summary>
-    <value>To be added.</value>
-    <remarks>To be added.</remarks>
+    <returns>To be added.</returns>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate is used to construct instances of the <see cref="T:System.Net.Security.SslStream" /> class. The <see cref="T:System.Net.Security.SslStream" /> class is used to help secure information exchanged between a client and server. The client and server use this delegate to select a certificate to be used for authentication.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Selects the local Secure Sockets Layer (SSL) certificate used for authentication.</para>
+    </summary>
   </Docs>
 </Type>

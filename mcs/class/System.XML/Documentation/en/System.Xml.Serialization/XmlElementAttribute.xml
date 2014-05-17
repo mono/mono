@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlElementAttribute" FullName="System.Xml.Serialization.XmlElementAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlElementAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlElementAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -13,198 +16,751 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue, AllowMultiple=true)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue | System.AttributeTargets.All, AllowMultiple=true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> belongs to a family of attributes that controls how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes or deserializes an object. For a complete list of similar attributes, see <format type="text/html"><a href="414b820f-a696-4206-b576-2711d85490c7">Attributes That Control XML Serialization</a></format>.</para>
+      <para>An XML document usually contains XML elements, each of which consists of three parts: an opening tag with possible attributes, a closing tag, and the data between the tags. XML tags can be nested--that is, the data between tags can also be XML elements. This capacity of one element to enclose another allows the document to contain hierarchies of data. An XML element can also include attributes.</para>
+      <para>Apply the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to public fields or public read/write properties to control characteristics of the XML elements such as the element name and namespace.</para>
+      <para>The <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> can be applied multiple times to a field that returns an array of objects. The purpose of this is to specify (through the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Type" /> property) different types that can be inserted into the array. For example, the array in the following C# code accepts both strings and integers.</para>
+      <code> public class Things{
+    [XmlElement(Type = typeof(string)),
+    XmlElement(Type = typeof(int))]
+    public object[] StringsAndInts;
+ }</code>
+      <para>This results in XML that might resemble the following.</para>
+      <code> &lt;Things&gt;
+    &lt;string&gt;Hello&lt;/string&gt;
+    &lt;int&gt;999&lt;/int&gt;
+    &lt;string&gt;World&lt;/string&gt;
+ &lt;/Things&gt;</code>
+      <para>Note that when you apply the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> multiple times without specifying an <see cref="P:System.Xml.Serialization.XmlElementAttribute.ElementName" /> property value, the elements are named after the type of the acceptable objects.</para>
+      <para>If you apply the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to a field or property that returns an array, the items in the array are encoded as a sequence of XML elements.</para>
+      <para>In contrast if an <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> is not applied to such a field or property, the items in the array are encoded as a sequence of elements, nested under an element named after the field or property. (Use the <see cref="T:System.Xml.Serialization.XmlArrayAttribute" /> and <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> attributes to control how an array is serialized.) </para>
+      <para>You can set the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Type" /> property to specify a type that is derived from the type of the original field or property--that is, the field or property to which you have applied the <see cref="T:System.Xml.Serialization.XmlElementAttribute" />.</para>
+      <para>If a field or property returns an <see cref="T:System.Collections.ArrayList" />, you can apply multiple instances of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to the member. For each instance, set the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Type" /> property to a type of object that can be inserted into the array.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+      <block subset="none" type="note">
+        <para>You can use the word XmlElement in your code instead of the longer <see cref="T:System.Xml.Serialization.XmlElementAttribute" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a public field or property represents an XML element when the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes or deserializes the object that contains it.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlElementAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlElementAttribute (string elementName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string elementName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="elementName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="elementName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses the member name as the XML element name when serializing a class instance. For example, a field named Vehicle generates an XML element named Vehicle. However if you need a different element, such as Cars, pass it in the <paramref name="elementName" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> class and specifies the name of the XML element.</para>
+        </summary>
+        <param name="elementName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element name of the serialized member. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlElementAttribute (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'System.Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <paramref name="type" /> parameter to specify a type that is derived from a base class. For example, suppose a property named MyAnimal returns an Animal object. You want to enhance the object, so you create a new class named Mammal that inherits from the Animal class. To instruct the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to accept the Mammal class when it serializes the MyAnimal property, pass the <see cref="T:System.Type" /> of the Mammal class to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> class and specifies a type for the member to which the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> is applied. This type is used by the <see cref="T:System.Xml.Serialization.XmlSerializer" /> when serializing or deserializing object that contains it.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of an object derived from the member's type. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlElementAttribute (string elementName, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string elementName, class System.Type type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="elementName" Type="System.String" />
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="elementName">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'System.Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses the member name as the XML element name when serializing a class instance. For example, a field named Vehicle generates an XML element named Vehicle. However, if you need a different element, such as Cars, pass it in the <paramref name="elementName" /> parameter.</para>
+          <para>Use the <paramref name="type" /> parameter to specify a type that is derived from a base class. For example, suppose a property named MyAnimal returns an Animal object. You want to enhance the object, so you create a new class named Mammal that inherits from the Animal class. To instruct the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to accept the Mammal class when it serializes the MyAnimal property, pass the <see cref="T:System.Type" /> of the Mammal class to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> and specifies the name of the XML element and a derived type for the member to which the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> is applied. This member type is used when the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes the object that contains it.</para>
+        </summary>
+        <param name="elementName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element name of the serialized member. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of an object derived from the member's type. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DataType">
-      <MemberSignature Language="C#" Value="public string DataType { set; get; }" />
+      <MemberSignature Language="C#" Value="public string DataType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DataType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table lists the XML Schema simple data types with their.NET equivalents.</para>
+          <para>For the XML Schema base64Binary and hexBinary data types, use an array of <see cref="T:System.Byte" /> structures, and apply a <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> with the <see cref="P:System.Xml.Serialization.XmlElementAttribute.DataType" /> set to "base64Binary" or "hexBinary", as appropriate. For the XML Schema time and date data types, use the <see cref="T:System.DateTime" /> type and apply the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> with the <see cref="P:System.Xml.Serialization.XmlElementAttribute.DataType" /> set to "date" or "time".</para>
+          <para>For every XML Schema type that is mapped to a string, apply the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> with its <see cref="P:System.Xml.Serialization.XmlElementAttribute.DataType" /> property set to the XML Schema type. It is possible that this can change the serialization format, not only the schema for the member.</para>
+          <block subset="none" type="note">
+            <para>The property is case-sensitive, so you must set it exactly to one of the XML Schema data types.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Passing binary data as an XML element is more efficient than passing it as an XML Schema attribute.</para>
+          </block>
+          <para>For more information about XML data types, see the World Wide Web Consortium (www.w3.org) document named "XML Schema Part 2: Datatypes".</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>XSD data type </para>
+                </term>
+                <description>
+                  <para>.NET data type </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>anyURI </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>base64Binary </para>
+              </term>
+              <description>
+                <para>Array of <see cref="T:System.Byte" /> objects </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>boolean </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>byte </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.SByte" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>date </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.DateTime" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>dateTime </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.DateTime" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>decimal </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Decimal" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>double </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Double" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ENTITY </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ENTITIES </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>float </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Single" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gDay </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gMonth </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gMonthDay </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gYear </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gYearMonth </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hexBinary </para>
+              </term>
+              <description>
+                <para>Array of <see cref="T:System.Byte" /> objects </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ID </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IDREF </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IDREFS </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>int </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int32" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>integer </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>language </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>long </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int64" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Name </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NCName </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>negativeInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NMTOKEN </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NMTOKENS </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>normalizedString </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>nonNegativeInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>nonPositiveInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NOTATION </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>positiveInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>QName </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Xml.XmlQualifiedName" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>duration </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>string </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>short </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int16" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>time </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.DateTime" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>token </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedByte </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Byte" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedInt </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.UInt32" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedLong </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.UInt64" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedShort </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.UInt16" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML Schema definition (XSD) data type of the XML element generated by the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ElementName">
-      <MemberSignature Language="C#" Value="public string ElementName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ElementName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ElementName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify an <see cref="P:System.Xml.Serialization.XmlArrayItemAttribute.ElementName" /> if you want the name of the generated XML element to differ from the member's identifier.</para>
+          <para>You can set the same <see cref="P:System.Xml.Serialization.XmlArrayAttribute.ElementName" /> value to more than one class member if the generated XML document uses XML namespaces to distinguish between the identically named members. For details on how to use namespaces and prefixed names in the XML document, see the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the generated XML element.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Form">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaForm Form { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlSchemaForm Form" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Form">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaForm Form { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaForm</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.Schema.XmlSchemaForm'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributeAttribute.Form" /> property determines whether an XML element is qualified or unqualified. The <see cref="P:System.Xml.Serialization.XmlAttributeAttribute.Form" /> property conforms to the World Wide Web Consortium (www.w3.org) 1999 specification, "Namespaces in XML".</para>
+          <para>If the <see cref="P:System.Xml.Serialization.XmlAttributeAttribute.Namespace" /> property is set to any value, attempting to set the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Form" /> property to XmlSchemaForm.Unqualified throws an exception. The default setting, XmlSchemaForm.None, instructs the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to check the schema for the XML document to determine whether the namespace is qualified. If the schema does not specify a value for an individual element or attribute, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses the elementFormDefault and attributeFormDefault values to determine whether an element or attribute is qualified. The following XML code shows a schema: </para>
+          <code> &lt;schema elementFormDefault="qualified" 
+ attributeFormDefault="unqualified"... &gt;
+  &lt;element name="Name"/&gt;
+  &lt;attribute name="Number"/&gt;
+ &lt;/schema&gt;</code>
+          <para>When the <see cref="T:System.Xml.Serialization.XmlSerializer" /> reads the schema, the <see cref="P:System.Xml.Serialization.XmlAttributeAttribute.Form" /> value for both the Name and Number is XmlSchemaForm.None, but the Name element is qualified, while the Number element is unqualified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the element is qualified.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="IsNullable">
+      <MemberSignature Language="C#" Value="public bool IsNullable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsNullable" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsNullable">
-      <MemberSignature Language="C#" Value="public bool IsNullable { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML schema specification for structures allows an XML document to explicitly signal that an element's content is missing. Such an element contains the attribute xsi:nil set to true. For more information, see the World Wide Web Consortium (www.w3.org) specification, "XML Schema Part 1: Structures".</para>
+          <para>If the <see cref="P:System.Xml.Serialization.XmlElementAttribute.IsNullable" /> property is set to true, the xsi:nil attribute is generated for class members that have been set to null. For example if you set a field named MyStringArray to null, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> generates the following XML code.</para>
+          <code> &lt;MyStringArray xsi:nil = "true" /&gt;</code>
+          <para>If the <see cref="P:System.Xml.Serialization.XmlElementAttribute.IsNullable" /> property is false, no XML element is generated for class members that have been set to null.</para>
+          <block subset="none" type="note">
+            <para>You cannot apply the <see cref="P:System.Xml.Serialization.XmlElementAttribute.IsNullable" /> property to a member typed as a value type because a value type cannot contain null. Additionally, you cannot set this property to false for nullable value types. When such types are null, they will be serialized by setting xsi:nil to true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <see cref="T:System.Xml.Serialization.XmlSerializer" /> must serialize a member that is set to null as an empty tag with the xsi:nil attribute set to true.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Namespace">
-      <MemberSignature Language="C#" Value="public string Namespace { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Serialization.XmlArrayItemAttribute.Namespace" /> property conforms to the World Wide Web Consortium (www.w3.org) specification, "Namespaces in XML".</para>
+          <para>To create namespaces that are associated with a prefix, you must create an <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> that contains the namespaces and prefixes used in the XML document. As you set the namespace for each <see cref="T:System.Xml.Serialization.XmlArrayAttribute" />, it must match one of the namespaces in the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" />. When the XML is generated, each array is correctly prefixed with the prefix associated with the specified namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace assigned to the XML element that results when the class is serialized.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Order">
-      <MemberSignature Language="C#" Value="public int Order { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Order { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Order" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="F:System.Xml.Serialization.CodeGenerationOptions.GenerateOrder" /> enumeration to instruct the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> to generate code that sets the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Order" /> property. </para>
+          <block subset="none" type="note">
+            <para>Once the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Order" /> property has been used on one public property or field in a type, it must be applied to all public properties and fields for that type and all inherited types.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the explicit order in which the elements are serialized or deserialized.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public Type Type { set; get; }" />
+      <MemberSignature Language="C#" Value="public Type Type { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Type" /> property to specify a derived type for a field or property.</para>
+          <para>If a field or property returns an <see cref="T:System.Collections.ArrayList" />, you can apply multiple instances of the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to the member. For each instance, set the <see cref="P:System.Xml.Serialization.XmlElementAttribute.Type" /> property to a type of object that can be inserted into the array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object type used to represent the XML element.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

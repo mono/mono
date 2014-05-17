@@ -1,0 +1,117 @@
+<Type Name="CodeTry" FullName="Mono.CodeGeneration.CodeTry">
+  <TypeSignature Language="C#" Value="public class CodeTry : Mono.CodeGeneration.CodeStatement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeTry extends Mono.CodeGeneration.CodeStatement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.CodeGeneration.CodeStatement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeTry ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CatchBlocks">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.List&lt;System.Collections.Generic.KeyValuePair&lt;Mono.CodeGeneration.CodeVariableDeclaration,Mono.CodeGeneration.CodeBlock&gt;&gt; CatchBlocks { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.List`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class Mono.CodeGeneration.CodeVariableDeclaration, class Mono.CodeGeneration.CodeBlock&gt;&gt; CatchBlocks" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.List&lt;System.Collections.Generic.KeyValuePair&lt;Mono.CodeGeneration.CodeVariableDeclaration,Mono.CodeGeneration.CodeBlock&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FinallyBlock">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeBlock FinallyBlock { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.CodeGeneration.CodeBlock FinallyBlock" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeBlock</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Generate">
+      <MemberSignature Language="C#" Value="public override void Generate (System.Reflection.Emit.ILGenerator gen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Generate(class System.Reflection.Emit.ILGenerator gen) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gen" Type="System.Reflection.Emit.ILGenerator" />
+      </Parameters>
+      <Docs>
+        <param name="gen">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrintCode">
+      <MemberSignature Language="C#" Value="public override void PrintCode (Mono.CodeGeneration.CodeWriter cp);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void PrintCode(class Mono.CodeGeneration.CodeWriter cp) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cp" Type="Mono.CodeGeneration.CodeWriter" />
+      </Parameters>
+      <Docs>
+        <param name="cp">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryBlock">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeBlock TryBlock { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.CodeGeneration.CodeBlock TryBlock" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeBlock</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

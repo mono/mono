@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WsdlExporter" FullName="System.ServiceModel.Description.WsdlExporter">
+  <TypeSignature Language="C#" Value="public class WsdlExporter : System.ServiceModel.Description.MetadataExporter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WsdlExporter extends System.ServiceModel.Description.MetadataExporter" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Description.MetadataExporter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.WsdlExporter" /> class to transform <see cref="T:System.ServiceModel.Description.ContractDescription" /> or <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects into metadata represented by <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects.</para>
+      <para>The <see cref="T:System.ServiceModel.Description.WsdlExporter" /> is used in a three-step process. </para>
+      <list type="ordered">
+        <item>
+          <para>Call the <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" /> method, passing the appropriate parameters. </para>
+        </item>
+        <item>
+          <para>Determine whether there are any export errors by checking the base <see cref="P:System.ServiceModel.Description.MetadataExporter.Errors" /> property. </para>
+        </item>
+        <item>
+          <para>If there are no errors, use the <see cref="M:System.ServiceModel.Description.WsdlExporter.GetGeneratedMetadata" /> to get a collection of <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects or get more specific versions of the metadata using the <see cref="P:System.ServiceModel.Description.WsdlExporter.GeneratedWsdlDocuments" /> or <see cref="P:System.ServiceModel.Description.WsdlExporter.GeneratedXmlSchemas" /> properties.</para>
+        </item>
+      </list>
+      <para>You can support exporting custom WSDL extensions by implementing the <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> interface and custom policy assertions by implementing the <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> interface. For details, see the documentation for those interfaces. </para>
+      <block subset="none" type="note">
+        <para>The WsdlExporter can only be used to export metadata from ContractDescription instances that contain Common Language Runtime (CLR) type information, such as a ContractDescription instance created using the ContractDescription.GetContract method or created as part of the ServiceDescription for a ServiceHost instance. You cannot use the WsdlExporter to export metadata from ContractDescription instances imported from service metadata or constructed without type information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts service, contract, and endpoint information into metadata documents.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WsdlExporter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use to create a <see cref="T:System.ServiceModel.Description.WsdlExporter" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.WsdlExporter" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportContract">
+      <MemberSignature Language="C#" Value="public override void ExportContract (System.ServiceModel.Description.ContractDescription contract);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void ExportContract(class System.ServiceModel.Description.ContractDescription contract) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contract" Type="System.ServiceModel.Description.ContractDescription" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" /> method to export metadata from only one contract.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports metadata that describes only the contract information from the specified contract description.</para>
+        </summary>
+        <param name="contract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ContractDescription" /> to generate metadata from.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportEndpoint">
+      <MemberSignature Language="C#" Value="public override void ExportEndpoint (System.ServiceModel.Description.ServiceEndpoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void ExportEndpoint(class System.ServiceModel.Description.ServiceEndpoint endpoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" /> method to create metadata about a single endpoint.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates metadata about the specified endpoint.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> about which to return metadata.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportEndpoints">
+      <MemberSignature Language="C#" Value="public void ExportEndpoints (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, System.Xml.XmlQualifiedName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ExportEndpoints(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, class System.Xml.XmlQualifiedName name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoints" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+        <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" /> method to create metadata about a set of endpoints from a specified service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates metadata about a group of endpoints from a specified service.</para>
+        </summary>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects about which to generate metadata.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GeneratedWsdlDocuments">
+      <MemberSignature Language="C#" Value="public System.Web.Services.Description.ServiceDescriptionCollection GeneratedWsdlDocuments { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.Services.Description.ServiceDescriptionCollection GeneratedWsdlDocuments" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Services.Description.ServiceDescriptionCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.WsdlExporter.GeneratedWsdlDocuments" /> property returns documents only as a result of calls to either <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects after calling one of the export methods. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GeneratedXmlSchemas">
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet GeneratedXmlSchemas { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaSet GeneratedXmlSchemas" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.Description.WsdlExporter.GeneratedXmlSchemas" /> property returns documents only as a result of calls to either <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of <see cref="T:System.Xml.Schema.XmlSchema" /> objects after calling one of the export methods.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetGeneratedMetadata">
+      <MemberSignature Language="C#" Value="public override System.ServiceModel.Description.MetadataSet GetGeneratedMetadata ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ServiceModel.Description.MetadataSet GetGeneratedMetadata() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MetadataSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlExporter.GetGeneratedMetadata" /> property to get a collection of all the metadata generated as a result of any number of calls to <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" />. </para>
+          <para>It is recommended that you check the base <see cref="P:System.ServiceModel.Description.MetadataExporter.Errors" /> property to determine whether any errors occurred before you retrieve the metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of generated <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of generated <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects that represents the metadata generated as a result of calls to <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

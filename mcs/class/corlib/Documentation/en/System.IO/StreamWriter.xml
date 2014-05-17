@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StreamWriter" FullName="System.IO.StreamWriter" FullNameSP="System_IO_StreamWriter" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable StreamWriter extends System.IO.TextWriter" />
   <TypeSignature Language="C#" Value="public class StreamWriter : System.IO.TextWriter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit StreamWriter extends System.IO.TextWriter" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -15,100 +17,79 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Implements a <see cref="T:System.IO.Stream" /> wrapper that writes
-   characters to a stream in a particular encoding.</para>
-    </summary>
     <remarks>
-      <para>The <see cref="T:System.IO.StreamWriter" /> class is designed for character output in a particular
-<see cref="T:System.Text.Encoding" />, 
-   whereas subclasses of <see cref="T:System.IO.Stream" /> are designed for byte
-   input and output.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>
-        <see cref="T:System.IO.StreamWriter" /> defaults to using an instance of <see cref="T:System.Text.UTF8Encoding" /> unless specified 
-otherwise. This instance of <see cref="T:System.Text.UTF8Encoding" /> is constructed such that the <see cref="M:System.Text.Encoding.GetPreamble" qualify="true" /> method returns
-the Unicode byte order mark written in UTF-8. The preamble of the encoding is
-added to a stream when you are not appending to an existing stream. This means
-any text file you create with <see cref="T:System.IO.StreamWriter" /> has three byte order marks at
-its beginning. UTF-8
-handles all Unicode characters correctly and gives consistent results on
-localized versions of the operating system. </para>
+        <see cref="T:System.IO.StreamWriter" /> is designed for character output in a particular encoding, whereas classes derived from <see cref="T:System.IO.Stream" /> are designed for byte input and output.</para>
       <para>
-        <block subset="none" type="note">By default, 
-<see cref="T:System.IO.StreamWriter" /> is not thread safe. For a thread-safe wrapper, see <see cref="M:System.IO.TextWriter.Synchronized(System.IO.TextWriter)" qualify="true" />
-.</block>
-      </para>
+        <see cref="T:System.IO.StreamWriter" /> defaults to using an instance of <see cref="T:System.Text.UTF8Encoding" /> unless specified otherwise. This instance of UTF8Encoding is constructed without a byte order mark (BOM), so its <see cref="M:System.Text.Encoding.GetPreamble" /> method returns an empty byte array. The default UTF-8 encoding for this constructor throws an exception on invalid bytes. This behavior is different from the behavior provided by the encoding object in the <see cref="P:System.Text.Encoding.UTF8" /> property. To specify a BOM and determine whether an exception is thrown on invalid bytes, use a constructor that accepts an encoding object as a parameter, such as <see cref="M:System.IO.StreamWriter.#ctor(System.String,System.Boolean,System.Text.Encoding)" /> or <see cref="M:System.IO.StreamWriter.#ctor(System.IO.Stream,System.Text.Encoding)" />.</para>
+      <para>By default, a <see cref="T:System.IO.StreamWriter" /> is not thread safe. See <see cref="M:System.IO.TextWriter.Synchronized(System.IO.TextWriter)" /> for a thread-safe wrapper.</para>
+      <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a <see cref="T:System.IO.TextWriter" /> for writing characters to a stream in a particular encoding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream)" />
       <MemberSignature Language="C#" Value="public StreamWriter (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="stream" Type="System.IO.Stream" />
-      </Parameters>
-      <Docs>
-        <param name="stream">The <see cref="T:System.IO.Stream" /> to write to.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified stream, using the default
-   encoding and buffer size.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property to a <see cref="T:System.Text.UTF8Encoding" /> whose <see cref="M:System.Text.Encoding.GetPreamble" /> method returns an empty
-   byte array. For additional information,
-   see <see cref="P:System.IO.TextWriter.Encoding" />
-   . The <see cref="P:System.IO.StreamWriter.BaseStream" /> property is initialized using
-<paramref name="stream" /> .</para>
-          <para>
-            <block subset="none" type="note">The default buffer size can typically be
-   around 4 KB.</block>
-          </para>
-        </remarks>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="stream " />does not support writing.</exception>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="stream " /> is <see langword="null" />.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="stream " />does not support writing.</exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="stream " /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.IO.StreamWriter" /> with UTF-8 encoding without a Byte-Order Mark (BOM), so its <see cref="M:System.Text.Encoding.GetPreamble" /> method returns an empty byte array. The default UTF-8 encoding for this constructor throws an exception on invalid bytes. This behavior is different from the behavior provided by the encoding object in the <see cref="P:System.Text.Encoding.UTF8" /> property. To specify whether an exception is thrown on invalid bytes, use a constructor that accepts an encoding object as a parameter, such as <see cref="M:System.IO.StreamWriter.#ctor(System.IO.Stream,System.Text.Encoding)" />. The <see cref="P:System.IO.StreamWriter.BaseStream" /> property is initialized using the <paramref name="stream" /> parameter. The position of the stream is not reset.</para>
+          <para>The <see cref="T:System.IO.StreamWriter" /> object calls <see cref="M:System.IO.Stream.Dispose" /> on the provided <see cref="T:System.IO.Stream" /> object when <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" /> is called.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified stream by using UTF-8 encoding and the default buffer size.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path)" />
       <MemberSignature Language="C#" Value="public StreamWriter (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to write to.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified file on the specified path, using the default encoding and
-   buffer size.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property to 
-   a <see cref="T:System.Text.UTF8Encoding" /> whose <see cref="M:System.Text.Encoding.GetPreamble" /> method returns an empty
-   byte array. For additional information, see <see cref="P:System.IO.TextWriter.Encoding" /> .</para>
-          <block subset="none" type="note">
-            <para>
-              <paramref name="path" /> is not required to be a file stored on disk;
-   it can be any part of a system that supports access via streams. For example,
-   depending on the system, this class might be able to access a
-   physical device.</para>
-            <para>For information on the valid format and characters for 
-   path strings, see <see cref="T:System.IO.Path" />
-   .</para>
-            <para>The default buffer size can typically be around 4 KB.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.IO.IOException">
           <paramref name="path" /> is in an invalid format or contains invalid characters.</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
@@ -120,84 +101,81 @@ localized versions of the operating system. </para>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission for reading and writing files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />, <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" /></permission>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" />  or the absolute path information for <paramref name="path" /> exceeds the implementation-specific maximum length.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.IO.StreamWriter" /> with UTF-8 encoding without a Byte-Order Mark (BOM), so its <see cref="M:System.Text.Encoding.GetPreamble" /> method returns an empty byte array. The default UTF-8 encoding for this constructor throws an exception on invalid bytes. This behavior is different from the behavior provided by the encoding object in the <see cref="P:System.Text.Encoding.UTF8" /> property. To specify a BOM and determine whether an exception is thrown on invalid bytes, use a constructor that accepts an encoding object as a parameter, such as <see cref="M:System.IO.StreamWriter.#ctor(System.String,System.Boolean,System.Text.Encoding)" />. </para>
+          <para>The <paramref name="path" /> parameter can be a file name, including a file on a Universal Naming Convention (UNC) share. If the file exists, it is overwritten; otherwise, a new file is created.</para>
+          <para>The <paramref name="path" /> parameter is not required to be a file stored on disk; it can be any part of a system that supports access using streams.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified file by using the default encoding and buffer size.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complete file path to write to. <paramref name="path" /> can be a file name. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding)" />
+      <MemberSignature Language="C#" Value="public StreamWriter (System.IO.Stream stream, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding)" />
-      <MemberSignature Language="C#" Value="public StreamWriter (System.IO.Stream stream, System.Text.Encoding encoding);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="stream" Type="System.IO.Stream" />
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="stream">The <see cref="T:System.IO.Stream" /> to write to.</param>
-        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamWriter" />
-class for the specified stream, using the specified
-encoding and the default buffer size.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using <paramref name="encoding" /> , and the <see cref="P:System.IO.StreamWriter.BaseStream" /> property
-   using <paramref name="stream" /> . For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
-          <para>
-            <block subset="none" type="note">The default buffer size can typically be
-   around 4 KB.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="stream " /> or <paramref name="encoding " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="stream" /> does not support writing.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using the encoding parameter, and the <see cref="P:System.IO.StreamWriter.BaseStream" /> property using the stream parameter. The position of the stream is not reset. For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
+          <para>The <see cref="T:System.IO.StreamWriter" /> object calls <see cref="M:System.IO.Stream.Dispose" /> on the provided <see cref="T:System.IO.Stream" /> object when <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" /> is called.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable, and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified stream by using the specified encoding and the default buffer size.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to. </param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, bool append)" />
+      <MemberSignature Language="C#" Value="public StreamWriter (string path, bool append);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, bool append) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, bool append)" />
-      <MemberSignature Language="C#" Value="public StreamWriter (string path, bool append);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="path" Type="System.String" />
         <Parameter Name="append" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to write to.</param>
-        <param name="append">A <see cref="T:System.Boolean" /> value that determines whether data is to be appended to the file. If the file exists and <paramref name="append " />is <see langword="false" />, the file is overwritten. If the file exists and <paramref name="append " />is <see langword="true" />, the data is appended to the file. Otherwise, a new file is created.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamWriter" />
-class for the specified file on
-the specified path, using the default encoding and buffer size.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" />
-property to <see cref="T:System.Text.UTF8Encoding" /> whose <see cref="M:System.Text.Encoding.GetPreamble" /> method returns an empty
-byte array. For additional information, see <see cref="P:System.IO.TextWriter.Encoding" /> .</para>
-          <para>If the specified file exists, it can be either overwritten or appended to. If
-   the file does not exist, this constructor creates a new file.</para>
-          <block subset="none" type="note">
-            <para>
-              <paramref name="path" /> is not required to be a file stored on disk;
-   it can be any part of a system that supports access via streams. For example,
-   depending on the system, this class might be able to access a physical device.</para>
-            <para>For information on the valid format and characters for path strings, see 
-<see cref="T:System.IO.Path" /> .</para>
-            <para>The default buffer size can typically be around 4 KB.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.IO.IOException">A general I/O exception occurs, such as trying to access a CD-ROM drive whose tray is open</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
         <exception cref="T:System.UnauthorizedAccessException">Access to <paramref name="path" /> is denied. The caller does not have the required permission.</exception>
@@ -210,18 +188,37 @@ byte array. For additional information, see <see cref="P:System.IO.TextWriter.En
         <exception cref="T:System.IO.NotSupportedException">
           <paramref name="path " /> is in an implementation-specific invalid format.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" />  or the absolute path information for <paramref name="path" /> exceeds the implementation-specific maximum length.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.IO.StreamWriter" /> with UTF-8 encoding without a Byte-Order Mark (BOM), so its <see cref="M:System.Text.Encoding.GetPreamble" /> method returns an empty byte array. The default UTF-8 encoding for this constructor throws an exception on invalid bytes. This behavior is different from the behavior provided by the encoding object in the <see cref="P:System.Text.Encoding.UTF8" /> property. To specify a BOM and determine whether an exception is thrown on invalid bytes, use a constructor that accepts an encoding object as a parameter, such as <see cref="M:System.IO.StreamWriter.#ctor(System.String,System.Boolean,System.Text.Encoding)" />. </para>
+          <para>The <paramref name="path" /> parameter can be a file name, including a file on a Universal Naming Convention (UNC) share.</para>
+          <para>The <paramref name="path" /> parameter is not required to be a file stored on disk; it can be any part of a system that supports access using streams.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable, and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified file by using the default encoding and buffer size. If the file exists, it can be either overwritten or appended to. If the file does not exist, this constructor creates a new file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complete file path to write to. </param>
+        <param name="append">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to append data to the file; false to overwrite the file. If the specified file does not exist, this parameter has no effect, and the constructor creates a new file. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding, int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public StreamWriter (System.IO.Stream stream, System.Text.Encoding encoding, int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding, int32 bufferSize) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding, int32 bufferSize)" />
-      <MemberSignature Language="C#" Value="public StreamWriter (System.IO.Stream stream, System.Text.Encoding encoding, int bufferSize);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="stream" Type="System.IO.Stream" />
@@ -229,36 +226,44 @@ byte array. For additional information, see <see cref="P:System.IO.TextWriter.En
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="stream">The <see cref="T:System.IO.Stream" /> to write to.</param>
-        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
-        <param name="bufferSize">A <see cref="T:System.Int32" /> that specifies the buffer size.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamWriter" />
-class for the specified stream, using the specified
-encoding and buffer size.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using
-<paramref name="encoding" /> , and the <see cref="P:System.IO.StreamWriter.BaseStream" /> property using <paramref name="stream" /> . For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="stream " /> or <paramref name="encoding " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="bufferSize " /> is negative.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="stream" /> does not support writing.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using the <paramref name="encoding" /> parameter, and the <see cref="P:System.IO.StreamWriter.BaseStream" /> property using the <paramref name="stream" /> parameter. The position of the stream is not reset. For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
+          <para>The <see cref="T:System.IO.StreamWriter" /> object calls <see cref="M:System.IO.Stream.Dispose" /> on the provided <see cref="T:System.IO.Stream" /> object when <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" /> is called.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable, and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified stream by using the specified encoding and buffer size.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to. </param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use. </param>
+        <param name="bufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer size, in bytes. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, bool append, class System.Text.Encoding encoding)" />
+      <MemberSignature Language="C#" Value="public StreamWriter (string path, bool append, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, bool append, class System.Text.Encoding encoding) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, bool append, class System.Text.Encoding encoding)" />
-      <MemberSignature Language="C#" Value="public StreamWriter (string path, bool append, System.Text.Encoding encoding);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="path" Type="System.String" />
@@ -266,29 +271,6 @@ encoding and buffer size.</para>
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to write to.</param>
-        <param name="append">A <see cref="T:System.Boolean" /> value that determines whether data is to be appended to the file. If the file exists and <paramref name="append " />is <see langword="false" />, the file is overwritten. If the file exists and <paramref name="append " />is <see langword="true" />, the data is appended to the file. Otherwise, a new file is created.</param>
-        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamWriter" />
-class for the specified file on
-the specified path, using the specified encoding and default buffer size.</para>
-        </summary>
-        <remarks>
-          <para>If the specified file exists, it can be either overwritten or appended to. If
-      the file does not exist, this constructor creates a new file.</para>
-          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using
-<paramref name="encoding" /> . For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
-          <block subset="none" type="note">
-            <para>
-              <paramref name="path" /> is not required to be a file stored on disk;
-   it can be any part of a system that supports access via streams. For example,
-   depending on the system, this class might be able to access a physical device.</para>
-            <para>For information on the valid format and characters for path strings, see 
-<see cref="T:System.IO.Path" /> .</para>
-            <para>The default buffer size can typically be around 4 KB.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.IO.IOException">A general I/O exception occurred, such as trying to access a CD-ROM drive whose tray is open.</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
         <exception cref="T:System.UnauthorizedAccessException">Access is denied. The caller does not have the required permission.</exception>
@@ -301,18 +283,77 @@ the specified path, using the specified encoding and default buffer size.</para>
         <exception cref="T:System.IO.NotSupportedException">
           <paramref name="path " /> is in an implementation-specific invalid format.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" />  or the absolute path information for <paramref name="path" /> exceeds the implementation-specific maximum length.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using the encoding parameter. For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
+          <para>
+            <paramref name="path" /> can be a file name, including a file on a Universal Naming Convention (UNC) share.</para>
+          <para>
+            <paramref name="path" /> is not required to be a file stored on disk; it can be any part of a system that supports access via streams.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable, and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified file by using the specified encoding and default buffer size. If the file exists, it can be either overwritten or appended to. If the file does not exist, this constructor creates a new file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complete file path to write to. </param>
+        <param name="append">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to append data to the file; false to overwrite the file. If the specified file does not exist, this parameter has no effect, and the constructor creates a new file.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StreamWriter (System.IO.Stream stream, System.Text.Encoding encoding, int bufferSize, bool leaveOpen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, class System.Text.Encoding encoding, int32 bufferSize, bool leaveOpen) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="leaveOpen" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unless you set the <paramref name="leaveOpen" /> parameter to true, the <see cref="T:System.IO.StreamWriter" /> object calls <see cref="M:System.IO.Stream.Dispose" /> on the provided <see cref="T:System.IO.Stream" /> object when <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" /> is called.</para>
+          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property by using the <paramref name="encoding" /> parameter, and initializes the <see cref="P:System.IO.StreamWriter.BaseStream" /> property by using the <paramref name="stream" /> parameter. The position of the stream is not reset. For additional information, see the <see cref="P:System.IO.TextWriter.Encoding" /> property.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable, and could cause an exception to be thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified stream by using the specified encoding and buffer size, and optionally leaves the stream open.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use.</param>
+        <param name="bufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer size, in bytes.</param>
+        <param name="leaveOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to leave the stream open after the <see cref="T:System.IO.StreamWriter" /> object is disposed; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, bool append, class System.Text.Encoding encoding, int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public StreamWriter (string path, bool append, System.Text.Encoding encoding, int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, bool append, class System.Text.Encoding encoding, int32 bufferSize) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string path, bool append, class System.Text.Encoding encoding, int32 bufferSize)" />
-      <MemberSignature Language="C#" Value="public StreamWriter (string path, bool append, System.Text.Encoding encoding, int bufferSize);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="path" Type="System.String" />
@@ -321,29 +362,6 @@ the specified path, using the specified encoding and default buffer size.</para>
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="path">A <see cref="T:System.String" /> that specifies the complete file path to write to.</param>
-        <param name="append">A <see cref="T:System.Boolean" /> value that determines whether data is to be appended to the file. If the file exists and <paramref name="append " />is <see langword="false" />, the file is overwritten. If the file exists and <paramref name="append " />is <see langword="true" />, the data is appended to the file. Otherwise, a new file is created.</param>
-        <param name="encoding">A <see cref="T:System.Text.Encoding" /> that specifies the character encoding to use.</param>
-        <param name="bufferSize">A <see cref="T:System.Int32" /> that specifies the buffer size.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.IO.StreamWriter" />
-class for the specified file on
-the specified path, using the specified encoding and buffer size.</para>
-        </summary>
-        <remarks>
-          <para>If the specified file exists, it can be either overwritten or appended to. If
-      the file does not exist, this constructor creates a new file.</para>
-          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using
-<paramref name="encoding" /> . For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
-          <block subset="none" type="note">
-            <para>
-              <paramref name="path" /> is not required to be a file stored on disk; it can be any part 
-   of a system that supports access via streams. For example, depending on the
-   system, this class might be able to access a physical device.</para>
-            <para>For information on the valid format and characters for path strings, see 
-<see cref="T:System.IO.Path" /> . </para>
-          </block>
-        </remarks>
         <exception cref="T:System.IO.IOException">A general I/O exception occurred, such as trying to access a CD-ROM drive whose tray is open.</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">The directory information specified in <paramref name="path" /> was not found.</exception>
         <exception cref="T:System.ArgumentException">
@@ -358,28 +376,48 @@ the specified path, using the specified encoding and buffer size.</para>
         <exception cref="T:System.IO.NotSupportedException">
           <paramref name="path" /> is in an implementation-specific invalid format.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" />  or the absolute path information for <paramref name="path" /> exceeds the implementation-specific maximum length.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.IO.StreamWriter.Encoding" /> property using the encoding parameter. For additional information, see <see cref="P:System.IO.TextWriter.Encoding" />.</para>
+          <para>
+            <paramref name="path" /> can be a file name, including a file on a Universal Naming Convention (UNC) share.</para>
+          <para>
+            <paramref name="path" /> is not required to be a file stored on disk; it can be any part of a system that supports access via streams.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable, and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.StreamWriter" /> class for the specified file on the specified path, using the specified encoding and buffer size. If the file exists, it can be either overwritten or appended to. If the file does not exist, this constructor creates a new file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complete file path to write to. </param>
+        <param name="append">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to append data to the file; false to overwrite the file. If the specified file does not exist, this parameter has no effect, and the constructor creates a new file.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use. </param>
+        <param name="bufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer size, in bytes. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AutoFlush">
+      <MemberSignature Language="ILASM" Value=".property bool AutoFlush { public hidebysig virtual specialname bool get_AutoFlush() public hidebysig virtual specialname void set_AutoFlush(bool value) }" />
+      <MemberSignature Language="C#" Value="public virtual bool AutoFlush { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AutoFlush" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AutoFlush">
-      <MemberSignature Language="ILASM" Value=".property bool AutoFlush { public hidebysig virtual specialname bool get_AutoFlush() public hidebysig virtual specialname void set_AutoFlush(bool value) }" />
-      <MemberSignature Language="C#" Value="public virtual bool AutoFlush { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets a <see cref="T:System.Boolean" /> value indicating whether the
-   current <see cref="T:System.IO.StreamWriter" /> will flush its buffer to the
-   underlying stream after every call to <see cref="M:System.IO.StreamWriter.Write(System.Char)" qualify="true" />.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> to force
@@ -387,96 +425,88 @@ the specified path, using the specified encoding and buffer size.</para>
    buffer; otherwise, <see langword="false" />.</para>
         </value>
         <remarks>
-          <para>The <see cref="T:System.IO.StreamWriter" /> will do a limited amount of buffering, both
-   internally and potentially in the encoder from the encoding you passed in. If
-<see cref="P:System.IO.StreamWriter.AutoFlush" /> 
-is set to <see langword="false" />, the data will
-be flushed into the underlying stream only when the buffer is full, or when
-<see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" />(<see langword="true" />) or <see cref="M:System.IO.StreamWriter.Close" /> 
-is called.</para>
-          <para> Setting <see cref="P:System.IO.StreamWriter.AutoFlush" /> to
-<see langword="true" /> forces <see cref="T:System.IO.StreamWriter" /> to flush the buffered data out of the 
-encoder and call <see cref="M:System.IO.StreamWriter.Flush" /> on the
-stream every time <see cref="M:System.IO.StreamWriter.Write(System.Char)" />
-is called.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-   above.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call <see cref="M:System.IO.StreamWriter.Flush" /> or <see cref="M:System.IO.StreamWriter.Close" />. Setting <see cref="P:System.IO.StreamWriter.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
+          <para>When AutoFlush is set to false, StreamWriter will do a limited amount of buffering, both internally and potentially in the encoder from the encoding you passed in. You can get better performance by setting AutoFlush to false, assuming that you always call Close (or at least Flush) when you're done writing with a StreamWriter.</para>
+          <para>For example, set AutoFlush to true when you are writing to a device where the user expects immediate feedback. Console.Out is one of these cases: The StreamWriter used internally for writing to Console flushes all its internal state except the encoder state after every call to <see cref="M:System.IO.StreamWriter.Write(System.Char)" />.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.IO.StreamWriter" /> will flush its buffer to the underlying stream after every call to <see cref="M:System.IO.StreamWriter.Write(System.Char)" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BaseStream">
+      <MemberSignature Language="ILASM" Value=".property class System.IO.Stream BaseStream { public hidebysig virtual specialname class System.IO.Stream get_BaseStream() }" />
+      <MemberSignature Language="C#" Value="public virtual System.IO.Stream BaseStream { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Stream BaseStream" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BaseStream">
-      <MemberSignature Language="ILASM" Value=".property class System.IO.Stream BaseStream { public hidebysig virtual specialname class System.IO.Stream get_BaseStream() }" />
-      <MemberSignature Language="C#" Value="public virtual System.IO.Stream BaseStream { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the underlying
-      stream.</para>
-        </summary>
         <value>
           <para>The <see cref="T:System.IO.Stream" /> the current <see cref="T:System.IO.StreamWriter" /> instance
    is writing to.</para>
         </value>
         <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the underlying stream that interfaces with a backing store.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Close">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
-      <MemberSignature Language="C#" Value="public override void Close ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Closes the current <see cref="T:System.IO.StreamWriter" />
-and the underlying stream.</para>
-        </summary>
         <remarks>
-          <para> This method calls <see cref="M:System.IO.StreamWriter.Flush" />
-, writing buffered data to the underlying stream. Following a call to <see cref="M:System.IO.StreamWriter.Close" />, any operations on the current instance
-might raise exceptions.</para>
-          <block subset="none" type="note">
-            <para>This version of <see cref="M:System.IO.StreamWriter.Close" /> is equivalent to <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" />(<see langword="true" />).</para>
-            <para>This method overrides <see cref="M:System.IO.Stream.Close" qualify="true" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.Stream.Close" />.</para>
+          <para>This implementation of <see cref="M:System.IO.StreamWriter.Close" /> calls the <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" /> method passing a true value.</para>
+          <para>You must call <see cref="M:System.IO.StreamWriter.Close" /> to ensure that all data is correctly written out to the underlying stream. Following a call to <see cref="M:System.IO.StreamWriter.Close" />, any operations on the <see cref="T:System.IO.StreamWriter" /> might raise exceptions. If there is insufficient space on the disk, calling <see cref="M:System.IO.StreamWriter.Close" /> will raise an exception.</para>
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call <see cref="M:System.IO.StreamWriter.Flush" /> or <see cref="M:System.IO.StreamWriter.Close" />. Setting <see cref="P:System.IO.StreamWriter.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the current StreamWriter object and the underlying stream.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
-      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -484,46 +514,34 @@ might raise exceptions.</para>
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">
-          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
-        <summary>
-          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.StreamWriter" /> and
-   optionally releases the managed resources.</para>
-        </summary>
         <remarks>
-          <para>When the <paramref name="disposing" /> parameter is <see langword="true" />, this method
-   releases all resources held by any managed objects that this <see cref="T:System.IO.StreamWriter" />
-   references. This method invokes the <see langword="Dispose()" /> method of each
-   referenced object.</para>
-          <block subset="none" type="note">
-            <para>
-              <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" /> can be called multiple
-   times by other objects. When overriding <see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not
-   to reference objects that have been previously disposed in an earlier call to
-<see cref="M:System.IO.StreamWriter.Dispose(System.Boolean)" />.</para>
-            <para>This method calls the dispose method of the base class, <see cref="M:System.IO.TextWriter.Dispose(System.Boolean)" /><see langword="(" /><paramref name="disposing" /><see langword=")" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.IO.StreamWriter" /> references. This method invokes the Dispose method of each referenced object.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.StreamWriter" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Encoding">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Encoding { public hidebysig virtual specialname class System.Text.Encoding get_Encoding() }" />
+      <MemberSignature Language="C#" Value="public override System.Text.Encoding Encoding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding Encoding" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Encoding">
-      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Encoding { public hidebysig virtual specialname class System.Text.Encoding get_Encoding() }" />
-      <MemberSignature Language="C#" Value="public override System.Text.Encoding Encoding { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the <see cref="T:System.Text.Encoding" /> in which the output is written.</para>
-        </summary>
         <value>
           <para>The <see cref="T:System.Text.Encoding" /> specified in
    the constructor for the current instance, or <see cref="T:System.Text.UTF8Encoding" />
@@ -531,28 +549,16 @@ might raise exceptions.</para>
    specified.</para>
         </value>
         <remarks>
-          <para>
-            <block subset="none" type="note">This property overrides the <see cref="P:System.IO.TextWriter.Encoding" /> 
-property.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">This property is required in some XML
-   scenarios where a header must be written containing the encoding used by the
-<see cref="T:System.IO.StreamWriter" />.
-   This allows XML code to consume an arbitrary <see cref="T:System.IO.StreamWriter" /> and generate a correct XML
-   header.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is necessary for some XML scenarios where a header must be written containing the encoding used by the <see cref="T:System.IO.StreamWriter" />. This allows the XML code to consume an arbitrary <see cref="T:System.IO.StreamWriter" /> and generate the correct XML header.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Text.Encoding" /> in which the output is written.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Finalize()" />
@@ -563,9 +569,6 @@ property.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Releases resources held by the current instance.</para>
-        </summary>
         <remarks>
           <block subset="none" type="note">
             <para>Application code does not call this 
@@ -575,62 +578,105 @@ property.</block>
             <para> This method overrides <see cref="M:System.Object.Finalize" /> . </para>
           </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees the resources of the current <see cref="T:System.IO.StreamWriter" /> before it is reclaimed by the garbage collector.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="Flush">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Flush()" />
       <MemberSignature Language="C#" Value="public override void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Flush() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Clears all buffers for the current writer and causes any buffered
-      data to be written to the underlying stream.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextWriter.Flush" qualify="true" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ObjectDisposedException">The current writer is closed.</exception>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Flush" />.</para>
+          <para>Flushing the stream will not flush its underlying encoder unless you explicitly call Flush or <see cref="M:System.IO.StreamWriter.Close" />. Setting <see cref="P:System.IO.StreamWriter.AutoFlush" /> to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can only be encoded after the encoder receives the adjacent character or characters.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears all buffers for the current writer and causes any buffered data to be written to the underlying stream.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FlushAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task FlushAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task FlushAsync() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears all buffers for this stream asynchronously and causes any buffered data to be written to the underlying device.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Null">
+      <MemberSignature Language="C#" Value="public static readonly System.IO.StreamWriter Null;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.IO.StreamWriter Null" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Null">
-      <MemberSignature Language="C#" Value="public static readonly System.IO.StreamWriter Null;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.StreamWriter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use Null to redirect output to a StreamWriter that will not consume any operating system resources.</para>
+          <para>When the StreamWriter.Write methods are invoked on Null, the call simply returns, and no data is actually written to any backing store.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a StreamWriter with no backing store that can be written to, but not read from.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public override void Write (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public override void Write (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -638,35 +684,35 @@ property.</block>
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.Char" /> to write to the underlying stream.</param>
-        <summary>
-          <para> Writes a character to the stream.</para>
-        </summary>
-        <remarks>
-          <para> The specified character is written to the underlying stream unless the end
-      of the stream is reached prematurely. </para>
-          <para>If <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" />, <see cref="M:System.IO.StreamWriter.Flush" /> is
-   invoked automatically.</para>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ObjectDisposedException">The current writer is closed.</exception>
         <exception cref="T:System.NotSupportedException">
           <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" /> or the <see cref="T:System.IO.StreamWriter" /> buffer is full, and the contents of the buffer cannot be written to the underlying fixed size stream because the <see cref="T:System.IO.StreamWriter" /> is at the end the stream.</exception>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" />.</para>
+          <para>The specified character is written to the underlying stream unless the end of the stream is reached prematurely. If <see cref="P:System.IO.StreamWriter.AutoFlush" /> is true, <see cref="M:System.IO.StreamWriter.Flush" /> is invoked automatically.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character to the stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the stream. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer)" />
+      <MemberSignature Language="C#" Value="public override void Write (char[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(char[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer)" />
-      <MemberSignature Language="C#" Value="public override void Write (char[] buffer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -674,35 +720,36 @@ property.</block>
         <Parameter Name="buffer" Type="System.Char[]" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Char" /> array containing the data to write. If <paramref name="buffer" /> is <see langword="null" />, nothing is written.</param>
-        <summary>
-          <para> Writes a character array to the underlying stream.</para>
-        </summary>
-        <remarks>
-          <para>The specified characters are written to the underlying stream unless the end
-      of the stream is reached prematurely. </para>
-          <para>If <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" />, <see cref="M:System.IO.StreamWriter.Flush" /> is
-   invoked automatically.</para>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ObjectDisposedException">The current writer is closed.</exception>
         <exception cref="T:System.NotSupportedException">
           <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" /> or the <see cref="T:System.IO.StreamWriter" /> buffer is full, and the contents of the buffer cannot be written to the underlying fixed size stream because the <see cref="T:System.IO.StreamWriter" /> is at the end the stream.</exception>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" />.</para>
+          <para>The specified characters are written to the underlying stream unless the end of the stream is reached prematurely. If <see cref="P:System.IO.StreamWriter.AutoFlush" /> is true, <see cref="M:System.IO.StreamWriter.Flush" /> is invoked automatically.</para>
+          <para>This method might provide faster performance than Write (<paramref name="char[]," /> <paramref name="int," /> <paramref name="int" />) because it has fewer arguments to check.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character array to the stream.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A character array containing the data to write. If <paramref name="buffer" /> is null, nothing is written. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string value)" />
+      <MemberSignature Language="C#" Value="public override void Write (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string value)" />
-      <MemberSignature Language="C#" Value="public override void Write (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -710,35 +757,37 @@ property.</block>
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.String" /> to write to the stream. If <paramref name="value " />is <see langword="null" />, nothing is written.</param>
-        <summary>
-          <para> Writes a string to the stream.</para>
-        </summary>
-        <remarks>
-          <para>The specified <see cref="T:System.String" /> is written to the underlying stream unless the end
-   of the stream is reached prematurely. </para>
-          <para>If <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" />, <see cref="M:System.IO.StreamWriter.Flush" /> is
-invoked automatically.</para>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ObjectDisposedException">The current writer is closed.</exception>
         <exception cref="T:System.NotSupportedException">
           <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" /> or the <see cref="T:System.IO.StreamWriter" /> buffer is full, and the contents of the buffer cannot be written to the underlying fixed size stream because the <see cref="T:System.IO.StreamWriter" /> is at the end the stream.</exception>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" />.</para>
+          <para>The specified <see cref="T:System.String" /> is written to the underlying stream unless the end of the stream is reached prematurely.</para>
+          <para>
+            <see cref="M:System.IO.StreamWriter.Flush" /> is invoked automatically if <see cref="P:System.IO.StreamWriter.AutoFlush" /> is true. If <paramref name="value" /> is null, no entries are written.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a string to the stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write to the stream. If <paramref name="value" /> is null, nothing is written. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public override void Write (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public override void Write (char[] buffer, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -748,22 +797,6 @@ invoked automatically.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Char" /> array containing the data to write.</param>
-        <param name="index">A <see cref="T:System.Int32" /> that specifies the index into <paramref name="buffer " /> at which to begin writing.</param>
-        <param name="count">A <see cref="T:System.Int32" /> that specifies the number of characters to read from <paramref name="buffer" />.</param>
-        <summary>
-          <para> Writes a sub-array of characters to the underlying stream.</para>
-        </summary>
-        <remarks>
-          <para> The specified
-      characters are written to the underlying stream unless the end of the stream is
-      reached prematurely. <see langword="" /></para>
-          <para>If <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" />, <see cref="M:System.IO.StreamWriter.Flush" /> is
-   invoked automatically.</para>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" qualify="true" />.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">buffer.Length - <paramref name="index " /> &lt; <paramref name="count" />.</exception>
@@ -773,19 +806,234 @@ invoked automatically.</para>
         <exception cref="T:System.NotSupportedException">
           <see cref="P:System.IO.StreamWriter.AutoFlush" /> is <see langword="true" /> or the <see cref="T:System.IO.StreamWriter" /> buffer is full, and the contents of the buffer cannot be written to the underlying fixed size stream because the <see cref="T:System.IO.StreamWriter" /> is at the end the stream.</exception>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.IO.TextWriter.Write(System.Char)" />.</para>
+          <para>The characters are read from <paramref name="buffer" /> beginning at <paramref name="index" /> and continuing through <paramref name="index" /> + (<paramref name="count" /> - 1). All characters are written to the underlying stream unless the end of the underlying stream is reached prematurely. <see cref="M:System.IO.StreamWriter.Flush" /> is invoked automatically if <see cref="P:System.IO.StreamWriter.AutoFlush" /> is true.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters to the stream.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A character array that contains the data to write. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character position in the buffer at which to start reading data. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to write. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task WriteAsync (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task WriteAsync(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character to the stream asynchronously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task WriteAsync (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task WriteAsync(string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a string to the stream asynchronously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write to the stream. If <paramref name="value" /> is null, nothing is written.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task WriteAsync (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task WriteAsync(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters to the stream asynchronously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A character array that contains the data to write.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character position in the buffer at which to begin reading data.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task WriteLineAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task WriteLineAsync() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a line terminator asynchronously to the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task WriteLineAsync (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task WriteLineAsync(char value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character followed by a line terminator asynchronously to the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the stream.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task WriteLineAsync (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task WriteLineAsync(string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a string followed by a line terminator asynchronously to the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If the value is null, only a line terminator is written. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public override System.Threading.Tasks.Task WriteLineAsync (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Threading.Tasks.Task WriteLineAsync(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters followed by a line terminator asynchronously to the stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character position in the buffer at which to start reading data.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to write.</param>
+      </Docs>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

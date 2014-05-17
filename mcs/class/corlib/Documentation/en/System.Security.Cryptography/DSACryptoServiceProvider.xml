@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DSACryptoServiceProvider" FullName="System.Security.Cryptography.DSACryptoServiceProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class DSACryptoServiceProvider : System.Security.Cryptography.DSA, System.Security.Cryptography.ICspAsymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DSACryptoServiceProvider extends System.Security.Cryptography.DSA implements class System.Security.Cryptography.ICspAsymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,88 +18,127 @@
       <InterfaceName>System.Security.Cryptography.ICspAsymmetricAlgorithm</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Managed implementation of the Digital Signature Algorithm (DSA) algorithm. </summary>
     <remarks>
-      <para>In Mono this class is completely implemented in managed code.</para>
-      <para>A major design difference between Mono and Microsoft implementation is the key generation. Microsoft always generate a new key pair in the constructor (unless a <see cref="T:System.Security.Cryptography.CspParameters" /> object is used with an non-empty container). This can degrade performance (e.g. server) when key pair are imported (e.g. XML) after the object is created. Mono implementation doesn't generate a new key pair until it is required (e.g. exporting, signing, encrypting ...). This shouldn't affect functionality but you may experience slowdown (during key pair generation) at a different time than MS implementation.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class to create digital signatures and protect the integrity of your data. </para>
+      <para>To use a public-key system to digitally sign a message, the sender first applies a hash function to the message to create a message digest. The sender then encrypts the message digest with the sender's private key to create the sender's personal signature. Upon receiving the message and signature, the receiver decrypts the signature using the sender's public key to recover the message digest and hashes the message using the same hash algorithm that the sender used. If the message digest that the receiver computes exactly matches the message digest received from the sender, the receiver can be sure that the message was not altered while in transit. Note that a signature can be verified by anyone, because the sender's public key is common knowledge.</para>
+      <block subset="none" type="note">
+        <para>Newer asymmetric algorithms are available. Consider using the <see cref="T:System.Security.Cryptography.RSACryptoServiceProvider" /> class instead of the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class. Use <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> only for compatibility with legacy applications and data.</para>
+      </block>
+      <para>This algorithm supports key lengths from 512 bits to 1024 bits in increments of 64 bits.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a wrapper object to access the cryptographic service provider (CSP) implementation of the <see cref="T:System.Security.Cryptography.DSA" /> algorithm. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DSACryptoServiceProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Create a new DSACryptoServiceProvider instance with the default key pair length.</summary>
         <remarks>Default key size is 1024 bits.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DSACryptoServiceProvider (int dwKeySize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 dwKeySize) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="dwKeySize" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="dwKeySize">Length of the public key. This can be between 512 and 1024 in multiple of 64 bits increments. </param>
-        <summary>Create a new DSACryptoServiceProvider instance with the specified key pair length.</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="dwKeySize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class with the specified key size.</para>
+        </summary>
+        <param name="dwKeySize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the key for the asymmetric algorithm in bits. </param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DSACryptoServiceProvider (System.Security.Cryptography.CspParameters parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Cryptography.CspParameters parameters) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="parameters" Type="System.Security.Cryptography.CspParameters" />
-      </Parameters>
-      <Docs>
-        <param name="parameters">To be added: an object of type 'CspParameters'</param>
-        <summary>Create a new DSACryptoServiceProvider instance with the default key pair length. The generated key pair will be persisted in the key store specified by the CspParameters.</summary>
-        <remarks>Default key size is 1024 bits.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Security.Cryptography.CspParameters" />
+      </Parameters>
+      <Docs>
+        <remarks>Default key size is 1024 bits.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class with the specified parameters for the cryptographic service provider (CSP).</para>
+        </summary>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters for the CSP. </param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DSACryptoServiceProvider (int dwKeySize, System.Security.Cryptography.CspParameters parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 dwKeySize, class System.Security.Cryptography.CspParameters parameters) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="dwKeySize" Type="System.Int32" />
         <Parameter Name="parameters" Type="System.Security.Cryptography.CspParameters" />
       </Parameters>
       <Docs>
-        <param name="dwKeySize">Length of the public key. This can be between 512 and 1024 in multiple of 64 bits increments.</param>
-        <param name="parameters">To be added: an object of type 'CspParameters'</param>
-        <summary>Create a new DSACryptoServiceProvider instance with the specified key pair length. The generated key pair will be persisted in the key store specified by the CspParameters.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class with the specified key size and parameters for the cryptographic service provider (CSP).</para>
+        </summary>
+        <param name="dwKeySize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the key for the cryptographic algorithm in bits. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters for the CSP. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateSignature">
+      <MemberSignature Language="C#" Value="public override byte[] CreateSignature (byte[] rgbHash);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance unsigned int8[] CreateSignature(unsigned int8[] rgbHash) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateSignature">
-      <MemberSignature Language="C#" Value="public override byte[] CreateSignature (byte[] rgbHash);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -105,20 +146,27 @@
         <Parameter Name="rgbHash" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbHash">The SHA1 hash to be signed. </param>
-        <summary>Sign the specified hash value using the instance private key.</summary>
-        <returns>An array of 40 bytes containing the DSA signature of the specified hash.</returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the instance doesn't have a private key or if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are).</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digital signature for the specified data.</para>
+        </returns>
+        <param name="rgbHash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be signed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CspKeyContainerInfo">
       <MemberSignature Language="C#" Value="public System.Security.Cryptography.CspKeyContainerInfo CspKeyContainerInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.CspKeyContainerInfo CspKeyContainerInfo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -128,19 +176,28 @@
         <ReturnType>System.Security.Cryptography.CspKeyContainerInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.CspKeyContainerInfo" /> property to retrieve additional information about a cryptographic key pair.  The returned <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object describes whether the key is exportable, and specifies the key container name, information about the provider, and other information. </para>
+          <para>In cases where a random key is generated, a key container will not be created until you call a method that uses the key.  Some properties of the <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object returned by the <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.CspKeyContainerInfo" /> property will throw a <see cref="T:System.Security.Cryptography.CryptographicException" /> if a key container has not been created.  To make sure that a key container has been created, call a method such as <see cref="Overload:System.Security.Cryptography.DSACryptoServiceProvider.SignData" />, <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.SignHash(System.Byte[],System.String)" />, <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyData(System.Byte[],System.Byte[])" />, <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyHash(System.Byte[],System.String,System.Byte[])" />, and so on, before you call the <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.CspKeyContainerInfo" /> property.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.Cryptography.CspKeyContainerInfo" /> object that describes additional information about a cryptographic key pair.  </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -148,32 +205,23 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>The private key is zeroized during Dispose.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the disposing parameter set to true. Finalize invokes Dispose with disposing set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExportCspBlob">
       <MemberSignature Language="C#" Value="public byte[] ExportCspBlob (bool includePrivateParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] ExportCspBlob(bool includePrivateParameters) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Byte[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="includePrivateParameters" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="includePrivateParameters">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -183,10 +231,39 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="includePrivateParameters" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.ExportCspBlob(System.Boolean)" /> method returns a blob containing key information that is compatible with the unmanaged Microsoft Cryptographic API (CAPI).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports a blob containing the key information associated with a <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> object.  </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the key information associated with a <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> object.</para>
+        </returns>
+        <param name="includePrivateParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include the private key; otherwise, false.</param>
+      </Docs>
     </Member>
     <Member MemberName="ExportParameters">
       <MemberSignature Language="C#" Value="public override System.Security.Cryptography.DSAParameters ExportParameters (bool includePrivateParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.Security.Cryptography.DSAParameters ExportParameters(bool includePrivateParameters) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.DSAParameters</ReturnType>
       </ReturnValue>
@@ -194,9 +271,6 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="includePrivateParameters">True to include private parameters; otherwise, false.</param>
-        <summary>Export the instance key into a <see cref="T:System.Security.Cryptography.DSAParameters" /> structure.</summary>
-        <returns>a DSAParameters structure contaning each parameters of the key.</returns>
         <remarks>
           <para>A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown if the private key is requested but not available. Sadly there is not way (before 2.0) to know if the private key is available without throwing an exception. Here is a safe way to test for the private key presence:</para>
           <example>
@@ -220,16 +294,27 @@ bool IsPrivateKeyAvailable (DSA dsa)
           </example>
           <para>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.DSAParameters" />.<see cref="M:System.Security.Cryptography.DSAParameters.X" />) if you export it from the instance.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports the <see cref="T:System.Security.Cryptography.DSAParameters" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters for <see cref="T:System.Security.Cryptography.DSA" />.</para>
+        </returns>
+        <param name="includePrivateParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~DSACryptoServiceProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~DSACryptoServiceProvider ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -238,27 +323,11 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ImportCspBlob">
       <MemberSignature Language="C#" Value="public void ImportCspBlob (byte[] keyBlob);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ImportCspBlob(unsigned int8[] keyBlob) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="keyBlob" Type="System.Byte[]" />
-      </Parameters>
-      <Docs>
-        <param name="keyBlob">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -268,10 +337,35 @@ bool IsPrivateKeyAvailable (DSA dsa)
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyBlob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.ImportCspBlob(System.Byte[])" /> method initializes the key data of a <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> object using a blob that is compatible with the unmanaged Microsoft Cryptographic API (CAPI).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports a blob that represents DSA key information.</para>
+        </summary>
+        <param name="keyBlob">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that represents a DSA key blob.</param>
+      </Docs>
     </Member>
     <Member MemberName="ImportParameters">
       <MemberSignature Language="C#" Value="public override void ImportParameters (System.Security.Cryptography.DSAParameters parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void ImportParameters(valuetype System.Security.Cryptography.DSAParameters parameters) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -279,49 +373,60 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="parameters" Type="System.Security.Cryptography.DSAParameters" />
       </Parameters>
       <Docs>
-        <param name="parameters">A DSAParameters containing the DSA key parameters.</param>
-        <summary>Import the key from the <see cref="T:System.Security.Cryptography.DSAParameters" /> structure into the current instance.</summary>
         <remarks>Parameter <see cref="M:System.Security.Cryptography.DSAParameters.X" /> is required if you want to import the DSA private key into the instance. Note that you are responsable to zeroize the private key inside the <see cref="T:System.Security.Cryptography.DSAParameters" /> after it's been imported.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports the specified <see cref="T:System.Security.Cryptography.DSAParameters" />.</para>
+        </summary>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters for <see cref="T:System.Security.Cryptography.DSA" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="KeyExchangeAlgorithm">
+      <MemberSignature Language="C#" Value="public override string KeyExchangeAlgorithm { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string KeyExchangeAlgorithm" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="KeyExchangeAlgorithm">
-      <MemberSignature Language="C#" Value="public override string KeyExchangeAlgorithm { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Return the common, but unique, name when using this algorithm for key exchange.</summary>
         <value>null</value>
         <remarks>DSA cannot be used as a key exchange algorithm.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the key exchange algorithm.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="KeySize">
+      <MemberSignature Language="C#" Value="public override int KeySize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 KeySize" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="KeySize">
-      <MemberSignature Language="C#" Value="public override int KeySize { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Return the key length (in bits) of the current key.</summary>
         <value>The size (in bits) of the current key.</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This algorithm supports key lengths from 512 bits to 1024 bits in increments of 64 bits.</para>
+          <para>The <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class does not allow you to change key sizes using the <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.KeySize" /> property.  Any value written to this property will fail to update the property without error.  To change the key size, use one of the constructor overloads.   </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the key used by the asymmetric algorithm in bits.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LegalKeySizes">
       <MemberSignature Language="C#" Value="public virtual System.Security.Cryptography.KeySizes[] LegalKeySizes { get; }" />
@@ -330,34 +435,53 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <ReturnType>System.Security.Cryptography.KeySizes[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Return an array of legal key size for this implementation of DSA.</summary>
         <value>To be added: an object of type 'KeySizes []'</value>
-        <remarks>This implementation support DSA keys from 512 bits up to 1024 bits in 64 bits increments.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only values represented in this array are valid for the property <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.KeySize" />.</para>
+          <para>This algorithm supports key lengths from 512 bits to 1024 bits in increments of 64 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key sizes that are supported by the asymmetric algorithm.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="PersistKeyInCsp">
-      <MemberSignature Language="C#" Value="public bool PersistKeyInCsp { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool PersistKeyInCsp { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PersistKeyInCsp" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Specify if the current key pair is persisted into a Cryptographic Service Provider (CSP).</summary>
-        <value>True if the key is persisted, false otherwise.</value>
-        <remarks>If specified Mono:: key pair persistance mechanism will kept the keys on disk. A <see cref="T:System.Security.Cryptography.CspParameters" /> must been specified in the constructor to allow key persistance.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>True if the key is persisted, false otherwise.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property when you want to persist a key in a key container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the key should be persisted in the cryptographic service provider (CSP).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PublicOnly">
       <MemberSignature Language="C#" Value="public bool PublicOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PublicOnly" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -367,36 +491,48 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> class can be initialized either with a public key only or with both a public and private key.  Use the <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.PublicOnly" /> property to determine whether the current instance contains only a public key or both a public and private key.    </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Security.Cryptography.DSACryptoServiceProvider" /> object contains only a public key.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SignatureAlgorithm">
       <MemberSignature Language="C#" Value="public override string SignatureAlgorithm { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SignatureAlgorithm" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Return the common, but unique, name when using this algorithm for signature. </summary>
-        <value>http://www.w3.org/2000/09/xmldsig#dsa-sha1</value>
-        <remarks>This value comes from the W3 "XML-Signature Syntax and Processing" specification available at http://www.w3.org/TR/xmldsig-core/ </remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>http://www.w3.org/2000/09/xmldsig#dsa-sha1</value>
+        <remarks>This value comes from the W3 "XML-Signature Syntax and Processing" specification available at http://www.w3.org/TR/xmldsig-core/ </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the signature algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SignData">
       <MemberSignature Language="C#" Value="public byte[] SignData (byte[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] SignData(unsigned int8[] buffer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -404,20 +540,33 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="buffer">The data buffer to be hashed then signed.</param>
-        <summary>Process the SHA1 algorithm on the complete buffer specified then sign it's result.</summary>
-        <returns>The signature value of the processed buffer.</returns>
-        <remarks>The supplied data is hashed using the default <see cref="T:System.Security.Cryptography.SHA1" /> implementation then signed.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyData(System.Byte[],System.Byte[])" /> method.</para>
+          <para>
+            <see cref="T:System.Security.Cryptography.DSA" /> uses the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the hash value of the specified byte array and signs the resulting hash value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input data for which to compute the hash. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SignData">
+      <MemberSignature Language="C#" Value="public byte[] SignData (System.IO.Stream inputStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] SignData(class System.IO.Stream inputStream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SignData">
-      <MemberSignature Language="C#" Value="public byte[] SignData (System.IO.Stream inputStream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -425,20 +574,32 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="inputStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="inputStream">The data stream to be hashed then signed.</param>
-        <summary>Process the SHA1 hash algorithm on the specified stream then sign it's result.</summary>
-        <returns>The signature value of the processed stream.</returns>
-        <remarks>The supplied data is hashed using the default <see cref="T:System.Security.Cryptography.SHA1" /> implementation then signed.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Security.Cryptography.DSA" /> uses the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the hash value of the specified input stream and signs the resulting hash value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </returns>
+        <param name="inputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input data for which to compute the hash. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SignData">
+      <MemberSignature Language="C#" Value="public byte[] SignData (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] SignData(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SignData">
-      <MemberSignature Language="C#" Value="public byte[] SignData (byte[] buffer, int offset, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -448,22 +609,37 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">The data buffer to be hashed then signed. </param>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>Process the SHA1 algorithm on a subset of the buffer specified then sign it's result.</summary>
-        <returns>The signature value of the processed buffer.</returns>
-        <remarks>The supplied data is hashed using the default <see cref="T:System.Security.Cryptography.SHA1" /> implementation then signed.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyData(System.Byte[],System.Byte[])" /> method.</para>
+          <para>
+            <see cref="T:System.Security.Cryptography.DSA" /> uses the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signs a byte array from the specified start point to the specified end point.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input data to sign. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the array from which to begin using data. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the array to use as data. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SignHash">
+      <MemberSignature Language="C#" Value="public byte[] SignHash (byte[] rgbHash, string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] SignHash(unsigned int8[] rgbHash, string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SignHash">
-      <MemberSignature Language="C#" Value="public byte[] SignHash (byte[] rgbHash, string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -472,38 +648,59 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="rgbHash">The hash to be signed.</param>
-        <param name="str">The algorithm used to compute the hash value.</param>
-        <summary>Sign the specified hash value.</summary>
-        <returns>An array of 40 bytes containing the DSA signature of the specified hash.</returns>
-        <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> is thrown is str isn't "SHA1".</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.VerifyHash(System.Byte[],System.String,System.Byte[])" /> method.</para>
+          <para>
+            <see cref="T:System.Security.Cryptography.DSA" /> uses the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the signature for the specified hash value by encrypting it with the private key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified hash value.</para>
+        </returns>
+        <param name="rgbHash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash value of the data to be signed. </param>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the hash algorithm used to create the hash value of the data. </param>
       </Docs>
+    </Member>
+    <Member MemberName="UseMachineKeyStore">
+      <MemberSignature Language="C#" Value="public static bool UseMachineKeyStore { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool UseMachineKeyStore" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UseMachineKeyStore">
-      <MemberSignature Language="C#" Value="public static bool UseMachineKeyStore { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Specified if, by default, the key store for persistance should be the machine store (default is the user store).</summary>
         <value>True if the machine key store is used by default, false otherwise.</value>
-        <remarks>Keys kept in the machine store are readable by every user on the system.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to true is equivalent to passing the <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.UseMachineKeyStore" />  flag to a <see cref="T:System.Security.Cryptography.CspParameters" /> object. The <see cref="P:System.Security.Cryptography.DSACryptoServiceProvider.UseMachineKeyStore" /> property applies to all code in the current application domain, while the <see cref="T:System.Security.Cryptography.CspParameters" /> object applies only to classes that explicitly reference it. These settings are useful when impersonating or running under an account whose user profile is not loaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the key should be persisted in the computer's key store instead of the user profile store.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="VerifyData">
+      <MemberSignature Language="C#" Value="public bool VerifyData (byte[] rgbData, byte[] rgbSignature);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool VerifyData(unsigned int8[] rgbData, unsigned int8[] rgbSignature) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VerifyData">
-      <MemberSignature Language="C#" Value="public bool VerifyData (byte[] rgbData, byte[] rgbSignature);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -512,21 +709,35 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbData">The data buffer to be hashed then verified.</param>
-        <param name="rgbSignature">An array of 40 bytes containing the DSA signature of the specified hash.</param>
-        <summary>Process the SHA1 algorithm on the complete buffer specified then verify it's signature.</summary>
-        <returns>True if the signature can be verified, false otherwise.</returns>
-        <remarks>The supplied data is hashed using the default SHA1 implementation then the signature is verified. </remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method verifies the <see cref="T:System.Security.Cryptography.DSA" /> digital signature produced by <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.SignData(System.IO.Stream)" />.</para>
+          <para>
+            <see cref="T:System.Security.Cryptography.DSA" /> uses the <see cref="T:System.Security.Cryptography.SHA1" /> hash algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies the specified signature data by comparing it to the signature computed for the specified data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature verifies as valid; otherwise, false.</para>
+        </returns>
+        <param name="rgbData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data that was signed. </param>
+        <param name="rgbSignature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The signature data to be verified. </param>
       </Docs>
+    </Member>
+    <Member MemberName="VerifyHash">
+      <MemberSignature Language="C#" Value="public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool VerifyHash(unsigned int8[] rgbHash, string str, unsigned int8[] rgbSignature) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VerifyHash">
-      <MemberSignature Language="C#" Value="public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -536,22 +747,36 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbHash">The SHA1 hash to be verified. </param>
-        <param name="str">The algorithm used to compute the hash value.</param>
-        <param name="rgbSignature">An array of 40 bytes containing the DSA signature of the specified hash.</param>
-        <summary>Verify the signature using the specified hash value.</summary>
-        <returns>True if the signature can be verified, false otherwise. </returns>
-        <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are) or if the signature length isn't 40 bytes long (as all DSA signatures are).</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method verifies the <see cref="T:System.Security.Cryptography.DSA" /> digital signature produced by <see cref="M:System.Security.Cryptography.DSACryptoServiceProvider.SignHash(System.Byte[],System.String)" />.</para>
+          <para>If the <paramref name="str" /> parameter is null, the default hash algorithm (SHA1) is used. The valid hash algorithms is <see cref="T:System.Security.Cryptography.SHA1" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies the specified signature data by comparing it to the signature computed for the specified hash value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature verifies as valid; otherwise, false.</para>
+        </returns>
+        <param name="rgbHash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash value of the data to be signed. </param>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the hash algorithm used to create the hash value of the data. </param>
+        <param name="rgbSignature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The signature data to be verified. </param>
       </Docs>
+    </Member>
+    <Member MemberName="VerifySignature">
+      <MemberSignature Language="C#" Value="public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool VerifySignature(unsigned int8[] rgbHash, unsigned int8[] rgbSignature) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VerifySignature">
-      <MemberSignature Language="C#" Value="public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -560,22 +785,20 @@ bool IsPrivateKeyAvailable (DSA dsa)
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbHash">The SHA1 hash to be verified. </param>
-        <param name="rgbSignature">An array of 40 bytes containing the DSA signature of the specified hash.</param>
-        <summary>Verify that signature match the hash value using the instance public key. </summary>
-        <returns>True if the signature can be verified, false otherwise. </returns>
         <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the parameter rgbHash isn't exactly 20 bytes long (like all SHA1 hashes are) or if the signature length isn't 40 bytes long (as all DSA signatures are).</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies the <see cref="T:System.Security.Cryptography.DSA" /> signature for the specified data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="rgbSignature" /> matches the signature computed using the specified hash algorithm and key on <paramref name="rgbHash" />; otherwise, false.</para>
+        </returns>
+        <param name="rgbHash">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data signed with <paramref name="rgbSignature" />. </param>
+        <param name="rgbSignature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The signature to be verified for <paramref name="rgbData" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

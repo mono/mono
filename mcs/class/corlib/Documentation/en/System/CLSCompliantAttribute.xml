@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CLSCompliantAttribute" FullName="System.CLSCompliantAttribute" FullNameSP="System_CLSCompliantAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable CLSCompliantAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class CLSCompliantAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit CLSCompliantAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,74 +25,75 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Indicates whether the target of the current attribute complies with the
-      Common Language Specification (CLS).</para>
-    </summary>
     <remarks>
-      <para>If no <see cref="T:System.CLSCompliantAttribute" /> is associated with a given assembly, that assembly is
-   assumed not to be CLS-compliant.</para>
-      <para>A type is assumed to be CLS-compliant if and only if its
-   enclosing type (for nested types) or assembly (for top-level types) is
-   CLS-compliant. Other members (methods, fields, properties and events) are
-   CLS-compliant if and only if the type in which they are
-   defined is CLS-compliant. </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.CLSCompliantAttribute" /> attribute is used to indicate whether a particular program element complies with the Common Language Specification (CLS), which defines the features that any language that targets the .NET Framework must support. CLS compliance is primarily of concern to library developers who want to ensure that their libraries are accessible in any language that targets the .NET Framework. For more information, See <format type="text/html"><a href="4f0b77d0-4844-464f-af73-6e06bedeafc6">Language Independence and Language-Independent Components</a></format>. </para>
+      <para>You can apply the <see cref="T:System.CLSCompliantAttribute" /> attribute to the following program elements: assembly, module, class, struct, enum, constructor, method, property, field, event, interface, delegate, parameter, and return value. However, the notion of CLS compliance is only meaningful for assemblies, modules, types, and members of types, not parts of a member signature. Consequently, <see cref="T:System.CLSCompliantAttribute" /> is ignored when applied to parameter or return value program elements.</para>
+      <para>If no <see cref="T:System.CLSCompliantAttribute" /> is applied to a program element, then by default: </para>
+      <list type="bullet">
+        <item>
+          <para>The assembly is not CLS-compliant.</para>
+        </item>
+        <item>
+          <para>The type is CLS-compliant only if its enclosing type or assembly is CLS-compliant.</para>
+        </item>
+        <item>
+          <para>The member of a type is CLS-compliant only if the type is CLS-compliant.</para>
+        </item>
+      </list>
+      <para>If an assembly is marked as CLS-compliant, any publicly exposed type in the assembly that is not CLS-compliant must be marked with <see cref="T:System.CLSCompliantAttribute" /> using a false argument. Similarly, if a class is marked as CLS-compliant, you must individually mark all members that are not CLS-compliant. All non-compliant members must provide corresponding CLS-compliant alternatives.</para>
+      <para>Attributes that are applied to assemblies or modules must occur after the C# using (Imports in Visual Basic) clauses and before the code.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1E00-4602-9EBF-526B271A8B87">[&lt;topic://cpconExtendingMetadataUsingAttributes&gt;]</a></format>.</para>
       <block subset="none" type="note">
-        <para> The CLS is a subset of CLI features that is supported by a
-      broad set of compliant languages and tools. CLS-compliant languages and tools
-      are guaranteed to interoperate with other CLS-compliant languages and tools.</para>
-        <para>Because the CLS defines the rules for language interoperability, its rules
-      apply only to "externally visible" items. The CLS assumes that language
-      interoperability is important only across the assembly boundary - that is,
-      within a single assembly there are no restrictions as to the programming
-      techniques that are used. Thus, the CLS rules apply only to items that are
-      visible outside of their defining assembly and have public, family, or
-      family-or-assembly accessibility.</para>
-        <para> For more information on CLS compliance,
-      see Partition I of the CLI Specification.</para>
-        <para> This attribute can be applied to any valid attribute
-      target. For a complete list of valid targets, see <see cref="T:System.AttributeTargets" />.</para>
+        <para>The current Microsoft Visual Basic compiler intentionally does not generate a CLS-compliance warning, however, a future release of the compiler will issue that warning.</para>
       </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether a program element is compliant with the Common Language Specification (CLS). This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(bool isCompliant)" />
       <MemberSignature Language="C#" Value="public CLSCompliantAttribute (bool isCompliant);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool isCompliant) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="isCompliant" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="isCompliant">
-          <see langword="true" /> if the target of the new instance complies with the CLS; otherwise, <see langword="false" />.</param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.CLSCompliantAttribute" />
-class.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="isCompliant" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.CLSCompliantAttribute" /> class with a Boolean value indicating whether the indicated program element is CLS-compliant.</para>
+        </summary>
+        <param name="isCompliant">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if CLS-compliant; otherwise, false. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="IsCompliant">
       <MemberSignature Language="ILASM" Value=".property bool IsCompliant { public hidebysig specialname instance bool get_IsCompliant() }" />
       <MemberSignature Language="C#" Value="public bool IsCompliant { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCompliant" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Boolean" /> indicating whether the target of the
- current instance is CLS-compliant.</para>
-        </summary>
         <value>
           <para>
             <see langword="true " />if the target 
@@ -101,13 +104,12 @@ class.</para>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Boolean value indicating whether the indicated program element is CLS-compliant.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

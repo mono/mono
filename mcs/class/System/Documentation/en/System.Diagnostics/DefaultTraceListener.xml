@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DefaultTraceListener" FullName="System.Diagnostics.DefaultTraceListener">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DefaultTraceListener : System.Diagnostics.TraceListener" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi DefaultTraceListener extends System.Diagnostics.TraceListener" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -14,109 +17,95 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>The DefaultTraceListener is a <see cref="T:System.Diagnostics.TraceListener" /> that is, by default, present in all applications.</summary>
     <remarks>
-      <para>The DefaultTraceListener is a <see cref="T:System.Diagnostics.TraceListener" /> that is present (by default) in all applications.  All messages sent through <see cref="M:System.Diagnostics.Trace.Write" /> (and related methods) will be sent to the DefaultTraceListener, as well as any other TraceListeners in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
-      <para>There are three ways to view the output of the DefaultTraceListener:</para>
-      <list type="number">
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An instance of this class is automatically added to the <see cref="P:System.Diagnostics.Debug.Listeners" /> and <see cref="P:System.Diagnostics.Trace.Listeners" /> collections. Explicitly adding a second <see cref="T:System.Diagnostics.DefaultTraceListener" /> causes duplicate messages in the debugger output window and duplicate message boxes for asserts.</para>
+      <para>By default, the <see cref="M:System.Diagnostics.DefaultTraceListener.Write(System.String)" /> and <see cref="M:System.Diagnostics.DefaultTraceListener.WriteLine(System.String)" /> methods emit the message to the Win32 OutputDebugString function and to the <see cref="M:System.Diagnostics.Debugger.Log(System.Int32,System.String,System.String)" /> method. For information about the OutputDebugString function, see the Platform SDK or MSDN.</para>
+      <para>The <see cref="M:System.Diagnostics.DefaultTraceListener.Fail(System.String)" /> method, by default, displays a message box when the application is running in a user interface mode; it also emits the message using <see cref="M:System.Diagnostics.DefaultTraceListener.WriteLine(System.String)" />.</para>
+      <block subset="none" type="note">
+        <para>The display of the message box for <see cref="Overload:System.Diagnostics.Debug.Assert" /> and <see cref="Overload:System.Diagnostics.Debug.Fail" /> method calls depends on the presence of the <see cref="T:System.Diagnostics.DefaultTraceListener" />. If the <see cref="T:System.Diagnostics.DefaultTraceListener" /> is not in the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection, the message box is not displayed. The <see cref="T:System.Diagnostics.DefaultTraceListener" /> can be removed by the <format type="text/html"><a href="b44732a8-271f-4a06-ba9e-fe3298d6f192">&lt;clear&gt; element</a></format>, by the <format type="text/html"><a href="9a5cd1b5-be1a-485f-8f0c-2890ad3ef3e0">&lt;remove&gt; element</a></format>, or by calling the <see cref="M:System.Diagnostics.TraceListenerCollection.Clear" /> method on the <see cref="P:System.Diagnostics.Trace.Listeners" /> property (System.Diagnostics.Trace.Listeners.Clear()).</para>
+      </block>
+      <para>You must enable tracing or debugging to use a trace listener. The following syntax is compiler specific. If you use compilers other than C# or Visual Basic, refer to the documentation for your compiler.</para>
+      <list type="bullet">
         <item>
-          <term>
-            <para>Set the <see cref="P:System.Diagnostics.DefaultTraceListener.LogFileName" /> property.  This will cause all output to be appended to the specified log file.</para>
-            <para>This is the only behavior that is consistent across both .NET and Mono platforms.</para>
-            <para>The LogFileName property can be set either through code, or in the application .config file, by setting the (XPath) <c>/configuration/system.diagnostics/assert/@logfilename</c> attribute.   For example:</para>
-            <example>
-              <code lang=".config file">&lt;configuration&gt;
-  &lt;system.diagnostics&gt;
-    &lt;assert logfilename="where I want TraceListener messages to go"/&gt;
-  &lt;/system.diagnostics&gt;
-&lt;/configuration&gt;</code>
-            </example>
-          </term>
+          <para>To enable debugging in C#, add the /d:DEBUG flag to the compiler command line when you compile your code, or add #define DEBUG to the top of your file. In Visual Basic, add the /d:DEBUG=True flag to the compiler command line.</para>
         </item>
         <item>
-          <term>On Windows, messages are also displayed using the <c>OutputDebugString</c> API.  (Look it up on MSDN.)  Messages are automatically displayed in the debugger if the program is being debugged.  If the program isn't being debugged, a program such as <c>DebugView</c>, available from <c>http://www.sysinternals.com</c> can be used to view the output.</term>
-        </item>
-        <item>
-          <term>
-            <para>On Unix, the LogFileName property is used, with additional behavior available depending on the <c>MONO_TRACE_LISTENER</c> environment variable.</para>
-            <para>If <c>MONO_TRACE_LISTENER</c> isn't set or is empty, messages are ignored.</para>
-            <para>Otherwise, the value in <c>MONO_TRACE_LISTENER</c> must match the following BNF-like grammar:</para>
-            <para>
-              <code lang="MONO_TRACE_LISTENER BNF Grammar">MONO_TRACE_LISTENER := &lt;builtin-locations/&gt; | &lt;file-name/&gt;
-
-&lt;builtin-locations/&gt; := ( "Console.Out" | "Console.Error" ) ( ':' &lt;prefix/&gt; )?
-
-&lt;prefix/&gt; := any string of characters
-
-&lt;file-name/&gt; := any valid file name</code>
-            </para>
-            <para>
-              <c>Console.Out</c> corresponds to Standard Output (<c>/dev/stdout</c>), and <c>Console.Error</c> corresponds to Standard Error (<c>/dev/stderr</c>).  This also means that you cannot create a filename of Console.Out or Console.Error.</para>
-            <para>The "prefix" is a string of characters that appears before each message printed to Standard Output or Standard Error.  It is not available for filename settings.  It is present so that it is easier to distinguish between normal program output and the diagnostic messages.</para>
-            <para>For example, given the following sample program:</para>
-            <example>
-              <code lang="C#">using System;
-using System.Diagnostics;
-public class ShowDefaultTraceListener {
-	public static void Main ()
-	{
-		Console.WriteLine ("Standard Output message.");
-		Trace.WriteLine ("TraceListener message");
-	}
-}</code>
-            </example>
-            <para>If <c>MONO_TRACE_LISTENER</c> is set to "<c>Console.Out:++prefix++ </c>", then the output of the program under Unix would be:</para>
-            <example>
-              <code lang="Output">Standard Output message.
-++prefix++ TraceListener message</code>
-            </example>
-          </term>
+          <para>To enable tracing in C#, add the /d:TRACE flag to the compiler command line when you compile your code, or add #define TRACE to the top of your file. In Visual Basic, add the /d:TRACE=True flag to the compiler command line.</para>
         </item>
       </list>
-      <para>The DefaultTraceListener is not complete.  MSDN specifies that GUI widgets be used for certain features, such as when <see cref="P:System.Diagnostics.TraceListener.AssertUiEnabled" /> is <see langword="true" /> and <see cref="M:System.Diagnostics.TraceListener.Fail" /> is called.  GUI support is not present, so non-GUI alternatives should be used, such as LogFileName.</para>
-      <para>The default <see cref="P:System.Diagnostics.TraceListener.Name" /> is "<c>Default</c>".  The name can be used to remove TraceListeners.</para>
-      <para>See <see cref="T:System.Diagnostics.TraceListener" /> for more information on adding and removing TraceListeners.</para>
+      <para>To add a trace listener, edit the configuration file that corresponds to the name of your application. Within this file, you can add a listener, set its type and set its parameters, remove a listener, or clear all the listeners previously set by the application. The configuration file should be formatted similar to the following example: </para>
+      <code>&lt;configuration&gt;
+&lt;system.diagnostics&gt;
+  &lt;trace autoflush="false" indentsize="4"&gt;
+    &lt;listeners&gt;
+      &lt;remove name="Default" /&gt;
+      &lt;add name="myListener"  type="System.Diagnostics.TextWriterTraceListener"    initializeData="c:\myListener.log" /&gt;
+    &lt;/listeners&gt;
+  &lt;/trace&gt;
+&lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the default output methods and behavior for tracing.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DefaultTraceListener ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>Constructs a new instance of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> class.</summary>
-        <remarks>Constructs a new instance of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> class, with a <see cref="P:System.Diagnostics.TraceListener.Name" /> value of <c>Default</c>.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>Constructs a new instance of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> class, with a <see cref="P:System.Diagnostics.TraceListener.Name" /> value of <c>Default</c>.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DefaultTraceListener" /> class with "Default" as its <see cref="P:System.Diagnostics.TraceListener.Name" /> property value.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AssertUiEnabled">
-      <MemberSignature Language="C#" Value="public bool AssertUiEnabled { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AssertUiEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AssertUiEnabled" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Gets or sets whether a GUI is used for some functionality.  This is ignored by Mono.</summary>
         <value>Whether or not a GUI should be used when <see cref="M:System.Diagnostics.TraceListener.Fail" /> is called.</value>
         <remarks>
           <para>If <see langword="true" />, calls to <see cref="M:System.Diagnostics.TraceListener.Fail" /> should appear in a GUI dialog box.</para>
           <para>This is currently ignored by Mono.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the application is running in user-interface mode.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fail">
       <MemberSignature Language="C#" Value="public override void Fail (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Fail(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -124,20 +113,27 @@ public class ShowDefaultTraceListener {
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">The failure message to display.</param>
-        <summary>Writes a failure message.</summary>
         <remarks>
-          <para>Writes a failure message, which is a message that should be displayed in a very visible fashion.  If <see cref="P:System.Diagnostics.DefaultTraceListener.AssertUiEnabled" /> is <see langword="true" />, the message is displayed in a GUI dialog box, interupting whatever the user might be doing.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, this method sends the <paramref name="message" /> parameter and a stack trace to a message box (when the application runs in user-interface mode) and to the <see cref="T:System.Diagnostics.DefaultTraceListener" /> instance.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits or displays a message and a stack trace for an assertion that always fails.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to emit or display. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fail">
       <MemberSignature Language="C#" Value="public override void Fail (string message, string detailMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Fail(string message, string detailMessage) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -146,39 +142,57 @@ public class ShowDefaultTraceListener {
         <Parameter Name="detailMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">The short message to display.</param>
-        <param name="detailMessage">The detailed message to display.</param>
-        <summary>Writes a failure message with detailed information.</summary>
         <remarks>
-          <para>Writes a failure message, which is a message that should be displayed in a very visible fashion, along with detailed information.  If <see cref="P:System.Diagnostics.DefaultTraceListener.AssertUiEnabled" /> is <see langword="true" />, the message is displayed in a GUI dialog box, interupting whatever the user might be doing.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, this method sends the <paramref name="message" /> parameter, the <paramref name="detailMessage" /> parameter, and a stack trace to a message box (when the application runs in user-interface mode) and to the <see cref="T:System.Diagnostics.DefaultTraceListener" /> instance.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits or displays detailed messages and a stack trace for an assertion that always fails.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to emit or display. </param>
+        <param name="detailMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The detailed message to emit or display. </param>
       </Docs>
+    </Member>
+    <Member MemberName="LogFileName">
+      <MemberSignature Language="C#" Value="public string LogFileName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LogFileName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LogFileName">
-      <MemberSignature Language="C#" Value="public string LogFileName { set; get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Gets or sets the name of a log file to write trace and debug messages to.</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>When set to a non-empty string, all debug and trace messages are appended to the specified file.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of a log file to write trace or debug messages to.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public override void Write (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -186,21 +200,27 @@ public class ShowDefaultTraceListener {
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">The message to display.</param>
-        <summary>Writes <paramref name="message" />.</summary>
         <remarks>
-          <para>Writes <paramref name="message" /> to a number of potential locations.</para>
-          <para>See <see cref="T:System.Diagnostics.DefaultTraceListener" /> for location information.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For information about the Win32 OutputDebugString debugging function, see "OutputDebugString" in the Platform SDK or MSDN.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the output to the OutputDebugString function and to the <see cref="M:System.Diagnostics.Debugger.Log(System.Int32,System.String,System.String)" /> method.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to write to OutputDebugString and <see cref="M:System.Diagnostics.Debugger.Log(System.Int32,System.String,System.String)" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public override void WriteLine (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteLine(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -208,17 +228,19 @@ public class ShowDefaultTraceListener {
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">The message to display.</param>
-        <summary>Writes <paramref name="message" />, followed by <see cref="P:System.Environment.NewLine" />.</summary>
         <remarks>
-          <para>Writes <paramref name="message" />, followed by <see cref="P:System.Environment.NewLine" />, to a number of potential locations.</para>
-          <para>See <see cref="T:System.Diagnostics.DefaultTraceListener" /> for location information.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default line terminator is a carriage return followed by a line feed (\r\n).</para>
+          <para>For information about the Win32 OutputDebugString debugging function, see the Platform SDK or MSDN.</para>
+          <para>This method sets the <see cref="P:System.Diagnostics.TraceListener.NeedIndent" /> property to true.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the output to the OutputDebugString function and to the <see cref="M:System.Diagnostics.Debugger.Log(System.Int32,System.String,System.String)" /> method, followed by a carriage return and line feed (\r\n).</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to write to OutputDebugString and <see cref="M:System.Diagnostics.Debugger.Log(System.Int32,System.String,System.String)" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

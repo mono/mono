@@ -29,6 +29,7 @@
 #if NET_2_0
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using NUnit.Framework;
 
@@ -104,6 +105,52 @@ namespace MonoTests.System.Net {
 			// Lame. They should check that we have no prefixes.
 			IAsyncResult ares = listener.BeginGetContext (null, null);
 			Assert.IsFalse (ares.IsCompleted);
+		}
+
+		private bool CanOpenPort(int port)
+		{
+			try
+			{
+				using(Socket socket = new Socket (AddressFamily.InterNetwork,
+					SocketType.Stream,
+					ProtocolType.Tcp))
+				{
+					socket.Bind (new IPEndPoint (IPAddress.Loopback, port));
+					socket.Listen(1);
+				}
+			}
+			catch(Exception ex) {
+				//Can be AccessDeniedException(ports 80/443 need root access) or
+				//SocketException because other application is listening
+				return false;
+			}
+			return true;
+		}
+
+		[Test]
+		public void DefaultHttpPort ()
+		{
+			if (!CanOpenPort (80))
+				Assert.Ignore ("Can not open port 80 skipping test.");
+			using(HttpListener listener = new HttpListener ())
+			{
+				listener.Prefixes.Add ("http://127.0.0.1/");
+				listener.Start ();
+				Assert.IsFalse (CanOpenPort (80), "HttpListener is not listening on port 80.");
+			}
+		}
+
+		[Test]
+		public void DefaultHttpsPort ()
+		{
+			if (!CanOpenPort (443))
+				Assert.Ignore ("Can not open port 443 skipping test.");
+			using(HttpListener listener = new HttpListener ())
+			{
+				listener.Prefixes.Add ("https://127.0.0.1/");
+				listener.Start ();
+				Assert.IsFalse (CanOpenPort (443), "HttpListener is not listening on port 443.");
+			}
 		}
 
 		[Test]

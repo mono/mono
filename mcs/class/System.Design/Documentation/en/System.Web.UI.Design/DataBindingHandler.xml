@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBindingHandler" FullName="System.Web.UI.Design.DataBindingHandler">
   <TypeSignature Language="C#" Value="public abstract class DataBindingHandler" />
   <AssemblyInfo>
@@ -10,8 +11,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.UI.Design.DataBindingHandler" /> provides a base class for data-binding handlers. A data-binding handler can be used within a designer to perform data-binding to enable a meaningful display of the control on the design surface. Typically a control's designer is responsible for this functionality. However, when a control is not live on the design surface, such as within the template of another control, it does not have a designer, and this functionality is provided by a data-binding handler if one has been specified with a <see cref="T:System.Web.UI.DataBindingHandlerAttribute" /> in the code for the control.</para>
+      <para>To use a data-binding handler, the control which has the data-bound property or properties must have a <see cref="T:System.Web.UI.DataBindingHandlerAttribute" /> specified within its code that indicates the type of data-binding handler to use.</para>
+      <para>For example, the <see cref="T:System.Web.UI.WebControls.Label" /> control is associated with the <see cref="T:System.Web.UI.Design.TextDataBindingHandler" /> class through a <see cref="T:System.Web.UI.DataBindingHandlerAttribute" /> in the code for the <see cref="T:System.Web.UI.WebControls.Label" /> class. Within a template for a <see cref="T:System.Web.UI.WebControls.DataList" />, a <see cref="T:System.Web.UI.WebControls.Label" /> control whose text property has been data bound displays the word "DataBound" on the label. Without the data-binding handler, the label would be invisible at design-time, as it does not have a designer to bind its data-bound properties while in a templated control at design-time.</para>
+      <para>To implement a data-binding handler, define a new class that derives from this class and implement the <see cref="M:System.Web.UI.Design.DataBindingHandler.DataBindControl(System.ComponentModel.Design.IDesignerHost,System.Web.UI.Control)" /> method to set the appropriate properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for a data-binding handler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +30,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DataBindingHandler" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -38,10 +52,18 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should be implemented in a derived class to provide functionality to a custom data-binding handler. The logic for the data binding should be implemented within this method, and can be specific to the type or types that the data-binding handler is to bind a property or properties on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds the specified control.</para>
+        </summary>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the document. </param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to bind. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

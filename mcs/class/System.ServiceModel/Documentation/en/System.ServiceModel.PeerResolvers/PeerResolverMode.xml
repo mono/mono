@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PeerResolverMode" FullName="System.ServiceModel.PeerResolvers.PeerResolverMode">
+  <TypeSignature Language="C#" Value="public enum PeerResolverMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PeerResolverMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If the specified peer resolver is unavailable, a <see cref="T:System.InvalidOperationException" /> will be thrown when an attempt to use the resolver is made.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the type of peer resolver being used.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Auto">
+      <MemberSignature Language="C#" Value="Auto" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.PeerResolvers.PeerResolverMode Auto = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.PeerResolverMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If available, a custom resolver is used.  If one is unavailable, the PNRP peer resolver is used. A peer resolver is considered "available" if the <see cref="P: System.ServiceModel.PeerResolvers.PeerCustomResolverSettings.Address" /> and <see cref="P:System.ServiceModel.PeerResolvers.PeerCustomResolverSettings.Binding" /> properties are set on it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Automatically determines the type of resolver to use from the information set on the binding. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Custom">
+      <MemberSignature Language="C#" Value="Custom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.PeerResolvers.PeerResolverMode Custom = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.PeerResolverMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom resolver is used.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Pnrp">
+      <MemberSignature Language="C#" Value="Pnrp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.PeerResolvers.PeerResolverMode Pnrp = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.PeerResolverMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PNRP resolver is used.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

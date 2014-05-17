@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapUnknownHeader" FullName="System.Web.Services.Protocols.SoapUnknownHeader">
   <TypeSignature Language="C#" Value="public sealed class SoapUnknownHeader : System.Web.Services.Protocols.SoapHeader" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A SOAP client might invoke an XML Web service with additional data beyond the required parameters in the form of a SOAP header. An XML Web service created using ASP.NET or an XML Web service client can view any SOAP headers it did not know about at the time the XML Web service was written by applying a <see cref="T:System.Web.Services.Protocols.SoapHeaderAttribute" /> with a <see cref="P:System.Web.Services.Protocols.SoapHeaderAttribute.MemberName" /> property of either an array of <see cref="T:System.Web.Services.Protocols.SoapHeader" />, <see cref="T:System.Web.Services.Protocols.SoapHeader" />, <see cref="T:System.Web.Services.Protocols.SoapUnknownHeader" /> or an array of <see cref="T:System.Web.Services.Protocols.SoapUnknownHeader" /> to the XML Web service method. Specifying a <see cref="T:System.Type" /> of <see cref="T:System.Web.Services.Protocols.SoapUnknownHeader" />, allows the XML Web service to view the contents of the SOAP header in the form of an <see cref="T:System.Xml.XmlElement" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the data received from a SOAP header that was not understood by the recipient XML Web service or XML Web service client. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.SoapUnknownHeader" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +49,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.XmlElement" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an XML Web service method wants to process SOAP headers it does not know about at the time the XML Web service is written, it can process an <see cref="T:System.Xml.XmlElement" /> class representing the raw XML of the SOAP header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML Header element for a SOAP request or response.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

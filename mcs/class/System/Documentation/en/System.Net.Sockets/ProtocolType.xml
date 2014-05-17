@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProtocolType" FullName="System.Net.Sockets.ProtocolType" FullNameSP="System_Net_Sockets_ProtocolType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ProtocolType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum ProtocolType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ProtocolType extends System.Enum" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,27 +10,32 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Specifies the protocols used by the <see cref="T:System.Net.Sockets.Socket" /> class.
-   </para>
-    </summary>
     <remarks>
-      <para>The <see cref="T:System.Net.Sockets.ProtocolType" /> enumeration is used with the
-<see cref="T:System.Net.Sockets.Socket" /> class. This enumeration specifies the 
-   protocols that a socket instance can use to transport
-   data. </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.Socket" /> class uses the <see cref="T:System.Net.Sockets.ProtocolType" /> enumeration to inform the Windows Sockets API of the requested protocol. Low-level driver software for the requested protocol must be present on the computer for the <see cref="T:System.Net.Sockets.Socket" /> to be created successfully.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the protocols that the <see cref="T:System.Net.Sockets.Socket" /> class supports.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ggp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Ggp = 3" />
       <MemberSignature Language="C#" Value="Ggp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Ggp = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -36,19 +43,22 @@
       <MemberValue>Ggp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Gateway To Gateway Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gateway To Gateway Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Icmp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Icmp = 1" />
       <MemberSignature Language="C#" Value="Icmp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Icmp = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -56,32 +66,40 @@
       <MemberValue>Icmp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Internet Control Message Protocol (ICMP) as defined by IETF RFC 1792.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Control Message Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IcmpV6">
       <MemberSignature Language="C#" Value="IcmpV6" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IcmpV6 = int32(58)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Control Message Protocol for IPv6.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Idp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Idp = 22" />
       <MemberSignature Language="C#" Value="Idp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Idp = int32(22)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -89,19 +107,22 @@
       <MemberValue>Idp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Inter-Domain Policy Protocol (IDP) as defined by IETF RFC 1764.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Datagram Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Igmp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Igmp = 2" />
       <MemberSignature Language="C#" Value="Igmp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Igmp = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -109,19 +130,22 @@
       <MemberValue>Igmp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Internet Group Management Protocol (IGMP) as defined by IETF RFC 2236.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Group Management Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IP">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IP = 0" />
       <MemberSignature Language="C#" Value="IP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IP = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -129,144 +153,187 @@
       <MemberValue>IP</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Internet Protocol (IP) as defined by IETF RFC 791, 792, 919, 
-      922, and 1112.</para>
-          <block subset="none" type="note">
-            <para>Multiple names are defined for this value based on prior art.
-         This value is identical to <see cref="F:System.Net.Sockets.ProtocolType.Unspecified" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPSecAuthenticationHeader">
       <MemberSignature Language="C#" Value="IPSecAuthenticationHeader" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPSecAuthenticationHeader = int32(51)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Authentication header. For details, see RFC 2292 section 2.2.1, available at http://www.ietf.org.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPSecEncapsulatingSecurityPayload">
       <MemberSignature Language="C#" Value="IPSecEncapsulatingSecurityPayload" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPSecEncapsulatingSecurityPayload = int32(50)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Encapsulating Security Payload header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv4">
       <MemberSignature Language="C#" Value="IPv4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPv4 = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Protocol version 4.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6">
       <MemberSignature Language="C#" Value="IPv6" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPv6 = int32(41)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <MemberValue>IPv6</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Protocol version 6 (IPv6). </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6DestinationOptions">
       <MemberSignature Language="C#" Value="IPv6DestinationOptions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPv6DestinationOptions = int32(60)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Destination Options header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6FragmentHeader">
       <MemberSignature Language="C#" Value="IPv6FragmentHeader" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPv6FragmentHeader = int32(44)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Fragment header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6HopByHopOptions">
       <MemberSignature Language="C#" Value="IPv6HopByHopOptions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPv6HopByHopOptions = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Hop by Hop Options header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6NoNextHeader">
       <MemberSignature Language="C#" Value="IPv6NoNextHeader" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPv6NoNextHeader = int32(59)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 No next header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPv6RoutingHeader">
       <MemberSignature Language="C#" Value="IPv6RoutingHeader" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType IPv6RoutingHeader = int32(43)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPv6 Routing header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ipx">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Ipx = 1000" />
       <MemberSignature Language="C#" Value="Ipx" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Ipx = int32(1000)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -274,19 +341,22 @@
       <MemberValue>Ipx</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Internetwork Packet Exchange Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internet Packet Exchange Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ND">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType ND = 77" />
       <MemberSignature Language="C#" Value="ND" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType ND = int32(77)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -294,19 +364,22 @@
       <MemberValue>ND</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Net Disk Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Net Disk Protocol (unofficial).</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Pup">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Pup = 12" />
       <MemberSignature Language="C#" Value="Pup" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Pup = int32(12)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -314,19 +387,22 @@
       <MemberValue>Pup</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Xerox Post Office Update Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>PARC Universal Packet Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Raw">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Raw = 255" />
       <MemberSignature Language="C#" Value="Raw" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Raw = int32(255)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -334,19 +410,22 @@
       <MemberValue>Raw</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Raw IP packet protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raw IP packet protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Spx">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Spx = 1256" />
       <MemberSignature Language="C#" Value="Spx" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Spx = int32(1256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -354,19 +433,22 @@
       <MemberValue>Spx</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Sequenced Packet Exchange Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sequenced Packet Exchange protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SpxII">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType SpxII = 1257" />
       <MemberSignature Language="C#" Value="SpxII" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType SpxII = int32(1257)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -374,19 +456,22 @@
       <MemberValue>SpxII</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Sequenced Packet Exchange Version 2 Protocol.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sequenced Packet Exchange version 2 protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Tcp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Tcp = 6" />
       <MemberSignature Language="C#" Value="Tcp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Tcp = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -394,19 +479,22 @@
       <MemberValue>Tcp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the Transmission Control Protocol (TCP) as defined by IETF RFC 793. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transmission Control Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Udp">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Udp = 17" />
       <MemberSignature Language="C#" Value="Udp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Udp = int32(17)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -414,19 +502,22 @@
       <MemberValue>Udp</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the User Datagram Protocol (UDP) as defined by IETF RFC 768. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>User Datagram Protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Unknown = -1" />
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Unknown = int32(-1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -434,20 +525,22 @@
       <MemberValue>Unknown</MemberValue>
       <Docs>
         <summary>
-          <para>Used to indicate an uninitialized state. This member is not to
-      be used when constructing instances of the <see cref="T:System.Net.Sockets.Socket" /> class.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unknown protocol.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unspecified">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Unspecified = 0" />
       <MemberSignature Language="C#" Value="Unspecified" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.ProtocolType Unspecified = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.ProtocolType</ReturnType>
       </ReturnValue>
@@ -455,18 +548,11 @@
       <MemberValue>IP</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unspecified protocol.</para>
-          <block subset="none" type="note">
-            <para>Multiple names are defined for this value based on prior art. 
-         This value is identical to <see cref="F:System.Net.Sockets.ProtocolType.IP" />.</para>
-          </block>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

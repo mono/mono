@@ -1,102 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AsyncCompletedEventArgs" FullName="System.ComponentModel.AsyncCompletedEventArgs">
   <TypeSignature Language="C#" Value="public class AsyncCompletedEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AsyncCompletedEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.EventArgs</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you are using a class that implements the <format type="text/html"><a href="792aa8da-918b-458e-b154-9836b97735f3">Event-based Asynchronous Pattern Overview</a></format>, the class will provide a MethodNameCompleted event. If you add an instance of the <see cref="T:System.ComponentModel.AsyncCompletedEventHandler" /> delegate to the event, you will receive information about the outcome of asynchronous operations in the <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" /> parameter of the corresponding event-handler method.</para>
+      <para>The client application's event-handler delegate can check the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> property to determine if the asynchronous task was cancelled.</para>
+      <para>The client application's event-handler delegate can check the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property to determine if an exception occurred during execution of the asynchronous task.</para>
+      <para>If the class supports multiple asynchronous methods, or multiple calls to the same asynchronous method, you can determine which task raised the MethodNameCompleted event by checking the value of the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. Your code will need to track these tokens, known as task IDs, as their corresponding asynchronous tasks start and complete.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the MethodNameCompleted event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AsyncCompletedEventArgs (Exception error, bool cancelled, object userState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Exception error, bool cancelled, object userState) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="error" Type="System.Exception" />
         <Parameter Name="cancelled" Type="System.Boolean" />
         <Parameter Name="userState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="error">To be added.</param>
-        <param name="cancelled">To be added.</param>
-        <param name="userState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" /> class. </para>
+        </summary>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any error that occurred during the asynchronous operation.</param>
+        <param name="cancelled">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether the asynchronous operation was canceled.</param>
+        <param name="userState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The optional user-supplied state object passed to the <see cref="M:System.ComponentModel.BackgroundWorker.RunWorkerAsync(System.Object)" /> method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Cancelled">
       <MemberSignature Language="C#" Value="public bool Cancelled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Cancelled" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> property is true, the asynchronous operation was interrupted.</para>
+          <para>The client application's event-handler delegate should check the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> property before accessing any properties in a class derived from <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" />; otherwise, the property will raise an <see cref="T:System.InvalidOperationException" /> if the asynchronous operation was interrupted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether an asynchronous operation has been canceled.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Error">
       <MemberSignature Language="C#" Value="public Exception Error { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Exception Error" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an exception is raised during an asynchronous operation, the class will assign the exception to the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property. The client application's event-handler delegate should check the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property before accessing any properties in a class derived from <see cref="T:System.ComponentModel.AsyncCompletedEventArgs" />; otherwise, the property will raise a <see cref="T:System.Reflection.TargetInvocationException" /> with its <see cref="P:System.Exception.InnerException" /> property holding a reference to <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" />.</para>
+          <para>The value of the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property is null if the operation was canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating which error occurred during an asynchronous operation.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RaiseExceptionIfNecessary">
       <MemberSignature Language="C#" Value="protected void RaiseExceptionIfNecessary ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void RaiseExceptionIfNecessary() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises a user-supplied exception if an asynchronous operation failed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserState">
       <MemberSignature Language="C#" Value="public object UserState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object UserState" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a class supports multiple asynchronous methods, or multiple invocations of a single method, you can determine which task raised the MethodNameCompleted event by checking the value of the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.UserState" /> property. Your code will need track these tokens, known as task IDs, as their corresponding asynchronous tasks start and complete.</para>
+          <para>The value of this property is set during the original call to the asynchronous method that started the task.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier for the asynchronous task.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

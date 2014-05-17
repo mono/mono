@@ -1,11 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IQueryable&lt;T&gt;" FullName="System.Linq.IQueryable&lt;T&gt;">
-  <TypeSignature Language="C#" Value="public interface IQueryable&lt;T&gt; : System.Collections.Generic.IEnumerable&lt;T&gt;, System.Linq.IQueryable" />
+  <TypeSignature Language="C#" Value="public interface IQueryable&lt;out T&gt; : System.Collections.Generic.IEnumerable&lt;out T&gt;, System.Linq.IQueryable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IQueryable`1&lt;+ T&gt; implements class System.Collections.Generic.IEnumerable`1&lt;!T&gt;, class System.Collections.IEnumerable, class System.Linq.IQueryable" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="T" />
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Interfaces>
     <Interface>
@@ -17,8 +24,19 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Linq.IQueryable`1" /> interface is intended for implementation by query providers.</para>
+      <para>This interface inherits the <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface so that if it represents a query, the results of that query can be enumerated. Enumeration forces the expression tree associated with an <see cref="T:System.Linq.IQueryable`1" /> object to be executed. Queries that do not return enumerable results are executed when the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method is called.</para>
+      <para>The definition of "executing an expression tree" is specific to a query provider. For example, it may involve translating the expression tree to a query language appropriate for an underlying data source.</para>
+      <para>The <see cref="T:System.Linq.IQueryable`1" /> interface enables queries to be polymorphic. That is, because a query against an <unmanagedCodeEntityReference>IQueryable</unmanagedCodeEntityReference> data source is represented as an expression tree, it can be executed against different types of data sources.</para>
+      <para>The static (Shared in Visual Basic) methods defined in the class <see cref="T:System.Linq.Queryable" /> (except for <see cref="Overload:System.Linq.Queryable.AsQueryable" />, <see cref="Overload:System.Linq.Queryable.ThenBy" />, and <see cref="Overload:System.Linq.Queryable.ThenByDescending" />) extend objects of types that implement the <see cref="T:System.Linq.IQueryable`1" /> interface.</para>
+      <para>For more information about how to create your own LINQ provider, see <see cref="http://go.microsoft.com/fwlink/?LinkID=112370">LINQ: Building an IQueryable Provider</see> on MSDN Blogs.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality to evaluate queries against a specific data source wherein the type of the data is known.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

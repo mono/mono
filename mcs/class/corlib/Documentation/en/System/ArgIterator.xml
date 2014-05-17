@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ArgIterator" FullName="System.ArgIterator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct ArgIterator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ArgIterator extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,131 +15,111 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>This class is used to acess variable arguments on methods that use the __arglist calling convention.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Developers who write compilers use the <see cref="T:System.ArgIterator" /> structure to enumerate the mandatory and optional arguments in an argument list. The <see cref="T:System.ArgIterator" /> structure is not generally useful for applications other than compilers.</para>
+      <para>The functionality in the <see cref="T:System.ArgIterator" /> structure is typically hidden in the syntax of a specific programming language. For example, in the C++ programming language you declare a variable-length argument list by specifying an ellipsis ("...") at the end of the argument list. The <see cref="T:System.ArgIterator" /> structure is useful primarily when a development language does not provide direct support for accessing variable-length parameters.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a variable-length argument list; that is, the parameters of a function that takes a variable number of arguments.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ArgIterator (RuntimeArgumentHandle arglist);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.RuntimeArgumentHandle arglist) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="arglist" Type="System.RuntimeArgumentHandle" />
-      </Parameters>
-      <Docs>
-        <param name="arglist">The handle to the argument list, as obtained by the special compiler __arglist expression.</param>
-        <summary>Creates an ArgIterator from a RuntimeArgumentHandle.</summary>
-        <remarks>Here is an example of a routine that uses the __arglist calling conventions:
-
-
-<example><code lang="C#">
-using System;
-
-class ArgIteratorDemo {
-
-        static int AddABunchOfInts (__arglist)
-        {
-                int result = 0;
-
-                System.ArgIterator iter = new System.ArgIterator (__arglist);
-                int argCount = iter.GetRemainingCount();
-
-                for (int i = 0; i &lt; argCount; i++) {
-                        System.TypedReference typedRef = iter.GetNextArg();
-                        result += (int)TypedReference.ToObject( typedRef );
-                }
-
-                return result;
-        }
-
-        static void Main (string[] args)
-        {
-                int result = AddABunchOfInts (__arglist ( 2, 3, 4 ));
-                Console.WriteLine ("Answer: {0}", result);
-	}
-}
-  </code></example></remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="arglist" Type="System.RuntimeArgumentHandle" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.ArgIterator" /> object enumerates the argument list starting from the first optional argument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ArgIterator" /> structure using the specified argument list.</para>
+        </summary>
+        <param name="arglist">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list consisting of mandatory and optional arguments. </param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ArgIterator (RuntimeArgumentHandle arglist, void* ptr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.RuntimeArgumentHandle arglist, void* ptr) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue />
       <Parameters>
         <Parameter Name="arglist" Type="System.RuntimeArgumentHandle" />
         <Parameter Name="ptr" Type="System.Void*" />
       </Parameters>
       <Docs>
-        <param name="arglist">The argument list, as obtained by the special compiler keyword __arglist.</param>
-        <param name="ptr">Overrides the starting address for computing parameters.</param>
-        <summary>Initialize an ArgIterator using a base address.</summary>
-        <remarks>Here is an example of a routine that uses the __arglist calling conventions:
-
-
-<example><code lang="C#">
-using System;
-
-class ArgIteratorDemo {
-
-        static int AddABunchOfInts (__arglist)
-        {
-                int result = 0;
-
-                System.ArgIterator iter = new System.ArgIterator (__arglist);
-                int argCount = iter.GetRemainingCount();
-
-                for (int i = 0; i &lt; argCount; i++) {
-                        System.TypedReference typedRef = iter.GetNextArg();
-                        result += (int)TypedReference.ToObject( typedRef );
-                }
-
-                return result;
-        }
-
-        static void Main (string[] args)
-        {
-                int result = AddABunchOfInts (__arglist ( 2, 3, 4 ));
-                Console.WriteLine ("Answer: {0}", result);
-	}
-}
-  </code></example></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.ArgIterator" /> object enumerates the argument list starting from the argument specified by <paramref name="ptr" />, or the first mandatory argument if <paramref name="ptr" /> is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ArgIterator" /> structure using the specified argument list and a pointer to an item in the list.</para>
+        </summary>
+        <param name="arglist">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list consisting of mandatory and optional arguments. </param>
+        <param name="ptr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the argument in <paramref name="arglist" /> to access first, or the first mandatory argument in <paramref name="arglist" /> if <paramref name="ptr" /> is null.</param>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
+    </Member>
+    <Member MemberName="End">
+      <MemberSignature Language="C#" Value="public void End ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void End() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="End">
-      <MemberSignature Language="C#" Value="public void End ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Finishes iterating over the arguments.</summary>
-        <remarks>Invalidates the ArgIterator instance, from this point on operations will throw an exception.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conceptually, <see cref="M:System.ArgIterator.End" /> concludes the processing of a variable-length argument list. However, this method has no actual implementation; the <see cref="M:System.ArgIterator.End" /> method body is empty. You can use this method in your code as a marker to indicate where variable-length argument list processing logically ends.</para>
+          <para>The <see cref="M:System.ArgIterator.End" /> method corresponds to the va_end method in the C standard library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concludes processing of the variable-length argument list represented by this instance.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object o) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -145,47 +127,48 @@ class ArgIteratorDemo {
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported, and always throws <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This comparison is not supported. No value is returned.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to be compared to this instance. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code of this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetNextArg">
       <MemberSignature Language="C#" Value="public TypedReference GetNextArg ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.TypedReference GetNextArg() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.TypedReference</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Returns the next argument.</summary>
-        <returns>Returns the next argument as a <see cref="T:System.TypedReference" />.</returns>
-        <remarks>This advances the position of the argument iterator.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -196,10 +179,39 @@ class ArgIteratorDemo {
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TypedReference</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The iterator is automatically advanced to the next argument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the next argument in a variable-length argument list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next argument as a <see cref="T:System.TypedReference" /> object.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="GetNextArg">
       <MemberSignature Language="C#" Value="public TypedReference GetNextArg (RuntimeTypeHandle rth);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.TypedReference GetNextArg(valuetype System.RuntimeTypeHandle rth) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.TypedReference</ReturnType>
       </ReturnValue>
@@ -207,57 +219,76 @@ class ArgIteratorDemo {
         <Parameter Name="rth" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <param name="rth">To be added: an object of type 'RuntimeTypeHandle'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypedReference'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The iterator is automatically advanced to the next argument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the next argument in a variable-length argument list that has a specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next argument as a <see cref="T:System.TypedReference" /> object.</para>
+        </returns>
+        <param name="rth">
+          <attribution license="cc4" from="Microsoft" modified="false" />A runtime type handle that identifies the type of the argument to retrieve. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetNextArgType">
+      <MemberSignature Language="C#" Value="public RuntimeTypeHandle GetNextArgType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeTypeHandle GetNextArgType() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetNextArgType">
-      <MemberSignature Language="C#" Value="public RuntimeTypeHandle GetNextArgType ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeTypeHandle</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Returns the type of the next argument.</summary>
-        <returns>To be added: an object of type 'RuntimeTypeHandle'</returns>
-        <remarks>This does not advance the current position in the iterator.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not advance the iterator to the next argument.</para>
+          <para>
+            <see cref="M:System.ArgIterator.GetNextArgType" /> returns the type of the argument as specified in the calling function. For example, if an argument is type <see cref="T:System.String" />, but the calling function specifies the argument as type <see cref="T:System.Object" />, <see cref="M:System.ArgIterator.GetNextArgType" /> reports the argument as type <see cref="T:System.Object" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type of the next argument.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the next argument.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetRemainingCount">
+      <MemberSignature Language="C#" Value="public int GetRemainingCount ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 GetRemainingCount() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRemainingCount">
-      <MemberSignature Language="C#" Value="public int GetRemainingCount ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Returns the number of remaining arguments to be processed.</summary>
-        <returns>The count of arguments remaining to be processed.</returns>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of arguments remaining in the argument list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of remaining arguments.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

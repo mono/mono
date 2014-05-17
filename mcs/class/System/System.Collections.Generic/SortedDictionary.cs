@@ -414,6 +414,9 @@ namespace System.Collections.Generic
 
 			public ValueCollection (SortedDictionary<TKey,TValue> dictionary)
 			{
+				if (dictionary == null)
+					throw new ArgumentNullException ("dictionary");
+
 				_dic = dictionary;
 			}
 

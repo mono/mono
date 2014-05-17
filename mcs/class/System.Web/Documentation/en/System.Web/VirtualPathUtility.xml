@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VirtualPathUtility" FullName="System.Web.VirtualPathUtility">
   <TypeSignature Language="C#" Value="public static class VirtualPathUtility" />
   <AssemblyInfo>
@@ -9,9 +10,22 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.VirtualPathUtility" /> class provides utility methods for common operations involving virtual paths. For ASP.NET server controls and server code, virtual paths using the Web application root operator, the tilde (~), commonly are used instead of relative and absolute paths. For more information, see <format type="text/html"><a href="2447f50c-b849-483c-8093-85ed53e7a5bd">ASP.NET Web Site Paths</a></format>. </para>
+      <para>Use the <see cref="T:System.Web.VirtualPathUtility" /> class when you need to convert application-relative paths to absolute virtual paths, as might be the case in developing a custom Web service handler.</para>
+      <para>An absolute virtual path starts with the literal slash mark (/). A relative virtual path is relative to the application root directory, if it is just a tilde (~) or starts with the tilde and a double backslash (~\\) or the tilde and a slash mark (~/). Making a virtual path relative makes the path independent of the application.</para>
+      <para>The virtual directory for the application can be obtained from the <see cref="P:System.Web.HttpRuntime.AppDomainAppVirtualPath" /> and <see cref="P:System.Web.HttpRequest.ApplicationPath" /> properties. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.VirtualPathUtility" /> class is not intended for security or canonicalization purposes. For more information about Web application security, see <format type="text/html"><a href="88d61678-f84e-4622-ae80-53128821855a">Overview of Web Application Security Threats</a></format>. For generic URL processing functionality, see <see cref="T:System.Uri" />.</para>
+      </block>
+      <para />
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides utility methods for common virtual path operations.  </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AppendTrailingSlash">
@@ -24,11 +38,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the literal slash mark (/) exists at the end of the virtual path, the virtual path is not modified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the literal slash mark (/) to the end of the virtual path, if one does not already exist.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified virtual path.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to append the slash mark to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,12 +69,24 @@
         <Parameter Name="relativePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="basePath">To be added.</param>
-        <param name="relativePath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.VirtualPathUtility.Combine(System.String,System.String)" /> method returns the value of the <see cref="P:System.Web.HttpRuntime.AppDomainAppVirtualPath" /> property if the relative path is exactly a tilde (~).</para>
+          <para>The <see cref="M:System.Web.VirtualPathUtility.Combine(System.String,System.String)" /> method uses the <see cref="P:System.Web.HttpRuntime.AppDomainAppVirtualPath" /> property value rather than the base path, if the relative path starts with a tilde and a slash mark (~/); otherwise, the <see cref="M:System.Web.VirtualPathUtility.Combine(System.String,System.String)" /> method uses the base path. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines a base path and a relative path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The combined <paramref name="basePath" /> and <paramref name="relativePath" />.</para>
+        </returns>
+        <param name="basePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base path.</param>
+        <param name="relativePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relative path.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,11 +102,22 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="virtualPath" /> is not rooted; that is, it does not equal the root operator (the tilde [~]), does not start with a tilde (~), such as a tilde and a slash mark (~/) or a tilde and a double backslash (~//), or does not start with a slash mark (/), an <see cref="T:System.ArgumentException" /> exception is thrown.</para>
+          <para>If the virtual path that is passed into the <see cref="M:System.Web.VirtualPathUtility.GetDirectory(System.String)" /> method is "/images/image1.gif", the returned directory is "/images".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the directory portion of a virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The directory referenced in the virtual path. </para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -86,11 +133,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the virtual path that is passed into the <see cref="M:System.Web.VirtualPathUtility.GetExtension(System.String)" /> method is "/images/image1.gif", the returned extension is ".gif".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the extension of the file that is referenced in the virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file name extension string literal, including the period (.), null, or an empty string ("").</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,11 +163,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the virtual path that is passed into the <see cref="M:System.Web.VirtualPathUtility.GetFileName(System.String)" /> method is "/images/image1.gif", the returned file name is "image1.gif".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the file name of the file that is referenced in the virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file name literal after the last directory character in <paramref name="virtualPath" />; otherwise, the last directory name if the last character of <paramref name="virtualPath" /> is a directory or volume separator character.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -126,11 +193,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A virtual path is absolute if it begins with a literal slash mark (/). For example, the <see cref="P:System.Web.HttpRequest.Path" /> property returns an absolute virtual path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value indicating whether the specified virtual path is absolute; that is, it starts with a literal slash mark (/).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="virtualPath" /> is an absolute path and is not null or an empty string (""); otherwise, false.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to check. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,11 +223,25 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The virtual path can be just the root operator (the tilde [~]), or it can begin with the root operator. If <paramref name="virtualPath" /> is null, an <see cref="T:System.ArgumentNullException" /> exception is raised. If <paramref name="virtualPath" /> is an empty string (""), the <see cref="M:System.Web.VirtualPathUtility.IsAppRelative(System.String)" /> method returns false.</para>
+          <block subset="none" type="note">
+            <para>"~<paramref name="filename" />" is not a valid virtual path and returns false for the <see cref="M:System.Web.VirtualPathUtility.IsAppRelative(System.String)" /> method.</para>
+          </block>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value indicating whether the specified virtual path is relative to the application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="virtualPath" /> is relative to the application; otherwise, false.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to check. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -167,12 +258,25 @@
         <Parameter Name="toPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fromPath">To be added.</param>
-        <param name="toPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="fromPath" /> and <paramref name="toPath" /> parameters are not rooted; that is, they do not equal the root operator (the tilde [~]), do not start with a tilde (~), such as a tilde and a slash mark (~/) or a tilde and a double backslash (~//), or do not start with a slash mark (/), an <see cref="T:System.ArgumentException" /> exception is thrown.</para>
+          <para>Query string parameters and HTML anchors that are used in the URI are not used in determining the relative path.</para>
+          <para>If <paramref name="fromPath" /> is "/directory1/file1.aspx" and <paramref name="toPath" /> is "/directory2/file2.aspx", the <see cref="M:System.Web.VirtualPathUtility.MakeRelative(System.String,System.String)" /> method returns "../directory2/file2.aspx".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the relative virtual path from one virtual path containing the root operator (the tilde [~]) to another.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The relative virtual path from <paramref name="fromPath" /> to <paramref name="toPath" />.</para>
+        </returns>
+        <param name="fromPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting virtual path to return the relative virtual path from.</param>
+        <param name="toPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ending virtual path to return the relative virtual path to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -188,11 +292,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.VirtualPathUtility.RemoveTrailingSlash(System.String)" /> method removes a slash mark (/) from the end of the virtual path. If the virtual path is already the root directory ("/"), no action is taken. If the virtual path is null or an empty string (""), the <see cref="M:System.Web.VirtualPathUtility.RemoveTrailingSlash(System.String)" /> method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a trailing slash mark (/) from a virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A virtual path without a trailing slash mark, if the virtual path is not already the root directory ("/"); otherwise, null.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to remove any trailing slash mark from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -208,11 +322,33 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An application absolute path is one where the application path is used instead of the root operator (the tilde [~]). </para>
+          <para>If <paramref name="virtualPath" /> is: </para>
+          <list type="bullet">
+            <item>
+              <para>Absolute, the <see cref="M:System.Web.VirtualPathUtility.ToAbsolute(System.String)" /> method returns the virtual path unchanged.</para>
+            </item>
+            <item>
+              <para>Application relative, the <see cref="M:System.Web.VirtualPathUtility.ToAbsolute(System.String)" /> method appends the current application virtual directory path to the beginning of the <paramref name="virtualPath" />. For example, the current application virtual directory path can be accessed from the <see cref="P:System.Web.HttpRuntime.AppDomainAppVirtualPath" /> property.</para>
+            </item>
+            <item>
+              <para>Not rooted, the <see cref="M:System.Web.VirtualPathUtility.ToAbsolute(System.String)" /> method raises an <see cref="T:System.ArgumentOutOfRangeException" /> exception.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a virtual path to an application absolute path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute path representation of the specified virtual path. </para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -229,12 +365,35 @@
         <Parameter Name="applicationPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="applicationPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.VirtualPathUtility.ToAbsolute(System.String,System.String)" /> overload of the <see cref="Overload:System.Web.VirtualPathUtility.ToAbsolute" /> method uses the supplied application path rather than the current application path.</para>
+          <para>If <paramref name="virtualPath" /> is: </para>
+          <list type="bullet">
+            <item>
+              <para>Absolute, the <see cref="M:System.Web.VirtualPathUtility.ToAbsolute(System.String,System.String)" /> method returns the virtual path with no changes.</para>
+            </item>
+            <item>
+              <para>Application relative, the <see cref="M:System.Web.VirtualPathUtility.ToAbsolute(System.String,System.String)" /> method adds <paramref name="applicationPath" /> to the beginning of the virtual path.</para>
+            </item>
+            <item>
+              <para>Not rooted, the <see cref="M:System.Web.VirtualPathUtility.ToAbsolute(System.String,System.String)" /> method raises an <see cref="T:System.ArgumentOutOfRangeException" /> exception.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a virtual path to an application absolute path using the specified application path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute virtual path representation of <paramref name="virtualPath" />.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path.</param>
+        <param name="applicationPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application path to use to convert <paramref name="virtualPath" /> to a relative path.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,11 +432,23 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the virtual path for the application is "myapp" and the virtual path "/myApp/sub/default.asp" is passed into the <see cref="M:System.Web.VirtualPathUtility.ToAppRelative(System.String)" /> method, the resulting application-relative path is "~/sub/default.aspx".</para>
+          <para>If <paramref name="virtualPath" /> does not start with the current application path, the <see cref="M:System.Web.VirtualPathUtility.ToAppRelative(System.String)" /> method returns the virtual path unchanged.</para>
+          <para>If <paramref name="virtualPath" /> is the same as the application path, the root operator (the tilde [~]), is returned. For example, the current application virtual directory path can be accessed from the <see cref="P:System.Web.HttpRuntime.AppDomainAppVirtualPath" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a virtual path to an application-relative path using the application virtual path that is in the <see cref="P:System.Web.HttpRuntime.AppDomainAppVirtualPath" /> property. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application-relative path representation of <paramref name="virtualPath" />.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -294,12 +465,23 @@
         <Parameter Name="applicationPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="applicationPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.VirtualPathUtility.ToAppRelative(System.String,System.String)" /> overload of the <see cref="Overload:System.Web.VirtualPathUtility.ToAppRelative" /> method uses <paramref name="applicationPath" /> rather than the current application path. If <paramref name="virtualPath" /> does not start with <paramref name="applicationPath" />, the <see cref="M:System.Web.VirtualPathUtility.ToAppRelative(System.String,System.String)" /> method returns the virtual path unchanged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a virtual path to an application-relative path using a specified application path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application-relative path representation of <paramref name="virtualPath" />.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to convert to an application-relative path. </param>
+        <param name="applicationPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The application path to use to convert <paramref name="virtualPath" /> to a relative path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

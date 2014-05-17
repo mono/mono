@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PackingSize" FullName="System.Reflection.Emit.PackingSize">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum PackingSize" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed PackingSize extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -17,156 +19,219 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Packing size affects the alignment of fields in structures and classes whose organization is <see cref="F:System.Runtime.InteropServices.LayoutKind.Sequential" />. The packing size is one of two factors that determine the offset of a field when the structure or class is marshaled; the other factor is the effective size of the field. To determine the offset of a field: </para>
+      <list type="ordered">
+        <item>
+          <para>Compute the minimum value for the offset by adding the size of the preceding field to the offset of the preceding field.</para>
+        </item>
+        <item>
+          <para>Compute the natural packing size for the field: If the field is a simple data type, use the size. If the field is an array, use the size of an array element. If the field is itself a structure, compare the packing size of that structure to the size of the largest field in that structure, and use the smaller of the two values.</para>
+        </item>
+        <item>
+          <para>Compute the effective packing size by comparing the packing size to the natural packing size of the field, computed in step 2. Use the smaller of the two numbers.</para>
+        </item>
+        <item>
+          <para>Compute the offset. The offset is the first memory location that is equal to or larger than the minimum, and a multiple of the effective packing size computed in step 3.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Once offsets have been computed for all the fields in the class or structure, padding is added so that the overall size is a multiple of the packing size.</para>
+      </block>
+      <para>For example, in a class containing a byte and a long, using packing size Size1, the offset of the byte field is zero (0) and the offset of the long field is one (1). If the packing size is Size4, the long field has offset four (4). In a class containing two short fields, using any packing size, the offset of the second short field is two (2).</para>
+      <block subset="none" type="note">
+        <para>Changing the packing size can affect performance if it causes fields to be aligned on offsets that are not multiples of their size.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies one of two factors that determine the memory alignment of fields when a type is marshaled.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Size1">
       <MemberSignature Language="C#" Value="Size1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size1 = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 1 byte.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Size128">
       <MemberSignature Language="C#" Value="Size128" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size128 = int32(128)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 128 bytes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Size16">
       <MemberSignature Language="C#" Value="Size16" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size16 = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 16 bytes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Size2">
       <MemberSignature Language="C#" Value="Size2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size2 = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 2 bytes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Size32">
       <MemberSignature Language="C#" Value="Size32" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size32 = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 32 bytes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Size4">
       <MemberSignature Language="C#" Value="Size4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size4 = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 4 bytes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Size64">
       <MemberSignature Language="C#" Value="Size64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size64 = int32(64)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 64 bytes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Size8">
       <MemberSignature Language="C#" Value="Size8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Size8 = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is 8 bytes.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Unspecified">
       <MemberSignature Language="C#" Value="Unspecified" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.Emit.PackingSize Unspecified = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.PackingSize</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The packing size is not specified.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

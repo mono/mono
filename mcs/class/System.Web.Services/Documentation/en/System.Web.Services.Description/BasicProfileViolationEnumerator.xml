@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BasicProfileViolationEnumerator" FullName="System.Web.Services.Description.BasicProfileViolationEnumerator">
   <TypeSignature Language="C#" Value="public class BasicProfileViolationEnumerator : System.Collections.Generic.IEnumerator&lt;System.Web.Services.Description.BasicProfileViolation&gt;" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enumerates the elements in a <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +32,15 @@
       </Parameters>
       <Docs>
         <param name="collection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Web.Services.Description.BasicProfileViolationEnumerator.Current" /> is set to -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.BasicProfileViolationEnumerator" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Current">
@@ -42,9 +53,15 @@
         <ReturnType>System.Web.Services.Description.BasicProfileViolation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> element in the <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -58,8 +75,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Web.Services.Description.BasicProfileViolationEnumerator" /> class.Releases all resources used by the <see cref="T:System.Web.Services.Description.BasicProfileViolationEnumerator" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveNext">
@@ -73,9 +93,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enumerates to the next element in the <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false if the end of the collection is reached; otherwise true.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Current">
@@ -88,9 +114,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current element in the <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Reset">
@@ -104,8 +133,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the enumerator to its initial position, which is before the first element in the <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

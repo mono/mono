@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlAttributes" FullName="System.Xml.Serialization.XmlAttributes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlAttributes extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,274 +15,426 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creating the <see cref="T:System.Xml.Serialization.XmlAttributes" /> is part of a process that overrides the default way the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes class instances. For example, suppose you want to serialize an object that is created from a DLL which has an inaccessible source. By using the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" />, you can augment or otherwise control how the object is serialized.</para>
+      <para>The members of the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class correspond directly to a family of attribute classes that control serialization. For example, the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlText" /> property must be set to an <see cref="T:System.Xml.Serialization.XmlTextAttribute" />, which allows you to override serialization of a field or property by instructing the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to serialize the property value as XML text. For a complete list of attributes that control serialization, see the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+      <para>For more details on using the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> with the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class, see <format type="text/html"><a href="5cc1c0b0-f94b-4525-9a41-88a582cd6668">How to: Specify an Alternate Element Name for an XML Stream</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of attribute objects that control how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes and deserializes an object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlAttributes (System.Reflection.ICustomAttributeProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.ICustomAttributeProvider provider) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="provider" Type="System.Reflection.ICustomAttributeProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'System.Reflection.ICustomAttributeProvider'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the default constructor for the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class, rather than using this constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class and customizes how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes and deserializes an object. </para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A class that can provide alternative implementations of attributes that control XML serialization.</param>
       </Docs>
+    </Member>
+    <Member MemberName="XmlAnyAttribute">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAnyAttributeAttribute XmlAnyAttribute { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlAnyAttributeAttribute XmlAnyAttribute" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlAnyAttribute">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAnyAttributeAttribute XmlAnyAttribute { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlAnyAttributeAttribute</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlAnyAttributeAttribute'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" /> can be applied to a member that returns an array of <see cref="T:System.Xml.XmlAttribute" /> objects on deserialization. This allows the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to deserialize any attributes that do not have a corresponding member in the object being deserialized--thus those elements are "unknown" to the <see cref="T:System.Xml.Serialization.XmlSerializer" />. This is useful when the XML stream has been altered by an XML Web service, or when it is known that random data is always included with the XML stream.</para>
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributes.XmlAnyAttribute" /> property allows you to override the serialization of a member to which the <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" /> has been applied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.Serialization.XmlAnyAttributeAttribute" /> to override.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlAnyElements">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAnyElementAttributes XmlAnyElements { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlAnyElementAttributes XmlAnyElements" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlAnyElementAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlAnyElementAttributes'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Serialization.XmlAnyElementAttribute" /> can be applied to a member that returns an array of <see cref="T:System.Xml.XmlElement" /> objects on deserialization. This allows the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to deserialize any elements that do not have a corresponding member in the object being deserialized--thus those elements are "unknown" to the <see cref="T:System.Xml.Serialization.XmlSerializer" />. This is useful when the XML stream has been altered by an XML Web service, or when it is known that random data is always included with the XML stream.</para>
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributes.XmlAnyElements" /> property allows you to override the serialization of a member to function as a member to which the <see cref="T:System.Xml.Serialization.XmlAnyElementAttribute" /> has been applied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Xml.Serialization.XmlAnyElementAttribute" /> objects to override.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlArray">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlArrayAttribute XmlArray { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlArrayAttribute XmlArray" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlArray">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlArrayAttribute XmlArray { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlArrayAttribute</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlArrayAttribute'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are two ways in which a public field or public read/write property that returns an array is serialized by the <see cref="T:System.Xml.Serialization.XmlSerializer" />: the default serialization, and the controlled serialization.</para>
+          <para>In the default serialization, no attribute is applied to the member. When serialized, the array is serialized as a nested sequence of XML elements with the XML element name of the nested sequence taken from the member name.</para>
+          <para>To control the serialization more precisely, apply an <see cref="T:System.Xml.Serialization.XmlArrayAttribute" /> to the field or property. For example, you can change the generated XML element name from the default to a different name by setting the <see cref="P:System.Xml.Serialization.XmlArrayAttribute.ElementName" /> property to a new value.</para>
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributes.XmlArray" /> property allows you to override the default serialization, as well as the serialization controlled by applying an <see cref="T:System.Xml.Serialization.XmlArrayAttribute" /> to the member. For example, you can change the XML element name generated from the default (the member identifier) to a new value. In addition, if you apply an <see cref="T:System.Xml.Serialization.XmlArrayAttribute" /> to a member, it is overridden by any <see cref="T:System.Xml.Serialization.XmlArrayAttribute" /> that is assigned to the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlArray" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that specifies how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a public field or read/write property that returns an array.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlArrayItems">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlArrayItemAttributes XmlArrayItems { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlArrayItemAttributes XmlArrayItems" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlArrayItemAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlArrayItemAttributes'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributes.XmlArrayItems" /> property allows you to specify the derived types that can be inserted into an array returned by a public field or public read/write property. For each new type you want the field or property to accept, create an <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> object and <see cref="M:System.Xml.Serialization.XmlArrayItemAttributes.Add(System.Xml.Serialization.XmlArrayItemAttribute)" /> it to the <see cref="T:System.Xml.Serialization.XmlArrayItemAttributes" />) returned by the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlArrayItems" /> property. (The new type must be derived from the type already accepted by the field or property.) <see cref="M:System.Xml.Serialization.XmlAttributeOverrides.Add(System.Type,System.Xml.Serialization.XmlAttributes)" /> the <see cref="T:System.Xml.Serialization.XmlAttributes" /> object to an <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object and specify the type of the object that contains the field or property, and the name of the field or property. Construct an <see cref="T:System.Xml.Serialization.XmlSerializer" /> with the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object before calling <see cref="M:System.Xml.Serialization.XmlSerializer.Serialize(System.IO.TextWriter,System.Object)" /> or <see cref="M:System.Xml.Serialization.XmlSerializer.Deserialize(System.IO.Stream)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of objects that specify how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes items inserted into an array returned by a public field or read/write property.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlAttribute">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAttributeAttribute XmlAttribute { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlAttributeAttribute XmlAttribute" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlAttribute">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAttributeAttribute XmlAttribute { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlAttributeAttribute</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlAttributeAttribute'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, if no attribute is applied to a public field or public read/write property, it is serialized as an XML element. You can also instruct the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to generate an XML attribute by applying an <see cref="T:System.Xml.Serialization.XmlAttributeAttribute" /> to the field or property.</para>
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributes.XmlAttribute" /> property allows you to override the default serialization, as well as the serialization controlled by applying an <see cref="T:System.Xml.Serialization.XmlAttributeAttribute" /> to the member. To do this, create an <see cref="T:System.Xml.Serialization.XmlAttributeAttribute" /> and set its properties (such as <see cref="P:System.Xml.Serialization.XmlAttributeAttribute.AttributeName" />). Assign the new object to the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlAttribute" /> property of an <see cref="T:System.Xml.Serialization.XmlAttributes" /> object. Add the <see cref="T:System.Xml.Serialization.XmlAttributes" /> object to an <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object and specify the type of the object that contains the field or property, and the name of the field or property. Lastly, create an <see cref="T:System.Xml.Serialization.XmlSerializer" /> using the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object and call the <see cref="M:System.Xml.Serialization.XmlSerializer.Serialize(System.IO.TextWriter,System.Object)" /> or <see cref="M:System.Xml.Serialization.XmlSerializer.Deserialize(System.IO.Stream)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that specifies how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a public field or public read/write property as an XML attribute.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlChoiceIdentifier">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlChoiceIdentifierAttribute XmlChoiceIdentifier { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlChoiceIdentifierAttribute XmlChoiceIdentifier" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlChoiceIdentifierAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlChoiceIdentifierAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that allows you to distinguish between a set of choices.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlDefaultValue">
+      <MemberSignature Language="C#" Value="public object XmlDefaultValue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object XmlDefaultValue" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlDefaultValue">
-      <MemberSignature Language="C#" Value="public object XmlDefaultValue { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify the default value of an XML element or XML attribute by applying a <see cref="T:System.ComponentModel.DefaultValueAttribute" /> to a member. To examine the result of applying the value, compile the application into a DLL or executable, and pass the resulting file as an argument to the XML Schema Definition tool (XSD.exe). In the XML schema document, a default value is assigned to the default attribute. In the following example, the default for the &lt;Animal&gt; element is "Dogs." </para>
+          <code>&lt;?xml version="1.0"?&gt;
+ &lt;schema attributeFormDefault="qualified" 
+ elementFormDefault="qualified" targetNamespace="" 
+ xmlns="http://www.w3.org/2000/10/XMLSchema"&gt;
+   &lt;element name="Pets" nullable="true" type="Pets"/&gt;
+   &lt;complexType name="Pets"&gt;
+     &lt;sequence&gt;
+       &lt;element default="Dogs" name="Animal" nullable="true" 
+        type="string" minOccurs="0"/&gt;
+     &lt;/sequence&gt;
+   &lt;/complexType&gt;
+ &lt;/schema&gt;</code>
+          <para>To override the default value, create an <see cref="T:System.Object" /> and assign it to the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlDefaultValue" />.</para>
+          <para>If the value assigned to a field or property is equal to the default value for that field or property, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> does not serialize the value to the XML-instance. This is because the assigned value can be recovered from the XML schema. In other words, setting a field or property to its own default value is equivalent of not setting it at all. Likewise, if no value is set for the field or property, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses the default value found in the schema. In both cases, (setting the property to its default, or not setting it at all), the XML-document instance does not contain any value for the property.</para>
+          <para>You can use the class constructors instead of the schema to assign the default values. If you are using Xsd.exe to generate a classes from schemas, you can comment out or remove all of the [System.ComponentModel.DefaultValueAttribute("myFieldName")] attributes from the class files.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default value of an XML element or attribute.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlElements">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlElementAttributes XmlElements { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlElementAttributes XmlElements" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlElementAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlElementAttributes'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For each overridden member that is serialized as an XML element, you must add a new <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> to an <see cref="T:System.Xml.Serialization.XmlElementAttributes" /> by calling the <see cref="M:System.Xml.Serialization.XmlElementAttributes.Add(System.Xml.Serialization.XmlElementAttribute)" /> method. By default, an <see cref="T:System.Xml.Serialization.XmlElementAttributes" /> object is created and assigned to the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlElements" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of objects that specify how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a public field or read/write property as an XML element.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlEnum">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlEnumAttribute XmlEnum { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlEnumAttribute XmlEnum" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlEnum">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlEnumAttribute XmlEnum { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlEnumAttribute</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlEnumAttribute'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For each identifier you want to override, you must create an <see cref="T:System.Xml.Serialization.XmlAttributes" /> object, and set the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlEnum" /> property to an <see cref="T:System.Xml.Serialization.XmlEnumAttribute" /> that overrides the identifier. Add the <see cref="T:System.Xml.Serialization.XmlAttributes" /> object to the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object and specify both the <see cref="T:System.Type" /> of the class that contains the enumeration, and the overridden member name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that specifies how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes an enumeration member.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlIgnore">
-      <MemberSignature Language="C#" Value="public bool XmlIgnore { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool XmlIgnore { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool XmlIgnore" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, all public fields and public read/write properties are serialized by the <see cref="T:System.Xml.Serialization.XmlSerializer" />. That is, the value of each public field or property is persisted as an XML element or XML attribute in an XML-document instance.</para>
+          <para>To override the default serialization of a field or property, create an <see cref="T:System.Xml.Serialization.XmlAttributes" /> object, and set its <see cref="P:System.Xml.Serialization.XmlAttributes.XmlIgnore" /> property to true. <see cref="M:System.Xml.Serialization.XmlAttributeOverrides.Add(System.Type,System.Xml.Serialization.XmlAttributes)" /> the object to an <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object and specify the type of the object that contains the field or property to ignore, and the name of the field or property to ignore.</para>
+          <para>If an <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" /> is applied to a field or property, the field or property is ignored. However you can override that behavior by creating an <see cref="T:System.Xml.Serialization.XmlAttributes" /> object, setting its <see cref="P:System.Xml.Serialization.XmlAttributes.XmlIgnore" /> property to false, adding it to an <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object specifying the type of the object that contains the field or property, and the name of the field or property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether or not the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a public field or public read/write property.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Xmlns">
-      <MemberSignature Language="C#" Value="public bool Xmlns { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Xmlns { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Xmlns" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to keep all namespace declarations when an object containing a member that returns an <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> object is overridden.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlRoot">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlRootAttribute XmlRoot { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlRootAttribute XmlRoot" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlRoot">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlRootAttribute XmlRoot { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlRootAttribute</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlRootAttribute'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that specifies how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a class as an XML root element.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlText">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlTextAttribute XmlText { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlTextAttribute XmlText" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlText">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlTextAttribute XmlText { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlTextAttribute</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlTextAttribute'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, a public field or public read/write property is serialized as an XML element by the <see cref="T:System.Xml.Serialization.XmlSerializer" />. However, it can force the field or property to be serialized as XML text by applying an <see cref="T:System.Xml.Serialization.XmlTextAttribute" /> to the field or property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Xml.Serialization.XmlTextAttribute" /> cannot be applied to a field or property that returns an array.</para>
+          </block>
+          <para>To override the default serialization of a field or property (that does not return an array), create an <see cref="T:System.Xml.Serialization.XmlTextAttribute" /> and assign it to the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlText" /> property of an <see cref="T:System.Xml.Serialization.XmlAttributes" /> object. Add the <see cref="T:System.Xml.Serialization.XmlAttributes" /> object to an <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object and specify the type of the object that contains the overridden field or property, and the name of the overridden field or property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that instructs the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to serialize a public field or public read/write property as XML text.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="XmlType">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlTypeAttribute XmlType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlTypeAttribute XmlType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="XmlType">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlTypeAttribute XmlType { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlTypeAttribute</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlTypeAttribute'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> can be used to control how a type is serialized by the <see cref="T:System.Xml.Serialization.XmlSerializer" />. For example, by default, when a type is serialized, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses the class name as the XML element name. By creating an <see cref="T:System.Xml.Serialization.XmlTypeAttribute" />, setting the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlType" /> property to it, and creating an <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object, you can change the XML element name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that specifies how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes a class to which the <see cref="T:System.Xml.Serialization.XmlTypeAttribute" /> has been applied.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IChannelInfo" FullName="System.Runtime.Remoting.IChannelInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IChannelInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IChannelInfo" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,35 +10,46 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="ChannelData">
-      <MemberSignature Language="C#" Value="public object[] ChannelData { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Object[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-      </Parameters>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'object []'</value>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is implemented by the <see cref="P:System.Runtime.Remoting.ObjRef.ChannelInfo" /> property. It provides access to transport specific information contributed by the channels that are able to receive calls in the process or application domain where the object lives. This interface might also be used when building custom <see cref="T:System.Runtime.Remoting.ObjRef" /> classes.</para>
+      <para>When an existing object instance is marshaled to produce a <see cref="T:System.Runtime.Remoting.ObjRef" />, the <see cref="P:System.Runtime.Remoting.IChannelInfo.ChannelData" /> is copied from the channel (see <see cref="T:System.Runtime.Remoting.Channels.IChannelReceiver" />) for each registered channel and stored in the <see cref="T:System.Runtime.Remoting.ObjRef" />. When the <see cref="T:System.Runtime.Remoting.ObjRef" /> is unmarshaled at its destination, the <see cref="P:System.Runtime.Remoting.IChannelInfo.ChannelData" /> provided through the <see cref="T:System.Runtime.Remoting.IChannelInfo" /> interface can be examined and used by corresponding channels in that process or application domain to create a transport message sink that manages the communication between the proxy and the server object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides custom channel information that is carried along with the <see cref="T:System.Runtime.Remoting.ObjRef" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ChannelData">
+      <MemberSignature Language="C#" Value="public object[] ChannelData { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object[] ChannelData" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <value>To be added: an object of type 'object []'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the channel data for each channel.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

@@ -51,5 +51,6 @@
 /TestSuite.cs -crlf
 /TestSuiteBuilder.cs -crlf
 /TextCapture.cs -crlf
+/ThreadUtility.cs -crlf
 /ThreadedTestRunner.cs -crlf
 /nunit.core.build -crlf

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UCOMIPersistFile" FullName="System.Runtime.InteropServices.UCOMIPersistFile">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMIPersistFile" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract UCOMIPersistFile" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,6 +10,7 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Obsolete</AttributeName>
@@ -20,13 +23,25 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, please see the existing documentation for IPersistFile and IPersist in the com subfolder of the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.IPersistFile" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetClassID">
       <MemberSignature Language="C#" Value="public void GetClassID (out Guid pClassID);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetClassID(valuetype System.Guid pClassID) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -38,15 +53,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetCurFile">
+      <MemberSignature Language="C#" Value="public void GetCurFile (out string ppszFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetCurFile(string ppszFileName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCurFile">
-      <MemberSignature Language="C#" Value="public void GetCurFile (out string ppszFileName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -58,33 +74,44 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsDirty">
+      <MemberSignature Language="C#" Value="public int IsDirty ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 IsDirty() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDirty">
-      <MemberSignature Language="C#" Value="public int IsDirty ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IPersistFile::IsDirty in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks an object for changes since it was last saved to its current file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>S_OK if the file has changed since it was last saved; S_FALSE if the file has not changed since it was last saved.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public void Load (string pszFileName, int dwMode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Load(string pszFileName, int32 dwMode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public void Load (string pszFileName, int dwMode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -93,20 +120,30 @@
         <Parameter Name="dwMode" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="pszFileName">To be added: an object of type 'string'</param>
-        <param name="dwMode">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The STGM enumeration is not part of the .NET Framework, but is documented in the MSDN library.</para>
+          <para>For more information, please see the existing documentation for IPersistFile::Load in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the specified file and initializes an object from the file contents.</para>
+        </summary>
+        <param name="pszFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-terminated string containing the absolute path of the file to open. </param>
+        <param name="dwMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A combination of values from the STGM enumeration to indicate the access mode in which to open <paramref name="pszFileName" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string pszFileName, bool fRemember);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Save(string pszFileName, bool fRemember) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Save">
-      <MemberSignature Language="C#" Value="public void Save (string pszFileName, bool fRemember);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -115,20 +152,29 @@
         <Parameter Name="fRemember" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="pszFileName">To be added: an object of type 'string'</param>
-        <param name="fRemember">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IPersistFile::Save in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves a copy of the object into the specified file.</para>
+        </summary>
+        <param name="pszFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-terminated string containing the absolute path of the file to which the object is saved. </param>
+        <param name="fRemember">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether <paramref name="pszFileName" /> is to be used as the current working file. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SaveCompleted">
+      <MemberSignature Language="C#" Value="public void SaveCompleted (string pszFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SaveCompleted(string pszFileName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SaveCompleted">
-      <MemberSignature Language="C#" Value="public void SaveCompleted (string pszFileName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -136,16 +182,17 @@
         <Parameter Name="pszFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="pszFileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IPersistFile::SaveCompleted in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the object that it can write to its file.</para>
+        </summary>
+        <param name="pszFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The absolute path of the file where the object was previously saved. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Interfaces />
 </Type>

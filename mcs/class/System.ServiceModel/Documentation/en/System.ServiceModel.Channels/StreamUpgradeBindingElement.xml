@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="StreamUpgradeBindingElement" FullName="System.ServiceModel.Channels.StreamUpgradeBindingElement">
+  <TypeSignature Language="C#" Value="public abstract class StreamUpgradeBindingElement : System.ServiceModel.Channels.BindingElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit StreamUpgradeBindingElement extends System.ServiceModel.Channels.BindingElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.BindingElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To indicate that a custom stream upgrade provider should be used, implement a binding element that implements this abstract class on the custom binding.</para>
+      <para>This abstract class is implemented by:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.WindowsStreamSecurityBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Adds a custom stream upgrade provider to a custom binding.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected StreamUpgradeBindingElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeBindingElement" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected StreamUpgradeBindingElement (System.ServiceModel.Channels.StreamUpgradeBindingElement other);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.StreamUpgradeBindingElement other) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="other" Type="System.ServiceModel.Channels.StreamUpgradeBindingElement" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeBindingElement" /> class from an existing instance. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildClientStreamUpgradeProvider">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.StreamUpgradeProvider BuildClientStreamUpgradeProvider (System.ServiceModel.Channels.BindingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.StreamUpgradeProvider BuildClientStreamUpgradeProvider(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.StreamUpgradeProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when opening the client channel factory and provides a custom implementation of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> abstract class. </para>
+          <para>The <see cref="T:System.ServiceModel.Channels.BindingContext" /> parameter enables reacting to other elements in the channel stack.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance on the client of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />. </para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildServerStreamUpgradeProvider">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Channels.StreamUpgradeProvider BuildServerStreamUpgradeProvider (System.ServiceModel.Channels.BindingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.StreamUpgradeProvider BuildServerStreamUpgradeProvider(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.StreamUpgradeProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when opening the service and provides a custom implementation of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> abstract class. </para>
+          <para>The <see cref="T:System.ServiceModel.Channels.BindingContext" /> parameter enables reacting to other elements in the channel stack.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance on the server of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

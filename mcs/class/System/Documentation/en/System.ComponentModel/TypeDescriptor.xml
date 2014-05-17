@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeDescriptor" FullName="System.ComponentModel.TypeDescriptor">
   <TypeSignature Language="C#" Value="public sealed class TypeDescriptor" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TypeDescriptor extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,15 +16,68 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The .NET Framework provides two ways to access metadata on a type: the reflection API provided in the <see cref="N:System.Reflection" /> namespace, and the <see cref="T:System.ComponentModel.TypeDescriptor" /> class. Reflection is a general mechanism available to all types because its foundation is established in the <see cref="M:System.Object.GetType" /> method of the root <see cref="T:System.Object" /> class. The information it returns for a type is not extensible, in that it cannot be modified after compilation of the target type. For more information, see the topics in <format type="text/html"><a href="d1a58e7f-fb39-4d50-bf84-e3b8f9bf9775">Reflection</a></format>.</para>
+      <para>In contrast, <see cref="T:System.ComponentModel.TypeDescriptor" /> is an extensible inspection mechanism for components: those classes that implement the <see cref="T:System.ComponentModel.IComponent" /> interface. Unlike reflection, it does not inspect for methods. <see cref="T:System.ComponentModel.TypeDescriptor" /> can be dynamically extended by several services available through the target component's <see cref="P:System.ComponentModel.Component.Site" />. The following table shows these services.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Service name</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.IExtenderProvider" /> </para>
+          </term>
+          <description>
+            <para>Enables another class, such as <see cref="T:System.Windows.Forms.ToolTip" />, to provide extra properties to a component.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" /> </para>
+          </term>
+          <description>
+            <para>Enables another object to modify the standard metadata that is exposed by a component. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> </para>
+          </term>
+          <description>
+            <para>Enables a class to completely and dynamically specify its own metadata, replacing the standard inspection mechanism of <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+          </description>
+        </item>
+      </list>
+      <para>The extensibility provided by <see cref="T:System.ComponentModel.TypeDescriptor" /> allows the design-time representation of a component to differ from its actual run-time representation, which makes <see cref="T:System.ComponentModel.TypeDescriptor" /> useful for building design-time infrastructure.</para>
+      <para>All the methods in <see cref="T:System.ComponentModel.TypeDescriptor" /> are static. You cannot create an instance of this class, and this class cannot be inherited.</para>
+      <para>You can set property and event values two different ways: specify them in the component class or change them at design time. Because you can set these values two ways, the overloaded methods of <see cref="T:System.ComponentModel.TypeDescriptor" /> take two different types of parameters: a class type or an object instance. </para>
+      <para>When you want to access <see cref="T:System.ComponentModel.TypeDescriptor" /> information and you have an instance of the object, use the method that calls for a component. Use the method that calls for the class type only when you do not have an instance of the object.</para>
+      <para>Properties and events are cached by <see cref="T:System.ComponentModel.TypeDescriptor" /> for speed. Typically, they are constant for the lifetime of an object. However, extender providers and designers can change the set of properties on an object. If this is the case, then the <see cref="Overload:System.ComponentModel.TypeDescriptor.Refresh" /> method must be called to update the cache.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about the characteristics for a component, such as its attributes, properties, and events. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddAttributes">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.TypeDescriptionProvider AddAttributes (object instance, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.TypeDescriptionProvider AddAttributes(object instance, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -42,18 +98,31 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.AddAttributes(System.Object,System.Attribute[])" /> method adds class-level attributes to the specified instance of a component. Because this is a common requirement of applications using the vsprvs Windows Forms Designer and Properties window, this method provides a shortcut by creating a type description provider that merges the provided attributes with the attributes that already exist on the class. The return value is the type description provider that was used to add the attributes. This provider can later be passed to the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method when the added attributes are no longer needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds class-level attributes to the target component instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> that was used to add the specified attributes.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Attribute" /> objects to add to the component's class.</param>
       </Docs>
     </Member>
     <Member MemberName="AddAttributes">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.TypeDescriptionProvider AddAttributes (Type type, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.TypeDescriptionProvider AddAttributes(class System.Type type, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -74,16 +143,38 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.AddAttributes(System.Type,System.Attribute[])" /> method adds class-level attributes to the specified type of a component. Because this is a common requirement of applications using the vsprvs Windows Forms Designer and Properties window, this method provides a shortcut by creating a type description provider that merges the provided attributes with the attributes that already exist on the class. The return value is the type description provider that was used to add the attributes. This provider can later be passed to the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method when the added attributes are no longer needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds class-level attributes to the target component type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> that was used to add the specified attributes.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Attribute" /> objects to add to the component's class.</param>
       </Docs>
     </Member>
     <Member MemberName="AddEditorTable">
       <MemberSignature Language="C#" Value="public static void AddEditorTable (Type editorBaseType, System.Collections.Hashtable table);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddEditorTable(class System.Type editorBaseType, class System.Collections.Hashtable table) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -92,26 +183,28 @@
         <Parameter Name="table" Type="System.Collections.Hashtable" />
       </Parameters>
       <Docs>
-        <param name="editorBaseType">To be added: an object of type 'Type'</param>
-        <param name="table">To be added: an object of type 'Collections.Hashtable'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.AddEditorTable(System.Type,System.Collections.Hashtable)" /> method adds an editor table for the given editor base type. Typically, editors are specified as metadata on a component. However, if no metadata for a requested editor base type can be found on the component, the associated <see cref="T:System.ComponentModel.TypeDescriptor" /> will search an editor table for the editor type, if one can be found. Once an editor table has been added to a type descriptor, it cannot be removed and is owned by the type descriptor. The type descriptor may freely make modifications to this table.</para>
+          <para>The format for an editor table uses data types as keys and editors as values. The value portion of an entry in the table represents an editor instance. It can have one of three values. If it contains a string, the type descriptor will assume this is a fully qualified name of a type, and then load the type for the object. If it contains a type, an instance of this type will be created to obtain an editor. Finally, the value portion may contain an actual editor instance. If the type descriptor resolves an editor to an instance, it will store the instance back into the table for future use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an editor table for the given editor base type. </para>
+        </summary>
+        <param name="editorBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The editor base type to add the editor table for. If a table already exists for this type, this method will do nothing. </param>
+        <param name="table">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Hashtable" /> to add. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="AddProvider">
       <MemberSignature Language="C#" Value="public static void AddProvider (System.ComponentModel.TypeDescriptionProvider provider, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddProvider(class System.ComponentModel.TypeDescriptionProvider provider, object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -126,17 +219,34 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method adds a type description provider that supplies type information for a single instance of a component. If a provider is added by this method, the provider's <see cref="M:System.ComponentModel.TypeDescriptor.CreateInstance(System.IServiceProvider,System.Type,System.Type[],System.Object[])" /> method will not be called because the instance already exists. </para>
+          <para>This method does not maintain a hard reference to the component, so it does not prevent the component from finalizing.</para>
+          <para>It is possible to add multiple type description providers for the same type or object. If this occurs, the first type description provider encountered that provides type information will be used exclusively. Since type information providers are stored in a stack, the last provider added will be the first one queried. This behavior enables the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> and <see cref="Overload:System.ComponentModel.TypeDescriptor.RemoveProvider" /> methods to be used to push and pop type description providers as required for particular scenarios. </para>
+          <para>If successful, this method calls the <see cref="M:System.ComponentModel.TypeDescriptor.Refresh(System.Object)" /> method on the <paramref name="instance" /> parameter.</para>
+          <block subset="none" type="note">
+            <para>The two versions of this method produce results with different scopes. The <see cref="Overload:System.ComponentModel.TypeDescriptor.AddProvider" /> method that takes an <see cref="T:System.Object" /> parameter affects only that single instance of the component specified. In contrast, the other overload, which takes a <see cref="T:System.Type" /> parameter, affects all instances of the component described by that type.</para>
+          </block>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.AddProviderTransparent(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method if you need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a type description provider for a single instance of a component.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to add.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="AddProvider">
       <MemberSignature Language="C#" Value="public static void AddProvider (System.ComponentModel.TypeDescriptionProvider provider, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddProvider(class System.ComponentModel.TypeDescriptionProvider provider, class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -151,64 +261,183 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method adds a type description provider that supplies type information for the specified class, derived classes, and all instances of these types.</para>
+          <block subset="none" type="note">
+            <para>The <paramref name="type" /> parameter can be any type, including an interface. For example, to provide custom type and instance information for all components, you would specify typeof(IComponent). Passing typeof(object) will call the provider to supply type information for all types.</para>
+          </block>
+          <para>This method does not maintain a hard reference to any object, so it does not prevent objects from finalizing.</para>
+          <para>It is possible to add multiple type description providers for the same type or object. If this occurs, the first type description provider encountered that provides type information will be used exclusively. Because type information providers are stored in a stack, the last provider added will be the first one queried. This behavior enables the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> and <see cref="Overload:System.ComponentModel.TypeDescriptor.RemoveProvider" /> methods to be used to push and pop type description providers as required for particular scenarios. </para>
+          <para>If successful, this method calls the <see cref="M:System.ComponentModel.TypeDescriptor.Refresh(System.Type)" /> method on the <paramref name="type" /> parameter.</para>
+          <block subset="none" type="note">
+            <para>The two versions of this method produce results with different scopes. The <see cref="Overload:System.ComponentModel.TypeDescriptor.AddProvider" /> method that takes an <see cref="T:System.Object" /> parameter affects only that single instance of the component specified. In contrast, the other overload, which takes a <see cref="T:System.Type" /> parameter, affects all instances of the component described by that type.</para>
+          </block>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.AddProviderTransparent(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method if you need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a type description provider for a component class.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to add.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddProviderTransparent">
+      <MemberSignature Language="C#" Value="public static void AddProviderTransparent (System.ComponentModel.TypeDescriptionProvider provider, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddProviderTransparent(class System.ComponentModel.TypeDescriptionProvider provider, object instance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("Security not applied.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.ComponentModel.TypeDescriptionProvider" />
+        <Parameter Name="instance" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be called from partially trusted code. If <see cref="F:System.Security.Permissions.TypeDescriptorPermissionFlags.RestrictedRegistrationAccess" /> is defined, the caller can register a provider for the specified instance if its type is also partially trusted.</para>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method if you do not need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a type description provider for a single instance of a component.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to add.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddProviderTransparent">
+      <MemberSignature Language="C#" Value="public static void AddProviderTransparent (System.ComponentModel.TypeDescriptionProvider provider, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddProviderTransparent(class System.ComponentModel.TypeDescriptionProvider provider, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("Security not applied.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.ComponentModel.TypeDescriptionProvider" />
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be called from partially trusted code. If <see cref="F:System.Security.Permissions.TypeDescriptorPermissionFlags.RestrictedRegistrationAccess" /> is defined, the caller can register a provider for the specified type if it is also partially trusted. </para>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method if you do not need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a type description provider for a component class.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to add.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="ComNativeDescriptorHandler">
-      <MemberSignature Language="C#" Value="public static System.ComponentModel.IComNativeDescriptorHandler ComNativeDescriptorHandler { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.IComNativeDescriptorHandler ComNativeDescriptorHandler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ComponentModel.IComNativeDescriptorHandler ComNativeDescriptorHandler" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ComponentModel.IComNativeDescriptorHandler</ReturnType>
-      </ReturnValue>
-      <Parameters>
-      </Parameters>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'IComNativeDescriptorHandler'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("Use ComObjectType")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.IComNativeDescriptorHandler</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <value>To be added: an object of type 'IComNativeDescriptorHandler'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.TypeDescriptor.ComNativeDescriptorHandler" /> property and the <see cref="T:System.ComponentModel.IComNativeDescriptorHandler" /> interface are obsolete. For more information, see the <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the provider for the Component Object Model (COM) type information for the target component.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ComObjectType">
       <MemberSignature Language="C#" Value="public static Type ComObjectType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Type ComObjectType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("Mono does not support COM")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" /> property returns a type that can be passed to the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method to define a type description provider for COM types.</para>
+          <para>The <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" /> property and other members in this class replace the functionality in the obsolete <see cref="T:System.ComponentModel.IComNativeDescriptorHandler" /> interface. To implement a mapping layer between a COM object and <see cref="T:System.ComponentModel.TypeDescriptor" />, add a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to handle type <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the Component Object Model (COM) object represented by the target component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateAssociation">
       <MemberSignature Language="C#" Value="public static void CreateAssociation (object primary, object secondary);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void CreateAssociation(object primary, object secondary) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("Associations not supported")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -219,15 +448,30 @@
         <Parameter Name="secondary" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="primary">To be added.</param>
-        <param name="secondary">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.CreateAssociation(System.Object,System.Object)" /> method creates an association between a primary and a secondary object. Once an association is created, a designer or other filtering mechanism can add properties that route to either object into the primary object's property set. When a property invocation is made against the primary object, the <see cref="M:System.ComponentModel.TypeDescriptor.GetAssociation(System.Type,System.Object)" /> method will be called to resolve the actual object instance that is related to its type parameter. </para>
+          <para>A <see cref="T:System.WeakReference" /> is used to maintain the association between the primary and secondary object; therefore, this method does not prevent either object from being finalized and reclaimed by garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a primary-secondary association between two objects.</para>
+        </summary>
+        <param name="primary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The primary <see cref="T:System.Object" />.</param>
+        <param name="secondary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secondary <see cref="T:System.Object" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDesigner">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.Design.IDesigner CreateDesigner (System.ComponentModel.IComponent component, Type designerBaseType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Design.IDesigner CreateDesigner(class System.ComponentModel.IComponent component, class System.Type designerBaseType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.IDesigner</ReturnType>
       </ReturnValue>
@@ -236,20 +480,33 @@
         <Parameter Name="designerBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'IComponent'</param>
-        <param name="designerBaseType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Design.IDesigner'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this method cannot find a valid <see cref="T:System.ComponentModel.DesignerAttribute" />, it searches up the class hierarchy for a designer. If it cannot find a designer in the class hierarchy, it returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the designer associated with the specified component and of the specified type of designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.Design.IDesigner" /> that is an instance of the designer for the component, or null if no designer can be found.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.IComponent" /> that specifies the component to associate with the designer. </param>
+        <param name="designerBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of designer to create. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateEvent">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptor CreateEvent (Type componentType, System.ComponentModel.EventDescriptor oldEventDescriptor, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptor CreateEvent(class System.Type componentType, class System.ComponentModel.EventDescriptor oldEventDescriptor, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -265,21 +522,32 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <param name="oldEventDescriptor">To be added: an object of type 'EventDescriptor'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new event descriptor that is identical to an existing event descriptor, when passed the existing <see cref="T:System.ComponentModel.EventDescriptor" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.EventDescriptor" /> that has merged the specified metadata attributes with the existing metadata attributes.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the component for which to create the new event. </param>
+        <param name="oldEventDescriptor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The existing event information. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new attributes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateEvent">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptor CreateEvent (Type componentType, string name, Type type, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptor CreateEvent(class System.Type componentType, string name, class System.Type type, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -296,25 +564,38 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new event descriptor that is identical to an existing event descriptor by dynamically generating descriptor information from a specified event on a type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that is bound to a type.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the component the event lives on. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the event. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate that handles the event. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes for this event. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public static object CreateInstance (IServiceProvider provider, Type objectType, Type[] argTypes, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CreateInstance(class System.IServiceProvider provider, class System.Type objectType, class System.Type[] argTypes, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -325,18 +606,37 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="objectType">To be added.</param>
-        <param name="argTypes">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.CreateInstance(System.IServiceProvider,System.Type,System.Type[],System.Object[])" /> method will search for a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> that is associated with the specified <paramref name="objectType" /> data type. This method first tries to obtain a type description provider from the <paramref name="provider" /> parameter. If this fails, it searches its own internal tables for a provider (these entries were created through previous calls to <see cref="Overload:System.ComponentModel.TypeDescriptor.AddProvider" />). If it finds a provider, this method will delegate the creation call to that object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object that can substitute for another data type. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the substitute data type if an associated <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> is found; otherwise, null.</para>
+        </returns>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service provider that provides a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> service. This parameter can be null.</param>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of object to create.</param>
+        <param name="argTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional array of parameter types to be passed to the object's constructor. This parameter can be null or an array of zero length.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional array of parameter values to pass to the object's constructor. If not null, the number of elements must be the same as <paramref name="argTypes" />. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateProperty">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptor CreateProperty (Type componentType, System.ComponentModel.PropertyDescriptor oldPropertyDescriptor, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptor CreateProperty(class System.Type componentType, class System.ComponentModel.PropertyDescriptor oldPropertyDescriptor, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
@@ -352,21 +652,32 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <param name="oldPropertyDescriptor">To be added: an object of type 'PropertyDescriptor'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new property descriptor from an existing property descriptor, using the specified existing <see cref="T:System.ComponentModel.PropertyDescriptor" /> and attribute array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.PropertyDescriptor" /> that has the specified metadata attributes merged with the existing metadata attributes.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the component that the property is a member of. </param>
+        <param name="oldPropertyDescriptor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The existing property descriptor. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new attributes for this property. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateProperty">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptor CreateProperty (Type componentType, string name, Type type, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptor CreateProperty(class System.Type componentType, string name, class System.Type type, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
@@ -383,28 +694,39 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and dynamically binds a property descriptor to a type, using the specified property name, type, and attribute array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that is bound to the specified type and that has the specified metadata attributes merged with the existing metadata attributes.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the component that the property is a member of. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the property. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new attributes for this property. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAssociation">
       <MemberSignature Language="C#" Value="public static object GetAssociation (Type type, object primary);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetAssociation(class System.Type type, object primary) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("Associations not supported")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -415,16 +737,34 @@
         <Parameter Name="primary" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="primary">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a previous association has been made for the <paramref name="type" /> parameter using the <see cref="M:System.ComponentModel.TypeDescriptor.CreateAssociation(System.Object,System.Object)" /> method, then the <see cref="M:System.ComponentModel.TypeDescriptor.GetAssociation(System.Type,System.Object)" /> method returns the correct secondary object to invoke for the requested type. Otherwise, <see cref="M:System.ComponentModel.TypeDescriptor.GetAssociation(System.Type,System.Object)" /> searches for a compatible designer for <paramref name="type" /> and returns the designer if one is found. This method never returns null.</para>
+          <para>A <see cref="T:System.WeakReference" /> is used to maintain the association between the primary and secondary object; therefore, this method does not prevent either the primary or secondary object from being finalized and reclaimed by garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an instance of the type associated with the specified primary object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the secondary type that has been associated with the primary object if an association exists; otherwise, <paramref name="primary" /> if no specified association exists.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
+        <param name="primary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The primary object of the association.</param>
       </Docs>
     </Member>
     <Member MemberName="GetAttributes">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.AttributeCollection GetAttributes (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.AttributeCollection GetAttributes(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.AttributeCollection</ReturnType>
       </ReturnValue>
@@ -432,19 +772,35 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attributes returned by the <see cref="Overload:System.ComponentModel.TypeDescriptor.GetAttributes" /> method may be dynamically modified from the original component's source listing by extender providers (<see cref="T:System.ComponentModel.IExtenderProvider" />), filter services (<see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" />), and attribute filters.</para>
+          <para>When you define a custom attribute with <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> set to true, you must override the <see cref="P:System.Attribute.TypeId" /> property to make it unique. If all instances of your attribute are unique, override <see cref="P:System.Attribute.TypeId" /> to return the object identity of your attribute. If only some instances of your attribute are unique, return a value from <see cref="P:System.Attribute.TypeId" /> that would return equality in those cases. For example, some attributes have a constructor parameter that acts as a unique key. For these attributes, return the value of the constructor parameter from the <see cref="P:System.Attribute.TypeId" /> property.</para>
+          <block subset="none" type="note">
+            <para>The default implementation of <see cref="P:System.Attribute.TypeId" /> returns the type identity regardless of the value of the <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> property. In order to return multiple instances of an <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> attribute from the <see cref="T:System.ComponentModel.AttributeCollection" />, your attribute must override the <see cref="P:System.Attribute.TypeId" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of attributes for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> containing the attributes for the component. If <paramref name="component" /> is null, this method returns an empty collection.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component for which you want to get attributes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttributes">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.AttributeCollection GetAttributes (Type componentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.AttributeCollection GetAttributes(class System.Type componentType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.AttributeCollection</ReturnType>
       </ReturnValue>
@@ -452,19 +808,41 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>For attributes with <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> set to true, the attribute collection removes duplicate instances. These are instances in which the <see cref="P:System.Attribute.TypeId" /> property returns equal values.</para>
+          <para>When you define a custom attribute with <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> set to true, you must override the <see cref="P:System.Attribute.TypeId" /> property to make it unique. If all instances of your attribute are unique, override <see cref="P:System.Attribute.TypeId" /> to return the object identity of your attribute. If only some instances of your attribute are unique, return a value from <see cref="P:System.Attribute.TypeId" /> that would return equality in those cases. For example, some attributes have a constructor parameter that acts as a unique key. For these attributes, return the value of the constructor parameter from the <see cref="P:System.Attribute.TypeId" /> property.</para>
+          <block subset="none" type="note">
+            <para>The default implementation of <see cref="P:System.Attribute.TypeId" /> returns the type identity regardless of the value of the <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> property. In order to return multiple instances of an <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> attribute from the <see cref="T:System.ComponentModel.AttributeCollection" />, your attribute must override the <see cref="P:System.Attribute.TypeId" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of attributes for the specified type of component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> with the attributes for the type of the component. If the component is null, this method returns an empty collection.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttributes">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.AttributeCollection GetAttributes (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.AttributeCollection GetAttributes(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.ComponentModel.AttributeCollection</ReturnType>
       </ReturnValue>
@@ -473,25 +851,37 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attributes returned by the <see cref="Overload:System.ComponentModel.TypeDescriptor.GetAttributes" /> method may be dynamically modified from the original components source listing by extender providers (<see cref="T:System.ComponentModel.IExtenderProvider" />), filter services (<see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" />), and attribute filters.</para>
+          <para>When you define a custom attribute with <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> set to true, you must override the <see cref="P:System.Attribute.TypeId" /> property to make it unique. If all instances of your attribute are unique, override <see cref="P:System.Attribute.TypeId" /> to return the object identity of your attribute. If only some instances of your attribute are unique, return a value from <see cref="P:System.Attribute.TypeId" /> that would return equality in those cases. For example, some attributes have a constructor parameter that acts as a unique key. For these attributes, return the value of the constructor parameter from the <see cref="P:System.Attribute.TypeId" /> property.</para>
+          <block subset="none" type="note">
+            <para>The default implementation of <see cref="P:System.Attribute.TypeId" /> returns the type identity regardless of the value of the <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> property. In order to return multiple instances of an <see cref="P:System.AttributeUsageAttribute.AllowMultiple" /> attribute from the <see cref="T:System.ComponentModel.AttributeCollection" />, your attribute must override the <see cref="P:System.Attribute.TypeId" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of attributes for the specified component and a Boolean indicating that a custom type descriptor has been created.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> with the attributes for the component. If the component is null, this method returns an empty collection.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component for which you want to get attributes. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use a baseline set of attributes from the custom type descriptor if <paramref name="component" /> is of type <see cref="T:System.ComponentModel.ICustomTypeDescriptor" />; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetClassName">
       <MemberSignature Language="C#" Value="public static string GetClassName (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetClassName(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -499,22 +889,36 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this method returns the full <see cref="T:System.Type" /> name for the <paramref name="component" /> parameter type. For example, the class name for a button is "System.Windows.Forms.Button". If <paramref name="component" /> implements <see cref="T:System.ComponentModel.ICustomTypeDescriptor" />, it can return an alternate name. </para>
+          <para>This method is equivalent to the overloaded <see cref="M:System.ComponentModel.TypeDescriptor.GetClassName(System.Object,System.Boolean)" /> method with a second parameter of false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the class for the specified component using the default type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the class for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetClassName">
       <MemberSignature Language="C#" Value="public static string GetClassName (Type componentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetClassName(class System.Type componentType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -522,15 +926,36 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method uses the cached custom type descriptor for the specified type to discover the associated class name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the class for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the class for the specified component type.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="GetClassName">
       <MemberSignature Language="C#" Value="public static string GetClassName (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetClassName(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -539,25 +964,33 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this method returns the full <see cref="T:System.Type" /> name for the <paramref name="component" /> parameter type. For example, the class name for a button is "System.Windows.Forms.Button". If the <paramref name="component" /> parameter implements <see cref="T:System.ComponentModel.ICustomTypeDescriptor" />, it can return an alternate name. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the class for the specified component using a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the class for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetComponentName">
       <MemberSignature Language="C#" Value="public static string GetComponentName (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetComponentName(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -565,19 +998,38 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this method returns the name for the site of the component, if one exists. For example, the class name for a button is "System.Windows.Forms.Button".</para>
+          <para>This method is equivalent to the overloaded <see cref="M:System.ComponentModel.TypeDescriptor.GetComponentName(System.Object,System.Boolean)" /> method with a second parameter of false.</para>
+          <para>This method is used at design time to retrieve the name of an instance of a component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the specified component using the default type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the specified component, or null if there is no component name.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetComponentName">
       <MemberSignature Language="C#" Value="public static string GetComponentName (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetComponentName(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -586,25 +1038,33 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used at design time to retrieve the name of an instance of a component. Typically, this method returns the name for the site of the component, if one exists. For example, the class name for a button is "System.Windows.Forms.Button". If the component implements the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface, it can return an alternate name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the specified component using a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the class for the specified component, or null if there is no component name.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetConverter">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.TypeConverter GetConverter (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.TypeConverter GetConverter(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.TypeConverter</ReturnType>
       </ReturnValue>
@@ -612,19 +1072,32 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method locates an appropriate type converter by looking for a <see cref="T:System.ComponentModel.TypeConverterAttribute" />. If it cannot find a <see cref="T:System.ComponentModel.TypeConverterAttribute" />, it traverses the base class hierarchy of the class until it finds a primitive type.</para>
+          <para>This method is equivalent to the overloaded <see cref="M:System.ComponentModel.TypeDescriptor.GetConverter(System.Object,System.Boolean)" /> method with a second parameter of false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a type converter for the type of the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the converter for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetConverter">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.TypeConverter GetConverter (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.TypeConverter GetConverter(class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.TypeConverter</ReturnType>
       </ReturnValue>
@@ -632,19 +1105,37 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>This method looks for the appropriate type converter by looking for a <see cref="T:System.ComponentModel.TypeConverterAttribute" />. If it cannot find a <see cref="T:System.ComponentModel.TypeConverterAttribute" />, it traverses the base class hierarchy of the class until it finds a primitive type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a type converter for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetConverter">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.TypeConverter GetConverter (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.TypeConverter GetConverter(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.ComponentModel.TypeConverter</ReturnType>
       </ReturnValue>
@@ -653,25 +1144,33 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method looks for the appropriate type converter by trying to find a <see cref="T:System.ComponentModel.TypeConverterAttribute" />. If it cannot find a <see cref="T:System.ComponentModel.TypeConverterAttribute" />, it traverses the base class hierarchy of the class until it finds a primitive type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a type converter for the type of the specified component with a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the converter for. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetDefaultEvent">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptor GetDefaultEvent (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptor GetDefaultEvent(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -679,19 +1178,31 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is equivalent to the overloaded <see cref="M:System.ComponentModel.TypeDescriptor.GetDefaultEvent(System.Object,System.Boolean)" /> method with a second parameter of false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default event for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> with the default event, or null if there are no events.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the event for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDefaultEvent">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptor GetDefaultEvent (Type componentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptor GetDefaultEvent(class System.Type componentType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -699,19 +1210,36 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default event for the specified type of component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> with the default event, or null if there are no events.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDefaultEvent">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptor GetDefaultEvent (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptor GetDefaultEvent(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptor</ReturnType>
       </ReturnValue>
@@ -720,25 +1248,30 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default event for a component with a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> with the default event, or null if there are no events.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the event for. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetDefaultProperty">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptor GetDefaultProperty (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptor GetDefaultProperty(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
@@ -746,19 +1279,31 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="component" /> parameter is null, this method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default property for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the default property, or null if there are no properties.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default property for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDefaultProperty">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptor GetDefaultProperty (Type componentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptor GetDefaultProperty(class System.Type componentType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
@@ -766,19 +1311,37 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>If the <paramref name="componentType" /> parameter is null, this method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default property for the specified type of component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the default property, or null if there are no properties.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the class to get the property for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDefaultProperty">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptor GetDefaultProperty (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptor GetDefaultProperty(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
@@ -787,25 +1350,33 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="component" /> parameter is null, this method returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default property for the specified component with a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the default property, or null if there are no properties.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default property for. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetEditor">
       <MemberSignature Language="C#" Value="public static object GetEditor (object component, Type editorBaseType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetEditor(object component, class System.Type editorBaseType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -814,20 +1385,34 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="editorBaseType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of <paramref name="editorBaseType" /> is usually <see cref="T:System.Drawing.Design.UITypeEditor" />, but you can also use other types (for example, <see cref="T:System.ComponentModel.ComponentEditor" /> and <see cref="T:System.ComponentModel.InstanceCreationEditor" />).</para>
+          <para>You can define multiple editors for a property. You use this method to select the editor you want to use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an editor with the specified base type for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the editor that can be cast to the specified editor type, or null if no editor of the requested type can be found.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the editor for. </param>
+        <param name="editorBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the base type of the editor you want to find. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEditor">
       <MemberSignature Language="C#" Value="public static object GetEditor (Type componentType, Type editorBaseType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetEditor(class System.Type componentType, class System.Type editorBaseType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -837,19 +1422,38 @@
       </Parameters>
       <Docs>
         <param name="componentType">To be added.</param>
-        <param name="editorBaseType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of <paramref name="editorBaseType" /> is usually <see cref="T:System.Drawing.Design.UITypeEditor" />, but you can also use other types (for example <see cref="T:System.ComponentModel.ComponentEditor" /> and <see cref="T:System.ComponentModel.InstanceCreationEditor" />).</para>
+          <para>You can define multiple editors for a type. You use this method to select the one you want to use.</para>
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an editor with the specified base type for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the editor object that can be cast to the given base type, or null if no editor of the requested type can be found.</para>
+        </returns>
+        <param name="editorBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the base type of the editor you are trying to find. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEditor">
       <MemberSignature Language="C#" Value="public static object GetEditor (object component, Type editorBaseType, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetEditor(object component, class System.Type editorBaseType, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -859,26 +1463,36 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="editorBaseType">To be added: an object of type 'Type'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of <paramref name="editorBaseType" /> is usually <see cref="T:System.Drawing.Design.UITypeEditor" />, but you can also use other types (for example <see cref="T:System.ComponentModel.ComponentEditor" /> and <see cref="T:System.ComponentModel.InstanceCreationEditor" />).</para>
+          <para>You can define multiple editors for a property. You use this method to select the editor you want to use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an editor with the specified base type and with a custom type descriptor for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the editor that can be cast to the specified editor type, or null if no editor of the requested type can be found.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the editor for. </param>
+        <param name="editorBaseType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the base type of the editor you want to find. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A flag indicating whether custom type description information should be considered.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetEvents">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptorCollection GetEvents (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptorCollection GetEvents(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -886,19 +1500,33 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of events that the given <paramref name="component" /> parameter instance provides. This collection can differ from the set of events the class provides. If the <paramref name="component" /> parameter is sited, the site can add or remove additional events.</para>
+          <para>If <paramref name="component" /> is null, then an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of events for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events for this component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvents">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptorCollection GetEvents (Type componentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptorCollection GetEvents(class System.Type componentType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -906,19 +1534,33 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>If the <paramref name="componentType" /> parameter is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of events for a specified type of component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events for this component.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvents">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptorCollection GetEvents (object component, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptorCollection GetEvents(object component, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -927,20 +1569,55 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The events for the <paramref name="component" /> parameter can differ from the events of a class, because the site can add or remove events if the <paramref name="component" /> parameter is sited.</para>
+          <para>The <paramref name="attributes" /> array can have a mix of <see cref="T:System.Type" /> and <see cref="T:System.Attribute" /> objects. Filtering is defined by the following rules: </para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="T:System.Type" /> is treated as a wildcard; it matches any event that has the <see cref="T:System.Type" /> in its set of attributes.</para>
+            </item>
+            <item>
+              <para>If an event does not have an <see cref="T:System.Attribute" /> of the same class, the event is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If the attribute is an instance of the <see cref="T:System.Attribute" /> class, the event must be an exact match or it is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If an <see cref="T:System.Attribute" /> instance is specified and it is the default event, it is included in the returned array even if there is no instance of the <see cref="T:System.Attribute" /> in the event.</para>
+            </item>
+          </list>
+          <para>If <paramref name="component" /> is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of events for a specified component using a specified array of attributes as a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events that match the specified attributes for this component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that you can use as a filter. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvents">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptorCollection GetEvents (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptorCollection GetEvents(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -949,25 +1626,35 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method retrieves a collection of events that the given <paramref name="component" /> parameter instance provides. This can differ from the set of events the class provides. If the <paramref name="component" /> parameter is sited, the site can add or remove additional events.</para>
+          <para>If <paramref name="component" /> is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of events for a specified component with a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events for this component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetEvents">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptorCollection GetEvents (Type componentType, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptorCollection GetEvents(class System.Type componentType, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -976,20 +1663,55 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>The <paramref name="attributes" /> parameter array can have a mix of <see cref="T:System.Type" /> and <see cref="T:System.Attribute" /> objects. Filtering is defined by the following rules: </para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="T:System.Type" /> is treated as a wildcard; it matches any event that has the <see cref="T:System.Type" /> in its set of attributes.</para>
+            </item>
+            <item>
+              <para>If an event does not have an <see cref="T:System.Attribute" /> of the same class, the event is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If the attribute is an instance of the <see cref="T:System.Attribute" /> class, the event must be an exact match or it is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If an <see cref="T:System.Attribute" /> instance is specified and it is the default event, it is included in the returned array even if there is no instance of the <see cref="T:System.Attribute" /> in the event.</para>
+            </item>
+          </list>
+          <para>If the <paramref name="componentType" /> parameter is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of events for a specified type of component using a specified array of attributes as a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events that match the specified attributes for this component.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that you can use as a filter. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvents">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.EventDescriptorCollection GetEvents (object component, Attribute[] attributes, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.EventDescriptorCollection GetEvents(object component, class System.Attribute[] attributes, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.ComponentModel.EventDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -999,29 +1721,56 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The events for the <paramref name="component" /> parameter can differ from the events of a class, because the site can add or remove events if the <paramref name="component" /> parameter is sited.</para>
+          <para>The <paramref name="attributes" /> parameter array can have a mix of <see cref="T:System.Type" /> and <see cref="T:System.Attribute" /> objects. Filtering is defined by the following rules: </para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="T:System.Type" /> is treated as a wildcard; it matches any event that has the <see cref="T:System.Type" /> in its set of attributes.</para>
+            </item>
+            <item>
+              <para>If an event does not have an <see cref="T:System.Attribute" /> of the same class, the event is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If the attribute is an instance of the <see cref="T:System.Attribute" /> class, the event must be an exact match or it is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If an <see cref="T:System.Attribute" /> instance is specified and it is the default event, it is included in the returned array even if there is no instance of the <see cref="T:System.Attribute" /> in the event.</para>
+            </item>
+          </list>
+          <para>If <paramref name="component" /> is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of events for a specified component using a specified array of attributes as a filter and using a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events that match the specified attributes for this component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> to use as a filter. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetFullComponentName">
       <MemberSignature Language="C#" Value="public static string GetFullComponentName (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetFullComponentName(object component) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1029,15 +1778,31 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In many cases, the <see cref="M:System.ComponentModel.TypeDescriptor.GetFullComponentName(System.Object)" /> method will return the same value as the <see cref="Overload:System.ComponentModel.TypeDescriptor.GetComponentName" /> method. However, if the component resides in a nested container or has other nested semantics, it may return a different fully qualified name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the fully qualified name of the component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fully qualified name of the specified component, or null if the component has no name.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Component" /> to find the name for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetProperties">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptorCollection GetProperties (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptorCollection GetProperties(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -1045,19 +1810,33 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for a component can differ from the properties of a class, because the site can add or remove properties if the component is sited.</para>
+          <para>If the <paramref name="component" /> parameter is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of properties for a specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetProperties">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptorCollection GetProperties (Type componentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptorCollection GetProperties(class System.Type componentType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -1065,19 +1844,33 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>If the <paramref name="componentType" /> parameter is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of properties for a specified type of component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties for a specified type of component.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the component to get properties for.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetProperties">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptorCollection GetProperties (object component, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -1086,47 +1879,92 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for the <paramref name="component" /> parameter can differ from the properties of a class, because the site can add or remove properties if the <paramref name="component" /> parameter is sited.</para>
+          <para>The <paramref name="attributes" /> parameter array is used to filter the array. Filtering is defined by the following rules: </para>
+          <list type="bullet">
+            <item>
+              <para>If a property does not have an <see cref="T:System.Attribute" /> of the same class, the property is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If the attribute is an instance of the <see cref="T:System.Attribute" /> class, the property must be an exact match or it is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If an <see cref="T:System.Attribute" /> instance is specified and it is the default property, it is included in the returned array even if there is no instance of the <see cref="T:System.Attribute" /> in the property.</para>
+            </item>
+            <item>
+              <para>If <paramref name="attributes" /> has a default attribute, the <see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Object,System.Attribute[])" /> method matches the case when the property does not have the attribute applied.</para>
+            </item>
+          </list>
+          <para>If <paramref name="component" /> is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of properties for a specified component using a specified array of attributes as a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that match the specified attributes for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> to use as a filter. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetProperties">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="component" Type="System.Object" />
-        <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="component" Type="System.Object" />
+        <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for the <paramref name="component" /> parameter can differ from the properties of a class, because the site can add or remove properties if the <paramref name="component" /> parameter is sited.</para>
+          <para>If <paramref name="component" /> is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of properties for a specified component using the default type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties for a specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to not consider custom type description information; otherwise, false.</param>
+      </Docs>
     </Member>
     <Member MemberName="GetProperties">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptorCollection GetProperties (Type componentType, Attribute[] attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptorCollection GetProperties(class System.Type componentType, class System.Attribute[] attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -1135,20 +1973,50 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="componentType">To be added: an object of type 'Type'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>The <paramref name="attributes" /> parameter array is used to filter the array. Filtering is defined by the following rules: </para>
+          <list type="bullet">
+            <item>
+              <para>If a property does not have an <see cref="T:System.Attribute" /> of the same class, the property is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If the attribute is an instance of the <see cref="T:System.Attribute" /> class, the property must be an exact match or it is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If an <see cref="T:System.Attribute" /> instance is specified and it is the default property, it is included in the returned array even if there is no instance of the <see cref="T:System.Attribute" /> in the property.</para>
+            </item>
+            <item>
+              <para>If <paramref name="attributes" /> has a default attribute, the <see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Type,System.Attribute[])" /> method matches the case when the property does not have the attribute applied.</para>
+            </item>
+          </list>
+          <para>If the <paramref name="componentType" /> parameter is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of properties for a specified type of component using a specified array of attributes as a filter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that match the specified attributes for this type of component.</para>
+        </returns>
+        <param name="componentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> to use as a filter. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetProperties">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.PropertyDescriptorCollection GetProperties (object component, Attribute[] attributes, bool noCustomTypeDesc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, class System.Attribute[] attributes, bool noCustomTypeDesc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
@@ -1158,23 +2026,50 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <param name="noCustomTypeDesc">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for a <paramref name="component" /> can differ from the properties of a class, because the site can add or remove properties if the <paramref name="component" /> is sited.</para>
+          <para>The <paramref name="attributes" /> parameter array is used to filter the array. Filtering is defined by the following rules: </para>
+          <list type="bullet">
+            <item>
+              <para>If a property does not have an <see cref="T:System.Attribute" /> of the same class, the property is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If the attribute is an instance of the <see cref="T:System.Attribute" /> class, the property must be an exact match or it is not included in the returned array.</para>
+            </item>
+            <item>
+              <para>If an <see cref="T:System.Attribute" /> instance is specified and it is the default property, it is included in the returned array even if there is no instance of the <see cref="T:System.Attribute" /> in the property.</para>
+            </item>
+            <item>
+              <para>If <paramref name="attributes" /> has a default attribute, the <see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Object,System.Attribute[],System.Boolean)" /> method matches the case when the property does not have the attribute applied.</para>
+            </item>
+          </list>
+          <para>If the <paramref name="component" /> parameter is null, an empty collection is returned.</para>
+          <para>The order of the returned collection is not guaranteed to be identical between calls, so always order it before use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of properties for a specified component using a specified array of attributes as a filter and using a custom type descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the events that match the specified attributes for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> to use as a filter. </param>
+        <param name="noCustomTypeDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to consider custom type description information; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetProvider">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.TypeDescriptionProvider GetProvider (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.TypeDescriptionProvider GetProvider(object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1188,17 +2083,29 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetProvider" /> method will always return a type description provider. Even the default <see cref="T:System.ComponentModel.TypeDescriptor" /> implementation is built on a <see cref="T:System.ComponentModel.TypeDescriptionProvider" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type description provider for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> associated with the specified component.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="GetProvider">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.TypeDescriptionProvider GetProvider (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.TypeDescriptionProvider GetProvider(class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1212,17 +2119,29 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetProvider" /> method will always return a type description provider. Even the default <see cref="T:System.ComponentModel.TypeDescriptor" /> implementation is built on a <see cref="T:System.ComponentModel.TypeDescriptionProvider" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type description provider for the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> associated with the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="GetReflectionType">
       <MemberSignature Language="C#" Value="public static Type GetReflectionType (object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetReflectionType(object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1236,17 +2155,29 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> method is a low-level version of the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method. <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> is typically used to perform standard reflection against an object when no custom type descriptor can be located for it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Type" /> that can be used to perform reflection, given an object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> for the specified object.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="GetReflectionType">
       <MemberSignature Language="C#" Value="public static Type GetReflectionType (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Type GetReflectionType(class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1260,15 +2191,58 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> method is a low-level version of the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method. <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> is typically used to perform standard reflection against a class when no custom type descriptor can be located for it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Type" /> that can be used to perform reflection, given a class type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> of the specified class.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="InterfaceType">
+      <MemberSignature Language="C#" Value="public static Type InterfaceType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Type InterfaceType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.TypeDescriptor.InterfaceType" /> property gets a <see cref="T:System.Type" /> object that you can pass to the <see cref="Overload:System.ComponentModel.TypeDescriptor.AddProvider" /> methods to define a type description provider for interface types. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a type that represents a type description provider for all interface types. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Refresh">
       <MemberSignature Language="C#" Value="public static void Refresh (object component);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Refresh(object component) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1276,18 +2250,28 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Properties and events are cached by <see cref="T:System.ComponentModel.TypeDescriptor" /> for speed. Typically, they are constant for the lifetime of an object. However, extender providers and designers can change the set of properties on an object. If they do, they should call this method to clear the property and event descriptors of the object. This method is used only at design time. It is not used during run time.</para>
+          <para>This method also raises a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event when the properties or events of a component change. This event is only raised if there was a prior call to the <see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Type)" /> or <see cref="M:System.ComponentModel.TypeDescriptor.GetEvents(System.Type)" /> method that cached the information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the properties and events for the specified component from the cache.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component for which the properties or events have changed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Refresh">
       <MemberSignature Language="C#" Value="public static void Refresh (System.Reflection.Assembly assembly);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Refresh(class System.Reflection.Assembly assembly) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1295,18 +2279,29 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Properties and events are cached by <see cref="T:System.ComponentModel.TypeDescriptor" /> for speed. Typically, they are constant for the lifetime of an object. However, extender providers and designers can change the set of properties on an object. If they do, they can call this method to clear the property and event descriptors of the object. This method is used only at design time. It is not used during run time.</para>
+          <para>Before you make a call to the <see cref="M:System.ComponentModel.TypeDescriptor.Refresh(System.Object)" /> method to clear the cache, you need to call the <see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Type)" /> method for the specific assembly to cache the information first.</para>
+          <para>This method also raises a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event to notify all classes that want to be notified when the property set of a component changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the properties and events for the specified assembly from the cache.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Assembly" /> that represents the assembly to refresh. Each <see cref="T:System.Type" /> in this assembly will be refreshed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Refresh">
       <MemberSignature Language="C#" Value="public static void Refresh (System.Reflection.Module module);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Refresh(class System.Reflection.Module module) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1314,18 +2309,29 @@
         <Parameter Name="module" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <param name="module">To be added: an object of type 'Reflection.Module'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Properties and events are cached by <see cref="T:System.ComponentModel.TypeDescriptor" /> for speed. Typically, they are constant for the lifetime of an object. However, extender providers and designers can change the set of properties on an object. If they do, they can call this method to clear the property and event descriptors of the object. This method is used only at design time. It is not used during run time.</para>
+          <para>Before you make a call to the <see cref="M:System.ComponentModel.TypeDescriptor.Refresh(System.Object)" /> method to clear the cache, you need to call the <see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Type)" /> method for the specific module to cache the information first.</para>
+          <para>This method also raises a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event to notify all classes that want to be notified when the property set of a component changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the properties and events for the specified module from the cache.</para>
+        </summary>
+        <param name="module">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Module" /> that represents the module to refresh. Each <see cref="T:System.Type" /> in this module will be refreshed. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Refresh">
       <MemberSignature Language="C#" Value="public static void Refresh (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Refresh(class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1333,40 +2339,58 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this version of this method only when you do not have an instance of the object.</para>
+          <para>Properties and events are cached by <see cref="T:System.ComponentModel.TypeDescriptor" /> for speed. Typically, they are constant for the lifetime of an object. However, extender providers and designers can change the set of properties on an object. If they do, they can call this method to clear the property and event descriptors of the object. This method is used only at design time. It is not used during run time.</para>
+          <para>This method also raises a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event when the properties or events of a component change. This event is only raised if there was a prior call to the <see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Type)" /> or <see cref="M:System.ComponentModel.TypeDescriptor.GetEvents(System.Type)" /> method that cached the information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the properties and events for the specified type of component from the cache.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Refreshed">
       <MemberSignature Language="C#" Value="public static event System.ComponentModel.RefreshEventHandler Refreshed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.RefreshEventHandler Refreshed" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.RefreshEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the cache for a component is cleared.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAssociation">
       <MemberSignature Language="C#" Value="public static void RemoveAssociation (object primary, object secondary);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveAssociation(object primary, object secondary) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("Associations not supported")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -1377,21 +2401,35 @@
         <Parameter Name="secondary" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="primary">To be added.</param>
-        <param name="secondary">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.RemoveAssociation(System.Object,System.Object)" /> method removes an association between two objects formed by the <see cref="M:System.ComponentModel.TypeDescriptor.CreateAssociation(System.Object,System.Object)" /> method.</para>
+          <para>A <see cref="T:System.WeakReference" /> is used to maintain the association between the primary and secondary object; therefore, this method does not influence when either object is finalized or reclaimed by garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an association between two objects.</para>
+        </summary>
+        <param name="primary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The primary <see cref="T:System.Object" />.</param>
+        <param name="secondary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secondary <see cref="T:System.Object" />.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAssociations">
       <MemberSignature Language="C#" Value="public static void RemoveAssociations (object primary);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveAssociations(object primary) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoNotSupported("Associations not supported")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -1401,16 +2439,26 @@
         <Parameter Name="primary" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="primary">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.TypeDescriptor.RemoveAssociations(System.Object)" /> method removes all associations between a primary object and all of its secondary objects, created by calls to the <see cref="M:System.ComponentModel.TypeDescriptor.CreateAssociation(System.Object,System.Object)" /> method.</para>
+          <para>A <see cref="T:System.WeakReference" /> is used to maintain the association between the primary and secondary object; therefore, this method does not influence when either the primary of secondary objects are finalized or reclaimed by garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all associations for a primary object.</para>
+        </summary>
+        <param name="primary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The primary <see cref="T:System.Object" /> in an association.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveProvider">
       <MemberSignature Language="C#" Value="public static void RemoveProvider (System.ComponentModel.TypeDescriptionProvider provider, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveProvider(class System.ComponentModel.TypeDescriptionProvider provider, object instance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1425,17 +2473,28 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes a type description provider previously added with the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method. Removing a provider causes a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event to be raised for the associated object.</para>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProviderTransparent(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method if you need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added type description provider that is associated with the specified object.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to remove.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveProvider">
       <MemberSignature Language="C#" Value="public static void RemoveProvider (System.ComponentModel.TypeDescriptionProvider provider, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveProvider(class System.ComponentModel.TypeDescriptionProvider provider, class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1450,15 +2509,108 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes a type description provider previously added with the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method. Removing a provider causes a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event to be raised for the associated type.</para>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProviderTransparent(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method if you need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added type description provider that is associated with the specified type.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to remove.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveProviderTransparent">
+      <MemberSignature Language="C#" Value="public static void RemoveProviderTransparent (System.ComponentModel.TypeDescriptionProvider provider, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveProviderTransparent(class System.ComponentModel.TypeDescriptionProvider provider, object instance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("Security not applied.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.ComponentModel.TypeDescriptionProvider" />
+        <Parameter Name="instance" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes a type description provider previously added with the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method. Removing a provider causes a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event to be raised for the associated object.</para>
+          <para>This method can be called from partially trusted code. If <see cref="F:System.Security.Permissions.TypeDescriptorPermissionFlags.RestrictedRegistrationAccess" /> is defined, the caller can register a provider for the specified instance if its type is also partially trusted.</para>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method if you do not need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added type description provider that is associated with the specified object.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to remove.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveProviderTransparent">
+      <MemberSignature Language="C#" Value="public static void RemoveProviderTransparent (System.ComponentModel.TypeDescriptionProvider provider, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveProviderTransparent(class System.ComponentModel.TypeDescriptionProvider provider, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("Security not applied.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.ComponentModel.TypeDescriptionProvider" />
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes a type description provider previously added with the <see cref="M:System.ComponentModel.TypeDescriptor.AddProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method. Removing a provider causes a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event to be raised for the associated type.</para>
+          <para>This method can be called from partially trusted code. If <see cref="F:System.Security.Permissions.TypeDescriptorPermissionFlags.RestrictedRegistrationAccess" /> is defined, the caller can unregister a provider for the specified type if it is also partially trusted.</para>
+          <para>Use the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method if you do not need to call from partially trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added type description provider that is associated with the specified type.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to remove.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
     </Member>
     <Member MemberName="SortDescriptorArray">
       <MemberSignature Language="C#" Value="public static void SortDescriptorArray (System.Collections.IList infos);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SortDescriptorArray(class System.Collections.IList infos) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1466,14 +2618,14 @@
         <Parameter Name="infos" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <param name="infos">To be added: an object of type 'Collections.IList'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts descriptors using the name of the descriptor.</para>
+        </summary>
+        <param name="infos">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IList" /> that contains the descriptors to sort. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

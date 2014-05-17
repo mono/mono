@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="BaseAddressPrefixFilterElement" FullName="System.ServiceModel.Configuration.BaseAddressPrefixFilterElement">
+  <TypeSignature Language="C#" Value="public sealed class BaseAddressPrefixFilterElement : System.Configuration.ConfigurationElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed BaseAddressPrefixFilterElement extends System.Configuration.ConfigurationElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Configuration.ConfigurationElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A prefix filter provider a mechanism for a service to bind to a specific URI .It enables you to host multiple applications with different base addresses for the same scheme on the same site.</para>
+      <para>IIS websites are containers for virtual applications which contain virtual directories. The application in a site can be accessed through one or more IIS binding. IIS bindings provide two pieces of information: binding protocol and binding information. Binding protocol (e.g., HTTP) defines the scheme over which communication occurs, and binding information (e.g., IPAddress, Port, Hostheader) contains data used to access the site. </para>
+      <para>IIS supports specifying multiple IIS bindings per site, which results in multiple base addresses per scheme. Since a indigo2 service hosted under a site allows binding to only one base address per scheme, you can use the prefix filter feature to pick the required base address of the hosted service.  The incoming base addresses, supplied by IIS, are filtered based on the optional prefix list filter.</para>
+      <para>For example, your site can contain the following base addresses</para>
+      <code>http://testl.fabrikam.com/Service.svc
+http://test2.fabrikam.com/Service.svc</code>
+      <para>You can use the following configuration file to specify a prefix filter at the appdomain level. </para>
+      <code>&lt;system.serviceModel&gt;
+  &lt;serviceHostingEnvironment&gt;
+     &lt;baseAddressPrefixFilters&gt;
+        &lt;add prefix=”net.tcp://test1.fabrikam.com:8000”/&gt;
+        &lt;add prefix=”http://test2.fabrikam.com:9000”/&gt;
+    &lt;/baseAddressPrefixFilters&gt;
+  &lt;/serviceHostingEnvironment&gt;
+&lt;/system.serviceModel&gt;</code>
+      <para>In this example, net.tcp://test1.fabrikam.com:8000 and http://test2.fabrikam.com:9000 are the only base addresses for their respective schemes which are allowed to be passed through. </para>
+      <para>By default, when prefix is not specified, all addresses are passed through. Specifying the prefix will result in only the matching base address for that scheme to be passed through. </para>
+      <block subset="none" type="note">
+        <para>The filter does not support any wildcards. In addition, the baseAddresses supplied by IIS may have addresses bound to other schemes not present in the baseAddressPrefixFilters list. These addresses are not filtered out.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies a pass through filter, which provides a mechanism to pick the appropriate IIS bindings when hosting a indigo1 application in IIS. This class cannot be inherited.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BaseAddressPrefixFilterElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.BaseAddressPrefixFilterElement" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BaseAddressPrefixFilterElement (Uri prefix);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Uri prefix) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.BaseAddressPrefixFilterElement" /> class with a specific URI.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A filter that causes the service to listen on all URIs that start with this specific prefix. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="Prefix">
+      <MemberSignature Language="C#" Value="public Uri Prefix { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Prefix" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("prefix", IsKey=true, IsRequired=true, Options=System.Configuration.ConfigurationPropertyOptions.IsRequired | System.Configuration.ConfigurationPropertyOptions.IsKey)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a prefix that is used to match a part of a base address.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

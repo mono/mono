@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Threading.Tasks">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The System.Threading.Tasks namespace provides types that simplify the work of writing concurrent and asynchronous code. The main types are <see cref="T:System.Threading.Tasks.Task" /> which represents an asynchronous operation that can be waited on and cancelled, and <see cref="T:System.Threading.Tasks.Task`1" />, which is a task that can return a value. The <see cref="T:System.Threading.Tasks.TaskFactory" /> class provides static methods for creating and starting tasks, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> class provides the default thread scheduling infrastructure.</para>
+    </summary>
+  </Docs>
+</Namespace>

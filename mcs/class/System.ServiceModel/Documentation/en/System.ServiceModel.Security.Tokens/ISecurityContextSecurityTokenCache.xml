@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ISecurityContextSecurityTokenCache" FullName="System.ServiceModel.Security.Tokens.ISecurityContextSecurityTokenCache">
+  <TypeSignature Language="C#" Value="public interface ISecurityContextSecurityTokenCache" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISecurityContextSecurityTokenCache" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When implemented, this interface specifies a contract for a security context token cache.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AddContext">
+      <MemberSignature Language="C#" Value="public void AddContext (System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddContext(class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a security context security token to the token cache.</para>
+        </summary>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ClearContexts">
+      <MemberSignature Language="C#" Value="public void ClearContexts ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ClearContexts() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the token cache of content.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAllContexts">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Security.Tokens.SecurityContextSecurityToken&gt; GetAllContexts (System.Xml.UniqueId contextId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken&gt; GetAllContexts(class System.Xml.UniqueId contextId) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Security.Tokens.SecurityContextSecurityToken&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of security context security token IDs that match a specified context ID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic collection of <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />s.</para>
+        </returns>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.Tokens.SecurityContextSecurityToken GetContext (System.Xml.UniqueId contextId, System.Xml.UniqueId generation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken GetContext(class System.Xml.UniqueId contextId, class System.Xml.UniqueId generation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityContextSecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="generation" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security context security token ID that matches a specified context ID and generation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</para>
+        </returns>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
+        <param name="generation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the generation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAllContexts">
+      <MemberSignature Language="C#" Value="public void RemoveAllContexts (System.Xml.UniqueId contextId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveAllContexts(class System.Xml.UniqueId contextId) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all tokens from the cache that match a given context ID.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveContext">
+      <MemberSignature Language="C#" Value="public void RemoveContext (System.Xml.UniqueId contextId, System.Xml.UniqueId generation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveContext(class System.Xml.UniqueId contextId, class System.Xml.UniqueId generation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="generation" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the token from the cache that matches a given context ID and generation.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
+        <param name="generation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the generation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="TryAddContext">
+      <MemberSignature Language="C#" Value="public bool TryAddContext (System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryAddContext(class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to add a token to the cache.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token was added successfully to the cache; otherwise, false. </para>
+        </returns>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateContextCachingTime">
+      <MemberSignature Language="C#" Value="public void UpdateContextCachingTime (System.ServiceModel.Security.Tokens.SecurityContextSecurityToken context, DateTime expirationTime);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void UpdateContextCachingTime(class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken context, valuetype System.DateTime expirationTime) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
+        <Parameter Name="expirationTime" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the expiration date for a token in the cache.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</param>
+        <param name="expirationTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new expiration time and date.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

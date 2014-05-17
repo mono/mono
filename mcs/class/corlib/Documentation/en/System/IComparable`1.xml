@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComparable&lt;T&gt;" FullName="System.IComparable&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IComparable&lt;in T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IComparable`1&lt;- T&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,18 +17,64 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>
-      <para>Defines generalized comparison methods that a value type or class implements to create a type-specific comparison method.</para>
-    </summary>
-    <remarks>
-      <para>This interface is implemented by types whose values can be ordered; for example, the numeric and string classes.</para>
-    </remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is implemented by types whose values can be ordered, primarily for sorting. For example, one number can be larger than a second number, and one string can appear in alphabetical order before another. A value type or class implements the <see cref="M:System.IComparable`1.CompareTo(`0)" /> method to create a type-specific comparison method suitable for purposes such as sorting. </para>
+      <para>The <see cref="T:System.IComparable`1" /> interface defines the <see cref="M:System.IComparable`1.CompareTo(`0)" /> method, which determines the sort order of instances of the implementing type. The <see cref="T:System.IEquatable`1" /> interface defines the <see cref="M:System.IEquatable`1.Equals(`0)" /> method, which determines the equality of instances of the implementing type.</para>
+      <para>The implementation of the <see cref="M:System.IComparable`1.CompareTo(`0)" /> method must return an <see cref="T:System.Int32" /> that has one of three values, as shown in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Value </para>
+            </term>
+            <description>
+              <para>Meaning </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Less than zero </para>
+          </term>
+          <description>
+            <para>This object is less than the object specified by the <see cref="M:System.IComparable`1.CompareTo(`0)" /> method. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Zero </para>
+          </term>
+          <description>
+            <para>This object is equal to the method parameter. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Greater than zero </para>
+          </term>
+          <description>
+            <para>This object is greater than the method parameter. </para>
+          </description>
+        </item>
+      </list>
+      <para>The <see cref="T:System.IComparable`1" /> interface provides a strongly typed comparison method for ordering members of a generic collection object. Because of this, it is usually not called directly from developer code. Instead, it is called automatically by methods such as <see cref="M:System.Collections.Generic.List`1.Sort" /> and <see cref="M:System.Collections.Generic.SortedList`2.Add(`0,`1)" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a generalized comparison method that a value type or class implements to create a type-specific comparison method for ordering instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CompareTo">
       <MemberSignature Language="C#" Value="public int CompareTo (T other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(!T other) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -89,10 +137,6 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

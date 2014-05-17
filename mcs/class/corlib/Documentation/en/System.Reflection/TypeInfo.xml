@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TypeInfo" FullName="System.Reflection.TypeInfo">
+  <TypeSignature Language="C#" Value="public abstract class TypeInfo : Type, System.Reflection.IReflectableType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TypeInfo extends System.Type implements class System.Reflection.IReflectableType" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Type</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Reflection.IReflectableType</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Starting with the net_v45, the <see cref="T:System.Reflection.TypeInfo" /> class is included in the net_win8_profile subset for use in creating Windows Store apps. <see cref="T:System.Reflection.TypeInfo" /> is available in the full .NET Framework as well. For more information about reflection for Windows Store apps, see <see cref="http://msdn.microsoft.com/library/windows/apps/hh441595(v=vs.110).aspx">System.Reflection namespaces</see> in the Windows Dev Center and <format type="text/html"><a href="0d07090c-9b47-4ecc-81d1-29d539603c9b">Reflection in the .NET Framework for Windows Store Apps</a></format> in the MSDN Library.</para>
+      <para>
+        <see cref="T:System.Reflection.TypeInfo" /> contains many of the members available in the <see cref="T:System.Type" /> class, and many of the reflection properties in the net_win8_profile return collections of <see cref="T:System.Reflection.TypeInfo" /> objects. To get a <see cref="T:System.Reflection.TypeInfo" /> object from a <see cref="T:System.Type" /> object, use the <see cref="M:System.Reflection.IReflectableType.GetTypeInfo" /> method.</para>
+      <para>A <see cref="T:System.Reflection.TypeInfo" /> object represents the type definition itself, whereas a <see cref="T:System.Type" /> object represents a reference to the type definition. Getting a <see cref="T:System.Reflection.TypeInfo" /> object forces the assembly that contains that type to load. In comparison, you can manipulate <see cref="T:System.Type" /> objects without necessarily requiring the runtime to load the assembly they reference.</para>
+      <para>In the net_win8_profile, you use the reflection properties of <see cref="T:System.Reflection.TypeInfo" /> that return <see cref="T:System.Collections.Generic.IEnumerable`1" /> collections instead of methods that return arrays. For example, use the <see cref="P:System.Reflection.TypeInfo.DeclaredMembers" /> property to get all declared members, or the <see cref="P:System.Reflection.TypeInfo.DeclaredProperties" /> property to get all declared properties. Reflection contexts can implement lazy traversal of these collections for large assemblies or types. To get specific members, use methods such as <see cref="M:System.Reflection.TypeInfo.GetDeclaredMethod(System.String)" /> and <see cref="M:System.Reflection.TypeInfo.GetDeclaredProperty(System.String)" />, and pass the name of the method or property you would like to retrieve.</para>
+      <para>To filter the results of <see cref="T:System.Reflection.TypeInfo" /> properties, use LINQ queries. For reflection objects that originate with the runtime (for example, as the result of typeof(Object)), you can traverse the inheritance tree by using the methods in the <see cref="T:System.Reflection.RuntimeReflectionExtensions" /> class. Consumers of objects from customized reflection contexts cannot use these methods and must traverse the inheritance tree themselves.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents type declarations for class types, interface types, array types, value types, enumeration types, type parameters, generic type definitions, and open or closed constructed generic types. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AsType">
+      <MemberSignature Language="C#" Value="public virtual Type AsType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type AsType() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the current type as a <see cref="T:System.Type" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current type.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaredConstructors">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.ConstructorInfo&gt; DeclaredConstructors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.ConstructorInfo&gt; DeclaredConstructors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.ConstructorInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To filter the results of the <see cref="P:System.Reflection.TypeInfo.DeclaredConstructors" /> property, use LINQ queries. For reflection objects that originate with the runtime (for example, as the result of typeof(Object)), you can traverse the inheritance tree by using the methods in the <see cref="T:System.Reflection.RuntimeReflectionExtensions" /> class. Consumers of objects from customized reflection contexts cannot use these methods and must traverse the inheritance tree themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the constructors declared by the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaredEvents">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.EventInfo&gt; DeclaredEvents { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.EventInfo&gt; DeclaredEvents" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.EventInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To filter the results of the <see cref="P:System.Reflection.TypeInfo.DeclaredEvents" /> property, use LINQ queries. For reflection objects that originate with the runtime (for example, as the result of typeof(Object)), you can traverse the inheritance tree by using the methods in the <see cref="T:System.Reflection.RuntimeReflectionExtensions" /> class. Consumers of objects from customized reflection contexts cannot use these methods and must traverse the inheritance tree themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the events defined by the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaredFields">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.FieldInfo&gt; DeclaredFields { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.FieldInfo&gt; DeclaredFields" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.FieldInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To filter the results of the <see cref="P:System.Reflection.TypeInfo.DeclaredFields" /> property, use LINQ queries. For reflection objects that originate with the runtime (for example, as the result of typeof(Object)), you can traverse the inheritance tree by using the methods in the <see cref="T:System.Reflection.RuntimeReflectionExtensions" /> class. Consumers of objects from customized reflection contexts cannot use these methods and must traverse the inheritance tree themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the fields defined by the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaredMembers">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.MemberInfo&gt; DeclaredMembers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.MemberInfo&gt; DeclaredMembers" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.MemberInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To filter the results of the <see cref="P:System.Reflection.TypeInfo.DeclaredMembers" /> property, use LINQ queries. For reflection objects that originate with the runtime (for example, as the result of typeof(Object)), you can traverse the inheritance tree by using the methods in the <see cref="T:System.Reflection.RuntimeReflectionExtensions" /> class. Consumers of objects from customized reflection contexts cannot use these methods and must traverse the inheritance tree themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the members defined by the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaredMethods">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.MethodInfo&gt; DeclaredMethods { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.MethodInfo&gt; DeclaredMethods" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.MethodInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To filter the results of the <see cref="P:System.Reflection.TypeInfo.DeclaredMethods" /> property, use LINQ queries. For reflection objects that originate with the runtime (for example, as the result of typeof(Object)), you can traverse the inheritance tree by using the methods in the <see cref="T:System.Reflection.RuntimeReflectionExtensions" /> class. Consumers of objects from customized reflection contexts cannot use these methods and must traverse the inheritance tree themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the methods defined by the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaredNestedTypes">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.TypeInfo&gt; DeclaredNestedTypes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.TypeInfo&gt; DeclaredNestedTypes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.TypeInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To filter the results of the <see cref="P:System.Reflection.TypeInfo.DeclaredNestedTypes" /> property, use LINQ queries. For reflection objects that originate with the runtime (for example, as the result of typeof(Object)), you can traverse the inheritance tree by using the methods in the <see cref="T:System.Reflection.RuntimeReflectionExtensions" /> class. Consumers of objects from customized reflection contexts cannot use these methods and must traverse the inheritance tree themselves.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the nested types defined by the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaredProperties">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.PropertyInfo&gt; DeclaredProperties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.PropertyInfo&gt; DeclaredProperties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.PropertyInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the properties defined by the current type. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GenericTypeParameters">
+      <MemberSignature Language="C#" Value="public virtual Type[] GenericTypeParameters { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type[] GenericTypeParameters" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of the generic parameters of the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeclaredEvent">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.EventInfo GetDeclaredEvent (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.EventInfo GetDeclaredEvent(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.EventInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents the specified public event declared by the current type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the specified event, if found; otherwise, null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the event.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeclaredField">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.FieldInfo GetDeclaredField (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.FieldInfo GetDeclaredField(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.FieldInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents the specified public field declared by the current type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the specified field, if found; otherwise, null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the field.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeclaredMethod">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo GetDeclaredMethod (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo GetDeclaredMethod(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents the specified public method declared by the current type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the specified method, if found; otherwise, null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeclaredMethods">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;System.Reflection.MethodInfo&gt; GetDeclaredMethods (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.MethodInfo&gt; GetDeclaredMethods(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.MethodInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection that contains all public methods declared on the current type that match the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains methods that match <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method name to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeclaredNestedType">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.TypeInfo GetDeclaredNestedType (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.TypeInfo GetDeclaredNestedType(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.TypeInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents the specified public nested type declared by the current type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the specified nested type, if found; otherwise, null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the nested type.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeclaredProperty">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.PropertyInfo GetDeclaredProperty (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.PropertyInfo GetDeclaredProperty(string name) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.PropertyInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents the specified public property declared by the current type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the specified property, if found; otherwise, null.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ImplementedInterfaces">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;Type&gt; ImplementedInterfaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class System.Type&gt; ImplementedInterfaces" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Type&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the interfaces implemented by the current type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsAssignableFrom">
+      <MemberSignature Language="C#" Value="public virtual bool IsAssignableFrom (System.Reflection.TypeInfo typeInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsAssignableFrom(class System.Reflection.TypeInfo typeInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typeInfo" Type="System.Reflection.TypeInfo" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified type can be assigned to the current type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified type can be assigned to this type; otherwise, false.</para>
+        </returns>
+        <param name="typeInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to check.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Reflection.IReflectableType.GetTypeInfo">
+      <MemberSignature Language="C#" Value="System.Reflection.TypeInfo IReflectableType.GetTypeInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Reflection.TypeInfo System.Reflection.IReflectableType.GetTypeInfo() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.TypeInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Reflection.TypeInfo" /> instance is cast to an <see cref="T:System.Reflection.IReflectableType" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a representation of the current type as a <see cref="T:System.Reflection.TypeInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the current type.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

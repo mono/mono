@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EditableDesignerRegion" FullName="System.Web.UI.Design.EditableDesignerRegion">
   <TypeSignature Language="C#" Value="public class EditableDesignerRegion : System.Web.UI.Design.DesignerRegion" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.Design.EditableDesignerRegion" /> class to help manage templates at design time. A <see cref="T:System.Web.UI.Design.ControlDesigner" /> will use an instance of this class with its <see cref="M:System.Web.UI.Design.ControlDesigner.GetEditableDesignerRegionContent(System.Web.UI.Design.EditableDesignerRegion)" /> method to generate HTML markup of the region's content.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an editable content region within the design-time markup for the associated control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +31,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.EditableDesignerRegion" /> class using the given owner and name.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.ControlDesigner" /> object, or a designer that derives from <see cref="T:System.Web.UI.Design.ControlDesigner" />.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the region.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,11 +54,17 @@
         <Parameter Name="serverControlsOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="serverControlsOnly">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.Design.EditableDesignerRegion" /> class using the given owner and name and the initial value of the <see cref="P:System.Web.UI.Design.EditableDesignerRegion.ServerControlsOnly" /> property.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.ControlDesigner" /> object, or a designer that derives from <see cref="T:System.Web.UI.Design.ControlDesigner" />.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the region.</param>
+        <param name="serverControlsOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to have the region accept only Web server controls for content; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="Content">
@@ -59,9 +77,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTML markup for the content of the region.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetChildViewRendering">
@@ -77,10 +98,17 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Web.UI.Design.ViewRendering" /> object containing the design-time HTML markup for the given control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ViewRendering" /> object.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control for which to get the <see cref="T:System.Web.UI.Design.ViewRendering" /> object for the current region.</param>
       </Docs>
     </Member>
     <Member MemberName="ServerControlsOnly">
@@ -93,9 +121,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the region can accept only Web server controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsDataBinding">
@@ -108,9 +139,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the region can be bound to a data source.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

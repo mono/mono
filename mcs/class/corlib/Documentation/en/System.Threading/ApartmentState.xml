@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ApartmentState" FullName="System.Threading.ApartmentState">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum ApartmentState" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ApartmentState extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,66 +13,86 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="MTA">
-      <MemberSignature Language="C#" Value="MTA" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.ApartmentState</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="STA">
-      <MemberSignature Language="C#" Value="STA" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.ApartmentState</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unknown">
-      <MemberSignature Language="C#" Value="Unknown" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.ApartmentState</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An apartment is a logical container within a process for objects sharing the same thread access requirements. All objects in the same apartment can receive calls from any thread in the apartment. The .NET Framework does not use apartments, and managed objects are responsible for using all shared resources in a thread-safe manner themselves.</para>
+      <para>Because COM classes use apartments, the common language runtime needs to create and initialize an apartment when calling a COM object in a COM interop situation. A managed thread can create and enter a single-threaded apartment (STA) that allows only one thread, or a multithreaded apartment (MTA) that contains one or more threads. You can control the type of apartment created by setting the <see cref="P:System.Threading.Thread.ApartmentState" /> property of the thread to one of the values of the <see cref="T:System.Threading.ApartmentState" /> enumeration. Because a given thread can only initialize a COM apartment once, you cannot change the apartment type after the first call to the unmanaged code.</para>
+      <para>For more information, see <see cref="T:System.Threading.Thread" />, <format type="text/html"><a href="DB425C20-4B2F-4433-BF96-76071C7881E5">[&lt;topic://cpconManagedUnmanagedThreading&gt;]</a></format>, and <format type="text/html"><a href="3ADA36E5-2390-4D70-B490-6AD8DE92F2FB">Advanced COM Interoperability</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the apartment state of a <see cref="T:System.Threading.Thread" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="MTA">
+      <MemberSignature Language="C#" Value="MTA" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ApartmentState MTA = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.ApartmentState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Thread" /> will create and enter a multithreaded apartment.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="STA">
+      <MemberSignature Language="C#" Value="STA" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ApartmentState STA = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.ApartmentState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Thread" /> will create and enter a single-threaded apartment.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Unknown">
+      <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ApartmentState Unknown = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.ApartmentState</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Threading.Thread.ApartmentState" /> property has not been set.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

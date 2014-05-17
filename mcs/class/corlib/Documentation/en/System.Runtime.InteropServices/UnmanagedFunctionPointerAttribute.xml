@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnmanagedFunctionPointerAttribute" FullName="System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute">
   <TypeSignature Language="C#" Value="public sealed class UnmanagedFunctionPointerAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit UnmanagedFunctionPointerAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,108 +20,159 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The fields of the <see cref="T:System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute" /> attribute control various aspects of the transition of a delegate to an unmanaged function pointer, and are the same as the fields with identical names in the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> attribute. These fields are optional, but if you do not specify a field name, <see cref="T:System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute" /> is ignored.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls the marshaling behavior of a delegate signature passed as an unmanaged function pointer to or from unmanaged code. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UnmanagedFunctionPointerAttribute (System.Runtime.InteropServices.CallingConvention callingConvention);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.InteropServices.CallingConvention callingConvention) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="callingConvention" Type="System.Runtime.InteropServices.CallingConvention" />
       </Parameters>
       <Docs>
-        <param name="callingConvention">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method specifies the calling convention for the delegate in unmanaged code and is the most common use of the <see cref="T:System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute" /> attribute. You can set the <paramref name="callingConvention" /> parameter to one of the values in the <see cref="T:System.Runtime.InteropServices.CallingConvention" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute" /> class with the specified calling convention. </para>
+        </summary>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified calling convention.</param>
       </Docs>
+    </Member>
+    <Member MemberName="BestFitMapping">
+      <MemberSignature Language="C#" Value="public bool BestFitMapping;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool BestFitMapping" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BestFitMapping">
-      <MemberSignature Language="C#" Value="public bool BestFitMapping;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute.BestFitMapping" /> field is true by default, which means that best-fit mapping behavior is enabled. If the field is false, best-fit mapping is disabled. Settings for this field override any level settings for the <see cref="T:System.Runtime.InteropServices.BestFitMappingAttribute" /> attribute.</para>
+          <para>For more information, see <see cref="F:System.Runtime.InteropServices.DllImportAttribute.BestFitMapping" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables or disables best-fit mapping behavior when converting Unicode characters to ANSI characters.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CallingConvention">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CallingConvention CallingConvention { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CallingConvention">
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CallingConvention CallingConvention { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CallingConvention</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the calling convention.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CharSet">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CharSet">
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this field with a member of the <see cref="T:System.Runtime.InteropServices.CharSet" /> enumeration to specify the marshaling behavior of string parameters and to specify which entry-point name to invoke (the exact name given or a name ending with "A" or "W").</para>
+          <para>For more information, see <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates how to marshal string parameters to the method, and controls name mangling.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetLastError">
       <MemberSignature Language="C#" Value="public bool SetLastError;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool SetLastError" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute.SetLastError" /> field is false by default, which means the caller calls SetLastError. Set this field to true to indicate that the callee calls SetLastError before returning from the attributed method.</para>
+          <para>For more information, see <see cref="F:System.Runtime.InteropServices.DllImportAttribute.SetLastError" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the callee calls the SetLastError Win32 API function before returning from the attributed method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ThrowOnUnmappableChar">
       <MemberSignature Language="C#" Value="public bool ThrowOnUnmappableChar;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool ThrowOnUnmappableChar" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute.ThrowOnUnmappableChar" /> field is false by default, which means that the field is disabled. Set this field to true to indicate that an exception is thrown each time the interop marshaler converts an unmappable character.</para>
+          <para>For more information, see <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ThrowOnUnmappableChar" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables or disables the throwing of an exception on an unmappable Unicode character that is converted to an ANSI "?" character.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

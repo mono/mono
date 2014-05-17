@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageContractAttribute" FullName="System.ServiceModel.MessageContractAttribute">
+  <TypeSignature Language="C#" Value="public sealed class MessageContractAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MessageContractAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.All)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.MessageContractAttribute" /> attribute to specify the structure of the SOAP envelope for a particular message. Your service can then use the message as a parameter or return type in service operations. For information about controlling the serialization of the contents of a SOAP body without modifying the default SOAP envelope itself, see <see cref="T:System.Runtime.Serialization.DataContractAttribute" />, <format type="text/html"><a href="7c5a26c8-89c9-4bcb-a4bc-7131e6d01f0c">Specifying Data Transfer in Service Contracts</a></format>, and <format type="text/html"><a href="a3ae7b21-c15c-4c05-abd8-f483bcbf31af">Data Contracts Overview</a></format>.</para>
+      <block subset="none" type="note">
+        <para>You cannot use custom message types in your service operation with regular serializable parameters. Either use custom message types or serializable parameters that are not <see cref="T:System.ServiceModel.Channels.Message" /> objects. For details, see , <format type="text/html"><a href="7c5a26c8-89c9-4bcb-a4bc-7131e6d01f0c">Specifying Data Transfer in Service Contracts</a></format>.</para>
+      </block>
+      <para>To implement a message contract for a type, annotate it with <see cref="T:System.ServiceModel.MessageContractAttribute" /> and annotate one or more of the class's fields or properties with <see cref="T:System.ServiceModel.MessageBodyMemberAttribute" />, <see cref="T:System.ServiceModel.MessageHeaderAttribute" />, or <see cref="T:System.ServiceModel.MessageHeaderArrayAttribute" />. </para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.ServiceModel.MessageParameterAttribute" /> is not a message contract attribute and cannot be used in conjunction with <see cref="T:System.ServiceModel.MessageContractAttribute" />.</para>
+      </block>
+      <para>Use the <see cref="P:System.ServiceModel.OperationContractAttribute.Action" /> and <see cref="P:System.ServiceModel.OperationContractAttribute.ReplyAction" /> properties to specify the value of the &lt;Action&gt; element in the SOAP message.</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.MessageContractAttribute.HasProtectionLevel" /> and <see cref="P:System.ServiceModel.MessageContractAttribute.ProtectionLevel" /> properties to indicate whether the SOAP message type has a protection level, and if so, what it is.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.MessageContractAttribute.IsWrapped" /> property to indicate whether the message body has a wrapper element, and if so, use the <see cref="P:System.ServiceModel.MessageContractAttribute.WrapperName" /> and <see cref="P:System.ServiceModel.MessageContractAttribute.WrapperNamespace" /> properties to specify the name and namespace, respectively, of the wrapping element.</para>
+        </item>
+      </list>
+      <para>For more information, see <format type="text/html"><a href="1e19c64a-ae84-4c2f-9155-91c54a77c249">Using Message Contracts</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a strongly-typed class that corresponds to a SOAP message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageContractAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.MessageContractAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HasProtectionLevel">
+      <MemberSignature Language="C#" Value="public bool HasProtectionLevel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this setting is true, the protection level for the message is the value of <see cref="P:System.ServiceModel.MessageContractAttribute.ProtectionLevel" />. For details about protection levels and their assumptions and scopes, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the message has a protection level. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsWrapped">
+      <MemberSignature Language="C#" Value="public bool IsWrapped { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsWrapped" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the value of <see cref="P:System.ServiceModel.MessageContractAttribute.IsWrapped" /> to false to suppress the wrapper element into which the message body is serialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the message body has a wrapper element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtectionLevel">
+      <MemberSignature Language="C#" Value="public System.Net.Security.ProtectionLevel ProtectionLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.ProtectionLevel ProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about protection levels and their assumptions and scopes, see <format type="text/html"><a href="0c034608-a1ac-4007-8287-b1382eaa8bf2">Understanding Protection Level</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specified whether the message must be encrypted, signed, or both. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WrapperName">
+      <MemberSignature Language="C#" Value="public string WrapperName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string WrapperName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.MessageContractAttribute.WrapperName" /> property to set the name of the wrapper element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the wrapper element of the message body.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WrapperNamespace">
+      <MemberSignature Language="C#" Value="public string WrapperNamespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string WrapperNamespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.MessageContractAttribute.WrapperNamespace" /> property to set the namespace of the wrapper element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace of the message body wrapper element.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

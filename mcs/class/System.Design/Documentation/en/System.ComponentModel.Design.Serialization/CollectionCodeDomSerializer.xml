@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CollectionCodeDomSerializer" FullName="System.ComponentModel.Design.Serialization.CollectionCodeDomSerializer">
   <TypeSignature Language="C#" Value="public class CollectionCodeDomSerializer : System.ComponentModel.Design.Serialization.CodeDomSerializer" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.CollectionCodeDomSerializer" /> class can create either statements or expressions. If the object to serialize is an array, the <see cref="T:System.ComponentModel.Design.Serialization.CollectionCodeDomSerializer" /> will create an expression and assign it to the statement in the current context stack. If the object is a collection with an AddRange or similar method, the <see cref="T:System.ComponentModel.Design.Serialization.CollectionCodeDomSerializer" /> will create a statement that calls the method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serializes collections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +28,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CollectionCodeDomSerializer" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodSupportsSerialization">
@@ -38,10 +48,20 @@
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <param name="method">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks the <paramref name="method" /> attributes to see if they support serialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies serialization support by the <paramref name="method" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="method" /> supports serialization; otherwise, false.</para>
+        </returns>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodInfo" /> to check for serialization attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
@@ -58,11 +78,43 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collections are serialized as follows:</para>
+          <list type="ordered">
+            <item>
+              <para>If the collection is an array, the array is written.</para>
+              <list type="ordered">
+                <item>
+                  <para>If the collection has an AddRange method, it will be called and provided with an array.</para>
+                </item>
+                <item>
+                  <para>If the collection has an Add method, it will be called repeatedly until all items in the collection are written.</para>
+                </item>
+              </list>
+            </item>
+            <item>
+              <para>If the collection is an <see cref="T:System.Collections.IList" />, the <see cref="M:System.ComponentModel.Design.Serialization.CollectionCodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method will cast the collection to an <see cref="T:System.Collections.IList" /> and add through that interface.</para>
+              <list type="ordered">
+                <item>
+                  <para>If the collection has no Add method, but is marked with <see cref="F:System.ComponentModel.DesignerSerializationVisibility.Content" />, <see cref="M:System.ComponentModel.Design.Serialization.CollectionCodeDomSerializer.Serialize(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> will enumerate the collection and serialize each element.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given collection into a CodeDOM object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM object representing <paramref name="value" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use during serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeCollection">
@@ -82,14 +134,28 @@
         <Parameter Name="valuesToSerialize" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="targetExpression">To be added.</param>
-        <param name="targetType">To be added.</param>
-        <param name="originalCollection">To be added.</param>
-        <param name="valuesToSerialize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.CodeDom.CodeExpression" /> that refers to the collection can be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialized collection if the serialization process succeeded; otherwise, null.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use during serialization.</param>
+        <param name="targetExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeExpression" /> that refers to the collection</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the collection.</param>
+        <param name="originalCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection to serialize.</param>
+        <param name="valuesToSerialize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The values to serialize.</param>
       </Docs>
     </Member>
   </Members>

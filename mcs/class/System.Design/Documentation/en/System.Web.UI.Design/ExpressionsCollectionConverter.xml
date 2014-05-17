@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionsCollectionConverter" FullName="System.Web.UI.Design.ExpressionsCollectionConverter">
   <TypeSignature Language="C#" Value="public class ExpressionsCollectionConverter : System.ComponentModel.TypeConverter" />
   <AssemblyInfo>
@@ -9,8 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.ExpressionsCollectionConverter" /> class converts an <see cref="T:System.Web.UI.ExpressionBindingCollection" /> to a string for the property-editing grid at design time, which always appears as an empty string ("").</para>
+      <para>A designer host, such as vsprvslong, uses the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> and <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class implementations with the <see cref="T:System.Web.UI.Design.ExpressionsCollectionEditor" /> and <see cref="T:System.Web.UI.Design.ExpressionsCollectionConverter" /> classes to set the expression bindings for control properties at design time, and the <see cref="T:System.Web.UI.Design.ControlPersister" /> to persist the expressions for run time. Expression strings reference a localizable resource, an application setting, a connection string, or a custom expression type. The expression string is bound to the control property at design time, and then used at run time to determine the value for the property. </para>
+      <block subset="none" type="note">
+        <para>You should never access a type converter directly. This implementation of <see cref="T:System.ComponentModel.TypeConverter" /> is intended only for use by an <see cref="T:System.Web.UI.ExpressionBindingCollection" /> object at design time.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type converter for expression binding collections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +32,16 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>You should never access a type converter directly. This implementation of <see cref="T:System.ComponentModel.TypeConverter" /> is intended only for use by an <see cref="T:System.Web.UI.ExpressionBindingCollection" /> object at design time.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ExpressionsCollectionConverter" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConvertTo">
@@ -41,13 +60,28 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="destinationType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>You should never access a type converter directly. This implementation of <see cref="T:System.ComponentModel.TypeConverter" /> is intended only for use by an <see cref="T:System.Web.UI.ExpressionBindingCollection" /> object at design time.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an expression binding collection to the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="destinationType" /> is not of type <see cref="T:System.String" />, the object produced by the type conversion; otherwise, if <paramref name="destinationType" /> is a string, an empty string ("").</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that indicates the component or control the expression binding collection belongs to. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> object that can be used to provide additional culture information.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
+        <param name="destinationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert to.</param>
       </Docs>
     </Member>
   </Members>

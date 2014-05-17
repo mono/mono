@@ -1,47 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConsoleTraceListener" FullName="System.Diagnostics.ConsoleTraceListener">
   <TypeSignature Language="C#" Value="public class ConsoleTraceListener : System.Diagnostics.TextWriterTraceListener" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ConsoleTraceListener extends System.Diagnostics.TextWriterTraceListener" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Diagnostics.TextWriterTraceListener</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> class to write trace and debugging messages to the console. You can initialize a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to write trace messages to the <see cref="P:System.Console.Out" /> stream or to the <see cref="P:System.Console.Error" /> stream.</para>
+      <para>When trace and debugging output is enabled, the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> messages are written to the specified <see cref="T:System.Console" /> stream, which is similar to the way messages are written with the <see cref="Overload:System.Console.Write" /> or <see cref="Overload:System.Console.WriteLine" /> methods. In a console application, the <see cref="T:System.Console" /> output and error streams write messages to the existing console window, or you can redirect the streams to write to a <see cref="T:System.IO.TextWriter" /> instance.</para>
+      <block subset="none" type="note">
+        <para>If the console does not exist, as in a Windows-based application, messages written to the console are not displayed.</para>
+      </block>
+      <para>Add a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to the appropriate <see cref="P:System.Diagnostics.Trace.Listeners" /> collection if you want messages written through <see cref="T:System.Diagnostics.Trace" />, <see cref="T:System.Diagnostics.TraceSource" />, or <see cref="T:System.Diagnostics.Debug" /> to be written to the console. In addition, you can write messages directly to the console using the <see cref="Overload:System.Diagnostics.Trace.Write" /> or <see cref="Overload:System.Diagnostics.Trace.WriteLine" /> methods.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Diagnostics.Debug" /> and <see cref="T:System.Diagnostics.Trace" /> classes share the same <see cref="T:System.Diagnostics.TraceListenerCollection" /> collection, accessed through their respective Listeners properties. If you add a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to the collection using one of these classes, the other class automatically uses the same listener.</para>
+      </block>
+      <para>Most compilers enable trace and debug output through conditional compilation flags. If you do not enable tracing or debugging, the messages written through the <see cref="T:System.Diagnostics.Debug" /> and <see cref="T:System.Diagnostics.Trace" /> classes are effectively ignored. The syntax to enable trace and debug output is compiler specific; if you use compilers other than C# or Visual Basic, refer to the documentation for your compiler.</para>
+      <list type="bullet">
+        <item>
+          <para>To enable debugging in C#, add the <system>/d:DEBUG</system> flag to the compiler command line when you compile your code, or you can add <system>#define DEBUG</system> to the top of your file. In Visual Basic, add the <system>/d:DEBUG=True</system> flag to the compiler command line.</para>
+        </item>
+        <item>
+          <para>To enable tracing in C#, add the <system>/d:TRACE</system> flag to the compiler command line when you compile your code, or add <system>#define TRACE</system> to the top of your file. In Visual Basic, add the <system>/d:TRACE=True</system> flag to the compiler command line.</para>
+        </item>
+      </list>
+      <para>You can add a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection in your code, or you can add a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection through the application configuration file. Add the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object in your code to write messages for a specific code section or execution path. Add the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object in your application configuration file to direct all trace and debug messages to the console while the application executes.</para>
+      <para>To write trace and debug messages to the console for a specific section of code, initialize a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object and add it to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection. Instrument the section of code that contains messages using the <see cref="T:System.Diagnostics.Trace" /> or <see cref="T:System.Diagnostics.Debug" /> classes. At the end of the code section, remove the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object from the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection, and call the <see cref="M:System.Diagnostics.TextWriterTraceListener.Close" /> method on the <see cref="T:System.Diagnostics.ConsoleTraceListener" />.</para>
+      <para>To direct all trace and debug messages to the console while the application executes, add a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to the application configuration file. Edit the configuration file that corresponds to the name of your application, or the app.config file in a vsprvslong project. In this file, insert an element for a <see cref="T:System.Diagnostics.ConsoleTraceListener" />. </para>
+      <para>The following example adds a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object named configConsoleListener to the <see cref="P:System.Diagnostics.Trace.Listeners" /> collection.</para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="4"&gt;
+      &lt;listeners&gt;
+        <codeFeaturedElement>&lt;add name="configConsoleListener" </codeFeaturedElement>
+<codeFeaturedElement>          type="System.Diagnostics.ConsoleTraceListener" /&gt;</codeFeaturedElement>
+      &lt;/listeners&gt;
+    &lt;/trace&gt;
+  &lt;/system.diagnostics&gt;
+ &lt;/configuration&gt;</code>
+      <para>For details about adding trace listeners in the application configuration file, see <format type="text/html"><a href="1394c2c3-6304-46db-87c1-8e8b16f5ad5b">&lt;listeners&gt; Element</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Directs tracing or debugging output to either the standard output or the standard error stream.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ConsoleTraceListener ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to write messages to the <see cref="P:System.Console.Out" /> stream. Its <see cref="P:System.Diagnostics.TraceListener.Name" /> property is initialized to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> class with trace output written to the standard output stream.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ConsoleTraceListener (bool useErrorStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool useErrorStream) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="useErrorStream" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="useErrorStream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> object to write messages to either the <see cref="P:System.Console.Out" /> or the <see cref="P:System.Console.Error" /> stream. Its <see cref="P:System.Diagnostics.TraceListener.Name" /> property is initialized to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ConsoleTraceListener" /> class with an option to write trace output to the standard output stream or the standard error stream.</para>
+        </summary>
+        <param name="useErrorStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to write tracing and debugging output to the standard error stream; false to write tracing and debugging output to the standard output stream.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

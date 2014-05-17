@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapOption" FullName="System.Runtime.Remoting.Metadata.SoapOption">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum SoapOption" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed SoapOption extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -20,111 +22,168 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Metadata.SoapOption" /> enumeration is used to specify instructions to the .NET Framework on how it will generate the SOAP.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the SOAP configuration options for use with the <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AlwaysIncludeTypes">
       <MemberSignature Language="C#" Value="AlwaysIncludeTypes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Remoting.Metadata.SoapOption AlwaysIncludeTypes = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that type will always be included on SOAP elements. This option is useful when performing SOAP interop with SOAP implementations that require types on all elements.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="EmbedAll">
       <MemberSignature Language="C#" Value="EmbedAll" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Remoting.Metadata.SoapOption EmbedAll = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that SOAP will be generated without references. This option is currently not implemented.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Remoting.Metadata.SoapOption None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default option indicating that no extra options are selected.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Option1">
       <MemberSignature Language="C#" Value="Option1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Remoting.Metadata.SoapOption Option1 = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Public reserved option for temporary interop conditions; the use will change.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Option2">
       <MemberSignature Language="C#" Value="Option2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Remoting.Metadata.SoapOption Option2 = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Public reserved option for temporary interop conditions; the use will change.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="XsdString">
       <MemberSignature Language="C#" Value="XsdString" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.Remoting.Metadata.SoapOption XsdString = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, while a class by default might be remoted in the SOAP format as </para>
+          <code> &lt;member1&gt;10&lt;/member1&gt;
+ &lt;member2 id="ref-3"&gt;hello&lt;/member2&gt;
+ &lt;member3 href="#ref-3"/&gt;
+ &lt;member4 href="#ref-4"/&gt;
+ &lt;member4shared href="#ref-4"/&gt;
+ &lt;member5 href="#ref-5"/&gt;
+ &lt;member6 id="ref-6" xsi:type="SOAP-ENC:string"&gt;Hello World&lt;/member6&gt;
+ &lt;str1 id="ref-7"&gt;hello &amp;#60; world&lt;/str1&gt;
+ &lt;str2 id="ref-8"&gt;&amp;#60;&lt;/str2&gt;
+ &lt;str3 id="ref-9"&gt;&amp;#60; world&lt;/str3&gt;
+ &lt;str4 href="#ref-7"/&gt;</code>
+          <para>remoting serialization with the XsdString option would produce the following XML.</para>
+          <code> &lt;member1 xsi:type="xsd:int"&gt;10&lt;/member1&gt;
+ &lt;member2 xsi:type="xsd:string"&gt;hello&lt;/member2&gt;
+ &lt;member3 xsi:type="xsd:string"&gt;hello&lt;/member3&gt;
+ &lt;member4 href="#ref-3"/&gt;
+ &lt;member4shared href="#ref-3"/&gt;
+ &lt;member5 href="#ref-4"/&gt;
+ &lt;member6 xsi:type="xsd:string"&gt;Hello World&lt;/member6&gt;
+ &lt;str1 xsi:type="xsd:string"&gt;hello &amp;#60; world&lt;/str1&gt;
+ &lt;str2 xsi:type="xsd:string"&gt;&amp;#60;&lt;/str2&gt;
+ &lt;str3 xsi:type="xsd:string"&gt;&amp;#60; world&lt;/str3&gt;
+ &lt;str4 xsi:type="xsd:string"&gt;hello &amp;#60; world&lt;/str4&gt;</code>
+          <para>For more information about SOAP envelopes, see www.w3.org/tr/soap/#_Toc478383494.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the output SOAP string type in a SOAP Envelope is using the XSD prefix, and that the resulting XML does not have an ID attribute for the string.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

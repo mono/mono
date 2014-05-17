@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XmlSyndicationContent" FullName="System.ServiceModel.Syndication.XmlSyndicationContent">
+  <TypeSignature Language="C#" Value="public class XmlSyndicationContent : System.ServiceModel.Syndication.SyndicationContent" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSyndicationContent extends System.ServiceModel.Syndication.SyndicationContent" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Syndication.SyndicationContent</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used to send serialized objects or other application state data as XML.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents XML syndication content that is not intended to be displayed in a browser.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected XmlSyndicationContent (System.ServiceModel.Syndication.XmlSyndicationContent source);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Syndication.XmlSyndicationContent source) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="source" Type="System.ServiceModel.Syndication.XmlSyndicationContent" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> with the specified <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> instance.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> instance.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlSyndicationContent (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> class. </para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlSyndicationContent (string type, System.ServiceModel.Syndication.SyndicationElementExtension extension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string type, class System.ServiceModel.Syndication.SyndicationElementExtension extension) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.String" />
+        <Parameter Name="extension" Type="System.ServiceModel.Syndication.SyndicationElementExtension" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> with the specified type and <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the content, typically expressed as a MIME content type, for example application/xml or application/xml+customer.</param>
+        <param name="extension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> to place in the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlSyndicationContent (string type, object dataContractExtension, System.Runtime.Serialization.XmlObjectSerializer dataContractSerializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string type, object dataContractExtension, class System.Runtime.Serialization.XmlObjectSerializer dataContractSerializer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.String" />
+        <Parameter Name="dataContractExtension" Type="System.Object" />
+        <Parameter Name="dataContractSerializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is one subtype of <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />. If null is passed, a default instance of <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is instantiated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> with the specified type, object, and <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content.</param>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data contract extension.</param>
+        <param name="dataContractSerializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlSyndicationContent (string type, object xmlSerializerExtension, System.Xml.Serialization.XmlSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string type, object xmlSerializerExtension, class System.Xml.Serialization.XmlSerializer serializer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.String" />
+        <Parameter Name="xmlSerializerExtension" Type="System.Object" />
+        <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> with the specified type, object and <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content.</param>
+        <param name="xmlSerializerExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML serializer extension.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public override System.ServiceModel.Syndication.SyndicationContent Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ServiceModel.Syndication.SyndicationContent Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationContent</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the existing <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationContent" /> instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Extension">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Syndication.SyndicationElementExtension Extension { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Syndication.SyndicationElementExtension Extension" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.SyndicationElementExtension</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On the send/serialization side, this property represents the XML content that must be serialized.</para>
+          <para>On the receive/deserialization side, this property is always null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetReaderAtContent">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlDictionaryReader GetReaderAtContent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlDictionaryReader GetReaderAtContent() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryReader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reader from the content of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> from the content of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadContent&lt;TContent&gt;">
+      <MemberSignature Language="C#" Value="public TContent ReadContent&lt;TContent&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!TContent ReadContent&lt;TContent&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TContent</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TContent" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On the receive/deserialization side, if the XML syndication content element is an empty XML element, then default(<paramref name="TContent" />) is returned. If not, a new instance of <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is created and is used to deserialize the inner XML of the XML syndication content element into an instance of <paramref name="TContent" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type.</para>
+        </returns>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadContent&lt;TContent&gt;">
+      <MemberSignature Language="C#" Value="public TContent ReadContent&lt;TContent&gt; (System.Runtime.Serialization.XmlObjectSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!TContent ReadContent&lt;TContent&gt;(class System.Runtime.Serialization.XmlObjectSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TContent</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TContent" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <param name="serializer">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On the receive/deserialization side, if the XML syndication content element is an empty XML element, then default(<paramref name="TContent" />) is returned. If not, the instance of <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> passed in is used to deserialize the inner XML of XML syndication content element into an instance of <paramref name="TContent" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> using the specified serializer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type.</para>
+        </returns>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadContent&lt;TContent&gt;">
+      <MemberSignature Language="C#" Value="public TContent ReadContent&lt;TContent&gt; (System.Xml.Serialization.XmlSerializer serializer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!TContent ReadContent&lt;TContent&gt;(class System.Xml.Serialization.XmlSerializer serializer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TContent</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TContent" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On the receive/deserialization side, if the XML syndication content element is an empty XML element, then default(<paramref name="TContent" />) is returned. If not, the instance of <see cref="T:System.Xml.Serialization.XmlSerializer" /> passed in is used to deserialize the inner XML of XML syndication content element into an instance of <paramref name="TContent" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> using the specified serializer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type.</para>
+        </returns>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public override string Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Type" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the XML syndication content.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteContentsTo">
+      <MemberSignature Language="C#" Value="protected override void WriteContentsTo (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void WriteContentsTo(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method writes the inner XML content of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> instance (for example, it does not write the top level start and end elements of the syndication content).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the contents of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

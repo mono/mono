@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CharSet" FullName="System.Runtime.InteropServices.CharSet" FullNameSP="System_Runtime_InteropServices_CharSet" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable CharSet extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum CharSet" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CharSet extends System.Enum" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,110 +14,115 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Specifies which character set marshaled strings are required to use.</para>
-    </summary>
     <remarks>
-      <para>This enumeration is used by the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> to indicate the
-   required modifications to the <see cref="T:System.String" /> arguments of an imported function.</para>
-      <para>
-        <block subset="none" type="note">See the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> class overview for an
-example that uses the <see cref="T:System.Runtime.InteropServices.CharSet" /> enumeration.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Because there are several unmanaged string types and only one managed string type, you must use a character set to specify how managed strings should be marshaled to unmanaged code. This enumeration, which provides character set options, is used by <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> and <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />. For a detailed description of the string marshaling and name matching behavior associated with this enumeration, see <format type="text/html"><a href="A8347EB1-295F-46B9-8A78-63331F9ECC50">Specifying a Character Set</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Dictates which character set marshaled strings should use.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ansi">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Ansi = 2" />
       <MemberSignature Language="C#" Value="Ansi" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Ansi = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Ansi</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that strings will be marshaled in the ANSI character
-      set.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marshal strings as multiple-byte character strings.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Auto">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Auto = 4" />
+      <MemberSignature Language="C#" Value="Auto" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Auto = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Auto">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Auto = 4" />
-      <MemberSignature Language="C#" Value="Auto" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Auto</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that strings will be automatically marshaled in the character set appropriate
-      for the target system (either Unicode or ANSI).</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Automatically marshal strings appropriately for the target operating system. The default is <see cref="F:System.Runtime.InteropServices.CharSet.Unicode" /> on Windows NT, Windows 2000, Windows XP, and the Windows Server 2003 family; the default is <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" /> on Windows 98 and Windows Me. Although the common language runtime default is <see cref="F:System.Runtime.InteropServices.CharSet.Auto" />, languages may override this default. For example, by default C# marks all methods and types as <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet None = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="None">
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is obsolete and has the same behavior as <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Unicode">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Unicode = 3" />
+      <MemberSignature Language="C#" Value="Unicode" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Unicode = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unicode">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Unicode = 3" />
-      <MemberSignature Language="C#" Value="Unicode" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>Unicode</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that strings will be marshaled in the Unicode character set.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marshal strings as Unicode 2-byte characters.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

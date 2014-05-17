@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AssociatedMetadataTypeTypeDescriptionProvider" FullName="System.ComponentModel.DataAnnotations.AssociatedMetadataTypeTypeDescriptionProvider">
+  <TypeSignature Language="C#" Value="public class AssociatedMetadataTypeTypeDescriptionProvider : System.ComponentModel.TypeDescriptionProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AssociatedMetadataTypeTypeDescriptionProvider extends System.ComponentModel.TypeDescriptionProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ComponentModel.TypeDescriptionProvider</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.DataAnnotations.AssociatedMetadataTypeTypeDescriptionProvider" /> class dynamically extends the type information associated with a type or object by adding, modifying, or hiding characteristics such as attributes, properties, and events. For more information, see <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extends the metadata information for a class by adding attributes and property information that is defined in an associated class.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AssociatedMetadataTypeTypeDescriptionProvider (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.AssociatedMetadataTypeTypeDescriptionProvider" /> class by using the specified type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type for which the metadata provider is created.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AssociatedMetadataTypeTypeDescriptionProvider (Type type, Type associatedMetadataType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Type associatedMetadataType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="associatedMetadataType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.AssociatedMetadataTypeTypeDescriptionProvider" /> class by using the specified metadata provider type and associated type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type for which the metadata provider is created.</param>
+        <param name="associatedMetadataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The associated type that contains the metadata.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTypeDescriptor">
+      <MemberSignature Language="C#" Value="public override System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ComponentModel.ICustomTypeDescriptor GetTypeDescriptor(class System.Type objectType, object instance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.ICustomTypeDescriptor</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="objectType" Type="System.Type" />
+        <Parameter Name="instance" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a type descriptor for the specified type and object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The descriptor that provides metadata for the type.</para>
+        </returns>
+        <param name="objectType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to retrieve the type descriptor for.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the type. </param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

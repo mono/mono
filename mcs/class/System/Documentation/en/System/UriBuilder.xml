@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UriBuilder" FullName="System.UriBuilder" FullNameSP="System_UriBuilder" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public UriBuilder extends System.Object" />
   <TypeSignature Language="C#" Value="public class UriBuilder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UriBuilder extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +10,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -15,129 +18,136 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Provides a mutable version of the <see cref="T:System.Uri" /> class.</para>
-    </summary>
     <remarks>
-      <para>The <see cref="T:System.Uri" /> and <see cref="T:System.UriBuilder" /> classes both
-   represent a Uniform Resource
-   Identifier (URI). Instances of the <see cref="T:System.Uri" /> type are immutable: once the underlying URI is
-   specified, neither it nor its components, or
-   constituent parts, can be changed. The <see cref="T:System.UriBuilder" /> type permits modifications to
-   the components of the URI it represents. The <see cref="P:System.UriBuilder.Uri" /> property provides the current contents of a
-<see cref="T:System.UriBuilder" /> as a 
-<see cref="T:System.Uri" /> instance. </para>
-      <para>
-        <block subset="none" type="note">For more information on URI, see IETF 
-   RFC 2396.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.UriBuilder" /> class provides a convenient way to modify the contents of a <see cref="T:System.Uri" /> instance without creating a new <see cref="T:System.Uri" /> instance for each modification.</para>
+      <para>The <see cref="T:System.UriBuilder" /> properties provide read/write access to the read-only <see cref="T:System.Uri" /> properties so that they can be modified.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a custom constructor for uniform resource identifiers (URIs) and modifies URIs for the <see cref="T:System.Uri" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public UriBuilder ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UriBuilder" /> class.</para>
-        </summary>
         <remarks>
-          <para> This constructor creates a new instance of the
-   <see cref="T:System.UriBuilder" /> class with its
-      properties initialized as follows:</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor creates a new instance of the <see cref="T:System.UriBuilder" /> class with its properties initialized as follows.</para>
           <list type="table">
             <listheader>
-              <term>Property</term>
-              <description>Initial value</description>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
             </listheader>
             <item>
-              <term> Fragment</term>
+              <term>
+                <para>Fragment </para>
+              </term>
               <description>
-                <see cref="F:System.String.Empty" />
+                <para>
+                  <see cref="F:System.String.Empty" /> </para>
               </description>
             </item>
             <item>
-              <term> Host</term>
-              <description>"loopback"</description>
-            </item>
-            <item>
-              <term> Password</term>
+              <term>
+                <para>Host </para>
+              </term>
               <description>
-                <see cref="F:System.String.Empty" />
+                <para>"loopback" </para>
               </description>
             </item>
             <item>
-              <term> Path</term>
-              <description>"/"</description>
-            </item>
-            <item>
-              <term> Port</term>
-              <description>80</description>
-            </item>
-            <item>
-              <term> Query</term>
+              <term>
+                <para>Password </para>
+              </term>
               <description>
-                <see cref="F:System.String.Empty" />
+                <para>
+                  <see cref="F:System.String.Empty" /> </para>
               </description>
             </item>
             <item>
-              <term> Scheme</term>
+              <term>
+                <para>Path </para>
+              </term>
               <description>
-                <see cref="F:System.Uri.UriSchemeHttp" />
+                <para>"/" </para>
               </description>
             </item>
             <item>
-              <term> UserName</term>
+              <term>
+                <para>Port </para>
+              </term>
               <description>
-                <see cref="F:System.String.Empty" />
+                <para>-1 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Query </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.String.Empty" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Scheme </para>
+              </term>
+              <description>
+                <para>"http" </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UserName </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.String.Empty" /> </para>
               </description>
             </item>
           </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriBuilder" /> class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string uri)" />
       <MemberSignature Language="C#" Value="public UriBuilder (string uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string uri) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">A <see cref="T:System.String" /> containing a URI.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UriBuilder" /> class using
-   the specified URI.</para>
-        </summary>
-        <remarks>
-          <para>This constructor checks for the presence of a scheme in
-   <paramref name="uri" />. If no scheme is found, <see cref="F:System.Uri.UriSchemeHttp" /> + <see cref="F:System.Uri.SchemeDelimiter" /> are prepended to
-   <paramref name="uri" />. The <see cref="T:System.Uri" />(<see cref="T:System.String" />) constructor is passed <paramref name="uri" />, and the components
-      of the new <see cref="T:System.Uri" /> instance are used to initialize the properties of the
-   <see cref="T:System.UriBuilder" />
-   instance being constructed.</para>
-          <para>If <paramref name="uri" />.<see langword="Fragment" /> is not equal to <see cref="F:System.String.Empty" />, <paramref name="uri" />.<see langword="Fragment" />
-is copied to the <see cref="P:System.UriBuilder.Fragment" /> property of the current instance,
-otherwise <paramref name="uri" />.<see langword="Query" /> is copied to the <see cref="P:System.UriBuilder.Query" /> property of the current instance.</para>
-          <para>The <see langword="Host" />, <see langword="Port" /> and
-<see langword="Scheme" /> properties of the <see cref="T:System.Uri" /> instance are used to initialize the 
-corresponding properties in the current instance. The
-<see langword="AbsolutePath" /> property of the <see cref="T:System.Uri" /> instance is used to initialize the 
-<see langword="Path" /> property of the current instance.</para>
-          <para>The <see langword="UserInfo" /> property of
-the <see cref="T:System.Uri" /> instance
-is used to initialize the <see langword="UserName" /> and
-<see langword="Password" /> properties of the current instance.</para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="uri " /> is <see langword="null" /> .</para>
@@ -153,142 +163,93 @@ is used to initialize the <see langword="UserName" /> and
           <para>
             <paramref name="uri " />is in an invalid form and cannot be parsed.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the <see cref="P:System.UriBuilder.Fragment" />, <see cref="P:System.UriBuilder.Host" />, <see cref="P:System.UriBuilder.Path" />, <see cref="P:System.UriBuilder.Port" />, <see cref="P:System.UriBuilder.Query" />, <see cref="P:System.UriBuilder.Scheme" />, and <see cref="P:System.UriBuilder.Uri" /> properties set as specified in <paramref name="uri" />.</para>
+          <para>If <paramref name="uri" /> does not specify a scheme, the scheme defaults to "http:".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified URI.</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI string. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Uri uri)" />
       <MemberSignature Language="C#" Value="public UriBuilder (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Uri uri) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="uri">An instance of the <see cref="T:System.Uri" /> class.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified <see cref="T:System.Uri" /> instance.</para>
-        </summary>
-        <remarks>
-          <para>The components of the specified <see cref="T:System.Uri" /> instance are used to initialize the properties of the
-<see cref="T:System.UriBuilder" /> 
-instance being constructed.</para>
-          <para>If <paramref name="uri" />.<see langword="Fragment" /> is not equal to <see cref="F:System.String.Empty" />, <paramref name="uri" />.<see langword="Fragment" />
-is copied to the <see cref="P:System.UriBuilder.Fragment" /> property of the current instance,
-otherwise <paramref name="uri" />.<see langword="Query" /> is copied to the <see cref="P:System.UriBuilder.Query" /> property of the current instance.</para>
-          <para>The <see langword="Host" />, <see langword="Port" /> and <see langword="Scheme" />
-properties of the <see cref="T:System.Uri" /> instance are used to initialize the corresponding
-properties in the current instance. The <see langword="AbsolutePath" /> property
-of the <see cref="T:System.Uri" />
-instance is used to initialize the <see langword="Path" /> property of the current
-instance.</para>
-          <para>The <see langword="UserInfo" /> property of the <see cref="T:System.Uri" /> instance is used to initialize the
-<see langword="UserName" /> and <see langword="Password" /> properties of the 
-current instance.</para>
-        </remarks>
         <exception cref="T:System.NullReferenceException">
           <para>
             <paramref name="uri " /> is <see langword="null" /> .</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the <see cref="P:System.UriBuilder.Fragment" />, <see cref="P:System.UriBuilder.Host" />, <see cref="P:System.UriBuilder.Path" />, <see cref="P:System.UriBuilder.Port" />, <see cref="P:System.UriBuilder.Query" />, <see cref="P:System.UriBuilder.Scheme" />, and <see cref="P:System.UriBuilder.Uri" /> properties set as specified in <paramref name="uri" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified <see cref="T:System.Uri" /> instance.</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Uri" /> class. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string schemeName, string hostName)" />
       <MemberSignature Language="C#" Value="public UriBuilder (string schemeName, string hostName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string schemeName, string hostName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="schemeName" Type="System.String" />
         <Parameter Name="hostName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="schemeName">A <see cref="T:System.String" /> containing the name of an Internet access protocol.</param>
-        <param name="hostName">A <see cref="T:System.String" /> containing a DNS host name or IP address.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UriBuilder" /> class with
-   the specified scheme and host.</para>
-        </summary>
         <remarks>
-          <para>This constructor creates a new instance of the <see cref="T:System.UriBuilder" /> class with
-   its properties initialized as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Property</term>
-              <description>Initial value</description>
-            </listheader>
-            <item>
-              <term> Fragment</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Host</term>
-              <description>
-                <paramref name="hostName" />
-              </description>
-            </item>
-            <item>
-              <term> Password</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Path</term>
-              <description>"/"</description>
-            </item>
-            <item>
-              <term> Port</term>
-              <description>-1</description>
-            </item>
-            <item>
-              <term> Query</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Scheme</term>
-              <description>
-                <paramref name="schemeName" />
-              </description>
-            </item>
-            <item>
-              <term> UserName</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-          </list>
-          <see langword="" />
-          <see langword="" />
-          <see langword="" />
-          <see langword="" />
-          <block subset="none" type="note">
-            <see cref="P:System.UriBuilder.Port" /> is initialized to the value -1 to indicate 
-the default port for the scheme should be used.</block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.UriBuilder" /> instance is initialized with the <see cref="P:System.UriBuilder.Scheme" /> property set to <paramref name="schemeName" /> and the <see cref="P:System.UriBuilder.Host" /> property set to <paramref name="hostName" />. <see cref="P:System.UriBuilder.Port" /> is initialized to the value -1 to indicate the default port for the scheme should be used, and the <see cref="P:System.UriBuilder.Path" /> property is set to the slash character (/).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified scheme and host.</para>
+        </summary>
+        <param name="schemeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An Internet access protocol. </param>
+        <param name="hostName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A DNS-style domain name or IP address. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string scheme, string host, int32 portNumber)" />
       <MemberSignature Language="C#" Value="public UriBuilder (string scheme, string host, int portNumber);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string scheme, string host, int32 portNumber) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="scheme" Type="System.String" />
@@ -296,264 +257,121 @@ the default port for the scheme should be used.</block>
         <Parameter Name="portNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="scheme">A <see cref="T:System.String" /> containing the name of an Internet access protocol.</param>
-        <param name="host">A <see cref="T:System.String" /> containing a DNS host name or IP address.</param>
-        <param name="portNumber">A <see cref="T:System.Int32" /> containing an IP port number.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the
-   specified scheme, host, and port.</para>
-        </summary>
-        <remarks>
-          <para>This constructor creates a new instance of the <see cref="T:System.UriBuilder" /> class with
-   its properties initialized as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Property</term>
-              <description>Initial value</description>
-            </listheader>
-            <item>
-              <term> Fragment</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Host</term>
-              <description>
-                <paramref name="host" />
-              </description>
-            </item>
-            <item>
-              <term> Password</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Path</term>
-              <description>"/"</description>
-            </item>
-            <item>
-              <term> Port</term>
-              <description>
-                <paramref name="portNumber" />
-              </description>
-            </item>
-            <item>
-              <term> Query</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Scheme</term>
-              <description>
-                <paramref name="scheme" />
-              </description>
-            </item>
-            <item>
-              <term> UserName</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-          </list>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="portNumber" /> is less than zero.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.UriBuilder" /> instance is initialized with the <see cref="P:System.UriBuilder.Scheme" /> property set to <paramref name="schemeName" />, the <see cref="P:System.UriBuilder.Host" /> property set to <paramref name="hostName" />, and the <see cref="P:System.UriBuilder.Port" /> property set to <paramref name="portNumber" />. The <see cref="P:System.UriBuilder.Path" /> property is set to the slash character (/).</para>
+          <para>If the <paramref name="portNumber" /> is set to a value of -1, this indicates that the default port value for the <paramref name="scheme" /> will be used to connect to the <paramref name="host" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified scheme, host, and port.</para>
+        </summary>
+        <param name="scheme">
+          <attribution license="cc4" from="Microsoft" modified="false" />An Internet access protocol. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />A DNS-style domain name or IP address. </param>
+        <param name="portNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP port number for the service. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string scheme, string host, int32 port, string pathValue)" />
       <MemberSignature Language="C#" Value="public UriBuilder (string scheme, string host, int port, string pathValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string scheme, string host, int32 port, string pathValue) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="scheme" Type="System.String" />
-        <Parameter Name="host" Type="System.String" />
-        <Parameter Name="port" Type="System.Int32" />
-        <Parameter Name="pathValue" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="scheme">A <see cref="T:System.String" /> containing the name of an Internet access protocol.</param>
-        <param name="host">A <see cref="T:System.String" /> containing a DNS host name or IP address.</param>
-        <param name="port">A <see cref="T:System.Int32" /> containing an IP port number.</param>
-        <param name="pathValue">A <see cref="T:System.String" /> containing the path for the resource.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified scheme,
-   host, port number, and path.</para>
-        </summary>
-        <remarks>
-          <para>This constructor creates a new instance of the <see cref="T:System.UriBuilder" /> class with
-   its properties initialized as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Property</term>
-              <description>Initial value</description>
-            </listheader>
-            <item>
-              <term> Fragment</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Host</term>
-              <description>
-                <paramref name="host" />
-              </description>
-            </item>
-            <item>
-              <term> Password</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Path</term>
-              <description>
-                <paramref name="pathValue" />
-              </description>
-            </item>
-            <item>
-              <term> Port</term>
-              <description>
-                <paramref name="port" />
-              </description>
-            </item>
-            <item>
-              <term> Query</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Scheme</term>
-              <description>
-                <paramref name="scheme" />
-              </description>
-            </item>
-            <item>
-              <term> UserName</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-          </list>
-          <para>Before setting the <see cref="P:System.UriBuilder.Path" /> property, this constructor converts any backward slashes
-in <paramref name="pathValue" /> to forward slashes, and calls <see cref="M:System.Uri.EscapeString(System.String)" />(<paramref name="pathValue" />). </para>
-        </remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="port" /> is less than zero.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string scheme, string host, int32 port, string path, string extraValue)" />
-      <MemberSignature Language="C#" Value="public UriBuilder (string scheme, string host, int port, string pathValue, string extraValue);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="scheme" Type="System.String" />
         <Parameter Name="host" Type="System.String" />
         <Parameter Name="port" Type="System.Int32" />
         <Parameter Name="pathValue" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is less than zero.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.UriBuilder" /> instance is initialized with the <see cref="P:System.UriBuilder.Scheme" /> property set to <paramref name="schemeName" />, the <see cref="P:System.UriBuilder.Host" /> property set to <paramref name="hostName" />, the <see cref="P:System.UriBuilder.Port" /> property set to <paramref name="portNumber" /> and the <see cref="P:System.UriBuilder.Path" /> property set to <paramref name="pathValue" />.</para>
+          <para>If the <paramref name="portNumber" /> is set to a value of -1, this indicates that the default port value for the <paramref name="scheme" /> will be used to connect to the <paramref name="host" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified scheme, host, port number, and path.</para>
+        </summary>
+        <param name="scheme">
+          <attribution license="cc4" from="Microsoft" modified="false" />An Internet access protocol. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />A DNS-style domain name or IP address. </param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP port number for the service. </param>
+        <param name="pathValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the Internet resource. </param>
+      </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string scheme, string host, int32 port, string path, string extraValue)" />
+      <MemberSignature Language="C#" Value="public UriBuilder (string scheme, string host, int port, string path, string extraValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string scheme, string host, int32 port, string path, string extraValue) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="scheme" Type="System.String" />
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="path" Type="System.String" />
         <Parameter Name="extraValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="scheme">A <see cref="T:System.String" /> containing the name of an Internet access protocol.</param>
-        <param name="host">A <see cref="T:System.String" /> containing a DNS host name or IP address.</param>
-        <param name="port">A <see cref="T:System.Int32" /> containing an IP port number.</param>
-        <param name="pathValue">To be added.</param>
-        <param name="extraValue">A <see cref="T:System.String" /> containing a query or fragment component.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified scheme, host, port number, path, and
-   query string or fragment identifier.</para>
-        </summary>
-        <remarks>
-          <para>This constructor creates a new instance of the <see cref="T:System.UriBuilder" /> class with
-   its properties initialized as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Property</term>
-              <description>Initial value</description>
-            </listheader>
-            <item>
-              <term> Fragment</term>
-              <description>If
-      <paramref name="extraValue" /> begins with a "#", <paramref name="extraValue" />; otherwise
-      <see cref="F:System.String.Empty" /> . </description>
-            </item>
-            <item>
-              <term> Host</term>
-              <description>
-                <paramref name="host" />
-              </description>
-            </item>
-            <item>
-              <term> Password</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-            <item>
-              <term> Path</term>
-              <description>
-                <paramref name="path" />
-              </description>
-            </item>
-            <item>
-              <term> Port</term>
-              <description>
-                <paramref name="port" />
-              </description>
-            </item>
-            <item>
-              <term> Query</term>
-              <description>If
-   <paramref name="extraValue" /> begins with a "?", <paramref name="extraValue" />; otherwise
-   <see cref="F:System.String.Empty" /> .</description>
-            </item>
-            <item>
-              <term> Scheme</term>
-              <description>
-                <paramref name="scheme" />
-              </description>
-            </item>
-            <item>
-              <term> UserName</term>
-              <description>
-                <see cref="F:System.String.Empty" />
-              </description>
-            </item>
-          </list>
-          <para>Before setting the <see cref="P:System.UriBuilder.Path" /> property, this constructor converts any
-backward slashes in <paramref name="path" /> to forward slashes, and calls <see cref="M:System.Uri.EscapeString(System.String)" />(<paramref name="path" />). </para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="port" /> is less than zero.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="extraValue" /> is not  <see langword="null" /> or <see cref="P:System.String.Empty" />, and does not have as its first character a number sign ('#') indicating a fragment, or a question mark ('?') indicating a query.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.UriBuilder" /> instance is initialized with the <see cref="P:System.UriBuilder.Scheme" /> property set to <paramref name="schemeName" />, the <see cref="P:System.UriBuilder.Host" /> property set to <paramref name="hostName" />, the <see cref="P:System.UriBuilder.Port" /> property set to <paramref name="portNumber" />, and the <see cref="P:System.UriBuilder.Path" /> property is set to <paramref name="pathValue" />. If <paramref name="extraValue" /> begins with a number sign (#), then <see cref="P:System.UriBuilder.Fragment" /> is set to <paramref name="extraValue" />. If <paramref name="extraValue" /> begins with a question mark (?), then <see cref="P:System.UriBuilder.Query" /> is set to <paramref name="extraValue" />.</para>
+          <para>If the <paramref name="portNumber" /> is set to a value of -1, this indicates that the default port value for the <paramref name="scheme" /> will be used to connect to the <paramref name="host" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriBuilder" /> class with the specified scheme, host, port number, path and query string or fragment identifier.</para>
+        </summary>
+        <param name="scheme">
+          <attribution license="cc4" from="Microsoft" modified="false" />An Internet access protocol. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />A DNS-style domain name or IP address. </param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />An IP port number for the service. </param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the Internet resource. </param>
+        <param name="extraValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />A query string or fragment identifier. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object rparam)" />
       <MemberSignature Language="C#" Value="public override bool Equals (object rparam);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object rparam) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -561,149 +379,131 @@ backward slashes in <paramref name="path" /> to forward slashes, and calls <see 
         <Parameter Name="rparam" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="rparam">The object to compare with the current instance. The string representation of this argument is used to construct a <see cref="T:System.Uri" /> for comparison.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.UriBuilder.Equals(System.Object)" /> method compares a specified <see cref="T:System.Uri" /> instance with the <see cref="T:System.Uri" /> instance built by the <see cref="T:System.UriBuilder" /> instance. If the two are the same, the <see cref="M:System.UriBuilder.Equals(System.Object)" /> method returns true.</para>
+        </remarks>
         <summary>
-          <para> Compares the current instance
-      and the specified object for equality.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares an existing <see cref="T:System.Uri" /> instance with the contents of the <see cref="T:System.UriBuilder" /> for equality.</para>
         </summary>
         <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="rparam" /><paramref name=" " /> 
-represents the same URI as the current instance. If <paramref name="rparam" /> is
-<see langword="null" /> 
-, returns <see langword="false" /> .</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="rparam" /> represents the same <see cref="T:System.Uri" /> as the <see cref="T:System.Uri" /> constructed by this <see cref="T:System.UriBuilder" /> instance; otherwise, false.</para>
         </returns>
-        <remarks>
-          <para>This method invokes <see cref="M:System.Uri.Equals(System.Object)" />(<paramref name="rparam" />.ToString()) on 
-   the <see cref="T:System.Uri" />
-   instance returned by the <see cref="P:System.UriBuilder.Uri" /> property of the current instance.</para>
-          <para>
-            <block subset="none" type="note">This method
-   overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
-          </para>
-        </remarks>
+        <param name="rparam">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fragment">
       <MemberSignature Language="ILASM" Value=".property string Fragment { public hidebysig specialname instance string get_Fragment() public hidebysig specialname instance void set_Fragment(string value) }" />
-      <MemberSignature Language="C#" Value="public string Fragment { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Fragment { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Fragment" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the fragment component of the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the fragment component of the URI represented by the
  current instance.</para>
         </value>
         <remarks>
-          <para>The <see cref="P:System.UriBuilder.Fragment" />
-property contains any text following a fragment
-marker ('#') in the URI, including the marker itself. When setting the <see cref="P:System.UriBuilder.Fragment" /> property, the property value does not include
-the fragment marker as it is added to the property value by the set
-operation. Specifying <see langword="null" /> for the <see cref="P:System.UriBuilder.Fragment" /> property value sets the property to
-<see cref="F:System.String.Empty" />. If 
-<see langword="null" /> or <see cref="F:System.String.Empty" /> are specified in a set 
-operation, the fragment marker is not added to the property value.
-The set operation does not escape the fragment value.</para>
-Setting the <see cref="P:System.UriBuilder.Fragment" />
-property to any value, including <see langword="null" /> , sets the <see cref="P:System.UriBuilder.Query" /> property to <see cref="F:System.String.Empty" /> .
-</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.UriBuilder.Fragment" /> property contains any text following a fragment marker (#) in the URI, including the marker itself. When setting the <see cref="P:System.UriBuilder.Fragment" /> property, the fragment marker is added to its value. Note   In version 1.0 and 1.1 of the .NET Framework, setting the <see cref="P:System.UriBuilder.Fragment" /> property to any value, including null, cleared the <see cref="P:System.UriBuilder.Query" /> property, and setting the <see cref="P:System.UriBuilder.Fragment" /> property to null or to <see cref="F:System.String.Empty" /> cleared the property. In version 2.0, however, the <see cref="P:System.UriBuilder.Fragment" /> and <see cref="P:System.UriBuilder.Query" /> properties are independent.</para>
+          <para>Note   Do not append a string directly to this property. If the length of <see cref="P:System.UriBuilder.Fragment" /> is greater than 1, retrieve the property value as a string, remove the leading pound sign, append the new query string, and set the property with the combined string.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the fragment portion of the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code is generated without including any fragment. The URIs http://www.contoso.com/index.htm#search and http://www.contoso.com/index.htm generate the same hash code.</para>
+          <para>The hash codes for <see cref="T:System.Uri" /> A and B are guaranteed to be the same when A.Equals(B) is true.</para>
+          <para>This method implements <see cref="M:System.Object.GetHashCode" />.</para>
+        </remarks>
         <summary>
-          <para>Generates a hash code for the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the URI.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code generated for the URI.</para>
         </returns>
-        <remarks>
-          <para> The hash code is generated without the fragment component.
-      For example, the URIs "http://www.contoso.com/index.htm#search"
-      and "http://www.contoso.com/index.htm"
-      produce the same hash code.</para>
-          <para>The algorithm used to 
-      generate the hash code is unspecified.</para>
-          <para>
-            <block subset="none" type="note"> This method 
-      overrides <see cref="M:System.Object.GetHashCode" />. </block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Host">
       <MemberSignature Language="ILASM" Value=".property string Host { public hidebysig specialname instance string get_Host() public hidebysig specialname instance void set_Host(string value) }" />
-      <MemberSignature Language="C#" Value="public string Host { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Host { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Host" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the Domain Name System (DNS) host name or
-      IP address of a machine that provides access to the resource
-      identified by the current instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> containing the DNS host name or IP address of the host machine.</para>
         </value>
         <remarks>
-          <para>Specifying <see langword="null" /> for 
-   a set
-   operation sets this property to <see cref="F:System.String.Empty" />
-   
-   .</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.UriBuilder.Host" /> property contains the fully qualified DNS host name or IP address of the server.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Domain Name System (DNS) host name or IP address of a server.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Password">
       <MemberSignature Language="ILASM" Value=".property string Password { public hidebysig specialname instance string get_Password() public hidebysig specialname instance void set_Password(string value) }" />
-      <MemberSignature Language="C#" Value="public string Password { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Password { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Password" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the password information used to access the
-      resource represented by the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the
    password used to access the resource represented by the current instance.</para>
@@ -712,231 +512,282 @@ property to any value, including <see langword="null" /> , sets the <see cref="P
           <para>Specifying <see langword="null" /> for 
    a set operation sets this property to <see cref="F:System.String.Empty" /> .</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the password associated with the user that accesses the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Path">
       <MemberSignature Language="ILASM" Value=".property string Path { public hidebysig specialname instance string get_Path() public hidebysig specialname instance void set_Path(string value) }" />
-      <MemberSignature Language="C#" Value="public string Path { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Path { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Path" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the path to the resource represented by the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the
    path to the resource represented by the current instance.</para>
         </value>
         <remarks>
-          <para> This property returns the escaped form of the
-      path information in the current instance. Values specified for set
-      operations are escaped, and any backslashes are converted to forward
-      slashes.</para>
-          <para>Specifying <see langword="null" /> or <see cref="F:System.String.Empty" /> for a set operation sets
-   this property to "/" .</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.UriBuilder.Path" /> property contains the path information that the server uses to resolve requests for information. Typically this is the path to the desired information on the server's file system; although it also can indicate the application or script that the server must run to provide the information.</para>
+          <para>The path information does not include the scheme, host name, or query portion of the URI. The <see cref="P:System.UriBuilder.Path" /> property always returns at least a slash (/).</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path to the resource referenced by the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Port">
       <MemberSignature Language="ILASM" Value=".property int32 Port { public hidebysig specialname instance int32 get_Port() public hidebysig specialname instance void set_Port(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int Port { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Port { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Port" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the port number used to connect to
-      the <see cref="P:System.UriBuilder.Host" /> referenced by the
-      current instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Int32" /> containing a non-negative port number or -1.</para>
         </value>
-        <remarks>
-          <para> If
-      no port was specified, the
-   <see cref="P:System.Uri.Port" /> property returns the default port as determined by
-      the scheme of the current instance. A port value of -1 indicates that
-      the current scheme does not use a port, as is the case when the scheme of
-      the current instance is the <see cref="F:System.Uri.UriSchemeFile" />
-      scheme.</para>
-          <para>
-            <block subset="none" type="note"> For the list of
-      default ports used with each scheme, see <see cref="P:System.Uri.Port" />
-      .</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation was less than zero.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The port number defines the protocol port for contacting the host referenced in the URI. If a port is not specified as part of the URI, the <see cref="P:System.Uri.Port" /> property returns the value of -1 to indicate that the default port value for the protocol scheme will be used to connect to the host. If the <see cref="P:System.Uri.Port" /> property is set to a value of -1, this indicates that the default port value for the protocol scheme will be used to connect to the host.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the port number of the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Query">
       <MemberSignature Language="ILASM" Value=".property string Query { public hidebysig specialname instance string get_Query() public hidebysig specialname instance void set_Query(string value) }" />
-      <MemberSignature Language="C#" Value="public string Query { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Query { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Query" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the query component of the current instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> containing the query component of the URI represented by the current instance.</para>
         </value>
         <remarks>
-          <para>The <see cref="P:System.UriBuilder.Query" />
-property contains any text following a query
-marker ('?') in the URI, including the marker itself. When setting the <see cref="P:System.UriBuilder.Query" /> property, the property value does not include
-the query marker as it is added to the property value by the set
-operation. Specifying <see langword="null" /> for the <see cref="P:System.UriBuilder.Query" /> property value sets the property to
-<see cref="F:System.String.Empty" />. If 
-<see langword="null" /> or <see cref="F:System.String.Empty" /> are specified in a set 
-operation, the query marker is not added to the property value.
-The set operation does not escape the query value.</para>
-Setting
-the <see cref="P:System.UriBuilder.Query" />
-property to any value, including <see langword="null" /> , sets the <see cref="P:System.UriBuilder.Fragment" /> property to <see cref="F:System.String.Empty" /> .
-</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Uri.Query" /> property contains any query information included in the URI. Query information is separated from the path information by a question mark (?) and continues to the end of the URI. The query information returned includes the leading question mark.</para>
+          <para>The query information is escaped according to RFC 2396.</para>
+          <para>Note   In version 1.0 and 1.1 of the .NET Framework, setting the <see cref="P:System.UriBuilder.Fragment" /> property to any value, including null, cleared the <see cref="P:System.UriBuilder.Query" /> property, and setting the <see cref="P:System.UriBuilder.Fragment" /> property to null or to <see cref="F:System.String.Empty" /> cleared the property. In version 2.0, however, the <see cref="P:System.UriBuilder.Fragment" /> and <see cref="P:System.UriBuilder.Query" /> properties are independent.</para>
+          <para>Note   Do not append a string directly to this property. If the length of <see cref="P:System.UriBuilder.Query" /> is greater than 1, retrieve the property value as a string, remove the leading question mark, append the new query string, and set the property with the combined string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets any query information included in the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Scheme">
       <MemberSignature Language="ILASM" Value=".property string Scheme { public hidebysig specialname instance string get_Scheme() public hidebysig specialname instance void set_Scheme(string value) }" />
-      <MemberSignature Language="C#" Value="public string Scheme { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Scheme { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Scheme" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the scheme component of the current
-      instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the
    scheme component of the current instance.</para>
         </value>
         <remarks>
-          <para>Specifying <see langword="null" /> for a set operation sets this property to 
-<see cref="F:System.String.Empty" /> . 
-   If the value specified for a set operation contains a colon (":"), the scheme is
-   set using the substring that includes all characters from the start of the value
-   up to, but not including the colon. The characters in the value are converted to
-   lower case.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table lists the valid scheme names for the <see cref="P:System.UriBuilder.Scheme" /> property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Scheme </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>file </para>
+              </term>
+              <description>
+                <para>The resource is a file on the local computer. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ftp </para>
+              </term>
+              <description>
+                <para>The resource is accessed through FTP. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gopher </para>
+              </term>
+              <description>
+                <para>The resource is accessed through the Gopher protocol. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>http </para>
+              </term>
+              <description>
+                <para>The resource is accessed through HTTP. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>https </para>
+              </term>
+              <description>
+                <para>The resource is accessed through SSL-encrypted HTTP. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>mailto </para>
+              </term>
+              <description>
+                <para>The resource is an e-mail address and is accessed through SMTP. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>news </para>
+              </term>
+              <description>
+                <para>The resource is accessed through NNTP. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the scheme name of the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The display string contains the <see cref="P:System.UriBuilder.Port" /> property value if the <see cref="P:System.UriBuilder.Port" /> property was set or the port was specified when the <see cref="T:System.UriBuilder" /> was constructed using of the <see cref="M:System.UriBuilder.#ctor" /> methods that accept a port number parameter except for the case when the <see cref="P:System.UriBuilder.Port" />.property value was set to a value of -1 to indicate the default port.</para>
+          <para>The display string does not contain the <see cref="P:System.UriBuilder.Port" /> property value if the <see cref="P:System.UriBuilder.Port" /> property was not set and a port was not specified when the <see cref="T:System.UriBuilder" /> was constructed. The display string also does not contain the <see cref="P:System.UriBuilder.Port" /> property value if the <see cref="P:System.UriBuilder.Port" /> property or port number for the constructor was set to a value of -1. </para>
+        </remarks>
         <summary>
-          <para>Returns the escaped form of the URI represented by the current instance. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the display string for the specified <see cref="T:System.UriBuilder" /> instance.</para>
         </summary>
         <returns>
-          <para> A <see cref="T:System.String" /> containing the escaped URI contained in the current <see cref="T:System.UriBuilder" /> instance.
-   </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that contains the unescaped display string of the <see cref="T:System.UriBuilder" />.</para>
+          <para />
         </returns>
-        <remarks>
-          <para>The string returned by this method (shown here as uriString) is constructed as
-      follows:</para>
-          <c>
-            <para>uriString = scheme + scheme delimiter + host.</para>
-            <para>If port != -1 and host != "", then uriString = uriString + ":" + port.</para>
-            <para>If host != "" and path != "" and path != "/", then uriString = uriString + "/".</para>
-            <para>uriString = uriString + path.</para>
-            <para>If fragment != "", then uriString = uriString + fragment, else uriString = uriString + query.</para>
-          </c>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.Object.ToString" />.</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Uri">
       <MemberSignature Language="ILASM" Value=".property class System.Uri Uri { public hidebysig specialname instance class System.Uri get_Uri() }" />
       <MemberSignature Language="C#" Value="public Uri Uri { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Uri" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Uri" /> instance
-   constructed using the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Uri" /> containing the URI
    components of the current instance.</para>
         </value>
-        <remarks>
-          <para>This property returns the same <see cref="T:System.Uri" /> instance until
-   modifications are made to the current instance, at which time a new <see cref="T:System.Uri" /> instance is constructed
-   by passing the string representation of the current instance to the
-<see cref="T:System.Uri" />(<see cref="T:System.String" /> ) constructor.</para>
-        </remarks>
         <exception cref="T:System.UriFormatException">The URI constructed using the string representation of the current instance is in an invalid form.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.UriBuilder.Uri" /> property contains the <see cref="T:System.Uri" /> created by the <see cref="T:System.UriBuilder" />. Any changes made to the <see cref="T:System.UriBuilder" /> properties are reflected in the <see cref="P:System.UriBuilder.Uri" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Uri" /> instance constructed by the specified <see cref="T:System.UriBuilder" /> instance.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserName">
       <MemberSignature Language="ILASM" Value=".property string UserName { public hidebysig specialname instance string get_UserName() public hidebysig specialname instance void set_UserName(string value) }" />
-      <MemberSignature Language="C#" Value="public string UserName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string UserName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string UserName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the user name information used to access the resource identified by the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the
    user name used to access
@@ -947,12 +798,12 @@ property to any value, including <see langword="null" /> , sets the <see cref="P
 <see cref="F:System.String.Empty" /> 
 .</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user name associated with the user that accesses the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

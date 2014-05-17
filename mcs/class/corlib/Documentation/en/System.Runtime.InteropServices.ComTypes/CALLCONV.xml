@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CALLCONV" FullName="System.Runtime.InteropServices.ComTypes.CALLCONV">
   <TypeSignature Language="C#" Value="public enum CALLCONV" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CALLCONV extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,160 +11,227 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The calling conventions in this class describe how functions pass arguments and return values. They specify the order in which parameters are set up for the called functions, where the parameters are stored (in registers or in memory), and who (caller or called function) is responsible for cleaning up the stack after the function returns. For example:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="F:System.Runtime.InteropServices.ComTypes.CALLCONV.CC_CDECL" /> uses the naming and calling conventions of the C language. The caller pushes the parameters onto the stack in reverse (right-to-left) order, and cleans the stack after the function returns. This calling convention enables you to call functions with varargs, which makes it appropriate for use with methods that accept a variable number of parameters, such as the C run-time functions <format type="text/html"><a href="77a854ae-5b48-4865-89f4-f2dc5cf80f52">printf, _printf_l, wprintf, _wprintf_l</a></format>.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Runtime.InteropServices.ComTypes.CALLCONV.CC_PASCAL" /> uses the Pascal calling convention. The caller pushes the parameters onto the stack in left-to-right order. The called function cleans the stack before returning.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Runtime.InteropServices.ComTypes.CALLCONV.CC_STDCALL" /> is the standard calling convention for Win32 functions. It is the default convention for calling unmanaged functions with platform invoke. The caller pushes the parameters onto the stack in reverse (right to left) order, and the called function cleans the stack before returning.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.Runtime.InteropServices.ComTypes.CALLCONV.CC_SYSCALL" /> is similar to CDECL in that arguments are pushed from right to left. The EAX, ECX, and EDX registers are not preserved. </para>
+        </item>
+      </list>
+      <para>These calling convention identifiers are used by the dnprdnshort, the wince platform, and by Automation.</para>
+      <para>For additional information about <see cref="T:System.Runtime.InteropServices.ComTypes.CALLCONV" />, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the calling convention used by a method described in a <format type="text/html"><a href="85fd7121-3eed-4a83-9ba2-caa81fa1e048">METHODDATA</a></format> structure.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CC_CDECL">
       <MemberSignature Language="C#" Value="CC_CDECL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_CDECL = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the C declaration (CDECL) calling convention is used for a method. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_MACPASCAL">
       <MemberSignature Language="C#" Value="CC_MACPASCAL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_MACPASCAL = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the Macintosh Pascal (MACPASCAL) calling convention is used for a method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_MAX">
       <MemberSignature Language="C#" Value="CC_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_MAX = int32(9)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the end of the <see cref="T:System.Runtime.InteropServices.ComTypes.CALLCONV" /> enumeration.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_MPWCDECL">
       <MemberSignature Language="C#" Value="CC_MPWCDECL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_MPWCDECL = int32(7)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the Macintosh Programmers' Workbench (MPW) CDECL calling convention is used for a method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_MPWPASCAL">
       <MemberSignature Language="C#" Value="CC_MPWPASCAL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_MPWPASCAL = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the Macintosh Programmers' Workbench (MPW) PASCAL calling convention is used for a method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_MSCPASCAL">
       <MemberSignature Language="C#" Value="CC_MSCPASCAL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_MSCPASCAL = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the MSC Pascal (MSCPASCAL) calling convention is used for a method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_PASCAL">
       <MemberSignature Language="C#" Value="CC_PASCAL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_PASCAL = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the Pascal calling convention is used for a method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_RESERVED">
       <MemberSignature Language="C#" Value="CC_RESERVED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_RESERVED = int32(5)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is reserved for future use.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_STDCALL">
       <MemberSignature Language="C#" Value="CC_STDCALL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_STDCALL = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the standard calling convention (STDCALL) is used for a method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CC_SYSCALL">
       <MemberSignature Language="C#" Value="CC_SYSCALL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.CALLCONV CC_SYSCALL = int32(6)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.ComTypes.CALLCONV</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the standard SYSCALL calling convention is used for a method.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

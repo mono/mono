@@ -45,68 +45,10 @@ static inline void mono_memory_write_barrier (void)
 	_WriteBarrier ();
 	MemoryBarrier ();
 }
-#elif defined(__WIN32__) || defined(_WIN32)
-#include <windows.h>
-
-/* Since we only support GCC 3.x in Cygwin for
-   some arcane reason, we have to use inline
-   assembly to get fences (__sync_synchronize
-   is not available). */
-
-static inline void mono_memory_barrier (void)
-{
-	__asm__ __volatile__ (
-		"lock\n\t"
-		"addl\t$0,0(%%esp)\n\t"
-		:
-		:
-		: "memory"
-	);
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-	mono_memory_barrier ();
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-	mono_memory_barrier ();
-}
 #elif defined(USE_GCC_ATOMIC_OPS)
 static inline void mono_memory_barrier (void)
 {
 	__sync_synchronize ();
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-	mono_memory_barrier ();
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-	mono_memory_barrier ();
-}
-#elif defined(sparc) || defined(__sparc__)
-static inline void mono_memory_barrier (void)
-{
-	__asm__ __volatile__ ("membar	#LoadLoad | #LoadStore | #StoreStore | #StoreLoad" : : : "memory");
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-	__asm__ __volatile__ ("membar	#LoadLoad" : : : "memory");
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-	__asm__ __volatile__ ("membar	#StoreStore" : : : "memory");
-}
-#elif defined(__s390__)
-static inline void mono_memory_barrier (void)
-{
-	__asm__ __volatile__ ("bcr 15,0" : : : "memory");
 }
 
 static inline void mono_memory_read_barrier (void)
@@ -132,18 +74,6 @@ static inline void mono_memory_read_barrier (void)
 static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
-}
-#elif defined(MONO_CROSS_COMPILE)
-static inline void mono_memory_barrier (void)
-{
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-}
-
-static inline void mono_memory_write_barrier (void)
-{
 }
 #else
 #error "Don't know how to do memory barriers!"

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMessage" FullName="System.Runtime.Remoting.Messaging.IMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IMessage" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessage" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,33 +10,45 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="Properties">
-      <MemberSignature Language="C#" Value="public System.Collections.IDictionary Properties { get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IDictionary</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'Collections.IDictionary'</value>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Message sinks that use <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> can be placed in the client sink chains or in the server sink chains. A message object is passed from message sink to message sink through the chain, and carries a set of named properties such as action identifiers, envoy information, and parameters.</para>
+      <para>An object that implements the <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> interface meets the minimum qualifications to be considered a message object. The exact object received by a message sink does not have to be passed on to the next sink, but this is often the case.</para>
+      <para>Although the objects in the property bag do not have to be serializable, the message sink implementer needs to consider this, since the properties that flow out of the application domain must be serializable.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains communication data sent between cooperating message sinks.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="public System.Collections.IDictionary Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IDictionary Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'Collections.IDictionary'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.IDictionary" /> that represents a collection of the message's properties.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

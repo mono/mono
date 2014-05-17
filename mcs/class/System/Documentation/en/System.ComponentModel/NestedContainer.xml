@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NestedContainer" FullName="System.ComponentModel.NestedContainer">
-  <TypeSignature Language="C#" Value="public class NestedContainer : System.ComponentModel.Container, System.ComponentModel.INestedContainer" />
+  <TypeSignature Language="C#" Value="public class NestedContainer : System.ComponentModel.Container, IDisposable, System.ComponentModel.INestedContainer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NestedContainer extends System.ComponentModel.Container implements class System.ComponentModel.IContainer, class System.ComponentModel.INestedContainer, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.Container</BaseTypeName>
@@ -11,32 +14,69 @@
     <Interface>
       <InterfaceName>System.ComponentModel.INestedContainer</InterfaceName>
     </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.NestedContainer" /> class is a simple implementation of the <see cref="T:System.ComponentModel.INestedContainer" /> interface, which defines a component that logically contains zero or more other components and is owned by a parent component. The behavior of nested containers differs from a standard <see cref="T:System.ComponentModel.Container" /> in a number of ways, including the following:</para>
+      <list type="bullet">
+        <item>
+          <para>Site characteristics such as <see cref="P:System.ComponentModel.Component.DesignMode" /> and <see cref="M:System.ComponentModel.Component.GetService(System.Type)" /> are routed through the owning component’s site.</para>
+        </item>
+        <item>
+          <para>The site’s <see cref="P:System.ComponentModel.ISite.Name" /> property is a qualified name that includes the owning component’s name followed by a period (.) and the child component’s name.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.ComponentModel.NestedContainer.GetService(System.Type)" /> provides support for the <see cref="T:System.ComponentModel.INestedContainer" /> as a service.</para>
+        </item>
+        <item>
+          <para>When the owning component is disposed, the container is disposed as well.</para>
+        </item>
+      </list>
+      <para>In addition, designers treat nested containers differently. A designer host is only interested in one container—the one associated with the host. Therefore, component add and remove events are not raised when a component is added to or removed from a nested container. However, because services flow through to the nested container, component change events are raised when a component in a nested container is changed. </para>
+      <para>This disparity in event tracking also impacts undo functionality, which is closely tied to serialization. The standard undo engine uses <see cref="T:System.ComponentModel.Design.IReferenceService" /> to track changes made to components. If the undo engine cannot identify a name for a component through the reference service, the engine will ignore any changes for that component. This service automatically recognizes changes to contained components only if they are exposed as public read-only properties of the same name in their owners. Otherwise, the developer must pass component change events up to the owner. For example, if a nested component’s Text property is resurfaced on its owning component as an Address property, when the Text property is changed, a property change must be programmatically made for the corresponding Address property or else that change will not be tracked by undo. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base implementation for the <see cref="T:System.ComponentModel.INestedContainer" /> interface, which enables containers to have an owning component.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public NestedContainer (System.ComponentModel.IComponent owner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.IComponent owner) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="owner" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor enlists in its owner's <see cref="E:System.ComponentModel.IComponent.Disposed" /> event so that the nested container's <see cref="Overload:System.ComponentModel.NestedContainer.Dispose" /> method will automatically be called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.NestedContainer" /> class.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> that owns this nested container.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateSite">
       <MemberSignature Language="C#" Value="protected override System.ComponentModel.ISite CreateSite (System.ComponentModel.IComponent component, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.ComponentModel.ISite CreateSite(class System.ComponentModel.IComponent component, string name) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ISite</ReturnType>
@@ -46,18 +86,31 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="name" /> parameter is null, the <see cref="T:System.ComponentModel.IComponent" /> is added to the nested container without an identifying name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a site for the component within the container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.ISite" />.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to create a site for.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to assign to <paramref name="component" />, or null to skip the name assignment.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -66,16 +119,26 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.NestedContainer" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the nested container.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="GetService">
       <MemberSignature Language="C#" Value="protected override object GetService (Type service);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance object GetService(class System.Type service) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -84,40 +147,66 @@
         <Parameter Name="service" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="service">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.ComponentModel.Container.GetService(System.Type)" /> method. This implementation only resolves requests for the <see cref="T:System.ComponentModel.INestedContainer" /> and <see cref="T:System.ComponentModel.IContainer" /> services.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the service object of the specified type, if it is available.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that implements the requested service, or null if the service cannot be resolved.</para>
+        </returns>
+        <param name="service">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the service to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="Owner">
       <MemberSignature Language="C#" Value="public System.ComponentModel.IComponent Owner { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.IComponent Owner" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The owning component is the characteristic that differentiates nested containers from ordinary containers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the owning component for this nested container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OwnerName">
       <MemberSignature Language="C#" Value="protected virtual string OwnerName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string OwnerName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property may be overridden to provide a custom owner name. The default implementation searches the owner's site for <see cref="T:System.ComponentModel.INestedSite" /> and calls <see cref="P:System.ComponentModel.INestedSite.FullName" />, or <see cref="P:System.ComponentModel.ISite.Name" /> if there is no nested site. If neither is available, this property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the owning component.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

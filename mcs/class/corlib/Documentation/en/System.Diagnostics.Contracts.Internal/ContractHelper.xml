@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractHelper" FullName="System.Diagnostics.Contracts.Internal.ContractHelper">
   <TypeSignature Language="C#" Value="public static class ContractHelper" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit ContractHelper extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,13 +10,22 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Type has been moved to System.Runtime.CompilerServices")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Methods required by the contract rewriter to handle contract failures.</summary>
     <remarks>These methods are called by code that has been rewritten by the Ccrewrite tool.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods that the binary rewriter uses to handle contract failures.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="RaiseContractFailedEvent">
       <MemberSignature Language="C#" Value="public static string RaiseContractFailedEvent (System.Diagnostics.Contracts.ContractFailureKind failureKind, string userMessage, string conditionText, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string RaiseContractFailedEvent(valuetype System.Diagnostics.Contracts.ContractFailureKind failureKind, string userMessage, string conditionText, class System.Exception innerException) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -24,7 +35,7 @@
           <AttributeName>System.Diagnostics.DebuggerNonUserCode</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -37,17 +48,31 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="failureKind">The kind of contract failure.</param>
-        <param name="userMessage">The user message describing this contract failure.</param>
-        <param name="conditionText">The condition that caused this contract failure.</param>
-        <param name="innerException">The exception that caused this contract filure, if any.</param>
-        <summary>Implements the default behaviour on code contract failure.</summary>
-        <returns>The code contract failure message, if the failure has not been handled already. Null if the failure has been handled successfully.</returns>
-        <remarks>The default behaviour is to call each event handler in turn, with exceptions thrown in the handlers treated as calls to <see cref="m:System.Diagnostics.Contracts.ContractFailedEventArgs.SetUnwind()" />. This is defined fully in section 7.3 of UserDoc.pdf from Microsoft.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The binary rewriter calls this method to notify listeners about a contract failure. The <see cref="M:System.Diagnostics.Contracts.Internal.ContractHelper.RaiseContractFailedEvent(System.Diagnostics.Contracts.ContractFailureKind,System.String,System.String,System.Exception)" /> method does not perform the failure behavior (an assert or throw) itself. If the failure is handled by the listeners, the method returns null. If the failure is not handled by the listeners, a localized failure message is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by the binary rewriter to activate the default failure behavior.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A null reference (Nothing in Visual Basic) if the event was handled and should not trigger a failure; otherwise, returns the localized failure message.</para>
+        </returns>
+        <param name="failureKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of failure.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />Additional user information.</param>
+        <param name="conditionText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the condition that caused the failure.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The inner exception that caused the current exception.</param>
       </Docs>
     </Member>
     <Member MemberName="TriggerFailure">
       <MemberSignature Language="C#" Value="public static void TriggerFailure (System.Diagnostics.Contracts.ContractFailureKind kind, string displayMessage, string userMessage, string conditionText, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TriggerFailure(valuetype System.Diagnostics.Contracts.ContractFailureKind kind, string displayMessage, string userMessage, string conditionText, class System.Exception innerException) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -71,13 +96,24 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="kind">The kind of contract failure.</param>
-        <param name="displayMessage">The message to display describing this contract failure.</param>
-        <param name="userMessage">The user message describing this contract failure.</param>
-        <param name="conditionText">The condition that caused this contract failure.</param>
-        <param name="innerException">The exception that caused this contract filure, if any.</param>
-        <summary>Implements the default code contract failure behaviour.</summary>
-        <remarks>The default code contract failure behaviour is to trigger an assert if in user interactive mode, otherwise <see cref="m:System.Environment.FailFast(string message)" /> is called to immediately terminate the process.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default failure behavior is to raise an <see cref="M:System.Diagnostics.Debug.Assert(System.Boolean)" />, which causes the <ui>Assert</ui> dialog box to be displayed. You can change that behavior to throw an <see cref="T:System.Exception" /> instead of displaying the dialog box. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Triggers the default failure behavior.</para>
+        </summary>
+        <param name="kind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of failure.</param>
+        <param name="displayMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />Additional user information.</param>
+        <param name="conditionText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the condition that caused the failure.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The inner exception that caused the current exception.</param>
       </Docs>
     </Member>
   </Members>

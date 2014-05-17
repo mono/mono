@@ -52,11 +52,11 @@ namespace System.Linq.Expressions {
 		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
 		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
-		public ExpressionType NodeType {
+		public virtual ExpressionType NodeType {
 			get { return node_type; }
 		}
 
-		public Type Type {
+		public virtual Type Type {
 			get { return type; }
 		}
 
@@ -270,7 +270,7 @@ namespace System.Linq.Expressions {
 					if (ltype == rtype && ultype.IsEnum)
 						return null;
 
-					if (ltype == rtype && ultype == typeof (bool))
+					if (ltype == rtype && (ultype == typeof (bool) || ultype == typeof (char)))
 						return null;
 
 					if (ltype.IsNullable () && ConstantExpression.IsNull (right) && !ConstantExpression.IsNull (left))

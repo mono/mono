@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewColumn" FullName="System.Windows.Forms.DataGridViewColumn">
   <TypeSignature Language="C#" Value="public class DataGridViewColumn : System.Windows.Forms.DataGridViewBand, System.ComponentModel.IComponent" />
   <AssemblyInfo>
@@ -13,9 +14,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewColumn" /> class represents a logical column in a <see cref="T:System.Windows.Forms.DataGridView" /> control. You can retrieve columns through the <see cref="P:System.Windows.Forms.DataGridView.Columns" /> collection of the control.</para>
+      <para>Unlike a <see cref="T:System.Windows.Forms.DataGridViewRow" />, which contains the actual collection of cells in a <see cref="T:System.Windows.Forms.DataGridView" />, <see cref="T:System.Windows.Forms.DataGridViewColumn" /> is used mainly to adjust the appearance and behavior of the column user interface (UI), such as column width and cell style. For more information about cell styles, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+      <para>Types that derive from <see cref="T:System.Windows.Forms.DataGridViewColumn" /> typically initialize the <see cref="P:System.Windows.Forms.DataGridViewColumn.CellTemplate" /> property to a new instance of a related type derived from the <see cref="T:System.Windows.Forms.DataGridViewCell" /> class. Any column properties that relate to the appearance or behavior of individual cells are wrappers for the corresponding properties of the template cell. Changing one of these properties on the column automatically changes the value on the cell template and on all cells in the column. To override the specified value for individual cells, set the cell values after you set the column value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a column in a <see cref="T:System.Windows.Forms.DataGridView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +32,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewColumn" /> class to the default state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +50,17 @@
         <Parameter Name="cellTemplate" Type="System.Windows.Forms.DataGridViewCell" />
       </Parameters>
       <Docs>
-        <param name="cellTemplate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Windows.Forms.DataGridViewColumn.CellTemplate" /> property to the value of the <paramref name="cellTemplate" /> parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewColumn" /> class using an existing <see cref="T:System.Windows.Forms.DataGridViewCell" /> as a template.</para>
+        </summary>
+        <param name="cellTemplate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An existing <see cref="T:System.Windows.Forms.DataGridViewCell" /> to use as a template. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +73,21 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatic sizing behavior of the column is determined by the value of the <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedAutoSizeMode" /> property, which is the same as the value of the <see cref="P:System.Windows.Forms.DataGridViewColumn.AutoSizeMode" /> property for all values except <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.NotSet" />, which indicates that the value is inherited from the <see cref="P:System.Windows.Forms.DataGridView.AutoSizeColumnsMode" /> property instead.</para>
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedAutoSizeMode" /> property value is <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill" />, the column is resized along with other columns in that mode. All fill-mode columns in the control divide the available space in proportions determined by their <see cref="P:System.Windows.Forms.DataGridViewColumn.FillWeight" /> property values. The width available for fill mode is determined by subtracting the widths of all other columns from the width of the client area of the control. If this width is smaller than the combined <see cref="P:System.Windows.Forms.DataGridViewColumn.MinimumWidth" /> values of all fill-mode columns, the horizontal scroll bar is displayed, all fill-mode columns are shown with their minimum widths, and user column-resizing is disabled. For more information about column fill mode, see <format type="text/html"><a href="b4ef7411-ebf4-4e26-bb33-aecec90de80c">Column Fill Mode in the Windows Forms DataGridView Control</a></format>.</para>
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedAutoSizeMode" /> property is set to any other value except <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.None" />, the column will manage its width so that its cell values are fully displayed without clipping. In content-based sizing modes, size adjustments occur whenever cell contents change or, if <see cref="P:System.Windows.Forms.DataGridViewCellStyle.WrapMode" /> is enabled, whenever row heights change. Some content-based sizing modes let you limit the size adjustment to the currently displayed rows in order to increase performance. </para>
+          <para>Only columns with a <see cref="P:System.Windows.Forms.DataGridViewColumn.Visible" /> property value of true are resized, and changing the visibility of a column does not cause resizing to occur. Additionally, when columns are set to automatically resize, the user cannot adjust the column widths with the mouse.</para>
+          <para>To adjust column widths programmatically, use the <see cref="T:System.Windows.Forms.DataGridView" /> control's <see cref="Overload:System.Windows.Forms.DataGridView.AutoResizeColumn" /> or <see cref="Overload:System.Windows.Forms.DataGridView.AutoResizeColumns" /> methods or set the column <see cref="P:System.Windows.Forms.DataGridViewColumn.Width" /> property. </para>
+          <para>For more information about content-based automatic sizing, see <format type="text/html"><a href="a5620a9c-0d06-41e3-8934-c25ddb16c9e6">Sizing Options in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the mode by which the column automatically adjusts its width.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -78,10 +108,19 @@
         <ReturnType>System.Windows.Forms.DataGridViewCell</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The constructors for the <see cref="T:System.Windows.Forms.DataGridViewColumn" /> class initialize this property. The default constructor sets the property to null; the other constructor copies the cell template from its parameter.</para>
+          <block subset="none" type="note">
+            <para>Changing the properties of the cell template will not immediately affect the user interface (UI) of the column's existing cells. These changes are only apparent after the column is regenerated (for example, by sorting the column or through a call to the <see cref="M:System.Windows.Forms.DataGridView.InvalidateColumn(System.Int32)" /> method).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template used to create new cells.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,10 +144,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base type of the <see cref="P:System.Windows.Forms.DataGridViewColumn.CellTemplate" /> is <see cref="T:System.Windows.Forms.DataGridViewCell" />. Use this property to determine the actual derived type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the run-time type of the cell template.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -154,9 +199,15 @@
         <ReturnType>System.Windows.Forms.ContextMenuStrip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The shortcut menu appears when a user clicks the right mouse button in the column's display area. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the shortcut menu for the column.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataPropertyName">
@@ -166,10 +217,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DataGridView.AutoGenerateColumns" /> property is set to true, each column automatically sets its <see cref="P:System.Windows.Forms.DataGridViewColumn.DataPropertyName" /> property to the name of a property or database column in the data source specified by the <see cref="P:System.Windows.Forms.DataGridView.DataSource" /> property. This binding can also be performed manually, which is useful when you want to display only a subset of the properties or database columns available in the data source. In such cases, set the <see cref="P:System.Windows.Forms.DataGridView.AutoGenerateColumns" /> property to false, and then manually add each <see cref="T:System.Windows.Forms.DataGridViewColumn" />, setting the value of each <see cref="P:System.Windows.Forms.DataGridViewColumn.DataPropertyName" /> property to the properties or database columns in the data source that you want to display.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the data source property or database column to which the <see cref="T:System.Windows.Forms.DataGridViewColumn" /> is bound.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -196,10 +253,17 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control displays its cells using the styles indicated by the cell <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedStyle" /> property, which inherits styles from other properties of type <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />. For cells in this column, the styles specified through the <see cref="P:System.Windows.Forms.DataGridViewColumn.DefaultCellStyle" /> property override the styles specified through the <see cref="P:System.Windows.Forms.DataGridView.DefaultCellStyle" /> property, but are overridden by the styles specified through the <see cref="P:System.Windows.Forms.DataGridView.RowsDefaultCellStyle" />, <see cref="P:System.Windows.Forms.DataGridView.AlternatingRowsDefaultCellStyle" />, <see cref="P:System.Windows.Forms.DataGridViewRow.DefaultCellStyle" />, and <see cref="P:System.Windows.Forms.DataGridViewCell.Style" /> properties. </para>
+          <para>For more information, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the column's default cell style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -217,10 +281,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike the <see cref="P:System.Windows.Forms.DataGridViewBand.Index" /> property, the <see cref="P:System.Windows.Forms.DataGridViewColumn.DisplayIndex" /> property corresponds to the current position of the column as displayed by the user interface (UI). By default, each column's <see cref="P:System.Windows.Forms.DataGridViewColumn.DisplayIndex" /> is set to numbers of increasing order, which reflects the order in which they were added. The <see cref="P:System.Windows.Forms.DataGridViewColumn.Visible" /> property value does not affect the <see cref="P:System.Windows.Forms.DataGridViewColumn.DisplayIndex" /> value. To determine the display position of a column based on its visibility or other state, use the <see cref="Overload:System.Windows.Forms.DataGridViewColumnCollection.GetFirstColumn" />, <see cref="M:System.Windows.Forms.DataGridViewColumnCollection.GetLastColumn(System.Windows.Forms.DataGridViewElementStates,System.Windows.Forms.DataGridViewElementStates)" />, or <see cref="M:System.Windows.Forms.DataGridViewColumnCollection.GetNextColumn(System.Windows.Forms.DataGridViewColumn,System.Windows.Forms.DataGridViewElementStates,System.Windows.Forms.DataGridViewElementStates)" /> method of the <see cref="T:System.Windows.Forms.DataGridViewColumnCollection" /> class. </para>
+          <para>Every column in the control has a unique <see cref="P:System.Windows.Forms.DataGridViewColumn.DisplayIndex" /> value. The values start with 0 and proceed in numerical order without skipping any values. When you change the <see cref="P:System.Windows.Forms.DataGridViewColumn.DisplayIndex" /> value for a column, the <see cref="P:System.Windows.Forms.DataGridViewColumn.DisplayIndex" /> values for other columns are changed to reflect the new order. </para>
+          <para>If the column has an associated <see cref="T:System.Windows.Forms.DataGridView" /> control, setting this property will cause the control to redraw itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display order of the column relative to the currently displayed columns.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -260,9 +332,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Windows.Forms.DataGridViewColumn" /> is disposed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -283,10 +361,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful to provide a visual boundary between frozen columns and columns that can scroll. The extra edge is part of the current column, although it will take on the foreground color of the associated <see cref="T:System.Windows.Forms.DataGridView" />. The extra edge does not extend the area in which users can double-click to automatically resize a column. To resize a column, the user must double-click on the boundary between the divider and the adjacent column. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width, in pixels, of the column divider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -304,10 +388,17 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedAutoSizeMode" /> property value is <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill" />, the column is resized along with other columns in that mode so that all visible columns in the control exactly fill the horizontal width of the available display area. All fill-mode columns in the control divide the available space in proportions determined by their <see cref="P:System.Windows.Forms.DataGridViewColumn.FillWeight" /> property values. For more information about column fill mode, see <format type="text/html"><a href="b4ef7411-ebf4-4e26-bb33-aecec90de80c">Column Fill Mode in the Windows Forms DataGridView Control</a></format>.</para>
+          <para>The maximum sum of <see cref="P:System.Windows.Forms.DataGridViewColumn.FillWeight" /> values for all columns in a <see cref="T:System.Windows.Forms.DataGridView" /> control is 65535.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that represents the width of the column when it is in fill mode relative to the widths of other fill-mode columns in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -325,10 +416,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a column is frozen, all the columns to its left (or to its right in right-to-left languages) are frozen as well. The frozen and unfrozen columns form two groups. If column repositioning is enabled by setting the <see cref="P:System.Windows.Forms.DataGridView.AllowUserToOrderColumns" /> property to true, the user cannot drag a column from one group to the other. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a column will move when a user scrolls the <see cref="T:System.Windows.Forms.DataGridView" /> control horizontally.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -353,12 +450,25 @@
         <Parameter Name="fixedHeight" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="autoSizeColumnMode">To be added.</param>
-        <param name="fixedHeight">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by the content-based automatic sizing feature of the <see cref="T:System.Windows.Forms.DataGridView" /> control to determine the ideal width of a column.</para>
+          <para>A <paramref name="fixedHeight" /> parameter value of false calculates the column width based on calculated row heights that will achieve ideal cell height-to-width ratios. For cell contents to wrap onto multiple lines, the cell style in effect for the cell must have a <see cref="P:System.Windows.Forms.DataGridViewCellStyle.WrapMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewTriState.True" />.</para>
+          <para>For more information about automatic sizing, see <format type="text/html"><a href="a5620a9c-0d06-41e3-8934-c25ddb16c9e6">Sizing Options in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the ideal width of the column based on the specified criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ideal width, in pixels, of the column.</para>
+        </returns>
+        <param name="autoSizeColumnMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAutoSizeColumnMode" /> value that specifies an automatic sizing mode. </param>
+        <param name="fixedHeight">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to calculate the width of the column based on the current row heights; false to calculate the width with the expectation that the row heights will be adjusted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -371,10 +481,16 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumnHeaderCell</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The header of a column is typically used to display a column label. Depending on the current values of the <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> and <see cref="P:System.Windows.Forms.DataGridView.SelectionMode" /> properties, users can also click the column header to sort or select the column.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Windows.Forms.DataGridViewColumnHeaderCell" /> that represents the column header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -395,10 +511,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful only when the column has an associated header cell. For more information, see the <see cref="P:System.Windows.Forms.DataGridViewBand.HeaderCellCore" /> property.</para>
+          <block subset="none" type="note">
+            <para>There is no corresponding header text property for rows. To display labels in row headers, you must handle the <see cref="E:System.Windows.Forms.DataGridView.CellPainting" /> event and paint your own labels when <see cref="P:System.Windows.Forms.DataGridViewCellPaintingEventArgs.ColumnIndex" /> is -1. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the caption text on the column's header cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -416,10 +541,21 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatic sizing behavior of the column is determined by the value of the <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedAutoSizeMode" /> property, which is the same as the value of the <see cref="P:System.Windows.Forms.DataGridViewColumn.AutoSizeMode" /> property for all values except <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.NotSet" />, which indicates that the value is inherited from the <see cref="P:System.Windows.Forms.DataGridView.AutoSizeColumnsMode" /> property instead.</para>
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedAutoSizeMode" /> property value is <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill" />, the column is resized along with other columns in that mode so that all visible columns in the control exactly fill the horizontal width of the available display area. All fill-mode columns in the control divide the available space in proportions determined by their <see cref="P:System.Windows.Forms.DataGridViewColumn.FillWeight" /> property values. For more information about column fill mode, see <format type="text/html"><a href="b4ef7411-ebf4-4e26-bb33-aecec90de80c">Column Fill Mode in the Windows Forms DataGridView Control</a></format>.</para>
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedAutoSizeMode" /> property is set to any other value except <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.None" />, the column will manage its width so that its cell values are fully displayed without clipping. In content-based sizing modes, size adjustments occur whenever cell contents change or, if <see cref="P:System.Windows.Forms.DataGridViewCellStyle.WrapMode" /> is enabled, whenever row heights change. Some content-based sizing modes let you limit the size adjustment to the currently displayed rows in order to increase performance. </para>
+          <para>Only columns with a <see cref="P:System.Windows.Forms.DataGridViewColumn.Visible" /> property value of true are resized, and changing the visibility of a column does not cause resizing to occur. Additionally, when columns are set to automatically resize, the user cannot adjust the column widths with the mouse.</para>
+          <para>To adjust column widths programmatically, use the <see cref="T:System.Windows.Forms.DataGridView" /> control's <see cref="Overload:System.Windows.Forms.DataGridView.AutoResizeColumn" /> or <see cref="Overload:System.Windows.Forms.DataGridView.AutoResizeColumns" /> methods or set the column <see cref="P:System.Windows.Forms.DataGridViewColumn.Width" /> property. </para>
+          <para>For more information about content-based automatic sizing, see <format type="text/html"><a href="a5620a9c-0d06-41e3-8934-c25ddb16c9e6">Sizing Options in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sizing mode in effect for the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -443,10 +579,17 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful to determine which cell styles are applied to all cells in a column regardless of any row styles that are also applied to the cells. The column <see cref="P:System.Windows.Forms.DataGridViewColumn.InheritedStyle" /> property inherits its values from the <see cref="P:System.Windows.Forms.DataGridViewColumn.DefaultCellStyle" /> and the <see cref="P:System.Windows.Forms.DataGridView.DefaultCellStyle" /> property. </para>
+          <para>For more information about cell style inheritance, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cell style currently applied to the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -464,10 +607,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A column becomes bound to a data source if it is part of a data-bound <see cref="T:System.Windows.Forms.DataGridView" />. A column can become part of a data-bound <see cref="T:System.Windows.Forms.DataGridView" /> if the column is automatically created when the <see cref="P:System.Windows.Forms.DataGridView.AutoGenerateColumns" /> property is set to true, or if the column's <see cref="P:System.Windows.Forms.DataGridViewColumn.DataPropertyName" /> property is set when the column is manually added to the <see cref="T:System.Windows.Forms.DataGridView" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the column is bound to a data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -488,10 +637,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewColumn.MinimumWidth" /> property sets a limit on how narrow the column can be resized in the user interface (UI). The <see cref="P:System.Windows.Forms.DataGridViewColumn.Width" /> property can override the <see cref="P:System.Windows.Forms.DataGridViewColumn.MinimumWidth" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum width, in pixels, of the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -515,10 +670,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents a formal name associated with the column that can be used to identify the column in a collection. For example, the <see cref="M:System.Windows.Forms.DataGridViewColumnCollection.Remove(System.Windows.Forms.DataGridViewColumn)" /> and <see cref="M:System.Windows.Forms.DataGridViewColumnCollection.Contains(System.Windows.Forms.DataGridViewColumn)" /> methods of the <see cref="T:System.Windows.Forms.DataGridViewColumnCollection" /> class use the <see cref="P:System.Windows.Forms.DataGridViewColumn.Name" /> property. The name is case-insensitive. The <see cref="T:System.Windows.Forms.DataGridView" /> will treat column1 and COLUMN1 as the same column.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -536,10 +697,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewColumn.ReadOnly" /> property affects the <see cref="P:System.Windows.Forms.DataGridViewCell.ReadOnly" /> property of each cell in the column.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user can edit the column's cells.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -552,10 +719,18 @@
         <ReturnType>System.Windows.Forms.DataGridViewTriState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> property is <see cref="F:System.Windows.Forms.DataGridViewTriState.False" />, the user will not be able to manually adjust the column width.</para>
+          <para>By default, the <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> property value is based on the <see cref="P:System.Windows.Forms.DataGridView.AllowUserToResizeColumns" /> property value. If you explicitly set <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> to <see cref="F:System.Windows.Forms.DataGridViewTriState.True" /> or <see cref="F:System.Windows.Forms.DataGridViewTriState.False" />, however, the control value is ignored. Set <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> to <see cref="F:System.Windows.Forms.DataGridViewTriState.NotSet" /> to restore the value-inheritance behavior. </para>
+          <para>Because <see cref="F:System.Windows.Forms.DataGridViewTriState.NotSet" /> restores the value inheritance, the <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> property will never return a <see cref="F:System.Windows.Forms.DataGridViewTriState.NotSet" /> value unless the column has not been added to a <see cref="T:System.Windows.Forms.DataGridView" /> control. If you need to determine whether the <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> property value of a column is inherited, check its <see cref="P:System.Windows.Forms.DataGridViewElement.State" /> property. If the <see cref="P:System.Windows.Forms.DataGridViewElement.State" /> property value includes the <see cref="F:System.Windows.Forms.DataGridViewElementStates.ResizableSet" /> flag, the <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> property value is not inherited. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the column is resizable.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -568,10 +743,13 @@
         <ReturnType>System.ComponentModel.ISite</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the site of the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -592,10 +770,20 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumnSortMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DataGridView" /> control is sorted using a column with a <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Automatic" />, a sorting glyph is automatically displayed in the column header.</para>
+          <para>When the control is sorted using a column with a <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Programmatic" />, you must display the sorting glyph yourself through the <see cref="P:System.Windows.Forms.DataGridViewColumnHeaderCell.SortGlyphDirection" /> property.</para>
+          <para>The default sort mode of a <see cref="T:System.Windows.Forms.DataGridViewTextBoxColumn" /> is <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Automatic" />. The default sort mode for other column types is <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.NotSortable" />.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> value does not prevent you from sorting a column programmatically, although other restrictions may apply. For more information, see the <see cref="Overload:System.Windows.Forms.DataGridView.Sort" /> method.</para>
+          <para>A <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.NotSortable" /> will not prevent the <see cref="E:System.Windows.Forms.DataGridView.ColumnHeaderMouseClick" /> event from occurring, but it will prevent the header from changing its appearance when it is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the sort mode for the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -613,10 +801,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column's ToolTip displays when the mouse pointer rests on the column header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text used for ToolTips.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -638,10 +832,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.Object.ToString" /> method. The returned string contains the <see cref="P:System.Windows.Forms.DataGridViewColumn.Name" /> and <see cref="P:System.Windows.Forms.DataGridViewBand.Index" /> properties of the <see cref="T:System.Windows.Forms.DataGridViewColumn" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that describes the column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that describes the column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -654,10 +857,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used when filtering or sorting the columns with respect to the contents of their cells.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type of the values in the column's cells.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -681,10 +890,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to hide a column from view while keeping the column in the <see cref="T:System.Windows.Forms.DataGridView" />. To completely remove a column, use the <see cref="Overload:System.Windows.Forms.DataGridViewColumnCollection.Remove" /> method.</para>
+          <para>To hide a column that is automatically generated when binding to a data source, set this property in a <see cref="E:System.Windows.Forms.DataGridView.DataBindingComplete" /> event handler. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the column is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -705,10 +921,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified value when setting this property is less than the value of the <see cref="P:System.Windows.Forms.DataGridViewColumn.MinimumWidth" /> property, the <see cref="P:System.Windows.Forms.DataGridViewColumn.MinimumWidth" /> property value is used instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current width of the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

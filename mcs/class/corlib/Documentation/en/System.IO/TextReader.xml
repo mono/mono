@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextReader" FullName="System.IO.TextReader" FullNameSP="System_IO_TextReader" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable TextReader extends System.MarshalByRefObject implements System.IDisposable" />
   <TypeSignature Language="C#" Value="public abstract class TextReader : MarshalByRefObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit TextReader extends System.MarshalByRefObject implements class System.IDisposable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -18,100 +20,115 @@
       <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Represents an object that can read a sequential series of
-      characters.</para>
-    </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>
-        <see cref="T:System.IO.TextReader" /> is designed for character
-   input, whereas the <see cref="T:System.IO.StreamReader" /> is designed for byte input and the
-<see cref="T:System.IO.StringReader" />
-class is designed for reading from a
-string.</para>
-      <para>By default, a <see cref="T:System.IO.TextReader" /> is not thread safe. For information on creating a
-thread-safe <see cref="T:System.IO.TextReader" />
-, see <see cref="M:System.IO.TextReader.Synchronized(System.IO.TextReader)" qualify="true" /> .</para>
+        <see cref="T:System.IO.TextReader" /> is the abstract base class of <see cref="T:System.IO.StreamReader" /> and <see cref="T:System.IO.StringReader" />, which read characters from streams and strings, respectively. Use these derived classes to open a text file for reading a specified range of characters, or to create a reader based on an existing stream. </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reader that can read a sequential series of characters.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected TextReader ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs a new instance of the <see cref="T:System.IO.TextReader" /> class.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor for derived classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.TextReader" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
       <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Closes the current <see cref="T:System.IO.TextReader" /> instance and releases any system
-   resources associated with it.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="note">
-            <para>After a call to <see cref="M:System.IO.TextReader.Close" /> , any IO operation on the current
-      instance might throw an exception.</para>
-          </block>
-          <para>
-            <block subset="none" type="behaviors">This method is equivalent to <see cref="M:System.IO.TextReader.Dispose(System.Boolean)" />(<see langword=" true" />
-).</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to
-   close the current instance and free any resources associated with
-   it.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of Close calls the <see cref="M:System.IO.StringReader.Dispose(System.Boolean)" /> method and passes it a true value.</para>
+          <para>Flushing the text reader will not flush its underlying encoder unless you explicitly call Close. Setting the <see cref="P:System.IO.StreamWriter.AutoFlush" /> property to true means that data will be flushed from the buffer to the stream, but the encoder state will not be flushed. This allows the encoder to keep its state (partial characters) so that it can encode the next block of characters correctly. This scenario affects UTF8 and UTF7 where certain characters can be encoded only after the encoder receives the adjacent character or characters.</para>
+          <block subset="none" type="note">
+            <para>In derived classes, do not override the <see cref="M:System.IO.TextReader.Close" /> method. Instead, override the <see cref="M:System.IO.TextReader.Dispose(System.Boolean)" /> method to add code for releasing resources.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the <see cref="T:System.IO.TextReader" /> and releases any system resources associated with the TextReader.</para>
+        </summary>
       </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.IO.TextReader.Dispose" /> when you are finished using the <see cref="T:System.IO.TextReader" />. The <see cref="M:System.IO.TextReader.Dispose" /> method leaves the <see cref="T:System.IO.TextReader" /> in an unusable state. After calling <see cref="M:System.IO.TextReader.Dispose" />, you must release all references to the <see cref="T:System.IO.TextReader" /> so the garbage collector can reclaim the memory that the <see cref="T:System.IO.TextReader" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">[&lt;topic://cpconCleaningUpUnmanagedResources&gt;]</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.IO.TextReader.Dispose" /> before you release your last reference to the <see cref="T:System.IO.TextReader" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.IO.TextReader" /> object's <see cref="M:System.Object.Finalize" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.IO.TextReader" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
       <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -119,155 +136,135 @@ thread-safe <see cref="T:System.IO.TextReader" />
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">
-          <see langword="true" /> to release both managed and unmanaged resources; <see langword="false" /> to release only unmanaged resources.</param>
-        <summary>
-          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.TextReader" /> and 
-   optionally releases the managed resources.</para>
-        </summary>
         <remarks>
-          <para>When the <paramref name="disposing" /> parameter is <see langword="true" />, this method 
-   releases all resources held by any managed objects that this <see cref="T:System.IO.TextReader" />
-   references. This method invokes the <see langword="Dispose()" /> method of each
-   referenced object.</para>
-          <para>
-            <block subset="none" type="note">
-              <see cref="M:System.IO.TextReader.Dispose(System.Boolean)" /> can be called multiple 
-times by other objects. When overriding <see cref="M:System.IO.TextReader.Dispose(System.Boolean)" />(<see cref="T:System.Boolean" />), be careful not
-to reference objects that have been previously disposed in an earlier call to
-<see cref="M:System.IO.TextReader.Dispose(System.Boolean)" /> .</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. By default, this method specifies the <paramref name="disposing" /> parameter as true. <see cref="M:System.Object.Finalize" /> specifies the <paramref name="disposing" /> parameter as false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.IO.TextReader" /> references. This method invokes the Dispose method of each referenced object.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.TextReader" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Null">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.IO.TextReader Null" />
       <MemberSignature Language="C#" Value="public static readonly System.IO.TextReader Null;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.IO.TextReader Null" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.TextReader</ReturnType>
       </ReturnValue>
       <Parameters />
+      <MemberValue>null</MemberValue>
       <Docs>
-        <summary>
-          <para>Provides a <see cref="T:System.IO.TextReader" /> with no data to read from.</para>
-        </summary>
         <remarks>
-          <para>Reading from the <see cref="F:System.IO.TextReader.Null" /> text reader is similar to reading from the end of a
-   stream:</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reading from the <see cref="F:System.IO.TextReader.Null" /> text reader is similar to reading from the end of a stream: </para>
           <list type="bullet">
             <item>
-              <term>
-                <see cref="M:System.IO.TextReader.Read" />()
-      and <see cref="M:System.IO.TextReader.Peek" /> methods
-      return -1</term>
+              <para>The <see cref="M:System.IO.TextReader.Read" /> and <see cref="M:System.IO.TextReader.Peek" /> methods return -1.</para>
             </item>
             <item>
-              <term>
-                <see cref="M:System.IO.TextReader.Read" />
-                <see langword="(" />
-                <see cref="T:System.Char" />[], <see cref="T:System.Int32" />, <see cref="T:System.Int32" /><see langword=")" /> and <see cref="M:System.IO.TextReader.ReadBlock(System.Char[],System.Int32,System.Int32)" /> methods return zero</term>
+              <para>The <see cref="M:System.IO.TextReader.ReadBlock(System.Char[],System.Int32,System.Int32)" /> method returns zero.</para>
             </item>
             <item>
-              <term>
-                <see cref="M:System.IO.TextReader.ReadLine" /> and <see cref="M:System.IO.TextReader.ReadToEnd" /> methods return
-   <see langword="null" />.</term>
+              <para>The <see cref="M:System.IO.TextReader.ReadLine" /> method returns null.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.IO.TextReader.ReadToEnd" /> method returns an empty string.</para>
             </item>
           </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a TextReader with no data to read from.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <MemberValue>null</MemberValue>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Peek">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Peek()" />
       <MemberSignature Language="C#" Value="public virtual int Peek ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Peek() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Reads the next character without changing the state of the reader
-      or the character source.</para>
-        </summary>
-        <returns>
-          <para>The next character to be read, or -1 if no more characters are
-      available.</para>
-        </returns>
-        <remarks>
-          <para> The position of the <see cref="T:System.IO.TextReader" />
-in the source is not changed by this operation.</para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The default implementation
-   returns -1.</block>
-          </para>
-        </remarks>
-        <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.TextReader.Peek" /> method returns an integer value in order to determine whether the end of the file, or another error has occurred. This allows a user to first check if the returned value is -1 before casting it to a <see cref="T:System.Char" /> type.</para>
+          <para>The current position of the <see cref="T:System.IO.TextReader" /> is not changed by this operation. The returned value is -1 if no more characters are available. The default implementation returns -1.</para>
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.Peek" /> method, see the <see cref="M:System.IO.StreamReader.Peek" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the next character without changing the state of the reader or the character source. Returns the next available character without actually reading it from the reader.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer representing the next character to be read, or -1 if no more characters are available or the reader does not support seeking.</para>
+        </returns>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read()" />
       <MemberSignature Language="C#" Value="public virtual int Read ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Read() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Reads the next character from the character source and advances the character
-      position by one character.</para>
-        </summary>
-        <returns>
-          <para>The next character from the character source represented
-      as a <see cref="T:System.Int32" /> , or -1 if at the end
-      of the stream.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The default implementation
-      returns -1.</block>
-          </para>
-        </remarks>
-        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.Read" /> method, see the <see cref="M:System.IO.StreamReader.Read" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the next character from the text reader and advances the character position by one character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character from the text reader, or -1 if no more characters are available. The default implementation returns -1.</para>
+        </returns>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 Read(class System.Char[] buffer, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public virtual int Read (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Read(char[] buffer, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -277,27 +274,6 @@ in the source is not changed by this operation.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Char" /> array. When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> -1) replaced by the characters read from the current source.</param>
-        <param name="index">A <see cref="T:System.Int32" /> that specifies the place in <paramref name="buffer " /> at which to begin writing.</param>
-        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of characters to read. If the end of the stream is reached before <paramref name="count " />of characters is read into <paramref name="buffer" /> , this method returns. </param>
-        <summary>
-          <para>Reads at most the specified number of characters from the current character source, and writes them to the provided
-      character array.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the number of characters that were read, or zero if there were no more
-   characters left to read. Can be less than <paramref name="count" /> if the end of the stream
-   has been reached. </para>
-        </returns>
-        <remarks>
-          <para>
-            <see cref="M:System.IO.TextReader.ReadBlock(System.Char[],System.Int32,System.Int32)" />
-is a blocking version of this method.</para>
-          <para>
-            <block subset="none" type="behaviors">The provided character array can
-   be changed only in the specified range.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> ) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
@@ -310,18 +286,75 @@ is a blocking version of this method.</para>
             <paramref name="count &lt; " /> 0.</para>
         </exception>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns after either <paramref name="count" /> characters are read or the end of the file is reached. <see cref="M:System.IO.TextReader.ReadBlock(System.Char[],System.Int32,System.Int32)" /> is a blocking version of this method.</para>
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.Read(System.Char[],System.Int32,System.Int32)" /> method, see the <see cref="M:System.IO.StreamReader.Read(System.Char[],System.Int32,System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a specified maximum number of characters from the current reader and writes the data to a buffer, beginning at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters that have been read. The number will be less than or equal to <paramref name="count" />, depending on whether the data is available within the reader. This method returns 0 (zero) if it is called when no more characters are left to read.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in <paramref name="buffer" /> at which to begin writing. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to read. If the end of the reader is reached before the specified number of characters is read into the buffer, the method returns. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;int&gt; ReadAsync (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;int32&gt; ReadAsync(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task completes after either the number of characters specified by the <paramref name="count" /> parameter are read or the end of the file is reached. </para>
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.ReadAsync(System.Char[],System.Int32,System.Int32)" /> method, see the <see cref="M:System.IO.StreamReader.ReadAsync(System.Char[],System.Int32,System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a specified maximum number of characters from the current text reader asynchronously and writes the data to a buffer, beginning at the specified index. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the text has been reached.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in <paramref name="buffer" /> at which to begin writing.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to read. If the end of the text is reached before the specified number of characters is read into the buffer, the current method returns.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadBlock">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 ReadBlock(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual int ReadBlock (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 ReadBlock(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadBlock">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 ReadBlock(class System.Char[] buffer, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public virtual int ReadBlock (char[] buffer, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -331,27 +364,6 @@ is a blocking version of this method.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">A <see cref="T:System.Char" /> array. When this method returns, contains the specified character array with the values between <paramref name="index" /> and <paramref name="(index + count - 1)" /> replaced by the characters read from the current source.</param>
-        <param name="index">A <see cref="T:System.Int32" /> that specifies the index in <paramref name="buffer " /> at which to begin writing.</param>
-        <param name="count">A <see cref="T:System.Int32" /> that specifies the maximum number of characters to read.</param>
-        <summary>
-          <para> Reads a
-      specified number of characters from the current stream into a
-      provided character array.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing the number of characters that were read, or
-   zero if there were no more characters left to read. Can be
-   less than <paramref name="count" /> if the end of the stream has been reached.</para>
-        </returns>
-        <remarks>
-          <para> The method blocks until either the specified number of
-      characters are read, or no more characters are available in the source.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> - 1) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
@@ -364,94 +376,199 @@ is a blocking version of this method.</para>
             <paramref name="count &lt; " /> 0.</para>
         </exception>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position of the underlying text reader is advanced by the number of characters that were read into <paramref name="buffer" />.</para>
+          <para>The method blocks until either <paramref name="count" /> characters are read, or all characters have been read. This is a blocking version of <see cref="M:System.IO.TextReader.Read" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a specified maximum number of characters from the current text reader and writes the data to a buffer, beginning at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters that have been read. The number will be less than or equal to <paramref name="count" />, depending on whether all input characters have been read.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, this parameter contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> -1) replaced by the characters read from the current source. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in <paramref name="buffer" /> at which to begin writing.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to read. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadBlockAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;int&gt; ReadBlockAsync (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;int32&gt; ReadBlockAsync(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task does not complete until either the number of characters specified by the <paramref name="count" /> parameter are read, or the end of the text has been reached. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a specified maximum number of characters from the current text reader asynchronously and writes the data to a buffer, beginning at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the text has been reached.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in <paramref name="buffer" /> at which to begin writing.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of characters to read. If the end of the text is reached before the specified number of characters is read into the buffer, the current method returns.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadLine()" />
+      <MemberSignature Language="C#" Value="public virtual string ReadLine ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ReadLine() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadLine()" />
-      <MemberSignature Language="C#" Value="public virtual string ReadLine ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Reads a line of characters
-      from the current character source.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the next line from the input stream, or
-<see langword="null" /> if all lines have
-   been read. The returned string does not
-   contain the line terminating character.</para>
-        </returns>
-        <remarks>
-          <para> A line is defined as a sequence
-      of characters followed by a carriage return (0x000d), a line feed (0x000a), <see cref="P:System.Environment.NewLine" qualify="true" />, or the end of stream marker.</para>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
         <exception cref="T:System.OutOfMemoryException">
           <para>There is insufficient memory to allocate a buffer for the returned string.</para>
         </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The number of characters in the next line is larger than <see cref="F:System.Int32.MaxValue" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A line is defined as a sequence of characters followed by a carriage return (0x000d), a line feed (0x000a), a carriage return followed by a line feed, <see cref="P:System.Environment.NewLine" />, or the end-of-stream marker. The string that is returned does not contain the terminating carriage return or line feed. The return value is null if the end of the input stream has been reached.</para>
+          <para>If the method throws an <see cref="T:System.OutOfMemoryException" /> exception, the reader's position in the underlying <see cref="T:System.IO.Stream" /> is advanced by the number of characters the method was able to read, but the characters that were already read into the internal <see cref="M:System.IO.TextReader.ReadLine" /> buffer are discarded. Because the position of the reader in the stream cannot be changed, the characters that were already read are unrecoverable and can be accessed only by reinitializing the <see cref="T:System.IO.TextReader" /> object. If the initial position within the stream is unknown or the stream does not support seeking, the underlying <see cref="T:System.IO.Stream" /> also needs to be reinitialized.</para>
+          <para>To avoid such a situation and produce robust code you should use the <see cref="M:System.IO.TextReader.Read" /> method and store the read characters in a preallocated buffer.</para>
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.ReadLine" /> method, see the <see cref="M:System.IO.StreamReader.ReadLine" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a line of characters from the text reader and returns the data as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next line from the reader, or null if all characters have been read.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadLineAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;string&gt; ReadLineAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;string&gt; ReadLineAsync() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.ReadLineAsync" /> method, see the <see cref="M:System.IO.StreamReader.ReadLineAsync" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a line of characters asynchronously and returns the data as a string. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the next line from the text reader, or is null if all of the characters have been read. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadToEnd">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadToEnd()" />
+      <MemberSignature Language="C#" Value="public virtual string ReadToEnd ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ReadToEnd() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadToEnd">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ReadToEnd()" />
-      <MemberSignature Language="C#" Value="public virtual string ReadToEnd ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Reads all characters from the current position in the
-      character source
-      to the end of the source.</para>
-        </summary>
-        <returns>
-          <para> A string containing all characters from the current
-      position to the end of the character
-      source.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As
-      described above.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
         <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The number of characters from the current position to the end of the underlying stream is larger than <see cref="F:System.Int32.MaxValue" qualify="true" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the method throws an <see cref="T:System.OutOfMemoryException" /> exception, the reader's position in the underlying <see cref="T:System.IO.Stream" /> is advanced by the number of characters the method was able to read, but the characters that were already read into the internal <see cref="M:System.IO.TextReader.ReadToEnd" /> buffer are discarded. Because the position of the reader in the stream cannot be changed, the characters that were already read are unrecoverable and can be accessed only by reinitializing the <see cref="T:System.IO.TextReader" />. If the initial position within the stream is unknown or the stream does not support seeking, the underlying <see cref="T:System.IO.Stream" /> also needs to be reinitialized.</para>
+          <para>To avoid such a situation and produce robust code you should use the <see cref="M:System.IO.TextReader.Read" /> method and store the read characters in a preallocated buffer.</para>
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.ReadToEnd" /> method, see the <see cref="M:System.IO.StreamReader.ReadToEnd" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads all characters from the current position to the end of the text reader and returns them as one string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains all characters from the current position to the end of the text reader.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadToEndAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;string&gt; ReadToEndAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;string&gt; ReadToEndAsync() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.ReadToEndAsync" /> method, see the <see cref="M:System.IO.StreamReader.ReadToEndAsync" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads all characters from the current position to the end of the text reader asynchronously and returns them as one string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains a string with the characters from the current position to the end of the text reader. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.TextReader Synchronized(class System.IO.TextReader reader)" />
+      <MemberSignature Language="C#" Value="public static System.IO.TextReader Synchronized (System.IO.TextReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.TextReader Synchronized(class System.IO.TextReader reader) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Synchronized">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.TextReader Synchronized(class System.IO.TextReader reader)" />
-      <MemberSignature Language="C#" Value="public static System.IO.TextReader Synchronized (System.IO.TextReader reader);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.TextReader</ReturnType>
       </ReturnValue>
@@ -459,27 +576,23 @@ is a blocking version of this method.</para>
         <Parameter Name="reader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="reader">The <see cref="T:System.IO.TextReader" /> to synchronize.</param>
+        <exception cref="T:System.ArgumentNullException">The <paramref name="reader" /> parameter is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current method returns a class that wraps around the specified <see cref="T:System.IO.TextReader" /> instance and restricts access to it by multiple threads. All reads from the returned wrapper will be thread safe.</para>
+        </remarks>
         <summary>
-          <para>Creates a thread-safe wrapper around the specified
-   <see cref="T:System.IO.TextReader" />
-   instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a thread-safe wrapper around the specified TextReader.</para>
         </summary>
         <returns>
-          <para> A thread-safe <see cref="T:System.IO.TextReader" /> .</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread-safe <see cref="T:System.IO.TextReader" />.</para>
         </returns>
-        <remarks>
-          <para>This method returns a <see cref="T:System.IO.TextReader" /> instance that wraps around the specified <see cref="T:System.IO.TextReader" /> instance and restricts concurrent
-   access to it by multiple threads.</para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">The <paramref name="reader" /> parameter is <see langword="null" />.</exception>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextReader to synchronize. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
@@ -489,8 +602,14 @@ is a blocking version of this method.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.IO.TextReader" /> instance is cast to an <see cref="T:System.IDisposable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IDisposable.Dispose" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -498,9 +617,4 @@ is a blocking version of this method.</para>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyContainerPermissionFlags" FullName="System.Security.Permissions.KeyContainerPermissionFlags">
   <TypeSignature Language="C#" Value="public enum KeyContainerPermissionFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed KeyContainerPermissionFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,175 +19,257 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by members of the <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> class.</para>
+      <block subset="none" type="note">
+        <para>Many of these flags can have powerful effects and should be granted only to highly trusted code.</para>
+      </block>
+      <para>The most powerful of the flags are <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Create" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Delete" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Import" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Export" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Decrypt" />, and <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.AllFlags" />. For specific threats that the use of these flags can present, see the member descriptions.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of key container access allowed.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllFlags">
       <MemberSignature Language="C#" Value="AllFlags" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags AllFlags = int32(13111)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Create, decrypt, delete, and open a key container; export and import a key; sign files using a key; and view and change the access control list for a key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ChangeAcl">
       <MemberSignature Language="C#" Value="ChangeAcl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags ChangeAcl = int32(8192)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Change the access control list (ACL) for a key container. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="Create" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags Create = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creating a key container also creates a file on disk. It is very important that any key container that is created is removed when it is no longer in use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Create a key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Decrypt">
       <MemberSignature Language="C#" Value="Decrypt" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags Decrypt = int32(512)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decryption is a privileged operation because it uses the private key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypt a key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="Delete" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags Delete = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deleting a key container can constitute a denial of service attack because it prevents the use of files encrypted or signed with the key. Therefore, deletion is a privileged operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Delete a key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Export">
       <MemberSignature Language="C#" Value="Export" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags Export = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ability to export a key is potentially harmful because it removes the exclusivity of the key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Export a key from a key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Import">
       <MemberSignature Language="C#" Value="Import" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags Import = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ability to import a key can be as harmful as the ability to delete a container because importing a key into a named key container replaces the existing key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Import a key into a key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NoFlags">
       <MemberSignature Language="C#" Value="NoFlags" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags NoFlags = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No access to a key container.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Open">
       <MemberSignature Language="C#" Value="Open" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags Open = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Open does not give permission to sign or decrypt files using the private key, but it does allow a user to verify file signatures and to encrypt files. Only the owner of the key is able to decrypt these files using the private key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Open a key container and use the public key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Sign">
       <MemberSignature Language="C#" Value="Sign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags Sign = int32(256)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ability to sign a file is potentially harmful because it can allow a user to sign a file using another user's key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sign a file using a key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ViewAcl">
       <MemberSignature Language="C#" Value="ViewAcl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.KeyContainerPermissionFlags ViewAcl = int32(4096)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>View the access control list (ACL) for a key container.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

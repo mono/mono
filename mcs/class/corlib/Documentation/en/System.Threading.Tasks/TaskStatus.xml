@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TaskStatus" FullName="System.Threading.Tasks.TaskStatus">
   <TypeSignature Language="C#" Value="public enum TaskStatus" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TaskStatus extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,12 +10,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the current stage in the lifecycle of a <see cref="T:System.Threading.Tasks.Task" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Canceled">
       <MemberSignature Language="C#" Value="Canceled" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus Canceled = int32(6)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -22,11 +28,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task acknowledged cancellation by throwing an OperationCanceledException with its own CancellationToken while the token was in signaled state, or the task's CancellationToken was already signaled before the task started executing. For more information, see <format type="text/html"><a href="3ecf1ea9-e399-4a6a-a0d6-8475f48dcb28">Task Cancellation</a></format>.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Created">
       <MemberSignature Language="C#" Value="Created" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus Created = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,11 +45,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task has been initialized but has not yet been scheduled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Faulted">
       <MemberSignature Language="C#" Value="Faulted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus Faulted = int32(7)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -48,11 +62,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task completed due to an unhandled exception.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RanToCompletion">
       <MemberSignature Language="C#" Value="RanToCompletion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus RanToCompletion = int32(5)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -61,11 +79,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task completed execution successfully.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Running">
       <MemberSignature Language="C#" Value="Running" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus Running = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -74,11 +96,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task is running but has not yet completed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WaitingForActivation">
       <MemberSignature Language="C#" Value="WaitingForActivation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus WaitingForActivation = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -87,11 +113,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task is waiting to be activated and scheduled internally by the .NET Framework infrastructure.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WaitingForChildrenToComplete">
       <MemberSignature Language="C#" Value="WaitingForChildrenToComplete" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus WaitingForChildrenToComplete = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -100,11 +130,15 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task has finished executing and is implicitly waiting for attached child tasks to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WaitingToRun">
       <MemberSignature Language="C#" Value="WaitingToRun" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskStatus WaitingToRun = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -113,7 +147,10 @@
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The task has been scheduled for execution but has not yet begun executing.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

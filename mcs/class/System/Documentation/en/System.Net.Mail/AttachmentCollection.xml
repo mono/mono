@@ -1,13 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AttachmentCollection" FullName="System.Net.Mail.AttachmentCollection">
   <TypeSignature Language="C#" Value="public sealed class AttachmentCollection : System.Collections.ObjectModel.Collection&lt;System.Net.Mail.Attachment&gt;, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AttachmentCollection extends System.Collections.ObjectModel.Collection`1&lt;class System.Net.Mail.Attachment&gt; implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Collections.ObjectModel.Collection&lt;System.Net.Mail.Attachment&gt;</BaseTypeName>
     <BaseTypeArguments>
-      <BaseTypeArgument TypeParamName="T">System.Net.Mail.Attachment</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!0">System.Net.Mail.Attachment</BaseTypeArgument>
     </BaseTypeArguments>
   </Base>
   <Interfaces>
@@ -16,16 +19,26 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instances of the <see cref="T:System.Net.Mail.AttachmentCollection" /> class are returned by the <see cref="P:System.Net.Mail.MailMessage.AlternateViews" /> and <see cref="P:System.Net.Mail.MailMessage.Attachments" /> properties. </para>
+      <para>Use the <see cref="P:System.Net.Mail.MailMessage.AlternateViews" /> property to specify copies of an e-mail message in different formats. For example, if you send a message in HTML, you might also want provide a plain text version in case some of the recipients use e-mail readers that cannot display HTML content.</para>
+      <para>Use the collection returned by the <see cref="P:System.Net.Mail.MailMessage.Attachments" /> property to add an attachment, such as a file or the contents of a <see cref="T:System.IO.Stream" /> to this <see cref="T:System.Net.Mail.MailMessage" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores attachments to be sent as part of an e-mail message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ClearItems">
       <MemberSignature Language="C#" Value="protected override void ClearItems ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void ClearItems() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -38,25 +51,35 @@
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the <see cref="M:System.Net.Mail.MailMessage.Dispose" /> method. You do not have to call it in your application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Net.Mail.AttachmentCollection" />. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InsertItem">
       <MemberSignature Language="C#" Value="protected override void InsertItem (int index, System.Net.Mail.Attachment item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InsertItem(int32 index, class System.Net.Mail.Attachment item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -66,17 +89,24 @@
         <Parameter Name="item" Type="System.Net.Mail.Attachment" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Net.Mail.Attachment" /> object into this collection, at the specified index location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified location at which to insert the <see cref="T:System.Net.Mail.Attachment" /> object.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Mail.Attachment" /> object to be inserted.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">
       <MemberSignature Language="C#" Value="protected override void RemoveItem (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void RemoveItem(int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -92,9 +122,11 @@
     </Member>
     <Member MemberName="SetItem">
       <MemberSignature Language="C#" Value="protected override void SetItem (int index, System.Net.Mail.Attachment item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void SetItem(int32 index, class System.Net.Mail.Attachment item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -104,10 +136,15 @@
         <Parameter Name="item" Type="System.Net.Mail.Attachment" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the <see cref="T:System.Net.Mail.Attachment" /> element at the specified location in the collection with the new <see cref="T:System.Net.Mail.Attachment" /> object.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the element in this collection to be replaced.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Mail.Attachment" /> object to replace the specified element in the collection.</param>
       </Docs>
     </Member>
   </Members>

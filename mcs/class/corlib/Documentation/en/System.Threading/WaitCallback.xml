@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WaitCallback" FullName="System.Threading.WaitCallback">
   <TypeSignature Maintainer="auto" Language="C#" Value="public delegate void WaitCallback(object state);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WaitCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,21 +13,35 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="state">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="state" Type="System.Object" />
   </Parameters>
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="state">To be added.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Threading.WaitCallback" /> represents a callback method that you want to execute on a <see cref="T:System.Threading.ThreadPool" /> thread. Create the delegate by passing your callback method to the <see cref="T:System.Threading.WaitCallback" /> constructor. Your method must have the signature shown here.</para>
+      <para>Queue your task for execution by passing the <see cref="T:System.Threading.WaitCallback" /> delegate to <see cref="M:System.Threading.ThreadPool.QueueUserWorkItem(System.Threading.WaitCallback,System.Object)" />. Your callback method executes when a thread pool thread becomes available.</para>
+      <para>[Visual Basic]</para>
+      <block subset="none" type="note">
+        <para>Visual Basic users can omit the <see cref="T:System.Threading.WaitCallback" /> constructor, and simply use the AddressOf operator when passing the callback method to <see cref="M:System.Threading.ThreadPool.QueueUserWorkItem(System.Threading.WaitCallback,System.Object)" />. Visual Basic automatically calls the correct delegate constructor.</para>
+      </block>
+      <para>If you want to pass information to your callback method, create an object that contains the necessary information and pass it to <see cref="M:System.Threading.ThreadPool.QueueUserWorkItem(System.Threading.WaitCallback,System.Object)" /> when you queue your task for execution. Each time your callback method executes, the <paramref name="state" /> parameter contains this object.</para>
+      <para>For more information about using callbacks to synchronize thread pool threads, see <format type="text/html"><a href="2BE05B06-A42E-4C9D-A739-96C21D673927">[&lt;topic://cpconthreadpooling&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a callback method to be executed by a thread pool thread.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

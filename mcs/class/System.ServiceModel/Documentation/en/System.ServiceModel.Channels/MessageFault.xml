@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageFault" FullName="System.ServiceModel.Channels.MessageFault">
+  <TypeSignature Language="C#" Value="public abstract class MessageFault" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MessageFault extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Channels.MessageFault" /> class any time you need an in-memory SOAP fault that can be modified and used to create a SOAP message that contains the fault information.</para>
+      <para>Typically, the <see cref="T:System.ServiceModel.Channels.MessageFault" /> class is used when implementing the <see cref="T:System.ServiceModel.Dispatcher.IErrorHandler" /> interface. In this case, indigo1 passes the <see cref="T:System.ServiceModel.Channels.MessageFault" /> object and you use it for your specific needs (for example, you can customize the <see cref="T:System.ServiceModel.Channels.MessageFault" /> or to log fault information). However, <see cref="T:System.ServiceModel.Channels.MessageFault" /> can be used anywhere custom SOAP fault message handling is required.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an in-memory representation of a SOAP fault that can be passed to <see cref="Overload:System.ServiceModel.Channels.Message.CreateMessage" /> to create a message that contains a fault. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MessageFault ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called in a derived class, initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageFault" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Actor">
+      <MemberSignature Language="C#" Value="public virtual string Actor { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Actor" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the actor.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Code">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.FaultCode Code { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.FaultCode Code" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.FaultCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the SOAP fault code. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MessageFault CreateFault (System.ServiceModel.Channels.Message message, int maxBufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MessageFault CreateFault(class System.ServiceModel.Channels.Message message, int32 maxBufferSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageFault</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="maxBufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.Channels.Message" /> and the specified maximum buffer size for the message buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified <see cref="T:System.ServiceModel.Channels.Message" /> to be used to create the <see cref="T:System.ServiceModel.Channels.MessageFault" /> object.</param>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified maximum buffer size for the message buffer</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MessageFault CreateFault (System.ServiceModel.FaultCode code, System.ServiceModel.FaultReason reason);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MessageFault CreateFault(class System.ServiceModel.FaultCode code, class System.ServiceModel.FaultReason reason) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageFault</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="code" Type="System.ServiceModel.FaultCode" />
+        <Parameter Name="reason" Type="System.ServiceModel.FaultReason" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" /> and <see cref="T:System.ServiceModel.FaultReason" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reason for the fault.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MessageFault CreateFault (System.ServiceModel.FaultCode code, string reason);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MessageFault CreateFault(class System.ServiceModel.FaultCode code, string reason) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageFault</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="code" Type="System.ServiceModel.FaultCode" />
+        <Parameter Name="reason" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" /> and fault reason.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reason for the fault.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MessageFault CreateFault (System.ServiceModel.FaultCode code, System.ServiceModel.FaultReason reason, object detail);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MessageFault CreateFault(class System.ServiceModel.FaultCode code, class System.ServiceModel.FaultReason reason, object detail) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageFault</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="code" Type="System.ServiceModel.FaultCode" />
+        <Parameter Name="reason" Type="System.ServiceModel.FaultReason" />
+        <Parameter Name="detail" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, and detail object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reason for the fault.</param>
+        <param name="detail">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault detail object.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MessageFault CreateFault (System.ServiceModel.FaultCode code, System.ServiceModel.FaultReason reason, object detail, System.Runtime.Serialization.XmlObjectSerializer formatter);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MessageFault CreateFault(class System.ServiceModel.FaultCode code, class System.ServiceModel.FaultReason reason, object detail, class System.Runtime.Serialization.XmlObjectSerializer formatter) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageFault</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="code" Type="System.ServiceModel.FaultCode" />
+        <Parameter Name="reason" Type="System.ServiceModel.FaultReason" />
+        <Parameter Name="detail" Type="System.Object" />
+        <Parameter Name="formatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <param name="formatter">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, detail object, and  <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reason for the fault.</param>
+        <param name="detail">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault detail object.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MessageFault CreateFault (System.ServiceModel.FaultCode code, System.ServiceModel.FaultReason reason, object detail, System.Runtime.Serialization.XmlObjectSerializer formatter, string actor);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MessageFault CreateFault(class System.ServiceModel.FaultCode code, class System.ServiceModel.FaultReason reason, object detail, class System.Runtime.Serialization.XmlObjectSerializer formatter, string actor) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageFault</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="code" Type="System.ServiceModel.FaultCode" />
+        <Parameter Name="reason" Type="System.ServiceModel.FaultReason" />
+        <Parameter Name="detail" Type="System.Object" />
+        <Parameter Name="formatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+        <Parameter Name="actor" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="formatter">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, detail object, <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />, and actor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reason for the fault.</param>
+        <param name="detail">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault detail object.</param>
+        <param name="actor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the actor.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MessageFault CreateFault (System.ServiceModel.FaultCode code, System.ServiceModel.FaultReason reason, object detail, System.Runtime.Serialization.XmlObjectSerializer formatter, string actor, string node);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MessageFault CreateFault(class System.ServiceModel.FaultCode code, class System.ServiceModel.FaultReason reason, object detail, class System.Runtime.Serialization.XmlObjectSerializer formatter, string actor, string node) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MessageFault</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="code" Type="System.ServiceModel.FaultCode" />
+        <Parameter Name="reason" Type="System.ServiceModel.FaultReason" />
+        <Parameter Name="detail" Type="System.Object" />
+        <Parameter Name="formatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+        <Parameter Name="actor" Type="System.String" />
+        <Parameter Name="node" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="formatter">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, detail object, <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />, actor, and node values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reason for the fault.</param>
+        <param name="detail">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault detail object.</param>
+        <param name="actor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the actor.</param>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the node.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDetail&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetDetail&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetDetail&lt;T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the detail object of the message fault.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detail object of the message fault.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the detail object.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDetail&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetDetail&lt;T&gt; (System.Runtime.Serialization.XmlObjectSerializer formatter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T GetDetail&lt;T&gt;(class System.Runtime.Serialization.XmlObjectSerializer formatter) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="formatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
+      </Parameters>
+      <Docs>
+        <param name="formatter">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the detail object that uses the specified <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detail object contained in the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the detail object.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetReaderAtDetailContents">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlDictionaryReader GetReaderAtDetailContents ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlDictionaryReader GetReaderAtDetailContents() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryReader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="HasDetail">
+      <MemberSignature Language="C#" Value="public abstract bool HasDetail { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasDetail" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.ServiceModel.Channels.MessageFault" /> has a detail object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Node">
+      <MemberSignature Language="C#" Value="public virtual string Node { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Node" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the SOAP node containing information about which SOAP node on a message path cause the fault.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnGetReaderAtDetailContents">
+      <MemberSignature Language="C#" Value="protected virtual System.Xml.XmlDictionaryReader OnGetReaderAtDetailContents ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Xml.XmlDictionaryReader OnGetReaderAtDetailContents() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlDictionaryReader</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called in a derived class, returns an <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="OnWriteDetail">
+      <MemberSignature Language="C#" Value="protected virtual void OnWriteDetail (System.Xml.XmlDictionaryWriter writer, System.ServiceModel.EnvelopeVersion version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnWriteDetail(class System.Xml.XmlDictionaryWriter writer, class System.ServiceModel.EnvelopeVersion version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+        <Parameter Name="version" Type="System.ServiceModel.EnvelopeVersion" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.ServiceModel.Channels.MessageFault.OnWriteDetail(System.Xml.XmlDictionaryWriter,System.ServiceModel.EnvelopeVersion)" /> method to participate in the detail writing process. The default behavior is to call <see cref="M:System.ServiceModel.Channels.MessageFault.OnWriteStartDetail(System.Xml.XmlDictionaryWriter,System.ServiceModel.EnvelopeVersion)" /> followed by <see cref="M:System.ServiceModel.Channels.MessageFault.OnWriteDetailContents(System.Xml.XmlDictionaryWriter)" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked prior to writing the detail contents.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write the detail element.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the SOAP envelope to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnWriteDetailContents">
+      <MemberSignature Language="C#" Value="protected abstract void OnWriteDetailContents (System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnWriteDetailContents(class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Channels.MessageFault.OnWriteDetailContents(System.Xml.XmlDictionaryWriter)" /> method is called subsequent to <see cref="M:System.ServiceModel.Channels.MessageFault.OnWriteStartDetail(System.Xml.XmlDictionaryWriter,System.ServiceModel.EnvelopeVersion)" /> and prior to writing the end element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a non-abstract derived class, writes the contents of the detail element. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write the detail element.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnWriteStartDetail">
+      <MemberSignature Language="C#" Value="protected virtual void OnWriteStartDetail (System.Xml.XmlDictionaryWriter writer, System.ServiceModel.EnvelopeVersion version);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnWriteStartDetail(class System.Xml.XmlDictionaryWriter writer, class System.ServiceModel.EnvelopeVersion version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+        <Parameter Name="version" Type="System.ServiceModel.EnvelopeVersion" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the start element using the specified <see cref="T:System.Xml.XmlDictionaryWriter" /> and SOAP envelope version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write the detail element.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the SOAP envelope to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Reason">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.FaultReason Reason { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.FaultReason Reason" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.FaultReason</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a textual description of a SOAP fault. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public void WriteTo (System.Xml.XmlDictionaryWriter writer, System.ServiceModel.EnvelopeVersion version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteTo(class System.Xml.XmlDictionaryWriter writer, class System.ServiceModel.EnvelopeVersion version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+        <Parameter Name="version" Type="System.ServiceModel.EnvelopeVersion" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the message fault that uses the specified <see cref="T:System.Xml.XmlDictionaryWriter" /> and SOAP envelope version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write the message fault.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the SOAP envelope to write.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public void WriteTo (System.Xml.XmlWriter writer, System.ServiceModel.EnvelopeVersion version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteTo(class System.Xml.XmlWriter writer, class System.ServiceModel.EnvelopeVersion version) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="version" Type="System.ServiceModel.EnvelopeVersion" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the message fault that uses the specified <see cref="T:System.Xml.XmlWriter" /> and SOAP envelope version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> used to write the message fault.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the SOAP envelope to write.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

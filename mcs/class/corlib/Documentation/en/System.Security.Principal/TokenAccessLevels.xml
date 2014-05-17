@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TokenAccessLevels" FullName="System.Security.Principal.TokenAccessLevels">
   <TypeSignature Language="C#" Value="public enum TokenAccessLevels" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TokenAccessLevels extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,205 +19,260 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the privileges of the user account associated with the access token. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AdjustDefault">
       <MemberSignature Language="C#" Value="AdjustDefault" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels AdjustDefault = int32(128)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can change the default owner, primary group, or discretionary access control list (DACL) of the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AdjustGroups">
       <MemberSignature Language="C#" Value="AdjustGroups" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels AdjustGroups = int32(64)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can change the attributes of the groups in the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AdjustPrivileges">
       <MemberSignature Language="C#" Value="AdjustPrivileges" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels AdjustPrivileges = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can enable or disable privileges in the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AdjustSessionId">
       <MemberSignature Language="C#" Value="AdjustSessionId" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels AdjustSessionId = int32(256)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can adjust the session identifier of the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AllAccess">
       <MemberSignature Language="C#" Value="AllAccess" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels AllAccess = int32(983551)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user has all possible access to the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AssignPrimary">
       <MemberSignature Language="C#" Value="AssignPrimary" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels AssignPrimary = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can attach a primary token to a process.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Duplicate">
       <MemberSignature Language="C#" Value="Duplicate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels Duplicate = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can duplicate the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Impersonate">
       <MemberSignature Language="C#" Value="Impersonate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels Impersonate = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can impersonate a client.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MaximumAllowed">
       <MemberSignature Language="C#" Value="MaximumAllowed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels MaximumAllowed = int32(33554432)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value that can be assigned for the <see cref="T:System.Security.Principal.TokenAccessLevels" /> enumeration.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Query">
       <MemberSignature Language="C#" Value="Query" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels Query = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can query the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="QuerySource">
       <MemberSignature Language="C#" Value="QuerySource" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels QuerySource = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can query the source of the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="Read" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels Read = int32(131080)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user has standard read rights and the <see cref="F:System.Security.Principal.TokenAccessLevels.Query" /> privilege for the token.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="Write" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Principal.TokenAccessLevels Write = int32(131296)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Principal.TokenAccessLevels</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user has standard write rights and the <see cref="F:System.Security.Principal.TokenAccessLevels.AdjustPrivileges, F:System.Security.Principal.TokenAccessLevels.AdjustGroups" />, and <see cref="F:System.Security.Principal.TokenAccessLevels.AdjustDefault" /> privileges for the token.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

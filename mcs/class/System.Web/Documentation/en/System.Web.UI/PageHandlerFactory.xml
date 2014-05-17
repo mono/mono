@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PageHandlerFactory" FullName="System.Web.UI.PageHandlerFactory">
   <TypeSignature Language="C#" Value="public class PageHandlerFactory : System.Web.IHttpHandlerFactory" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.PageHandlerFactory" /> class implements the <see cref="T:System.Web.IHttpHandlerFactory" /> interface to provide the default HTTP handler for ASP.NET files. The <see cref="T:System.Web.UI.PageHandlerFactory" /> calls the ASP.NET compilation system to compile, if necessary, and return the exact type corresponding to the URL, and then creates an instance of that type. The page type inherits from the <see cref="T:System.Web.UI.Page" /> class and implements the <see cref="T:System.Web.IHttpHandler" /> interface.</para>
+      <para>To build a custom page handler factory, implement the <see cref="T:System.Web.IHttpHandlerFactory" /> and register the custom <see cref="T:System.Web.UI.PageHandlerFactory" /> class in the Web.config file for the application in the <format type="text/html"><a href="24ca01f3-7141-4fdc-acac-71c0733cf6c2">httpHandlers Element (ASP.NET Settings Schema)</a></format> configuration section.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates instances of classes that inherit from the <see cref="T:System.Web.UI.Page" /> class and implement the <see cref="T:System.Web.IHttpHandler" /> interface. Instances are created dynamically to handle requests for ASP.NET files. The <see cref="T:System.Web.UI.PageHandlerFactory" /> class is the default handler factory implementation for ASP.NET pages.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +33,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageHandlerFactory.#ctor" /> constructor is the default constructor and initializes any fields to their default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PageHandlerFactory" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHandler">
@@ -45,13 +59,25 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="requestType">To be added.</param>
         <param name="url">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageHandlerFactory.GetHandler(System.Web.HttpContext,System.String,System.String,System.String)" /> method is called by the ASP.NET run time and returns either a valid instance of the <see cref="T:System.Web.IHttpHandler" /> interface or null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an instance of the <see cref="T:System.Web.IHttpHandler" /> interface to process the requested resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Web.IHttpHandler" /> that processes the request; otherwise, null.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Web.HttpContext" /> class that provides references to intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests. </param>
+        <param name="requestType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP data transfer method (GET or POST) that the client uses.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.HttpRequest.PhysicalApplicationPath" /> property to the requested resource.</param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseHandler">
@@ -67,9 +93,13 @@
         <Parameter Name="handler" Type="System.Web.IHttpHandler" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables a factory to reuse an existing instance of a handler.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.IHttpHandler" /> to reuse.</param>
       </Docs>
     </Member>
   </Members>

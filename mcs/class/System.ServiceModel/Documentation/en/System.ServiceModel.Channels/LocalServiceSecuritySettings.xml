@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="LocalServiceSecuritySettings" FullName="System.ServiceModel.Channels.LocalServiceSecuritySettings">
+  <TypeSignature Language="C#" Value="public sealed class LocalServiceSecuritySettings" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit LocalServiceSecuritySettings extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains the local security settings used by the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> to build the security channel. These settings are local to the service and are not represented in the service's security policy.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides local service security properties that can be set.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LocalServiceSecuritySettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.LocalServiceSecuritySettings" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.LocalServiceSecuritySettings Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.LocalServiceSecuritySettings Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.LocalServiceSecuritySettings</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of this class from the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.ServiceModel.Channels.LocalServiceSecuritySettings" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="DetectReplays">
+      <MemberSignature Language="C#" Value="public bool DetectReplays { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DetectReplays" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether replay detection is enabled on the service. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InactivityTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan InactivityTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan InactivityTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a secure conversation session, note that both this property and the ReceiveTimeout property on the binding affect session timeout. The shorter of the two determines when timeouts occur.</para>
+          <para>Session settings such as this one are applicable under any of the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>All client credential types for <see cref="T:System.ServiceModel.WSDualHttpBinding" /> and <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is enabled.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is not enabled, on <see cref="T:System.ServiceModel.WSHttpBinding" /> with <see cref="P:System.ServiceModel.Description.ClientCredentials.UserName" /> = true or  <see cref="P:System.ServiceModel.Description.ClientCredentials.windows" /> = true.</para>
+            </item>
+          </list>
+          <para>Session settings such as this one are not applicable under any of the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>For <see cref="T:System.ServiceModel.BasicHttpBinding" />.</para>
+            </item>
+            <item>
+              <para>For <see cref="T:System.ServiceModel.NetNamedPipeBinding" />.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is not enabled, on <see cref="T:System.ServiceModel.WSHttpBinding" /> with <see cref="P:System.ServiceModel.Description.ClientCredentials.ClientCertificate" /> = true or with none of the <see cref="T:System.ServiceModel.Description.ClientCredentials" /> properties set to true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the duration to wait before the channel is closed due to inactivity.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IssuedCookieLifetime">
+      <MemberSignature Language="C#" Value="public TimeSpan IssuedCookieLifetime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan IssuedCookieLifetime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the service issues secure conversation cookie tokens to the client, their validity period is determined by the value of this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lifetime for the <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" /> that the service issues for the client.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxCachedCookies">
+      <MemberSignature Language="C#" Value="public int MaxCachedCookies { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxCachedCookies" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />s that the service allows to cache at once.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxClockSkew">
+      <MemberSignature Language="C#" Value="public TimeSpan MaxClockSkew { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan MaxClockSkew" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for this property is 5 minutes. </para>
+          <para>Messages that do not pass the send-time test are rejected.</para>
+          <para>This property is used in conjunction with the message timestamp verification and the <see cref="P:System.ServiceModel.Channels.LocalClientSecuritySettings.ReplayWindow" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum allowable time difference between the system clocks of the two parties that are communicating.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxPendingSessions">
+      <MemberSignature Language="C#" Value="public int MaxPendingSessions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxPendingSessions" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of concurrent security sessions that are established with the server for which it has issued a session token but for which no application messages are sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxStatefulNegotiations">
+      <MemberSignature Language="C#" Value="public int MaxStatefulNegotiations { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxStatefulNegotiations" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Negotiation sessions in excess of this limit are rejected and a SOAP fault is sent back to the client. The client typically must retry later, which allows some time for existing negotiations on the service to complete.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of concurrent security negotiations with clients that the service can participate in.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiationTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan NegotiationTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan NegotiationTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this limit is exceeded, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum duration of the security negotiation phase between client and service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReconnectTransportOnFailure">
+      <MemberSignature Language="C#" Value="public bool ReconnectTransportOnFailure { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ReconnectTransportOnFailure" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this flag is set to true, the service allows the client to send messages that correspond to a single security session over multiple transport connections. This is useful in the case of secure WS-ReliableMessaging because the client requires the session to tolerate transient transport failures.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether security sessions attempt to reconnect after transport failures.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplayCacheSize">
+      <MemberSignature Language="C#" Value="public int ReplayCacheSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ReplayCacheSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A nonce is a "number used once".</para>
+          <para>If the nonce count is exceeded, the incoming message is rejected and a <see cref="T:System.ServiceModel.Security.MessageSecurityException" /> is thrown. Old nonces are removed in a timely manner.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the nonce cache used for replay detection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplayWindow">
+      <MemberSignature Language="C#" Value="public TimeSpan ReplayWindow { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan ReplayWindow" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A nonce is a "number used once".</para>
+          <para>The service rejects all messages that are sent more than the <see cref="P:System.ServiceModel.Channels.LocalServiceSecuritySettings.ReplayWindow" /> duration in the past. Messages that arrive within the ReplayWindow have their nonce checked for uniqueness.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum amount of time within which the service can accept a message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SessionKeyRenewalInterval">
+      <MemberSignature Language="C#" Value="public TimeSpan SessionKeyRenewalInterval { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan SessionKeyRenewalInterval" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Session settings such as this one are applicable under any of the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>All client credential types for <see cref="T:System.ServiceModel.WSDualHttpBinding" /> and <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is enabled.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is not enabled, on <see cref="T:System.ServiceModel.WSHttpBinding" /> with <see cref="P:System.ServiceModel.Description.ClientCredentials.UserName" /> = true or  <see cref="P:System.ServiceModel.Description.ClientCredentials.windows" /> = true.</para>
+            </item>
+          </list>
+          <para>Session settings such as this one are not applicable under any of the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>For <see cref="T:System.ServiceModel.BasicHttpBinding" />.</para>
+            </item>
+            <item>
+              <para>For <see cref="T:System.ServiceModel.NetNamedPipeBinding" />.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is not enabled, on <see cref="T:System.ServiceModel.WSHttpBinding" /> with <see cref="P:System.ServiceModel.Description.ClientCredentials.ClientCertificate" /> = true or with none of the <see cref="T:System.ServiceModel.Description.ClientCredentials" /> properties set to true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lifetime of a key used in a security session. When this interval expires the key is automatically renewed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SessionKeyRolloverInterval">
+      <MemberSignature Language="C#" Value="public TimeSpan SessionKeyRolloverInterval { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan SessionKeyRolloverInterval" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After key renewal, the client and server should always send messages using the most current available key. Both parties can accept incoming messages secured with the previous session key until the rollover time expires.</para>
+          <para>Session settings such as this one are applicable under any of the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>All client credential types for <see cref="T:System.ServiceModel.WSDualHttpBinding" /> and <see cref="T:System.ServiceModel.NetTcpBinding" />.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is enabled.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is not enabled, on <see cref="T:System.ServiceModel.WSHttpBinding" /> with <see cref="P:System.ServiceModel.Description.ClientCredentials.UserName" /> = true or  <see cref="P:System.ServiceModel.Description.ClientCredentials.windows" /> = true.</para>
+            </item>
+          </list>
+          <para>Session settings such as this one are not applicable under any of the following conditions:</para>
+          <list type="bullet">
+            <item>
+              <para>For <see cref="T:System.ServiceModel.BasicHttpBinding" />.</para>
+            </item>
+            <item>
+              <para>For <see cref="T:System.ServiceModel.NetNamedPipeBinding" />.</para>
+            </item>
+            <item>
+              <para>If <format type="text/html"><a href="9c93818a-7dfa-43d5-b3a1-1aafccf3a00b">&lt;reliableSession&gt; element</a></format> is not enabled, on <see cref="T:System.ServiceModel.WSHttpBinding" /> with <see cref="P:System.ServiceModel.Description.ClientCredentials.ClientCertificate" /> = true or with none of the <see cref="T:System.ServiceModel.Description.ClientCredentials" /> properties set to true.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time interval after key renewal for which the previous session key is valid on incoming messages during a key renewal.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TimestampValidityDuration">
+      <MemberSignature Language="C#" Value="public TimeSpan TimestampValidityDuration { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan TimestampValidityDuration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum duration of time that messages are valid when sent by the service. If the client receives the service's message after this duration, it discards the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

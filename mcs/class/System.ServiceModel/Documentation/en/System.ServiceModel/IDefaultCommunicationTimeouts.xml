@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IDefaultCommunicationTimeouts" FullName="System.ServiceModel.IDefaultCommunicationTimeouts">
+  <TypeSignature Language="C#" Value="public interface IDefaultCommunicationTimeouts" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDefaultCommunicationTimeouts" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface has four read-only properties that provide default timeout values for the open, send, receive, and close methods that can be called on a communication object. Each implementation is responsible for obtaining the default values in whatever manner is appropriate for the implementation. This interface is implemented by <see cref="T:System.ServiceModel.Channels.ChannelBase" />, the base implementation for writing custom channels, and the <see cref="T:System.ServiceModel.Channels.ChannelManagerBase" />, the base implementation for writing custom channel managers which derive from <see cref="T:System.ServiceModel.Channels.ChannelFactoryBase" /> and <see cref="T:System.ServiceModel.Channels.ChannelListenerBase" />. The interface is also implemented by the <see cref="T:System.ServiceModel.Channels.Binding" /> class and then inherited from there by <see cref="T:System.ServiceModel.Channels.CustomBinding" /> and the system-provided bindings, such as <see cref="T:System.ServiceModel.BasicHttpBinding" />.</para>
+      <para>When you use channels directly, you have the ability to explicitly specify timeouts on a per-channel or per-operation-basis, or on any other custom basis. When using the channel model, timeouts are quite accessible when you want to control them. </para>
+      <para>When using the service model, on the other hand, you program against services and contracts, and timeouts are more in the background. They are controlled by the infrastructure machinery which flows timeouts from place to place on your behalf. <see cref="T:System.ServiceModel.IDefaultCommunicationTimeouts" /> is one mechanism for providing that flow.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface for specifying communication timeouts used by channels, channel managers such as channel listeners and channel factories, and service hosts.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CloseTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan CloseTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan CloseTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All operations that are potentially lengthy must have a timeout. Methods that don't take explicit timeouts, must delegate to those that do with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already consumed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the close method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan OpenTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan OpenTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All operations that are potentially lengthy must have a timeout. Methods that don't take explicit timeouts, must delegate to those that do with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already consumed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the open method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReceiveTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan ReceiveTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan ReceiveTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All operations that are potentially lengthy must have a timeout. Methods that don't take explicit timeouts, must delegate to those that do with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already consumed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the receive method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SendTimeout">
+      <MemberSignature Language="C#" Value="public TimeSpan SendTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan SendTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All operations that are potentially lengthy must have a timeout. Methods that don't take explicit timeouts, must delegate to those that do with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already consumed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the send method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

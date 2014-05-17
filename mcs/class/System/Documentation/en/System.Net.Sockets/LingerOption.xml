@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LingerOption" FullName="System.Net.Sockets.LingerOption" FullNameSP="System_Net_Sockets_LingerOption" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public LingerOption extends System.Object" />
   <TypeSignature Language="C#" Value="public class LingerOption" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit LingerOption extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +10,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -15,70 +18,118 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para>Maintains information that specifies how a <see cref="T:System.Net.Sockets.Socket" /> instance
-   with pending data behaves when the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method of
-   the socket is called. </para>
-    </summary>
     <remarks>
-      <para> An instance of this class is
-      passed into the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" qualify="true" /> method
-      and is returned by the <see cref="M:System.Net.Sockets.Socket.GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName)" qualify="true" /> method when the <paramref name="optionName" />
-      parameter is set to <see cref="F:System.Net.Sockets.SocketOptionName.Linger" qualify="true" />.</para>
-      <para>When the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property is <see langword="true" />, any queued data continues to be sent until
-   time equal to the setting of the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property has passed or until
-   the input queue is empty. At this time, the connection is closed. </para>
-      <para> When the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property is zero or the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property is
-<see langword="false" />, calling <see cref="M:System.Net.Sockets.Socket.Close" /> immediately closes the socket and any
-pending data is lost. </para>
-When setting the <see cref="F:System.Net.Sockets.SocketOptionName.Linger" /> option of an instance of
-the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class, a <see cref="T:System.ArgumentException" qualify="true" /> exception is thrown if the
-<see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property is
-less than zero or greater than <see cref="F:System.UInt16.MaxValue" />.
-</remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>There may still be data available in the outgoing network buffer after an application calls the <see cref="T:System.Net.Sockets.Socket" /> or <see cref="T:System.Net.Sockets.TcpClient" /> method. If you want to specify the amount of time that the <see cref="T:System.Net.Sockets.Socket" /> will attempt to transmit unsent data after closing, create a <see cref="T:System.Net.Sockets.LingerOption" /> with the <paramref name="enable" /> parameter set to true, and the <paramref name="seconds" /> parameter set to the desired amount of time. The <paramref name="seconds" /> parameter is used to indicate how long you would like the <see cref="T:System.Net.Sockets.Socket" /> to remain connected before timing out. If you do not want the <see cref="T:System.Net.Sockets.Socket" /> to stay connected for any length of time after closing, create a <see cref="T:System.Net.Sockets.LingerOption" /> instance with the <paramref name="enable" /> parameter set to true and the <paramref name="seconds" /> parameter set to zero. In this case, the <see cref="T:System.Net.Sockets.Socket" /> will close immediately and any unsent data will be lost. Once created, pass the <see cref="T:System.Net.Sockets.LingerOption" /> to the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" /> method. If you are sending and receiving data with a <see cref="T:System.Net.Sockets.TcpClient" />, then set the <see cref="T:System.Net.Sockets.LingerOption" /> instance in the <see cref="P:System.Net.Sockets.TcpClient.LingerState" /> property.</para>
+      <para>The IP stack computes the default IP protocol time-out period to use based on the round trip time of the connection. In most cases, the time-out computed by the stack is more relevant than one defined by an application. This is the default behavior for a <see cref="T:System.Net.Sockets.Socket" /> when the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property is not set and for a <see cref="T:System.Net.Sockets.TcpClient" /> when the <see cref="P:System.Net.Sockets.TcpClient.LingerState" /> property is not set.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a <see cref="T:System.Net.Sockets.Socket" /> will remain connected after a call to the <see cref="M:System.Net.Sockets.Socket.Close" /> or <see cref="M:System.Net.Sockets.TcpClient.Close" /> methods and the length of time it will remain connected, if data remains to be sent.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(bool enable, int32 seconds)" />
-      <MemberSignature Language="C#" Value="public LingerOption (bool enable, int secs);" />
+      <MemberSignature Language="C#" Value="public LingerOption (bool enable, int seconds);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool enable, int32 seconds) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="enable" Type="System.Boolean" />
-        <Parameter Name="secs" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="enable">A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> enables the linger option and <see langword="false" /> disables the option.</param>
-        <param name="secs">To be added.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of
-      the <see cref="T:System.Net.Sockets.LingerOption" /> class.</para>
-        </summary>
-        <remarks>
-          <para>The <see cref="T:System.Net.Sockets.LingerOption" /> instance is created with the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property set to <paramref name="enable " />and the
-<see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property set to <paramref name="seconds" />.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="enable" Type="System.Boolean" />
+        <Parameter Name="seconds" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There may still be data available in the outgoing network buffer after you close the <see cref="T:System.Net.Sockets.Socket" />. Use the <paramref name="enable" /> parameter to specify whether you would like the <see cref="T:System.Net.Sockets.Socket" /> to continue transmitting unsent data after the close method is called. Use the <paramref name="seconds" /> parameter to indicate how long you would like the <see cref="T:System.Net.Sockets.Socket" /> to attempt transferring unsent data before timing out. If you specify true for the <paramref name="enable" /> parameter and 0 for the <paramref name="seconds" /> parameter, the <see cref="T:System.Net.Sockets.Socket" /> will attempt to send data until there is no data left in the outgoing network buffer. If you specify false for the <paramref name="enable" /> parameter, the <see cref="T:System.Net.Sockets.Socket" /> will close immediately and any unsent data will be lost.</para>
+          <para>The following table describes the behavior on the <see cref="M:System.Net.Sockets.Socket.Close" /> and <see cref="M:System.Net.Sockets.TcpClient.Close" /> methods based on the possible values of the <paramref name="enable" /> and <paramref name="seconds" /> parameters when an T:System.Net.Sockets.LingerOption instance is created and set in the <see cref="P:System.Net.Sockets.Socket.LingerState" /> or <see cref="P:System.Net.Sockets.TcpClient.LingerState" /> property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="enable" />
+                  </para>
+                </term>
+                <description>
+                  <para>
+                    <paramref name="seconds" />
+                  </para>
+                </description>
+                <description>
+                  <para>Behavior</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>false (disabled), the default value </para>
+              </term>
+              <description>
+                <para>The time-out is not applicable, (default).</para>
+              </description>
+              <description>
+                <para>Attempts to send pending data for a connection-oriented socket (TCP, for example) until the default IP protocol time-out expires. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true (enabled)</para>
+              </term>
+              <description>
+                <para>A nonzero time-out</para>
+              </description>
+              <description>
+                <para>Attempts to send pending data until the specified time-out expires, and if the attempt fails, then Winsock resets the connection. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true (enabled)</para>
+              </term>
+              <description>
+                <para>A zero timeout.</para>
+              </description>
+              <description>
+                <para>Discards any pending data. For connection-oriented socket (TCP, for example), Winsock resets the connection. </para>
+              </description>
+            </item>
+          </list>
+          <para>The IP stack computes the default IP protocol time-out period to use based on the round trip time of the connection. In most cases, the time-out computed by the stack is more relevant than one defined by an application. This is the default behavior for a socket when the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property is not set.</para>
+          <para>When the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property stored in the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property is set greater than the default IP protocol time-out, the default IP protocol time-out will still apply and override.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.LingerOption" /> class.</para>
+        </summary>
+        <param name="enable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to remain connected after the <see cref="M:System.Net.Sockets.Socket.Close" /> method is called; otherwise, false. </param>
+        <param name="seconds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of seconds to remain connected after the <see cref="M:System.Net.Sockets.Socket.Close" /> method is called. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Enabled">
       <MemberSignature Language="ILASM" Value=".property bool Enabled { public hidebysig specialname instance bool get_Enabled() public hidebysig specialname instance void set_Enabled(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool Enabled { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Enabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Enabled" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets a <see cref="T:System.Boolean" /> value indicating whether the connection remains
-   open (lingers) for a period of time after the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method is
-   called.</para>
-        </summary>
         <value>
           <para>
             <see langword="true " />to enable lingering
@@ -86,45 +137,158 @@ less than zero or greater than <see cref="F:System.UInt16.MaxValue" />.
    method is called; otherwise
 <see langword="false" />.</para>
         </value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property to determine whether the <see cref="T:System.Net.Sockets.Socket" /> will linger after closing. Change this value to true or false and pass the altered <see cref="T:System.Net.Sockets.LingerOption" /> to the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" /> method or set the <see cref="P:System.Net.Sockets.TcpClient.LingerState" /> or <see cref="P:System.Net.Sockets.Socket.LingerState" /> property.to disable or enable lingering.</para>
+          <para>The following table describes the behavior for the possible values of the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property and the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property stored in the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="enable" />
+                  </para>
+                </term>
+                <description>
+                  <para>
+                    <paramref name="seconds" />
+                  </para>
+                </description>
+                <description>
+                  <para>Behavior</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>false (disabled), the default value </para>
+              </term>
+              <description>
+                <para>The time-out is not applicable, (default).</para>
+              </description>
+              <description>
+                <para>Attempts to send pending data for a connection-oriented socket (TCP, for example) until the default IP protocol time-out expires. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true (enabled)</para>
+              </term>
+              <description>
+                <para>A nonzero time-out</para>
+              </description>
+              <description>
+                <para>Attempts to send pending data until the specified time-out expires, and if the attempt fails, then Winsock resets the connection. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true (enabled)</para>
+              </term>
+              <description>
+                <para>A zero timeout.</para>
+              </description>
+              <description>
+                <para>Discards any pending data. For connection-oriented socket (TCP, for example), Winsock resets the connection. </para>
+              </description>
+            </item>
+          </list>
+          <para>The IP stack computes the default IP protocol time-out period to use based on the round trip time of the connection. In most cases, the time-out computed by the stack is more relevant than one defined by an application. This is the default behavior for a socket when the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property is not set.</para>
+          <para>When the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property stored in the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property is set greater than the default IP protocol time-out, the default IP protocol time-out will still apply and override.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to linger after the <see cref="T:System.Net.Sockets.Socket" /> is closed.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LingerTime">
       <MemberSignature Language="ILASM" Value=".property int32 LingerTime { public hidebysig specialname instance int32 get_LingerTime() public hidebysig specialname instance void set_LingerTime(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int LingerTime { set; get; }" />
+      <MemberSignature Language="C#" Value="public int LingerTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LingerTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the amount of time to remain connected after
-      the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" /> method is called.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" qualify="true" /> that contains the amount of time, in seconds, to remain connected after
    calling the <see cref="M:System.Net.Sockets.Socket.Close" qualify="true" />
    method.</para>
         </value>
         <remarks>
-          <para>When setting the <see cref="F:System.Net.Sockets.SocketOptionName.Linger" /> option of an instance of
-   the <see cref="T:System.Net.Sockets.Socket" qualify="true" /> class, a <see cref="T:System.ArgumentException" qualify="true" /> exception is thrown if the
-<see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> 
-property is less than zero or greater than
-<see cref="F:System.UInt16.MaxValue" /> . </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this value if you want to determine how long a closed <see cref="T:System.Net.Sockets.Socket" /> will attempt to transfer unsent data before timing out. You can also set this value to the desired time-out period, in seconds. </para>
+          <para>If the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property is true, and you set <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> to 0, the <see cref="T:System.Net.Sockets.Socket" /> discards any pending data to send in the outgoing network buffer. If you change this value, you must pass the altered <see cref="T:System.Net.Sockets.LingerOption" /> instance to the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" /> method or set the <see cref="P:System.Net.Sockets.TcpClient.LingerState" /> or <see cref="P:System.Net.Sockets.Socket.LingerState" /> property.</para>
+          <para>The following table describes the behavior for the possible values of the <see cref="P:System.Net.Sockets.LingerOption.Enabled" /> property and the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property stored in the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="enable" />
+                  </para>
+                </term>
+                <description>
+                  <para>
+                    <paramref name="seconds" />
+                  </para>
+                </description>
+                <description>
+                  <para>Behavior</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>false (disabled), the default value </para>
+              </term>
+              <description>
+                <para>The time-out is not applicable, (default).</para>
+              </description>
+              <description>
+                <para>Attempts to send pending data for a connection-oriented socket (TCP, for example) until the default IP protocol time-out expires. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true (enabled)</para>
+              </term>
+              <description>
+                <para>A nonzero time-out</para>
+              </description>
+              <description>
+                <para>Attempts to send pending data until the specified time-out expires, and if the attempt fails, then Winsock resets the connection. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true (enabled)</para>
+              </term>
+              <description>
+                <para>A zero timeout.</para>
+              </description>
+              <description>
+                <para>Discards any pending data. For connection-oriented socket (TCP, for example), Winsock resets the connection. </para>
+              </description>
+            </item>
+          </list>
+          <para>The IP stack computes the default IP protocol time-out period to use based on the round trip time of the connection. In most cases, the time-out computed by the stack is more relevant than one defined by an application. This is the default behavior for a socket when the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property is not set.</para>
+          <para>When the <see cref="P:System.Net.Sockets.LingerOption.LingerTime" /> property stored in the <see cref="P:System.Net.Sockets.Socket.LingerState" /> property is set greater than the default IP protocol time-out, the default IP protocol time-out will still apply and override.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time to remain connected after calling the <see cref="M:System.Net.Sockets.Socket.Close" /> method if data remains to be sent.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

@@ -1,13 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LinkedResourceCollection" FullName="System.Net.Mail.LinkedResourceCollection">
   <TypeSignature Language="C#" Value="public sealed class LinkedResourceCollection : System.Collections.ObjectModel.Collection&lt;System.Net.Mail.LinkedResource&gt;, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit LinkedResourceCollection extends System.Collections.ObjectModel.Collection`1&lt;class System.Net.Mail.LinkedResource&gt; implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Collections.ObjectModel.Collection&lt;System.Net.Mail.LinkedResource&gt;</BaseTypeName>
     <BaseTypeArguments>
-      <BaseTypeArgument TypeParamName="T">System.Net.Mail.LinkedResource</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!0">System.Net.Mail.LinkedResource</BaseTypeArgument>
     </BaseTypeArguments>
   </Base>
   <Interfaces>
@@ -16,16 +19,24 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An instance of the <see cref="T:System.Net.Mail.LinkedResourceCollection" /> class is returned by the <see cref="P:System.Net.Mail.AlternateView.LinkedResources" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores linked resources to be sent as part of an e-mail message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ClearItems">
       <MemberSignature Language="C#" Value="protected override void ClearItems ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void ClearItems() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -38,25 +49,39 @@
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Net.Mail.LinkedResourceCollection.Dispose" /> when you are finished using the <see cref="T:System.Net.Mail.LinkedResourceCollection" />. The <see cref="M:System.Net.Mail.LinkedResourceCollection.Dispose" /> method leaves the <see cref="T:System.Net.Mail.LinkedResourceCollection" /> in an unusable state. After calling <see cref="M:System.Net.Mail.LinkedResourceCollection.Dispose" />, you must release all references to the <see cref="T:System.Net.Mail.LinkedResourceCollection" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Net.Mail.LinkedResourceCollection" /> occupied. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <para>This method invokes <see cref="M:System.Net.Mail.AlternateView.Dispose(System.Boolean)" /> on all views in this collection. This method is called by the <see cref="M:System.Net.Mail.MailMessage.Dispose" /> method. You do not need to call it in your application.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Net.Mail.LinkedResourceCollection.Dispose" /> before you release your last reference to the <see cref="T:System.Net.Mail.LinkedResourceCollection" />. Otherwise, the resources it is using are not freed until the garbage collector calls the <see cref="T:System.Net.Mail.LinkedResourceCollection" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Net.Mail.LinkedResourceCollection" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InsertItem">
       <MemberSignature Language="C#" Value="protected override void InsertItem (int index, System.Net.Mail.LinkedResource item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InsertItem(int32 index, class System.Net.Mail.LinkedResource item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -66,17 +91,24 @@
         <Parameter Name="item" Type="System.Net.Mail.LinkedResource" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Mail.LinkedResource" /> object into this collection, at the specified location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the location at which to insert the <see cref="T:System.Mail.LinkedResource" /> object.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Mail.LinkedResource" /> object to be inserted into this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">
       <MemberSignature Language="C#" Value="protected override void RemoveItem (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void RemoveItem(int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -92,9 +124,11 @@
     </Member>
     <Member MemberName="SetItem">
       <MemberSignature Language="C#" Value="protected override void SetItem (int index, System.Net.Mail.LinkedResource item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void SetItem(int32 index, class System.Net.Mail.LinkedResource item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -106,8 +140,11 @@
       <Docs>
         <param name="index">To be added.</param>
         <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the <see cref="T:System.Net.Mail.LinkedResource" /> element at the specified location in the collection with the new <see cref="T:System.Net.Mail.LinkedResource" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

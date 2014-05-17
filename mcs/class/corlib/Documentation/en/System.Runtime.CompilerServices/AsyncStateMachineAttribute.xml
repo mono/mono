@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AsyncStateMachineAttribute" FullName="System.Runtime.CompilerServices.AsyncStateMachineAttribute">
+  <TypeSignature Language="C#" Value="public sealed class AsyncStateMachineAttribute : System.Runtime.CompilerServices.StateMachineAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit AsyncStateMachineAttribute extends System.Runtime.CompilerServices.StateMachineAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Runtime.CompilerServices.StateMachineAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You shouldn't apply the <unmanagedCodeEntityReference>AsyncStateMachine</unmanagedCodeEntityReference> attribute to methods in your code. For methods that have the async modifier, the compiler will apply the <unmanagedCodeEntityReference>AsyncStateMachine</unmanagedCodeEntityReference> attribute in the IL that the compiler emits.</para>
+      <para>When a method (MethodName) has the Async or async modifier, the compiler emits IL that includes a state machine structure. This structure contains the code in the method. That IL also contains a stub method (MethodName) that calls into the state machine. The compiler adds the <unmanagedCodeEntityReference>AsyncStateMachine</unmanagedCodeEntityReference> attribute to the stub method so that tools can identify the corresponding state machine. Details of the emitted IL might change in future releases of the compilers.</para>
+      <para>For information about the Async feature, see <format type="text/html"><a href="db854f91-ccef-4035-ae4d-0911fde808c7">Asynchronous Programming with Async and Await (C# and Visual Basic)</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether a method is marked with either the <format type="text/html"><a href="1be8b4b5-9689-41b5-bd33-b906bfd53bc5">Async (Visual Basic)</a></format> or <format type="text/html"><a href="16f14f09-b2ce-42c7-a875-e4eca5d50674">async (C# Reference)</a></format> modifier.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AsyncStateMachineAttribute (Type stateMachineType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type stateMachineType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stateMachineType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.AsyncStateMachineAttribute" /> class.</para>
+        </summary>
+        <param name="stateMachineType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type object for the underlying state machine type that's used to implement a state machine method.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

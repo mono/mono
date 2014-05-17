@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BadImageFormatException" FullName="System.BadImageFormatException" FullNameSP="System_BadImageFormatException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable BadImageFormatException extends System.SystemException" />
   <TypeSignature Language="C#" Value="public class BadImageFormatException : SystemException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit BadImageFormatException extends System.SystemException" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,18 +16,12 @@
     <BaseTypeName>System.SystemException</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para>Represents the error that occurs when an attempt is made
-      to load a <see cref="T:System.Reflection.Assembly" />
-      from a file with an invalid file image.</para>
-    </summary>
-    <remarks>
-      <para> This exception is thrown when the file image of an
-      executable program is invalid. For example, this exception is thrown when
-      unmanaged code is passed to <see cref="M:System.Reflection.Assembly.Load(System.String)" qualify="true" />
-      for loading.</para>
-    </remarks>
     <example>
       <para>The following example demonstrates an attempt to load an unmanaged executable, which causes
       the system to throw a <see cref="T:System.BadImageFormatException" /> exception. <block subset="none" type="note">The name of the unmanaged executable
@@ -49,162 +45,316 @@ public class BadImageExample {
         <para>Caught: The format of the file 'calc' is invalid.</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This exception is thrown when the file format of a dynamic link library (.dll file) or an executable (.exe file) does not conform to the format that is expected by the common language runtime. In particular, the exception is thrown under the following conditions:</para>
+      <list type="bullet">
+        <item>
+          <para>An earlier version of a .NET Framework utility, such as ILDasm.exe or installutil.exe, is used with an assembly that was developed with a later version of the .NET Framework.</para>
+          <para>To address this exception, use the version of the tool that corresponds to the version of the .NET Framework that was used to develop the assembly. This may require modifying the Path environment variable or providing a fully qualified path to the correct executable.</para>
+        </item>
+        <item>
+          <para>An attempt is made to load an unmanaged dynamic link library or executable (such as a Windows system DLL) as if it were a .NET Framework assembly. The following example illustrates this by using the <see cref="M:System.Reflection.Assembly.LoadFile(System.String)" /> method to load Kernel32.dll.</para>
+          <para>code reference: System.BadImageFormatException.Class#1</para>
+          <para>To address this exception, access the methods defined in the DLL by using the features provided by your development language, such as the Declare statement in Visual Basic or the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> attribute with the extern keyword in C#. </para>
+        </item>
+        <item>
+          <para>A DLL or executable is loaded as a 64-bit assembly, but it contains 32-bit features or resources. For example, it relies on COM interop or calls methods in a 32-bit dynamic link library.</para>
+          <para>To address this exception, set the project's <ui>Platform target</ui> property to x86 (instead of x64 or AnyCPU) and recompile.</para>
+        </item>
+        <item>
+          <para>Components have been created using different versions of the .NET Framework. Typically, this exception occurs when an application or component that was developed using the net_v10_short or the net_v11_short attempts to load an assembly that was developed using the net_v20SP1_short or later, or when an application that was developed using the net_v20SP1_short or net_v35_short attempts to load an assembly that was developed using the net_v40_short. The <see cref="T:System.BadImageFormatException" /> may be reported as a compile-time error, or the exception may be thrown at run time. The following example illustrates this scenario. It defines a StringLib class that has a single member, ToProperCase, and that resides in an assembly named StringLib.dll.</para>
+          <para>code reference: System.BadImageFormatException.Class#2</para>
+          <para>The following example uses reflection to load an assembly named StringLib.dll. If the source code is compiled with a net_v11_short compiler, a <see cref="T:System.BadImageFormatException" /> is thrown by the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" /> method. </para>
+          <para>code reference: System.BadImageFormatException.Class#3</para>
+          <para>To address this exception, ensure that the assembly from which the exception is thrown attempts to load an assembly that was developed by using a compatible version of the .NET Framework.</para>
+        </item>
+      </list>
+      <para>
+        <see cref="T:System.BadImageFormatException" /> uses the HRESULT COR_E_BADIMAGEFORMAT, which has the value 0x8007000B.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.BadImageFormatException" />, see the <see cref="T:System.BadImageFormatException" /> constructors.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when the file image of a dynamic link library (DLL) or an executable program is invalid. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public BadImageFormatException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.BadImageFormatException" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.BadImageFormatException.Message" /> property of
-   the new instance to a system-supplied message that describes the error, such
-   as "Format of the executable or library is invalid." This message takes into
-   account the current system culture.</para>
-          <para>The <see cref="!:System.BadImageFormatException.InnerException" /> and the <see cref="P:System.BadImageFormatException.FileName" /> properties of the new instance are
-initialized to <see langword="null" /> .</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Exception.Message" /> property of the new instance to a system-supplied message that describes the error, such as "Format of the executable or library is invalid." This message takes into account the current system culture.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.BadImageFormatException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>A null reference (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The localized error message string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.BadImageFormatException" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message)" />
       <MemberSignature Language="C#" Value="public BadImageFormatException (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.BadImageFormatException" />
-class.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="P:System.BadImageFormatException.Message" /> property of the new instance
-   using <paramref name="message" />. If <paramref name="message" /> is
-<see langword="null" />, the <see cref="P:System.BadImageFormatException.Message" /> property is initialized to the system-supplied message 
-   provided by the constructor that takes no arguments.</para>
-          <para> The <see cref="!:System.BadImageFormatException.InnerException" /> and the <see cref="P:System.BadImageFormatException.FileName" /> properties of the new instance are initialized to
-<see langword="null" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.BadImageFormatException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>A null reference (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.BadImageFormatException" /> class with a specified error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message that describes the error. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BadImageFormatException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected BadImageFormatException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called during deserialization to reconstitute the exception object transmitted over a stream. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.BadImageFormatException" /> class with serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, class System.Exception inner)" />
       <MemberSignature Language="C#" Value="public BadImageFormatException (string message, Exception inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception inner) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is non-null, then the current exception was raised in a catch block handling <paramref name="inner" /> .</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.BadImageFormatException" />
-class.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="P:System.BadImageFormatException.Message" /> property of
-   the new instance using <paramref name="message" /> and the <see cref="!:System.BadImageFormatException.InnerException" /> property using
-<paramref name="inner" />. If <paramref name="message" /> is <see langword="null" />, 
-   the <see cref="P:System.BadImageFormatException.Message" /> property is initialized to the system-supplied message
-   provided by the constructor that takes no arguments.</para>
-          <para>The <see cref="P:System.BadImageFormatException.FileName" /> property of the new instance is initialized to <see langword="null" />.</para>
-          <para>
-            <block subset="none" type="note">For more information on inner
-   exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.BadImageFormatException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The inner exception reference. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.BadImageFormatException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="inner" /> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, string fileName)" />
       <MemberSignature Language="C#" Value="public BadImageFormatException (string message, string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, string fileName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <param name="fileName">A <see cref="T:System.String" /> containing the name of the file with the invalid image.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.BadImageFormatException" />
-class.</para>
-        </summary>
         <remarks>
-          <para>This constructor initializes the <see cref="P:System.BadImageFormatException.Message" /> property of the new instance
-   using <paramref name="message" /> and the <see cref="P:System.BadImageFormatException.FileName" /> property using
-<paramref name="fileName" /> . If <paramref name="message" /> is 
-<see langword="null" />, the <see cref="P:System.BadImageFormatException.Message" /> property is initialized to the system-supplied message 
-   provided by the constructor that takes no arguments. </para>
-          <para> The <see cref="!:System.BadImageFormatException.InnerException" /> property of the
-new instance is initialized to <see langword="null" />
-.</para>
-          <para>If the <paramref name="fileName" /> parameter is <see langword="null" />, the <see cref="P:System.BadImageFormatException.FileName" /> property is set
-to <see langword="null" />, the <see cref="P:System.BadImageFormatException.Message" /> property does not contain the name of the file, and the <see cref="M:System.BadImageFormatException.ToString" />
-method does not return the name of the file with the invalid
-image.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.BadImageFormatException.FileName" /> </para>
+              </term>
+              <description>
+                <para>The full name of the file with the invalid image. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.BadImageFormatException.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.BadImageFormatException" /> class with a specified error message and file name.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that describes the error. </param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full name of the file with the invalid image. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, string fileName, class System.Exception inner)" />
+      <MemberSignature Language="C#" Value="public BadImageFormatException (string message, string fileName, Exception inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, string fileName, class System.Exception inner) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string message, string fileName, class System.Exception inner)" />
-      <MemberSignature Language="C#" Value="public BadImageFormatException (string message, string fileName, Exception inner);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="message" Type="System.String" />
@@ -212,85 +362,127 @@ image.</para>
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">A <see cref="T:System.String" /> that describes the error. The content of <paramref name="message" /> is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</param>
-        <param name="fileName">A <see cref="T:System.String" /> containing the name of the file with the invalid image.</param>
-        <param name="inner">An instance of <see cref="T:System.Exception" /> that is the cause of the current exception. If <paramref name="inner" /> is non-null, then the current exception was raised in a catch block handling <paramref name="inner" /> .</param>
-        <param name="fileName">To be added.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.BadImageFormatException" />
-class.</para>
-        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full name of the file with the invalid image. </param>
         <remarks>
-          <para>This constructor initializes the <see cref="P:System.BadImageFormatException.Message" /> property of
-   the new instance using <paramref name="message" />, the <see cref="!:System.BadImageFormatException.InnerException" /> property
-   using <paramref name="inner" />, and the <see cref="P:System.BadImageFormatException.FileName" /> property using <paramref name="fileName" />. If <paramref name="message" /> is <see langword="null" />,
-   the <see cref="P:System.BadImageFormatException.Message" /> property is initialized to the system-supplied message
-   provided by the constructor that takes no arguments.</para>
-          <block subset="none" type="note">
-            <para>If the <paramref name="fileName" /> parameter is <see langword="null" />, the <see cref="P:System.BadImageFormatException.FileName" /> property is set to
-<see langword="null" />, the <see cref="P:System.BadImageFormatException.Message" /> property does not contain the 
-   name of the file, and the <see cref="M:System.BadImageFormatException.ToString" /> method does not return the name
-   of the file with the invalid image.</para>
-            <para>For more information on inner
-   exceptions, see <see cref="P:System.Exception.InnerException" />.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.BadImageFormatException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The inner exception reference. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.BadImageFormatException.FileName" /> </para>
+              </term>
+              <description>
+                <para>The full name of the file with the invalid image. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.BadImageFormatException.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.BadImageFormatException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The full name of the file with the invalid image. </param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="inner" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FileName">
+      <MemberSignature Language="ILASM" Value=".property string FileName { public hidebysig specialname instance string get_FileName() }" />
+      <MemberSignature Language="C#" Value="public string FileName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FileName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FileName">
-      <MemberSignature Language="ILASM" Value=".property string FileName { public hidebysig specialname instance string get_FileName() }" />
-      <MemberSignature Language="C#" Value="public string FileName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the name of the file with the invalid image.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the
    name of the file with the invalid image, or <see langword="null" /> if no file
    name was passed to the constructor for the current instance.</para>
         </value>
         <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the name of the file supplied to the constructor for the current instance, if any. If the file name was not specified or is a null reference (Nothing in Visual Basic), this property returns a null reference.</para>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the file that causes this exception.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FusionLog">
+      <MemberSignature Language="C#" Value="public string FusionLog { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FusionLog" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FusionLog">
-      <MemberSignature Language="C#" Value="public string FusionLog { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the log file that describes why an assembly load failed.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -299,91 +491,78 @@ class.</para>
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the file name, assembly cache log, and additional exception information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Message" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Message">
-      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
-      <MemberSignature Language="C#" Value="public override string Message { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.String" /> that describes the error that caused the current exception.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the
    error description.</para>
         </value>
         <remarks>
-          <para>If no message was supplied to the constructor for the 
-      current exception, this property returns a system-supplied error message.
-      If the <see cref="P:System.BadImageFormatException.FileName" /> property is not <see langword="null" /> ,
-      the message includes the file name.</para>
-          <para> This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no message was supplied to the constructor for the current exception, this property returns a system-supplied error message. If the <see cref="P:System.BadImageFormatException.FileName" /> property is not a null reference (Nothing in Visual Basic), the message includes the file name.</para>
+          <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error message and the name of the file that caused this exception.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation returned by this method includes the name of the exception, the value of the <see cref="P:System.BadImageFormatException.Message" /> property, the result of calling ToString on the inner exception, the value of the <see cref="P:System.BadImageFormatException.FileName" /> property, and the result of calling <see cref="P:System.Environment.StackTrace" />. If any of these members is a null reference (Nothing in Visual Basic), its value is not included in the returned string.</para>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the value of the current exception.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the fully qualified name of this exception and possibly the error message, the name of the inner exception, and the stack trace.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.String" />
-representation of the current exception.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified name of this exception and possibly the error message, the name of the inner exception, and the stack trace.</para>
         </returns>
-        <remarks>
-          <para>The string representation returned by this method 
-      includes the name of the exception, the value of the <see cref="P:System.BadImageFormatException.Message" />
-      property, the result of calling <see langword="ToString " />on the inner exception, the value of the
-   <see cref="P:System.BadImageFormatException.FileName" /> 
-   property, and the result of calling <see cref="P:System.Environment.StackTrace" />.
-   If any of these members is <see langword="null" />, its value is not included in
-   the returned string.
-   </para>
-          <para>
-            <block subset="none" type="note">This method overrides <see cref="M:System.Exception.ToString" />
-.</block>
-          </para>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

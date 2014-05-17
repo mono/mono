@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlBuilder" FullName="System.Web.UI.WebControls.XmlBuilder">
   <TypeSignature Language="C#" Value="public class XmlBuilder : System.Web.UI.ControlBuilder" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Interacts with the parser to build the <see cref="T:System.Web.UI.WebControls.Xml" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +23,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.XmlBuilder" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,9 +44,16 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.XmlBuilder.AppendLiteralString(System.String)" /> method of the <see cref="T:System.Web.UI.WebControls.XmlBuilder" /> class overrides the <see cref="M:System.Web.UI.ControlBuilder.AppendLiteralString(System.String)" /> method of the <see cref="T:System.Web.UI.ControlBuilder" /> class so that the method of the base class has no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds literal content to the control.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The literal content to add to the control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,11 +70,22 @@
         <Parameter Name="attribs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="tagName">To be added.</param>
-        <param name="attribs">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.XmlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method of the <see cref="T:System.Web.UI.WebControls.XmlBuilder" /> class overrides the <see cref="M:System.Web.UI.ControlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method of the <see cref="T:System.Web.UI.ControlBuilder" /> class. This implementation of the <see cref="M:System.Web.UI.WebControls.XmlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method always returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Obtains the <see cref="T:System.Type" /> for the <see cref="T:System.Web.UI.WebControls.Xml" /> control's specified child control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ControlBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method is overridden to always return null.</para>
+        </returns>
+        <param name="tagName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the child control.</param>
+        <param name="attribs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of attributes contained in the child control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,9 +99,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.XmlBuilder.NeedsTagInnerText" /> method of the <see cref="T:System.Web.UI.WebControls.XmlBuilder" /> class overrides the <see cref="M:System.Web.UI.ControlBuilder.NeedsTagInnerText" /> method of the <see cref="T:System.Web.UI.ControlBuilder" /> class to always return true.</para>
+          <para>The inner text is the text between the opening and closing tags of the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Web.UI.WebControls.Xml" /> control needs to get its inner text.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ControlBuilder.NeedsTagInnerText" /> method is overridden to always return true.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,9 +127,16 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method loads the <see cref="T:System.String" /> passed in to an XML document to determine whether it is well-formed. If it is, the code calls the <see cref="M:System.Web.UI.ControlBuilder.SetTagInnerText(System.String)" /> method of the <see cref="T:System.Web.UI.ControlBuilder" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Web.UI.WebControls.Xml" /> control's inner text. </para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to insert as the inner text. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

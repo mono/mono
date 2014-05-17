@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PanelStyle" FullName="System.Web.UI.WebControls.PanelStyle">
   <TypeSignature Language="C#" Value="public class PanelStyle : System.Web.UI.WebControls.Style" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class is used to represent the style settings for a panel control. It encapsulates the properties that control the appearance of a panel and can be applied to multiple panel controls to provide a common appearance.</para>
+      <para>You can specify an image to display in the background of the panel by setting the <see cref="P:System.Web.UI.WebControls.PanelStyle.BackImageUrl" /> property. The horizontal alignment of the contents of the panel is indicated by the <see cref="P:System.Web.UI.WebControls.PanelStyle.HorizontalAlign" /> property. The direction of controls that contain text within the panel control can be specified by setting the <see cref="P:System.Web.UI.WebControls.PanelStyle.Direction" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the style for a <see cref="T:System.Web.UI.WebControls.Panel" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +31,13 @@
         <Parameter Name="bag" Type="System.Web.UI.StateBag" />
       </Parameters>
       <Docs>
-        <param name="bag">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class.</para>
+        </summary>
+        <param name="bag">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.StateBag" /> object that represents the state bag in which to store style information.</param>
       </Docs>
     </Member>
     <Member MemberName="BackImageUrl">
@@ -38,9 +50,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.BackImageUrl" /> property specifies the URL of the background image for the panel control. For this property to work, an image file must exist at the specified location. If the specified image file is not accessible, then the panel control is displayed without a background image.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the background image for the panel control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyFrom">
@@ -56,9 +74,17 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.UI.WebControls.PanelStyle.CopyFrom(System.Web.UI.WebControls.Style)" /> method to duplicate the style settings of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object for the current instance of the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.PanelStyle.CopyFrom(System.Web.UI.WebControls.Style)" /> method copies non-blank elements from the specified <see cref="T:System.Web.UI.WebControls.Style" /> object, <paramref name="s" />. Any element that is defined in <paramref name="s" /> replaces any element that is defined in the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> object. To replace only those style settings left blank in the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> object, use the <see cref="M:System.Web.UI.WebControls.PanelStyle.MergeWith(System.Web.UI.WebControls.Style)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Duplicates the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object for the current instance of the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> object that represents the style settings to copy.</param>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -71,9 +97,53 @@
         <ReturnType>System.Web.UI.WebControls.ContentDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.Direction" /> property specifies the direction in which to display controls that include text in a panel control.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.Direction" /> property is set using one of the <see cref="T:System.Web.UI.WebControls.ContentDirection" /> values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet</para>
+              </term>
+              <description>
+                <para>The content direction is not set.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>LeftToRight</para>
+              </term>
+              <description>
+                <para>Child controls that include text are displayed from left to right.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>RightToLeft</para>
+              </term>
+              <description>
+                <para>Child controls that include text are displayed from right to left.</para>
+              </description>
+            </item>
+          </list>
+          <para>If you specify <see cref="F:System.Web.UI.WebControls.ContentDirection.LeftToRight" />, child controls that include text display from left to right. If you specify <see cref="F:System.Web.UI.WebControls.ContentDirection.RightToLeft" />, child controls that include text display right to left. Use <see cref="F:System.Web.UI.WebControls.ContentDirection.RightToLeft" /> to display text for languages that are written from right to left, such as Arabic or Hebrew.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the direction in which to display controls that include text in a panel control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HorizontalAlign">
@@ -86,9 +156,63 @@
         <ReturnType>System.Web.UI.WebControls.HorizontalAlign</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.HorizontalAlign" /> property specifies the horizontal alignment of the contents within a panel control.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.HorizontalAlign" /> property is set using one of the <see cref="T:System.Web.UI.WebControls.HorizontalAlign" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet</para>
+              </term>
+              <description>
+                <para>The horizontal alignment is not set.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Left</para>
+              </term>
+              <description>
+                <para>The contents of the panel are left-aligned.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Center</para>
+              </term>
+              <description>
+                <para>The contents of the panel are centered.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Right</para>
+              </term>
+              <description>
+                <para>The contents of the panel are right-aligned.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>. If the <see cref="P:System.Web.UI.WebControls.PanelStyle.HorizontalAlign" /> property is set to <see cref="F:System.Web.UI.WebControls.HorizontalAlign.NotSet" /> but the property is set in the control that contains the panel control, the setting is inherited from the containing control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the horizontal alignment of the contents within a panel control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MergeWith">
@@ -104,9 +228,17 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Web.UI.WebControls.PanelStyle.MergeWith(System.Web.UI.WebControls.Style)" /> method to combine the style settings of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object with the current instance of the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.PanelStyle.MergeWith(System.Web.UI.WebControls.Style)" /> method copies non-blank elements from the specified <see cref="T:System.Web.UI.WebControls.Style" /> object, <paramref name="s" />, but does not replace any existing style settings in the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> object. To replace the style settings in the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> object with the style settings in <paramref name="s" />, use the <see cref="M:System.Web.UI.WebControls.PanelStyle.CopyFrom(System.Web.UI.WebControls.Style)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines the style settings of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object with the current instance of the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> object that represents the style settings to combine with the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -120,8 +252,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to remove any defined style settings from the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes any defined style settings from the <see cref="T:System.Web.UI.WebControls.PanelStyle" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScrollBars">
@@ -134,9 +272,68 @@
         <ReturnType>System.Web.UI.WebControls.ScrollBars</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.ScrollBars" /> property specifies the visibility and position of scroll bars in a panel control. </para>
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.ScrollBars" /> property is set using one of the <see cref="T:System.Web.UI.WebControls.ScrollBars" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>None</para>
+              </term>
+              <description>
+                <para>No scroll bars are shown.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Horizontal</para>
+              </term>
+              <description>
+                <para>Only a horizontal scroll bar is shown.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Vertical</para>
+              </term>
+              <description>
+                <para>Only a vertical scroll bar is shown.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Both</para>
+              </term>
+              <description>
+                <para>Both horizontal and vertical scroll bars are shown.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Auto</para>
+              </term>
+              <description>
+                <para>If necessary, horizontal, vertical, or both scroll bars are shown. Otherwise, no scroll bars are shown.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the visibility and position of scroll bars in a panel control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Wrap">
@@ -149,9 +346,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.PanelStyle.Wrap" /> property indicates whether the content wraps within the panel. When the <see cref="P:System.Web.UI.WebControls.PanelStyle.Wrap" /> property is set to false and the <see cref="P:System.Web.UI.WebControls.PanelStyle.ScrollBars" /> property is set to <see cref="F:System.Web.UI.WebControls.ScrollBars.Auto" />, if the content of the panel is longer than what will fit in the panel, the content of the panel will appear on one line with a horizontal scroll bar. When the <see cref="P:System.Web.UI.WebControls.PanelStyle.Wrap" /> property is set to false and the <see cref="P:System.Web.UI.WebControls.PanelStyle.ScrollBars" /> property is set to <see cref="F:System.Web.UI.WebControls.ScrollBars.None" />, the panel will extend and if necessary the Web page will have a horizontal scroll bar.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the content wraps within the panel.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

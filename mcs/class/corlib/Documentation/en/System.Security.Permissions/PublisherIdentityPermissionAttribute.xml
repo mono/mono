@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PublisherIdentityPermissionAttribute" FullName="System.Security.Permissions.PublisherIdentityPermissionAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class PublisherIdentityPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit PublisherIdentityPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,96 +23,149 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The scope of the declaration that is allowed depends on the <see cref="T:System.Security.Permissions.SecurityAction" /> that is used.</para>
+      <para>The properties <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.CertFile" />, <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.SignedFile" />, and <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.X509Certificate" /> are mutually exclusive.</para>
+      <para>The security information declared by a security attribute is stored in the metadata of the attribute target and is accessed by the system at run time. Security attributes are used only for declarative security. For imperative security, use the corresponding permission class.</para>
+      <block subset="none" type="note">
+        <para>Starting with the net_v40_long, identity permissions are not used.</para>
+        <para>   In the .NET Framework versions 1.0 and 1.1, identity permissions cannot have an <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> permission state value. Starting with the .NET Framework version 2.0, identity permissions can have any permission state value. This means that in 2.0 and later versions, identity permissions have the same behavior as permissions that implement the <see cref="T:System.Security.Permissions.IUnrestrictedPermission" /> interface.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>By default, code access security does not check for <see cref="T:System.Security.Policy.Publisher" /> evidence. Unless your computer has a custom code group based on the <see cref="T:System.Security.Policy.PublisherMembershipCondition" /> class, you can improve performance by bypassing Authenticode signature verification. This is accomplished by configuring the runtime to not provide <see cref="T:System.Security.Policy.Publisher" /> evidence for code access security. For more information about how to configure this option and which applications can use it, see the <format type="text/html"><a href="7d208f50-e8d5-4a42-bc1a-1cf3590706a8">&lt;generatePublisherEvidence&gt;</a></format> element.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows security actions for <see cref="T:System.Security.Permissions.PublisherIdentityPermission" /> to be applied to code using declarative security. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PublisherIdentityPermissionAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added: an object of type 'SecurityAction'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.PublisherIdentityPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CertFile">
+      <MemberSignature Language="C#" Value="public string CertFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CertFile" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CertFile">
-      <MemberSignature Language="C#" Value="public string CertFile { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.X509Certificate" /> is set, this property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a certification file containing an Authenticode X.509v3 certificate.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CreatePermission">
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission CreatePermission() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreatePermission">
-      <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should be called only by the security system, never by application code.</para>
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. Declarative security data in metadata is created from the permission that this method returns that corresponds to this attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new instance of <see cref="T:System.Security.Permissions.PublisherIdentityPermission" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.PublisherIdentityPermission" /> that corresponds to this attribute.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SignedFile">
-      <MemberSignature Language="C#" Value="public string SignedFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SignedFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SignedFile" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If either <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.X509Certificate" /> or <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.CertFile" /> is set, this property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a signed file from which to extract an Authenticode X.509v3 certificate.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="X509Certificate">
-      <MemberSignature Language="C#" Value="public string X509Certificate { set; get; }" />
+      <MemberSignature Language="C#" Value="public string X509Certificate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string X509Certificate" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set, <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.CertFile" /> and <see cref="P:System.Security.Permissions.PublisherIdentityPermissionAttribute.SignedFile" /> are ignored.</para>
+          <para>You can obtain the hexadecimal representation by running the Strong Name tool (Sn.exe) with the token and public key options (<system>Sn</system> <system>-tp</system> keyfile) against a file that has an Authenticode signature. For more information, see <format type="text/html"><a href="c1d2b532-1b8e-4c7a-8ac5-53b801135ec6">Sn.exe (Strong Name Tool)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an Authenticode X.509v3 certificate that identifies the publisher of the calling code.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

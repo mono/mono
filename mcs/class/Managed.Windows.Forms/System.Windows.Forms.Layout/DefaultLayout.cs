@@ -246,7 +246,7 @@ namespace System.Windows.Forms.Layout
 			int height;
 			Size preferredsize = child.PreferredSize;
 
-			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink || (child.Dock != DockStyle.None && !(child is Button))) {
+			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink || (child.Dock != DockStyle.None && !(child is Button) && !(child is FlowLayoutPanel))) {
 				width = preferredsize.Width;
 				height = preferredsize.Height;
 			} else {
@@ -257,7 +257,20 @@ namespace System.Windows.Forms.Layout
 				if (preferredsize.Height > height)
 					height = preferredsize.Height;
 			}
-
+			if (child.AutoSize && child is FlowLayoutPanel && child.Dock != DockStyle.None) {
+				switch (child.Dock) {
+				case DockStyle.Left:
+				case DockStyle.Right:
+					if (preferredsize.Width < child.ExplicitBounds.Width && preferredsize.Height < child.Parent.PaddingClientRectangle.Height)
+						width = preferredsize.Width;
+					break;
+				case DockStyle.Top:
+				case DockStyle.Bottom:
+					if (preferredsize.Height < child.ExplicitBounds.Height && preferredsize.Width < child.Parent.PaddingClientRectangle.Width)
+						height = preferredsize.Height;
+					break;
+				}
+			}
 			// Sanity
 			if (width < child.MinimumSize.Width)
 				width = child.MinimumSize.Width;

@@ -1,35 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientSettingsSection" FullName="System.Configuration.ClientSettingsSection">
   <TypeSignature Language="C#" Value="public sealed class ClientSettingsSection : System.Configuration.ConfigurationSection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ClientSettingsSection extends System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Configuration.ConfigurationSection</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The dnprdnshort contains a single default settings provider, <see cref="T:System.Configuration.LocalFileSettingsProvider" />, which stores configuration data to the local file system in files with the extension .config. The contents of configuration files are structured as XML documents. User-scoped settings are persisted in a file with the name username.config. Within this file, data is stored as elements within a &lt;userSettings&gt; section. Each of these sections is represented by a corresponding <see cref="T:System.Configuration.ClientSettingsSection" />. Each section object is owned and administered by a configuration section handler, which is an <see cref="T:System.Configuration.IConfigurationSectionHandler" />.</para>
+      <para>The <see cref="T:System.Configuration.ClientSettingsSection" /> class represents a simple extension of the <see cref="T:System.Configuration.ConfigurationSection" /> class, which is used in the dnprdnshort support for general configuration files.</para>
+      <para>For more information about application settings, see the topic <format type="text/html"><a href="64090a34-8556-4904-8ea0-20efe9f8c886">Application Settings for Windows Forms</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a group of user-scoped application settings in a configuration file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ClientSettingsSection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="M:System.Configuration.ClientSettingsSection.#ctor" /> constructor initializes the <see cref="P:System.Configuration.ClientSettingsSection.Settings" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.ClientSettingsSection" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Properties">
       <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
@@ -39,13 +63,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Settings">
       <MemberSignature Language="C#" Value="public System.Configuration.SettingElementCollection Settings { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.SettingElementCollection Settings" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("", Options=System.Configuration.ConfigurationPropertyOptions.IsDefaultCollection)</AttributeName>
@@ -55,14 +81,17 @@
         <ReturnType>System.Configuration.SettingElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.ClientSettingsSection.Settings" /> property is itself a configuration property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of client settings for the section.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

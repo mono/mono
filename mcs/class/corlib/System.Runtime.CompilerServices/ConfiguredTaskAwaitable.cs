@@ -28,6 +28,7 @@
 
 #if NET_4_5
 
+using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.ExceptionServices;
 
@@ -54,6 +55,9 @@ namespace System.Runtime.CompilerServices
 
 			public void GetResult ()
 			{
+				if (!task.IsCompleted)
+					task.WaitCore (Timeout.Infinite, CancellationToken.None, true);
+
 				if (task.Status != TaskStatus.RanToCompletion)
 					ExceptionDispatchInfo.Capture (TaskAwaiter.HandleUnexpectedTaskResult (task)).Throw ();
 			}

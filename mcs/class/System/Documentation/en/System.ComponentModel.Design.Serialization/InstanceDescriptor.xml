@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InstanceDescriptor" FullName="System.ComponentModel.Design.Serialization.InstanceDescriptor">
   <TypeSignature Language="C#" Value="public sealed class InstanceDescriptor" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit InstanceDescriptor extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,32 +16,68 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> can store information that describes an instance of an object. This information can be used to create an instance of the object.</para>
+      <para>Some custom serializers use <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> to represent serializable objects. Several methods of a <see cref="T:System.ComponentModel.TypeDescriptor" /> use <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> to represent or instantiate objects.</para>
+      <para>An <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> provides the following members: </para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="P:System.ComponentModel.Design.Serialization.InstanceDescriptor.MemberInfo" /> property that describes this object.</para>
+        </item>
+        <item>
+          <para>An <see cref="P:System.ComponentModel.Design.Serialization.InstanceDescriptor.Arguments" /> property that consists of the constructor arguments that can be used to instantiate this object.</para>
+        </item>
+        <item>
+          <para>A Boolean <see cref="P:System.ComponentModel.Design.Serialization.InstanceDescriptor.IsComplete" /> property that indicates whether the object is completely represented by the current information.</para>
+        </item>
+        <item>
+          <para>An <see cref="M:System.ComponentModel.Design.Serialization.InstanceDescriptor.Invoke" /> method that can be used to create an instance of the represented object.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the information necessary to create an instance of an object. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public InstanceDescriptor (System.Reflection.MemberInfo member, System.Collections.ICollection arguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.MemberInfo member, class System.Collections.ICollection arguments) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="member" Type="System.Reflection.MemberInfo" />
         <Parameter Name="arguments" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
-        <param name="arguments">To be added: an object of type 'Collections.ICollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> class using the specified member information and arguments.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member information for the descriptor. This can be a <see cref="T:System.Reflection.MethodInfo" />, <see cref="T:System.Reflection.ConstructorInfo" />, <see cref="T:System.Reflection.FieldInfo" />, or <see cref="T:System.Reflection.PropertyInfo" />. If this is a <see cref="T:System.Reflection.MethodInfo" />, <see cref="T:System.Reflection.FieldInfo" />, or <see cref="T:System.Reflection.PropertyInfo" />, it must represent a static member. </param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of arguments to pass to the member. This parameter can be null or an empty collection if there are no arguments. The collection can also consist of other instances of <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public InstanceDescriptor (System.Reflection.MemberInfo member, System.Collections.ICollection arguments, bool isComplete);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.MemberInfo member, class System.Collections.ICollection arguments, bool isComplete) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="member" Type="System.Reflection.MemberInfo" />
@@ -46,81 +85,115 @@
         <Parameter Name="isComplete" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="member">To be added: an object of type 'Reflection.MemberInfo'</param>
-        <param name="arguments">To be added: an object of type 'Collections.ICollection'</param>
-        <param name="isComplete">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> class using the specified member information, arguments, and value indicating whether the specified information completely describes the instance.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member information for the descriptor. This can be a <see cref="T:System.Reflection.MethodInfo" />, <see cref="T:System.Reflection.ConstructorInfo" />, <see cref="T:System.Reflection.FieldInfo" />, or <see cref="T:System.Reflection.PropertyInfo" />. If this is a <see cref="T:System.Reflection.MethodInfo" />, <see cref="T:System.Reflection.FieldInfo" />, or <see cref="T:System.Reflection.PropertyInfo" />, it must represent a static member. </param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of arguments to pass to the member. This parameter can be null or an empty collection if there are no arguments. The collection can also consist of other instances of <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" />. </param>
+        <param name="isComplete">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the specified information completely describes the instance; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Arguments">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection Arguments { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ICollection Arguments" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.ICollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of arguments that can be used to reconstruct an instance of the object that this instance descriptor represents.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Invoke">
       <MemberSignature Language="C#" Value="public object Invoke ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object Invoke() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a new instance of the object indicated by the <see cref="P:System.ComponentModel.Design.Serialization.InstanceDescriptor.MemberInfo" /> property, using the specified arguments to create that particular type of instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes this instance descriptor and returns the object the descriptor describes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object this instance descriptor describes.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsComplete">
       <MemberSignature Language="C#" Value="public bool IsComplete { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsComplete" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, an <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> completely describes a particular instance. However, some objects are too complex for a single method or constructor to represent. <see cref="P:System.ComponentModel.Design.Serialization.InstanceDescriptor.IsComplete" /> indicates whether an <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> is incomplete, so a user can identify these objects and perform additional processing, if necessary, to further describe their state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the contents of this <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> completely identify the instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MemberInfo">
       <MemberSignature Language="C#" Value="public System.Reflection.MemberInfo MemberInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MemberInfo MemberInfo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MemberInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Reflection.MemberInfo'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property can be a <see cref="T:System.Reflection.MethodInfo" />, <see cref="T:System.Reflection.ConstructorInfo" />, <see cref="T:System.Reflection.FieldInfo" />, or <see cref="T:System.Reflection.PropertyInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the member information that describes the instance this descriptor is associated with.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

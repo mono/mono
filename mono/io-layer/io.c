@@ -240,6 +240,43 @@ static void io_ops_init (void)
 /* Some utility functions.
  */
 
+/*
+ * Check if a file is writable by the current user.
+ *
+ * This is is a best effort kind of thing. It assumes a reasonable sane set
+ * of permissions by the underlying OS.
+ *
+ * We assume that basic unix permission bits are authoritative. Which might not
+ * be the case under systems with extended permissions systems (posix ACLs, SELinux, OSX/iOS sandboxing, etc)
+ *
+ * The choice of access as the fallback is due to the expected lower overhead compared to trying to open the file.
+ *
+ * The only expected problem with using access are for root, setuid or setgid programs as access is not consistent
+ * under those situations. It's to be expected that this should not happen in practice as those bits are very dangerous
+ * and should not be used with a dynamic runtime.
+ */
+static gboolean
+is_file_writable (struct stat *st, const char *path)
+{
+	/* Is it globally writable? */
+	if (st->st_mode & S_IWOTH)
+		return 1;
+
+	/* Am I the owner? */
+	if ((st->st_uid == geteuid ()) && (st->st_mode & S_IWUSR))
+		return 1;
+
+	/* Am I in the same group? */
+	if ((st->st_gid == getegid ()) && (st->st_mode & S_IWGRP))
+		return 1;
+
+	/* Fallback to using access(2). It's not ideal as it might not take into consideration euid/egid
+	 * but it's the only sane option we have on unix.
+	 */
+	return access (path, W_OK) == 0;
+}
+
+
 static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 					      struct stat *buf,
 					      struct stat *lbuf)
@@ -259,14 +296,14 @@ static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 
 	if (S_ISDIR (buf->st_mode)) {
 		attrs = FILE_ATTRIBUTE_DIRECTORY;
-		if (!(buf->st_mode & S_IWUSR)) {
+		if (!is_file_writable (buf, pathname)) {
 			attrs |= FILE_ATTRIBUTE_READONLY;
 		}
 		if (filename[0] == '.') {
 			attrs |= FILE_ATTRIBUTE_HIDDEN;
 		}
 	} else {
-		if (!(buf->st_mode & S_IWUSR)) {
+		if (!is_file_writable (buf, pathname)) {
 			attrs = FILE_ATTRIBUTE_READONLY;
 
 			if (filename[0] == '.') {
@@ -523,7 +560,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 {
 	struct _WapiHandle_file *file_handle;
 	gboolean ok;
-	off_t offset, newpos;
+	gint64 offset, newpos;
 	int whence, fd;
 	guint32 ret;
 	
@@ -578,15 +615,15 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 	offset=movedistance;
 #endif
 
-#ifdef HAVE_LARGE_FILE_SUPPORT
 	DEBUG ("%s: moving handle %p by %lld bytes from %d", __func__,
-		  handle, offset, whence);
-#else
-	DEBUG ("%s: moving handle %p fd %d by %ld bytes from %d", __func__,
-		  handle, offset, whence);
-#endif
+		   handle, (long long)offset, whence);
 
+#ifdef PLATFORM_ANDROID
+	/* bionic doesn't support -D_FILE_OFFSET_BITS=64 */
+	newpos=lseek64(fd, offset, whence);
+#else
 	newpos=lseek(fd, offset, whence);
+#endif
 	if(newpos==-1) {
 		DEBUG("%s: lseek on handle %p returned error %s",
 			  __func__, handle, strerror(errno));
@@ -595,11 +632,7 @@ static guint32 file_seek(gpointer handle, gint32 movedistance,
 		return(INVALID_SET_FILE_POINTER);
 	}
 
-#ifdef HAVE_LARGE_FILE_SUPPORT
 	DEBUG ("%s: lseek returns %lld", __func__, newpos);
-#else
-	DEBUG ("%s: lseek returns %ld", __func__, newpos);
-#endif
 
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	ret=newpos & 0xFFFFFFFF;
@@ -1362,6 +1395,43 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 	return(TRUE);
 }
 
+
+static gboolean
+share_allows_delete (struct stat *statbuf, struct _WapiFileShare **share_info)
+{
+	gboolean file_already_shared;
+	guint32 file_existing_share, file_existing_access;
+
+	file_already_shared = _wapi_handle_get_or_set_share (statbuf->st_dev, statbuf->st_ino, FILE_SHARE_DELETE, GENERIC_READ, &file_existing_share, &file_existing_access, share_info);
+
+	if (file_already_shared) {
+		/* The reference to this share info was incremented
+		 * when we looked it up, so be careful to put it back
+		 * if we conclude we can't use this file.
+		 */
+		if (file_existing_share == 0) {
+			/* Quick and easy, no possibility to share */
+			DEBUG ("%s: Share mode prevents open: requested access: 0x%x, file has sharing = NONE", __func__, fileaccess);
+
+			_wapi_handle_share_release (*share_info);
+
+			return(FALSE);
+		}
+
+		if (!(file_existing_share & FILE_SHARE_DELETE)) {
+			/* New access mode doesn't match up */
+			DEBUG ("%s: Share mode prevents open: requested access: 0x%x, file has sharing: 0x%x", __func__, fileaccess, file_existing_share);
+
+			_wapi_handle_share_release (*share_info);
+
+			return(FALSE);
+		}
+	} else {
+		DEBUG ("%s: New file!", __func__);
+	}
+
+	return(TRUE);
+}
 static gboolean share_check (struct stat *statbuf, guint32 sharemode,
 			     guint32 fileaccess,
 			     struct _WapiFileShare **share_info, int fd)
@@ -1744,15 +1814,14 @@ gboolean MoveFile (const gunichar2 *name, const gunichar2 *dest_name)
 		}
 	}
 
-	/* Check to make sure sharing allows us to open the file for
-	 * writing.  See bug 377049.
+	/* Check to make that we have delete sharing permission.
+	 * See https://bugzilla.xamarin.com/show_bug.cgi?id=17009
 	 *
 	 * Do the checks that don't need an open file descriptor, for
 	 * simplicity's sake.  If we really have to do the full checks
 	 * then we can implement that later.
 	 */
-	if (share_allows_open (&stat_src, 0, GENERIC_WRITE,
-			       &shareinfo) == FALSE) {
+	if (share_allows_delete (&stat_src, &shareinfo) == FALSE) {
 		SetLastError (ERROR_SHARING_VIOLATION);
 		return FALSE;
 	}
@@ -2013,7 +2082,7 @@ ReplaceFile (const gunichar2 *replacedFileName, const gunichar2 *replacementFile
 		      const gunichar2 *backupFileName, guint32 replaceFlags, 
 		      gpointer exclude, gpointer reserved)
 {
-	int result, errno_copy, backup_fd = -1,replaced_fd = -1;
+	int result, backup_fd = -1,replaced_fd = -1;
 	gchar *utf8_replacedFileName, *utf8_replacementFileName = NULL, *utf8_backupFileName = NULL;
 	struct stat stBackup;
 	gboolean ret = FALSE;
@@ -2031,13 +2100,11 @@ ReplaceFile (const gunichar2 *replacedFileName, const gunichar2 *replacementFile
 		// Open the backup file for read so we can restore the file if an error occurs.
 		backup_fd = _wapi_open (utf8_backupFileName, O_RDONLY, 0);
 		result = _wapi_rename (utf8_replacedFileName, utf8_backupFileName);
-		errno_copy = errno;
 		if (result == -1)
 			goto replace_cleanup;
 	}
 
 	result = _wapi_rename (utf8_replacementFileName, utf8_replacedFileName);
-	errno_copy = errno;
 	if (result == -1) {
 		_wapi_set_last_path_error_from_errno (NULL, utf8_replacementFileName);
 		_wapi_rename (utf8_backupFileName, utf8_replacedFileName);
@@ -2112,8 +2179,6 @@ gpointer GetStdHandle(WapiStdHandle stdhandle)
 
 	handle = GINT_TO_POINTER (fd);
 
-	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
-			      (void *)&stdhandle_mutex);
 	thr_ret = mono_mutex_lock (&stdhandle_mutex);
 	g_assert (thr_ret == 0);
 
@@ -2135,7 +2200,6 @@ gpointer GetStdHandle(WapiStdHandle stdhandle)
   done:
 	thr_ret = mono_mutex_unlock (&stdhandle_mutex);
 	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
 	
 	return(handle);
 }
@@ -2728,8 +2792,6 @@ gboolean FindNextFile (gpointer handle, WapiFindData *find_data)
 		return(FALSE);
 	}
 
-	pthread_cleanup_push ((void(*)(void *))_wapi_handle_unlock_handle,
-			      handle);
 	thr_ret = _wapi_handle_lock_handle (handle);
 	g_assert (thr_ret == 0);
 	
@@ -2839,7 +2901,6 @@ retry:
 cleanup:
 	thr_ret = _wapi_handle_unlock_handle (handle);
 	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
 	
 	return(ret);
 }
@@ -2872,8 +2933,6 @@ gboolean FindClose (gpointer handle)
 		return(FALSE);
 	}
 
-	pthread_cleanup_push ((void(*)(void *))_wapi_handle_unlock_handle,
-			      handle);
 	thr_ret = _wapi_handle_lock_handle (handle);
 	g_assert (thr_ret == 0);
 	
@@ -2882,7 +2941,6 @@ gboolean FindClose (gpointer handle)
 
 	thr_ret = _wapi_handle_unlock_handle (handle);
 	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
 	
 	_wapi_handle_unref (handle);
 	
@@ -3725,7 +3783,9 @@ add_drive_string (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state)
 			ignore_entry = TRUE;
 		else
 			ignore_entry = FALSE;
-	} else
+	} else if (state->fstype_index == 3 && memcmp ("nfs", state->fstype, state->fstype_index) == 0)
+		ignore_entry = FALSE;
+	else
 		ignore_entry = TRUE;
 
 	if (!ignore_entry) {

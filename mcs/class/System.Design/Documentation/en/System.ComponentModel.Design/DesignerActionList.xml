@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionList" FullName="System.ComponentModel.Design.DesignerActionList">
   <TypeSignature Language="C#" Value="public class DesignerActionList" />
   <AssemblyInfo>
@@ -9,8 +10,22 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The DesignerAction feature enables components and controls to display context-sensitive information and commands. The DesignerAction feature can be thought of as a replacement for designer verbs, because a <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> can be displayed in the smart tag panel and also in the shortcut menu associated with a component or control. The <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class represents the main point of interaction for developers who want to add smart tag support to their custom components and controls.</para>
+      <para>
+        <see cref="T:System.ComponentModel.Design.DesignerActionList" /> is the base class, derived from by component developers in order to populate a smart tag panel. A smart tag panel represents the menu-like user interface (UI) for smart tags. </para>
+      <para>This derived class may implement the virtual <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method to return a collection of objects derived from <see cref="T:System.ComponentModel.Design.DesignerActionItem" />. These objects represent the smart tag panel items. Each item is displayed in the panel according to its type. For example, a <see cref="T:System.ComponentModel.Design.DesignerActionTextItem" /> is displayed as a static text label. Active panel items, represented by the <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" /> and <see cref="T:System.ComponentModel.Design.DesignerActionMethodItem" /> types, have a corresponding publicly accessible property or method, respectively, that implements the functionality for that item.</para>
+      <para>For more information about how to add items to the smart tag panel, see the <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method.</para>
+      <block subset="none" type="note">
+        <para>Forms and dialog boxes can be displayed by members of the class derived from <see cref="T:System.ComponentModel.Design.DesignerActionList" />. By default, the parent of these windows will be the container window for the smart tag panel. Explicitly parenting these child windows to another service or window may cause smart tags to display improperly.</para>
+        <para>Smart-tag panels do not support scrolling or paging, so be careful not to populate your panels with many smart-tag items. Too many items may result in the smart-tag panel extending beyond the screen boundary.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for types that define a list of items used to create a smart tag panel.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +38,16 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.DesignerActionList" /> constructor sets the <see cref="P:System.ComponentModel.Design.DesignerActionList.AutoShow" /> property to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component related to the <see cref="T:System.ComponentModel.Design.DesignerActionList" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AutoShow">
@@ -38,9 +60,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the property value is set to true, the component with which this <see cref="T:System.ComponentModel.Design.DesignerActionList" /> is associated will automatically expand and display the smart tag panel when the component is created. </para>
+          <para>You can opt out of this behavior by setting the <see cref="P:System.Windows.Forms.Design.DesignerOptions.ObjectBoundSmartTagAutoShow" /> property to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the smart tag panel should automatically be displayed when it is created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Component">
@@ -53,9 +82,12 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component related to <see cref="T:System.ComponentModel.Design.DesignerActionList" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -71,10 +103,17 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents a service provided by the component associated with the <see cref="T:System.ComponentModel.Design.DesignerActionList" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents a service provided by the <see cref="T:System.ComponentModel.Component" />. This value is null if the <see cref="T:System.ComponentModel.Component" /> does not provide the specified service.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provided by the <see cref="T:System.ComponentModel.Component" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSortedActionItems">
@@ -88,9 +127,81 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The virtual <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method is implemented to return, in the expected display order, a collection of objects derived from the <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> class. These items can be of the following specific types.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Type</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.DesignerActionHeaderItem" /> </para>
+              </term>
+              <description>
+                <para>The group label, displayed in bold.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.DesignerActionTextItem" /> </para>
+              </term>
+              <description>
+                <para>A label, displayed in a plain font.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" /> </para>
+              </term>
+              <description>
+                <para>A panel item associated with a property. May also display a check mark or property editor associated with the underlying property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.DesignerActionMethodItem" /> </para>
+              </term>
+              <description>
+                <para>A panel item displayed as a hyperlink and associated with a method.</para>
+              </description>
+            </item>
+          </list>
+          <para>For every <see cref="T:System.ComponentModel.Design.DesignerActionMethodItem" /> and <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" />, a corresponding method or property must be added to the programmer-supplied class derived from the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class. Each method and property item is displayed as an active entry; interacting with it through the user interface (UI) invokes the corresponding method or property, respectively.</para>
+          <para>Property items have a special panel-item interface that enables display and manipulation of their corresponding property values. For more information, see the <see cref="T:System.ComponentModel.Design.DesignerActionPropertyItem" /> class.</para>
+          <para>The order of the items in the returned array reflects the order that they will appear in the panel. The items are grouped according to the <see cref="P:System.ComponentModel.Design.DesignerActionItem.Category" /> property, using the following rules:</para>
+          <list type="bullet">
+            <item>
+              <para>The category of the first item encountered signifies the start of the first group. That group continues as long as each succeeding item is of the same category. When an item of a different, new category is encountered, a new group is created and the item is placed in it.</para>
+            </item>
+            <item>
+              <para>If an item has a type different than the current group, but that category has already been used, the item is placed in the matching existing category.</para>
+            </item>
+            <item>
+              <para>If an item does not have a category, it is placed in a miscellaneous group at the end of the panel. This group also contains items whose <see cref="P:System.ComponentModel.Design.DesignerActionItem.AllowAssociate" /> property is set to false.</para>
+            </item>
+          </list>
+          <para>The <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method is called when the panel is first created. You must call the <see cref="M:System.ComponentModel.Design.DesignerActionUIService.Refresh(System.ComponentModel.IComponent)" /> method to update the list of items displayed in the panel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the collection of <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> objects contained in the list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> array that contains the items in this list.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

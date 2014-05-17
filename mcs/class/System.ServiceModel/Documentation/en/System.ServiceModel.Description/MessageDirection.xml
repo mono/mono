@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MessageDirection" FullName="System.ServiceModel.Description.MessageDirection">
+  <TypeSignature Language="C#" Value="public enum MessageDirection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MessageDirection extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The direction of a message indicates whether the message is coming into an endpoint or going out from an endpoint. <see cref="F:System.ServiceModel.Description.MessageDirection.Input" /> is incoming to the server and <see cref="F:System.ServiceModel.Description.MessageDirection.Output" /> is outgoing from the server. For a basic request/response message pattern, a request is incoming to the server and the response is outgoing from the server. On callbacks from the server to client, however, a request is outgoing from the server and a response is incoming to the server.</para>
+      <para>Use the <see cref="M:System.ServiceModel.Description.MessageDescription.#ctor(System.String,System.ServiceModel.Description.MessageDirection)" /> constructor to specify the direction of a message. </para>
+      <para>Retrieve the direction of a message using the <see cref="P:System.ServiceModel.Description.MessageDescription.Direction" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the direction of the message.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Input">
+      <MemberSignature Language="C#" Value="Input" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.MessageDirection Input = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MessageDirection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message is incoming.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Output">
+      <MemberSignature Language="C#" Value="Output" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.MessageDirection Output = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MessageDirection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message is outgoing.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

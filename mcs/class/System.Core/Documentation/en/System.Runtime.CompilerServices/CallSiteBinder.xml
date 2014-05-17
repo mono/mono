@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallSiteBinder" FullName="System.Runtime.CompilerServices.CallSiteBinder">
+  <TypeSignature Language="C#" Value="public abstract class CallSiteBinder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CallSiteBinder extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Class responsible for runtime binding of the dynamic operations on the dynamic call site.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected CallSiteBinder ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.CallSiteBinder" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Bind">
+      <MemberSignature Language="C#" Value="public abstract System.Linq.Expressions.Expression Bind (object[] args, System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.ParameterExpression&gt; parameters, System.Linq.Expressions.LabelTarget returnLabel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Linq.Expressions.Expression Bind(object[] args, class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Linq.Expressions.ParameterExpression&gt; parameters, class System.Linq.Expressions.LabelTarget returnLabel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="parameters" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.ParameterExpression&gt;" />
+        <Parameter Name="returnLabel" Type="System.Linq.Expressions.LabelTarget" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the runtime binding of the dynamic operation on a set of arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Expression that performs tests on the dynamic operation arguments, and performs the dynamic operation if the tests are valid. If the tests fail on subsequent occurrences of the dynamic operation, Bind will be called again to produce a new <see cref="T:System.Linq.Expressions.Expression" /> for the new argument types.</para>
+        </returns>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments to the dynamic operation.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.Linq.Expressions.ParameterExpression" /> instances that represent the parameters of the call site in the binding process.</param>
+        <param name="returnLabel">
+          <attribution license="cc4" from="Microsoft" modified="false" />A LabelTarget used to return the result of the dynamic binding.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BindDelegate&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public virtual T BindDelegate&lt;T&gt; (System.Runtime.CompilerServices.CallSite&lt;T&gt; site, object[] args) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !!T BindDelegate&lt;class T&gt;(class System.Runtime.CompilerServices.CallSite`1&lt;!!T&gt; site, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
+        <Parameter Name="args" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides low-level runtime binding support. Classes can override this and provide a direct delegate for the implementation of rule. This can enable saving rules to disk, having specialized rules available at runtime, or providing a different caching policy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new delegate which replaces the CallSite Target.</para>
+        </returns>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />The CallSite the bind is being performed for.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments for the binder.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target type of the CallSite.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="CacheTarget&lt;T&gt;">
+      <MemberSignature Language="C#" Value="protected void CacheTarget&lt;T&gt; (T target) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void CacheTarget&lt;class T&gt;(!!T target) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="target" Type="T" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateLabel">
+      <MemberSignature Language="C#" Value="public static System.Linq.Expressions.LabelTarget UpdateLabel { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Linq.Expressions.LabelTarget UpdateLabel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.LabelTarget</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a label that can be used to cause the binding to be updated. It indicates that the expression's binding is no longer valid. This is typically used when the "version" of a dynamic object has changed.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

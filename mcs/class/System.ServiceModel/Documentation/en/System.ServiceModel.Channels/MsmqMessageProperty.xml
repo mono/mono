@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MsmqMessageProperty" FullName="System.ServiceModel.Channels.MsmqMessageProperty">
+  <TypeSignature Language="C#" Value="public sealed class MsmqMessageProperty" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MsmqMessageProperty extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.MsmqMessageProperty" /> class is obtained from the channel context and is used primarily for error processing. For example, if an application reads a message from the dead-letter queue, the application should examine properties like <see cref="P:System.ServiceModel.Channels.MsmqMessageProperty.DeliveryFailure" /> and <see cref="P:System.ServiceModel.Channels.MsmqMessageProperty.DeliveryStatus" />. If an application is performing its own poison-message handling, it should examine properties like <see cref="P:System.ServiceModel.Channels.MsmqMessageProperty.AbortCount" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.MsmqMessageProperty" /> class encapsulates the properties of a message that has been read from a queue.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AbortCount">
+      <MemberSignature Language="C#" Value="public int AbortCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 AbortCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used in poison-message handling. For more information about poison-message handling, see <format type="text/html"><a href="8d1c5e5a-7928-4a80-95ed-d8da211b8595">Poison-Message Handling</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Int32" /> value that indicates the number of times the message participated in the transaction that was aborted, that is, channel attempts - 1.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeliveryFailure">
+      <MemberSignature Language="C#" Value="public Nullable&lt;System.ServiceModel.Channels.DeliveryFailure&gt; DeliveryFailure { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype System.ServiceModel.Channels.DeliveryFailure&gt; DeliveryFailure" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.ServiceModel.Channels.DeliveryFailure&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property together with <see cref="P:System.ServiceModel.Channels.MsmqMessageProperty.DeliveryStatus" /> when reading a message from a dead-letter queue to determine why the message failed delivery.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value from the <see cref="T:System.ServiceModel.Channels.DeliveryFailure" /> enumeration that indicates why the message failed delivery.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeliveryStatus">
+      <MemberSignature Language="C#" Value="public Nullable&lt;System.ServiceModel.Channels.DeliveryStatus&gt; DeliveryStatus { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype System.ServiceModel.Channels.DeliveryStatus&gt; DeliveryStatus" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.ServiceModel.Channels.DeliveryStatus&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message may have a delivery status of <see cref="F:System.ServiceModel.Channels.DeliveryStatus.InDoubt" /> or <see cref="F:System.ServiceModel.Channels.DeliveryStatus.NotDelivered" />. A message has a delivery status of <see cref="F:System.ServiceModel.Channels.DeliveryStatus.InDoubt" /> unless Message Queuing (MSMQ) can determine that it was not delivered, in which case its delivery status becomes <see cref="F:System.ServiceModel.Channels.DeliveryStatus.NotDelivered" />.</para>
+          <para>An example of an in-doubt message is a message that has expired. Message Queuing cannot determine whether the message was delivered to the application after it expired.</para>
+          <para>Use this property together with <see cref="P:System.ServiceModel.Channels.MsmqMessageProperty.DeliveryFailure" /> when reading a message from a dead-letter queue to determine why the message failed delivery.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value from the <see cref="T:System.ServiceModel.Channels.DeliveryStatus" /> enumeration that indicates the delivery status of the message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.MsmqMessageProperty Get (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Channels.MsmqMessageProperty Get(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.MsmqMessageProperty</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Channels.MsmqMessageProperty" /> for the specified <see cref="T:System.ServiceModel.Channels.Message" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.MsmqMessageProperty" /> for the specified <see cref="T:System.ServiceModel.Channels.Message" />.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> whose properties are to be retrieved.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="MoveCount">
+      <MemberSignature Language="C#" Value="public int MoveCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MoveCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Int32" /> value that indicates the number of times the message has moved from the main queue to the subqueue or the other way.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public const string Name;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string Name" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the string "MsmqMessageProperty".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.String" /> that contains the string "MsmqMessageProperty".</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

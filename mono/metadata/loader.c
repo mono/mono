@@ -129,6 +129,7 @@ mono_loader_cleanup (void)
 static void
 set_loader_error (MonoLoaderError *error)
 {
+	mono_loader_clear_error ();
 	mono_native_tls_set_value (loader_error_thread_id, error);
 }
 
@@ -531,13 +532,13 @@ mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass,
 		return result;
 	}
 
-	mono_loader_lock ();
+	mono_image_lock (image);
 	if ((field = g_hash_table_lookup (image->field_cache, GUINT_TO_POINTER (token)))) {
 		*retklass = field->parent;
-		mono_loader_unlock ();
+		mono_image_unlock (image);
 		return field;
 	}
-	mono_loader_unlock ();
+	mono_image_unlock (image);
 
 	if (mono_metadata_token_table (token) == MONO_TABLE_MEMBERREF)
 		field = field_from_memberref (image, token, retklass, context);
@@ -554,10 +555,10 @@ mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass,
 		field = mono_class_get_field (k, token);
 	}
 
-	mono_loader_lock ();
+	mono_image_lock (image);
 	if (field && field->parent && !field->parent->generic_class && !field->parent->generic_container)
 		g_hash_table_insert (image->field_cache, GUINT_TO_POINTER (token), field);
-	mono_loader_unlock ();
+	mono_image_unlock (image);
 	return field;
 }
 
@@ -1811,7 +1812,7 @@ MonoMethod *
 mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 		      MonoGenericContext *context)
 {
-	MonoMethod *result;
+	MonoMethod *result = NULL;
 	gboolean used_context = FALSE;
 
 	/* We do everything inside the lock to prevent creation races */
@@ -1822,7 +1823,7 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 		if (!image->method_cache)
 			image->method_cache = g_hash_table_new (NULL, NULL);
 		result = g_hash_table_lookup (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)));
-	} else {
+	} else if (!image->dynamic) {
 		if (!image->methodref_cache)
 			image->methodref_cache = g_hash_table_new (NULL, NULL);
 		result = g_hash_table_lookup (image->methodref_cache, GINT_TO_POINTER (token));
@@ -1832,16 +1833,18 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 	if (result)
 		return result;
 
+
 	result = mono_get_method_from_token (image, token, klass, context, &used_context);
 	if (!result)
 		return NULL;
 
 	mono_image_lock (image);
 	if (!used_context && !result->is_inflated) {
-		MonoMethod *result2;
+		MonoMethod *result2 = NULL;
+
 		if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
 			result2 = g_hash_table_lookup (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)));
-		else
+		else if (!image->dynamic)
 			result2 = g_hash_table_lookup (image->methodref_cache, GINT_TO_POINTER (token));
 
 		if (result2) {
@@ -1851,7 +1854,7 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 
 		if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
 			g_hash_table_insert (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)), result);
-		else
+		else if (!image->dynamic)
 			g_hash_table_insert (image->methodref_cache, GINT_TO_POINTER (token), result);
 	}
 
@@ -2252,7 +2255,7 @@ stack_walk_adapter (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data)
 		return FALSE;
 	case FRAME_TYPE_MANAGED:
 		g_assert (frame->ji);
-		return d->func (frame->ji->method, frame->native_offset, frame->il_offset, frame->managed, d->user_data);
+		return d->func (mono_jit_info_get_method (frame->ji), frame->native_offset, frame->il_offset, frame->managed, d->user_data);
 		break;
 	default:
 		g_assert_not_reached ();

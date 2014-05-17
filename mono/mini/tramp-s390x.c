@@ -193,16 +193,26 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_nullify_plt_entry			    */
+/* Name		- mono_arch_get_nullified_class_init		    */
 /*                                                                  */
 /* Function	- Nullify a PLT entry call.			    */
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-void
-mono_arch_nullify_plt_entry (guint8 *code, mgreg_t *regs)
+gpointer
+mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 {
-	g_assert_not_reached ();
+	guint8 *buf, *code;
+
+	code = buf = mono_global_codeman_reserve (16);
+
+	s390_br (code, s390_r14);
+
+	if (info)
+		*info = mono_tramp_info_create ("nullified_class_init_trampoline", 
+						buf, code - buf, NULL, NULL);
+
+	return (buf);
 }
 
 /*========================= End of Function ========================*/

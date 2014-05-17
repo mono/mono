@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MatchCollection" FullName="System.Text.RegularExpressions.MatchCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class MatchCollection : System.Collections.ICollection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit MatchCollection extends System.Object implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -17,99 +20,175 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The collection is immutable (read-only) and has no public constructor. The <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String,System.String)" /> method returns a <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object.</para>
+      <para>The collection contains zero or more <see cref="T:System.Text.RegularExpressions.Match" /> objects. If the match is successful, the collection is populated with one <see cref="T:System.Text.RegularExpressions.Match" /> object for each match found in the input string. If the match is unsuccessful, the collection contains no <see cref="T:System.Text.RegularExpressions.Match" /> objects, and its <see cref="P:System.Text.RegularExpressions.MatchCollection.Count" /> property equals zero.</para>
+      <para>When applying a regular expression pattern to a particular input string, the regular expression engine uses either of two techniques to build the <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object:</para>
+      <list type="bullet">
+        <item>
+          <para>Direct evaluation. </para>
+          <para>The <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object is populated all at once, with all matches resulting from a particular call to the <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String)" /> method. This technique is used when the collection's <see cref="P:System.Text.RegularExpressions.MatchCollection.Count" /> property is accessed. It typically is the more expensive method of populating the collection and entails a greater performance hit.</para>
+        </item>
+        <item>
+          <para>Lazy evaluation. </para>
+          <para>The <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object is populated as needed on a match-by-match basis. It is equivalent to the regular expression engine calling the <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String)" /> method repeatedly and adding each match to the collection. This technique is used when the collection is accessed through its <see cref="M:System.Text.RegularExpressions.MatchCollection.GetEnumerator" /> method, or when it is accessed using the foreach statement (in C#) or the For Each...Next statement (in Visual Basic).</para>
+        </item>
+      </list>
+      <para>To iterate through the members of the collection, you should use the collection iteration construct provided by your language (such as foreach in C# and For Each…Next in Visual Basic) instead of retrieving the enumerator that is returned by the <see cref="M:System.Text.RegularExpressions.MatchCollection.GetEnumerator" /> method. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the set of successful matches found by iteratively applying a regular expression pattern to the input string.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (Array array, int index);" />
+      <MemberSignature Language="C#" Value="public void CopyTo (Array array, int arrayIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(class System.Array array, int32 arrayIndex) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="array" Type="System.Array" />
-        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the collection is copied into the array starting at the given index, the destination array must be at least as large as the entire collection.</para>
+          <block subset="none" type="note">
+            <para>This member is not present in the net_portable. If you are developing applications that target the net_portable, use the <see cref="M:System.Text.RegularExpressions.CaptureCollection.System#Collections#ICollection#CopyTo(System.Array,System.Int32)" /> method instead.</para>
+          </block>
+          <para>Because the <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object is generally populated by using lazy evaluation, trying to copy the collection before it has been fully populated may throw a <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> exception. This exception can be thrown if a time-out value for matching operations is in effect, and the attempt to find a single match exceeds that time-out interval.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the elements of the collection to the given array starting at the given index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array the collection is to be copied into. </param>
+        <param name="arrayIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the array where copying is to begin. </param>
       </Docs>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Accessing individual members of the <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object by retrieving the value of the collection's <see cref="P:System.Text.RegularExpressions.MatchCollection.Count" /> property causes the regular expression engine to populate the collection using direct evaluation. ln contrast, calling the <see cref="M:System.Text.RegularExpressions.MatchCollection.GetEnumerator" /> method (or using the foreach statement in C# and the For Each...Next statement in Visual Basic) causes the regular expression engine to populate the collection on an as needed basis using lazy evaluation. Direct evaluation can be a much more expensive method of building the collection than lazy evaluation.</para>
+          <para>Because the <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object is generally populated by using lazy evaluation, trying to determine the number of elements in the collection before it has been fully populated may throw a <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> exception. This exception can be thrown if a time-out value for matching operations is in effect, and the attempt to find a single match exceeds that time-out interval.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of matches.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instead of  calling the <see cref="M:System.Text.RegularExpressions.MatchCollection.GetEnumerator" /> method to retrieve an enumerator that lets you iterate through the <see cref="T:System.Text.RegularExpressions.Match" /> objects in the collection, you should use the group iteration construct (such as foreach in C# and For Each…Next in Visual Basic) provided by your programming language.</para>
+          <para>Iterating the members of the <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object using the <see cref="M:System.Text.RegularExpressions.MatchCollection.GetEnumerator" /> method (or the foreach statement in C# and the For Each...Next statement in Visual Basic) causes the regular expression engine to populate the collection on an as needed basis using lazy evaluation. This is analogous to repeatedly calling the <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String)" /> method, and then adding the resulting match to the <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object. In contrast, the regular expression engine uses direct evaluation to populate the collection all at once when the <see cref="P:System.Text.RegularExpressions.MatchCollection.Count" /> property is accessed. This can be a much more expensive method of building the collection than lazy evaluation. </para>
+          <para>Because the <see cref="T:System.Text.RegularExpressions.MatchCollection" /> object is generally populated by using lazy evaluation, trying to navigate to the next member of the collection may throw a <see cref="T:System.Text.RegularExpressions.RegexMatchTimeoutException" /> exception. This exception can be thrown if a time-out value for matching operations is in effect, and the attempt to find the next match exceeds that time-out interval.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an enumerator that iterates through the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains all <see cref="T:System.Text.RegularExpressions.Match" /> objects within the <see cref="T:System.Text.RegularExpressions.MatchCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
       <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the collection is read only.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSynchronized">
       <MemberSignature Language="C#" Value="public bool IsSynchronized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSynchronized" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This member is not present in the net_portable. If you are developing applications that target the net_portable, use the <see cref="P:System.Text.RegularExpressions.MatchCollection.System#Collections#ICollection#IsSynchronized" /> property instead.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized (thread-safe).</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public virtual System.Text.RegularExpressions.Match this[int i] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.RegularExpressions.Match Item(int32)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.Match</ReturnType>
       </ReturnValue>
@@ -122,26 +201,32 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SyncRoot">
       <MemberSignature Language="C#" Value="public object SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This member is not present in the net_portable. If you are developing applications that target the net_portable, use the <see cref="P:System.Text.RegularExpressions.MatchCollection.System#Collections#ICollection#SyncRoot" /> property instead.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

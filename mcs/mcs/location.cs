@@ -222,7 +222,7 @@ namespace Mono.CSharp
 		// </summary>
 		static public void Initialize (List<SourceFile> files)
 		{
-#if NET_4_0 || MONODROID
+#if NET_4_0 || MOBILE_DYNAMIC
 			source_list.AddRange (files);
 #else
 			source_list.AddRange (files.ToArray ());

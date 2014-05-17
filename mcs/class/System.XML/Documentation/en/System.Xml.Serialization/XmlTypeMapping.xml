@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlTypeMapping" FullName="System.Xml.Serialization.XmlTypeMapping">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlTypeMapping : System.Xml.Serialization.XmlMapping" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlTypeMapping extends System.Xml.Serialization.XmlMapping" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,8 +15,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> class is used to serialize an object as encoded SOAP XML. The resulting XML conforms to section 5 of the World Wide Web Consortium (www.w3.org) document, "Simple Object Access Protocol (SOAP) 1.1". Create an <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> by calling the <see cref="M:System.Xml.Serialization.SoapReflectionImporter.ImportTypeMapping(System.Type)" /> method of the <see cref="T:System.Xml.Serialization.SoapReflectionImporter" /> class. Use the <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> to construct an instance of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class. To control the serialization, use one of the attributes listed in <format type="text/html"><a href="93EE258C-9C0F-4A08-897C-C10DB7A00F91">[&lt;topic://cpconAttributesThatControlSOAPEncodedSerialization&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a mapping of one type to another.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ElementName">
@@ -50,67 +59,97 @@
     </Member>
     <Member MemberName="TypeFullName">
       <MemberSignature Language="C#" Value="public string TypeFullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TypeFullName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fully qualified type name that includes the namespace (or namespaces) and type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TypeName">
       <MemberSignature Language="C#" Value="public string TypeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TypeName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type name is the class name of the mapped object.</para>
+          <para>You can also see the fully qualified name by examining the <see cref="P:System.Xml.Serialization.XmlTypeMapping.TypeFullName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type name of the mapped object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="XsdTypeName">
       <MemberSignature Language="C#" Value="public string XsdTypeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string XsdTypeName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set an alternate element name of an object, apply a <see cref="T:System.Xml.Serialization.SoapTypeAttribute" /> to the class, and set the <see cref="P:System.Xml.Serialization.SoapTypeAttribute.TypeName" /> property to a new value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML element name of the mapped object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XsdTypeNamespace">
       <MemberSignature Language="C#" Value="public string XsdTypeNamespace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string XsdTypeNamespace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set a namespace name of an object, apply a <see cref="T:System.Xml.Serialization.SoapTypeAttribute" /> to the class, and set the <see cref="P:System.Xml.Serialization.SoapTypeAttribute.Namespace" /> property to a new value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML namespace of the mapped object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

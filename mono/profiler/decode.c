@@ -23,6 +23,7 @@
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/utils/mono-counters.h>
 
 #define HASH_SIZE 9371
 #define SMALL_HASH_SIZE 31
@@ -44,6 +45,7 @@ static uint64_t find_size = 0;
 static const char* find_name = NULL;
 static uint64_t time_from = 0;
 static uint64_t time_to = 0xffffffffffffffffULL;
+static int use_time_filter = 0;
 static uint64_t startup_time = 0;
 static FILE* outfile = NULL;
 
@@ -86,6 +88,412 @@ pstrdup (const char *s)
 	char *p = malloc (len);
 	memcpy (p, s, len);
 	return p;
+}
+
+typedef struct _CounterValue CounterValue;
+struct _CounterValue {
+	uint64_t timestamp;
+	unsigned char *buffer;
+	CounterValue *next;
+};
+
+typedef struct _Counter Counter;
+struct _Counter {
+	int index;
+	int section;
+	const char *name;
+	int type;
+	int unit;
+	int variance;
+	CounterValue *values;
+	CounterValue *values_last;
+};
+
+typedef struct _CounterList CounterList;
+struct _CounterList {
+	Counter *counter;
+	CounterList *next;
+};
+
+typedef struct _CounterSection CounterSection;
+struct _CounterSection {
+	int value;
+	CounterList *counters;
+	CounterList *counters_last;
+	CounterSection *next;
+};
+
+typedef struct _CounterTimestamp CounterTimestamp;
+struct _CounterTimestamp {
+	uint64_t value;
+	CounterSection *sections;
+	CounterSection *sections_last;
+	CounterTimestamp *next;
+};
+
+static CounterList *counters = NULL;
+static CounterSection *counters_sections = NULL;
+static CounterTimestamp *counters_timestamps = NULL;
+
+enum {
+	COUNTERS_SORT_TIME,
+	COUNTERS_SORT_CATEGORY
+};
+
+static int counters_sort_mode = COUNTERS_SORT_TIME;
+
+static void
+add_counter_to_section (Counter *counter)
+{
+	CounterSection *csection, *s;
+	CounterList *clist;
+
+	clist = calloc (1, sizeof (CounterList));
+	clist->counter = counter;
+
+	for (csection = counters_sections; csection; csection = csection->next) {
+		if (csection->value == counter->section) {
+			/* If section exist */
+			if (!csection->counters)
+				csection->counters = clist;
+			else
+				csection->counters_last->next = clist;
+			csection->counters_last = clist;
+			return;
+		}
+	}
+
+	/* If section does not exist */
+	csection = calloc (1, sizeof (CounterSection));
+	csection->value = counter->section;
+	csection->counters = clist;
+	csection->counters_last = clist;
+
+	if (!counters_sections) {
+		counters_sections = csection;
+	} else {
+		s = counters_sections;
+		while (s->next)
+			s = s->next;
+		s->next = csection;
+	}
+}
+
+static void
+add_counter (int section, const char *name, int type, int unit, int variance, int index)
+{
+	CounterList *list, *l;
+	Counter *counter;
+
+	for (list = counters; list; list = list->next)
+		if (list->counter->index == index)
+			return;
+
+	counter = calloc (1, sizeof (Counter));
+	counter->section = section;
+	counter->name = name;
+	counter->type = type;
+	counter->unit = unit;
+	counter->variance = variance;
+	counter->index = index;
+
+	list = calloc (1, sizeof (CounterList));
+	list->counter = counter;
+
+	if (!counters) {
+		counters = list;
+	} else {
+		l = counters;
+		while (l->next)
+			l = l->next;
+		l->next = list;
+	}
+
+	if (counters_sort_mode == COUNTERS_SORT_CATEGORY || !verbose)
+		add_counter_to_section (counter);
+}
+
+static void
+add_counter_to_timestamp (uint64_t timestamp, Counter *counter)
+{
+	CounterTimestamp *ctimestamp, *t;
+	CounterSection *csection;
+	CounterList *clist;
+
+	clist = calloc (1, sizeof (CounterList));
+	clist->counter = counter;
+
+	for (ctimestamp = counters_timestamps; ctimestamp; ctimestamp = ctimestamp->next) {
+		if (ctimestamp->value == timestamp) {
+			for (csection = ctimestamp->sections; csection; csection = csection->next) {
+				if (csection->value == counter->section) {
+					/* if timestamp exist and section exist */
+					if (!csection->counters)
+						csection->counters = clist;
+					else
+						csection->counters_last->next = clist;
+					csection->counters_last = clist;
+					return;
+				}
+			}
+
+			/* if timestamp exist and section does not exist */
+			csection = calloc (1, sizeof (CounterSection));
+			csection->value = counter->section;
+			csection->counters = clist;
+			csection->counters_last = clist;
+
+			if (!ctimestamp->sections)
+				ctimestamp->sections = csection;
+			else
+				ctimestamp->sections_last->next = csection;
+			ctimestamp->sections_last = csection;
+			return;
+		}
+	}
+
+	/* If timestamp do not exist and section does not exist */
+	csection = calloc (1, sizeof (CounterSection));
+	csection->value = counter->section;
+	csection->counters = clist;
+	csection->counters_last = clist;
+
+	ctimestamp = calloc (1, sizeof (CounterTimestamp));
+	ctimestamp->value = timestamp;
+	ctimestamp->sections = csection;
+	ctimestamp->sections_last = csection;
+
+	if (!counters_timestamps) {
+		counters_timestamps = ctimestamp;
+	} else {
+		t = counters_timestamps;
+		while (t->next)
+			t = t->next;
+		t->next = ctimestamp;
+	}
+}
+
+static void
+add_counter_value (int index, CounterValue *value)
+{
+	CounterList *list;
+
+	for (list = counters; list; list = list->next) {
+		if (list->counter->index == index) {
+			if (!list->counter->values)
+				list->counter->values = value;
+			else
+				list->counter->values_last->next = value;
+			list->counter->values_last = value;
+
+			if (counters_sort_mode == COUNTERS_SORT_TIME)
+				add_counter_to_timestamp (value->timestamp, list->counter);
+
+			return;
+		}
+	}
+}
+
+static const char*
+section_name (int section)
+{
+	switch (section) {
+	case MONO_COUNTER_JIT: return "Mono JIT";
+	case MONO_COUNTER_GC: return "Mono GC";
+	case MONO_COUNTER_METADATA: return "Mono Metadata";
+	case MONO_COUNTER_GENERICS: return "Mono Generics";
+	case MONO_COUNTER_SECURITY: return "Mono Security";
+	case MONO_COUNTER_RUNTIME: return "Mono Runtime";
+	case MONO_COUNTER_SYSTEM: return "Mono System";
+	default: return "<unknown>";
+	}
+}
+
+static const char*
+type_name (int type)
+{
+	switch (type) {
+	case MONO_COUNTER_INT: return "Int";
+	case MONO_COUNTER_UINT: return "UInt";
+	case MONO_COUNTER_WORD: return "Word";
+	case MONO_COUNTER_LONG: return "Long";
+	case MONO_COUNTER_ULONG: return "ULong";
+	case MONO_COUNTER_DOUBLE: return "Double";
+	case MONO_COUNTER_STRING: return "String";
+	case MONO_COUNTER_TIME_INTERVAL: return "Time Interval";
+	default: return "<unknown>";
+	}
+}
+
+static const char*
+unit_name (int unit)
+{
+	switch (unit) {
+	case MONO_COUNTER_RAW: return "Raw";
+	case MONO_COUNTER_BYTES: return "Bytes";
+	case MONO_COUNTER_TIME: return "Time";
+	case MONO_COUNTER_COUNT: return "Count";
+	case MONO_COUNTER_PERCENTAGE: return "Percentage";
+	default: return "<unknown>";
+	}
+}
+
+static const char*
+variance_name (int variance)
+{
+	switch (variance) {
+	case MONO_COUNTER_MONOTONIC: return "Monotonic";
+	case MONO_COUNTER_CONSTANT: return "Constant";
+	case MONO_COUNTER_VARIABLE: return "Variable";
+	default: return "<unknown>";
+	}
+}
+
+static void
+dump_counters_value (Counter *counter, const char *key_format, const char *key, void *value)
+{
+	char format[32];
+
+	if (value == NULL) {
+		snprintf (format, sizeof (format), "%s : %%s\n", key_format);
+		fprintf (outfile, format, key, "<null>");
+	} else {
+		switch (counter->type) {
+		case MONO_COUNTER_INT:
+#if SIZEOF_VOID_P == 4
+		case MONO_COUNTER_WORD:
+#endif
+			snprintf (format, sizeof (format), "%s : %%d\n", key_format);
+			fprintf (outfile, format, key, *(int32_t*)value);
+			break;
+		case MONO_COUNTER_UINT:
+			snprintf (format, sizeof (format), "%s : %%u\n", key_format);
+			fprintf (outfile, format, key, *(uint32_t*)value);
+			break;
+		case MONO_COUNTER_LONG:
+#if SIZEOF_VOID_P == 8
+		case MONO_COUNTER_WORD:
+#endif
+		case MONO_COUNTER_TIME_INTERVAL:
+			if (counter->type == MONO_COUNTER_LONG && counter->unit == MONO_COUNTER_TIME) {
+				snprintf (format, sizeof (format), "%s : %%0.3fms\n", key_format);
+				fprintf (outfile, format, key, (double)*(int64_t*)value / 10000.0);
+			} else if (counter->type == MONO_COUNTER_TIME_INTERVAL) {
+				snprintf (format, sizeof (format), "%s : %%0.3fms\n", key_format);
+				fprintf (outfile, format, key, (double)*(int64_t*)value / 1000.0);
+			} else {
+				snprintf (format, sizeof (format), "%s : %%u\n", key_format);
+				fprintf (outfile, format, key, *(int64_t*)value);
+			}
+			break;
+		case MONO_COUNTER_ULONG:
+			snprintf (format, sizeof (format), "%s : %%llu\n", key_format);
+			fprintf (outfile, format, key, *(uint64_t*)value);
+			break;
+		case MONO_COUNTER_DOUBLE:
+			snprintf (format, sizeof (format), "%s : %%f\n", key_format);
+			fprintf (outfile, format, key, *(double*)value);
+			break;
+		case MONO_COUNTER_STRING:
+			snprintf (format, sizeof (format), "%s : %%s\n", key_format);
+			fprintf (outfile, format, key, *(char*)value);
+			break;
+		}
+	}
+}
+
+static void
+dump_counters (void)
+{
+	Counter *counter;
+	CounterValue *cvalue;
+	CounterTimestamp *ctimestamp;
+	CounterSection *csection;
+	CounterList *clist;
+	char strtimestamp[17];
+	int i, section_printed;
+
+	fprintf (outfile, "\nCounters:\n");
+
+	if (!verbose) {
+		char counters_to_print[][64] = {
+			"Methods from AOT",
+			"Methods JITted using mono JIT",
+			"Methods JITted using LLVM",
+			"Total time spent JITting (sec)",
+			"User Time",
+			"System Time",
+			"Total Time",
+			"Working Set",
+			"Private Bytes",
+			"Virtual Bytes",
+			"Page Faults",
+			"CPU Load Average - 1min",
+			"CPU Load Average - 5min",
+			"CPU Load Average - 15min",
+			""
+		};
+
+		for (csection = counters_sections; csection; csection = csection->next) {
+			section_printed = 0;
+
+			for (clist = csection->counters; clist; clist = clist->next) {
+				counter = clist->counter;
+				if (!counter->values_last)
+					continue;
+
+				for (i = 0; counters_to_print [i][0] != 0; i++) {
+					if (strcmp (counters_to_print [i], counter->name) == 0) {
+						if (!section_printed) {
+							fprintf (outfile, "\t%s:\n", section_name (csection->value));
+							section_printed = 1;
+						}
+
+						dump_counters_value (counter, "\t\t%-30s", counter->name, counter->values_last->buffer);
+						break;
+					}
+				}
+			}
+		}
+	} else if (counters_sort_mode == COUNTERS_SORT_TIME) {
+		for (ctimestamp = counters_timestamps; ctimestamp; ctimestamp = ctimestamp->next) {
+			fprintf (outfile, "\t%lld:%02lld:%02lld:%02lld.%03lld:\n", ctimestamp->value / 1000 / 60 / 60 / 24 % 1000,
+				ctimestamp->value / 1000 / 60 / 60 % 24, ctimestamp->value / 1000 / 60 % 60,
+				ctimestamp->value / 1000 % 60, ctimestamp->value % 1000);
+
+			for (csection = ctimestamp->sections; csection; csection = csection->next) {
+				fprintf (outfile, "\t\t%s:\n", section_name (csection->value));
+
+				for (clist = csection->counters; clist; clist = clist->next) {
+					counter = clist->counter;
+					for (cvalue = counter->values; cvalue; cvalue = cvalue->next) {
+						if (cvalue->timestamp != ctimestamp->value)
+							continue;
+
+						dump_counters_value (counter, "\t\t\t%-30s", counter->name, cvalue->buffer);
+					}
+				}
+			}
+		}
+	} else if (counters_sort_mode == COUNTERS_SORT_CATEGORY) {
+		for (csection = counters_sections; csection; csection = csection->next) {
+			fprintf (outfile, "\t%s:\n", section_name (csection->value));
+
+			for (clist = csection->counters; clist; clist = clist->next) {
+				counter = clist->counter;
+				fprintf (outfile, "\t\t%s: [type: %s, unit: %s, variance: %s]\n",
+					counter->name, type_name (counter->type), unit_name (counter->unit), variance_name (counter->variance));
+
+				for (cvalue = counter->values; cvalue; cvalue = cvalue->next) {
+					snprintf (strtimestamp, sizeof (strtimestamp), "%lld:%02lld:%02lld:%02lld.%03lld", cvalue->timestamp / 1000 / 60 / 60 / 24 % 1000,
+						cvalue->timestamp / 1000 / 60 / 60 % 24, cvalue->timestamp / 1000 / 60 % 60,
+						cvalue->timestamp / 1000 % 60, cvalue->timestamp % 1000);
+
+					dump_counters_value (counter, "\t\t\t%s", strtimestamp, cvalue->buffer);
+				}
+			}
+		}
+	}
 }
 
 static int num_images;
@@ -188,6 +596,7 @@ struct _MethodDesc {
 	int len;
 	int recurse_count;
 	int sample_hits;
+	int ignore_jit; /* when this is set, we collect the metadata but don't count this method fot jit time and code size, when filtering events */
 	uint64_t calls;
 	uint64_t total_time;
 	uint64_t callee_time;
@@ -1526,7 +1935,7 @@ decode_buffer (ProfContext *ctx)
 		return 0;
 	if (!startup_time) {
 		startup_time = time_base;
-		if (time_from) {
+		if (use_time_filter) {
 			time_from += startup_time;
 			time_to += startup_time;
 		}
@@ -1648,7 +2057,7 @@ decode_buffer (ProfContext *ctx)
 					fprintf (outfile, "non-zero flags in thread\n");
 					return 0;
 				}
-				nt = get_thread (ctx, ptr_base * ptrdiff);
+				nt = get_thread (ctx, ptr_base + ptrdiff);
 				nt->name = pstrdup ((char*)p);
 				if (debug)
 					fprintf (outfile, "thread %p named: %s\n", (void*)(ptr_base + ptrdiff), p);
@@ -1711,14 +2120,19 @@ decode_buffer (ProfContext *ctx)
 			if (subtype == TYPE_JIT) {
 				intptr_t codediff = decode_sleb128 (p, &p);
 				int codelen = decode_uleb128 (p, &p);
+				MethodDesc *jitted_method;
 				if (debug)
 					fprintf (outfile, "jitted method %p (%s), size: %d, code: %p\n", (void*)(method_base), p, codelen, (void*)(ptr_base + codediff));
-				add_method (method_base, (char*)p, ptr_base + codediff, codelen);
+				jitted_method = add_method (method_base, (char*)p, ptr_base + codediff, codelen);
+				if (!(time_base >= time_from && time_base < time_to))
+					jitted_method->ignore_jit = 1;
 				while (*p) p++;
 				p++;
 			} else {
 				MethodDesc *method;
 				if ((thread_filter && thread_filter != thread->thread_id))
+					break;
+				if (!(time_base >= time_from && time_base < time_to))
 					break;
 				method = lookup_method (method_base);
 				if (subtype == TYPE_ENTER) {
@@ -1834,6 +2248,8 @@ decode_buffer (ProfContext *ctx)
 			LOG_TIME (time_base, tdiff);
 			time_base += tdiff;
 			record = (!thread_filter || thread_filter == thread->thread_id);
+			if (!(time_base >= time_from && time_base < time_to))
+				record = 0;
 			if (event == MONO_PROFILER_MONITOR_CONTENTION) {
 				MonitorDesc *mdesc = lookup_monitor (OBJ_ADDR (objdiff));
 				if (record) {
@@ -1896,6 +2312,8 @@ decode_buffer (ProfContext *ctx)
 			LOG_TIME (time_base, tdiff);
 			time_base += tdiff;
 			record = (!thread_filter || thread_filter == thread->thread_id);
+			if (!(time_base >= time_from && time_base < time_to))
+				record = 0;
 			if (subtype == TYPE_CLAUSE) {
 				int clause_type = decode_uleb128 (p, &p);
 				int clause_num = decode_uleb128 (p, &p);
@@ -1938,9 +2356,23 @@ decode_buffer (ProfContext *ctx)
 				int count = decode_uleb128 (p, &p);
 				for (i = 0; i < count; ++i) {
 					uintptr_t ip = ptr_base + decode_sleb128 (p, &p);
-					add_stat_sample (sample_type, ip);
+					if ((tstamp >= time_from && tstamp < time_to))
+						add_stat_sample (sample_type, ip);
 					if (debug)
 						fprintf (outfile, "sample hit, type: %d at %p\n", sample_type, (void*)ip);
+				}
+				if (ctx->data_version > 5) {
+					count = decode_uleb128 (p, &p);
+					for (i = 0; i < count; ++i) {
+						MethodDesc *method;
+						int64_t ptrdiff = decode_sleb128 (p, &p);
+						int il_offset = decode_sleb128 (p, &p);
+						int native_offset = decode_sleb128 (p, &p);
+						method_base += ptrdiff;
+						method = lookup_method (method_base);
+						if (debug)
+							fprintf (outfile, "sample hit bt %d: %s at IL offset %d (native: %d)\n", i, method->name, il_offset, native_offset);
+					}
 				}
 			} else if (subtype == TYPE_SAMPLE_USYM) {
 				/* un unmanaged symbol description */
@@ -1968,6 +2400,86 @@ decode_buffer (ProfContext *ctx)
 					fprintf (outfile, "unmanaged binary %s at %p\n", name, (void*)addr);
 				while (*p) p++;
 				p++;
+			} else if (subtype == TYPE_SAMPLE_COUNTERS_DESC) {
+				uint64_t i, len = decode_uleb128 (p + 1, &p);
+				for (i = 0; i < len; i++) {
+					uint64_t section = decode_uleb128 (p, &p);
+					char *name = pstrdup ((char*)p);
+					while (*p++);
+					uint64_t type = decode_uleb128 (p, &p);
+					uint64_t unit = decode_uleb128 (p, &p);
+					uint64_t variance = decode_uleb128 (p, &p);
+					uint64_t index = decode_uleb128 (p, &p);
+					add_counter ((int)section, name, (int)type, (int)unit, (int)variance, (int)index);
+				}
+			} else if (subtype == TYPE_SAMPLE_COUNTERS) {
+				int i;
+				CounterValue *value, *previous = NULL;
+				CounterList *list;
+				uint64_t timestamp = decode_uleb128 (p + 1, &p);
+				uint64_t time_between = timestamp / 1000 * 1000 * 1000 * 1000 + startup_time;
+				while (1) {
+					uint64_t index = decode_uleb128 (p, &p);
+					if (index == 0)
+						break;
+
+					for (list = counters; list; list = list->next) {
+						if (list->counter->index == (int)index) {
+							previous = list->counter->values_last;
+							break;
+						}
+					}
+
+					uint64_t type = decode_uleb128 (p, &p);
+
+					value = calloc (1, sizeof (CounterValue));
+					value->timestamp = timestamp;
+
+					switch (type) {
+					case MONO_COUNTER_INT:
+#if SIZEOF_VOID_P == 4
+					case MONO_COUNTER_WORD:
+#endif
+						value->buffer = malloc (sizeof (int32_t));
+						*(int32_t*)value->buffer = (int32_t)decode_sleb128 (p, &p) + (previous ? (*(int32_t*)previous->buffer) : 0);
+						break;
+					case MONO_COUNTER_UINT:
+						value->buffer = malloc (sizeof (uint32_t));
+						*(uint32_t*)value->buffer = (uint32_t)decode_uleb128 (p, &p) + (previous ? (*(uint32_t*)previous->buffer) : 0);
+						break;
+					case MONO_COUNTER_LONG:
+#if SIZEOF_VOID_P == 8
+					case MONO_COUNTER_WORD:
+#endif
+					case MONO_COUNTER_TIME_INTERVAL:
+						value->buffer = malloc (sizeof (int64_t));
+						*(int64_t*)value->buffer = (int64_t)decode_sleb128 (p, &p) + (previous ? (*(int64_t*)previous->buffer) : 0);
+						break;
+					case MONO_COUNTER_ULONG:
+						value->buffer = malloc (sizeof (uint64_t));
+						*(uint64_t*)value->buffer = (uint64_t)decode_uleb128 (p, &p) + (previous ? (*(uint64_t*)previous->buffer) : 0);
+						break;
+					case MONO_COUNTER_DOUBLE:
+						value->buffer = malloc (sizeof (double));
+#if TARGET_BYTE_ORDER == G_LITTLE_ENDIAN
+						for (i = 0; i < sizeof (double); i++)
+#else
+						for (i = sizeof (double) - 1; i >= 0; i--)
+#endif
+							value->buffer[i] = *p++;
+						break;
+					case MONO_COUNTER_STRING:
+						if (*p++ == 0) {
+							value->buffer = NULL;
+						} else {
+							value->buffer = (unsigned char*) pstrdup ((char*)p);
+							while (*p++);
+						}
+						break;
+					}
+					if (time_between >= time_from && time_between <= time_to)
+						add_counter_value (index, value);
+				}
 			} else {
 				return 0;
 			}
@@ -2184,7 +2696,7 @@ dump_jit (void)
 	for (i = 0; i < HASH_SIZE; ++i) {
 		m = method_hash [i];
 		for (m = method_hash [i]; m; m = m->next) {
-			if (!m->code)
+			if (!m->code || m->ignore_jit)
 				continue;
 			compiled_methods++;
 			code_size += m->len;
@@ -2471,7 +2983,7 @@ flush_context (ProfContext *ctx)
 	}
 }
 
-static const char *reports = "header,jit,gc,sample,alloc,call,metadata,exception,monitor,thread,heapshot";
+static const char *reports = "header,jit,gc,sample,alloc,call,metadata,exception,monitor,thread,heapshot,counters";
 
 static const char*
 match_option (const char *p, const char *opt)
@@ -2546,6 +3058,11 @@ print_reports (ProfContext *ctx, const char *reps, int parse_only)
 				dump_samples ();
 			continue;
 		}
+		if ((opt = match_option (p, "counters")) != p) {
+			if (!parse_only)
+				dump_counters ();
+			continue;
+		}
 		return 0;
 	}
 	return 1;
@@ -2580,6 +3097,8 @@ usage (void)
 	printf ("\t                     %s\n", reports);
 	printf ("\t--method-sort=MODE   sort methods according to MODE: total, self, calls\n");
 	printf ("\t--alloc-sort=MODE    sort allocations according to MODE: bytes, count\n");
+	printf ("\t--counters-sort=MODE sort counters according to MODE: time, category\n");
+	printf ("\t                     only accessible in verbose mode\n");
 	printf ("\t--track=OB1[,OB2...] track what happens to objects OBJ1, O2 etc.\n");
 	printf ("\t--find=FINDSPEC      find and track objects matching FINFSPEC, where FINDSPEC is:\n");
 	printf ("\t                     S:minimum_size or T:partial_name\n");
@@ -2619,6 +3138,16 @@ main (int argc, char *argv[])
 				method_sort_mode = METHOD_SORT_SELF;
 			} else if (strcmp (val, "calls") == 0) {
 				method_sort_mode = METHOD_SORT_CALLS;
+			} else {
+				usage ();
+				return 1;
+			}
+		} else if (strncmp ("--counters-sort=", argv [i], 16) == 0) {
+			const char *val = argv [i] + 16;
+			if (strcmp (val, "time") == 0) {
+				counters_sort_mode = COUNTERS_SORT_TIME;
+			} else if (strcmp (val, "category") == 0) {
+				counters_sort_mode = COUNTERS_SORT_CATEGORY;
 			} else {
 				usage ();
 				return 1;
@@ -2682,6 +3211,7 @@ main (int argc, char *argv[])
 			}
 			time_from = from_secs * 1000000000;
 			time_to = to_secs * 1000000000;
+			use_time_filter = 1;
 		} else if (strcmp ("--verbose", argv [i]) == 0) {
 			verbose++;
 		} else if (strcmp ("--traces", argv [i]) == 0) {

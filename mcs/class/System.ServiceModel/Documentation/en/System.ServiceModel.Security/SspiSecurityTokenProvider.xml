@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SspiSecurityTokenProvider" FullName="System.ServiceModel.Security.SspiSecurityTokenProvider">
+  <TypeSignature Language="C#" Value="public class SspiSecurityTokenProvider : System.IdentityModel.Selectors.SecurityTokenProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SspiSecurityTokenProvider extends System.IdentityModel.Selectors.SecurityTokenProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.IdentityModel.Selectors.SecurityTokenProvider</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The SSPI security token is not capable of any cryptographic operations, but contains only the settings needed for Windows authentication.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a security token provider that provides an SSPI security token.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SspiSecurityTokenProvider (System.Net.NetworkCredential credential, bool extractGroupsForWindowsAccounts, bool allowUnauthenticatedCallers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Net.NetworkCredential credential, bool extractGroupsForWindowsAccounts, bool allowUnauthenticatedCallers) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="credential" Type="System.Net.NetworkCredential" />
+        <Parameter Name="extractGroupsForWindowsAccounts" Type="System.Boolean" />
+        <Parameter Name="allowUnauthenticatedCallers" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The instance of this class is used for SSPI tokens on the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SspiSecurityTokenProvider" /> class.</para>
+        </summary>
+        <param name="credential">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.NetworkCredential" /> that represents the server identity.</param>
+        <param name="extractGroupsForWindowsAccounts">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to expand users to include Windows Groups; otherwise, false.</param>
+        <param name="allowUnauthenticatedCallers">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to allow unauthenticated callers; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SspiSecurityTokenProvider (System.Net.NetworkCredential credential, bool allowNtlm, System.Security.Principal.TokenImpersonationLevel impersonationLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Net.NetworkCredential credential, bool allowNtlm, valuetype System.Security.Principal.TokenImpersonationLevel impersonationLevel) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="credential" Type="System.Net.NetworkCredential" />
+        <Parameter Name="allowNtlm" Type="System.Boolean" />
+        <Parameter Name="impersonationLevel" Type="System.Security.Principal.TokenImpersonationLevel" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance of this class is used for SSPI tokens on the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SspiSecurityTokenProvider" /> class.</para>
+        </summary>
+        <param name="credential">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.NetworkCredential" /> that represents the client identity.</param>
+        <param name="allowNtlm">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to allow NTLM authentication; otherwise, false.</param>
+        <param name="impersonationLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.TokenImpersonationLevel" /> granted to the server.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTokenCore">
+      <MemberSignature Language="C#" Value="protected override System.IdentityModel.Tokens.SecurityToken GetTokenCore (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.IdentityModel.Tokens.SecurityToken GetTokenCore(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security token is of type <see cref="T:System.ServiceModel.Security.Tokens.SspiSecurityToken" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security token.</para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Timespan" /> that represents the time-out interval.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

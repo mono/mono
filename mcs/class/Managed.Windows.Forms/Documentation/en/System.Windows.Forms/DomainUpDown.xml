@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DomainUpDown" FullName="System.Windows.Forms.DomainUpDown">
   <TypeSignature Language="C#" Value="public class DomainUpDown : System.Windows.Forms.UpDownBase" />
   <AssemblyInfo>
@@ -27,8 +28,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.DomainUpDown" /> control displays a single string value that is selected from an <see cref="T:System.Object" /> collection by clicking the up or down buttons of the control. The user can also enter text in the control, unless the <see cref="P:System.Windows.Forms.UpDownBase.ReadOnly" /> property is set to true (the string typed in must match an item in the collection to be accepted). When an item is selected, the object is converted to a string value so it can be displayed in the spin box.</para>
+      <para>To create a collection of objects to display in the <see cref="T:System.Windows.Forms.DomainUpDown" /> control, you can add or remove the items individually by using the <see cref="M:System.Collections.ArrayList.Add(System.Object)" /> and <see cref="M:System.Collections.ArrayList.Remove(System.Object)" /> methods. This can be called in an event handler, such as the <see cref="E:System.Windows.Forms.Control.Click" /> event of a button. The object collection can be sorted alphabetically by setting the <see cref="P:System.Windows.Forms.DomainUpDown.Sorted" /> property to true. When the <see cref="P:System.Windows.Forms.DomainUpDown.Wrap" /> property is set to true, if you scroll past the last or first object in the collection, the list will start over with the first or last object respectively and appear to roll in a continuous list.</para>
+      <para>When the <see cref="M:System.Windows.Forms.DomainUpDown.UpButton" /> or <see cref="M:System.Windows.Forms.DomainUpDown.DownButton" /> methods are called, either in code or by the click of the up or down buttons, <see cref="M:System.Windows.Forms.DomainUpDown.UpdateEditText" /> is called to update the control with the new string. If <see cref="P:System.Windows.Forms.UpDownBase.UserEdit" /> is set to true, the string is matched to one of the values in the collection prior to updating the control's text display.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows spin box (also known as an up-down control) that displays string values.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +45,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DomainUpDown" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -52,9 +64,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.DomainUpDown.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
+          <block subset="none" type="note">
+            <para>To get or set the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property, you must add a reference to the Accessibility assembly installed with the .NET Framework. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new accessibility object for the <see cref="T:System.Windows.Forms.DomainUpDown" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DomainUpDown.DomainUpDownAccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,8 +93,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As you move through the collection of items in the <see cref="T:System.Windows.Forms.DomainUpDown" /> control using the down button, you will eventually reach the last item in the collection. If you continue, and <see cref="P:System.Windows.Forms.DomainUpDown.Wrap" /> is set to true, the list will start over with the first item in the collection and appear to be continuous. This behavior also occurs when you move through the collection using the up button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the next item in the object collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +125,15 @@
         <ReturnType>System.Windows.Forms.DomainUpDown+DomainUpDownItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> collection can be built and made available to the <see cref="T:System.Windows.Forms.DomainUpDown" /> control in two ways. You can add items to the collection by using the <see cref="M:System.Collections.ArrayList.Add(System.Object)" /> or <see cref="M:System.Collections.ArrayList.Insert(System.Int32,System.Object)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects assigned to the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,10 +151,15 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DomainUpDown.SelectedItemChanged" /> event.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -136,10 +177,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DomainUpDown.OnSelectedItemChanged(System.Object,System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DomainUpDown.SelectedItemChanged" /> event.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,10 +230,20 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyPressEventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.UpDownBase.ReadOnly" /> property is set to true, the <see cref="T:System.Windows.Forms.DomainUpDown" /> control chooses the item on the list that begins with the character. If more than one item in the collection starts with the same character, the <see cref="T:System.Windows.Forms.DomainUpDown" /> control selects the next item that begins with the typed character, starting from the currently selected position. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DomainUpDown.OnTextBoxKeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event. </para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Padding">
@@ -207,9 +267,15 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Even if you set the <see cref="P:System.Windows.Forms.DomainUpDown.Padding" /> property, it will have a value of <see cref="F:System.Windows.Forms.Padding.Empty" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the spacing between the <see cref="T:System.Windows.Forms.DomainUpDown" /> control's contents and its edges.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingChanged">
@@ -230,8 +296,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DomainUpDown.Padding" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectedIndex">
@@ -249,9 +321,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DomainUpDown.SelectedIndex" /> property holds the index value of the item in the collection that is currently selected in the spin box (also known as an up-down control). Collection items can be reassigned new index values if the <see cref="P:System.Windows.Forms.DomainUpDown.Sorted" /> property has been changed from false to true. As the collection is re-sorted alphabetically, the items will be assigned a new index value.</para>
+          <block subset="none" type="note">
+            <para>If the user has entered an item in the spin box, or if no item has been selected, the <see cref="P:System.Windows.Forms.DomainUpDown.SelectedIndex" /> value will be the default value, -1.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index value of the selected item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -273,9 +354,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set, the value is validated to be one of the items in the collection, and the <see cref="P:System.Windows.Forms.DomainUpDown.SelectedIndex" /> property is set to the appropriate index value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the selected item based on the index value of the selected item in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -289,8 +376,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="E:System.Windows.Forms.DomainUpDown.SelectedItemChanged" /> event to occur, the <see cref="P:System.Windows.Forms.DomainUpDown.SelectedItem" /> property can be changed in code, by the user typing in a new value or clicking the control's up or down buttons.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DomainUpDown.SelectedItem" /> property has been changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -309,9 +402,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.DomainUpDown.Sorted" /> is set to true, the collection is sorted in alphabetical order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the item collection is sorted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -326,9 +425,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return string includes the type and the values for the <see cref="P:System.Collections.ArrayList.Count" /> and <see cref="P:System.Windows.Forms.DomainUpDown.SelectedIndex" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.DomainUpDown" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.DomainUpDown" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -343,8 +451,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As you move through the collection of items in the <see cref="T:System.Windows.Forms.DomainUpDown" /> control using the up button, you will eventually reach the first item in the collection. If you continue, and <see cref="P:System.Windows.Forms.DomainUpDown.Wrap" /> is set to true, the list will start over with the last item in the collection and appear to be continuous. This behavior also occurs when you move through the collection using the down button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the previous item in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -359,8 +473,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the text in the spin box (also known as an up-down control) to display the selected item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -382,9 +499,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DomainUpDown.Wrap" /> property is set to true, if you reach the last item in the collection and continue, the list will start over with the first item and appear to be continuous. This behavior works in reverse as well.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the collection of items continues to the first or last item if the user continues past the end of the list.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

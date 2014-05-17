@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AddressingVersion" FullName="System.ServiceModel.Channels.AddressingVersion">
+  <TypeSignature Language="C#" Value="public sealed class AddressingVersion" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AddressingVersion extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>There are currently two version of WS-Addressing: WS-Addressing August 2004 and WS-Addressing 1.0. These versions can be retrieved using the <see cref="P:System.ServiceModel.Channels.AddressingVersion.WSAddressingAugust2004" /> and <see cref="P:System.ServiceModel.Channels.AddressingVersion.WSAddressing10" /> properties, respectively. There is also an addressing version available that is not associated with WS-Addressing, which is retrieved using the <see cref="P:System.ServiceModel.Channels.AddressingVersion.None" /> property. This value indicates that no version of WS-Addressing is used. This is primarily for transports that do not pass SOAP envelopes on the wire and therefore have no use for WS-Addressing.</para>
+      <para>The addressing version is part of the message version: specifically <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Addressing" /> property. The <see cref="T:System.ServiceModel.Channels.MessageVersion" /> also contains the SOAP envelope version in addition to the addressing version information. The <see cref="T:System.ServiceModel.EnvelopeVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Envelope" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The WS-Addressing version associated with a SOAP message or understood by an endpoint.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.AddressingVersion None { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.Channels.AddressingVersion None" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.AddressingVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The addressing version is part of the message version: specifically <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Addressing" /> property. The <see cref="T:System.ServiceModel.Channels.MessageVersion" /> also contains the SOAP envelope version in addition to the addressing version information. The <see cref="T:System.ServiceModel.EnvelopeVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Envelope" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the addressing version that is not associated with WS-Addressing version.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the current addressing version.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current addressing version.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="WSAddressing10">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.AddressingVersion WSAddressing10 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.Channels.AddressingVersion WSAddressing10" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.AddressingVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The addressing version is part of the message version: specifically <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Addressing" /> property. The <see cref="T:System.ServiceModel.Channels.MessageVersion" /> also contains the SOAP envelope version in addition to the addressing version information. The <see cref="T:System.ServiceModel.EnvelopeVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Envelope" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an identifier for the address version associated with WS-Addressing 1.0.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WSAddressingAugust2004">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Channels.AddressingVersion WSAddressingAugust2004 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.ServiceModel.Channels.AddressingVersion WSAddressingAugust2004" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.AddressingVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The addressing version is part of the message version: specifically <see cref="T:System.ServiceModel.Channels.AddressingVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Addressing" /> property. The <see cref="T:System.ServiceModel.Channels.MessageVersion" /> also contains the SOAP envelope version in addition to the addressing version information. The <see cref="T:System.ServiceModel.EnvelopeVersion" /> provides the return type for the <see cref="P:System.ServiceModel.Channels.MessageVersion.Envelope" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of WS-Addressing that is associated with WS-Addressing August 2004.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

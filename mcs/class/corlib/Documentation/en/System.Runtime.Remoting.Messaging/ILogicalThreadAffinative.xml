@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ILogicalThreadAffinative" FullName="System.Runtime.Remoting.Messaging.ILogicalThreadAffinative">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ILogicalThreadAffinative" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ILogicalThreadAffinative" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,15 +10,21 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
   <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a remote method call is made to an object in another <see cref="T:System.AppDomain" />, the current <see cref="T:System.Runtime.Remoting.Messaging.CallContext" /> class generates a <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> that travels along with the call to the remote location. Only objects that expose the <see cref="T:System.Runtime.Remoting.Messaging.ILogicalThreadAffinative" /> interface and are stored in the <see cref="T:System.Runtime.Remoting.Messaging.CallContext" /> are propagated outside the <see cref="T:System.AppDomain" />. Objects that do not support this interface are not transmitted in <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> instances with remote method calls.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks an object that can propagate outside of an <see cref="T:System.AppDomain" /> in a <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" />.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

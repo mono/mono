@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ExportLifetimeContext&lt;T&gt;" FullName="System.ComponentModel.Composition.ExportLifetimeContext&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public sealed class ExportLifetimeContext&lt;T&gt; : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ExportLifetimeContext`1&lt;T&gt; extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds an exported value created by an <see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> object and a reference to a method to release that object.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExportLifetimeContext (T value, Action disposeAction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!T value, class System.Action disposeAction) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="value" Type="T" />
+        <Parameter Name="disposeAction" Type="System.Action" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="disposeAction">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the Dispose method of a <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> object calls the referenced method to release its associated export.</para>
+          <para>Call Dispose when you are finished using the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" />. The Dispose method leaves the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> was occupying.</para>
+          <para>For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=187455">Cleaning Up Unmanaged Resources</see> and <see cref="http://go.microsoft.com/fwlink/?LinkId=187456">Implementing a Dispose Method</see>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.ComponentModel.Composition.ExportLifetimeContext`1" /> class, including its associated export.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public T Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T Value" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exported value of a <see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

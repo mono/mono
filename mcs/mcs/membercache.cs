@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 						continue;
 
 					if (list is MemberSpec[]) {
-						list = new List<MemberSpec> () { list [0] };
+						list = new List<MemberSpec> { list [0] };
 						member_hash[entry.Key] = list;
 					}
 
@@ -335,7 +335,7 @@ namespace Mono.CSharp {
 					member_hash[name] = list;
 			} else {
 				if (list.Count == 1) {
-					list = new List<MemberSpec> () { list[0] };
+					list = new List<MemberSpec> { list[0] };
 					member_hash[name] = list;
 				}
 
@@ -390,7 +390,7 @@ namespace Mono.CSharp {
 			}
 
 			if (existing.Count == 1) {
-				existing = new List<MemberSpec> () { existing[0], member };
+				existing = new List<MemberSpec> { existing[0], member };
 				return true;
 			}
 
@@ -464,6 +464,7 @@ namespace Mono.CSharp {
 			IList<MemberSpec> applicable;
 			TypeSpec best_match = null;
 			do {
+#if !FULL_AOT_RUNTIME
 				// TODO: Don't know how to handle this yet
 				// When resolving base type of nested type, parent type must have
 				// base type resolved to scan full hierarchy correctly
@@ -472,6 +473,7 @@ namespace Mono.CSharp {
 				var tc = container.MemberDefinition as TypeContainer;
 				if (tc != null)
 					tc.DefineContainer ();
+#endif
 
 				if (container.MemberCacheTypes.member_hash.TryGetValue (name, out applicable)) {
 					for (int i = applicable.Count - 1; i >= 0; i--) {
@@ -564,11 +566,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < applicable.Count; ++i) {
 						var entry = applicable [i];
 
-						if ((entry.Modifiers & Modifiers.PRIVATE) != 0)
-							continue;
-
-						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL &&
-							!entry.DeclaringType.MemberDefinition.IsInternalAsPublic (member.Module.DeclaringAssembly))
+						if ((entry.Modifiers & Modifiers.PUBLIC) == 0 && !entry.IsAccessible (member))
 							continue;
 
 						//
@@ -697,6 +695,14 @@ namespace Mono.CSharp {
 						continue;
 
 					if ((name_entry.Modifiers & Modifiers.STATIC) != 0)
+						continue;
+
+					//
+					// Ignore user private fields for definite assignment. This is sort of unexpected but
+					// rationale is to have consistent results when using reference assemblies which don't
+					// include any private fields and full assemblies
+					//
+					if ((name_entry.Modifiers & (Modifiers.PRIVATE | Modifiers.BACKING_FIELD)) == Modifiers.PRIVATE)
 						continue;
 
 					//

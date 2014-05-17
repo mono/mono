@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MsmqBindingElementBase" FullName="System.ServiceModel.Configuration.MsmqBindingElementBase">
+  <TypeSignature Language="C#" Value="public abstract class MsmqBindingElementBase : System.ServiceModel.Configuration.StandardBindingElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract MsmqBindingElementBase extends System.ServiceModel.Configuration.StandardBindingElement implements class System.ServiceModel.Configuration.IBindingConfigurationElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.StandardBindingElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains settings required to configure a binding based on Message Queuing (also known as MSMQ).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class with members common to the <see cref="T:System.ServiceModel.Configuration.NetMsmqBindingElement" /> and <see cref="T:System.ServiceModel.Configuration.MsmqIntegrationBindingElement" /> classes.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MsmqBindingElementBase ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.MsmqBindingElementBase" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CustomDeadLetterQueue">
+      <MemberSignature Language="C#" Value="public Uri CustomDeadLetterQueue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri CustomDeadLetterQueue" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("customDeadLetterQueue", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <newTerm>dead-letter queue</newTerm> is a queue managed by the sending application's queue manager that stores messages that have failed to be delivered or have expired. The CustomDeadLetterQueue property allows you to specify a custom dead-letter queue rather than using the default system-wide, dead-letter queue.</para>
+          <para>The URI that is specified by <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.CustomDeadLetterQueue" /> must use the net.msmq scheme.</para>
+          <para>If <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.DeadLetterQueue" /> is set to <see cref="F:System.ServiceModel.DeadLetterQueue.None" /> or <see cref="F:System.ServiceModel.DeadLetterQueue.System" />, then <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.CustomDeadLetterQueue" /> must be set to null. If <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.CustomDeadLetterQueue" /> is not null, then <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.DeadLetterQueue" /> must be set to <see cref="F:System.ServiceModel.DeadLetterQueue.Custom" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Uri" /> that identifies a custom dead-letter queue where expired messages or messages that failed to be delivered are sent.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeadLetterQueue">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.DeadLetterQueue DeadLetterQueue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.DeadLetterQueue DeadLetterQueue" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("deadLetterQueue", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.DeadLetterQueue</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <newTerm>dead-letter queue</newTerm> is a queue managed by the sending application's queue manager that stores messages that have failed to be delivered or have expired. The reasons a message can fail to reach the receiving application include: </para>
+          <list type="bullet">
+            <item>
+              <para>A transactional message is sent to a non-transactional queue.</para>
+            </item>
+            <item>
+              <para>A non-transactional message is sent to a transactional queue.</para>
+            </item>
+            <item>
+              <para>An unauthenticated message is sent to a queue that accepts only authenticated messages.</para>
+            </item>
+            <item>
+              <para>An unencrypted message is sent to a queue that accepts only encrypted messages.</para>
+            </item>
+            <item>
+              <para>The message expires before the message is delivered to a receiver.</para>
+            </item>
+            <item>
+              <para>The message storage quota of the target computer or the storage quota of the destination queue is exceeded, or there is no available storage space on the target computer when the message arrives.</para>
+            </item>
+            <item>
+              <para>The sender does not have the <see cref="http://go.microsoft.com/fwlink/?LinkID=96167">access rights</see> required to place the message in the destination queue.</para>
+            </item>
+            <item>
+              <para>The digital signature attached to the message is not valid.</para>
+            </item>
+            <item>
+              <para>An encrypted message cannot be decrypted by the destination queue manager.</para>
+            </item>
+            <item>
+              <para>The destination queue is purged or deleted before the message is retrieved.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.DeadLetterQueue" /> setting for this binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Durable">
+      <MemberSignature Language="C#" Value="public bool Durable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Durable" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("durable", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set to true, messages are durable; otherwise, messages are volatile. Durable messages are not lost if the queue manager crashes. The default value for this property is true. When exactly-once assurances are required (<see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.ExactlyOnce" /> is set to true), this property must be set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether messages sent with this binding are durable or volatile.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExactlyOnce">
+      <MemberSignature Language="C#" Value="public bool ExactlyOnce { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ExactlyOnce" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("exactlyOnce", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.ExactlyOnce" />, when set to true, indicates that Message Queuing (also known as MSMQ) ensures that a sent message is delivered to the receiving message queue once and only once. If delivery fails, the message is sent to the dead-letter queue depending on the DeadLetterQueue property setting. Setting <see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.ExactlyOnce" /> to true requires the queue to be transactional.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether messages sent with this binding have exactly-once assurances.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxReceivedMessageSize">
+      <MemberSignature Language="C#" Value="public long MaxReceivedMessageSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 MaxReceivedMessageSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("maxReceivedMessageSize", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.LongValidator(ExcludeRange=false, MaxValue=9223372036854775807, MinValue=0)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an incoming message is larger than <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.MaxReceivedMessageSize" />, the message is dropped.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates the maximum size, in bytes, allowed for a message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxRetryCycles">
+      <MemberSignature Language="C#" Value="public int MaxRetryCycles { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxRetryCycles" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("maxRetryCycles", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.IntegerValidator(ExcludeRange=false, MaxValue=2147483647, MinValue=0)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <newTerm>retry cycle</newTerm> is when a message is transferred from the retry queue to the application queue to attempt delivery to the application. Messages are placed in the retry queue after failing a number of immediate retries as specified by <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.ReceiveRetryCount" />. <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.MaxRetryCycles" /> specifies the number of retry cycles and does not include the initial attempt to send the message. An attempt to deliver a message is made a maximum of (1 + MaxRetryCycles) * (ReceiveRetryCount + 1) times. For example, if ReceiveRetryCount = 0 and MaxRetryCycles is 1, there is a maximum of two attempts to deliver the message. This property is available starting with the wv operating system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of retry cycles to attempt delivery of messages to the receiving application.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="protected override System.Configuration.ConfigurationPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.ConfigurationPropertyCollection Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReceiveErrorHandling">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.ReceiveErrorHandling ReceiveErrorHandling { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ServiceModel.ReceiveErrorHandling ReceiveErrorHandling" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("receiveErrorHandling", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.ReceiveErrorHandling</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to <see cref="F:System.ServiceModel.ReceiveErrorHandling.Fault" />, the listener is faulted and a <see cref="T:System.ServiceModel.ProtocolException" /> (wrapping a <see cref="T:System.ServiceModel.MsmqPoisonMessageException" />) is traced and thrown. The message is left in the queue and must be removed in a manual way. The <see cref="T:System.ServiceModel.MsmqPoisonMessageException" /> contains a <see cref="P:System.ServiceModel.MsmqPoisonMessageException.MessageLookupId" /> that can be used to identify and manually remove the message from the poison-message queue.</para>
+          <para>When this property is set to <see cref="F:System.ServiceModel.ReceiveErrorHandling.Drop" />, the offending message is simply dropped.</para>
+          <para>When this property is set to <see cref="F:System.ServiceModel.ReceiveErrorHandling.Reject" />, a negative acknowledgement is sent to the client and the message is removed from the poison-message queue. This option is available only on Message Queuing (MSMQ) 4.0.</para>
+          <para>When this property is set to <see cref="F:System.ServiceModel.ReceiveErrorHandling.Move" />, the message is moved to the final poison-message subqueue. This option is available only on Message Queuing (also known as MSMQ) 4.0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an enumeration value that specifies how poison and messages that cannot be dispatched are handled.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReceiveRetryCount">
+      <MemberSignature Language="C#" Value="public int ReceiveRetryCount { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ReceiveRetryCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("receiveRetryCount", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.IntegerValidator(ExcludeRange=false, MaxValue=2147483647, MinValue=0)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the maximum number of delivery attempts is reached and the message is not accessed by the application, then the message is sent to a retry queue for redelivery at a later time. The amount of time before the message is transferred back to the sending queue is controlled by <see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.RetryCycleDelay" />. If retry cycles reach the <see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.MaxRetryCycles" /> value, then the message is either sent to the poison-message queue, or a negative acknowledgement is sent back to the sender.</para>
+          <para>crdefault <see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.MaxRetryCycles" /> and <see cref="P:System.ServiceModel.Channels.MsmqBindingElementBase.RetryCycleDelay" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of immediate retries that the queue manager should attempt if transmission of a message from the application queue to the application fails.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RetryCycleDelay">
+      <MemberSignature Language="C#" Value="public TimeSpan RetryCycleDelay { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan RetryCycleDelay" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter(typeof(System.ComponentModel.TimeSpanConverter))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("retryCycleDelay", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single retry cycle makes repeated attempts to deliver a message to the receiving application (specified by the <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.MaxRetryCycles" /> property). If all attempts fail, the message is placed back in the retry queue. This property specifies how long the message remains in the retry queue before it is transferred to the application queue for another retry cycle. This property is available starting with the wv or later operating systems.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how long to wait before attempting another retry cycle when attempting to deliver a message that could not be delivered.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TimeToLive">
+      <MemberSignature Language="C#" Value="public TimeSpan TimeToLive { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan TimeToLive" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter(typeof(System.ComponentModel.TimeSpanConverter))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("timeToLive", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued applications, by design, work in a disconnected manner, so the sending and receiving applications might not be running at the same time. Therefore, a message sent by the sending application might not be processed immediately by the receiving application. Some messages contain information that is valid only for a particular period of time. If this message is not delivered within that period of time, it no longer contains useful information and should be dropped. This property enables you to specify a time limit for how long a message is kept prior to delivery to the application queue. If this time limit elapses prior to the message being delivered to the application queue, the message is placed in the dead-letter queue if one is available (determined by the <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.DeadLetterQueue" /> property); otherwise, if no dead-letter queue is available, the message is dropped.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how long messages are valid. When this time has elapsed, the message is placed in a dead-letter queue (if available).</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseMsmqTracing">
+      <MemberSignature Language="C#" Value="public bool UseMsmqTracing { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseMsmqTracing" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("useMsmqTracing", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.ServiceModel.Configuration.MsmqBindingElementBase.UseMsmqTracing" /> is set to true, the queued channel uses the Message Queuing built-in message tracing facility. Through this facility, a report message is sent to a specified report queue each time a message enters and leaves a queue manager.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the Message Queuing (also known as MSMQ) built-in message tracing facility is used.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UseSourceJournal">
+      <MemberSignature Language="C#" Value="public bool UseSourceJournal { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseSourceJournal" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Configuration.ConfigurationProperty("useSourceJournal", DefaultValue=Mono.Cecil.CustomAttributeArgument, Options=System.Configuration.ConfigurationPropertyOptions.None)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Queued applications that keep a record of messages that have left the source computer's outgoing queue can have the messages copied to a journal queue. After a message leaves the outgoing queue and an acknowledgment is received that the message was received on the destination computer, a copy of the message is kept in the sending computer's system journal queue.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether copies of messages processed by this binding should be stored in the source journal queue.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

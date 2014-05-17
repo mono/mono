@@ -78,6 +78,11 @@ namespace System.Net.Sockets
 			Init(AddressFamily.InterNetwork);
 			client.Bind(new IPEndPoint(IPAddress.Any, 0));
 		}
+
+		internal TcpClient (Socket s)
+		{
+			client = s;
+		}
 	
 		public TcpClient (AddressFamily family)
 		{
@@ -135,11 +140,6 @@ namespace System.Net.Sockets
 			set {
 				client.ExclusiveAddressUse = value;
 			}
-		}
-
-		internal void SetTcpClient (Socket s) 
-		{
-			Client = s;
 		}
 
 		public LingerOption LingerState {

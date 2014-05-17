@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ISecuritySession" FullName="System.ServiceModel.Security.ISecuritySession">
+  <TypeSignature Language="C#" Value="public interface ISecuritySession : System.ServiceModel.Channels.ISession" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISecuritySession implements class System.ServiceModel.Channels.ISession" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.ISession</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ServiceModel.Security.ISecuritySession" /> instances are provided by message security channels (which use WS-SecureConversation) and by TCP secure transport channels.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a kind of ISession that enforces the requirement that all messages exchanged on the session are between the same communicating parties that established the session.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="RemoteIdentity">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointIdentity RemoteIdentity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointIdentity RemoteIdentity" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identity of the remote principal.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

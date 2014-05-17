@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DefaultSettingValueAttribute" FullName="System.Configuration.DefaultSettingValueAttribute">
   <TypeSignature Language="C#" Value="public sealed class DefaultSettingValueAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DefaultSettingValueAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -14,42 +17,78 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Configuration.DefaultSettingValueAttribute" /> can only be applied to individual settings properties; it is invalid to apply this attribute to an entire application settings class. </para>
+      </block>
+      <para>Different settings providers may have different requirements or limitations on the use of the <see cref="T:System.Configuration.DefaultSettingValueAttribute" />. For example, the <see cref="T:System.Configuration.LocalFileSettingsProvider" /> does not require this attribute, and will override any value provided by this attribute if there are any values—default or user-modified— already present in the data store.</para>
+      <para>
+        <see cref="T:System.Configuration.DefaultSettingValueAttribute" /> requires that the default value can be represented as a string. As a result, settings using XML serialization cannot have a default value specified by means of this attribute. Some providers may choose to support multiple serialization schemes which can be specified at compile time using the <see cref="T:System.Configuration.SettingsSerializeAsAttribute" />.</para>
+      <block subset="none" type="note">
+        <para>The default values specified by this attribute are stored as plain text in the resultant compiled .exe or .dll file. Therefore these default values are inherently insecure.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the default value for an application settings property.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DefaultSettingValueAttribute (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string value) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The supplied string must be a value that is compatible with the available serialization mechanism associated with the property type. For example, if the property is of type <see cref="T:System.Drawing.Color" />, then a <paramref name="value" /> of "Azure" would be valid.</para>
+          <block subset="none" type="note">
+            <para>The default values specified by this attribute are stored as plain text in the resultant compiled .exe or .dll file. Therefore these default values are inherently insecure.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Configuration.DefaultSettingValueAttribute" /> class.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the default value for the property. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="C#" Value="public string Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.DefaultSettingValueAttribute.Value" /> property is set in the <see cref="M:System.Configuration.DefaultSettingValueAttribute.#ctor(System.String)" /> constructor.</para>
+          <para>Setting providers may support multiple serialization schemes that can be specified with the <see cref="T:System.Configuration.SettingsSerializeAsAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default value for the application settings property.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

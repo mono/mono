@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Net.Http.Headers">
+  <Docs>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for collections of HTTP headers used by the <see cref="N:System.Net.Http" /> namespace</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Net.Http.Headers" /> namespace provides support for HTTP headers as defined in <see cref="http://go.microsoft.com/fwlink/?LinkID=241642">RFC 2616</see> by the IETF.</para>
+    </remarks>
+  </Docs>
+</Namespace>

@@ -1,17 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IStructuralComparable" FullName="System.Collections.IStructuralComparable">
   <TypeSignature Language="C#" Value="public interface IStructuralComparable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IStructuralComparable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Collections.IStructuralComparable" /> interface enables you to implement customized comparisons for collection members. That is, you can define precisely what it means for one collection object to precede, follow, or occur in the same position in the sort order as a second collection object. You can then specify that this definition be used with a collection type that accepts the <see cref="T:System.Collections.IStructuralComparable" /> interface. </para>
+      <para>The interface has a single member, <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" />, which determines whether the current collection object is less than, equal to, or greater than a second object in the sort order. The actual comparison of the members or elements in the current instance with those in a second object is performed by an <see cref="T:System.Collections.IComparer" /> interface implementation, which contains the definition of your custom comparison.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Collections.IStructuralComparable" /> interface supports only structural comparisons for sorting or ordering. The <see cref="T:System.Collections.IStructuralEquatable" /> interface supports custom comparisons for structural equality.</para>
+      </block>
+      <para>The .NET Framework provides two default comparers. One is returned by the <see cref="P:System.Collections.StructuralComparisons.StructuralComparer" /> property; the other is returned by the <see cref="P:System.Collections.Generic.Comparer`1.Default" /> property.</para>
+      <para>The generic tuple classes (<see cref="T:System.Tuple`1" />, <see cref="T:System.Tuple`2" />, <see cref="T:System.Tuple`3" />, and so on) and the <see cref="T:System.Array" /> class provide explicit implementations of the <see cref="T:System.Collections.IStructuralComparable" /> interface. By casting (in C#) or converting (in Visual Basic) the current instance of an array or tuple to an <see cref="T:System.Collections.IStructuralComparable" /> interface value and providing your <see cref="T:System.Collections.IComparer" /> implementation as an argument to the <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method, you can define a custom sort order for the array or collection. However, you do not call the <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method directly in most cases. Instead, the <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method is called by sorting methods such as <see cref="M:System.Array.Sort(System.Array,System.Collections.IComparer)" />. In this case, you define your <see cref="T:System.Collections.IComparer" /> implementation and pass it as an argument to a sorting method or collection object's class constructor. The <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method with your custom comparer is then called automatically whenever the collection is sorted. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports the structural comparison of collection objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CompareTo">
       <MemberSignature Language="C#" Value="public int CompareTo (object other, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(object other, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -24,11 +39,69 @@
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method supports custom structural comparison and sorting of array and tuple objects. The <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method calls the <paramref name="comparer" /> object's <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> method to compare individual array elements or tuple components, starting with the first element or component. The individual calls to <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> end and the <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method returns a value when one of the following conditions becomes true:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> method returns -1.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> method returns 1.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> method is called for the last element or component in the collection object.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current collection object precedes, occurs in the same position as, or follows another object in the sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that indicates the relationship of the current collection object to <paramref name="other" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1</para>
+              </term>
+              <description>
+                <para>The current instance precedes <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0</para>
+              </term>
+              <description>
+                <para>The current instance and <paramref name="other" /> are equal.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1</para>
+              </term>
+              <description>
+                <para>The current instance follows <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that compares members of the current collection object with the corresponding members of <paramref name="other" />.</param>
       </Docs>
     </Member>
   </Members>

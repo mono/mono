@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlInputRadioButton" FullName="System.Web.UI.HtmlControls.HtmlInputRadioButton">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HtmlInputRadioButton : System.Web.UI.HtmlControls.HtmlInputControl, System.Web.UI.IPostBackDataHandler" />
   <AssemblyInfo>
@@ -25,8 +26,28 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control to create a radio button on a Web page. The <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control does not provide built-in functionality to display a caption for the radio button. To create a caption, use literal text in the Web page at the desired location. This allows you to determine where the caption is displayed relative to the radio button. For example, if you want to display the caption on the right side of the radio button, declare an <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control, followed by the caption text, as shown in the following code.</para>
+      <code> &lt;input type="radio" 
+  id="Radio1" 
+  name="Mode" 
+  runat="server"/&gt;
+ Caption Text&lt;br&gt;</code>
+      <para>You can optionally associate a quantity with the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control by setting the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Value" /> property. This is useful when you have multiple radio buttons and need to perform a calculation, based on the selection.</para>
+      <para>
+        <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls can be grouped together by specifying a common value for the <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Name" /> property of each radio button you want to include in the group.</para>
+      <block subset="none" type="note">
+        <para>When you group <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls together, only one radio button in the group can be selected at a time.</para>
+      </block>
+      <para>To determine whether the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control is selected, test the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property. If you have a group of <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls, you must iterate through the controls and test the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property of each control individually.</para>
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control provides a <see cref="E:System.Web.UI.HtmlControls.HtmlInputRadioButton.ServerChange" /> event that is raised when the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property changes values between posts to the server. This allows you to create a custom event handler that performs a specific set of instructions when the event is raised, such as data validation.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows programmatic access to the HTML &lt;input type= radio&gt; element on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +56,36 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> class.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The "radio" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -51,9 +100,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property to determine whether the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control is selected. If you have a group of <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls, you must iterate through the controls and test the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property of each control individually. You can also use this property to programmatically specify whether the control is selected.</para>
+          <para>You can group <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls together by specifying a common value for the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Name" /> property of each radio button control you want to include in the group.</para>
+          <block subset="none" type="note">
+            <para>When you group <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls, only one radio button in the group can be selected at a time. The <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property of the selected control is set to true, while the same property is set to false for all other radio buttons in the group.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,11 +141,23 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method checks to see whether the postback value of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control is different from its previous value, and if so, returns true. </para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the postback data for the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control's state has changed as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -97,9 +168,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Group multiple <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls by specifying a common value for the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Name" /> property of each radio button you want to include in the group. When you group <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> controls, only one radio button in the group can be selected at a time. The <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property of the selected control is set to true, while the same property is set to false for all other radio buttons in the group.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the group that the instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> class is associated with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +193,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.OnPreRender(System.EventArgs)" /> method is called just prior to rendering the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.OnPreRender(System.EventArgs)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event and registers the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control as one that requires postback handling.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,9 +220,21 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.HtmlControls.HtmlInputRadioButton.ServerChange" /> event is raised when the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control changes values between posts to the server. This allows you to create a custom event handler that performs a specific set of instructions (such as data validation) when the event is raised.</para>
+          <block subset="none" type="note">
+            <para>The control must have view state enabled for the <see cref="E:System.Web.UI.HtmlControls.HtmlInputRadioButton.ServerChange" /> event to work correctly. To enable view state for all controls on the Web Forms page, set the <see cref="P:System.Web.UI.Page.EnableViewState" /> property to true. You can also enable view state for an individual control by setting the <see cref="P:System.Web.UI.Control.EnableViewState" /> property to true.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.OnServerChange(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.HtmlControls.HtmlInputRadioButton.ServerChange" /> event. This allows you to create a custom event handler when the event is raised.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -155,8 +252,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.RaisePostDataChangedEvent" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calls the <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.OnServerChange(System.EventArgs)" /> method to signal the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control that the state of the control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RenderAttributes">
@@ -169,9 +272,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method writes the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Value" /> property as an attribute of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control and then calls the base class's <see cref="M:System.Web.UI.HtmlControls.HtmlInputControl.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control attributes to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that receives the rendered output.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,8 +297,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.HtmlControls.HtmlInputRadioButton.ServerChange" /> event is raised when the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control changes value between posts to the server. This allows you to create a custom event handler that performs a specific set of instructions (such as data validation) when the event is raised.</para>
+          <block subset="none" type="note">
+            <para>The control must have view state enabled for the <see cref="E:System.Web.UI.HtmlControls.HtmlInputRadioButton.ServerChange" /> event to work correctly. To enable view state for all controls on the Web Forms page, set the <see cref="P:System.Web.UI.Page.EnableViewState" /> property to true. You can also enable view state for an individual control by setting the <see cref="P:System.Web.UI.Control.EnableViewState" /> property to true.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Checked" /> property of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control changes between posts to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -209,11 +330,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method by calling the <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control's state has changed as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -228,8 +360,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method by calling the <see cref="M:System.Web.UI.HtmlControls.HtmlInputRadioButton.RaisePostDataChangedEvent" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -240,9 +378,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Value" /> property to specify or determine the value associated with the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control. The value can be any valid string that you want to associate with the control. This is useful when you have multiple radio buttons and need to perform a calculation based on the selection. For example, you can have radio buttons that represent different shipping methods. You can store the shipping cost in the <see cref="P:System.Web.UI.HtmlControls.HtmlInputRadioButton.Value" /> property. When the user selects the shipping method, the appropriate shipping amount can be determined from this property and added to the sales total.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value associated with the <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

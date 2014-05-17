@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecurityContextSecurityTokenResolver" FullName="System.ServiceModel.Security.Tokens.SecurityContextSecurityTokenResolver">
+  <TypeSignature Language="C#" Value="public class SecurityContextSecurityTokenResolver : System.IdentityModel.Selectors.SecurityTokenResolver, System.ServiceModel.Security.Tokens.ISecurityContextSecurityTokenCache" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SecurityContextSecurityTokenResolver extends System.IdentityModel.Selectors.SecurityTokenResolver implements class System.ServiceModel.Security.Tokens.ISecurityContextSecurityTokenCache" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.IdentityModel.Selectors.SecurityTokenResolver</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Security.Tokens.ISecurityContextSecurityTokenCache</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Resolves security context tokens.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecurityContextSecurityTokenResolver (int securityContextCacheCapacity, bool removeOldestTokensOnCacheFull);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 securityContextCacheCapacity, bool removeOldestTokensOnCacheFull) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="securityContextCacheCapacity" Type="System.Int32" />
+        <Parameter Name="removeOldestTokensOnCacheFull" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="securityContextCacheCapacity">To be added.</param>
+        <param name="removeOldestTokensOnCacheFull">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="removeOldestTokensOnCacheFull" /> is false, AddContext throws a <see cref="T:System.ServiceModel.QuotaExceededException" /> if the cache capacity has been reached.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityTokenResolver" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddContext">
+      <MemberSignature Language="C#" Value="public void AddContext (System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddContext(class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="token">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a security context security token to the token cache.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClearContexts">
+      <MemberSignature Language="C#" Value="public void ClearContexts ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ClearContexts() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the token cache of content.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAllContexts">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Security.Tokens.SecurityContextSecurityToken&gt; GetAllContexts (System.Xml.UniqueId contextId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken&gt; GetAllContexts(class System.Xml.UniqueId contextId) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Security.Tokens.SecurityContextSecurityToken&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <param name="contextId">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of security context security token IDs that match a specified context ID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic collection of security context tokens.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.Tokens.SecurityContextSecurityToken GetContext (System.Xml.UniqueId contextId, System.Xml.UniqueId generation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken GetContext(class System.Xml.UniqueId contextId, class System.Xml.UniqueId generation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityContextSecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="generation" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <param name="contextId">To be added.</param>
+        <param name="generation">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security context security token ID that matches a specified context ID and generation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching security context token.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAllContexts">
+      <MemberSignature Language="C#" Value="public void RemoveAllContexts (System.Xml.UniqueId contextId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveAllContexts(class System.Xml.UniqueId contextId) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <param name="contextId">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all tokens from the cache that match a given context ID.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveContext">
+      <MemberSignature Language="C#" Value="public void RemoveContext (System.Xml.UniqueId contextId, System.Xml.UniqueId generation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveContext(class System.Xml.UniqueId contextId, class System.Xml.UniqueId generation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextId" Type="System.Xml.UniqueId" />
+        <Parameter Name="generation" Type="System.Xml.UniqueId" />
+      </Parameters>
+      <Docs>
+        <param name="contextId">To be added.</param>
+        <param name="generation">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the token from the cache that matches a given context ID and generation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveOldestTokensOnCacheFull">
+      <MemberSignature Language="C#" Value="public bool RemoveOldestTokensOnCacheFull { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RemoveOldestTokensOnCacheFull" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the oldest tokens should be removed when the cache is full. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SecurityContextTokenCacheCapacity">
+      <MemberSignature Language="C#" Value="public int SecurityContextTokenCacheCapacity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SecurityContextTokenCacheCapacity" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security context token cache size.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TryAddContext">
+      <MemberSignature Language="C#" Value="public bool TryAddContext (System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryAddContext(class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="token">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to add a token to the cache.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token was added successfully to the cache; otherwise, false. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryResolveSecurityKeyCore">
+      <MemberSignature Language="C#" Value="protected override bool TryResolveSecurityKeyCore (System.IdentityModel.Tokens.SecurityKeyIdentifierClause keyIdentifierClause, out System.IdentityModel.Tokens.SecurityKey key);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool TryResolveSecurityKeyCore(class System.IdentityModel.Tokens.SecurityKeyIdentifierClause keyIdentifierClause, class System.IdentityModel.Tokens.SecurityKey key) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyIdentifierClause" Type="System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
+        <Parameter Name="key" Type="System.IdentityModel.Tokens.SecurityKey&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="keyIdentifierClause">To be added.</param>
+        <param name="key">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryResolveTokenCore">
+      <MemberSignature Language="C#" Value="protected override bool TryResolveTokenCore (System.IdentityModel.Tokens.SecurityKeyIdentifier keyIdentifier, out System.IdentityModel.Tokens.SecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool TryResolveTokenCore(class System.IdentityModel.Tokens.SecurityKeyIdentifier keyIdentifier, class System.IdentityModel.Tokens.SecurityToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyIdentifier" Type="System.IdentityModel.Tokens.SecurityKeyIdentifier" />
+        <Parameter Name="token" Type="System.IdentityModel.Tokens.SecurityToken&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="keyIdentifier">To be added.</param>
+        <param name="token">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryResolveTokenCore">
+      <MemberSignature Language="C#" Value="protected override bool TryResolveTokenCore (System.IdentityModel.Tokens.SecurityKeyIdentifierClause keyIdentifierClause, out System.IdentityModel.Tokens.SecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool TryResolveTokenCore(class System.IdentityModel.Tokens.SecurityKeyIdentifierClause keyIdentifierClause, class System.IdentityModel.Tokens.SecurityToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keyIdentifierClause" Type="System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
+        <Parameter Name="token" Type="System.IdentityModel.Tokens.SecurityToken&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="keyIdentifierClause">To be added.</param>
+        <param name="token">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateContextCachingTime">
+      <MemberSignature Language="C#" Value="public void UpdateContextCachingTime (System.ServiceModel.Security.Tokens.SecurityContextSecurityToken context, DateTime expirationTime);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void UpdateContextCachingTime(class System.ServiceModel.Security.Tokens.SecurityContextSecurityToken context, valuetype System.DateTime expirationTime) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
+        <Parameter Name="expirationTime" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <param name="expirationTime">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the expiration date for a token in the cache.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

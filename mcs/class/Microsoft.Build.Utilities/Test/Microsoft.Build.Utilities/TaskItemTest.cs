@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
@@ -113,6 +114,50 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		public void TestCtor4 ()
 		{
 			new TaskItem ("itemspec", null);
+		}
+
+		[Test]
+		public void TestCtor_EscapedSpecialChar ()
+		{
+			// If we instantiate with the *escaped* metadata, it's unescaped automatically
+			var metadata = "foo@2x.png";
+			var escapedMetadata = global::Microsoft.Build.BuildEngine.Utilities.Escape ("foo@2x.png");
+			var item = new TaskItem (escapedMetadata);
+			item.SetMetadata ("mine", escapedMetadata);
+
+			Assert.AreEqual (metadata, item.ItemSpec, "#1");
+			Assert.AreEqual (metadata, item.GetMetadata ("Identity"), "#2");
+			Assert.AreEqual (Path.GetFileNameWithoutExtension (metadata), item.GetMetadata ("FileName"), "#3");
+			Assert.IsTrue (item.GetMetadata ("FullPath").EndsWith (metadata), "#4");
+			Assert.AreEqual (metadata, item.GetMetadata ("mine"), "#5");
+		}
+
+		[Test]
+		public void TestCtor_EscapedSpecialChar_BrokenEscaping ()
+		{
+			// This is badly escaped, but MSBuild does not care.
+			var metadata = "foo%4@2x.png";
+			var item = new TaskItem (metadata);
+
+			Assert.AreEqual (metadata, item.ItemSpec, "#1");
+			Assert.AreEqual (metadata, item.GetMetadata ("Identity"), "#2");
+			Assert.AreEqual (Path.GetFileNameWithoutExtension (metadata), item.GetMetadata ("FileName"), "#3");
+			Assert.IsTrue (item.GetMetadata ("FullPath").EndsWith (metadata), "#4");
+		}
+
+		[Test]
+		public void TestCtor_UnescapedSpecialChar ()
+		{
+			// If we instantiate with unescaped metadata, we get the same value back
+			var metadata = "foo@2x.png";
+			var item = new TaskItem (metadata);
+			item.SetMetadata ("mine", metadata);
+
+			Assert.AreEqual (metadata, item.ItemSpec, "#1");
+			Assert.AreEqual (metadata, item.GetMetadata ("Identity"), "#2");
+			Assert.AreEqual (Path.GetFileNameWithoutExtension (metadata), item.GetMetadata ("FileName"), "#3");
+			Assert.IsTrue (item.GetMetadata ("FullPath").EndsWith (metadata), "#4");
+			Assert.AreEqual (metadata, item.GetMetadata ("mine"), "#5");
 		}
 
 		[Test]
@@ -239,6 +284,20 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		{
 			item = new TaskItem ("lalala");
 			item.SetMetadata ("Identity", "some value");
+		}
+
+		[Test]
+		public void TestSetItemSpec ()
+		{
+			var itemSpec = "foo@2x.png";
+			var escapedItemSpec =  global::Microsoft.Build.BuildEngine.Utilities.Escape (itemSpec);
+
+			var item = new TaskItem ("foo");
+			item.ItemSpec = itemSpec;
+			Assert.AreEqual (itemSpec, item.ItemSpec, "#1");
+
+			item.ItemSpec = escapedItemSpec;
+			Assert.AreEqual (itemSpec, item.ItemSpec, "#2");
 		}
 	}
 }

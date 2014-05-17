@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICollection&lt;T&gt;" FullName="System.Collections.Generic.ICollection&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface ICollection&lt;T&gt; : System.Collections.Generic.IEnumerable&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICollection`1&lt;T&gt; implements class System.Collections.Generic.IEnumerable`1&lt;!T&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,24 +17,27 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>
-      <para>Defines size and copying methods for all generic collections.</para>
-    </summary>
-    <remarks>
-      <para>
-        <block subset="none" type="note">
-          <para>This interface is the base interface for classes in the <see cref="N:System.Collections.Generic" /> namespace.</para>
-          <para>This interface extends <see cref="T:System.Collections.Generic.IEnumerable&lt;T&gt;" />; <see cref="T:System.Collections.Generic.IDictionary&lt;T,U&gt;" /> and <see cref="T:System.Collections.Generic.IList&lt;T&gt;" /> are more specialized interfaces that extend <see cref="T:System.Collections.Generic.ICollection&lt;T&gt;" />.</para>
-          <para>Some collections that limit access to their elements, like the <see cref="T:System.Collections.Generic.Queue&lt;T&gt;" />class and the <see cref="T:System.Collections.Generic.Stack&lt;T&gt;" /> class, directly implement the <see cref="T:System.Collections.Generic.ICollection&lt;T&gt;" /> interface.</para>
-        </block>
-      </para>
-    </remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Collections.Generic.ICollection`1" /> interface is the base interface for classes in the <see cref="N:System.Collections.Generic" /> namespace.</para>
+      <para>The <see cref="T:System.Collections.Generic.ICollection`1" /> interface extends <see cref="T:System.Collections.Generic.IEnumerable`1" />; <see cref="T:System.Collections.Generic.IDictionary`2" /> and <see cref="T:System.Collections.Generic.IList`1" /> are more specialized interfaces that extend <see cref="T:System.Collections.Generic.ICollection`1" />. A <see cref="T:System.Collections.Generic.IDictionary`2" /> implementation is a collection of key/value pairs, like the <see cref="T:System.Collections.Generic.Dictionary`2" /> class. A <see cref="T:System.Collections.Generic.IList`1" /> implementation is a collection of values, and its members can be accessed by index, like the <see cref="T:System.Collections.Generic.List`1" /> class.</para>
+      <para>If neither the <see cref="T:System.Collections.Generic.IDictionary`2" /> interface nor the <see cref="T:System.Collections.Generic.IList`1" /> interface meet the requirements of the required collection, derive the new collection class from the <see cref="T:System.Collections.Generic.ICollection`1" /> interface instead for more flexibility.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods to manipulate generic collections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (T item);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Add(!T item) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -48,37 +53,41 @@
         <since version=".NET 2.0" />
         <exception cref="System.NotSupportedException">The current collection is read-only.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clear">
-      <MemberSignature Language="C#" Value="public void Clear ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Removes all items from the current collection.</para>
-        </summary>
-        <remarks>
-          <para>
-            <see cref="P:System.Collections.Generic.ICollection&lt;T&gt;.Count" /> is set to zero.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="System.NotSupportedException">The current collection is read-only.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Collections.Generic.ICollection`1.Count" /> must be set to 0, and references to other objects from elements of the collection must be released.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1" />.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public bool Contains (T item);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Contains(!T item) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Contains">
-      <MemberSignature Language="C#" Value="public bool Contains (T item);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -97,14 +106,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (T[] array, int arrayIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(!T[] array, int32 arrayIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (T[] array, int arrayIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -138,22 +148,19 @@
           <para>Type <see langword="T" /> is not assignable to the element type of the destination array.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public int Count { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>
-          <para> Gets the number of elements contained in the current
-      instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> that indicates the number of elements contained in the current
    instance.</para>
@@ -162,40 +169,47 @@
           <para>This property is read-only.</para>
         </remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>
-          <para>Indicates whether the current collection is read-only.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" />, if the current collection is read-only; otherwise, <see langword="false" />.</para>
         </value>
+        <since version=".NET 2.0" />
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A collection that is read-only does not allow the addition, removal, or modification of elements after the collection is created.</para>
         </remarks>
-        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public bool Remove (T item);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Remove(!T item) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remove">
-      <MemberSignature Language="C#" Value="public bool Remove (T item);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -216,10 +230,6 @@
         <since version=".NET 2.0" />
         <exception cref="System.NotSupportedException">The current collection is read-only.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

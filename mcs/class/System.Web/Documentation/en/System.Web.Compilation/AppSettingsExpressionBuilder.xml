@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AppSettingsExpressionBuilder" FullName="System.Web.Compilation.AppSettingsExpressionBuilder">
   <TypeSignature Language="C#" Value="public class AppSettingsExpressionBuilder : System.Web.Compilation.ExpressionBuilder" />
   <AssemblyInfo>
@@ -17,9 +18,23 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> class provides access to values in the &lt;appSettings&gt; section of the Web.config file. The &lt;appSettings&gt; section of the Web.config file contains application-specific values in key/value pairs. </para>
+      <para>An application value is retrieved by assigning an expression of the form</para>
+      <para>&lt;%$ AppSettings: appSettingsKey %&gt;</para>
+      <para>to a property in a control declaration. The part of the expression before the colon (:) designates the type of expression to be retrieved, and the part after the colon signifies the key. The preceding expression would retrieve the following value from the Web.config file.</para>
+      <para>&lt;appSettings&gt;</para>
+      <para>    &lt;add key="appSettingsKey" value="appSettingsValue"/&gt;</para>
+      <para>&lt;/appSettings&gt;</para>
+      <para>When the page parser encounters an expression with the AppSettings prefix, it creates an instance of the <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> class to handle the expression. </para>
+      <para>If the expression is encountered in a page that will be compiled, the <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> object generates code to retrieve the specified value from the Web.config file. This code is executed during the execution of the generated page class. If the expression is encountered in a page that will not be compiled, the <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> object returns the value from the Web.config file when the page is parsed and executed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retrieves values, as specified in a declarative expression, from the &lt;appSettings&gt; section of the Web.config file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +42,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,14 +66,27 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="entry">To be added.</param>
-        <param name="parsedData">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when an expression of the form &lt;%$ AppSettings: someApplicationSetting %&gt; is encountered in a no-compile page. It retrieves the appropriate value from the key/value pairs in the &lt;appSettings&gt; section of the Web.config file. This method overrides <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> by calling the <see cref="M:System.Web.Compilation.AppSettingsExpressionBuilder.GetAppSetting(System.String,System.Type,System.String)" /> method with the <see cref="P:System.Web.UI.BoundPropertyEntry.Expression" /> property as the <paramref name="key" /> parameter, the <see cref="P:System.Web.UI.PropertyEntry.Name" /> property on the <see cref="P:System.Web.UI.PropertyEntry.PropertyInfo" /> property as the <paramref name="propertyName" /> parameter, and the <see cref="T:System.Type" /> of the <paramref name="target" /> parameter as the <paramref name="targetType" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value from the &lt;appSettings&gt; section of the Web.config file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> associated with a key in the &lt;appSettings&gt; section of the Web.config file.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the property entry.</param>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property to which the expression is bound..</param>
+        <param name="parsedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents parsed data as returned by <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Properties for the control or page.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,11 +102,21 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method retrieves the appropriate value from the key/value pairs in the &lt;appSettings&gt; section of the Web.config file. It retrieves the value by getting the <see cref="P:System.Configuration.ConfigurationManager.AppSettings" /> property with the key as the index. The <see cref="T:System.Object" /> returned is of the type <see cref="T:System.String" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value from the &lt;appSettings&gt; section of the Web.config file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> associated with the key in the &lt;appSettings&gt; section of the Web.config file.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key for the value to be retrieved from the configuration file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,13 +134,25 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="targetType">To be added.</param>
-        <param name="propertyName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method retrieves the appropriate value from the key/value pairs in the &lt;appSettings&gt; section of the Web.config file. The value is retrieved by getting the <see cref="P:System.Configuration.ConfigurationManager.AppSettings" /> property with the key as the index. The resulting string value is converted to a new type based on the <paramref name="targetType" /> and <paramref name="propertyName" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value from the &lt;appSettings&gt; section of the Web.config file with the value converted to a target type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> associated with the key in the &lt;appSettings&gt; section of the Web.config file.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key for a value to be retrieved from the configuration file.</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object that contains the property entry.</param>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to which the expression is bound.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,13 +170,25 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="entry">To be added.</param>
-        <param name="parsedData">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called during the CodeDOM creation for a page or control. The returned <see cref="T:System.CodeDom.CodeExpression" /> object represents the code expression to add to the property assignment in the generated page class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a code expression that is used to perform the property assignment in the generated page class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> that is used in the property assignment.</para>
+        </returns>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property to which the expression is bound.</param>
+        <param name="parsedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents parsed data as returned by <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Properties for the control or page.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -136,10 +201,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Compilation.AppSettingsExpressionBuilder.SupportsEvaluate" /> property indicates whether the <see cref="M:System.Web.Compilation.AppSettingsExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method has been implemented in the class and can return a value for the expression. <see cref="M:System.Web.Compilation.AppSettingsExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> must be implemented within an expression builder for an expression to be evaluated in a page that is not compiled. The <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> class supports evaluation of an application setting in a page that is not compiled, so it always returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether an expression can be evaluated in a page that is not compiled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GCHandle" FullName="System.Runtime.InteropServices.GCHandle" FullNameSP="System_Runtime_InteropServices_GCHandle" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sequential sealed GCHandle extends System.ValueType" />
   <TypeSignature Language="C#" Value="public struct GCHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit GCHandle extends System.ValueType" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,60 +16,68 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Provides a means for referencing a managed object from
-      unmanaged memory.</para>
-    </summary>
     <remarks>
-      <para>Use a <see cref="T:System.Runtime.InteropServices.GCHandle" /> when an 
-   object reference is required to be accessible from unmanaged
-   memory.</para>
-      <para> The <see cref="T:System.Runtime.InteropServices.GCHandleType" /> enumeration describes the
-possible <see cref="T:System.Runtime.InteropServices.GCHandle" />
-types.</para>
-      <para>
-        <block subset="none" type="note">If the type of the <see cref="T:System.Runtime.InteropServices.GCHandle" /> is
-<see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" />, then it is an opaque
-handle, and the address of the object it references cannot be resolved through
-it.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.InteropServices.GCHandle" /> structure is used with the <see cref="T:System.Runtime.InteropServices.GCHandleType" /> enumeration to create a handle corresponding to any managed object. This handle can be one of four types: Weak, WeakTrackResurrection, Normal, or Pinned. When the handle has been allocated, you can use it to prevent the managed object from being collected by the garbage collector when an unmanaged client holds the only reference. Without such a handle, the object can be collected by the garbage collector before completing its work on behalf of the unmanaged client.</para>
+      <para>You can also use <see cref="T:System.Runtime.InteropServices.GCHandle" /> to create a pinned object that returns a memory address to prevent the garbage collector from moving the object in memory.</para>
+      <para>When the handle goes out of scope you must explicitly release it by calling the <see cref="M:System.Runtime.InteropServices.GCHandle.Free" /> method; otherwise, memory leaks may occur. When you free a pinned handle, the associated object will be unpinned and will become eligible for garbage collection, if there are no other references to it.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way to access a managed object from unmanaged memory.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddrOfPinnedObject">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.IntPtr AddrOfPinnedObject()" />
       <MemberSignature Language="C#" Value="public IntPtr AddrOfPinnedObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance native int AddrOfPinnedObject() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IntPtr</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Returns the address of an object being referred to by a <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> handle.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.IntPtr" /> containing the address of the of the <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> object as a
-<see cref="T:System.IntPtr" /> .</para>
-        </returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.InvalidOperationException">The handle type is not <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> .</exception>
-        <permission cref="T:System.Security.Permissions.SecurityPermission">
-          <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
-        </permission>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <exception cref="T:System.InvalidOperationException">The handle type is not <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> .</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">
+          <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
+        </permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to get a stable pointer to the object. Pinning an object prevents the garbage collector from moving it around in memory, thereby reducing the efficiency of the garbage collector.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the address of an object in a <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> handle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The address of the of the Pinned object as an <see cref="T:System.IntPtr" />.</para>
+        </returns>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="Alloc">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Runtime.InteropServices.GCHandle Alloc(object value)" />
       <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle Alloc (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Runtime.InteropServices.GCHandle Alloc(object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -75,38 +85,37 @@ it.</block>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">The object for which the <see cref="T:System.Runtime.InteropServices.GCHandle" /> is created. Can be <see langword="null" /> .</param>
-        <summary>
-          <para>Allocates a <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" qualify="true" />
-handle for the specified object.</para>
-        </summary>
-        <returns>
-          <para> A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance that protects the
-   object from garbage collection.</para>
-        </returns>
-        <remarks>
-          <para>A <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> handle ensures the
-   object will not be collected by the garbage collector.</para>
-          <para>If the <paramref name="value" />
-parameter is <see langword="null" />, this method
-returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block subset="none" type="note">The target of the handle can be changed via the
-<see cref="P:System.Runtime.InteropServices.GCHandle.Target" /> property.</block></para>
-        </remarks>
         <permission cref="T:System.Security.Permissions.SecurityPermission">
           <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
         </permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> handles are opaque, which means that you cannot resolve the address of the object it contains through the handle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allocates a <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> handle for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> that protects the object from garbage collection. This <see cref="T:System.Runtime.InteropServices.GCHandle" /> must be released with <see cref="M:System.Runtime.InteropServices.GCHandle.Free" /> when it is no longer needed.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that uses the <see cref="T:System.Runtime.InteropServices.GCHandle" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Alloc">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Runtime.InteropServices.GCHandle Alloc(object value, valuetype System.Runtime.InteropServices.GCHandleType type)" />
+      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle Alloc (object value, System.Runtime.InteropServices.GCHandleType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Runtime.InteropServices.GCHandle Alloc(object value, valuetype System.Runtime.InteropServices.GCHandleType type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Alloc">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Runtime.InteropServices.GCHandle Alloc(object value, valuetype System.Runtime.InteropServices.GCHandleType type)" />
-      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle Alloc (object value, System.Runtime.InteropServices.GCHandleType type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -115,16 +124,6 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <Parameter Name="type" Type="System.Runtime.InteropServices.GCHandleType" />
       </Parameters>
       <Docs>
-        <param name="value">The object for which the <see cref="T:System.Runtime.InteropServices.GCHandle" /> is created. Can be <see langword="null" /> .</param>
-        <param name="type">A <see cref="T:System.Runtime.InteropServices.GCHandleType" /> value that specifies the type of <see cref="T:System.Runtime.InteropServices.GCHandle" /> to create.</param>
-        <param name="type">To be added.</param>
-        <summary>
-          <para>Allocates a handle of the specified type for the specified object.</para>
-        </summary>
-        <returns>
-          <para> A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance
-   that protects the object.</para>
-        </returns>
         <remarks>
           <para> If the <paramref name="value" /> parameter is
 <see langword="null" /> , this method returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block subset="none" type="note">The target of 
@@ -134,17 +133,31 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <permission cref="T:System.Security.Permissions.SecurityPermission">
           <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
         </permission>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.InteropServices.GCHandleType" /> values, indicating the type of <see cref="T:System.Runtime.InteropServices.GCHandle" /> to create. </param>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allocates a handle of the specified type for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> of the specified type. This <see cref="T:System.Runtime.InteropServices.GCHandle" /> must be released with <see cref="M:System.Runtime.InteropServices.GCHandle.Free" /> when it is no longer needed.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that uses the <see cref="T:System.Runtime.InteropServices.GCHandle" />. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.InteropServices.GCHandleType" /> values, indicating the type of <see cref="T:System.Runtime.InteropServices.GCHandle" /> to create. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object o) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -152,49 +165,61 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Runtime.InteropServices.GCHandle" /> objects are equal if they point to the same memory handle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Runtime.InteropServices.GCHandle" /> object is equal to the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Runtime.InteropServices.GCHandle" /> object is equal to the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Free">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Free()" />
       <MemberSignature Language="C#" Value="public void Free ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Free() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para>Frees a <see cref="T:System.Runtime.InteropServices.GCHandle" />.</para>
-        </summary>
-        <remarks>
-          <para> The caller is required to provide synchronization to
- prevent multiple threads from executing this method simultaneously for a given
- handle.</para>
-        </remarks>
-        <exception cref="T:System.InvalidOperationException">The handle has already been freed or was never initialized.</exception>
-        <permission cref="T:System.Security.Permissions.SecurityPermission">
-          <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
-        </permission>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <exception cref="T:System.InvalidOperationException">The handle has already been freed or was never initialized.</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">
+          <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
+        </permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The caller must ensure that for a given handle, <see cref="M:System.Runtime.InteropServices.GCHandle.Free" /> is called only once.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a <see cref="T:System.Runtime.InteropServices.GCHandle" />.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="FromIntPtr">
       <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle FromIntPtr (IntPtr value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Runtime.InteropServices.GCHandle FromIntPtr(native int value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -202,74 +227,87 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <Parameter Name="value" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new <see cref="T:System.Runtime.InteropServices.GCHandle" /> object created from a handle to a managed object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> object that corresponds to the value parameter.  </para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> handle to a managed object to create a <see cref="T:System.Runtime.InteropServices.GCHandle" /> object from.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.InteropServices.GCHandle.GetHashCode" /> method returns an integer representation of the internal memory handle encapsulated by the <see cref="T:System.Runtime.InteropServices.GCHandle" /> structure. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an identifier for the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An identifier for the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsAllocated">
       <MemberSignature Language="ILASM" Value=".property bool IsAllocated { public hidebysig specialname instance bool get_IsAllocated() }" />
       <MemberSignature Language="C#" Value="public bool IsAllocated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAllocated" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance is allocated.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> if the handle
  is allocated; otherwise, <see langword="false" /> .</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para> Use this method to determine whether
- the <see cref="T:System.Runtime.InteropServices.GCHandle" />
- 
- is still available.</para>
-          <para>
-            <block subset="none" type="note">When the garbage collector collects the
- object, the handle could still be resurrected in the finalizer.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property when using <see cref="F:System.Runtime.InteropServices.GCHandleType.Weak" /> handles to determine if the <see cref="T:System.Runtime.InteropServices.GCHandle" /> is still available. When the garbage collector collects the object, the <see cref="F:System.Runtime.InteropServices.GCHandleType.Weak" /> handle can still be resurrected in the finalizer. In that case, the handle is not allocated (it is lost when the garbage collector attempts to collect the object), even though the target object is valid.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the handle is allocated.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (System.Runtime.InteropServices.GCHandle a, System.Runtime.InteropServices.GCHandle b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Runtime.InteropServices.GCHandle a, valuetype System.Runtime.InteropServices.GCHandle b) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -278,22 +316,32 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <Parameter Name="b" Type="System.Runtime.InteropServices.GCHandle" />
       </Parameters>
       <Docs>
-        <param name="a">To be added.</param>
-        <param name="b">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two <see cref="T:System.Runtime.InteropServices.GCHandle" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="a" /> and <paramref name="b" /> parameters are equal; otherwise, false.</para>
+        </returns>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the <paramref name="b" /> parameter. </param>
+        <param name="b">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the <paramref name="a" /> parameter.  </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Explicit">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.Runtime.InteropServices.GCHandle op_Explicit(valuetype System.IntPtr value)" />
       <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle op_Explicit (IntPtr value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Runtime.InteropServices.GCHandle op_Explicit(native int value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -318,16 +366,17 @@ from its integer representation.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.IntPtr op_Explicit(valuetype System.Runtime.InteropServices.GCHandle value)" />
+      <MemberSignature Language="C#" Value="public static IntPtr op_Explicit (System.Runtime.InteropServices.GCHandle value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname native int op_Explicit(valuetype System.Runtime.InteropServices.GCHandle value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Explicit">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.IntPtr op_Explicit(valuetype System.Runtime.InteropServices.GCHandle value)" />
-      <MemberSignature Language="C#" Value="public static IntPtr op_Explicit (System.Runtime.InteropServices.GCHandle value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -351,15 +400,15 @@ from its integer representation.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Runtime.InteropServices.GCHandle a, System.Runtime.InteropServices.GCHandle b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Runtime.InteropServices.GCHandle a, valuetype System.Runtime.InteropServices.GCHandle b) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -368,30 +417,37 @@ from its integer representation.</para>
         <Parameter Name="b" Type="System.Runtime.InteropServices.GCHandle" />
       </Parameters>
       <Docs>
-        <param name="a">To be added.</param>
-        <param name="b">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two <see cref="T:System.Runtime.InteropServices.GCHandle" /> objects are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="a" /> and <paramref name="b" /> parameters are not equal; otherwise, false.</para>
+        </returns>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the <paramref name="b" /> parameter. </param>
+        <param name="b">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the <paramref name="a" /> parameter.  </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Target">
       <MemberSignature Language="ILASM" Value=".property object Target { public hidebysig specialname instance object get_Target() public hidebysig specialname instance void set_Target(object value) }" />
-      <MemberSignature Language="C#" Value="public object Target { set; get; }" />
+      <MemberSignature Language="C#" Value="public object Target { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Target" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets a reference to the object the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance represents.</para>
-        </summary>
         <value>
           <para>The object this handle represents.</para>
         </value>
@@ -399,17 +455,21 @@ from its integer representation.</para>
         <exception cref="T:System.InvalidOperationException">
           <para>The current <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance has already been freed or was never initialized.</para>
         </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object this handle represents.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToIntPtr">
       <MemberSignature Language="C#" Value="public static IntPtr ToIntPtr (System.Runtime.InteropServices.GCHandle value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int ToIntPtr(valuetype System.Runtime.InteropServices.GCHandle value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -417,22 +477,20 @@ from its integer representation.</para>
         <Parameter Name="value" Type="System.Runtime.InteropServices.GCHandle" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the internal integer representation of a <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IntPtr" /> object that represents a <see cref="T:System.Runtime.InteropServices.GCHandle" /> object. </para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to retrieve an internal integer representation from.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

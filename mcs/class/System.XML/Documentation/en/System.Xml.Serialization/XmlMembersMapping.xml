@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlMembersMapping" FullName="System.Xml.Serialization.XmlMembersMapping">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlMembersMapping : System.Xml.Serialization.XmlMapping" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlMembersMapping extends System.Xml.Serialization.XmlMapping" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -12,25 +15,89 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class is not used directly. Instead, it is used: </para>
+      <list type="bullet">
+        <item>
+          <para>By the Wsdl.exe tool, or the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> class, while generating client proxy classes or abstract server classes from a WSDL document. The WSDL document specifies use of the SOAP protocol.</para>
+        </item>
+        <item>
+          <para>To initialize <see cref="T:System.Xml.Serialization.XmlSerializer" /> objects while the .NET Framework is initializing a SOAP Web service or client.</para>
+        </item>
+        <item>
+          <para>By the <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> class while creating <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects from classes that are identified as SOAP Web services.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class is a substitute for the <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> class for mapping between Web service methods and messages. It is used to contain any of the following entities belonging to a SOAP Web service method: </para>
+      <list type="bullet">
+        <item>
+          <para>Input parameters.</para>
+        </item>
+        <item>
+          <para>Output parameters and return value.</para>
+        </item>
+        <item>
+          <para>Request SOAP headers.</para>
+        </item>
+        <item>
+          <para>Response SOAP headers.</para>
+        </item>
+      </list>
+      <para>Specifically, the class represents mappings for a WSDL message definition, according to the following choices:</para>
+      <list type="bullet">
+        <item>
+          <para>For a Web service method that uses SOAP encoding: The top-level <see cref="P:System.Xml.Serialization.XmlMapping.ElementName" /> and <see cref="P:System.Xml.Serialization.XmlTypeMapping.TypeName" /> properties pertain to a parent, wrapper element; the message parts are represented by array members. However, in the rare case when the Web service operation uses document style combined with a wrapped binding to a .NET Framework method plus SOAP encoding, the top-level <see cref="P:System.Xml.Serialization.XmlMapping.ElementName" /> and <see cref="P:System.Xml.Serialization.XmlTypeMapping.TypeName" /> properties pertain to the single part element that appears in a generated WSDL document.</para>
+        </item>
+        <item>
+          <para>For a Web service method that makes literal use of XML Schema definitions: If a Web service message or operation uses a wrapped binding to a .NET Framework method or merely defines a single message part, the top-level <see cref="P:System.Xml.Serialization.XmlMapping.ElementName" /> and <see cref="P:System.Xml.Serialization.XmlTypeMapping.TypeName" /> properties pertain to the part. If there are multiple parts (the atypical case), the top-level <see cref="P:System.Xml.Serialization.XmlMapping.ElementName" /> and <see cref="P:System.Xml.Serialization.XmlTypeMapping.TypeName" /> properties pertain to a parent, wrapper element; the parts are represented by the <see cref="P:System.Xml.Serialization.XmlMembersMapping.Count" /> and indexed array access properties. In addition, the XSD any element receives special treatment.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides mappings between .NET Framework Web service methods and Web Services Description Language (WSDL) messages that are defined for SOAP Web services. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection can contain of any of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Web service method input parameters.</para>
+            </item>
+            <item>
+              <para>Web service method output parameters, plus 1 for the return type, if not void.</para>
+            </item>
+            <item>
+              <para>SOAP input headers.</para>
+            </item>
+            <item>
+              <para>SOAP output headers.</para>
+            </item>
+          </list>
+          <para>See the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class for the conditions under which these entities translate to part elements in a Web Services Description Language (WSDL) document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of .NET Framework code entities that belong to a Web service method to which a SOAP message is being mapped. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ElementName">
       <MemberSignature Language="C#" Value="public string ElementName { get; }" />
@@ -39,9 +106,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SOAP message is defined in a Web Services Description Language (WSDL) document using the message element.</para>
+          <para>See the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class for the conditions under which the <see cref="P:System.Xml.Serialization.XmlMapping.ElementName" /> property refers to a code entity defined in a Web service method (a parameter or return value) instead of to an extra parent or wrapper element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unqualified name of the XML Schema element that represents a SOAP message for which .NET Framework type mapping information is being provided.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,7 +124,13 @@
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlMemberMapping this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlMemberMapping Item(int32)" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlMemberMapping</ReturnType>
       </ReturnValue>
@@ -63,10 +143,6 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Namespace">
       <MemberSignature Language="C#" Value="public string Namespace { get; }" />
@@ -75,9 +151,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SOAP message is defined in a Web Services Description Language (WSDL) document using the message element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML namespace of the XML schema element that represents a SOAP message for which .NET Framework type mapping information is being provided.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,35 +168,52 @@
     </Member>
     <Member MemberName="TypeName">
       <MemberSignature Language="C#" Value="public string TypeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TypeName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SOAP message is defined in a Web Services Description Language (WSDL) document using the message element.</para>
+          <para>See the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class for the conditions under which the <see cref="P:System.Xml.Serialization.XmlMembersMapping.TypeName" /> property refers to a code entity defined in a Web service method (a parameter or return value) instead of to an extra parent or wrapper element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the .NET Framework type being mapped to the data type of an XML Schema element that represents a SOAP message.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TypeNamespace">
       <MemberSignature Language="C#" Value="public string TypeNamespace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TypeNamespace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SOAP message is defined in a Web Services Description Language (WSDL) document using the message element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace of the .NET Framework type being mapped to the data type of an XML Schema element that represents a SOAP message.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

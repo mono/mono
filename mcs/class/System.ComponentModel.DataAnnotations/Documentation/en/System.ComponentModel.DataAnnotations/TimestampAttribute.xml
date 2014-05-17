@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TimestampAttribute" FullName="System.ComponentModel.DataAnnotations.TimestampAttribute">
+  <TypeSignature Language="C#" Value="public class TimestampAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TimestampAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.All, AllowMultiple=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A row version type (also known as a sequence number) is a binary number that is guaranteed to be unique in the database. It does not represent an actual time. Row version data is not visually meaningful. Therefore, when the <see cref="T:System.ComponentModel.DataAnnotations.TimestampAttribute" /> attribute is used with a Dynamic Data field, the column is not displayed unless the <see cref="T:System.ComponentModel.DataAnnotations.ScaffoldColumnAttribute" /> attribute of the column is explicitly set to true.</para>
+      <para>For more information, see <format type="text/html"><a href="65c9cf0e-3e8a-45f8-87b3-3460d96afb0b">rowversion</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the data type of the column as a row version.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public TimestampAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.TimestampAttribute" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

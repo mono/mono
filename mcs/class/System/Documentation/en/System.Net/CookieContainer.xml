@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CookieContainer" FullName="System.Net.CookieContainer">
   <TypeSignature Language="C#" Value="public class CookieContainer" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CookieContainer extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,44 +16,76 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Net.CookieContainer" /> is a data structure that provides storage for instances of the <see cref="T:System.Net.Cookie" /> class, and which is accessed in a database-like manner. The <see cref="T:System.Net.CookieContainer" /> has a capacity limit that is set when the container is created or changed by a property.</para>
+      <para>An instance of the <see cref="T:System.Net.Cookie" /> class is added to the container based on its originating URI. It is added to an internal <see cref="T:System.Net.CookieCollection" /> associated with the URI. A <see cref="T:System.Net.Cookie" /> is retrieved from the container based on the URI as a <see cref="T:System.Net.CookieCollection" />, or as a string that can be used to submit HTTP WebRequests.</para>
+      <para>The <see cref="T:System.Net.CookieContainer" /> has three properties that govern the volume of the content of the container: <see cref="P:System.Net.CookieContainer.Capacity" />, <see cref="P:System.Net.CookieContainer.MaxCookieSize" />, and <see cref="P:System.Net.CookieContainer.PerDomainCapacity" />. These values have the default settings of 300, 4096, and 20 respectively. When a <see cref="T:System.Net.Cookie" /> is added to the container, these properties are used to determine whether a <see cref="T:System.Net.Cookie" /> already contained in the <see cref="T:System.Net.CookieContainer" /> should be discarded to make room for the new one. The <see cref="T:System.Net.CookieContainer" /> keeps track of each addition to ensure that neither the <see cref="P:System.Net.CookieContainer.Capacity" /> nor the <see cref="P:System.Net.CookieContainer.PerDomainCapacity" /> limits are exceeded. If one or both are exceeded, then <see cref="T:System.Net.Cookie" /> instances held by the <see cref="T:System.Net.CookieContainer" /> are removed. First, any expired <see cref="T:System.Net.Cookie" /> is removed. If further capacity must be recaptured, then the least-recently used <see cref="T:System.Net.CookieCollection" /> is purged.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a container for a collection of <see cref="T:System.Net.CookieCollection" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CookieContainer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes all fields to their default values. <see cref="F:System.Net.CookieContainer.DefaultCookieLimit" /> is used to initialize <see cref="P:System.Net.CookieContainer.Capacity" />, <see cref="F:System.Net.CookieContainer.DefaultCookieLengthLimit" /> is used for <see cref="P:System.Net.CookieContainer.MaxCookieSize" />, and <see cref="F:System.Net.CookieContainer.DefaultPerDomainCookieLimit" /> is used for <see cref="P:System.Net.CookieContainer.PerDomainCapacity" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.CookieContainer" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CookieContainer (int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="capacity">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Net.CookieContainer.PerDomainCapacity" /> is initialized to 20, and <see cref="P:System.Net.CookieContainer.MaxCookieSize" /> is initialized to 4096.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.CookieContainer" /> class with a specified value for the number of <see cref="T:System.Net.Cookie" /> instances that the container can hold.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of <see cref="T:System.Net.Cookie" /> instances that the <see cref="T:System.Net.CookieContainer" /> can hold. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CookieContainer (int capacity, int perDomainCapacity, int maxCookieSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, int32 perDomainCapacity, int32 maxCookieSize) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
@@ -58,20 +93,31 @@
         <Parameter Name="maxCookieSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="capacity">To be added: an object of type 'int'</param>
-        <param name="perDomainCapacity">To be added: an object of type 'int'</param>
-        <param name="maxCookieSize">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters specify values for <see cref="P:System.Net.CookieContainer.Capacity" />, <see cref="P:System.Net.CookieContainer.MaxCookieSize" />, and <see cref="P:System.Net.CookieContainer.PerDomainCapacity" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.CookieContainer" /> class with specific properties.</para>
+        </summary>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of <see cref="T:System.Net.Cookie" /> instances that the <see cref="T:System.Net.CookieContainer" /> can hold. </param>
+        <param name="perDomainCapacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of <see cref="T:System.Net.Cookie" /> instances per domain. </param>
+        <param name="maxCookieSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size in bytes for any single <see cref="T:System.Net.Cookie" /> in a <see cref="T:System.Net.CookieContainer" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (System.Net.Cookie cookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Net.Cookie cookie) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -79,18 +125,27 @@
         <Parameter Name="cookie" Type="System.Net.Cookie" />
       </Parameters>
       <Docs>
-        <param name="cookie">To be added: an object of type 'Cookie'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Net.CookieContainer.Count" /> property equals or exceeds the <see cref="P:System.Net.CookieContainer.Capacity" /> property, one or more <see cref="T:System.Net.Cookie" /> instances are removed from the container before adding the <paramref name="cookie" /> parameter. Enough <see cref="T:System.Net.Cookie" /> instances are removed to bring <see cref="P:System.Net.CookieContainer.Count" /> below <see cref="P:System.Net.CookieContainer.Capacity" /> as follows: if there are expired instances in the given scope, they are cleaned up. If not, then the least recently used <see cref="T:System.Net.CookieCollection" /> is found and removed from the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Net.Cookie" /> to a <see cref="T:System.Net.CookieContainer" />. This method uses the domain from the <see cref="T:System.Net.Cookie" /> to determine which domain collection to associate the <see cref="T:System.Net.Cookie" /> with.</para>
+        </summary>
+        <param name="cookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Cookie" /> to be added to the <see cref="T:System.Net.CookieContainer" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (System.Net.CookieCollection cookies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Net.CookieCollection cookies) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -98,18 +153,27 @@
         <Parameter Name="cookies" Type="System.Net.CookieCollection" />
       </Parameters>
       <Docs>
-        <param name="cookies">To be added: an object of type 'CookieCollection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Net.CookieContainer.Count" /> property equals the <see cref="P:System.Net.CookieContainer.Capacity" /> property, one or more <see cref="T:System.Net.Cookie" /> instances are removed from the container before adding the contents of the <paramref name="cookies" /> parameter. Enough <see cref="T:System.Net.Cookie" /> instances are removed to make room for <paramref name="cookies" /> as follows: if there are expired instances, they are cleaned up. If not, or if more room is needed, then the least recently used <see cref="T:System.Net.CookieCollection" /> is found and removed from the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of a <see cref="T:System.Net.CookieCollection" /> to the <see cref="T:System.Net.CookieContainer" />.</para>
+        </summary>
+        <param name="cookies">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.CookieCollection" /> to be added to the <see cref="T:System.Net.CookieContainer" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (Uri uri, System.Net.Cookie cookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Uri uri, class System.Net.Cookie cookie) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -118,19 +182,32 @@
         <Parameter Name="cookie" Type="System.Net.Cookie" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added: an object of type 'Uri'</param>
-        <param name="cookie">To be added: an object of type 'Cookie'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you add a <see cref="T:System.Net.Cookie" /> instance for just one specific host, do not set the <see cref="P:System.Net.Cookie.Domain" /> property of the <see cref="T:System.Net.Cookie" /> instance. This is set automatically, based on the URI.</para>
+          <para>If your URI corresponds to your local domain and sends to all the hosts on the local domain, set the <see cref="T:System.Net.Cookie" /> <see cref="P:System.Net.Cookie.Domain" /> property equal to ".local". Otherwise, make sure it matches the host name used in the URI.</para>
+          <para>If the <see cref="P:System.Net.Cookie.Version" /> property of a <see cref="T:System.Net.Cookie" /> is Netscape, the <see cref="P:System.Net.Cookie.Path" /> property of the <see cref="T:System.Net.Cookie" />, if not set explicitly, is derived from the URI and is the complete path from the URI, including the page name.</para>
+          <para>If the <see cref="P:System.Net.CookieContainer.Count" /> property equals the <see cref="P:System.Net.CookieContainer.Capacity" /> property, one or more <see cref="T:System.Net.Cookie" /> instances are removed from the container before adding the <paramref name="cookie" /> parameter. Enough <see cref="T:System.Net.Cookie" /> instances are removed to bring <see cref="P:System.Net.CookieContainer.Count" /> below <see cref="P:System.Net.CookieContainer.Capacity" /> as follows: if there are expired instances in scope, they are cleaned up. If not, then the least recently used <see cref="T:System.Net.CookieCollection" /> is found and removed from the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Net.Cookie" /> to the <see cref="T:System.Net.CookieContainer" /> for a particular URI.</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the <see cref="T:System.Net.Cookie" /> to be added to the <see cref="T:System.Net.CookieContainer" />. </param>
+        <param name="cookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Cookie" /> to be added to the <see cref="T:System.Net.CookieContainer" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public void Add (Uri uri, System.Net.CookieCollection cookies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(class System.Uri uri, class System.Net.CookieCollection cookies) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -139,104 +216,158 @@
         <Parameter Name="cookies" Type="System.Net.CookieCollection" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added: an object of type 'Uri'</param>
-        <param name="cookies">To be added: an object of type 'CookieCollection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you add a <see cref="T:System.Net.Cookie" /> instance for just one specific host, do not set the <see cref="P:System.Net.Cookie.Domain" /> property of the <see cref="T:System.Net.Cookie" /> instance. This is set automatically, based on the URI.</para>
+          <para>If your URI corresponds to your local domain and sends to all the hosts on the local domain, set the <see cref="T:System.Net.Cookie" /> <see cref="P:System.Net.Cookie.Domain" /> property equal to ".local". Otherwise, make sure it matches the host name used in the URI.</para>
+          <para>If <see cref="P:System.Net.CookieContainer.Count" /> equals <see cref="P:System.Net.CookieContainer.Capacity" />, one or more <see cref="T:System.Net.Cookie" /> instances is removed from the container before adding the <paramref name="cookie" /> parameter. Enough <see cref="T:System.Net.Cookie" /> instances are removed to bring <see cref="P:System.Net.CookieContainer.Count" /> below <see cref="P:System.Net.CookieContainer.Capacity" /> as follows: if there are expired instances in scope they are cleaned up. If not, then the least recently used <see cref="T:System.Net.CookieCollection" /> is found and removed from the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of a <see cref="T:System.Net.CookieCollection" /> to the <see cref="T:System.Net.CookieContainer" /> for a particular URI.</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the <see cref="T:System.Net.CookieCollection" /> to be added to the <see cref="T:System.Net.CookieContainer" />. </param>
+        <param name="cookies">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.CookieCollection" /> to be added to the <see cref="T:System.Net.CookieContainer" />. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Capacity">
+      <MemberSignature Language="C#" Value="public int Capacity { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Capacity" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Capacity">
-      <MemberSignature Language="C#" Value="public int Capacity { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Net.CookieContainer.Count" /> equals or exceeds <see cref="P:System.Net.CookieContainer.Capacity" />, one or more <see cref="T:System.Net.Cookie" /> instances are removed from the container. Enough instances are removed to bring <see cref="P:System.Net.CookieContainer.Count" /> below <see cref="P:System.Net.CookieContainer.Capacity" /> as follows: if there are expired <see cref="T:System.Net.Cookie" /> instances in scope, they are cleaned up. If not, then the least recently used <see cref="T:System.Net.CookieCollection" /> is found and removed from the container.</para>
+          <para>
+            <see cref="P:System.Net.CookieContainer.Capacity" /> must be greater than or equal to <see cref="P:System.Net.CookieContainer.PerDomainCapacity" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the number of <see cref="T:System.Net.Cookie" /> instances that a <see cref="T:System.Net.CookieContainer" /> can hold.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of this property is <see cref="F:System.Net.CookieContainer.DefaultCookieLimit" />. If <see cref="P:System.Net.CookieContainer.Count" /> equals or exceeds <see cref="P:System.Net.CookieContainer.Capacity" />, one or more <see cref="T:System.Net.Cookie" /> instances are removed from the container. Enough instances are removed to bring <see cref="P:System.Net.CookieContainer.Count" /> below <see cref="P:System.Net.CookieContainer.Capacity" /> as follows: if there are expired <see cref="T:System.Net.Cookie" /> instances in scope, they are cleaned up. If not, then the least recently used <see cref="T:System.Net.CookieCollection" /> is found and removed from the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of <see cref="T:System.Net.Cookie" /> instances that a <see cref="T:System.Net.CookieContainer" /> currently holds.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultCookieLengthLimit">
       <MemberSignature Language="C#" Value="public const int DefaultCookieLengthLimit = 4096;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 DefaultCookieLengthLimit = (4096)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
       <MemberValue>4096</MemberValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default maximum <see cref="T:System.Net.Cookie" /> size is 4096.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the default maximum size, in bytes, of the <see cref="T:System.Net.Cookie" /> instances that the <see cref="T:System.Net.CookieContainer" /> can hold. This field is constant.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DefaultCookieLimit">
       <MemberSignature Language="C#" Value="public const int DefaultCookieLimit = 300;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 DefaultCookieLimit = (300)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
       <MemberValue>300</MemberValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default maximum number of <see cref="T:System.Net.Cookie" /> instances is 300.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the default maximum number of <see cref="T:System.Net.Cookie" /> instances that the <see cref="T:System.Net.CookieContainer" /> can hold. This field is constant.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DefaultPerDomainCookieLimit">
       <MemberSignature Language="C#" Value="public const int DefaultPerDomainCookieLimit = 20;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 DefaultPerDomainCookieLimit = (20)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
       <MemberValue>20</MemberValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default maximum number of <see cref="T:System.Net.Cookie" /> instances per domain is 20.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the default maximum number of <see cref="T:System.Net.Cookie" /> instances that the <see cref="T:System.Net.CookieContainer" /> can reference per domain. This field is constant.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetCookieHeader">
       <MemberSignature Language="C#" Value="public string GetCookieHeader (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetCookieHeader(class System.Uri uri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -244,19 +375,33 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added: an object of type 'Uri'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Net.CookieContainer.GetCookieHeader(System.Uri)" /> returns a string that holds the HTTP cookie header for the <see cref="T:System.Net.Cookie" /> instances specified by <paramref name="uri" />. The HTTP header is built by adding a string representation of each <see cref="T:System.Net.Cookie" /> associated with <paramref name="uri" />. Note that the exact format of the string depends on the RFC that the <see cref="T:System.Net.Cookie" /> conforms to. The strings for all the <see cref="T:System.Net.Cookie" /> instances that are associated with <paramref name="uri" /> are combined and delimited by semicolons.</para>
+          <para>This string is not in the correct format for use as the second parameter of the <see cref="M:System.Net.CookieContainer.SetCookies(System.Uri,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTTP cookie header that contains the HTTP cookies that represent the <see cref="T:System.Net.Cookie" /> instances that are associated with a specific URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTTP cookie header, with strings representing <see cref="T:System.Net.Cookie" /> instances delimited by semicolons.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the <see cref="T:System.Net.Cookie" /> instances desired. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCookies">
       <MemberSignature Language="C#" Value="public System.Net.CookieCollection GetCookies (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.CookieCollection GetCookies(class System.Uri uri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.CookieCollection</ReturnType>
       </ReturnValue>
@@ -264,55 +409,83 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added: an object of type 'Uri'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CookieCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of a <see cref="T:System.Net.CookieCollection" /> is created. Then the <see cref="T:System.Net.Cookie" /> instances in the internal collection that are associated with the specified URI are read out and added to the new <see cref="T:System.Net.CookieCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Net.CookieCollection" /> that contains the <see cref="T:System.Net.Cookie" /> instances that are associated with a specific URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.CookieCollection" /> that contains the <see cref="T:System.Net.Cookie" /> instances that are associated with a specific URI.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the <see cref="T:System.Net.Cookie" /> instances desired. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxCookieSize">
-      <MemberSignature Language="C#" Value="public int MaxCookieSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public int MaxCookieSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxCookieSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the new value of <see cref="P:System.Net.CookieContainer.MaxCookieSize" /> is less than the current value, any <see cref="T:System.Net.Cookie" /> with a length that exceeds the new value will be truncated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the maximum allowed length of a <see cref="T:System.Net.Cookie" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PerDomainCapacity">
-      <MemberSignature Language="C#" Value="public int PerDomainCapacity { set; get; }" />
+      <MemberSignature Language="C#" Value="public int PerDomainCapacity { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 PerDomainCapacity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the new <see cref="P:System.Net.CookieContainer.PerDomainCapacity" /> value is less than the current value, and if any of the domain collections contain more <see cref="T:System.Net.Cookie" /> instances than the new value, the collections are pruned to fit. This uses the same basic rules as described in the <see cref="P:System.Net.CookieContainer.Capacity" /> property. However, this does the clean-up only on the collection for this domain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the number of <see cref="T:System.Net.Cookie" /> instances that a <see cref="T:System.Net.CookieContainer" /> can hold per domain.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCookies">
       <MemberSignature Language="C#" Value="public void SetCookies (Uri uri, string cookieHeader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCookies(class System.Uri uri, string cookieHeader) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -321,15 +494,20 @@
         <Parameter Name="cookieHeader" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added: an object of type 'Uri'</param>
-        <param name="cookieHeader">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Net.CookieContainer.SetCookies(System.Uri,System.String)" /> pulls all the HTTP cookies out of the HTTP cookie header, builds a <see cref="T:System.Net.Cookie" /> for each one, and then adds each <see cref="T:System.Net.Cookie" /> to the internal <see cref="T:System.Net.CookieCollection" /> that is associated with the URI. The HTTP cookies in the <paramref name="cookieHeader" /> string must be delimited by commas.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds <see cref="T:System.Net.Cookie" /> instances for one or more cookies from an HTTP cookie header to the <see cref="T:System.Net.CookieContainer" /> for a specific URI.</para>
+        </summary>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the <see cref="T:System.Net.CookieCollection" />. </param>
+        <param name="cookieHeader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents of an HTTP set-cookie header as returned by a HTTP server, with <see cref="T:System.Net.Cookie" /> instances delimited by commas. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

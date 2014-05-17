@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HostProtectionAttribute" FullName="System.Security.Permissions.HostProtectionAttribute">
   <TypeSignature Language="C#" Value="public sealed class HostProtectionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit HostProtectionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,131 +20,219 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This attribute affects only unmanaged applications that host the common language runtime and implement host protection, such as SQL Server. If the code is run in a client application or on a server that is not host-protected, the attribute "evaporates"; it is not detected and therefore not applied. When applied, the security action results in the creation of a link demand based on the host resources the class or method exposes. </para>
+      <block subset="none" type="note">
+        <para>The purpose of this attribute is to enforce host-specific programming model guidelines, not security behavior.  Although a link demand is used to check for conformance to programming model requirements, the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> is not a security permission.</para>
+      </block>
+      <para>If the host does not have programming model requirements, the link demands do not occur.</para>
+      <para>This attribute identifies the following: </para>
+      <list type="bullet">
+        <item>
+          <para>Methods or classes that do not fit the host programming model, but are otherwise benign.</para>
+        </item>
+        <item>
+          <para>Methods or classes that do not fit the host programming model and could lead to destabilizing server-managed user code.</para>
+        </item>
+        <item>
+          <para>Methods or classes that do not fit the host programming model and could lead to a destabilization of the server process itself.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>If you are creating a class library that is to be called by applications that may execute in a host protected environment, you should apply this attribute to members that expose <see cref="T:System.Security.Permissions.HostProtectionResource" /> resource categories. The .NET Framework class library members with this attribute cause only the immediate caller to be checked.  Your library member must also cause a check of its immediate caller in the same manner. </para>
+      </block>
+      <block subset="none" type="note">
+        <para>Do not use the <format type="text/html"><a href="44bf97aa-a9a4-4eba-9a0d-cfaa6fc53a66">Native Image Generator (Ngen.exe)</a></format> to create a native image of assemblies that are protected by the <see cref="T:System.Security.Permissions.HostProtectionAttribute" />. In a full-trust environment, the image is always loaded, without regard to the <see cref="T:System.Security.Permissions.HostProtectionAttribute" />, and in a partial-trust environment the image is not loaded. </para>
+        <para />
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows the use of declarative security actions to determine host protection requirements. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HostProtectionAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> with all Boolean properties set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class with default values.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public HostProtectionAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor should not be used. It is intended for infrastructure use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" /> value.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreatePermission">
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission CreatePermission() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreatePermission">
-      <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should be called only by the security system, never by application code.</para>
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. Declarative security data in metadata is created from the permission corresponding to the attribute that this method returns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new host protection permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.IPermission" /> that corresponds to the current attribute.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExternalProcessMgmt">
-      <MemberSignature Language="C#" Value="public bool ExternalProcessMgmt { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ExternalProcessMgmt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ExternalProcessMgmt" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Code that exposes external process management might create or destroy other processes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether external process management is exposed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ExternalThreading">
-      <MemberSignature Language="C#" Value="public bool ExternalThreading { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ExternalThreading { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ExternalThreading" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Code that exposes external threading creates or manipulates threads other than its own, which might be harmful to the host.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether external threading is exposed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MayLeakOnAbort">
-      <MemberSignature Language="C#" Value="public bool MayLeakOnAbort { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool MayLeakOnAbort { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MayLeakOnAbort" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Code might cause a resource leak on termination, if not protected by a safe handle or some other means of ensuring the release of resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether resources might leak memory if the operation is terminated.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Resources">
-      <MemberSignature Language="C#" Value="public System.Security.Permissions.HostProtectionResource Resources { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.HostProtectionResource Resources { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Permissions.HostProtectionResource Resources" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.HostProtectionResource</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Permissions.HostProtectionResource" /> flags specify the resources exposed by the method or class that are potentially harmful to the host.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets flags specifying categories of functionality that are potentially harmful to the host.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SecurityInfrastructure">
+      <MemberSignature Language="C#" Value="public bool SecurityInfrastructure { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SecurityInfrastructure" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SecurityInfrastructure">
-      <MemberSignature Language="C#" Value="public bool SecurityInfrastructure { set; get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
@@ -152,100 +242,131 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The use of a <see cref="T:System.Security.Principal.WindowsIdentity" /> object to impersonate a user is an example of exposing the security infrastructure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the security infrastructure is exposed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelfAffectingProcessMgmt">
-      <MemberSignature Language="C#" Value="public bool SelfAffectingProcessMgmt { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SelfAffectingProcessMgmt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SelfAffectingProcessMgmt" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Self-affecting process management code might exit the current process, terminating the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether self-affecting process management is exposed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SelfAffectingThreading">
-      <MemberSignature Language="C#" Value="public bool SelfAffectingThreading { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SelfAffectingThreading { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SelfAffectingThreading" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Self-affecting threading manipulates threads in a way that only affects user code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether self-affecting threading is exposed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SharedState">
-      <MemberSignature Language="C#" Value="public bool SharedState { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SharedState { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SharedState" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Security.Permissions.HostProtectionAttribute.SharedState" /> is true, it indicates that a state is exposed that might be shared between threads.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether shared state is exposed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Synchronization">
-      <MemberSignature Language="C#" Value="public bool Synchronization { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Synchronization { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Synchronization" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether synchronization is exposed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="UI">
-      <MemberSignature Language="C#" Value="public bool UI { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool UI { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UI" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user interface is exposed.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

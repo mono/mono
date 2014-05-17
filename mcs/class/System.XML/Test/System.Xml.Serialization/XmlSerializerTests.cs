@@ -1936,6 +1936,15 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void TestSerializeReadOnlyListProp ()
+		{
+			ReadOnlyListProperty ts = new ReadOnlyListProperty ();
+			Serialize (ts);
+			Assert.AreEqual (Infoset ("<ReadOnlyListProperty xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><StrList><string>listString1</string><string>listString2</string></StrList></ReadOnlyListProperty>"), WriterText);
+		}
+
+
+		[Test]
 		public void TestSerializeIList ()
 		{
 			clsPerson k = new clsPerson ();
@@ -2889,6 +2898,69 @@ namespace MonoTests.System.XmlSerialization
 				xs.Serialize (xw, obj);
 			Assert.IsTrue (sw.ToString ().IndexOf ("foo") > 0, "#1");
 		}
+
+		public class AnotherArrayListType
+		{
+			[XmlAttribute]
+			public string one = "aaa";
+			[XmlAttribute]
+			public string another = "bbb";
+		}
+
+		public class DerivedArrayListType : AnotherArrayListType
+		{
+
+		}
+
+		public class ClassWithArrayList
+		{
+			[XmlElement (Type = typeof(int), ElementName = "int_elem")]
+			[XmlElement (Type = typeof(string), ElementName = "string_elem")]
+			[XmlElement (Type = typeof(AnotherArrayListType), ElementName = "another_elem")]
+			[XmlElement (Type = typeof(DerivedArrayListType), ElementName = "derived_elem")]
+			public ArrayList list;
+		}
+
+		public class ClassWithArray
+		{
+			[XmlElement (Type = typeof(int), ElementName = "int_elem")]
+			[XmlElement (Type = typeof(string), ElementName = "string_elem")]
+			[XmlElement (Type = typeof(AnotherArrayListType), ElementName = "another_elem")]
+			[XmlElement (Type = typeof(DerivedArrayListType), ElementName = "derived_elem")]
+			public object[] list;
+
+		}
+
+		[Test]
+		public void MultipleXmlElementAttributesOnArrayList()
+		{
+			var test = new ClassWithArrayList();
+
+			test.list = new ArrayList();
+			test.list.Add(3);
+			test.list.Add("apepe");
+			test.list.Add(new AnotherArrayListType());
+			test.list.Add(new DerivedArrayListType());
+
+			Serialize(test);
+			var expected_text = "<:ClassWithArrayList http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:int_elem>3</><:string_elem>apepe</><:another_elem :another='bbb' :one='aaa'></><:derived_elem :another='bbb' :one='aaa'></></>";
+
+			Assert.AreEqual(WriterText, expected_text, WriterText);
+		}
+
+		[Test]
+		public void MultipleXmlElementAttributesOnArray()
+		{
+			var test = new ClassWithArray();
+
+			test.list = new object[] { 3, "apepe", new AnotherArrayListType(), new DerivedArrayListType() };
+
+			Serialize(test);
+			var expected_text = "<:ClassWithArray http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:int_elem>3</><:string_elem>apepe</><:another_elem :another='bbb' :one='aaa'></><:derived_elem :another='bbb' :one='aaa'></></>";
+
+			Assert.AreEqual(WriterText, expected_text, WriterText);
+		}
+
 #endif
 
 		#endregion //GenericsSeralizationTests

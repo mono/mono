@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DisplayFormatAttribute" FullName="System.ComponentModel.DataAnnotations.DisplayFormatAttribute">
+  <TypeSignature Language="C#" Value="public class DisplayFormatAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DisplayFormatAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, AllowMultiple=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you apply this attribute to a data field, you must follow the guidelines for the use of the attributes. For more information, see <format type="text/html"><a href="c563bbf3-feb9-484e-81d1-a585f1b0e192">ASP.NET Dynamic Data Guidelines</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how data fields are displayed and formatted by ASP.NET Dynamic Data.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DisplayFormatAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.DisplayFormatAttribute" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyFormatInEditMode">
+      <MemberSignature Language="C#" Value="public bool ApplyFormatInEditMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ApplyFormatInEditMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the formatting string that is specified by the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.DataFormatString" /> property is applied to field values only when the data-bound control is in read-only mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the formatting string that is specified by the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.DataFormatString" /> property is applied to the field value when the data field is in edit mode.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ConvertEmptyStringToNull">
+      <MemberSignature Language="C#" Value="public bool ConvertEmptyStringToNull { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ConvertEmptyStringToNull" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Users might enter an empty string for a field value. Use the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.ConvertEmptyStringToNull" /> property to specify whether an empty string value is automatically converted to null when the data field is updated in the database.</para>
+          <block subset="none" type="note">
+            <para>By default, a <see cref="T:System.Web.DynamicData.DynamicField" /> object displays null values as empty strings. To display a different value, set the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.NullDisplayText" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether empty string values ("") are automatically converted to null when the data field is updated in the data source.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DataFormatString">
+      <MemberSignature Language="C#" Value="public string DataFormatString { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DataFormatString" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.DataFormatString" /> property to specify a custom display format for the values that are displayed in the <see cref="T:System.Web.DynamicData.DynamicField" /> object. If the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.DataFormatString" /> property is not set, the field's value is displayed without any special formatting. For more information, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Overview</a></format>.</para>
+          <block subset="none" type="note">
+            <para>When the <see cref="P:System.Web.DynamicData.DynamicField.HtmlEncode" /> property is true, the value of the field is HTML encoded to its string representation before the formatting string is applied. For some objects, such as dates, you might want to control how the object is displayed with a formatting string. In those cases, you must set the <see cref="P:System.Web.DynamicData.DynamicField.HtmlEncode" /> property to false.</para>
+          </block>
+          <para>By default, the formatting string is applied to the field value only when the data-bound control that contains the <see cref="T:System.Web.DynamicData.DynamicField" /> object is in read-only mode. To apply the formatting string to field values when they are in edit mode, set the <see cref="P:System.Web.DynamicData.DynamicField.ApplyFormatInEditMode" /> property to true.</para>
+          <para>The formatting string can be any literal string and usually includes a placeholder for the field's value. For example, in the formatting string "Item Value: {0}", the field's value is substituted for the {0} placeholder when the string is displayed in the <see cref="T:System.Web.DynamicData.DynamicField" /> object. The remainder of the formatting string is displayed as literal text.</para>
+          <block subset="none" type="note">
+            <para>If the formatting string does not include a placeholder, the field's value from the data source is not included in the final display text.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display format for the field value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HtmlEncode">
+      <MemberSignature Language="C#" Value="public bool HtmlEncode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HtmlEncode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the field should be HTML-encoded.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NullDisplayText">
+      <MemberSignature Language="C#" Value="public string NullDisplayText { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NullDisplayText" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sometimes a data field's value is stored as null values in the source. You can specify custom text to display for data fields that have a null value by setting the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.NullDisplayText" /> property. If this property is not set, null field values are displayed as empty strings (""). </para>
+          <block subset="none" type="note">
+            <para>To convert an empty string field value to a null value, you must set the <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.ConvertEmptyStringToNull" /> property to true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text that is displayed for a field when the field's value is null.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

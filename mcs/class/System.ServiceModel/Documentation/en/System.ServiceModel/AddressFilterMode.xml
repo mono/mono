@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AddressFilterMode" FullName="System.ServiceModel.AddressFilterMode">
+  <TypeSignature Language="C#" Value="public enum AddressFilterMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AddressFilterMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The value of the <see cref="T:System.ServiceModel.AddressFilterMode" /> enumeration is set on the <see cref="P:System.ServiceModel.ServiceBehaviorAttribute.AddressFilterMode" /> property. </para>
+      <para>The longest prefix match criterion specified by <see cref="F:System.ServiceModel.AddressFilterMode.Prefix" /> requires that the destination address be matched by the largest number of leading address bits in the filter. The default value is <see cref="F:System.ServiceModel.AddressFilterMode.Exact" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of match semantics used by the dispatcher to route incoming messages to the correct endpoint.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Any">
+      <MemberSignature Language="C#" Value="Any" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AddressFilterMode Any = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AddressFilterMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using this value turns off the indigo2 address filter check. Any message, no matter what its WS-Adressing:To identity is accepted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a filter that matches on any address of an incoming message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Exact">
+      <MemberSignature Language="C#" Value="Exact" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AddressFilterMode Exact = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AddressFilterMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a filter that does an exact match on the address of an incoming message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Prefix">
+      <MemberSignature Language="C#" Value="Prefix" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.AddressFilterMode Prefix = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.AddressFilterMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a filter does the longest prefix matches on the address of an incoming message.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

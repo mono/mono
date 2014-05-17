@@ -635,8 +635,8 @@ namespace MonoTests.System.Drawing{
         [Test]
         public void GetHashCode_UnitDiffers_HashesNotEqual()
         {
-            Font f1 = new Font("DejaVu Sans", 8.25F, GraphicsUnit.Point);
-            Font f2 = new Font("DejaVu Sans", 8.25F, GraphicsUnit.Pixel);
+            Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
+            Font f2 = new Font("Arial", 8.25F, GraphicsUnit.Pixel);
 
             Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
                 "Hashcodes should differ if _unit member differs");
@@ -645,8 +645,8 @@ namespace MonoTests.System.Drawing{
         [Test]
         public void GetHashCode_NameDiffers_HashesNotEqual()
         {
-            Font f1 = new Font("DejaVu Sans", 8.25F, GraphicsUnit.Point);
-            Font f2 = new Font("Liberation Sans", 8.25F, GraphicsUnit.Point);
+            Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
+            Font f2 = new Font("Courier New", 8.25F, GraphicsUnit.Point);
 
             Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
                 "Hashcodes should differ if _name member differs");
@@ -655,8 +655,8 @@ namespace MonoTests.System.Drawing{
         [Test]
         public void GetHashCode_StyleEqualsGdiCharSet_HashesNotEqual()
         {
-            Font f1 = new Font("DejaVu Sans", 8.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
-            Font f2 = new Font("DejaVu Sans", 8.25F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(1)));
+            Font f1 = new Font("Arial", 8.25F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
+            Font f2 = new Font("Arial", 8.25F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(1)));
 
             Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
                 "Hashcodes should differ if _style member differs");

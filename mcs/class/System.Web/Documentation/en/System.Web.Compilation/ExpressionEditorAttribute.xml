@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionEditorAttribute" FullName="System.Web.Compilation.ExpressionEditorAttribute">
   <TypeSignature Language="C#" Value="public sealed class ExpressionEditorAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class specifies the design-time expression editor for the expressions that are handled by an <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class. </para>
+      <para>When editing a control property, you can set the property value to an expression by using an editor for the expression.</para>
+      <para>When developing an expression builder, you can mark the builder with the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> attribute to set the editor type value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the design-time editor of the expression builder. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +35,17 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.Compilation.ExpressionEditorAttribute.#ctor(System.String)" /> constructor to initialize an instance of the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class using a type name. To initialize the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class using a type object, use the <see cref="M:System.Web.Compilation.ExpressionEditorAttribute.#ctor(System.Type)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class using the specified type name.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to associate with the <see cref="T:System.Web.UI.Design.ExpressionEditor" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +58,17 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.Compilation.ExpressionEditorAttribute.#ctor(System.Type)" /> constructor to initialize an instance of the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class using a type object. To initialize the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class using a type name, use the <see cref="M:System.Web.Compilation.ExpressionEditorAttribute.#ctor(System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class using the specified type object.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type reference to associate with the <see cref="T:System.Web.UI.Design.ExpressionEditor" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,10 +81,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.Compilation.ExpressionEditorAttribute.EditorTypeName" /> property to retrieve the name of the type of editor that is associated with this instance of the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by an expression editor to retrieve the editor type name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,11 +106,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this instance of the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class and a specified object are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if value is not null and <see cref="P:System.Web.Compilation.ExpressionEditorAttribute.EditorTypeName" /> is equal; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> class or a class that derives from it.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,10 +131,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of an <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> attribute is the value of its <see cref="P:System.Web.Compilation.ExpressionEditorAttribute.EditorTypeName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the hash code for the value of this <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" /> attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the value of this <see cref="T:System.Web.Compilation.ExpressionEditorAttribute" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

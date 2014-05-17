@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PartialCachingAttribute" FullName="System.Web.UI.PartialCachingAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class PartialCachingAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,28 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.PartialCachingAttribute" /> attribute class marks user controls (.ascx files) that support fragment caching, and encapsulates the cache settings that ASP.NET uses when caching the control. Page and controls developers use the <see cref="T:System.Web.UI.PartialCachingAttribute" /> attribute to enable output caching for a user control in a code-behind file.</para>
+      <para>Using the <see cref="T:System.Web.UI.PartialCachingAttribute" /> is one of several ways you can enable output caching. The following list describes methods you can use to enable output caching.</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive to enable output caching in declarative scenarios.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="T:System.Web.UI.PartialCachingAttribute" /> to enable caching for a user control in a code-behind file.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="T:System.Web.UI.ControlCachePolicy" /> class to programmatically specify cache settings in programmatic scenarios in which you are working with <see cref="T:System.Web.UI.BasePartialCachingControl" /> instances. </para>
+        </item>
+      </list>
+      <para>If a user control contains an <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive or has a <see cref="T:System.Web.UI.PartialCachingAttribute" /> applied, the ASP.NET parser generates an instance of the <see cref="T:System.Web.UI.PartialCachingControl" /> class to wrap the user control. </para>
+      <para>For more information about ASP.NET caching, see <format type="text/html"><a href="ac11c8ea-df5d-4de8-b315-9ccf1048b0ce">ASP.NET Caching Features</a></format>. For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the metadata attribute that Web Forms user controls (.ascx files) use to indicate if and how their output is cached. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +51,13 @@
         <Parameter Name="duration" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="duration">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PartialCachingAttribute" /> class with the specified duration assigned to the user control to be cached.</para>
+        </summary>
+        <param name="duration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time, in seconds, a user control should remain in the output cache. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,12 +75,19 @@
         <Parameter Name="varyByCustom" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="duration">To be added: an object of type 'int'</param>
-        <param name="varyByParams">To be added: an object of type 'string'</param>
-        <param name="varyByControls">To be added: an object of type 'string'</param>
-        <param name="varyByCustom">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PartialCachingAttribute" /> class, specifying the caching duration, any GET and POST values, control names, and custom output caching requirements used to vary the cache.</para>
+        </summary>
+        <param name="duration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time, in seconds, that the user control is cached. </param>
+        <param name="varyByParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of strings used to vary the output cache. By default, these strings correspond to a query string value sent with GET method attributes or to a parameter sent using the POST method. When this attribute is set to multiple parameters, the output cache contains a different version of the requested document for each specified parameter. Possible values include "none", "*", and any valid query string or POST parameter name. </param>
+        <param name="varyByControls">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of strings used to vary the output cache. These strings represent fully qualified names of properties on a user control. When this parameter is used for a user control, the user control output is varied to the cache for each specified user control property. </param>
+        <param name="varyByCustom">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any text that represents custom output caching requirements. If this parameter is given a value of "browser", the cache is varied by browser name and major version information. If a custom string is entered, you must override the <see cref="M:System.Web.HttpApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)" /> method in your application's Global.asax file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,13 +105,21 @@
         <Parameter Name="shared" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="duration">To be added.</param>
-        <param name="varyByParams">To be added.</param>
-        <param name="varyByControls">To be added.</param>
-        <param name="varyByCustom">To be added.</param>
-        <param name="shared">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PartialCachingAttribute" /> class, specifying the caching duration, any GET and POST values, control names, custom output caching requirements used to vary the cache, and whether the user control output can be shared with multiple pages.</para>
+        </summary>
+        <param name="duration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time, in seconds, that the user control is cached.</param>
+        <param name="varyByParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of strings used to vary the output cache. By default, these strings correspond to a query string value sent with GET method attributes, or a parameter sent using the POST method. When this attribute is set to multiple parameters, the output cache contains a different version of the requested document for each specified parameter. Possible values include "none", "*", and any valid query string or POST parameter name.</param>
+        <param name="varyByControls">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of strings used to vary the output cache. These strings represent fully qualified names of properties on a user control. When this parameter is used for a user control, the user control output is varied to the cache for each specified user control property.</param>
+        <param name="varyByCustom">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any text that represents custom output caching requirements. If this parameter is given a value of "browser", the cache is varied by browser name and major version information. If a custom string is entered, you must override the <see cref="M:System.Web.HttpApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)" /> method in your application's Global.asax file.</param>
+        <param name="shared">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the user control output can be shared with multiple pages; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,14 +141,23 @@
         <Parameter Name="shared" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="duration">To be added.</param>
-        <param name="varyByParams">To be added.</param>
-        <param name="varyByControls">To be added.</param>
-        <param name="varyByCustom">To be added.</param>
-        <param name="sqlDependency">To be added.</param>
-        <param name="shared">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PartialCachingAttribute" /> class, specifying the caching duration, any GET and POST values, control names, custom output caching requirements used to vary the cache, the database dependencies, and whether the user control output can be shared with multiple pages. </para>
+        </summary>
+        <param name="duration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time, in seconds, that the user control is cached.</param>
+        <param name="varyByParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of strings used to vary the output cache. By default, these strings correspond to a query string value sent with GET method attributes, or a parameter sent using the POST method. When this attribute is set to multiple parameters, the output cache contains a different version of the requested document for each specified parameter. Possible values include "none", "*", and any valid query string or POST parameter name.</param>
+        <param name="varyByControls">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of strings used to vary the output cache. These strings represent fully qualified names of properties on a user control. When this parameter is used for a user control, the user control output is varied to the cache for each specified user control property.</param>
+        <param name="varyByCustom">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any text that represents custom output caching requirements. If this parameter is given a value of "browser", the cache is varied by browser name and major version information. If a custom string is entered, you must override the <see cref="M:System.Web.HttpApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)" /> method in your application's Global.asax file.</param>
+        <param name="sqlDependency">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delimited list of database names and table names that, when changed, explicitly expire a cache entry in the ASP.NET cache. These database names match those SQL Server cache dependencies identified in your Web configuration section.</param>
+        <param name="shared">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the user control output can be shared with multiple pages; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="Duration">
@@ -118,9 +167,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the amount of time, in seconds, that cached items should remain in the output cache.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,9 +186,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you set this property to true, cached user control output can be accessed by multiple Web Forms pages. If you do not set it to true, the default behavior is to cache one version of user control output for each page that contains that user control. You can potentially save a significant amount of memory by enabling this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether user control output can be shared with multiple pages.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,9 +211,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PartialCachingAttribute.SqlDependency" /> string identifies databases and table names according to the name of a SQL Server cache dependency in your configuration (typically added using the sqlcachedependency configuration elements). If you use SQL Server 2005, you can set the <see cref="P:System.Web.UI.PartialCachingAttribute.SqlDependency" /> property to "CommandNotification", which instructs ASP.NET to create row level dependencies for all SQL commands issued within the context of the current ASP.NET page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a delimited string that identifies one or more database and table name pairs that the cached user control is dependent on.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VaryByControls">
@@ -165,9 +229,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of user control properties that the output cache uses to vary the user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,9 +248,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you specify "browser" for this property, the user control will be varied by browser type and major version number. You can also use this property to extend the values that output cache varies the user control response.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of custom strings that the output cache will use to vary the user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,9 +270,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of query string or form POST parameters that the output cache will use to vary the user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

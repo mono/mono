@@ -1,12 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ApplicationTrust" FullName="System.Security.Policy.ApplicationTrust">
-  <TypeSignature Language="C#" Value="public sealed class ApplicationTrust : System.Security.ISecurityEncodable" />
+  <TypeSignature Language="C#" Value="public sealed class ApplicationTrust : System.Security.Policy.EvidenceBase, System.Security.ISecurityEncodable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit ApplicationTrust extends System.Security.Policy.EvidenceBase implements class System.Security.ISecurityEncodable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName>System.Security.Policy.EvidenceBase</BaseTypeName>
   </Base>
   <Interfaces>
     <Interface>
@@ -19,44 +21,66 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Security.Policy.ApplicationTrust" /> object is returned by a trust manager's <see cref="M:System.Security.Policy.IApplicationTrustManager.DetermineApplicationTrust(System.ActivationContext,System.Security.Policy.TrustManagerContext)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates security decisions about an application. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationTrust ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an empty <see cref="T:System.Security.Policy.ApplicationTrust" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.ApplicationTrust" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationTrust (ApplicationIdentity applicationIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ApplicationIdentity applicationIdentity) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="applicationIdentity" Type="System.ApplicationIdentity" />
       </Parameters>
       <Docs>
-        <param name="applicationIdentity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An application identity contains the full name of the application and the location of its code base.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.ApplicationTrust" /> class with an <see cref="T:System.ApplicationIdentity" />. </para>
+        </summary>
+        <param name="applicationIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ApplicationIdentity" /> that uniquely identifies an application.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationTrust (System.Security.PermissionSet defaultGrantSet, System.Collections.Generic.IEnumerable&lt;System.Security.Policy.StrongName&gt; fullTrustAssemblies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.PermissionSet defaultGrantSet, class System.Collections.Generic.IEnumerable`1&lt;class System.Security.Policy.StrongName&gt; fullTrustAssemblies) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,66 +90,99 @@
         <Parameter Name="fullTrustAssemblies" Type="System.Collections.Generic.IEnumerable&lt;System.Security.Policy.StrongName&gt;" />
       </Parameters>
       <Docs>
-        <param name="defaultGrantSet">To be added.</param>
-        <param name="fullTrustAssemblies">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="fullTrustAssemblies" /> identifies strong-named assemblies within the <see cref="T:System.AppDomain" /> that are to be granted full trust. This constructor is called by the <see cref="M:System.AppDomain.CreateDomain(System.String,System.Security.Policy.Evidence,System.AppDomainSetup,System.Security.PermissionSet,System.Security.Policy.StrongName[])" /> method to create an <see cref="T:System.AppDomain" /> that will be used as a sandbox. For more information about running an application in a sandbox, see <format type="text/html"><a href="d1ad722b-5b49-4040-bff3-431b94bb8095">How To: Run Partially Trusted Code in a Sandbox</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.ApplicationTrust" /> class using the provided grant set and collection of full-trust assemblies.</para>
+        </summary>
+        <param name="defaultGrantSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />A default permission set that is granted to all assemblies that do not have specific grants.</param>
+        <param name="fullTrustAssemblies">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of strong names that represent assemblies that should be considered fully trusted in an application domain.</param>
       </Docs>
     </Member>
     <Member MemberName="ApplicationIdentity">
-      <MemberSignature Language="C#" Value="public ApplicationIdentity ApplicationIdentity { set; get; }" />
+      <MemberSignature Language="C#" Value="public ApplicationIdentity ApplicationIdentity { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ApplicationIdentity ApplicationIdentity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ApplicationIdentity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Policy.ApplicationTrust.ApplicationIdentity" /> property uniquely identifies a manifest-based application to be activated in a new domain. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the application identity for the application trust object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="DefaultGrantSet">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement DefaultGrantSet { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.PolicyStatement DefaultGrantSet" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefaultGrantSet">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement DefaultGrantSet { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyStatement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Policy.ApplicationTrust.DefaultGrantSet" /> property represents the permissions that are granted to the application.</para>
+          <para>The <see cref="T:System.Security.Policy.PolicyStatement" /> representing the default grants is initialized using a <see cref="T:System.Security.PermissionSet" /> and optional attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the policy statement defining the default grant set.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ExtraInfo">
+      <MemberSignature Language="C#" Value="public object ExtraInfo { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object ExtraInfo" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExtraInfo">
-      <MemberSignature Language="C#" Value="public object ExtraInfo { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets extra security information about the application.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="FromXml">
+      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement element);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void FromXml(class System.Security.SecurityElement element) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromXml">
-      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement element);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -133,18 +190,22 @@
         <Parameter Name="element" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.ISecurityPolicyEncodable.ToXml(System.Security.Policy.PolicyLevel)" /> and <see cref="M:System.Security.ISecurityPolicyEncodable.FromXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" /> methods are implemented to make <see cref="T:System.Security.Policy.ApplicationTrust" /> objects XML-encodable for security policy use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reconstructs an <see cref="T:System.Security.Policy.ApplicationTrust" /> object with a given state from an XML encoding.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML encoding to use to reconstruct the <see cref="T:System.Security.Policy.ApplicationTrust" /> object. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FullTrustAssemblies">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;System.Security.Policy.StrongName&gt; FullTrustAssemblies { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;class System.Security.Policy.StrongName&gt; FullTrustAssemblies" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -153,62 +214,92 @@
         <ReturnType>System.Collections.Generic.IList&lt;System.Security.Policy.StrongName&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list identifies assemblies that are to be granted full trust within the <see cref="T:System.AppDomain" /> that is associated with this <see cref="T:System.Security.Policy.ApplicationTrust" /> instance. The assemblies are identified by their strong names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of full-trust assemblies for this application trust.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsApplicationTrustedToRun">
-      <MemberSignature Language="C#" Value="public bool IsApplicationTrustedToRun { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IsApplicationTrustedToRun { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsApplicationTrustedToRun" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A trust manager sets the <see cref="P:System.Security.Policy.ApplicationTrust.IsApplicationTrustedToRun" /> property to true when an application has been approved to execute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the application has the required permission grants and is trusted to run.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Persist">
-      <MemberSignature Language="C#" Value="public bool Persist { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Persist { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Persist" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Security.Policy.ApplicationTrust.Persist" /> property is true, application trust information is saved to the ClickOnce application store.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether application trust information is persisted.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ToXml">
       <MemberSignature Language="C#" Value="public System.Security.SecurityElement ToXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.SecurityElement ToXml() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.ISecurityPolicyEncodable.ToXml(System.Security.Policy.PolicyLevel)" /> and <see cref="M:System.Security.ISecurityPolicyEncodable.FromXml(System.Security.SecurityElement,System.Security.Policy.PolicyLevel)" /> methods are implemented to make <see cref="T:System.Security.Policy.ApplicationTrust" /> objects XML-encodable for security policy use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the <see cref="T:System.Security.Policy.ApplicationTrust" /> object and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

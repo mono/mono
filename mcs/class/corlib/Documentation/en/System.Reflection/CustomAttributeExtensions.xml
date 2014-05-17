@@ -1,0 +1,1228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CustomAttributeExtensions" FullName="System.Reflection.CustomAttributeExtensions">
+  <TypeSignature Language="C#" Value="public static class CustomAttributeExtensions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CustomAttributeExtensions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains static methods for retrieving custom attributes.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.Assembly element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Attribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="attributeType" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.MemberInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Attribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="attributeType" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.Module element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Attribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="attributeType" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.ParameterInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Attribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="attributeType" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Attribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified member, and optionally inspects the ancestors of that member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="attributeType" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute">
+      <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Attribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified parameter, and optionally inspects the ancestors of that parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute matching <paramref name="attributeType" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.Assembly element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.Assembly element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified assembly. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="T" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.MemberInfo element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="T" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.Module element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.Module element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="T" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.ParameterInfo element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="T" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.MemberInfo element, bool inherit) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified member, and optionally inspects the ancestors of that member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="T" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttribute&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.ParameterInfo element, bool inherit) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" /> extension method if you expect more than one value to be returned, or <see cref="T:System.Reflection.AmbiguousMatchException" /> will be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a custom attribute of a specified type that is applied to a specified parameter, and optionally inspects the ancestors of that parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom attribute that matches <paramref name="T" />, or null if no such attribute is found.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Assembly element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Assembly element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes that are applied to a specified assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes that are applied to a specified member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Module element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Module element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes that are applied to a specified module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes that are applied to a specified parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Assembly element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="attributeType" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes that are applied to a specified member, and optionally inspects the ancestors of that member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> that match the specified criteria, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="attributeType" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Module element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="attributeType" />, or an empty collection if no such attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes that are applied to a specified parameter, and optionally inspects the ancestors of that parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="attributeType" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified member, and optionally inspects the ancestors of that member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="attributeType" />, or an empty collection if no such attributes exist.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified parameter, and optionally inspects the ancestors of that parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="attributeType" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.Assembly element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.Assembly element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified assembly. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="T" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.MemberInfo element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="T" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.Module element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.Module element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="T" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.ParameterInfo element) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="T" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.MemberInfo element, bool inherit) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified member, and optionally inspects the ancestors of that member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="T" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.ParameterInfo element, bool inherit) where T : Attribute;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>System.Attribute</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of custom attributes of a specified type that are applied to a specified parameter, and optionally inspects the ancestors of that parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the custom attributes that are applied to <paramref name="element" /> and that match <paramref name="T" />, or an empty collection if no such attributes exist. </para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.Assembly element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether custom attributes of a specified type are applied to a specified assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute of the specified type is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.MemberInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether custom attributes of a specified type are applied to a specified member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute of the specified type is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.Module element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether custom attributes of a specified type are applied to a specified module.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute of the specified type is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.ParameterInfo element, Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether custom attributes of a specified type are applied to a specified parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute of the specified type is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether custom attributes of a specified type are applied to a specified member, and, optionally, applied to its ancestors.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute of the specified type is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="inherit" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether custom attributes of a specified type are applied to a specified parameter, and, optionally, applied to its ancestors.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute of the specified type is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

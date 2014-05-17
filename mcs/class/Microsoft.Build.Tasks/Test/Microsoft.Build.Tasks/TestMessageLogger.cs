@@ -129,6 +129,18 @@ namespace MonoTests.Microsoft.Build.Tasks
 			}
 		}
 
+		public int WarningMessageCount {
+			get {
+				int count = 0, i = 0;
+				while (i++ < messages.Count) {
+					var importance = messages [i - 1].Importance;
+					if (importance == MessageImportance.High)
+						count++;
+				}
+				return count;
+			}
+		}
+
 		public int CheckHead (string text, MessageImportance importance)
 		{
 			string actual_msg;

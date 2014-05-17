@@ -7,6 +7,7 @@ RESOURCE_FILES = \
 	resources/ws-addr.xsd
 
 LIBRARY = System.ServiceModel.dll
+
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436,219,618 \
 		/unsafe \
@@ -31,12 +32,15 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 			/r:Mono.Security.dll
 endif
 
-ifeq (moonlight_raw, $(PROFILE))
-LIB_MCS_FLAGS += /r:System.Net
-endif
-
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += /r:System.Web.ApplicationServices.dll
+activation = $(the_libdir_base)System.ServiceModel.Activation.dll
+servicemodel_deps = $(activation)
+
+ifneq (plainservice/,$(intermediate))
+LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
+LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
+endif
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
@@ -64,6 +68,18 @@ NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 endif
 
-
-
 include ../../build/library.make
+
+$(the_libdir_base)System.ServiceModel.dll: $(servicemodel_deps)
+
+$(activation):
+	(cd ../System.ServiceModel.Activation; $(MAKE) $@)
+
+ifneq (plainservice/,$(intermediate))
+$(the_libdir_base)plainservice/System.ServiceModel.dll:
+	$(MAKE) intermediate=plainservice/ $(the_libdir_base)plainservice/System.ServiceModel.dll
+endif
+
+.NOTPARALLEL: $(servicemodel_deps)
+
+CLEAN_FILES = $(the_libdir_base)plainservice/System.ServiceModel.dll

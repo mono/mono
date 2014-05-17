@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeDomDesignerLoader" FullName="System.ComponentModel.Design.Serialization.CodeDomDesignerLoader">
   <TypeSignature Language="C#" Value="public abstract class CodeDomDesignerLoader : System.ComponentModel.Design.Serialization.BasicDesignerLoader, System.ComponentModel.Design.Serialization.IDesignerSerializationService, System.ComponentModel.Design.Serialization.INameCreationService" />
   <AssemblyInfo>
@@ -16,8 +17,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> is an abstract class that provides a full designer loader based on the Code Document Object Model (CodeDOM). You provide the CodeDOM parser and generator, and a type resolution service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for implementing a CodeDOM-based designer loader.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +36,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CodeDomProvider">
@@ -42,9 +53,15 @@
         <ReturnType>System.CodeDom.Compiler.CodeDomProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The designer loader does not parse or generate code from the returned <see cref="P:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.CodeDomProvider" />, but it does use the provider to obtain an <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> that it can use to validate identifiers in the name-creation service. The designer loader will also check the <see cref="P:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.CodeDomProvider" /> to see if it implements the <see cref="T:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload" /> interface. For more information on parsing or generating code, see the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Parse" /> and <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Write(System.CodeDom.CodeCompileUnit)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.CodeDomProvider" /> this designer loader will use. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -58,8 +75,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Dispose" /> method removes services added by the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Initialize" /> method.</para>
+          <para>Call <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" />. The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Dispose" /> method leaves the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> in an unusable state. After calling <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -73,8 +100,57 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table describes the replaceable services that the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> adds to the service container.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Term</para>
+                </term>
+                <description>
+                  <para>Definition</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.Serialization.INameCreationService" />
+                </para>
+              </term>
+              <description>
+                <para>Provides semantics for creating names of objects. The service uses the CodeDOM provider’s <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> interface to create names that are valid identifiers for the language. In addition, the name creation service supports empty names. Empty names should be interpreted as temporary local variables during serialization.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationService" />
+                </para>
+              </term>
+              <description>
+                <para>Allows other objects to serialize a group of components into a binary object. This service is most often used by features such as copy and paste or undo and redo. The <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> class provides a designer serialization service that is based on creating CodeDOM trees for objects.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.ComponentModel.Design.Serialization.ComponentSerializationService" />
+                </para>
+              </term>
+              <description>
+                <para>This service replaces <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationService" /> as a means to serialize components to a binary object.</para>
+              </description>
+            </item>
+          </list>
+          <para>For details on replaceable and non-replaceable services, see <see cref="T:System.ComponentModel.Design.Serialization.BasicDesignerLoader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes services.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReloadNeeded">
@@ -88,9 +164,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.IsReloadNeeded" /> method checks for the presence of the <see cref="T:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload" /> interface on the <see cref="P:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.CodeDomProvider" />. The provider will reparse the CodeDOM tree and pass the resulting parse tree to the <see cref="M:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload.ShouldReloadDesigner(System.CodeDom.CodeCompileUnit)" /> method. If this method returns false, the designer will not be reloaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether a reload is required.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.CodeDomProvider" /> decides a reload is required; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnBeginLoad">
@@ -104,8 +189,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.OnBeginLoad" /> method, see <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginLoad" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the designer loader that loading is about to begin.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBeginUnload">
@@ -119,8 +210,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.OnBeginUnload" /> method, see <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnBeginUnload" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the designer loader that unloading is about to begin.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnComponentRename">
@@ -138,11 +235,17 @@
         <Parameter Name="newName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <param name="oldName">To be added.</param>
-        <param name="newName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRename" /> event. </para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to rename.</param>
+        <param name="oldName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The original name of the component.</param>
+        <param name="newName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new name of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="OnEndLoad">
@@ -159,10 +262,18 @@
         <Parameter Name="errors" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="successful">To be added.</param>
-        <param name="errors">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" /> method, see <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.OnEndLoad(System.Boolean,System.Collections.ICollection)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the designer loader that loading is complete.</para>
+        </summary>
+        <param name="successful">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the load completed successfully; otherwise, false.</param>
+        <param name="errors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> of objects (usually exceptions) that were reported as errors.</param>
       </Docs>
     </Member>
     <Member MemberName="Parse">
@@ -176,9 +287,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Parse" /> method is called when the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> needs to parse the source code. The source code location and format must be specified by deriving classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the text or other persistent storage and returns a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeCompileUnit" /> resulting from a parse operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PerformFlush">
@@ -194,9 +314,20 @@
         <Parameter Name="manager" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformFlush(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> method obtains the root <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> for the root component of the designer and invokes the serializer to serialize the component. If the result of this operation is a <see cref="T:System.CodeDom.CodeTypeDeclaration" />, then <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformFlush(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> integrates the <see cref="T:System.CodeDom.CodeTypeDeclaration" /> with the existing CodeDOM tree. The result is the original CodeDOM tree with matching members and statements replaced. Finally, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformFlush(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> calls the abstract <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Write(System.CodeDom.CodeCompileUnit)" /> method to save this CodeDOM tree.</para>
+          <para>If the serialization of the root designer component does not result in a <see cref="T:System.CodeDom.CodeTypeDeclaration" />, then <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformFlush(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> does nothing further.</para>
+          <block subset="none" type="note">
+            <para>It is the responsibility of the caller to ensure that a CodeDOM originates from a trusted source. Accepting a CodeDOM object from an untrusted party could allow that party to run malicious code. When flushing a CodeDOM into a file, the framework will run code represented by the CodeDOM object and the serialized content of the object as provided.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests serialization of the root component of the designer.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> from which to request the serializer.</param>
       </Docs>
     </Member>
     <Member MemberName="PerformLoad">
@@ -212,9 +343,19 @@
         <Parameter Name="manager" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> method obtains an <see cref="T:System.CodeDom.Compiler.ICodeParser" /> from the CodeDOM provider and parses the code. <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> locates the first class in the file, obtains a root <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> for the data type, and then invokes the serializer to deserialize the data type. <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> assumes that this process will create all necessary components in the <see cref="T:System.ComponentModel.IContainer" /> of the <see cref="P:System.ComponentModel.Design.Serialization.BasicDesignerLoader.LoaderHost" /> property. Finally, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.PerformLoad(System.ComponentModel.Design.Serialization.IDesignerSerializationManager)" /> calls the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.SetBaseComponentClassName(System.String)" /> method with the fully qualified name of the type it passed to the CodeDOM serializer.</para>
+          <block subset="none" type="note">
+            <para>It is the responsibility of the caller to ensure that a CodeDOM originates from a trusted source. Accepting a CodeDOM object from an untrusted party could allow that party to run malicious code. When loading a CodeDOM into the design surface, the framework will run code represented by the CodeDOM object and the serialized content of the object as provided.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses code from a CodeDOM provider.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> from which to request the serializer.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationService.Deserialize">
@@ -230,10 +371,17 @@
         <Parameter Name="serializationData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serializationData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the specified serialization data object and returns a collection of objects represented by that data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects represented by <paramref name="serializationData" />.</para>
+        </returns>
+        <param name="serializationData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object consisting of serialized data.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationService.Serialize">
@@ -249,10 +397,17 @@
         <Parameter Name="objects" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="objects">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified collection of objects and stores them in a serialization data object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the serialized state of the specified collection of objects.</para>
+        </returns>
+        <param name="objects">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of objects to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.INameCreationService.CreateName">
@@ -269,11 +424,19 @@
         <Parameter Name="dataType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <param name="dataType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new name that is unique to all components in the specified container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique name for the data type.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The container where the new object is added.</param>
+        <param name="dataType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data type of the object that receives the name.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.INameCreationService.IsValidName">
@@ -289,10 +452,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified name is valid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the name is valid; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.INameCreationService.ValidateName">
@@ -308,9 +478,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified name is valid.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="TypeResolutionService">
@@ -323,9 +497,15 @@
         <ReturnType>System.ComponentModel.Design.ITypeResolutionService</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> automatically adds this <see cref="T:System.ComponentModel.Design.ITypeResolutionService" /> to the service container when the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Initialize" /> method is invoked. While the type resolution service is optional in many scenarios, it is required for code interpretation because source code contains type names, but no assembly references.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type resolution service to be used with this designer loader.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -341,9 +521,16 @@
         <Parameter Name="unit" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="unit">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Write(System.CodeDom.CodeCompileUnit)" /> method saves a <see cref="T:System.CodeDom.CodeCompileUnit" /> to persistent storage. The deriving class is responsible for invoking the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> on the appropriate text writer to save the code. The <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> ensures that the CodeDOM objects that are passed to <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Write(System.CodeDom.CodeCompileUnit)" /> are the same instances of objects that were retrieved from <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Parse" />, except in cases where the serialization process had to make changes to the code. This allows an optimized designer loader to store additional data in the <see cref="P:System.CodeDom.CodeObject.UserData" /> property of code elements. This data will be available during the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Write(System.CodeDom.CodeCompileUnit)" /> method for any elements that were not replaced by the serialization process.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes compile-unit changes to persistent storage.</para>
+        </summary>
+        <param name="unit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> to be persisted.</param>
       </Docs>
     </Member>
   </Members>

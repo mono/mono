@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IPolicyExportExtension" FullName="System.ServiceModel.Description.IPolicyExportExtension">
+  <TypeSignature Language="C#" Value="public interface IPolicyExportExtension" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPolicyExportExtension" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> interface on a <see cref="T:System.ServiceModel.Channels.BindingElement" /> object to write statements about endpoint capabilities or requirements into the WSDL information exposed by a particular endpoint. Typically the binding element is one that implements some feature, but this is not required. To load your policy exporter from a configuration file, implement a <see cref="T:System.ServiceModel.Configuration.BindingElementExtensionElement" /> that returns the policy exporter <see cref="T:System.ServiceModel.Channels.BindingElement" /> object.</para>
+      <para>The policy exporter is used by indigo1 to use policy assertions to communicate to clients the existence of that custom binding requirement or endpoint capability.</para>
+      <para>The <see cref="M:System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(System.ServiceModel.Description.MetadataExporter,System.ServiceModel.Description.PolicyConversionContext)" /> method takes the <see cref="T:System.ServiceModel.Description.MetadataExporter" /> and <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> objects. Use the <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" />, <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" />, and <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> methods to obtain collections of policy assertions that have already been exported at various scopes. Then add your custom policy assertion object to the appropriate collection.</para>
+      <para>The <see cref="P:System.ServiceModel.Description.PolicyConversionContext.Contract" /> property exposes the <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the endpoint that is being exported. This allows the <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> extension to correctly scope their exported policy assertions. For example, security attributes in code may add behaviors to the <see cref="T:System.ServiceModel.Description.ContractDescription" /> that indicate where security policy assertions should be added.</para>
+      <para>The <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> mechanism only supports exporting policy assertions in WSDL. To export custom WSDL elements you must use the <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> mechanism to modify the WSDL directly.</para>
+      <para>Once custom policy assertions have been attached to the WSDL information, clients can detect and import the custom binding assertions by using an <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> to insert custom binding policy assertions in the Web Services Description Language (WSDL) information.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ExportPolicy">
+      <MemberSignature Language="C#" Value="public void ExportPolicy (System.ServiceModel.Description.MetadataExporter exporter, System.ServiceModel.Description.PolicyConversionContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ExportPolicy(class System.ServiceModel.Description.MetadataExporter exporter, class System.ServiceModel.Description.PolicyConversionContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exporter" Type="System.ServiceModel.Description.MetadataExporter" />
+        <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" />, <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" />, and <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> methods to obtain collections of policy assertions that have already been exported at various scopes. Then add your <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> object to the appropriate collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement to include for exporting a custom policy assertion about bindings.</para>
+        </summary>
+        <param name="exporter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExporter" /> that you can use to modify the exporting process.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> that you can use to insert your custom policy assertion.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

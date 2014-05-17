@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRegisteredObject" FullName="System.Web.Hosting.IRegisteredObject">
   <TypeSignature Language="C#" Value="public interface IRegisteredObject" />
   <AssemblyInfo>
@@ -6,9 +7,18 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Objects must implement the <see cref="T:System.Web.Hosting.IRegisteredObject" /> interface in order to register with the hosting environment and have their lifetime managed by the hosting environment.</para>
+      <para>You can create an instance of a registered object by calling the <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method on the application manager. The application manager returns the newly created object to the caller, which can then call a type-specific method on the object. During startup, the registered object should call the <see cref="M:System.Web.Hosting.HostingEnvironment.RegisterObject(System.Web.Hosting.IRegisteredObject)" /> method to complete registration of the object.</para>
+      <para>When the application manager needs to stop a registered object, it will call the <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method. </para>
+      <para>Applications can have only one instance of a registered type. To create multiple instances of a registered type, use the factory pattern to create an object manager that is registered with the application and then manages the multiple instances. For an example of an object implementing the factory pattern, see the example for the <see cref="T:System.Web.Hosting.ApplicationManager" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods for objects that are managed by the hosting environment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Stop">
@@ -21,10 +31,19 @@
         <Parameter Name="immediate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="immediate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application manager will call the <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method to ask a registered object to unregister. During processing of the <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method, the registered object must call the <see cref="M:System.Web.Hosting.HostingEnvironment.UnregisterObject(System.Web.Hosting.IRegisteredObject)" /> method. </para>
+          <para>The <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method is first called with the <paramref name="immediate" /> parameter set to false. The object can either complete processing, call the <see cref="M:System.Web.Hosting.HostingEnvironment.UnregisterObject(System.Web.Hosting.IRegisteredObject)" /> method, and then return or it can return immediately and complete processing asynchronously before calling the <see cref="M:System.Web.Hosting.HostingEnvironment.UnregisterObject(System.Web.Hosting.IRegisteredObject)" /> method.</para>
+          <para>If the registered object does not complete processing before the application manager's time-out period expires, the <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method is called again with the <paramref name="immediate" /> parameter set to true. When the <paramref name="immediate" /> parameter is true, the registered object must call the <see cref="M:System.Web.Hosting.HostingEnvironment.UnregisterObject(System.Web.Hosting.IRegisteredObject)" /> method before returning; otherwise, its registration will be removed by the application manager.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests a registered object to unregister.</para>
+        </summary>
+        <param name="immediate">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the registered object should unregister from the hosting environment before returning; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

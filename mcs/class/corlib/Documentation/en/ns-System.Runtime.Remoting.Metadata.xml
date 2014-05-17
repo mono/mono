@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Metadata" FullName="System.Runtime.Remoting.Metadata" FullNameSP="System.Runtime.Remoting.Metadata" Maintainer="Mono">
   <Docs>
-    <summary>
-        To be added.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Metadata" /> namespace contains classes and attributes that can be used to customize generation and processing of SOAP for objects and fields. The classes of this namespace can be used to indicate the SOAPAction header field, type output, XML element name, and the method XML namespace URI. This information is used by the SOAP serializer during SOAP generation and the <format type="text/html"><a href="40f6f8c8-b80c-4e9f-a920-31bcd0cf45c5">Soapsuds Tool (Soapsuds.exe)</a></format> during Web Services Description Language (WSDL) generation. The information specified by the attributes in this namespace can be used on the receiving end of the generated SOAP to customize processing of the remoted method calls and objects. One of the most important classes of the <see cref="N:System.Runtime.Remoting.Metadata" /> namespace is <see cref="T:System.Runtime.Remoting.Metadata.SoapAttribute" /> class. The <see cref="T:System.Runtime.Remoting.Metadata.SoapAttribute" /> class is nonfunctional, and can only be used as the base class for all the metadata attributes. For more information on the SOAPAction HTTP header field, see www.w3.org/tr/soap/#_Toc478383528.</para>
+    </summary>
   </Docs>
 </Namespace>

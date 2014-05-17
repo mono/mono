@@ -25,5 +25,6 @@ System.ComponentModel.DataAnnotations/ScaffoldColumnAttribute.cs
 System.ComponentModel.DataAnnotations/ScaffoldTableAttribute.cs
 System.ComponentModel.DataAnnotations/StringLengthAttribute.cs
 System.ComponentModel.DataAnnotations/UIHintAttribute.cs
+System.ComponentModel.DataAnnotations/UrlAttribute.cs
 System.ComponentModel.DataAnnotations/ValidationAttribute.cs
 System.ComponentModel.DataAnnotations/ValidationException.cs

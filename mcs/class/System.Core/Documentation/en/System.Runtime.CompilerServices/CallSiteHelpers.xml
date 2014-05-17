@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallSiteHelpers" FullName="System.Runtime.CompilerServices.CallSiteHelpers">
+  <TypeSignature Language="C#" Value="public static class CallSiteHelpers" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CallSiteHelpers extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Class that contains helper methods for DLR CallSites.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="IsInternalFrame">
+      <MemberSignature Language="C#" Value="public static bool IsInternalFrame (System.Reflection.MethodBase mb);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsInternalFrame(class System.Reflection.MethodBase mb) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="mb" Type="System.Reflection.MethodBase" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks if a <see cref="T:System.Reflection.MethodBase" /> is internally used by DLR and should not be displayed on the language code's stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the input <see cref="T:System.Reflection.MethodBase" /> is internally used by DLR and should not be displayed on the language code's stack. Otherwise, false.</para>
+        </returns>
+        <param name="mb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.Reflection.MethodBase" /></param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

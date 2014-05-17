@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SkinIDTypeConverter" FullName="System.Web.UI.Design.SkinIDTypeConverter">
   <TypeSignature Language="C#" Value="public class SkinIDTypeConverter : System.ComponentModel.TypeConverter" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a list of valid skin IDs for a control at design time, based on the currently applicable theme.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +25,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.SkinIDTypeConverter" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanConvertFrom">
@@ -39,11 +46,19 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="sourceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this converter can convert a <see cref="P:System.Web.UI.Control.SkinID" /> object to a string using the provided format context and type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the conversion can be made; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An T:System.ComponentModel.ITypeDescriptorContext that provides a format context for the control being designed.</param>
+        <param name="sourceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CanConvertTo">
@@ -60,11 +75,19 @@
         <Parameter Name="destType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="destType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this converter can convert a <see cref="P:System.Web.UI.Control.SkinID" /> object to the specified type, using the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if a conversion can be made; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An T:System.ComponentModel.ITypeDescriptorContext that provides a format context for the control being designed.</param>
+        <param name="destType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A T:System.Type that represents the type to convert to.</param>
       </Docs>
     </Member>
     <Member MemberName="ConvertFrom">
@@ -82,12 +105,21 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the given string to a <see cref="P:System.Web.UI.Control.SkinID" /> object using the specified context and culture information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can be cast as a <see cref="P:System.Web.UI.DataSourceControl.SkinID" /> object, if the conversion can be made; otherwise, null.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An T:System.ComponentModel.ITypeDescriptorContext that provides a format context that represents the control being designed.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A T:System.Globalization.CultureInfo. If null is passed, the current culture is assumed.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert.</param>
       </Docs>
     </Member>
     <Member MemberName="ConvertTo">
@@ -106,13 +138,23 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="destinationType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the given <see cref="P:System.Web.UI.Control.SkinID" /> object to a string using the specified context and culture information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the converted value.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An T:System.ComponentModel.ITypeDescriptorContext that provides a format context that represents the control being designed.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A T:System.Globalization.CultureInfo. If null, the current culture is assumed. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.UI.Control.SkinID" /> object to convert.</param>
+        <param name="destinationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The T:System.Type to convert <paramref name="value" /> to (must be a <see cref="T:System.String" />). </param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValues">
@@ -128,10 +170,17 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a set of <see cref="P:System.Web.UI.Control.SkinID" /> objects that can be applied to the control that is represented by the given format context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> that holds a set of <see cref="P:System.Web.UI.Control.SkinID" /> objects; otherwise, null, if the control does not support skins.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An T:System.ComponentModel.ITypeDescriptorContext that provides a format context that represents the control being designed. <paramref name="context" /> or properties of <paramref name="context" /> can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValuesSupported">
@@ -147,10 +196,17 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the control that is represented by the given context supports a set of <see cref="P:System.Web.UI.Control.SkinID" /> objects that can be picked from a list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if <see cref="Overload:System.Web.UI.Design.SkinIDTypeConverter.GetStandardValues" /> should be called to find a common set of values the object supports; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> for the control being designed.</param>
       </Docs>
     </Member>
   </Members>

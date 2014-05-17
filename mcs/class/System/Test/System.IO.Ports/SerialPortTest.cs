@@ -59,7 +59,7 @@ namespace MonoTests.System.IO.Ports
 		{
 			int platform = (int) Environment.OSVersion.Platform;
 			// we are testing on Unix only
-			if ((platform != 4) && (platform != 128)) return;
+			if ((platform != 4) && (platform != 128)) Assert.Ignore ("Not running on Unix.");
 			SerialPort sp = new SerialPort ();
 			sp.BaudRate = 1234;
 			var exceptionCatched = false;

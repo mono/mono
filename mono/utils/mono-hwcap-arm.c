@@ -35,15 +35,11 @@ gboolean mono_hwcap_arm_is_v6 = FALSE;
 gboolean mono_hwcap_arm_is_v7 = FALSE;
 gboolean mono_hwcap_arm_is_v7s = FALSE;
 gboolean mono_hwcap_arm_has_vfp = FALSE;
+gboolean mono_hwcap_arm_has_vfp3 = FALSE;
+gboolean mono_hwcap_arm_has_vfp3_d16 = FALSE;
 gboolean mono_hwcap_arm_has_thumb = FALSE;
 gboolean mono_hwcap_arm_has_thumb2 = FALSE;
 
-#if defined(MONO_CROSS_COMPILE)
-void
-mono_hwcap_arch_init (void)
-{
-}
-#else
 void
 mono_hwcap_arch_init (void)
 {
@@ -57,8 +53,16 @@ mono_hwcap_arch_init (void)
 			mono_hwcap_arm_has_thumb = TRUE;
 
 		/* HWCAP_ARM_VFP */
-		if (hwcap & 0x00000064)
+		if (hwcap & 0x00000040)
 			mono_hwcap_arm_has_vfp = TRUE;
+
+		/* HWCAP_ARM_VFPv3 */
+		if (hwcap & 0x00002000)
+			mono_hwcap_arm_has_vfp3 = TRUE;
+
+		/* HWCAP_ARM_VFPv3D16 */
+		if (hwcap & 0x00004000)
+			mono_hwcap_arm_has_vfp3_d16 = TRUE;
 
 		/* TODO: Find a way to detect Thumb 2. */
 	}
@@ -136,6 +140,12 @@ mono_hwcap_arch_init (void)
 				if (strstr (line, "vfp"))
 					mono_hwcap_arm_has_vfp = TRUE;
 
+				if (strstr (line, "vfpv3"))
+					mono_hwcap_arm_has_vfp3 = TRUE;
+
+				if (strstr (line, "vfpv3-d16"))
+					mono_hwcap_arm_has_vfp3_d16 = TRUE;
+
 				continue;
 			}
 		}
@@ -144,7 +154,6 @@ mono_hwcap_arch_init (void)
 	}
 #endif
 }
-#endif
 
 void
 mono_hwcap_print(FILE *f)
@@ -154,6 +163,8 @@ mono_hwcap_print(FILE *f)
 	g_fprintf (f, "mono_hwcap_arm_is_v7 = %i\n", mono_hwcap_arm_is_v7);
 	g_fprintf (f, "mono_hwcap_arm_is_v7s = %i\n", mono_hwcap_arm_is_v7s);
 	g_fprintf (f, "mono_hwcap_arm_has_vfp = %i\n", mono_hwcap_arm_has_vfp);
+	g_fprintf (f, "mono_hwcap_arm_has_vfp3 = %i\n", mono_hwcap_arm_has_vfp3);
+	g_fprintf (f, "mono_hwcap_arm_has_vfp3_d16 = %i\n", mono_hwcap_arm_has_vfp3_d16);
 	g_fprintf (f, "mono_hwcap_arm_has_thumb = %i\n", mono_hwcap_arm_has_thumb);
 	g_fprintf (f, "mono_hwcap_arm_has_thumb2 = %i\n", mono_hwcap_arm_has_thumb2);
 }

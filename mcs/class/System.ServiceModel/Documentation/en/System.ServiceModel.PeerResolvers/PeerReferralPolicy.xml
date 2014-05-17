@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PeerReferralPolicy" FullName="System.ServiceModel.PeerResolvers.PeerReferralPolicy">
+  <TypeSignature Language="C#" Value="public enum PeerReferralPolicy" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PeerReferralPolicy extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the policy on sharing referrals between peers.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="DoNotShare">
+      <MemberSignature Language="C#" Value="DoNotShare" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.PeerResolvers.PeerReferralPolicy DoNotShare = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.PeerReferralPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Referrals are not shared.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Service">
+      <MemberSignature Language="C#" Value="Service" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.PeerResolvers.PeerReferralPolicy Service = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.PeerReferralPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Referral policy is determined by the resolver service.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Share">
+      <MemberSignature Language="C#" Value="Share" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.PeerResolvers.PeerReferralPolicy Share = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.PeerReferralPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Referrals are shared.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DecoderFallbackBuffer" FullName="System.Text.DecoderFallbackBuffer">
   <TypeSignature Language="C#" Value="public abstract class DecoderFallbackBuffer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DecoderFallbackBuffer extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,28 +12,79 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An encoding defines a mapping between a Unicode character and an encoded sequence of bytes. A decoding operation, which converts an input byte sequence to an output character, fails if no mapping is defined for a particular byte sequence. </para>
+      <para>The .NET Framework provides a failure handling mechanism, called a fallback, if a conversion cannot be performed. All decoder fallback handlers must implement the following: </para>
+      <list type="bullet">
+        <item>
+          <para>A decoder fallback, which is represented by a class derived from the <see cref="T:System.Text.DecoderFallback" /> class.</para>
+        </item>
+        <item>
+          <para>A decoder fallback buffer, which is represented by a type derived from the <see cref="T:System.Text.DecoderFallbackBuffer" /> class that can return a string to the conversion operation.</para>
+        </item>
+      </list>
+      <para>Fallbacks can use three strategies to handle conversion failures: </para>
+      <list type="bullet">
+        <item>
+          <para>Best-fit mapping. The decoder fallback buffer can return a string that represents a close approximation to the input byte sequence. The .NET Framework does not provide a public best-fit <see cref="T:System.Text.DecoderFallbackBuffer" /> implementation.</para>
+        </item>
+        <item>
+          <para>Replacement. The decoder fallback buffer can return a string, such as a question mark ("?"), that indicates that a byte sequence could not be decoded. In the .NET Framework, the <see cref="T:System.Text.DecoderReplacementFallback" /> and <see cref="T:System.Text.DecoderReplacementFallbackBuffer" /> classes provide a public replacement fallback buffer implementation. The constructor of the <see cref="T:System.Text.DecoderReplacementFallback" /> class enables you to define the replacement string.</para>
+        </item>
+        <item>
+          <para>Exception. The <see cref="T:System.Text.DecoderFallbackBuffer" /> implementation throws an exception, which indicates that a byte sequence cannot be decoded, and terminates the decoding operation. In this case, the fallback handler must provide a <see cref="T:System.Text.DecoderFallbackBuffer" /> implementation, although it does not return a string to the decoder. In the .NET Framework, the <see cref="T:System.Text.DecoderExceptionFallback" /> and <see cref="T:System.Text.DecoderExceptionFallbackBuffer" /> classes provide a public exception fallback implementation that throws a <see cref="T:System.Text.DecoderFallbackException" /> when a byte sequence cannot be decoded.</para>
+        </item>
+      </list>
+      <para>The buffer in a <see cref="T:System.Text.DecoderFallbackBuffer" /> implementation represents the entire string to be returned to the decoder in response to a decoder fallback. Generally, implementations also include state information, such as the index of the next character to return to the decoder and the number of remaining characters to be returned. Because <see cref="T:System.Text.DecoderFallbackBuffer" /> is an abstract class, it requires derived classes to implement the following members at a minimum:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Text.DecoderFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method, which is called by the decoder when it cannot decode a byte sequence. The decoder passes two pieces of information to the fallback buffer implementation: an array containing the bytes that could not be decoded and the index of the first byte in the input byte array. In a decoder fallback exception handler, the exception is thrown in this method. Otherwise, the method returns true if it provides a fallback, or false if it does not.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Text.DecoderFallbackBuffer.GetNextChar" /> method, which is called repeatedly by the decoder if the <see cref="M:System.Text.DecoderFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method returns true. In successive calls, the handler should return each character in its buffer. When it has returned all characters, it should return U+0000. An exception fallback handler always returns U+0000.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Text.DecoderFallbackBuffer.MovePrevious" /> method, which tries to move the pointer to the previous position in the buffer and indicates whether the move was successful. An exception handler always returns false.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Text.DecoderFallbackBuffer.Remaining" /> property, which indicates the number of remaining characters to be returned to the decoder. An exception fallback handler always returns zero.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a buffer that allows a fallback handler to return an alternate string to a decoder when it cannot decode an input byte sequence. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected DecoderFallbackBuffer ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.DecoderFallbackBuffer" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Fallback">
       <MemberSignature Language="C#" Value="public abstract bool Fallback (byte[] bytesUnknown, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Fallback(unsigned int8[] bytesUnknown, int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -40,87 +93,127 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytesUnknown">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" />, <see cref="M:System.Text.Encoding.GetString(System.Byte[])" />, and <see cref="Overload:System.Text.Decoder.Convert" /> methods call <see cref="M:System.Text.DecoderFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> if they encounter an unknown input byte sequence that cannot be decoded. A return value of true indicates that the fallback buffer can process the input byte sequence, which causes the calling method to call the <see cref="M:System.Text.DecoderFallbackBuffer.GetNextChar" /> method to obtain each character of the fallback buffer. Because it does not process individual bytes, the <see cref="M:System.Text.DecoderFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method in an exception fallback handler throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, prepares the fallback buffer to handle the specified input byte sequence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the fallback buffer can process <paramref name="bytesUnknown" />; false if the fallback buffer ignores <paramref name="bytesUnknown" />.</para>
+        </returns>
+        <param name="bytesUnknown">
+          <attribution license="cc4" from="Microsoft" modified="false" />An input array of bytes.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index position of a byte in <paramref name="bytesUnknown" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetNextChar">
+      <MemberSignature Language="C#" Value="public abstract char GetNextChar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance char GetNextChar() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetNextChar">
-      <MemberSignature Language="C#" Value="public abstract char GetNextChar ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoding operation calls the <see cref="M:System.Text.DecoderFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method if the operation encounters an unknown byte sequence in the input. If the <see cref="M:System.Text.DecoderFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method returns true, a substitute string exists that can be inserted in the output instead of decoding the unknown input. The decoding operation calls the <see cref="M:System.Text.DecoderFallbackBuffer.GetNextChar" /> method repeatedly and obtains the substitute string one character at a time. When all characters in the fallback buffer have been returned to the decoder, the method should return U+0000.</para>
+          <para>For an exception fallback handler, the <see cref="M:System.Text.DecoderFallbackBuffer.GetNextChar" /> method should return U+0000. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, retrieves the next character in the fallback buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character in the fallback buffer.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="MovePrevious">
+      <MemberSignature Language="C#" Value="public abstract bool MovePrevious ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MovePrevious() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MovePrevious">
-      <MemberSignature Language="C#" Value="public abstract bool MovePrevious ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception fallback handler should return false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, causes the next call to the <see cref="M:System.Text.DecoderFallbackBuffer.GetNextChar" /> method to access the data buffer character position that is prior to the current character position. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="M:System.Text.DecoderFallbackBuffer.MovePrevious" /> operation was successful; otherwise, false.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Remaining">
+      <MemberSignature Language="C#" Value="public abstract int Remaining { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Remaining" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remaining">
-      <MemberSignature Language="C#" Value="public abstract int Remaining { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Text.DecoderFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method returns true if <see cref="P:System.Text.DecoderFallbackBuffer.Remaining" /> is a nonzero value.</para>
+          <para>For an exception fallback handler, the <see cref="P:System.Text.DecoderFallbackBuffer.Remaining" /> method should return zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the number of characters in the current <see cref="T:System.Text.DecoderFallbackBuffer" /> object that remain to be processed.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public virtual void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public virtual void Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes all data and state information pertaining to this fallback buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

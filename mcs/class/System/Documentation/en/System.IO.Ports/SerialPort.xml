@@ -1,105 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerialPort" FullName="System.IO.Ports.SerialPort">
   <TypeSignature Language="C#" Value="public class SerialPort : System.ComponentModel.Component" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SerialPort extends System.ComponentModel.Component" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.Component</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this class to control a serial port file resource. This class provides synchronous and event-driven I/O, access to pin and break states, and access to serial driver properties. Additionally, the functionality of this class can be wrapped in an internal <see cref="T:System.IO.Stream" /> object, accessible through the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property, and passed to classes that wrap or use streams.</para>
+      <para>The <see cref="T:System.IO.Ports.SerialPort" /> class supports the following encodings: <see cref="T:System.Text.ASCIIEncoding" />, <see cref="T:System.Text.UTF8Encoding" />, <see cref="T:System.Text.UnicodeEncoding" />, <see cref="T:System.Text.UTF32Encoding" />, and any encoding defined in mscorlib.dll where the code page is less than 50000 or the code page is 54936.  You can use alternate encodings, but you must use the <see cref="M:System.IO.Ports.SerialPort.ReadByte" /> or <see cref="M:System.IO.Ports.SerialPort.Write(System.Byte[],System.Int32,System.Int32)" /> method and perform the encoding yourself.</para>
+      <para>You use the <see cref="M:System.IO.Ports.SerialPort.GetPortNames" /> method to retrieve the valid ports for the current computer.</para>
+      <para>If a <see cref="T:System.IO.Ports.SerialPort" /> object becomes blocked during a read operation, do not abort the thread. Instead, either close the base stream or dispose of the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a serial port resource.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerialPort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses default property values when none are specified. For example, the <see cref="P:System.IO.Ports.SerialPort.DataBits" /> property defaults to 8, the <see cref="P:System.IO.Ports.SerialPort.Parity" /> property defaults to the None enumeration value, the <see cref="P:System.IO.Ports.SerialPort.StopBits" /> property defaults to 1, and a default port name of COM1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerialPort (System.ComponentModel.IContainer container);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.IContainer container) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses default property values when none are specified. For example, the <see cref="P:System.IO.Ports.SerialPort.DataBits" /> property defaults to 8, the <see cref="P:System.IO.Ports.SerialPort.Parity" /> property defaults to the None enumeration value, the <see cref="P:System.IO.Ports.SerialPort.StopBits" /> property defaults to 1, and a default port name of COM1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class using the specified <see cref="T:System.ComponentModel.IContainer" /> object.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />An interface to a container. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerialPort (string portName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string portName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="portName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="portName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class when you want to specify the port name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class using the specified port name.</para>
+        </summary>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port to use (for example, COM1). </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerialPort (string portName, int baudRate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string portName, int32 baudRate) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="portName" Type="System.String" />
         <Parameter Name="baudRate" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="portName">To be added.</param>
-        <param name="baudRate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class when you want to specify the port name and the baud rate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class using the specified port name and baud rate.</para>
+        </summary>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port to use (for example, COM1). </param>
+        <param name="baudRate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The baud rate. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerialPort (string portName, int baudRate, System.IO.Ports.Parity parity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string portName, int32 baudRate, valuetype System.IO.Ports.Parity parity) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="portName" Type="System.String" />
         <Parameter Name="baudRate" Type="System.Int32" />
         <Parameter Name="parity" Type="System.IO.Ports.Parity" />
       </Parameters>
       <Docs>
-        <param name="portName">To be added.</param>
-        <param name="baudRate">To be added.</param>
-        <param name="parity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class when you want to specify the port name, the baud rate, and the parity bit.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class using the specified port name, baud rate, and parity bit.</para>
+        </summary>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port to use (for example, COM1). </param>
+        <param name="baudRate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The baud rate. </param>
+        <param name="parity">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="P:System.IO.Ports.SerialPort.Parity" /> values. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerialPort (string portName, int baudRate, System.IO.Ports.Parity parity, int dataBits);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string portName, int32 baudRate, valuetype System.IO.Ports.Parity parity, int32 dataBits) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="portName" Type="System.String" />
         <Parameter Name="baudRate" Type="System.Int32" />
@@ -107,21 +176,33 @@
         <Parameter Name="dataBits" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="portName">To be added.</param>
-        <param name="baudRate">To be added.</param>
-        <param name="parity">To be added.</param>
-        <param name="dataBits">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class when you want to specify the port name, the baud rate, the parity bit, and data bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class using the specified port name, baud rate, parity bit, and data bits.</para>
+        </summary>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port to use (for example, COM1). </param>
+        <param name="baudRate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The baud rate. </param>
+        <param name="parity">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="P:System.IO.Ports.SerialPort.Parity" /> values. </param>
+        <param name="dataBits">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data bits value. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerialPort (string portName, int baudRate, System.IO.Ports.Parity parity, int dataBits, System.IO.Ports.StopBits stopBits);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string portName, int32 baudRate, valuetype System.IO.Ports.Parity parity, int32 dataBits, valuetype System.IO.Ports.StopBits stopBits) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="portName" Type="System.String" />
         <Parameter Name="baudRate" Type="System.Int32" />
@@ -130,273 +211,386 @@
         <Parameter Name="stopBits" Type="System.IO.Ports.StopBits" />
       </Parameters>
       <Docs>
-        <param name="portName">To be added.</param>
-        <param name="baudRate">To be added.</param>
-        <param name="parity">To be added.</param>
-        <param name="dataBits">To be added.</param>
-        <param name="stopBits">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class when you want to specify the port name, the baud rate, the parity bit, data bits, and stop bit.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Ports.SerialPort" /> class using the specified port name, baud rate, parity bit, data bits, and stop bit.</para>
+        </summary>
+        <param name="portName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port to use (for example, COM1). </param>
+        <param name="baudRate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The baud rate. </param>
+        <param name="parity">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="P:System.IO.Ports.SerialPort.Parity" /> values. </param>
+        <param name="dataBits">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data bits value. </param>
+        <param name="stopBits">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="P:System.IO.Ports.SerialPort.StopBits" /> values. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BaseStream">
       <MemberSignature Language="C#" Value="public System.IO.Stream BaseStream { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Stream BaseStream" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property for explicit asynchronous I/O operations or to pass the <see cref="T:System.IO.Ports.SerialPort" /> object to a <see cref="T:System.IO.Stream" /> wrapper class such as <see cref="T:System.IO.StreamWriter" />.</para>
+          <para>Any open serial port's <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property returns an object that derives from the abstract <see cref="T:System.IO.Stream" /> class, and implements read and write methods using the prototypes inherited from the <see cref="T:System.IO.Stream" /> class: <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" />, <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" />, <see cref="M:System.IO.Stream.ReadByte" />, <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" />, and <see cref="M:System.IO.Stream.WriteByte(System.Byte)" />. These methods can be useful when passing a wrapped serial resource to a <see cref="T:System.IO.Stream" /> wrapper class.</para>
+          <para>Due to the inaccessibility of the wrapped file handle, the <see cref="P:System.IO.Stream.Length" /> and <see cref="P:System.IO.Stream.Position" /> properties are not supported, and the <see cref="M:System.IO.Stream.Seek(System.Int64,System.IO.SeekOrigin)" /> and <see cref="M:System.IO.Stream.SetLength(System.Int64)" /> methods are not supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the underlying <see cref="T:System.IO.Stream" /> object for a <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="BaudRate">
-      <MemberSignature Language="C#" Value="public int BaudRate { set; get; }" />
+      <MemberSignature Language="C#" Value="public int BaudRate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BaudRate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(9600)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The baud rate must be supported by the user's serial driver. The default value is 9600 bits per second (bps).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the serial baud rate.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BreakState">
-      <MemberSignature Language="C#" Value="public bool BreakState { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool BreakState { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool BreakState" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The break signal state occurs when a transmission is suspended and the line is placed in a break state (all low, no stop bit) until released. To enter a break state, set this property to true. If the port is already in a break state, setting this property again to true does not result in an exception. It is not possible to write to the <see cref="T:System.IO.Ports.SerialPort" /> object while <see cref="P:System.IO.Ports.SerialPort.BreakState" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the break signal state.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="BytesToRead">
       <MemberSignature Language="C#" Value="public int BytesToRead { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BytesToRead" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The receive buffer includes the serial driver's receive buffer as well as internal buffering in the <see cref="T:System.IO.Ports.SerialPort" /> object itself.</para>
+          <para>Because the <see cref="P:System.IO.Ports.SerialPort.BytesToRead" />  property represents both the <see cref="T:System.IO.Ports.SerialPort" /> buffer and the Windows-created buffer,  it can return a greater value than the <see cref="P:System.IO.Ports.SerialPort.ReadBufferSize" /> property, which represents only the Windows-created buffer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of bytes of data in the receive buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="BytesToWrite">
       <MemberSignature Language="C#" Value="public int BytesToWrite { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BytesToWrite" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The send buffer includes the serial driver's send buffer as well as internal buffering in the <see cref="T:System.IO.Ports.SerialPort" /> object itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of bytes of data in the send buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="CDHolding">
       <MemberSignature Language="C#" Value="public bool CDHolding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CDHolding" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used to monitor the state of the carrier detection line for a port. No carrier usually indicates that the receiver has hung up and the carrier has been dropped.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the Carrier Detect line for the port.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method closes the <see cref="T:System.IO.Ports.SerialPort" /> object and clears both the receive and transmit buffers. This method calls the <see cref="M:System.ComponentModel.Component.Dispose" />  method, which invokes the protected <see cref="M:System.IO.Ports.SerialPort.Dispose(System.Boolean)" /> method with the <paramref name="disposing" /> parameter set to true.</para>
+          <para>The best practice for any application is to wait for some amount of time after calling the <see cref="M:System.IO.Ports.SerialPort.Close" /> method before attempting to call the <see cref="M:System.IO.Ports.SerialPort.Open" /> method, as the port may not be closed instantly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the port connection, sets the <see cref="P:System.IO.Ports.SerialPort.IsOpen" /> property to false, and disposes of the internal <see cref="T:System.IO.Stream" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CtsHolding">
       <MemberSignature Language="C#" Value="public bool CtsHolding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CtsHolding" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Clear-to-Send (CTS) line is used in Request to Send/Clear to Send (RTS/CTS) hardware handshaking. The CTS line is queried by a port before data is sent.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the Clear-to-Send line.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="DataBits">
-      <MemberSignature Language="C#" Value="public int DataBits { set; get; }" />
+      <MemberSignature Language="C#" Value="public int DataBits { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 DataBits" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(8)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The range of values for this property is from 5 through 8. The default value is 8.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the standard length of data bits per byte.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DataReceived">
       <MemberSignature Language="C#" Value="public event System.IO.Ports.SerialDataReceivedEventHandler DataReceived;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.IO.Ports.SerialDataReceivedEventHandler DataReceived" />
       <MemberType>Event</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.Ports.SerialDataReceivedEventHandler</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.Ports.SerialDataReceivedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serial received events can be caused by any of the items in the <see cref="T:System.IO.Ports.SerialData" /> enumeration. Because the operating system determines whether to raise this event or not, not all parity errors may be reported.</para>
+          <para>
+            <see cref="E:System.IO.Ports.SerialPort.PinChanged" />, <see cref="E:System.IO.Ports.SerialPort.DataReceived" />, and <see cref="E:System.IO.Ports.SerialPort.ErrorReceived" /> events may be called out of order, and there may be a slight delay between when the underlying stream reports the error and when the event handler is executed. Only one event handler can execute at a time.</para>
+          <para>The <see cref="E:System.IO.Ports.SerialPort.DataReceived" /> event is not guaranteed to be raised for every byte received. Use the <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property to determine how much data is left to be read in the buffer.</para>
+          <para>The <see cref="E:System.IO.Ports.SerialPort.DataReceived" /> event is raised on a secondary thread when data is received from the <see cref="T:System.IO.Ports.SerialPort" /> object. Because this event is raised on a secondary thread, and not the main thread, attempting to modify some elements in the main thread, such as UI elements, could raise a threading exception. If it is necessary to modify elements in the main <see cref="T:System.Windows.Forms.Form" /> or <see cref="T:System.Windows.Forms.Control" />, post change requests back using <see cref="M:System.Windows.Forms.Control.Invoke(System.Delegate)" />, which will do the work on the proper thread.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the method that will handle the data received event of a <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DiscardInBuffer">
       <MemberSignature Language="C#" Value="public void DiscardInBuffer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DiscardInBuffer() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is equivalent to the following Visual Basic code: MSComm1.InBufferCount = 0. It clears the receive buffer, but does not affect the transmit buffer. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards data from the serial driver's receive buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DiscardNull">
-      <MemberSignature Language="C#" Value="public bool DiscardNull { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DiscardNull { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DiscardNull" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
         </Attribute>
@@ -404,41 +598,57 @@
           <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
+          <AttributeName>System.MonoTODO("Not implemented")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value should normally be set to false, especially for binary transmissions.  Setting this property to true can cause unexpected results for UTF32- and UTF16-encoded bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether null bytes are ignored when transmitted between the port and the receive buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DiscardOutBuffer">
       <MemberSignature Language="C#" Value="public void DiscardOutBuffer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DiscardOutBuffer() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is equivalent to the following Visual Basic code: MSComm1.OutBufferCount = 0. It clears the transmit buffer, but does not affect the receive buffer. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards data from the serial driver's transmit buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -446,201 +656,281 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public <see cref="M:System.ComponentModel.Component.Dispose" /> method and the <see cref="M:System.Object.Finalize" /> method. <see cref="M:System.ComponentModel.Component.Dispose" /> invokes the protected <see cref="M:System.IO.Ports.SerialPort.Dispose(System.Boolean)" /> method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes <see cref="M:System.IO.Ports.SerialPort.Dispose(System.Boolean)" /> with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.IO.Ports.SerialPort" /> references. This method invokes the <see cref="M:System.ComponentModel.Component.Dispose" /> method of each referenced object.</para>
+          <para>This method flushes and closes the stream object in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.IO.Ports.SerialPort" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DsrHolding">
       <MemberSignature Language="C#" Value="public bool DsrHolding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DsrHolding" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used in Data Set Ready/Data Terminal Ready (DSR/DTR) handshaking. The Data Set Ready (DSR) signal is usually sent by a modem to a port to indicate that it is ready for data transmission or data reception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the Data Set Ready (DSR) signal.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="DtrEnable">
-      <MemberSignature Language="C#" Value="public bool DtrEnable { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DtrEnable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DtrEnable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data Terminal Ready (DTR) is typically enabled during XON/XOFF software handshaking and Request to Send/Clear to Send (RTS/CTS) hardware handshaking, and modem communications. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that enables the Data Terminal Ready (DTR) signal during serial communication.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encoding">
-      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding Encoding" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Text.Encoding</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Text.Encoding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the byte encoding for pre- and post-transmission conversion of text.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ErrorReceived">
       <MemberSignature Language="C#" Value="public event System.IO.Ports.SerialErrorReceivedEventHandler ErrorReceived;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.IO.Ports.SerialErrorReceivedEventHandler ErrorReceived" />
       <MemberType>Event</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.Ports.SerialErrorReceivedEventHandler</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.Ports.SerialErrorReceivedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Error events can be caused by any of the items in the <see cref="T:System.IO.Ports.SerialError" /> enumeration. Because the operating system determines whether to raise this event or not, not all parity errors may be reported. </para>
+          <para>
+            <see cref="E:System.IO.Ports.SerialPort.PinChanged" />, <see cref="E:System.IO.Ports.SerialPort.DataReceived" />, and <see cref="E:System.IO.Ports.SerialPort.ErrorReceived" /> events may be called out of order, and there may be a slight delay between when the underlying stream reports the error and when code can when the event handler is executed. Only one event handler can execute at a time.</para>
+          <para>If a parity error occurs on the trailing byte of a stream, an extra byte will be added to the input buffer with a value of 126.</para>
+          <para>The <see cref="E:System.IO.Ports.SerialPort.ErrorReceived" /> event is raised on a secondary thread when an error is received from the <see cref="T:System.IO.Ports.SerialPort" /> object. Because this event is raised on a secondary thread, and not the main thread, attempting to modify some elements in the main thread, such as UI elements, could raise a threading exception. If it is necessary to modify elements in the main <see cref="T:System.Windows.Forms.Form" /> or <see cref="T:System.Windows.Forms.Control" />, post change requests back using <see cref="M:System.Windows.Forms.Control.Invoke(System.Delegate)" />, which will do the work on the proper thread.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the method that handles the error event of a <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetPortNames">
       <MemberSignature Language="C#" Value="public static string[] GetPortNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] GetPortNames() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of port names returned from <see cref="M:System.IO.Ports.SerialPort.GetPortNames" /> is not specified.</para>
+          <para>Use the <see cref="M:System.IO.Ports.SerialPort.GetPortNames" /> method to query the current computer for a list of valid serial port names. For example, you can use this method to determine whether COM1 and COM2 are valid serial ports for the current computer.</para>
+          <para>The port names are obtained from the system registry (for example, HKEY_LOCAL_MACHINE\HARDWARE\DEVICEMAP\SERIALCOMM). If the registry contains stale or otherwise incorrect data then the <see cref="M:System.IO.Ports.SerialPort.GetPortNames" /> method will return incorrect data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of serial port names for the current computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of serial port names for the current computer.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Handshake">
-      <MemberSignature Language="C#" Value="public System.IO.Ports.Handshake Handshake { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.IO.Ports.Handshake Handshake { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Ports.Handshake Handshake" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(System.IO.Ports.Handshake.None)</AttributeName>
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.IO.Ports.Handshake</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When handshaking is used, the device connected to the <see cref="T:System.IO.Ports.SerialPort" /> object is instructed to stop sending data when there is at least (<see cref="P:System.IO.Ports.SerialPort.ReadBufferSize" />-1024) bytes in the buffer. The device is instructed to start sending data again when there are 1024 or fewer bytes in the buffer. If the device is sending data in blocks that are larger than 1024 bytes, this may cause the buffer to overflow.</para>
+          <para>If the <see cref="P:System.IO.Ports.SerialPort.Handshake" /> property is set to <see cref="F:System.IO.Ports.Handshake.RequestToSendXOnXOff" />  and <see cref="P:System.IO.Ports.SerialPort.CtsHolding" /> is set to false, the XOff character will not be sent. If <see cref="P:System.IO.Ports.SerialPort.CtsHolding" /> is then set to true, more data must be sent before the XOff character will be sent.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the handshaking protocol for serial port transmission of data.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InfiniteTimeout">
       <MemberSignature Language="C#" Value="public const int InfiniteTimeout = -1;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 InfiniteTimeout = (-1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <MemberValue>-1</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is used with the <see cref="P:System.IO.Ports.SerialPort.ReadTimeout" /> and <see cref="P:System.IO.Ports.SerialPort.WriteTimeout" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that no time-out should occur.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsOpen">
       <MemberSignature Language="C#" Value="public bool IsOpen { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsOpen" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.Ports.SerialPort.IsOpen" /> property tracks whether the port is open for use by the caller, not whether the port is open by any application on the machine.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the open or closed status of the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NewLine">
-      <MemberSignature Language="C#" Value="public string NewLine { set; get; }" />
+      <MemberSignature Language="C#" Value="public string NewLine { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NewLine" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
         </Attribute>
@@ -648,67 +938,99 @@
           <AttributeName>System.ComponentModel.DefaultValue("
 ")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property defines the end of a line for the <see cref="M:System.IO.Ports.SerialPort.ReadLine" /> and <see cref="M:System.IO.Ports.SerialPort.WriteLine(System.String)" /> methods. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value used to interpret the end of a call to the <see cref="M:System.IO.Ports.SerialPort.ReadLine" /> and <see cref="M:System.IO.Ports.SerialPort.WriteLine(System.String)" /> methods.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Open">
       <MemberSignature Language="C#" Value="public void Open ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Open() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only one open connection can exist per <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+          <para>The best practice for any application is to wait for some amount of time after calling the <see cref="M:System.IO.Ports.SerialPort.Close" /> method before attempting to call the <see cref="M:System.IO.Ports.SerialPort.Open" /> method, as the port may not be closed instantly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a new serial port connection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parity">
-      <MemberSignature Language="C#" Value="public System.IO.Ports.Parity Parity { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.IO.Ports.Parity Parity { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Ports.Parity Parity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(System.IO.Ports.Parity.None)</AttributeName>
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.IO.Ports.Parity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parity is an error-checking procedure in which the number of 1s must always be the same—either even or odd—for each group of bits that is transmitted without error. In modem-to-modem communications, parity is often one of the parameters that must be agreed upon by sending parties and receiving parties before transmission can take place.</para>
+          <para>If a parity error occurs on the trailing byte of a stream, an extra byte will be added to the input buffer with a value of 126.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the parity-checking protocol.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ParityReplace">
-      <MemberSignature Language="C#" Value="public byte ParityReplace { set; get; }" />
+      <MemberSignature Language="C#" Value="public byte ParityReplace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8 ParityReplace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(63)</AttributeName>
         </Attribute>
@@ -716,72 +1038,101 @@
           <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
+          <AttributeName>System.MonoTODO("Not implemented")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is set to the null character, parity replacement is disabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the byte that replaces invalid bytes in a data stream when a parity error occurs.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PinChanged">
       <MemberSignature Language="C#" Value="public event System.IO.Ports.SerialPinChangedEventHandler PinChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.IO.Ports.SerialPinChangedEventHandler PinChanged" />
       <MemberType>Event</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.Ports.SerialPinChangedEventHandler</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="PortName">
-      <MemberSignature Language="C#" Value="public string PortName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
-        <ReturnType>System.String</ReturnType>
+        <ReturnType>System.IO.Ports.SerialPinChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serial pin changed events can be caused by any of the items in the <see cref="T:System.IO.Ports.SerialPinChange" /> enumeration. Because the operating system determines whether to raise this event or not, not all parity errors may be reported. As part of the event, the new value of the pin is set.</para>
+          <para>The <see cref="E:System.IO.Ports.SerialPort.PinChanged" /> event is raised when a <see cref="T:System.IO.Ports.SerialPort" /> object enters the <see cref="P:System.IO.Ports.SerialPort.BreakState" />, but not when the port exits the <see cref="P:System.IO.Ports.SerialPort.BreakState" />. This behavior does not apply to other values in the <see cref="T:System.IO.Ports.SerialPinChange" /> enumeration.</para>
+          <para>
+            <see cref="E:System.IO.Ports.SerialPort.PinChanged" />, <see cref="E:System.IO.Ports.SerialPort.DataReceived" />, and <see cref="E:System.IO.Ports.SerialPort.ErrorReceived" /> events may be called out of order, and there may be a slight delay between when the underlying stream reports the error and when the event handler is executed. Only one event handler can execute at a time.</para>
+          <para>The <see cref="E:System.IO.Ports.SerialPort.PinChanged" /> event is raised on a secondary thread. Because this event is raised on a secondary thread, and not the main thread, attempting to modify some elements in the main thread, such as UI elements, could raise a threading exception. If it is necessary to modify elements in the main <see cref="T:System.Windows.Forms.Form" /> or <see cref="T:System.Windows.Forms.Control" />, post change requests back using <see cref="M:System.Windows.Forms.Control.Invoke(System.Delegate)" />, which will do the work on the proper thread.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the method that will handle the serial pin changed event of a <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="PortName">
+      <MemberSignature Language="C#" Value="public string PortName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PortName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
+        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue("COM1")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
-        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list of valid port names can be obtained using the <see cref="M:System.IO.Ports.SerialPort.GetPortNames" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the port for communications, including but not limited to all available COM ports.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public int Read (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Read(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -791,21 +1142,37 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If it is necessary to switch between reading text and reading binary data from the stream, select a protocol that carefully defines the boundary between text and binary data, such as manually reading bytes and decoding the data.</para>
+          <para>Because the <see cref="T:System.IO.Ports.SerialPort" /> class buffers data, and the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property does not, the two might conflict about how many bytes are available to read.  The <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property can indicate that there are bytes to read, but these bytes might not be accessible to the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property because they have been buffered to the <see cref="T:System.IO.Ports.SerialPort" /> class. </para>
+          <para>The <see cref="M:System.IO.Ports.SerialPort.Read(System.Byte[],System.Int32,System.Int32)" /> method does not block other operations when the number of bytes read equals <paramref name="count" /> but there are still unread bytes available on the serial port.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a number of bytes from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer and writes those bytes into a byte array at the specified offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array to write the input to. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset in the buffer array to begin reading from. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public int Read (char[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Read(char[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -815,143 +1182,242 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method for reading characters from the serial port.</para>
+          <para>If it is necessary to switch between reading text and reading binary data from the stream, select a protocol that carefully defines the boundary between text and binary data, such as manually reading bytes and decoding the data.</para>
+          <para>Because the <see cref="T:System.IO.Ports.SerialPort" /> class buffers data, and the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property does not, the two might conflict about how many characters are available to read.  The <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property can indicate that there are characters to read, but these characters might not be accessible to the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property because they have been buffered to the <see cref="T:System.IO.Ports.SerialPort" /> class. </para>
+          <para>The <see cref="M:System.IO.Ports.SerialPort.Read(System.Char[],System.Int32,System.Int32)" /> method does not block other operations when the number of bytes read equals <paramref name="count" /> but there are still unread bytes available on the serial port.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a number of characters from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer and writes them into an array of characters at a given offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters read.</para>
+        </returns>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to write the input to. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset in the buffer array to begin reading from. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to read. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadBufferSize">
-      <MemberSignature Language="C#" Value="public int ReadBufferSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public int ReadBufferSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ReadBufferSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(4096)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.Ports.SerialPort.ReadBufferSize" /> property ignores any value smaller than 4096.</para>
+          <para>Because the <see cref="P:System.IO.Ports.SerialPort.ReadBufferSize" /> property represents only the Windows-created buffer, it can return a smaller value than the <see cref="P:System.IO.Ports.SerialPort.BytesToRead" />  property, which represents both the <see cref="T:System.IO.Ports.SerialPort" /> buffer and the Windows-created buffer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the <see cref="T:System.IO.Ports.SerialPort" /> input buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadByte">
       <MemberSignature Language="C#" Value="public int ReadByte ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 ReadByte() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads one byte.</para>
+          <para>Use caution when using <see cref="M:System.IO.Ports.SerialPort.ReadByte" /> and <see cref="M:System.IO.Ports.SerialPort.ReadChar" /> together. Switching between reading bytes and reading characters can cause extra data to be read and/or other unintended behavior. If it is necessary to switch between reading text and reading binary data from the stream, select a protocol that carefully defines the boundary between text and binary data, such as manually reading bytes and decoding the data.</para>
+          <block subset="none" type="note">
+            <para>Because the <see cref="T:System.IO.Ports.SerialPort" /> class buffers data, and the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property does not, the two might conflict about how many bytes are available to read.  The <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property can indicate that there are bytes to read, but these bytes might not be accessible to the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property because they have been buffered to the <see cref="T:System.IO.Ports.SerialPort" /> class. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronously reads one byte from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte, cast to an <see cref="T:System.Int32" />, or -1 if the end of the stream has been read.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadChar">
       <MemberSignature Language="C#" Value="public int ReadChar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 ReadChar() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads one complete character based on the encoding. </para>
+          <para>Use caution when using <see cref="M:System.IO.Ports.SerialPort.ReadByte" /> and <see cref="M:System.IO.Ports.SerialPort.ReadChar" /> together. Switching between reading bytes and reading characters can cause extra data to be read and/or other unintended behavior. If it is necessary to switch between reading text and reading binary data from the stream, select a protocol that carefully defines the boundary between text and binary data, such as manually reading bytes and decoding the data.</para>
+          <block subset="none" type="note">
+            <para>Because the <see cref="T:System.IO.Ports.SerialPort" /> class buffers data, and the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property does not, the two might conflict about how many bytes are available to read.  The <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property can indicate that there are bytes to read, but these bytes might not be accessible to the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property because they have been buffered to the <see cref="T:System.IO.Ports.SerialPort" /> class. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronously reads one character from the <see cref="T:System.IO.Ports.SerialPort" /> input buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character that was read.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadExisting">
       <MemberSignature Language="C#" Value="public string ReadExisting ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ReadExisting() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the contents of the stream and internal buffer of the <see cref="T:System.IO.Ports.SerialPort" /> object as a string. This method does not use a time-out. Note that this method can leave trailing lead bytes in the internal buffer, which makes the <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> value greater than zero.</para>
+          <para>If it is necessary to switch between reading text and reading binary data from the stream, select a protocol that carefully defines the boundary between text and binary data, such as manually reading bytes and decoding the data.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.IO.Ports.SerialPort" /> class buffers data, but the stream object contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property does not. Therefore, the <see cref="T:System.IO.Ports.SerialPort" /> object and the stream object might differ on the number of bytes that are available to read. When bytes are buffered to the <see cref="T:System.IO.Ports.SerialPort" /> object, the <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property includes these bytes in its value; however, these bytes might not be accessible to the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property.   </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads all immediately available bytes, based on the encoding, in both the stream and the input buffer of the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the stream and the input buffer of the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadLine">
       <MemberSignature Language="C#" Value="public string ReadLine ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ReadLine() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that while this method does not return the <see cref="P:System.IO.Ports.SerialPort.NewLine" /> value, the <see cref="P:System.IO.Ports.SerialPort.NewLine" /> value is removed from the input buffer.</para>
+          <para>By default, the <see cref="M:System.IO.Ports.SerialPort.ReadLine" /> method will block until a line is received. If this behavior is undesirable, set the <see cref="P:System.IO.Ports.SerialPort.ReadTimeout" /> property to any non-zero value to force the <see cref="M:System.IO.Ports.SerialPort.ReadLine" /> method to throw a <see cref="T:System.TimeoutException" /> if a line is not available on the port.</para>
+          <para>If it is necessary to switch between reading text and reading binary data from the stream, select a protocol that carefully defines the boundary between text and binary data, such as manually reading bytes and decoding the data.</para>
+          <block subset="none" type="note">
+            <para>Because the <see cref="T:System.IO.Ports.SerialPort" /> class buffers data, and the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property does not, the two might conflict about how many bytes are available to read.  The <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property can indicate that there are bytes to read, but these bytes might not be accessible to the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property because they have been buffered to the <see cref="T:System.IO.Ports.SerialPort" /> class. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads up to the <see cref="P:System.IO.Ports.SerialPort.NewLine" /> value in the input buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the input buffer up to the first occurrence of a <see cref="P:System.IO.Ports.SerialPort.NewLine" /> value.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadTimeout">
-      <MemberSignature Language="C#" Value="public int ReadTimeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public int ReadTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ReadTimeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(-1)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The read time-out value was originally set at 500 milliseconds in the Win32 Communications API. This property allows you to set this value. The time-out can be set to any value greater than zero, or set to <see cref="F:System.IO.Ports.SerialPort.InfiniteTimeout" />, in which case no time-out occurs. <see cref="F:System.IO.Ports.SerialPort.InfiniteTimeout" /> is the default. </para>
+          <block subset="none" type="note">
+            <para>Users of the unmanaged COMMTIMEOUTS structure might expect to set the time-out value to zero to suppress time-outs. To suppress time-outs with the <see cref="P:System.IO.Ports.SerialPort.ReadTimeout" /> property, however, you must specify <see cref="F:System.IO.Ports.SerialPort.InfiniteTimeout" />.</para>
+          </block>
+          <para>This property does not affect the <see cref="M:System.IO.Stream.BeginRead(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method of the stream returned by the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of milliseconds before a time-out occurs when a read operation does not finish.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadTo">
       <MemberSignature Language="C#" Value="public string ReadTo (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ReadTo(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -959,100 +1425,144 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads a string up to the specified <paramref name="value" />. While the returned string does not include the <paramref name="value" />, the <paramref name="value" /> is removed from the input buffer.</para>
+          <para>If it is necessary to switch between reading text and reading binary data from the stream, select a protocol that carefully defines the boundary between text and binary data, such as manually reading bytes and decoding the data.</para>
+          <block subset="none" type="note">
+            <para>Because the <see cref="T:System.IO.Ports.SerialPort" /> class buffers data, and the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property does not, the two might conflict about how many bytes are available to read.  The <see cref="P:System.IO.Ports.SerialPort.BytesToRead" /> property can indicate that there are bytes to read, but these bytes might not be accessible to the stream contained in the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property because they have been buffered to the <see cref="T:System.IO.Ports.SerialPort" /> class. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a string up to the specified <paramref name="value" /> in the input buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the input buffer up to the specified <paramref name="value" />.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates where the read operation stops. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReceivedBytesThreshold">
-      <MemberSignature Language="C#" Value="public int ReceivedBytesThreshold { set; get; }" />
+      <MemberSignature Language="C#" Value="public int ReceivedBytesThreshold { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ReceivedBytesThreshold" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(1)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Not implemented")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.IO.Ports.SerialPort.DataReceived" /> event is also raised if an <see cref="F:System.IO.Ports.SerialData.Eof" /> character is received, regardless of the number of bytes in the internal input buffer and the value of the <see cref="P:System.IO.Ports.SerialPort.ReceivedBytesThreshold" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of bytes in the internal input buffer before a <see cref="E:System.IO.Ports.SerialPort.DataReceived" /> event occurs.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RtsEnable">
-      <MemberSignature Language="C#" Value="public bool RtsEnable { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool RtsEnable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RtsEnable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Request to Transmit (RTS) signal is typically used in Request to Send/Clear to Send (RTS/CTS) hardware handshaking. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the Request to Send (RTS) signal is enabled during serial communication.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StopBits">
-      <MemberSignature Language="C#" Value="public System.IO.Ports.StopBits StopBits { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.IO.Ports.StopBits StopBits { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Ports.StopBits StopBits" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(System.IO.Ports.StopBits.One)</AttributeName>
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.IO.Ports.StopBits</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for <see cref="P:System.IO.Ports.SerialPort.StopBits" /> is <see cref="F:System.IO.Ports.StopBits.One" />.</para>
+          <para>The <see cref="F:System.IO.Ports.StopBits.None" /> value is not supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the standard number of stopbits per byte.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public void Write (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Write(string str) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1061,17 +1571,27 @@
       </Parameters>
       <Docs>
         <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you want to write a string as output to a serial port.</para>
+          <para>If there are too many bytes in the output buffer and <see cref="P:System.IO.Ports.SerialPort.Handshake" /> is set to <see cref="F:System.IO.Ports.Handshake.XOnXOff" /> then the <see cref="T:System.IO.Ports.SerialPort" /> object may raise a <see cref="T:System.ServiceProcess.TimeoutException" /> while it waits for the device to be ready to accept more data.</para>
+          <para>By default, <see cref="T:System.IO.Ports.SerialPort" /> uses <see cref="T:System.Text.ASCIIEncoding" /> to encode the characters. <see cref="T:System.Text.ASCIIEncoding" /> encodes all characters greater than 127 as (char)63 or '?'. To support additional characters in that range, set <see cref="P:System.IO.Ports.SerialPort.Encoding" /> to <see cref="T:System.Text.UTF8Encoding" />, <see cref="T:System.Text.UTF32Encoding" />, or <see cref="T:System.Text.UnicodeEncoding" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified string to the serial port.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public void Write (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Write(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1081,20 +1601,33 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you want to write to a byte buffer to create output to a serial port.</para>
+          <para>If there are too many bytes in the output buffer and <see cref="P:System.IO.Ports.SerialPort.Handshake" /> is set to <see cref="F:System.IO.Ports.Handshake.XOnXOff" /> then the <see cref="T:System.IO.Ports.SerialPort" /> object may raise a <see cref="T:System.ServiceProcess.TimeoutException" /> while it waits for the device to be ready to accept more data.</para>
+          <para>By default, <see cref="T:System.IO.Ports.SerialPort" /> uses <see cref="T:System.Text.ASCIIEncoding" /> to encode the characters. <see cref="T:System.Text.ASCIIEncoding" /> encodes all characters greater than 127 as (char)63 or '?'. To support additional characters in that range, set <see cref="P:System.IO.Ports.SerialPort.Encoding" /> to <see cref="T:System.Text.UTF8Encoding" />, <see cref="T:System.Text.UTF32Encoding" />, or <see cref="T:System.Text.UnicodeEncoding" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a specified number of bytes to the serial port using data from a buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array that contains the data to write to the port. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based byte offset in the <paramref name="buffer" /> parameter at which to begin copying bytes to the port. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public void Write (char[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Write(char[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1104,47 +1637,68 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you want to write to a character buffer to create output to a serial port.</para>
+          <para>If there are too many bytes in the output buffer and <see cref="P:System.IO.Ports.SerialPort.Handshake" /> is set to <see cref="F:System.IO.Ports.Handshake.XOnXOff" /> then the <see cref="T:System.IO.Ports.SerialPort" /> object may raise a <see cref="T:System.ServiceProcess.TimeoutException" /> while it waits for the device to be ready to accept more data.</para>
+          <para>By default, <see cref="T:System.IO.Ports.SerialPort" /> uses <see cref="T:System.Text.ASCIIEncoding" /> to encode the characters. <see cref="T:System.Text.ASCIIEncoding" /> encodes all characters greater than 127 as (char)63 or '?'. To support additional characters in that range, set <see cref="P:System.IO.Ports.SerialPort.Encoding" /> to <see cref="T:System.Text.UTF8Encoding" />, <see cref="T:System.Text.UTF32Encoding" />, or <see cref="T:System.Text.UnicodeEncoding" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a specified number of characters to the serial port using data from a buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array that contains the data to write to the port. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based byte offset in the <paramref name="buffer" /> parameter at which to begin copying bytes to the port. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteBufferSize">
-      <MemberSignature Language="C#" Value="public int WriteBufferSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public int WriteBufferSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WriteBufferSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(2048)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.Ports.SerialPort.WriteBufferSize" /> property ignores any value smaller than 2048.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the serial port output buffer. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public void WriteLine (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteLine(string str) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1153,45 +1707,56 @@
       </Parameters>
       <Docs>
         <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are too many bytes in the input buffer and <see cref="P:System.IO.Ports.SerialPort.Handshake" /> is set to <see cref="F:System.IO.Ports.Handshake.XOnXOff" /> then the <see cref="T:System.IO.Ports.SerialPort" /> object may raise a <see cref="T:System.ServiceProcess.TimeoutException" /> while it waits for the device to be ready to accept more data.</para>
+          <para>The written output includes the <see cref="P:System.IO.Ports.SerialPort.NewLine" /> string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified string and the <see cref="P:System.IO.Ports.SerialPort.NewLine" /> value to the output buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteTimeout">
-      <MemberSignature Language="C#" Value="public int WriteTimeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public int WriteTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WriteTimeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.Browsable(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.DefaultValue(-1)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
+        </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The write time-out value was originally set at 500 milliseconds in the Win32 Communications API. This property allows you to set this value. The time-out can be set to any value greater than zero, or set to <see cref="F:System.IO.Ports.SerialPort.InfiniteTimeout" />, in which case no time-out occurs. <see cref="F:System.IO.Ports.SerialPort.InfiniteTimeout" /> is the default. </para>
+          <block subset="none" type="note">
+            <para>Users of the unmanaged COMMTIMEOUTS structure might expect to set the time-out value to zero to suppress time-outs. To suppress time-outs with the <see cref="P:System.IO.Ports.SerialPort.WriteTimeout" /> property, however, you must specify <see cref="F:System.IO.Ports.SerialPort.InfiniteTimeout" />.</para>
+          </block>
+          <para>This property does not affect the <see cref="M:System.IO.Stream.BeginWrite(System.Byte[],System.Int32,System.Int32,System.AsyncCallback,System.Object)" /> method of the stream returned by the <see cref="P:System.IO.Ports.SerialPort.BaseStream" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of milliseconds before a time-out occurs when a write operation does not finish.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Diagnostics.MonitoringDescription("")</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

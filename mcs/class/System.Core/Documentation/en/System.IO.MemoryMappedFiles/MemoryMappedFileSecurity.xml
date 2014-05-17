@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MemoryMappedFileSecurity" FullName="System.IO.MemoryMappedFiles.MemoryMappedFileSecurity">
+  <TypeSignature Language="C#" Value="public class MemoryMappedFileSecurity : System.Security.AccessControl.ObjectSecurity&lt;System.IO.MemoryMappedFiles.MemoryMappedFileRights&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MemoryMappedFileSecurity extends System.Security.AccessControl.ObjectSecurity`1&lt;valuetype System.IO.MemoryMappedFiles.MemoryMappedFileRights&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Security.AccessControl.ObjectSecurity&lt;System.IO.MemoryMappedFiles.MemoryMappedFileRights&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.IO.MemoryMappedFiles.MemoryMappedFileRights</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" /> class specifies the access rights for a memory-mapped file and how access attempts are audited.  This class represents access and audit rights as a set of rules. </para>
+      <para>The <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" /> class is an abstraction of the underlying Microsoft Windows file security system. In this system. It hides many of the details of DACLs and SACLs.</para>
+      <para>Use the <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" /> class to retrieve, add, or change the access rules that represent the DACL and SACL of a pipe.</para>
+      <para>To apply new or changed access or audit rules to a memory-mapped file, use the <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.SetAccessControl(System.IO.MemoryMappedFiles.MemoryMappedFileSecurity)" /> method. To retrieve access or audit rules from an existing file, use the <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.GetAccessControl" /> method.</para>
+      <para>The following <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFile" /> methods take a <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" /> object as a parameter:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateNew(System.String,System.Int64,System.IO.MemoryMappedFiles.MemoryMappedFileAccess,System.IO.MemoryMappedFiles.MemoryMappedFileOptions,System.IO.MemoryMappedFiles.MemoryMappedFileSecurity,System.IO.HandleInheritability)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateFromFile(System.IO.FileStream,System.String,System.Int64,System.IO.MemoryMappedFiles.MemoryMappedFileAccess,System.IO.MemoryMappedFiles.MemoryMappedFileSecurity,System.IO.HandleInheritability,System.Boolean)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.SetAccessControl(System.IO.MemoryMappedFiles.MemoryMappedFileSecurity)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateOrOpen(System.String,System.Int64,System.IO.MemoryMappedFiles.MemoryMappedFileAccess,System.IO.MemoryMappedFiles.MemoryMappedFileOptions,System.IO.MemoryMappedFiles.MemoryMappedFileSecurity,System.IO.HandleInheritability)" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the permissions that can be granted for file access and operations on memory-mapped files. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MemoryMappedFileSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.MemoryMappedFiles.MemoryMappedFileSecurity" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

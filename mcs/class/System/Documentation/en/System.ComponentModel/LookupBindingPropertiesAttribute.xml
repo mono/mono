@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LookupBindingPropertiesAttribute" FullName="System.ComponentModel.LookupBindingPropertiesAttribute">
   <TypeSignature Language="C#" Value="public sealed class LookupBindingPropertiesAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed LookupBindingPropertiesAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -14,27 +17,44 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> is used to specify the properties used with lookup-based binding, particularly <see cref="T:System.Windows.Forms.ListBox" /> and <see cref="T:System.Windows.Forms.ComboBox" /> controls.</para>
+      <para>The <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> is specified at the class level. The class can be inherited and does not allow multiple attributes on the same class. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the properties that support lookup-based binding. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public LookupBindingPropertiesAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor sets the <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.DataSource" />, <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.DisplayMember" />, <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.ValueMember" />, and <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.LookupMember" /> properties to null. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> class using no parameters. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public LookupBindingPropertiesAttribute (string dataSource, string displayMember, string valueMember, string lookupMember);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string dataSource, string displayMember, string valueMember, string lookupMember) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="dataSource" Type="System.String" />
@@ -43,63 +63,99 @@
         <Parameter Name="lookupMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <param name="displayMember">To be added.</param>
-        <param name="valueMember">To be added.</param>
-        <param name="lookupMember">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets each of its public properties to the corresponding supplied parameter; for example, the <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.DataSource" /> property is set to <paramref name="dataSource" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> class. </para>
+        </summary>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to be used as the data source.</param>
+        <param name="displayMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to be used for the display name.</param>
+        <param name="valueMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to be used as the source for values.</param>
+        <param name="lookupMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to be used for lookups.</param>
       </Docs>
     </Member>
     <Member MemberName="DataSource">
       <MemberSignature Language="C#" Value="public string DataSource { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DataSource" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.DataSource" /> property is set in the constructors for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the data source property for the component to which the <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> is bound.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="public static readonly System.ComponentModel.LookupBindingPropertiesAttribute Default;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.ComponentModel.LookupBindingPropertiesAttribute Default" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.LookupBindingPropertiesAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.ComponentModel.LookupBindingPropertiesAttribute.Default" /> member is a static, read-only field that defines an instance of the <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> class initialized with the default constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the default value for the <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisplayMember">
       <MemberSignature Language="C#" Value="public string DisplayMember { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DisplayMember" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.DisplayMember" /> property is set in the constructors for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the display member property for the component to which the <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> is bound.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -108,56 +164,90 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.LookupBindingPropertiesAttribute.Equals(System.Object)" /> method returns true if the <paramref name="obj" /> parameter is of type <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> and all the public properties—<see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.DataSource" />, <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.DisplayMember" />, <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.ValueMember" />, and <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.LookupMember" />—are equal to each other.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> instance. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is equal to the current instance; otherwise, false, indicating they are not equal.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> instance </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LookupMember">
       <MemberSignature Language="C#" Value="public string LookupMember { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LookupMember" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.LookupMember" /> property is set in the constructors for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the lookup member for the component to which this attribute is bound.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueMember">
       <MemberSignature Language="C#" Value="public string ValueMember { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ValueMember" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.LookupBindingPropertiesAttribute.ValueMember" /> property is set in the constructors for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the value member property for the component to which the <see cref="T:System.ComponentModel.LookupBindingPropertiesAttribute" /> is bound.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -41,7 +41,10 @@ namespace System.Diagnostics {
 	internal class TraceImplSettings {
 		public const string Key = ".__TraceInfoSettingsKey__.";
 
+	// Disable warning that AutoFlush is not used
+#pragma warning disable 649
 		public bool AutoFlush;
+#pragma warning restore
 		//public int IndentLevel;
 		public int IndentSize = 4;
 		public TraceListenerCollection Listeners = new TraceListenerCollection (false);
@@ -53,7 +56,7 @@ namespace System.Diagnostics {
 	}
 #endif
 
-	internal class TraceImpl {
+	static class TraceImpl {
 
 #if !MOBILE
 		private static object initLock = new object ();
@@ -61,47 +64,20 @@ namespace System.Diagnostics {
 
 		private static bool autoFlush;
 
-#if TARGET_JVM
-		static readonly LocalDataStoreSlot _indentLevelStore = System.Threading.Thread.AllocateDataSlot ();
-		static readonly LocalDataStoreSlot _indentSizeStore = System.Threading.Thread.AllocateDataSlot ();
-
-		private static int indentLevel {
-			get {
-				object o = System.Threading.Thread.GetData (_indentLevelStore);
-				if (o == null)
-					return 0;
-				return (int) o;
-			}
-			set { System.Threading.Thread.SetData (_indentLevelStore, value); }
-		}
-
-		private static int indentSize {
-			get {
-				object o = System.Threading.Thread.GetData (_indentSizeStore);
-				if (o == null)
-					return 0;
-				return (int) o;
-			}
-			set { System.Threading.Thread.SetData (_indentSizeStore, value); }
-		}
-#else
 		[ThreadStatic]
-		private static int indentLevel = 0;
+		private static int indentLevel;
 
 		[ThreadStatic]
 		private static int indentSize;
-#endif
-
-		private TraceImpl ()
-		{
-		}
 
 #if MOBILE
-		static TraceImpl ()
-		{
-			listeners = new TraceListenerCollection (true);
-		}
+		static TraceListenerCollection listeners = new TraceListenerCollection (true);
+#else
+		static TraceListenerCollection listeners;
 #endif
+
+		static bool use_global_lock;
+		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static bool AutoFlush {
 			get {
@@ -146,8 +122,6 @@ namespace System.Diagnostics {
 			}
 		}
 
-		private static TraceListenerCollection listeners;
-
 		public static TraceListenerCollection Listeners {
 			get {
 				InitOnce ();
@@ -161,9 +135,6 @@ namespace System.Diagnostics {
 				return ((ICollection) Listeners).SyncRoot;
 			}
 		}
-
-		static bool use_global_lock;
-		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static CorrelationManager CorrelationManager {
 			get {
@@ -223,24 +194,18 @@ namespace System.Diagnostics {
 #endif
 		}
 
-		// FIXME: According to MSDN, this method should display a dialog box
-		[MonoTODO]
 		public static void Assert (bool condition)
 		{
 			if (!condition)
-				Fail (new StackTrace(true).ToString());
+				Fail ("");
 		}
 
-		// FIXME: According to MSDN, this method should display a dialog box
-		[MonoTODO]
 		public static void Assert (bool condition, string message)
 		{
 			if (!condition)
 				Fail (message);
 		}
 
-		// FIXME: According to MSDN, this method should display a dialog box
-		[MonoTODO]
 		public static void Assert (bool condition, string message, 
 			string detailMessage)
 		{

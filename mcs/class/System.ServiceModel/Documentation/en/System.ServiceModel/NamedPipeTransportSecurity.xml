@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="NamedPipeTransportSecurity" FullName="System.ServiceModel.NamedPipeTransportSecurity">
+  <TypeSignature Language="C#" Value="public sealed class NamedPipeTransportSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NamedPipeTransportSecurity extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by <see cref="P:System.ServiceModel.NetNamedPipeSecurity.Transport" /> to set the transport-level security settings for a binding.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties that control protection level for a named pipe.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ProtectionLevel">
+      <MemberSignature Language="C#" Value="public System.Net.Security.ProtectionLevel ProtectionLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.ProtectionLevel ProtectionLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned enumeration member indicates the security services requested for the authenticated stream.</para>
+          <para>Valid values are the following:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.Security.ProtectionLevel.None" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.Net.Security.ProtectionLevel.Sign" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the protection for the named pipe.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

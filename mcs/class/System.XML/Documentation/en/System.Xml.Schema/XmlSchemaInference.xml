@@ -1,105 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaInference" FullName="System.Xml.Schema.XmlSchemaInference">
   <TypeSignature Language="C#" Value="public sealed class XmlSchemaInference" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlSchemaInference extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Schema.XmlSchemaInference" /> class in the <see cref="N:System.Xml.Schema" /> namespace allows you to infer an XML Schema Definition Language (XSD) schema from the structure of an XML document. The <see cref="T:System.Xml.Schema.XmlSchemaInference" /> class outputs an XML schema that can validate the XML document.</para>
+      <para>The <see cref="T:System.Xml.Schema.XmlSchemaInference" /> class supports the W3C XML and XML Schemas standards. It can be used to infer a new schema or to refine an existing schema.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Infers an XML Schema Definition Language (XSD) schema from an XML document. The <see cref="T:System.Xml.Schema.XmlSchemaInference" /> class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlSchemaInference ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaInference" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InferSchema">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet InferSchema (System.Xml.XmlReader xmlReader);" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet InferSchema (System.Xml.XmlReader instanceDocument);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchemaSet InferSchema(class System.Xml.XmlReader instanceDocument) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
+        <Parameter Name="instanceDocument" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="xmlReader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Xml.Schema.XmlSchemaInference.InferSchema(System.Xml.XmlReader)" /> method infers one or more W3C XML Schema Definition Language (XSD) schemas from the XML instance document contained in the <see cref="T:System.Xml.XmlReader" /> object specified. If the XML document contains elements and attributes from multiple namespaces, then multiple schemas are generated: one for each namespace used in the document. The primary schema is the schema that can validate the entire XML document, and its target namespace is the same as the namespace of the document element of the XML document.</para>
+          <para>The following are important notes to consider when using the <see cref="M:System.Xml.Schema.XmlSchemaInference.InferSchema(System.Xml.XmlReader)" /> method.</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="M:System.Xml.Schema.XmlSchemaInference.InferSchema(System.Xml.XmlReader)" /> method ignores any xsi:type, xsi:schemaLocation, or xsi:noNamespaceSchemaLocation attributes in the XML document.</para>
+            </item>
+            <item>
+              <para>If the <see cref="T:System.Xml.XmlReader" /> object is typed, the type information it contains is ignored.</para>
+            </item>
+            <item>
+              <para>If the <see cref="T:System.Xml.XmlReader" /> object is positioned on an element that is not the root element of the XML document, a schema is inferred for only that element. If the <see cref="T:System.Xml.XmlReader" /> object is not positioned on an element, the <see cref="M:System.Xml.XmlReader.Read" /> method is called on the <see cref="T:System.Xml.XmlReader" /> parameter until an element is encountered (for example, when <see cref="P:System.Xml.XmlReader.NodeType" /> is <see cref="F:System.Xml.XmlNodeType.Element" />). At this point, the inference process starts from that element. If no element is encountered until the end of the document, an <see cref="T:System.ArgumentException" /> is thrown.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Infers an XML Schema Definition Language (XSD) schema from the XML document contained in the <see cref="T:System.Xml.XmlReader" /> object specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object containing the inferred schemas.</para>
+        </returns>
+        <param name="instanceDocument">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> object containing the XML document to infer a schema from.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InferSchema">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet InferSchema (System.Xml.XmlReader xmlReader, System.Xml.Schema.XmlSchemaSet schemas);" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet InferSchema (System.Xml.XmlReader instanceDocument, System.Xml.Schema.XmlSchemaSet schemas);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.Schema.XmlSchemaSet InferSchema(class System.Xml.XmlReader instanceDocument, class System.Xml.Schema.XmlSchemaSet schemas) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
+        <Parameter Name="instanceDocument" Type="System.Xml.XmlReader" />
         <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <param name="xmlReader">To be added.</param>
-        <param name="schemas">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Xml.Schema.XmlSchemaInference.InferSchema(System.Xml.XmlReader,System.Xml.Schema.XmlSchemaSet)" /> method infers one or more W3C XML Schema Definition Language (XSD) schemas from the XML instance document contained in the <see cref="T:System.Xml.XmlReader" /> object specified. If the XML document contains elements and attributes from multiple namespaces, multiple schemas are generated: one for each namespace used in the document. The primary schema is the schema that can validate the entire XML document, and its target namespace is the same as the namespace of the document element of the XML document.</para>
+          <para>The following are important notes to consider when using the <see cref="M:System.Xml.Schema.XmlSchemaInference.InferSchema(System.Xml.XmlReader,System.Xml.Schema.XmlSchemaSet)" /> method.</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="M:System.Xml.Schema.XmlSchemaInference.InferSchema(System.Xml.XmlReader,System.Xml.Schema.XmlSchemaSet)" /> method ignores any xsi:type, xsi:schemaLocation, or xsi:noNamespaceSchemaLocation attributes in the XML document.</para>
+            </item>
+            <item>
+              <para>If the <see cref="T:System.Xml.XmlReader" /> object is typed, the type information it contains is ignored.</para>
+            </item>
+            <item>
+              <para>If the <see cref="T:System.Xml.XmlReader" /> object is positioned on an element that is not the root element of the XML document, a schema is inferred for only that element. If the <see cref="T:System.Xml.XmlReader" /> object is not positioned on an element, the <see cref="M:System.Xml.XmlReader.Read" /> method is called on the <see cref="T:System.Xml.XmlReader" /> parameter until an element is encountered (for example, when <see cref="P:System.Xml.XmlReader.NodeType" /> is <see cref="F:System.Xml.XmlNodeType.Element" />). At this point, the inference process starts from that element. If no element is encountered until the end of the document, an <see cref="T:System.ArgumentException" /> is thrown.</para>
+            </item>
+            <item>
+              <para>If an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object is passed as a parameter and the element upon which the <see cref="T:System.Xml.XmlReader" /> object is positioned is defined in one of the schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, the inferred schema is used to refine an existing schema in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> parameter with the same target namespace; otherwise, a new schema is inferred for the namespace.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Infers an XML Schema Definition Language (XSD) schema from the XML document contained in the <see cref="T:System.Xml.XmlReader" /> object specified, and refines the inferred schema using an existing schema in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object specified with the same target namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object containing the inferred schemas.</para>
+        </returns>
+        <param name="instanceDocument">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> object containing the XML document to infer a schema from.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object containing an existing schema used to refine the inferred schema.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Occurrence">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaInference.InferenceOption Occurrence { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaInference.InferenceOption Occurrence { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlSchemaInference/InferenceOption Occurrence" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaInference+InferenceOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Xml.Schema.XmlSchemaInference.Occurrence" /> property is set to <see cref="F:System.Xml.Schema.XmlSchemaInference.InferenceOption.Restricted" />, the first time elements are encountered in the XML document, the schema declaration is inferred as minOccurs="1". When attributes are encountered, the schema declaration is inferred as use="required". </para>
+          <para>If the <see cref="P:System.Xml.Schema.XmlSchemaInference.Occurrence" /> property is set to <see cref="F:System.Xml.Schema.XmlSchemaInference.InferenceOption.Relaxed" />, element schema declarations are inferred as minOccurs="0", and attribute schema declarations are inferred as use="optional".</para>
+          <para>The default value of the <see cref="P:System.Xml.Schema.XmlSchemaInference.Occurrence" /> property is <see cref="F:System.Xml.Schema.XmlSchemaInference.InferenceOption.Restricted" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.Schema.XmlSchemaInference.InferenceOption" /> value that affects schema occurrence declarations inferred from the XML document.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TypeInference">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaInference.InferenceOption TypeInference { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaInference.InferenceOption TypeInference { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.Schema.XmlSchemaInference/InferenceOption TypeInference" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaInference+InferenceOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Xml.Schema.XmlSchemaInference.TypeInference" /> property is set to <see cref="F:System.Xml.Schema.XmlSchemaInference.InferenceOption.Relaxed" />, the inferred type of elements and attributes in the XML document with simple content is always xs:string. If the <see cref="P:System.Xml.Schema.XmlSchemaInference.TypeInference" /> property is set to <see cref="F:System.Xml.Schema.XmlSchemaInference.InferenceOption.Restricted" />, more specific types are inferred, such as xs:date, xs:decimal, xs:unsignedByte, and so on.</para>
+          <para>The default value of the <see cref="P:System.Xml.Schema.XmlSchemaInference.TypeInference" /> property is <see cref="F:System.Xml.Schema.XmlSchemaInference.InferenceOption.Restricted" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.Schema.XmlSchemaInference.InferenceOption" /> value that affects types inferred from the XML document.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

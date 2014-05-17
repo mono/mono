@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.ServiceModel.Activation.Configuration">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration settings for the SMSvcHost.exe tool.</para>
+      <para>This namespace represents the configuration elements that can be configured in the SMSvcHost.exe.config file. Specifically, it includes all machine-wide settings that need to be configured.</para>
+    </summary>
+  </Docs>
+</Namespace>

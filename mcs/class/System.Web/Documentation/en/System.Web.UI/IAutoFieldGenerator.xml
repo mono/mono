@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IAutoFieldGenerator" FullName="System.Web.UI.IAutoFieldGenerator">
   <TypeSignature Language="C#" Value="public interface IAutoFieldGenerator" />
   <AssemblyInfo>
@@ -14,8 +15,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a method that automatically generates fields for data-bound controls that use ASP.NET Dynamic Data features.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GenerateFields">
@@ -31,10 +35,17 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Automatically generates <see cref="T:System.Web.DynamicData.DynamicField" /> objects based on metadata information for the table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.Web.DynamicData.DynamicField" /> objects.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data-bound control that will contain the <see cref="T:System.Web.DynamicData.DynamicField" /> objects.</param>
       </Docs>
     </Member>
   </Members>

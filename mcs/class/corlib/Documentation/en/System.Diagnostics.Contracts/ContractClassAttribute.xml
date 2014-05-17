@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractClassAttribute" FullName="System.Diagnostics.Contracts.ContractClassAttribute">
   <TypeSignature Language="C#" Value="public sealed class ContractClassAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractClassAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -13,19 +15,26 @@
       <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Interface | System.AttributeTargets.Delegate | System.AttributeTargets.All, Inherited=false)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
+      <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+      <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Marks a class as having another class that contains its code contracts.</summary>
-    <remarks>Interfaces and abstract methods cannot have their contracts written directly in the code. The <see cref="T:System.Diagnostics.Contracts.ContractClassAttribute" /> and <see cref="T:System.Diagnostics.Contracts.ContractClassForAttribute" /> may be used to specify another class that contains the contracts for an interface or abstract class.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Types that are marked with this attribute have code contracts that are included in a separate type. The type that contains the contracts is specified in the constructor. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a separate type contains the code contracts for this type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractClassAttribute (Type typeContainingContracts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type typeContainingContracts) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -34,13 +43,18 @@
         <Parameter Name="typeContainingContracts" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="typeContainingContracts">The type that contains the code contract specifications.</param>
-        <summary>Constructs a ContractClassAttribute, specifying the type that contains the code contract specifications.</summary>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.ContractClassAttribute" /> class. </para>
+        </summary>
+        <param name="typeContainingContracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that contains the code contracts for this type.</param>
       </Docs>
     </Member>
     <Member MemberName="TypeContainingContracts">
       <MemberSignature Language="C#" Value="public Type TypeContainingContracts { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type TypeContainingContracts" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -49,9 +63,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Get the type that contains the code contract specifications.</summary>
         <value>The type that contains the code contract specifications.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type that contains the code contracts for this type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

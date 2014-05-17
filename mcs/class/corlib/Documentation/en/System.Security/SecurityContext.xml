@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityContext" FullName="System.Security.SecurityContext">
-  <TypeSignature Language="C#" Value="public sealed class SecurityContext" />
+  <TypeSignature Language="C#" Value="public sealed class SecurityContext : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SecurityContext extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -8,105 +10,197 @@
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
-  <Interfaces />
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Security.SecurityContext" /> object captures all security-related information for a logical thread, including the information contained in the <see cref="T:System.Security.Principal.WindowsIdentity" /> and <see cref="T:System.Threading.CompressedStack" /> objects.  This configuration allows the Windows identity and the security elements on the stack to be propagated automatically when the <see cref="T:System.Security.SecurityContext" /> is copied and transferred across asynchronous threads. </para>
+      <block subset="none" type="note">
+        <para>The common language runtime (CLR) is aware of impersonation operations performed using only managed code, not of impersonation performed outside of managed code, such as through platform invoke to unmanaged code or through direct calls to Win32 functions. Only managed <see cref="T:System.Security.Principal.WindowsIdentity" /> objects can flow across asynchronous points, unless the alwaysFlowImpersonationPolicy element has been set to true (&lt;alwaysFlowImpersonationPolicy enabled="true"/&gt;). Setting the alwaysFlowImpersonationPolicy element to true specifies that the Windows identity always flows across asynchronous points, regardless of how impersonation was performed. For more information about flowing unmanaged impersonation across asynchronous points, see <format type="text/html"><a href="ee622801-9e46-470b-85ab-88c4b1dd2ee1">&lt;alwaysFlowImpersonationPolicy&gt; Element</a></format>.</para>
+      </block>
+      <para>The <see cref="T:System.Security.SecurityContext" /> is part of the larger <see cref="T:System.Threading.ExecutionContext" /> and flows or migrates when the <see cref="T:System.Threading.ExecutionContext" /> flows or migrates.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates and propagates all security-related data for execution contexts transferred across threads. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Capture">
       <MemberSignature Language="C#" Value="public static System.Security.SecurityContext Capture ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.SecurityContext Capture() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.SecurityContext</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The captured security context can be applied to another thread. The <see cref="T:System.Security.SecurityContext" /> consists of the <see cref="T:System.Threading.CompressedStack" /> and the <see cref="T:System.Security.Principal.WindowsIdentity" /> for the executing thread.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Captures the security context for the current thread.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security context for the current thread.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateCopy">
       <MemberSignature Language="C#" Value="public System.Security.SecurityContext CreateCopy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.SecurityContext CreateCopy() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.SecurityContext</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current context must have been acquired through a capture or a copy operation. This method is useful for applying a captured <see cref="T:System.Security.SecurityContext" /> to multiple threads. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current security context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security context for the current thread.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsFlowSuppressed">
-      <MemberSignature Language="C#" Value="public static bool IsFlowSuppressed ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsWindowsIdentityFlowSuppressed">
-      <MemberSignature Language="C#" Value="public static bool IsWindowsIdentityFlowSuppressed ();" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="RestoreFlow">
-      <MemberSignature Language="C#" Value="public static void RestoreFlow ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Security.SecurityContext" />. The Dispose method leaves the <see cref="T:System.Security.SecurityContext" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Security.SecurityContext" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Security.SecurityContext" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Security.SecurityContext" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Security.SecurityContext" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Security.SecurityContext" /> class.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="IsFlowSuppressed">
+      <MemberSignature Language="C#" Value="public static bool IsFlowSuppressed ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsFlowSuppressed() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.SecurityContext.IsFlowSuppressed" /> method is used by infrastructure components to determine whether to transfer the <see cref="T:System.Security.SecurityContext" /> information during asynchronous operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the flow of the security context has been suppressed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the flow has been suppressed; otherwise, false. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="IsWindowsIdentityFlowSuppressed">
+      <MemberSignature Language="C#" Value="public static bool IsWindowsIdentityFlowSuppressed ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsWindowsIdentityFlowSuppressed() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.SecurityContext.IsWindowsIdentityFlowSuppressed" /> method is used by infrastructure components to determine whether to transfer the Windows identity information when the <see cref="T:System.Security.SecurityContext" /> migrates during asynchronous operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the flow of the Windows identity portion of the current security context has been suppressed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the flow has been suppressed; otherwise, false. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="RestoreFlow">
+      <MemberSignature Language="C#" Value="public static void RestoreFlow ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RestoreFlow() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.SecurityContext.RestoreFlow" /> method is called by the <see cref="M:System.Threading.AsyncFlowControl.Undo" /> method to reverse the effect of a prior <see cref="M:System.Security.SecurityContext.SuppressFlow" /> method call.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the flow of the security context across asynchronous threads.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Run">
       <MemberSignature Language="C#" Value="public static void Run (System.Security.SecurityContext securityContext, System.Threading.ContextCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Run(class System.Security.SecurityContext securityContext, class System.Threading.ContextCallback callback, object state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -116,53 +210,85 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="securityContext">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security context for the current thread is returned to its previous state when the method call is complete.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs the specified method in the specified security context on the current thread.</para>
+        </summary>
+        <param name="securityContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security context to set.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that represents the method to run in the specified security context.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to pass to the callback method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SuppressFlow">
       <MemberSignature Language="C#" Value="public static System.Threading.AsyncFlowControl SuppressFlow ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.AsyncFlowControl SuppressFlow() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.AsyncFlowControl</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to suppress the flow of <see cref="T:System.Security.SecurityContext" /> information on the current thread for asynchronous operations. </para>
+          <para>The common language runtime (CLR) is only aware of the impersonation operations performed using managed code. The CLR has no knowledge of impersonation performed outside of managed code, such as platform invokes to unmanaged code that does the impersonation, or through calls to Win32 functions. To flow identity across asynchronous points you must use the managed <see cref="T:System.Security.Principal.WindowsIdentity" /> and <see cref="T:System.Security.Principal.WindowsImpersonationContext" /> methods.  </para>
+          <para>Use the <see cref="M:System.Threading.AsyncFlowControl.Undo" /> method on the returned <see cref="T:System.Threading.AsyncFlowControl" /> structure to return the <see cref="T:System.Security.SecurityContext" /> object to its previous state.</para>
+          <para>This method is protected with a <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" /> for <see cref="F:System.Security.Permissions.SecurityPermissionFlag.Infrastructure" /> permission. A fully trusted component can call this method to suppress the flow of the <see cref="T:System.Security.SecurityContext" /> information during asynchronous calls. When the flow is suppressed, the <see cref="M:System.Security.SecurityContext.Capture" /> method returns null. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suppresses the flow of the security context across asynchronous threads.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Threading.AsyncFlowControl" /> structure for restoring the flow.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SuppressFlowWindowsIdentity">
       <MemberSignature Language="C#" Value="public static System.Threading.AsyncFlowControl SuppressFlowWindowsIdentity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Threading.AsyncFlowControl SuppressFlowWindowsIdentity() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.AsyncFlowControl</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to suppress the flow of the Windows identity when the <see cref="T:System.Security.SecurityContext" /> migrates across asynchronous threads.</para>
+          <para>Use the <see cref="M:System.Threading.AsyncFlowControl.Undo" /> method on the returned <see cref="T:System.Threading.AsyncFlowControl" /> structure to return the <see cref="T:System.Security.SecurityContext" /> object to its previous state.</para>
+          <block subset="none" type="note">
+            <para>The common language runtime (CLR) is aware of impersonation operations performed using only managed code, not of impersonation performed outside of managed code, such as through platform invoke to unmanaged code or through direct calls to Win32 functions. Only managed <see cref="T:System.Security.Principal.WindowsIdentity" /> objects can flow across asynchronous points, unless the alwaysFlowImpersonationPolicy element has been set to true (&lt;alwaysFlowImpersonationPolicy enabled="true"/&gt;). Setting the alwaysFlowImpersonationPolicy element to true specifies that the Windows identity always flows across asynchronous points, regardless of how impersonation was performed. For more information about flowing unmanaged impersonation across asynchronous points, see <format type="text/html"><a href="ee622801-9e46-470b-85ab-88c4b1dd2ee1">&lt;alwaysFlowImpersonationPolicy&gt; Element</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suppresses the flow of the Windows identity portion of the current security context across asynchronous threads.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure for restoring the flow.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

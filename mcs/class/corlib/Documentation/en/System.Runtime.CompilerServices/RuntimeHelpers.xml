@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RuntimeHelpers" FullName="System.Runtime.CompilerServices.RuntimeHelpers" FullNameSP="System_Runtime_CompilerServices_RuntimeHelpers" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable RuntimeHelpers extends System.Object" />
   <TypeSignature Language="C#" Value="public static class RuntimeHelpers" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit RuntimeHelpers extends System.Object" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -15,10 +17,6 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para>Implements static methods and properties that provide special support for
-      compilers. </para>
-    </summary>
     <remarks>
       <para>
         <block subset="none" type="note">The types in 
@@ -28,17 +26,22 @@
    features that are not directly visible to programmers.</block>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of static methods and properties that provide support for compilers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnsureSufficientExecutionStack">
       <MemberSignature Language="C#" Value="public static void EnsureSufficientExecutionStack ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EnsureSufficientExecutionStack() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -46,13 +49,31 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.EnsureSufficientExecutionStack" /> provides information about an artificially limited stack that preserves enough space for an exception to be raised and recovery action to be taken. The artificial stack limit is chosen by the common language runtime to ensure that enough space remains to throw an exception safely.</para>
+          <para>This method is useful in situations where stack overflow might occur as a result of unbounded recursion. It is intended for use in compiler services scenarios, although it can also be used safely in other development scenarios.</para>
+          <para>If the stack space is sufficient, the exception is not thrown, and most .NET Framework types and members can still be called.</para>
+          <block subset="none" type="note">
+            <para>This method is not part of the constrained execution region (CER) support, and should not be confused with the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.ProbeForSufficientStack" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ensures that the remaining stack space is large enough to execute the average .NET Framework function.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public static bool Equals (object o1, object o2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Equals(object o1, object o2) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -61,21 +82,32 @@
         <Parameter Name="o2" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o1">To be added.</param>
-        <param name="o2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by compilers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> instances are considered equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="o1" /> parameter is the same instance as the <paramref name="o2" /> parameter, or if both are null, or if o1.Equals(o2) returns true; otherwise, false.</para>
+        </returns>
+        <param name="o1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
+        <param name="o2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExecuteCodeWithGuaranteedCleanup">
       <MemberSignature Language="C#" Value="public static void ExecuteCodeWithGuaranteedCleanup (System.Runtime.CompilerServices.RuntimeHelpers.TryCode code, System.Runtime.CompilerServices.RuntimeHelpers.CleanupCode backoutCode, object userData);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ExecuteCodeWithGuaranteedCleanup(class System.Runtime.CompilerServices.RuntimeHelpers/TryCode code, class System.Runtime.CompilerServices.RuntimeHelpers/CleanupCode backoutCode, object userData) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -92,14 +124,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public static int GetHashCode (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 GetHashCode(object o) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -107,20 +141,59 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> method always calls the <see cref="M:System.Object.GetHashCode" /> method non-virtually, even if the object's type has overridden the <see cref="M:System.Object.GetHashCode" /> method. Therefore, using <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> might differ from calling GetHashCode directly on the object with the <see cref="M:System.Object.GetHashCode" /> method.</para>
+          <block subset="none" type="note">
+            <para>Although the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> method returns identical hash codes for identical object references, you should not use this method to test for object identity, because this hash code does not uniquely identify an object reference. To test for object identify (that is, to test that two objects reference the same object in memory), call the <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)" /> method. Nor should you use <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> to test whether two strings represent equal object references, because the string is interned. To test for string interning, call the <see cref="M:System.String.IsInterned(System.String)" /> method. </para>
+          </block>
+          <para>The <see cref="M:System.Object.GetHashCode" /> and <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> methods differ as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.Object.GetHashCode" /> returns a hash code that is based on the object's definition of equality. For example, two strings with identical contents will return the same value for <see cref="M:System.Object.GetHashCode" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> returns a hash code that indicates object identity. That is, two string variables whose contents are identical and that represent a string that is interned (see the <format type="text/html"><a href="#interning">String Interning</a></format> section) or that represent a single string in memory return identical hash codes. </para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Note that <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> always returns identical hash codes for equal object references. However, the reverse is not true: equal hash codes do not indicate equal object references. A particular hash code value is not unique to a particular object reference; different object references can generate identical hash codes. </para>
+          </block>
+          <para>This method is used by compilers.</para>
+          <format type="text/html">
+            <a href="#interning" />
+          </format>
+          <format type="text/html">
+            <h2>String Interning</h2>
+          </format>
+          <para>The common language runtime (CLR) maintains an internal pool of strings and stores literals in the pool. If two strings (for example, str1 and str2) are formed from an identical string literal, the CLR will set str1 and str2 to point to the same location on the managed heap to conserve memory. Calling <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> on these two string objects will produce the same hash code, contrary to the second bulleted item in the previous section.</para>
+          <para>The CLR adds only literals to the pool. Results of string operations such as concatenation are not added to the pool, unless the compiler resolves the string concatenation as a single string literal. Therefore, if str2 was created as the result of a concatenation operation, and str2 is identical to str1, using <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(System.Object)" /> on these two string objects will not produce the same hash code.</para>
+          <para>If you want to add a concatenated string to the pool explicitly, use the <see cref="M:System.String.Intern(System.String)" /> method.</para>
+          <para>You can also use the <see cref="M:System.String.IsInterned(System.String)" /> method to check whether a string has an interned reference.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for a particular object, and is suitable for use in algorithms and data structures that use hash codes, such as a hash table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the object identified by the <paramref name="o" /> parameter.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to retrieve the hash code for. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectValue">
+      <MemberSignature Language="C#" Value="public static object GetObjectValue (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetObjectValue(object obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectValue">
-      <MemberSignature Language="C#" Value="public static object GetObjectValue (object obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -128,21 +201,44 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Boxing a value type creates an object and performs a shallow copy of the fields of the specified value type into the new object.</para>
+          <para>This method allows a value class to be manipulated as an object while it retains the aliasing behavior of a value class. </para>
+          <para>The return value depends on whether the value class is mutable or immutable:</para>
+          <list type="bullet">
+            <item>
+              <para>If the value being assigned is a mutable value class, the method returns a shallow copy of the class, because value classes have copy semantics.</para>
+            </item>
+            <item>
+              <para>If the value being assigned is an immutable value class, the method returns the object itself, instead of a copy of the class.</para>
+            </item>
+          </list>
+          <para>Compilers of dynamically typed languages can use this method to make sure that boxed value types work identically to unboxed value types. That is, boxed value types get cloned when you pass them around, and they are always passed by value. The compiler can call <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.GetObjectValue(System.Object)" /> to assign a value type to an object or to pass a value type as a parameter of a type object.</para>
+          <para>This method is used by compilers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Boxes a value type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A boxed copy of <paramref name="obj" /> if it is a value class; otherwise, <paramref name="obj" /> itself.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value type to be boxed. </param>
       </Docs>
+    </Member>
+    <Member MemberName="InitializeArray">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void InitializeArray(class System.Array array, valuetype System.RuntimeFieldHandle fldHandle)" />
+      <MemberSignature Language="C#" Value="public static void InitializeArray (Array array, RuntimeFieldHandle fldHandle);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void InitializeArray(class System.Array array, valuetype System.RuntimeFieldHandle fldHandle) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InitializeArray">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void InitializeArray(class System.Array array, valuetype System.RuntimeFieldHandle fldHandle)" />
-      <MemberSignature Language="C#" Value="public static void InitializeArray (Array array, RuntimeFieldHandle fldHandle);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -151,73 +247,56 @@
         <Parameter Name="fldHandle" Type="System.RuntimeFieldHandle" />
       </Parameters>
       <Docs>
-        <param name="array">The <see cref="T:System.Array" /> to be initialized.</param>
-        <param name="fldHandle">A <see cref="T:System.RuntimeFieldHandle" /> specifying the location of the data used to initialize <paramref name="array" /> .</param>
-        <summary>
-          <para>Provides a fast way to initialize a <see cref="T:System.Array" /> from data
- stored in a module.</para>
-        </summary>
         <remarks>
-          <para> This method is for compiler use only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by compilers.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a fast way to initialize an array from data that is stored in a module.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to be initialized. </param>
+        <param name="fldHandle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A field handle that specifies the location of the data used to initialize the array. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OffsetToStringData">
+      <MemberSignature Language="ILASM" Value=".property int32 OffsetToStringData { public hidebysig static specialname int32 get_OffsetToStringData() }" />
+      <MemberSignature Language="C#" Value="public static int OffsetToStringData { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 OffsetToStringData" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OffsetToStringData">
-      <MemberSignature Language="ILASM" Value=".property int32 OffsetToStringData { public hidebysig static specialname int32 get_OffsetToStringData() }" />
-      <MemberSignature Language="C#" Value="public static int OffsetToStringData { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>12</MemberValue>
       <Docs>
-        <summary>
-          <para> Gets the number of bytes between the start of a <see cref="T:System.String" /> and the first <see cref="T:System.Char" />
-in the string.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Int32" /> containing the number of bytes between the start of a <see cref="T:System.String" /> and the first <see cref="T:System.Char" />
 in the string.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <block subset="none" type="note">
-            <para>This property is deprecated; its design is considered unnecessarily inflexible. It is expected that an improved design can be incorporated into the next revision of this Standard.
-         </para>
-            <para>Compilers use this property for unsafe, but efficient, pointer operations on
-         the characters in a managed string. Compilers should pin the string against
-         movement by the garbage collector prior to use. Note that strings are immutable:
-         their contents can be read but not changed.</para>
-            <para>The contents of these offset bytes are implementation-defined.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compilers use this property for unsafe, but efficient, pointer operations on the characters in a managed string. Compilers should pin the string against movement by the garbage collector before use. Note that common language runtime strings are immutable; that is, their contents can be read but not changed.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the offset, in bytes, to the data in the given string.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PrepareConstrainedRegions">
       <MemberSignature Language="C#" Value="public static void PrepareConstrainedRegions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PrepareConstrainedRegions() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -227,19 +306,29 @@ in the string.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compilers use this method to mark catch, finally, and fault blocks as constrained execution regions (CERs). Code that is marked as a constrained region must only call other code with strong reliability contracts. It should not allocate or make virtual calls to unprepared or unreliable methods unless it is prepared to handle failures.</para>
+          <para>Note that no intermediate language opcodes, except NOP, are allowed between a call to the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions" /> method and the try block. For more information about CERs, see the classes in the <see cref="N:System.Runtime.ConstrainedExecution" /> namespace.</para>
+          <para>CERs that are marked using the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions" /> method do not work perfectly when a <see cref="T:System.StackOverflowException" /> is generated from the try block. For more information, see the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.ExecuteCodeWithGuaranteedCleanup(System.Runtime.CompilerServices.RuntimeHelpers.TryCode,System.Runtime.CompilerServices.RuntimeHelpers.CleanupCode,System.Object)" /> method.  </para>
+          <para>The <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions" /> method calls the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.ProbeForSufficientStack" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Designates a body of code as a constrained execution region (CER).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PrepareConstrainedRegionsNoOP">
       <MemberSignature Language="C#" Value="public static void PrepareConstrainedRegionsNoOP ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PrepareConstrainedRegionsNoOP() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -249,10 +338,30 @@ in the string.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compilers should not call this method directly. Instead, define a CER by calling the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Designates a body of code as a constrained execution region (CER) without performing any probing.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PrepareDelegate">
       <MemberSignature Language="C#" Value="public static void PrepareDelegate (Delegate d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PrepareDelegate(class System.Delegate d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -260,19 +369,27 @@ in the string.</para>
         <Parameter Name="d" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="d">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compilers use this method to prepare a delegate's invocation method and to prepare the target of that invocation (and the delegate's statically determinable call graph) as a constrained execution region (CER).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the specified delegate should be prepared for inclusion in a constrained execution region (CER).</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate type to prepare.</param>
       </Docs>
+    </Member>
+    <Member MemberName="PrepareMethod">
+      <MemberSignature Language="C#" Value="public static void PrepareMethod (RuntimeMethodHandle method);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PrepareMethod(valuetype System.RuntimeMethodHandle method) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PrepareMethod">
-      <MemberSignature Language="C#" Value="public static void PrepareMethod (RuntimeMethodHandle method);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -280,19 +397,27 @@ in the string.</para>
         <Parameter Name="method" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <param name="method">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compilers use the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareMethod(System.RuntimeMethodHandle)" /> method to handle virtual calls that are made inside a constrained execution region (CER). At JIT compilation time, the common language runtime does not usually have enough information about the target of a virtual call. Therefore, the runtime does not initially prepare that segment of the call graph. If the code that is using the CER has enough knowledge to determine the target at any point in time before the CER is actually entered, it can call <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareMethod(System.RuntimeMethodHandle)" /> to perform the same runtime preparation normally done for a CER rooted at the method specified as an argument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares a method for inclusion in a constrained execution region (CER).</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to the method to prepare.</param>
       </Docs>
+    </Member>
+    <Member MemberName="PrepareMethod">
+      <MemberSignature Language="C#" Value="public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PrepareMethod(valuetype System.RuntimeMethodHandle method, valuetype System.RuntimeTypeHandle[] instantiation) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PrepareMethod">
-      <MemberSignature Language="C#" Value="public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -301,29 +426,26 @@ in the string.</para>
         <Parameter Name="instantiation" Type="System.RuntimeTypeHandle[]" />
       </Parameters>
       <Docs>
-        <param name="method">To be added.</param>
-        <param name="instantiation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can provide generics support for compilers by using the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareMethod(System.RuntimeMethodHandle,System.RuntimeTypeHandle[])" /> method. The common language runtime cannot prepare constrained execution regions (CERs) rooted in a method that has generic type parameters (either a type parameter on the class containing the method or one on the method itself) when those type parameters are instantiated as reference types.</para>
+          <para>You can use this overload to pass a specific instantiation (such as an array of types), specifying class type parameters first (if any), followed by method type parameters (if any). The runtime prepares that instantiation of the method. (This is necessary only if the instantiations you use contain at least one reference type parameter.) Thus, you can use a CER-style try clause in a generic method (or a nongeneric method on a generic class) and it will work reliably with instantiations of <see cref="T:System.Int32" /> or other value types. To instantiate reference types such as <see cref="T:System.String" />, you must use an explicit <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareMethod(System.RuntimeMethodHandle,System.RuntimeTypeHandle[])" /> method on the CER root method first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares a method for inclusion in a constrained execution region (CER) with the specified instantiation.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to the method to prepare.</param>
+        <param name="instantiation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instantiation to pass to the method.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProbeForSufficientStack">
       <MemberSignature Language="C#" Value="public static void ProbeForSufficientStack ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ProbeForSufficientStack() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -333,11 +455,34 @@ in the string.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by the constrained execution region (CER) infrastructure when running in hosts that are resilient to stack overflow such as Microsoft SQL Server and Microsoft Exchange Server. This method currently probes for 48 KB of stack space on the x86 platform, but the exact amount may change over time and may vary on other platforms.</para>
+          <para>This method is also used by compilers.</para>
+          <para>Instead of using the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.ProbeForSufficientStack" /> method, you should use a standard CER. That is, if you are planning to use a moderate amount of stack space, call the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions" /> method immediately before your try/finally or try/catch block. If you are calling a recursive method or plan to use a lot of stack space, you must use the <see cref="M:System.Runtime.CompilerServices.RuntimeHelpers.ExecuteCodeWithGuaranteedCleanup(System.Runtime.CompilerServices.RuntimeHelpers.TryCode,System.Runtime.CompilerServices.RuntimeHelpers.CleanupCode,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Probes for a certain amount of stack space to ensure that a stack overflow cannot happen within a subsequent block of code (assuming that your code uses only a finite and moderate amount of stack space). We recommend that you use a constrained execution region (CER) instead of this method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RunClassConstructor">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void RunClassConstructor(valuetype System.RuntimeTypeHandle type)" />
       <MemberSignature Language="C#" Value="public static void RunClassConstructor (RuntimeTypeHandle type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RunClassConstructor(valuetype System.RuntimeTypeHandle type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -345,25 +490,24 @@ in the string.</para>
         <Parameter Name="type" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <param name="type">A <see cref="T:System.RuntimeTypeHandle" /> specifying the class constructor method to run.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by compilers.</para>
+        </remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Runs a specified class constructor method.</para>
         </summary>
-        <remarks>To be added.</remarks>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A type handle that specifies the class constructor method to run. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RunModuleConstructor">
       <MemberSignature Language="C#" Value="public static void RunModuleConstructor (IntPtr module);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -379,7 +523,12 @@ in the string.</para>
     </Member>
     <Member MemberName="RunModuleConstructor">
       <MemberSignature Language="C#" Value="public static void RunModuleConstructor (ModuleHandle module);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RunModuleConstructor(valuetype System.ModuleHandle module) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -387,15 +536,18 @@ in the string.</para>
         <Parameter Name="module" Type="System.ModuleHandle" />
       </Parameters>
       <Docs>
-        <param name="module">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used by compilers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs a specified module constructor method.</para>
+        </summary>
+        <param name="module">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle that specifies the module constructor method to run.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

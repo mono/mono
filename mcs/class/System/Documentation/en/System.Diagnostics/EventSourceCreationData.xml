@@ -1,148 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventSourceCreationData" FullName="System.Diagnostics.EventSourceCreationData">
   <TypeSignature Language="C#" Value="public class EventSourceCreationData" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventSourceCreationData extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Diagnostics.EventSourceCreationData" /> class to configure a new source for writing localized entries to an event log. It is not necessary to use this class to read from an event log.</para>
+      <para>This class defines the configuration settings for a new event source and its associated event log. The associated event log can be on the local computer or a remote computer. To create a new source for a new or existing event log on the local computer, set the <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" /> and <see cref="P:System.Diagnostics.EventSourceCreationData.Source" /> properties of an <see cref="T:System.Diagnostics.EventSourceCreationData" /> and call the <see cref="M:System.Diagnostics.EventLog.CreateEventSource(System.Diagnostics.EventSourceCreationData)" /> method. This method creates the event source you specify in the <see cref="P:System.Diagnostics.EventSourceCreationData.Source" /> property and registers it for the event log specified in <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" />. This behavior is similar to using the <see cref="T:System.Diagnostics.EventLogInstaller" /> class to register an event source for an event log.</para>
+      <para>Use the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> and <see cref="Overload:System.Diagnostics.EventLog.WriteEntry" /> methods to write events to an event log. You must specify an event source to write events; you must create and configure the event source before writing the first entry with the source. </para>
+      <para>Create the new event source during the installation of your application. This allows time for the operating system to refresh its list of registered event sources and their configurations. If the operating system has not refreshed its list of event sources, and you attempt to write an event with the new source, the write operation will fail. You can configure a new source using an <see cref="T:System.Diagnostics.EventLogInstaller" />, or using the <see cref="Overload:System.Diagnostics.EventLog.CreateEventSource" /> method. You must have administrative rights on the computer to create a new event source.</para>
+      <para>You can create an event source for an existing event log or a new event log. When you create a new source for a new event log, the system registers the source for that log, but the log is not created until the first entry is written to it.</para>
+      <para>Each source can only write to one event log at a time; however, your application can use multiple sources to write to multiple event logs. For example, your application might need multiple sources configured for different event logs or different resource files.</para>
+      <para>To change the configuration details of an existing source, you must delete the source and then create it with the new configuration. If other applications or components use the existing source, create a new source with the updated configuration rather than deleting the existing source.</para>
+      <para>You can register the event source with localized resources for your event category and message strings. Your application can write event log entries using resource identifiers, rather than specifying the actual string. The Event Viewer uses the resource identifier to find and display the corresponding string from the localized resource file based on current language settings. You can register a separate file for event categories, messages, and parameter insertion strings, or you can register the same resource file for all three types of strings. Use the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" />, <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" />, <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" />, and <see cref="P:System.Diagnostics.EventSourceCreationData.ParameterResourceFile" /> properties to configure the source to write localized entries to the event log. If your application writes string values directly to the event log, you do not need to set these properties.</para>
+      <para>The source must be configured either for writing localized entries or for writing direct strings. The <see cref="Overload:System.Diagnostics.EventLog.WriteEntry" /> method writes the given string directly to the event log; it does not use a localizable message resource file. Use the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method to write events using a localized message resource file.</para>
+      <para>If your application writes entries using both resource identifiers and string values, you must register two separate sources. For example, configure one source with resource files, and then use that source in the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method to write entries using resource identifiers to the event log. Then create a different source without resource files and use that source in the <see cref="Overload:System.Diagnostics.EventLog.WriteEntry" /> method to write strings directly to the event log using that source.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration settings used to create an event log source on the local computer or a remote computer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventSourceCreationData (string source, string logName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string source, string logName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="source" Type="System.String" />
         <Parameter Name="logName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="logName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To write entries to an event log, you must first create an event source for the event log. To register a new source, initialize an <see cref="T:System.Diagnostics.EventSourceCreationData" /> instance, configure the instance properties for your application, and call the <see cref="M:System.Diagnostics.EventLog.CreateEventSource(System.Diagnostics.EventSourceCreationData)" /> method. After the source is registered, you can write entries from the source using the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> or <see cref="Overload:System.Diagnostics.EventLog.WriteEntry" /> methods.</para>
+          <para>You can register the event source with localized resources for your event category and message strings. Your application can write event log entries using resource identifiers, rather than specifying the actual string. The Event Viewer uses the resource identifier to find and display the corresponding string from the localized resource file based on current language settings. You can register a separate file for event categories, messages, and parameter insertion strings, or you can register the same resource file for all three types of strings. Use the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" />, <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" />, <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" />, and <see cref="P:System.Diagnostics.EventSourceCreationData.ParameterResourceFile" /> properties to configure the source to write localized entries to the event log. If your application writes string values directly to the event log, you do not need to set these properties.</para>
+          <para>The source must be configured either for writing localized entries or for writing direct strings. If your application writes entries using both resource identifiers and string values, you must register two separate sources. For example, configure one source with resource files, and then use that source in the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method to write entries using resource identifiers to the event log. Then create a different source without resource files and use that source in the <see cref="Overload:System.Diagnostics.EventLog.WriteEntry" /> method to write strings directly to the event log.</para>
+          <para>The following table shows initial property values for an <see cref="T:System.Diagnostics.EventSourceCreationData" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Diagnostics.EventSourceCreationData.Source" /> </para>
+              </term>
+              <description>
+                <para>The <paramref name="source" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" /> </para>
+              </term>
+              <description>
+                <para>The <paramref name="logName" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Diagnostics.EventSourceCreationData.MachineName" /> </para>
+              </term>
+              <description>
+                <para>The local computer ("."). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" /> </para>
+              </term>
+              <description>
+                <para>Zero </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" />
+                </para>
+              </term>
+              <description>
+                <para>null (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" />
+                </para>
+              </term>
+              <description>
+                <para>null (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Diagnostics.EventSourceCreationData.ParameterResourceFile" />
+                </para>
+              </term>
+              <description>
+                <para>null (Nothing in Visual Basic). </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.EventSourceCreationData" /> class with a specified event source and event log name.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to register with the event log as a source of entries. </param>
+        <param name="logName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the log to which entries from the source are written. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CategoryCount">
-      <MemberSignature Language="C#" Value="public int CategoryCount { set; get; }" />
+      <MemberSignature Language="C#" Value="public int CategoryCount { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CategoryCount" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" /> and <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" /> properties to write events with localized category strings. The Event Viewer displays the category for an event entry if you supply a category when you write the event. Event log categories are application-defined strings that help filter events, or provide further information on the event. For example, your application can define separate categories for different components or different operations.</para>
+          <para>Event categories are optional; if your application does not use categories, do not set the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" /> and <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" /> properties.</para>
+          <para>For details about defining event messages and building event resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of categories in the category resource file.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CategoryResourceFile">
-      <MemberSignature Language="C#" Value="public string CategoryResourceFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string CategoryResourceFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CategoryResourceFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" /> and <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" /> properties to write events with localized category strings. The Event Viewer displays the category for an event entry if you supply a category when you write the event. Event log categories are application-defined strings that help filter events, or provide further information on the event. For example, your application can define separate categories for different components or different operations.</para>
+          <para>Event categories are optional; if your application does not use categories, do not set the <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryCount" /> and <see cref="P:System.Diagnostics.EventSourceCreationData.CategoryResourceFile" /> properties.</para>
+          <para>For details about defining event messages and building event resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path of the resource file that contains category strings for the source.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LogName">
-      <MemberSignature Language="C#" Value="public string LogName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string LogName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LogName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" /> property to identify the event log that your application writes entries to using the new source. The event log can be a new log or an existing log. Applications and services should write to the Application log or a custom log. Device drivers should write to the System log. If you do not explicitly set the <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" /> property, the event log defaults to the Application log.</para>
+          <block subset="none" type="note">
+            <para>The Security log is read-only.</para>
+          </block>
+          <para>To target an existing log for the new source, set the <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" /> property to the existing event log name. To create a new event log for the source, you must set the <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" /> property. Event log names must consist of printable characters, and cannot include the characters '*', '?', or '\'. The first 8 characters of the event log name must be different from the first 8 characters of existing names of event logs on the specified computer.</para>
+          <para>The operating system stores event logs as files. When you use <see cref="T:System.Diagnostics.EventLogInstaller" /> or the <see cref="Overload:System.Diagnostics.EventLog.CreateEventSource" /> method to create a new event log, the associated file is stored in the %SystemRoot%\System32\Config directory on the specified computer. The file name is set by appending the first 8 characters of the <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" /> property with the ".evt" file name extension.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the event log to which the source writes entries.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MachineName">
-      <MemberSignature Language="C#" Value="public string MachineName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string MachineName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MachineName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.EventSourceCreationData.MachineName" /> value cannot be an empty string. If the machine name is not explicitly set, it defaults to the local computer (".").</para>
+          <para>When registering a source on a remote computer, you must have administrative rights on that computer to write the registry values with sufficient permissions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the computer on which to register the event source.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MessageResourceFile">
-      <MemberSignature Language="C#" Value="public string MessageResourceFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string MessageResourceFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MessageResourceFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" /> property to configure an event log source to write localized event messages. Event messages are application-defined strings that describe the event to the user.</para>
+          <para>Your application can write event log entries using resource identifiers. A resource identifier indexes a message located in the <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" />. The Event Viewer uses the resource identifier to find and display the corresponding string from the localized message resource file based on current language settings.</para>
+          <para>The event source must be configured either for writing localized entries or for writing direct strings. Use the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method to write localized entries for a source configured with a message resource file.</para>
+          <para>If your application writes event message strings directly, rather than using a resource identifier in a localized resource file, do not set the <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" /> property.</para>
+          <para>For details about defining event messages and building event resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path of the message resource file that contains message formatting strings for the source.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ParameterResourceFile">
-      <MemberSignature Language="C#" Value="public string ParameterResourceFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ParameterResourceFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ParameterResourceFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Diagnostics.EventSourceCreationData.ParameterResourceFile" /> property to configure an event log source to write localized event messages with inserted parameter strings. Each localized event message specified in the <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" /> property can contain placeholders for insertion strings. These placeholders are used to specify the position and resource identifier for a language-independent string within the event message. The Event Viewer fills in the placeholders using the corresponding strings from the <see cref="P:System.Diagnostics.EventSourceCreationData.ParameterResourceFile" /> and formats the event log message for the localized event entry.</para>
+          <para>For example, the following section of a message text file defines a string with a parameter placeholder:</para>
+          <code>
+MessageId = 1501
+Severity = Success
+Facility = Application
+SymbolicName = COMPONENT_STARTING
+Language=English
+Component %%6050 is starting.
+.</code>
+          <para>Within the parameter resource file, the insertion string must be defined with the resource identifier that corresponds to the placeholder, as shown below:</para>
+          <code>MessageId = 6050
+Severity = Success
+Facility = Application
+SymbolicName = COMPONENT_NAME_MSGID
+Language=English
+TRIGGER.EXE
+.</code>
+          <para>The event source must be configured either for writing localized entries or for writing direct strings. Use the <see cref="Overload:System.Diagnostics.EventLog.WriteEvent" /> method to write localized entries for a source configured with a message resource file.</para>
+          <para>If your application writes event message strings directly to the event log, or if your <see cref="P:System.Diagnostics.EventSourceCreationData.MessageResourceFile" /> property does not contain messages with parameter insertion placeholders, do not set the <see cref="P:System.Diagnostics.EventSourceCreationData.ParameterResourceFile" /> property.</para>
+          <para>For details about defining event messages and building event resource files, see the "Message Compiler" topic in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path of the resource file that contains message parameter strings for the source.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Source">
-      <MemberSignature Language="C#" Value="public string Source { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Source { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Source" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source name is often the name of the application, or the name of a component within a large application. The <see cref="M:System.Diagnostics.EventLog.CreateEventSource(System.Diagnostics.EventSourceCreationData)" /> method uses the <see cref="P:System.Diagnostics.EventSourceCreationData.Source" />, <see cref="P:System.Diagnostics.EventSourceCreationData.LogName" />, and <see cref="P:System.Diagnostics.EventSourceCreationData.MachineName" /> properties to create registry values on the target computer for the new source and its associated event log. A new source name cannot match an existing source name or an existing event log name on the target computer.</para>
+          <para>After the registry values for the source are created, your application can use the source to write entries to the configured event log.</para>
+          <para>Each source can only write to one event log at a time; however, your application can use multiple sources to write to multiple event logs. For example, your application might require multiple sources configured for different event logs or different resource files.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name to register with the event log as an event source.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,91 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SystemSounds" FullName="System.Media.SystemSounds">
   <TypeSignature Language="C#" Value="public sealed class SystemSounds" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SystemSounds extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Media.SystemSounds" /> class provides methods for retrieving the sounds associated with a set of operating system sound-event types for the current user. The sounds associated with each type of operating system sound event can be configured in Windows Control Panel.</para>
+      <para>
+        <see cref="T:System.Media.SystemSounds" /> provides static methods to access the sounds associated with the <see cref="P:System.Media.SystemSounds.Asterisk" />, <see cref="P:System.Media.SystemSounds.Beep" />, <see cref="P:System.Media.SystemSounds.Exclamation" />, <see cref="P:System.Media.SystemSounds.Hand" /> and <see cref="P:System.Media.SystemSounds.Question" /> sound events. Each property returns a <see cref="T:System.Media.SystemSound" /> that can be used to play the sound.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retrieves sounds associated with a set of Windows operating system sound-event types. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Asterisk">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Asterisk { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Asterisk" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sound associated with the Asterisk program event in the current Windows sound scheme.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Beep">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Beep { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Beep" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sound associated with the Beep program event in the current Windows sound scheme.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Exclamation">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Exclamation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Exclamation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sound associated with the Exclamation program event in the current Windows sound scheme.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Hand">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Hand { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Hand" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sound associated with the Hand program event in the current Windows sound scheme.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Question">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Question { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Question" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sound associated with the Question program event in the current Windows sound scheme.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,83 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContentDisposition" FullName="System.Net.Mime.ContentDisposition">
   <TypeSignature Language="C#" Value="public class ContentDisposition" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ContentDisposition extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The information in the <see cref="T:System.Net.Mime.ContentDisposition" /> class accompanies an e-mail message that contains attachments when the e-mail message is sent to its destination. The information in <see cref="T:System.Net.Mime.ContentDisposition" /> can be used by software that displays e-mail to present the e-mail attachments in the manner intended by the sender. </para>
+      <para>E-mail messages are created using instances of the <see cref="T:System.Net.Mail.MailMessage" /> class. Instances of the <see cref="T:System.Net.Mail.Attachment" /> class are used to add attachments to e-mail messages. To modify the <see cref="T:System.Net.Mime.ContentDisposition" /> for an attachment, get the instance from the <see cref="P:System.Net.Mail.Attachment.ContentDisposition" /> property.</para>
+      <para>Content to be displayed as part of the message body has the disposition type of <see cref="P:System.Net.Mime.ContentDisposition.Inline" />. Content that is not displayed but is attached in a separate file has the disposition type of <see cref="F:System.Net.Mime.DispositionTypeNames.Attachment" />. Use the <see cref="P:System.Net.Mime.ContentDisposition.Inline" /> property to control the disposition type for the attachment associated with an instance of <see cref="T:System.Net.Mime.ContentDisposition" />.</para>
+      <para>For file attachments, you can use the properties of the <see cref="T:System.Net.Mime.ContentDisposition" /> to set the file size, as well as the date the file was created, last read, and last modified. For all attachments, you can set a recommended file name in the event that the attachment is stored on the receiving computer.</para>
+      <para>The <see cref="M:System.Net.Mime.ContentDisposition.ToString" /> method returns the Content-Disposition header. The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a MIME protocol Content-Disposition header.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContentDisposition ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The instance returned by this constructor has the <see cref="P:System.Net.Mime.ContentDisposition.DispositionType" /> property set to <see cref="F:System.Net.Mime.DispositionTypeNames.Attachment" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mime.ContentDisposition" /> class with a <see cref="P:System.Net.Mime.ContentDisposition.DispositionType" /> of <see cref="F:System.Net.Mime.DispositionTypeNames.Attachment" />. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContentDisposition (string disposition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string disposition) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="disposition" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="disposition">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Mime.ContentDisposition" /> class with the specified disposition information.</para>
+        </summary>
+        <param name="disposition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Mime.DispositionTypeNames" /> value that contains the disposition.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreationDate">
-      <MemberSignature Language="C#" Value="public DateTime CreationDate { set; get; }" />
+      <MemberSignature Language="C#" Value="public DateTime CreationDate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime CreationDate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mime.ContentDisposition.CreationDate" /> property is used to send time stamp information with a file being sent in an e-mail message. This value sets the Creation-Date parameter in the Content-Disposition header sent with the email. </para>
+          <para>The <see cref="T:System.Net.Mail.MailMessage" /> class is used to compose an e-mail message. The <see cref="T:System.Net.Mail.Attachment" /> class is used to attach a file to an e-mail message. To set <see cref="P:System.Net.Mime.ContentDisposition.CreationDate" />, get the <see cref="T:System.Net.Mime.ContentDisposition" /> for the attachment from the <see cref="P:System.Net.Mail.Attachment.ContentDisposition" /> property.</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the creation date for a file attachment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DispositionType">
-      <MemberSignature Language="C#" Value="public string DispositionType { set; get; }" />
+      <MemberSignature Language="C#" Value="public string DispositionType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DispositionType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mime.ContentDisposition.DispositionType" /> property value can be used by software that displays e-mail to determine the correct way to present the e-mail attachments. <see cref="F:System.Net.Mime.DispositionTypeNames.Inline" /> attachments are usually displayed when the user opens the e-mail. <see cref="F:System.Net.Mime.DispositionTypeNames.Attachment" /> attachments are usually not opened until the user performs some action, such as clicking an icon that represents the attachment.</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the disposition type for an e-mail attachment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -86,144 +137,224 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the content-disposition header of the specified <see cref="T:System.Net.Mime.ContentDisposition" /> object is equal to the content-disposition header of this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the content-disposition headers are the same; otherwise false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FileName">
-      <MemberSignature Language="C#" Value="public string FileName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string FileName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FileName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mime.ContentDisposition.FileName" /> property allows the sender to suggest the name to be used to store an e-mail attachment on the recipient's computer. This name is a suggestion only; the receiving system can ignore it. The name must not include path information; any such information is ignored by the receiving computer. </para>
+          <para>To remove file name information, you can set this property to null or the empty string ("").</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the suggested file name for an e-mail attachment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the hash code of the specified <see cref="T:System.Net.Mime.ContentDisposition" /> object</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Inline">
-      <MemberSignature Language="C#" Value="public bool Inline { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Inline { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Inline" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mime.ContentDisposition.Inline" /> property sets the disposition type in the Content-Disposition header sent with the e-mail message. The disposition type can be used by software that displays e-mail to determine the correct way to present the e-mail attachments. Attachments with a disposition type of <see cref="F:System.Net.Mime.DispositionTypeNames.Inline" /> are usually displayed when the user opens the e-mail. Attachments with a disposition type of <see cref="F:System.Net.Mime.DispositionTypeNames.Attachment" /> are usually not opened until the user performs some additional action, such as clicking an icon that represents the attachment.</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that determines the disposition type (Inline or Attachment) for an e-mail attachment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ModificationDate">
-      <MemberSignature Language="C#" Value="public DateTime ModificationDate { set; get; }" />
+      <MemberSignature Language="C#" Value="public DateTime ModificationDate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime ModificationDate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mime.ContentDisposition.ModificationDate" /> property is used to send time stamp information with a file being sent in an e-mail message. This value sets the Modification-Date parameter in the Content-Disposition header sent with the e-mail message. </para>
+          <para>The <see cref="T:System.Net.Mail.MailMessage" /> class is used to compose an e-mail message. The <see cref="T:System.Net.Mail.Attachment" /> class is used to attach a file to an e-mail message. To set the <see cref="P:System.Net.Mime.ContentDisposition.ModificationDate" /> property, get the <see cref="T:System.Net.Mime.ContentDisposition" /> for the attachment using the <see cref="P:System.Net.Mail.Attachment.ContentDisposition" /> property.</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the modification date for a file attachment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parameters">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringDictionary Parameters { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringDictionary Parameters" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, the parameters are determined by the property values so you do not need to access them. If you need to add or change parameter information, modify the dictionary returned by the <see cref="P:System.Net.Mime.ContentDisposition.Parameters" /> property.</para>
+          <para>The Content-Disposition header is described in RFC 2183, available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters included in the Content-Disposition header represented by this instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadDate">
-      <MemberSignature Language="C#" Value="public DateTime ReadDate { set; get; }" />
+      <MemberSignature Language="C#" Value="public DateTime ReadDate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime ReadDate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mime.ContentDisposition.ReadDate" /> property is used to send time stamp information with a file being sent in an e-mail message. This value sets the Read-Date parameter in the Content-Disposition header sent with the e-mail message. </para>
+          <para>The <see cref="T:System.Net.Mail.MailMessage" /> class is used to compose an e-mail message. The <see cref="T:System.Net.Mail.Attachment" /> class is used to attach a file to an e-mail message. To set <see cref="P:System.Net.Mime.ContentDisposition.ReadDate" />, get the <see cref="T:System.Net.Mime.ContentDisposition" /> for the attachment by using the <see cref="P:System.Net.Mail.Attachment.ContentDisposition" /> property.</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the read date for a file attachment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Size">
-      <MemberSignature Language="C#" Value="public long Size { set; get; }" />
+      <MemberSignature Language="C#" Value="public long Size { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Size" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Mime.ContentDisposition.Size" /> property is used to send time stamp information with a file being sent in an e-mail message. The <see cref="T:System.Net.Mail.MailMessage" /> class is used to compose the message. The <see cref="T:System.Net.Mail.Attachment" /> class is used to attach a file to an e-mail message.</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of a file attachment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by the <see cref="M:System.Net.Mime.ContentDisposition.ToString" /> method is the Content-Disposition header.</para>
+          <para>The Content-Disposition header is described in RFC 2183 available at <see cref="http://www.ietf.org/">http://www.ietf.org</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> representation of this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the property values for this instance.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

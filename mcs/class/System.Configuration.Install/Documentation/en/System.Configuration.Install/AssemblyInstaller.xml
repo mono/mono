@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyInstaller" FullName="System.Configuration.Install.AssemblyInstaller">
   <TypeSignature Language="C#" Value="public class AssemblyInstaller : System.Configuration.Install.Installer" />
   <AssemblyInfo>
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Loads an assembly, and runs all the installers in it.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +23,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -35,10 +42,15 @@
         <Parameter Name="commandLine" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added.</param>
-        <param name="commandLine">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class, and specifies both the assembly to install and the command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object.</para>
+        </summary>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Assembly" /> to install. </param>
+        <param name="commandLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation. Can be a null value.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,10 +65,15 @@
         <Parameter Name="commandLine" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="commandLine">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class, and specifies both the file name of the assembly to install and the command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the assembly to install. </param>
+        <param name="commandLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation. Can be a null value.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +87,12 @@
         <ReturnType>System.Reflection.Assembly</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the assembly to install.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -89,9 +109,36 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Configuration.Install.AssemblyInstaller.CheckIfInstallable(System.String)" /> method determines whether the specified assembly can be installed. To avoid an exception being thrown, the file must meet the following criteria: </para>
+          <list type="bullet">
+            <item>
+              <para>The file exists.</para>
+            </item>
+            <item>
+              <para>The file is a .NET Framework assembly.</para>
+            </item>
+            <item>
+              <para>The public types can be read from the file.</para>
+            </item>
+            <item>
+              <para>There is at least one public, non abstract class that extends the <see cref="T:System.Configuration.Install.Installer" /> class and contains the <see cref="F:System.ComponentModel.RunInstallerAttribute.Yes" /> attribute.</para>
+            </item>
+            <item>
+              <para>An instance of each installer can be created.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>If the assembly is valid but contains no installers, an exception is thrown. This behavior differs from that at install time, when it is not an error to install an empty assembly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks to see if the specified assembly can be installed.</para>
+        </summary>
+        <param name="assemblyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly in which to search for installers. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,9 +152,12 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the command line to use when creating a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +174,17 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called only if the <see cref="M:System.Configuration.Install.AssemblyInstaller.Install(System.Collections.IDictionary)" /> methods of all the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> succeed. This method then calls the <see cref="M:System.Configuration.Install.AssemblyInstaller.Commit(System.Collections.IDictionary)" /> method of each installer in the collection.</para>
+          <para>Store any information that you might need to do a correct uninstall operation in the saved-state <see cref="T:System.Collections.IDictionary" />, which is passed to the <see cref="M:System.Configuration.Install.AssemblyInstaller.Uninstall(System.Collections.IDictionary)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the installation transaction.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers in the installer collection have run. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +198,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of an installation program is the InstallUtil.exe utility.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the help text for all the installers in the installer collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,9 +223,16 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls the <see cref="M:System.Configuration.Install.AssemblyInstaller.Install(System.Collections.IDictionary)" /> method of each installer contained in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property of this instance. The <see cref="T:System.Collections.IDictionary" /> object specified by the <paramref name="savedState" /> parameter is updated to reflect the status of the installation after the contained installers have run. If all the <see cref="M:System.Configuration.Install.AssemblyInstaller.Install(System.Collections.IDictionary)" /> methods succeed, the <see cref="M:System.Configuration.Install.AssemblyInstaller.Commit(System.Collections.IDictionary)" /> method is called. Otherwise, the <see cref="M:System.Configuration.Install.AssemblyInstaller.Rollback(System.Collections.IDictionary)" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the installation.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> used to save information needed to perform a commit, rollback, or uninstall operation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,9 +246,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path of the assembly to install.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +268,16 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A rollback restores the computer to the state it was in before the installation occurred. The <see cref="M:System.Configuration.Install.AssemblyInstaller.Rollback(System.Collections.IDictionary)" /> method is called if the <see cref="M:System.Configuration.Install.AssemblyInstaller.Install(System.Collections.IDictionary)" /> method of this <see cref="T:System.Configuration.Install.Installer" /> instance or of any installer in the installer collection fails to run correctly. Any exceptions generated by calling the <see cref="M:System.Configuration.Install.AssemblyInstaller.Rollback(System.Collections.IDictionary)" /> method of an installer in the collection are ignored, and the rollback of the other installers continues.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the computer to the state it was in before the installation.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,9 +294,19 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to remove a previously completed installation. If the <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> method fails for one of the installers in the collection, it is still called for the remaining installers. A failed uninstallation does not roll back the computer to its pre-uninstallation state.</para>
+          <block subset="none" type="note">
+            <para>Although the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" /> and <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" /> methods save the state of the computer after the installations, the file containing the <see cref="T:System.Collections.IDictionary" /> from the <paramref name="savedState" /> parameter might have been deleted at some point after the installation was complete. If the file is deleted, the <paramref name="savedState" /> parameter is null.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an installation.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the post-installation state of the computer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,9 +320,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to true creates a new file named "{Assembly name}.InstallLog" to log messages for this assembly. Setting <see cref="P:System.Configuration.Install.AssemblyInstaller.UseNewContext" /> to false prevents the new file from being created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to create a new <see cref="T:System.Configuration.Install.InstallContext" /> object for the assembly's installation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

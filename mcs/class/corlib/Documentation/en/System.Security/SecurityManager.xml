@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityManager" FullName="System.Security.SecurityManager">
   <TypeSignature Maintainer="auto" Language="C#" Value="public static class SecurityManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed SecurityManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,31 +14,194 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Security provides methods to access and manipulate the security policy configuration. You cannot create instances of <see cref="T:System.Security.SecurityManager" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the main access point for classes interacting with the security system. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CheckExecutionRights">
-      <MemberSignature Language="C#" Value="public static bool CheckExecutionRights { set; get; }" />
+      <MemberSignature Language="C#" Value="public static bool CheckExecutionRights { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool CheckExecutionRights" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is false, even code without <see cref="F:System.Security.Permissions.SecurityPermissionFlag.Execution" /> can execute. Execution checking is expensive and can eliminate the advantages of lazy policy resolution. This property is provided to disable execution checking when needed.</para>
+          <para>A change to this property is not persisted until <see cref="M:System.Security.SecurityManager.SavePolicy" /> is called. New processes will not be affected by the change until it is persisted in the registry.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether code must have <see cref="F:System.Security.Permissions.SecurityPermissionFlag.Execution" /> in order to execute.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentThreadRequiresSecurityContextCapture">
+      <MemberSignature Language="C#" Value="public static bool CurrentThreadRequiresSecurityContextCapture ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool CurrentThreadRequiresSecurityContextCapture() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Security.SecurityManager.CurrentThreadRequiresSecurityContextCapture" /> method before you cache sensitive data that is obtained after successful security demands. </para>
+          <para>If the <see cref="M:System.Security.CodeAccessPermission.Assert" /> method has been called higher on the stack, the data should not be cached without capturing the corresponding security context. Otherwise, sensitive data that is obtained under an <see cref="M:System.Security.CodeAccessPermission.Assert" /> may become available to code that is no longer be running with that <see cref="M:System.Security.CodeAccessPermission.Assert" /> in place.</para>
+          <block subset="none" type="note">
+            <para>The return value is reliable only when it is false, which means that the thread is guaranteed not to require a security context capture. The method may return true when a security context capture is not necessary, to avoid security vulnerabilities.</para>
+          </block>
+          <para>
+            <see cref="M:System.Security.SecurityManager.CurrentThreadRequiresSecurityContextCapture" /> is security-critical because its main use is to avoid unnecessary security context captures, which indicates that the code using it is security-sensitive and must be audited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current thread requires a security context capture if its security state has to be re-created at a later point in time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false if the stack contains no partially trusted application domains, no partially trusted assemblies, and no currently active <see cref="M:System.Security.CodeAccessPermission.PermitOnly" /> or <see cref="M:System.Security.CodeAccessPermission.Deny" /> modifiers; true if the common language runtime cannot guarantee that the stack contains none of these. </para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStandardSandbox">
+      <MemberSignature Language="C#" Value="public static System.Security.PermissionSet GetStandardSandbox (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.PermissionSet GetStandardSandbox(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.PermissionSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the net_v40_long, the host evidence in <paramref name="evidence" /> must contain <see cref="T:System.Security.Policy.Zone" /> evidence.</para>
+            <para>The following table shows the permission sets that are returned for each zone.</para>
+          </block>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Zone </para>
+                </term>
+                <description>
+                  <para>Permission set</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.SecurityZone.MyComputer" /> </para>
+              </term>
+              <description>
+                <para>FullTrust</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.SecurityZone.Intranet" /> </para>
+              </term>
+              <description>
+                <para>LocalIntranet</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.SecurityZone.Trusted" /> </para>
+              </term>
+              <description>
+                <para>Internet</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.SecurityZone.Internet" /> </para>
+              </term>
+              <description>
+                <para>Internet</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.SecurityZone.Untrusted" /> </para>
+              </term>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Security.SecurityZone.NoZone" /> </para>
+              </term>
+              <description>
+                <para>None</para>
+              </description>
+            </item>
+          </list>
+          <para>Other evidence, such as <see cref="T:System.Security.Policy.Url" /> or <see cref="T:System.Security.Policy.Site" />, may be considered.</para>
+          <para>The returned permission set can be used by a sandbox to run the application. Note that this method does not specify policy, but helps a host to determine whether the permission set requested by an application is reasonable. This method can be used to map a zone to a sandbox.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a permission set that is safe to grant to an application that has the provided evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A permission set that can be used as a grant set for the application that has the provided evidence.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host evidence to match to a permission set.</param>
+      </Docs>
     </Member>
     <Member MemberName="GetZoneAndOrigin">
       <MemberSignature Language="C#" Value="public static void GetZoneAndOrigin (out System.Collections.ArrayList zone, out System.Collections.ArrayList origin);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void GetZoneAndOrigin(class System.Collections.ArrayList zone, class System.Collections.ArrayList origin) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -50,15 +215,21 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsGranted">
+      <MemberSignature Language="C#" Value="public static bool IsGranted (System.Security.IPermission perm);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsGranted(class System.Security.IPermission perm) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsGranted">
-      <MemberSignature Language="C#" Value="public static bool IsGranted (System.Security.IPermission perm);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -66,20 +237,36 @@
         <Parameter Name="perm" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="perm">To be added: an object of type 'IPermission'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Granting of permissions is determined by policy and is different from a demand subject to overrides, such as an assert. Also, <see cref="M:System.Security.SecurityManager.IsGranted(System.Security.IPermission)" /> only tests the grant of the calling code assembly, independent of other callers on the stack.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a permission is granted to the caller.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the permissions granted to the caller include the permission <paramref name="perm" />; otherwise, false.</para>
+        </returns>
+        <param name="perm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The permission to test against the grant of the caller. </param>
       </Docs>
+    </Member>
+    <Member MemberName="LoadPolicyLevelFromFile">
+      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel LoadPolicyLevelFromFile (string path, System.Security.PolicyLevelType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Policy.PolicyLevel LoadPolicyLevelFromFile(string path, valuetype System.Security.PolicyLevelType type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LoadPolicyLevelFromFile">
-      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel LoadPolicyLevelFromFile (string path, System.Security.PolicyLevelType type);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyLevel</ReturnType>
       </ReturnValue>
@@ -88,21 +275,35 @@
         <Parameter Name="type" Type="System.Security.PolicyLevelType" />
       </Parameters>
       <Docs>
-        <param name="path">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'PolicyLevelType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Policy.PolicyLevel'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.Security.Policy.PolicyLevel" /> from the specified file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded policy level.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical file path to a file containing the security policy information. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of the policy level to be loaded. </param>
       </Docs>
+    </Member>
+    <Member MemberName="LoadPolicyLevelFromString">
+      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel LoadPolicyLevelFromString (string str, System.Security.PolicyLevelType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Policy.PolicyLevel LoadPolicyLevelFromString(string str, valuetype System.Security.PolicyLevelType type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LoadPolicyLevelFromString">
-      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel LoadPolicyLevelFromString (string str, System.Security.PolicyLevelType type);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyLevel</ReturnType>
       </ReturnValue>
@@ -111,39 +312,69 @@
         <Parameter Name="type" Type="System.Security.PolicyLevelType" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'PolicyLevelType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Policy.PolicyLevel'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.Security.Policy.PolicyLevel" /> from the specified string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded policy level.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML representation of a security policy level in the same form in which it appears in a configuration file. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of the policy level to be loaded. </param>
       </Docs>
+    </Member>
+    <Member MemberName="PolicyHierarchy">
+      <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator PolicyHierarchy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.IEnumerator PolicyHierarchy() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PolicyHierarchy">
-      <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator PolicyHierarchy ();" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned enumerator provides successive <see cref="T:System.Security.Policy.PolicyLevel" /> objects that represent the policy at the respective (machine, user, enterprise, application domain) level of the hierarchy. These objects are the live policy objects; altering these objects can have unpredictable results.</para>
+          <para>Minimum policy hierarchy consists of a machine level, an enterprise level, and a user level. However, the hierarchy can include additional levels.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an enumerator to access the security policy hierarchy by levels, such as computer policy and user policy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for <see cref="T:System.Security.Policy.PolicyLevel" /> objects that compose the security policy hierarchy.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ResolvePolicy">
+      <MemberSignature Language="C#" Value="public static System.Security.PermissionSet ResolvePolicy (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.PermissionSet ResolvePolicy(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ResolvePolicy">
-      <MemberSignature Language="C#" Value="public static System.Security.PermissionSet ResolvePolicy (System.Security.Policy.Evidence evidence);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.PermissionSet</ReturnType>
       </ReturnValue>
@@ -151,20 +382,35 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Policy.Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PermissionSet'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method invokes the security policy engine, providing it with evidence of the calling code's identity. The result is determined by the security policy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines what permissions to grant to code based on the specified evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of permissions that can be granted by the security system.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence set used to evaluate policy. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolvePolicy">
       <MemberSignature Language="C#" Value="public static System.Security.PermissionSet ResolvePolicy (System.Security.Policy.Evidence[] evidences);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.PermissionSet ResolvePolicy(class System.Security.Policy.Evidence[] evidences) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.PermissionSet</ReturnType>
       </ReturnValue>
@@ -172,20 +418,37 @@
         <Parameter Name="evidences" Type="System.Security.Policy.Evidence[]" />
       </Parameters>
       <Docs>
-        <param name="evidences">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method invokes the security policy engine, providing it with an array of <see cref="T:System.Security.Policy.Evidence" /> objects. The returned permission set represents only those permissions that apply to every evidence in the array. These permissions are either equivalent to, or a subset of the permissions that policy would have granted to each individual evidence. This method behaves as if you were performing an intersection on the results of resolving policy on each of the <see cref="T:System.Security.Policy.Evidence" /> objects in the array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines what permissions to grant to code based on the specified evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of permissions that is appropriate for all of the provided evidence.</para>
+        </returns>
+        <param name="evidences">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of evidence objects used to evaluate policy. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolvePolicy">
       <MemberSignature Language="C#" Value="public static System.Security.PermissionSet ResolvePolicy (System.Security.Policy.Evidence evidence, System.Security.PermissionSet reqdPset, System.Security.PermissionSet optPset, System.Security.PermissionSet denyPset, out System.Security.PermissionSet denied);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.PermissionSet ResolvePolicy(class System.Security.Policy.Evidence evidence, class System.Security.PermissionSet reqdPset, class System.Security.PermissionSet optPset, class System.Security.PermissionSet denyPset, class System.Security.PermissionSet denied) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.PermissionSet</ReturnType>
       </ReturnValue>
@@ -206,15 +469,21 @@
         <returns>To be added: an object of type 'PermissionSet'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ResolvePolicyGroups">
+      <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator ResolvePolicyGroups (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.IEnumerator ResolvePolicyGroups(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ResolvePolicyGroups">
-      <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator ResolvePolicyGroups (System.Security.Policy.Evidence evidence);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
@@ -222,20 +491,36 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Policy.Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful in analyzing how a specified policy configuration works with specific kinds of evidence.</para>
+          <para>Code groups will be returned from all applicable levels of the policy hierarchy matching the <paramref name="evidence" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of code groups matching the specified evidence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumeration of the set of code groups matching the evidence.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence set against which the policy is evaluated. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveSystemPolicy">
       <MemberSignature Language="C#" Value="public static System.Security.PermissionSet ResolveSystemPolicy (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.PermissionSet ResolveSystemPolicy(class System.Security.Policy.Evidence evidence) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Security.PermissionSet</ReturnType>
       </ReturnValue>
@@ -243,37 +528,66 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method invokes the security policy engine and provides it with evidence of the calling code's identity. The result is determined by the system security policy exclusive of any <see cref="T:System.AppDomain" /> policy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines which permissions to grant to code based on the specified evidence, excluding the policy for the <see cref="T:System.AppDomain" /> level.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of permissions that can be granted by the security system.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence set used to evaluate policy.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SavePolicy">
       <MemberSignature Language="C#" Value="public static void SavePolicy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SavePolicy() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method saves the policy as exposed by <see cref="M:System.Security.SecurityManager.PolicyHierarchy" />, <see cref="T:System.Security.Policy.PolicyLevel" />, and other classes that represent configuration of the security policy. Unless this method is called, changes made to the policy objects will not be saved and will not affect subsequent application runs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the modified security policy state.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SavePolicyLevel">
       <MemberSignature Language="C#" Value="public static void SavePolicyLevel (System.Security.Policy.PolicyLevel level);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SavePolicyLevel(class System.Security.Policy.PolicyLevel level) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -281,36 +595,22 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <param name="level">To be added: an object of type 'Policy.PolicyLevel'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Policy.PolicyLevel" /> will be saved to the same location from which it loaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves a modified security policy level loaded with <see cref="M:System.Security.SecurityManager.LoadPolicyLevelFromFile(System.String,System.Security.PolicyLevelType)" />.</para>
+        </summary>
+        <param name="level">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy level object to be saved. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SecurityEnabled">
-      <MemberSignature Language="C#" Value="public static bool SecurityEnabled { set; get; }" />
+      <MemberSignature Language="C#" Value="public static bool SecurityEnabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool SecurityEnabled" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Enable, or disable, the security manager.</summary>
-        <value>True to activate the security manager. False to disable the security manager.</value>
-        <remarks>
-          <para>By default the security manager is *OFF* in Mono. You can activate the security manager by supplying the --security switch to mono.
-<example><code>% mono --security hello.exe
-hello world!
-</code></example></para>
-          <para>
-            <b>Note that Mono's security manager is experimental and not for production use.</b>
-          </para>
-          <para>On MS runtime 2.0 and later the security manager <b>cannot</b> be turned off using this property.</para>
-        </remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -321,11 +621,27 @@ hello world!
           <AttributeName>System.Obsolete("The security manager cannot be turned off on MS runtime")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>True to activate the security manager. False to disable the security manager.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by the <format type="text/html"><a href="d2bf6123-7b0c-4e60-87ad-a39a1c3eb2e0">Caspol.exe (Code Access Security Policy Tool)</a></format> </para>
+          <para>-security (-s) option to turn off code-based security.</para>
+          <para>
+            <see cref="P:System.Security.SecurityManager.SecurityEnabled" /> provides a way for administrators to disable code access security. When code access security is disabled, all code access demands succeed. Effectively, this grants all code FullTrust. Disabling code access security bypasses the security system so that code might perform slightly better than the equivalent security policy granting FullTrust to all code. This property does not disable role-based security; therefore, <see cref="T:System.Security.Permissions.PrincipalPermission" /> demands are not affected.</para>
+          <block subset="none" type="note">
+            <para>Disabling code access security makes the system vulnerable to attacks by malicious code such as viruses and worms. Disabling code access security does not automatically block managed code from running in any way. It only causes managed code to run without restriction by the code access security system, and should only be done with the most extreme caution. Turning off security to gain extra performance should only be done when other security measures have been taken to help protect system security. Examples of other security precautions include disconnecting from public networks, physically securing computers, and so on.</para>
+          </block>
+          <para>A change to this property is not persisted in the registry until <see cref="M:System.Security.SecurityManager.SavePolicy" /> is called. New processes will not be affected by the change until it is persisted in the registry. Changing the value of this property in a running process does not necessarily change the state in the expected manner. To ensure changes have taken effect, you must call <see cref="M:System.Security.SecurityManager.SavePolicy" /> and start a new process.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether security is enabled.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

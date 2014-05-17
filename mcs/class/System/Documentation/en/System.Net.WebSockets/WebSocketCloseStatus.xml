@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WebSocketCloseStatus" FullName="System.Net.WebSockets.WebSocketCloseStatus">
+  <TypeSignature Language="C#" Value="public enum WebSocketCloseStatus" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WebSocketCloseStatus extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents well known WebSocket close codes as defined in <see cref="http://www.rfc-editor.org/rfc/rfc6455.txt">section 11.7</see> of the WebSocket protocol spec.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Empty">
+      <MemberSignature Language="C#" Value="Empty" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus Empty = int32(1004)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No error specified.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndpointUnavailable">
+      <MemberSignature Language="C#" Value="EndpointUnavailable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus EndpointUnavailable = int32(1001)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1001) Indicates an endpoint is being removed. Either the server or client will become unavailable.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InternalServerError">
+      <MemberSignature Language="C#" Value="InternalServerError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus InternalServerError = int32(1011)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection will be closed by the server because of an error on the server.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InvalidMessageType">
+      <MemberSignature Language="C#" Value="InvalidMessageType" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus InvalidMessageType = int32(1003)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1003) The client or server is terminating the connection because it cannot accept the data type it received.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InvalidPayloadData">
+      <MemberSignature Language="C#" Value="InvalidPayloadData" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus InvalidPayloadData = int32(1007)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1007) The client or server is terminating the connection because it has received data inconsistent with the message type.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MandatoryExtension">
+      <MemberSignature Language="C#" Value="MandatoryExtension" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus MandatoryExtension = int32(1010)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1010) The client is terminating the connection because it expected the server to negotiate an extension.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageTooBig">
+      <MemberSignature Language="C#" Value="MessageTooBig" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus MessageTooBig = int32(1004)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1004) Reserved for future use.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NormalClosure">
+      <MemberSignature Language="C#" Value="NormalClosure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus NormalClosure = int32(1000)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1000) The connection has closed after the request was fulfilled.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PolicyViolation">
+      <MemberSignature Language="C#" Value="PolicyViolation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus PolicyViolation = int32(1008)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1008) The connection will be closed because an endpoint has received a message that violates its policy.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProtocolError">
+      <MemberSignature Language="C#" Value="ProtocolError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebSockets.WebSocketCloseStatus ProtocolError = int32(1002)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.WebSockets.WebSocketCloseStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>(1002) The client or server is terminating the connection because of a protocol error.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

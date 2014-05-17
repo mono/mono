@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{82E0F554-0C45-4529-894D-D3074C177053}</ProjectGuid>
+    <ProjectGuid>{1FE45C8C-1411-4C7E-BBF4-6C2F816239BE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1030,169,219,618,672</NoWarn>
     <OutputPath>bin\Debug\Mono.Security-tests-net_2_0</OutputPath>
@@ -98,22 +98,25 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
-      <Project>{6785B2B5-3B06-48F3-9E6C-99B23B9AAC4F}</Project>
+      <Project>{57CFE851-81AC-4269-B24A-965A53D87248}</Project>
       <Name>Mono.Security\Mono.Security-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0.csproj">
-      <Project>{245C754C-D6DE-4434-BA78-37A93E196236}</Project>
+      <Project>{5A346705-1044-48F2-987D-CAE22A255427}</Project>
       <Name>System\System-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -121,3 +124,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

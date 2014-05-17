@@ -37,6 +37,12 @@ typedef struct {
 	char    msdos_header2 [64];
 } MonoMSDOSHeader;
 
+/* Possible values for coff_machine */
+#define COFF_MACHINE_I386 332
+#define COFF_MACHINE_IA64 512
+#define COFF_MACHINE_AMD64 34404
+#define COFF_MACHINE_ARM 452
+
 /* 20 bytes */
 typedef struct {
 	guint16  coff_machine;
@@ -289,6 +295,7 @@ typedef struct {
 #define CLI_FLAGS_ILONLY         0x01
 #define CLI_FLAGS_32BITREQUIRED  0x02
 #define CLI_FLAGS_STRONGNAMESIGNED 0x8
+#define CLI_FLAGS_PREFERRED32BIT  0x10
 #define CLI_FLAGS_TRACKDEBUGDATA 0x00010000
 	guint32        ch_flags;
 

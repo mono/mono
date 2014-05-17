@@ -4,26 +4,6 @@ include ../../build/rules.make
 
 LIBRARY = System.Web.dll
 
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
-
-LIBRARY_USE_INTERMEDIATE_FILE = yes
-
-# Because System.Web.dll and System.Web.Services.dll have a cyclic dependency, we need a two-pass build.
-# 1st pass - build System.Web.dll without System.Web.Services.dll reference
-# 2nd pass - build System.Web.dll with System.Web.Services.dll reference
-
-WEBSERVICES_DEP := System.Web.Services.dll
-WEBSERVICES_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(WEBSERVICES_DEP))
-MONOWEB_DEP := Mono.Web.dll
-MONOWEB_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(MONOWEB_DEP))
-ifndef NO_SYSTEMCORE_DEP
-SYSTEMCORE_DEP := System.Core.dll
-SYSTEMCORE_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SYSTEMCORE_DEP))
-endif
-CYCLIC_DEPS := $(WEBSERVICES_DEP) $(MONOWEB_DEP) 
-CYCLIC_DEP_FILES := $(WEBSERVICES_DEP_FILE) $(MONOWEB_DEP_FILE)
-endif
-
 RESOURCE_FILES_1= \
 	resources/WebUIValidation.js
 
@@ -269,6 +249,7 @@ LIB_MCS_FLAGS = \
 	-nowarn:612,618	\
 	-r:$(corlib)	 		\
 	-r:System.dll 			\
+	-r:System.Core.dll		\
 	-r:System.Drawing.dll 		\
 	-r:System.Data.dll		\
 	-r:System.Xml.dll		\
@@ -278,23 +259,11 @@ LIB_MCS_FLAGS = \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
 
-ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
-NO_SIGN_ASSEMBLY = yes
-NO_INSTALL = yes
-all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources echo-warning echo-warning-systemcore
-.PHONY: echo-warning echo-warning-systemcore
+ifneq (plainweb/,$(intermediate))
+LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:System.Web.Services.dll
 
-ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
-echo-warning:
-	@echo "** Warning: System.Web.dll built without parts that depend on: $(CYCLIC_DEPS)"
-endif
-endif
+all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
 
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-ifndef SYSTEMCORE_DEP_FILE
-echo-warning-systemcore:
-	@echo "** Warning: System.Web.dll built without parts that depend on $(SYSTEMCORE_DEP)"
-endif
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 -r:SystemWebTestShim.dll \
@@ -329,20 +298,18 @@ BUILT_SOURCES = System.Web/UplevelHelper.cs
 
 include ../../build/library.make
 
-ifdef WEBSERVICES_DEP_FILE
-LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:$(WEBSERVICES_DEP)
-$(build_lib): $(WEBSERVICES_DEP_FILE)
+$(the_libdir_base)System.Web.dll: $(the_libdir_base)System.Web.Services.dll
+
+$(the_libdir_base)System.Web.Services.dll:
+	(cd ../System.Web.Services; $(MAKE) $@)
+
+ifneq (plainweb/,$(intermediate))
+$(the_libdir_base)plainweb/System.Web.dll:
+	$(MAKE) intermediate=plainweb/ $(the_libdir_base)plainweb/System.Web.dll
+
 endif
 
-ifdef MONOWEB_DEP_FILE
-LIB_MCS_FLAGS += -define:MONOWEB_DEP -r:$(MONOWEB_DEP)
-$(build_lib): $(MONOWEB_DEP_FILE)
-endif
-
-ifdef SYSTEMCORE_DEP_FILE
-LIB_MCS_FLAGS += -define:SYSTEMCORE_DEP -r:$(SYSTEMCORE_DEP)
-$(build_lib): $(SYSTEMCORE_DEP_FILE)
-endif
+.NOTPARALLEL: $(the_libdir_base)plainweb/System.Web.dll $(the_libdir_base)System.Web.Services.dll
 
 ifdef DEBUG
 LIB_MCS_FLAGS += -define:DEBUG

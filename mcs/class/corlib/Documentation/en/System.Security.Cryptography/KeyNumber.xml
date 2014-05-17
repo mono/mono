@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyNumber" FullName="System.Security.Cryptography.KeyNumber">
   <TypeSignature Language="C#" Value="public enum KeyNumber" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed KeyNumber extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,40 +16,62 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Security.Cryptography.KeyNumber" /> enumeration with the <see cref="P:System.Security.Cryptography.CspKeyContainerInfo.KeyNumber" /> property to inspect a key type or with the <see cref="F:System.Security.Cryptography.CspParameters.KeyNumber" /> field to specify a key type. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether to create an asymmetric signature key or an asymmetric exchange key. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Exchange">
       <MemberSignature Language="C#" Value="Exchange" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.KeyNumber Exchange = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.KeyNumber</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.KeyNumber</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value corresponds to the AT_KEYEXCHANGE value used in the unmanaged Microsoft Cryptographic API (CAPI). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exchange key pair used to encrypt session keys so that they can be safely stored and exchanged with other users.  </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Signature">
       <MemberSignature Language="C#" Value="Signature" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.KeyNumber Signature = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.KeyNumber</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.KeyNumber</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value corresponds to the AT_SIGNATURE value used in the unmanaged Microsoft Cryptographic API (CAPI).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signature key pair used for authenticating digitally signed messages or files.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

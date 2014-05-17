@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IHierarchicalEnumerable" FullName="System.Web.UI.IHierarchicalEnumerable">
   <TypeSignature Language="C#" Value="public interface IHierarchicalEnumerable : System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -10,9 +11,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> interface extends the <see cref="T:System.Collections.IEnumerable" /> interface and exposes <see cref="M:System.Web.UI.IHierarchicalEnumerable.GetHierarchyData(System.Object)" />, which is a method used to retrieve an <see cref="T:System.Web.UI.IHierarchyData" /> object from an enumerated item, in addition to the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method.</para>
+      <para>Typically, clients that use <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collections retrieve an <see cref="T:System.Collections.IEnumerator" /> object by calling the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method, then iterate through the enumeration and call the <see cref="M:System.Web.UI.IHierarchicalEnumerable.GetHierarchyData(System.Object)" /> on each enumerated item to retrieve an <see cref="T:System.Web.UI.IHierarchyData" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a hierarchical collection that can be enumerated with an <see cref="T:System.Collections.IEnumerator" /> interface. Collections that implement the <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> interface are used by ASP.NET site navigation and data source controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetHierarchyData">
@@ -25,11 +33,21 @@
         <Parameter Name="enumeratedItem" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="enumeratedItem">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, clients that use <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collections retrieve an <see cref="T:System.Collections.IEnumerator" /> object by calling the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method, then iterate through the enumeration and call the <see cref="M:System.Web.UI.IHierarchicalEnumerable.GetHierarchyData(System.Object)" /> method on each enumerated item to retrieve an <see cref="T:System.Web.UI.IHierarchyData" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hierarchical data item for the specified enumerated item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchyData" /> instance that represents the <see cref="T:System.Object" /> passed to the <see cref="M:System.Web.UI.IHierarchicalEnumerable.GetHierarchyData(System.Object)" /> method.</para>
+        </returns>
+        <param name="enumeratedItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which to return an <see cref="T:System.Web.UI.IHierarchyData" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

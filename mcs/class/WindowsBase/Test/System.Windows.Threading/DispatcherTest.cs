@@ -134,6 +134,100 @@ namespace MonoTests.System.Windows.Threading
 			if (fail)
 				throw new Exception ("Expected all states to run");
 		}
+
+		[Test]
+		public void TestTwoArguments()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+
+			d.BeginInvoke (DispatcherPriority.Normal, (Action<int, string>) delegate(int arg1, string arg2) {
+				Assert.AreEqual(10, arg1, "arg1");
+				Assert.AreEqual("OK", arg2, "arg2");
+				frame.Continue = false;
+			}, 10, "OK");
+
+			Dispatcher.PushFrame(frame);
+		}
+
+		[Test]
+		public void TestRunTwice()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			Action exit = delegate { Dispatcher.ExitAllFrames(); };
+			int counter = 0;
+			Action increment = delegate { counter++; };
+
+			d.BeginInvoke(DispatcherPriority.Normal, exit);
+			Dispatcher.Run();
+			d.BeginInvoke(DispatcherPriority.Normal, increment);
+			d.BeginInvoke(DispatcherPriority.Normal, increment);
+			d.BeginInvoke(DispatcherPriority.Normal, exit);
+			Dispatcher.Run();
+
+			Assert.AreEqual(2, counter, "Counter of delegate invocation");
+		}
+
+		[Test]
+		public void TestStopIfContinueIsFalse()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+			int counter = 0;
+
+			d.BeginInvoke(DispatcherPriority.Normal, (Action) delegate {
+				counter++;
+			});
+			d.BeginInvoke(DispatcherPriority.Normal, (Action) delegate {
+				Dispatcher.ExitAllFrames();
+			});
+
+			frame.Continue = false;
+			Dispatcher.PushFrame(frame);
+			Assert.AreEqual(0, counter, "Counter of delegate invocation");
+			frame.Continue = true;
+			Dispatcher.PushFrame(frame);
+			Assert.AreEqual(1, counter, "Counter of delegate invocation");
+		}
+
+		//
+		// When a Dispatcher exits due to 'frame.Continue' being false,
+		// it should not try to deque the same operation second time.
+		//
+		[Test]
+		public void TestOperationDequeue()
+		{
+
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+			Action exit = delegate { frame.Continue = false; };
+
+			d.BeginInvoke(DispatcherPriority.Normal, exit);
+			Dispatcher.PushFrame(frame);
+
+			frame = new DispatcherFrame();
+			d.BeginInvoke(DispatcherPriority.Background, exit);
+			Dispatcher.PushFrame(frame);
+		}
+
+		[Test]
+		public void TestPreemptedByHigherPriorityTask()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+			int counter = 0;
+			Action increment = delegate { counter++; };
+
+			d.BeginInvoke(DispatcherPriority.Normal, (Action) delegate {
+				d.BeginInvoke(DispatcherPriority.Send, increment);
+			});
+			d.BeginInvoke(DispatcherPriority.Background, (Action) delegate {
+				frame.Continue = false;
+			});
+
+			Dispatcher.PushFrame(frame);
+			Assert.AreEqual(1, counter, "Counter of delegate invocation");
+		}
 	}
 }
 

@@ -1,145 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SocketAsyncOperation" FullName="System.Net.Sockets.SocketAsyncOperation">
   <TypeSignature Language="C#" Value="public enum SocketAsyncOperation" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SocketAsyncOperation extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type describes the asynchronous socket operation that was most recently completed using a <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object. The value of the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.LastOperation" /> property is set to <see cref="F:System.Net.Sockets.SocketAsyncOperation.None" /> until the <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> instance is used to begin an asynchronous socket operation. The property will then be set to the type of asynchronous operation being performed. This type more easily facilitates using a single completion callback delegate for multiple kinds of asynchronous socket operations. This type is intended for use in the SocketAsyncCallback completion routine. </para>
+      <para>The <see cref="T:System.Net.Sockets.SocketAsyncOperation" /> type is used by the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.LastOperation" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The type of asynchronous socket operation most recently performed with this context object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Accept">
       <MemberSignature Language="C#" Value="Accept" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Accept = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket Accept operation. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Connect">
       <MemberSignature Language="C#" Value="Connect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Connect = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket Connect operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
       <MemberSignature Language="C#" Value="Disconnect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Disconnect = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket Disconnect operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None of the socket operations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Receive">
       <MemberSignature Language="C#" Value="Receive" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Receive = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket Receive operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiveFrom">
       <MemberSignature Language="C#" Value="ReceiveFrom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation ReceiveFrom = int32(5)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket ReceiveFrom operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiveMessageFrom">
       <MemberSignature Language="C#" Value="ReceiveMessageFrom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation ReceiveMessageFrom = int32(6)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket ReceiveMessageFrom operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="Send" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Send = int32(7)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket Send operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendPackets">
       <MemberSignature Language="C#" Value="SendPackets" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation SendPackets = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket SendPackets operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendTo">
       <MemberSignature Language="C#" Value="SendTo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation SendTo = int32(9)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A socket SendTo operation.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

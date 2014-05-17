@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DllImportAttribute" FullName="System.Runtime.InteropServices.DllImportAttribute" FullNameSP="System_Runtime_InteropServices_DllImportAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed DllImportAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class DllImportAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit DllImportAttribute extends System.Attribute" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,26 +25,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Indicates that the target method of this attribute is an export from an unmanaged shared library.</para>
-    </summary>
-    <remarks>
-      <para> This attribute provides the information needed to call
-      a method exported from an unmanaged shared library. This attribute provides the name of the
-      shared library file, the name of the method within that library, the calling convention, and character set of the
-      unmanaged function.</para>
-      <para>
-        <block subset="none" type="note">A shared library refers
-      to Dynamically Linked Libraries on Windows systems, and Shared Libraries on
-      Unix systems.</block>
-      </para>
-      <para>Compilers are required to not preserve this type 
-      in metadata as a custom attribute. Instead, compilers are required to emit it
-      directly in the file format, as described in Partition II of the CLI
-      Specification. Metadata consumers, such as the Reflection API, are required to
-      retrieve this data from the file format and return it as if it were a custom
-      attribute. </para>
-    </remarks>
     <example>
       <para>The following example demonstrates the use of the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />.</para>
       <para>
@@ -86,238 +68,361 @@ public class DllImportAttributeTest {
         <para>The Date and Time is: 05/16/2001 at 11:39:17</para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to methods.</para>
+      <para>The <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> attribute provides the information needed to call a function exported from an unmanaged DLL. As a minimum requirement, you must supply the name of the DLL containing the entry point.</para>
+      <para>You apply this attribute directly to C# and C++ method definitions; however, the Visual Basic compiler emits this attribute when you use the Declare statement. For complex method definitions that include <see cref="F:System.Runtime.InteropServices.DllImportAttribute.BestFitMapping" />, <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CallingConvention" />, <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ExactSpelling" />, <see cref="F:System.Runtime.InteropServices.DllImportAttribute.PreserveSig" />, <see cref="F:System.Runtime.InteropServices.DllImportAttribute.SetLastError" />, or <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ThrowOnUnmappableChar" /> fields, you apply this attribute directly to Visual Basic method definitions.</para>
+      <para>Note   JScript does not support this attribute. You can use C# or Visual Basic wrapper classes to access unmanaged API methods from JScript programs.</para>
+      <para>For additional information about using the platform invoke service to access functions in unmanaged DLLs, see <format type="text/html"><a href="ECA7606E-EBFB-4F47-B8D9-289903FDC045">[&lt;topic://cpconconsumingunmanageddllfunctions&gt;]</a></format>.</para>
+      <block subset="none" type="note">
+        <para> The <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> does not support marshaling of generic types.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the attributed method is exposed by an unmanaged dynamic-link library (DLL) as a static entry point.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string dllName)" />
       <MemberSignature Language="C#" Value="public DllImportAttribute (string dllName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string dllName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="dllName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dllName">A <see cref="T:System.String" /> that specifies the name of the shared library containing the unmanaged method to import.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />
-class.</para>
-        </summary>
         <remarks>
-          <para>If the shared library specified in <paramref name="dllName" /> is not found, an error
-   occurs at runtime.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an unmanaged DLL file is included in an assembly, for example, by using the linker or the /linkresource compiler option, you can specify the assembly display name as part of <paramref name="dllName" />. For example, if an unmanaged DLL named unmanaged.dll is included in a managed assembly named MyAssembly, the attribute might be specified as shown in the following code.</para>
+          <para>code reference: System.Runtime.InteropServices.DllImportAttribute#2</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> class with the name of the DLL containing the method to import.</para>
+        </summary>
+        <param name="dllName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the DLL that contains the unmanaged method. This can include an assembly display name, if the DLL is included in an assembly.</param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BestFitMapping">
+      <MemberSignature Language="C#" Value="public bool BestFitMapping;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool BestFitMapping" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BestFitMapping">
-      <MemberSignature Language="C#" Value="public bool BestFitMapping;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, best-fit mapping behavior is enabled; otherwise, best-fit mapping is disabled. The <see cref="F:System.Runtime.InteropServices.DllImportAttribute.BestFitMapping" /> field is true by default. Settings for this field override the any level settings for the <see cref="T:System.Runtime.InteropServices.BestFitMappingAttribute" /> attribute.</para>
+          <para>The common language runtime converts to ANSI characters any managed Unicode characters passed to an unmanaged method executing on Windows 98 or Windows Me. Best-fit mapping enables the interop marshaler to provide a close-matching character when no exact match exists. For example, the marshaler converts the Unicode copyright character to 'c' for unmanaged methods that accept ANSI characters. Some characters lack a best-fit representation; these characters are called unmappable. Unmappable characters are usually converted to the default '?' ANSI character.</para>
+          <block subset="none" type="note">
+            <para>Certain Unicode characters are converted to dangerous characters, such as the backslash '\' character, which can inadvertently change a path. By setting the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ThrowOnUnmappableChar" /> field to true, you can signal the presence of an unmappable character to the caller by throwing an exception.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>You cannot change the default values provided by the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.BestFitMapping" /> and <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ThrowOnUnmappableChar" /> fields when passing a managed array whose elements are ANSI Chars or LPSTRs to an unmanaged safe array. Best-fit mapping is always enabled and no exception is thrown. Be aware that this combination can compromise your security model.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables or disables best-fit mapping behavior when converting Unicode characters to ANSI characters.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CallingConvention">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CallingConvention CallingConvention;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CallingConvention">
-      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CallingConvention CallingConvention;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CallingConvention</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> A <see cref="T:System.Runtime.InteropServices.CallingConvention" /> 
-value that specifies the calling convention used when passing arguments to
-the unmanaged implementation of a method in a
-shared library.</para>
-        </summary>
         <remarks>
-          <para> The default
-   <see cref="T:System.Runtime.InteropServices.CallingConvention" /> value
-      is <see cref="F:System.Runtime.InteropServices.CallingConvention.StdCall" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You set this field to one of the <see cref="T:System.Runtime.InteropServices.CallingConvention" /> enumeration members. The default value for the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CallingConvention" /> field is <see cref="F:System.Runtime.InteropServices.CallingConvention.Winapi" />, which in turn defaults to <see cref="F:System.Runtime.InteropServices.CallingConvention.StdCall" /> convention.</para>
+          <para>For more information, see Calling Convention in the MSDN library.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the calling convention of an entry point.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CharSet">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CharSet">
-      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>A <see cref="T:System.Runtime.InteropServices.CharSet" /> value that controls function name modification and indicates how the <see cref="T:System.String" /> arguments to the method will be
-   marshaled.</para>
-        </summary>
         <remarks>
-          <para>This field is set to one of the <see cref="T:System.Runtime.InteropServices.CharSet" /> values to indicate the
-   required modifications to the name of the imported function and to the <see cref="T:System.String" /> arguments of the
-   function. The default value for <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> is <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
-          <para>If <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> is set to <see cref="F:System.Runtime.InteropServices.CharSet.Unicode" />, all string arguments
-are converted to Unicode characters before being passed to the unmanaged
-implementation. If the
-field is set to <see cref="F:System.Runtime.InteropServices.CharSet.Ansi" /> the string characters
-are converted to ANSI characters. If <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> is set to <see cref="F:System.Runtime.InteropServices.CharSet.Auto" />, the <see cref="T:System.String" /> and function name
-conversion is platform dependent.</para>
-          <para>The <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> field might 
-also be used to determine which version of a function is imported from the
-specified shared library by modifying the provided name of the function.
-The name modification is platform specific, and includes
-   additional characters to indicate the character set.</para>
-          <para>The default value of this field is
-<see cref="F:System.Runtime.InteropServices.CharSet.Ansi" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this field with a member of the <see cref="T:System.Runtime.InteropServices.CharSet" /> enumeration to specify the marshaling behavior of string parameters and to specify which entry-point name to invoke (the exact name given or a name ending with "A" or "W"). The default enumeration member for C# and Visual Basic is CharSet.Ansi and the default enumeration member for C++ is CharSet.None, which is equivalent to CharSet.Ansi. In Visual Basic, you use the Declare statement to specify the CharSet field.</para>
+          <para>The <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ExactSpelling" /> field influences the behavior of the CharSet field in determining which entry-point name to invoke. For a detailed description and examples of the string marshaling and name matching behavior associated with the CharSet field, see <format type="text/html"><a href="A8347EB1-295F-46B9-8A78-63331F9ECC50">Specifying a Character Set</a></format>.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates how to marshal string parameters to the method and controls name mangling.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EntryPoint">
       <MemberSignature Language="ILASM" Value=".field public string EntryPoint" />
       <MemberSignature Language="C#" Value="public string EntryPoint;" />
+      <MemberSignature Language="ILAsm" Value=".field public string EntryPoint" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> A <see cref="T:System.String" /> that specifies the name of the shared library
-   entry
-   point.</para>
-        </summary>
-        <remarks />
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify the entry-point name by supplying a string indicating the name of the DLL containing the entry point, or you can identify the entry point by its ordinal. Ordinals are prefixed with the # sign, for example, #1. If you omit this field, the common language runtime uses the name of the.NET method marked with the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />.</para>
+          <para>For additional information, see <format type="text/html"><a href="3E3F6780-6D90-4413-BAD7-BA641220364D">[&lt;topic://cpconidentifyingfunctionsindlls&gt;]</a></format>. For examples showing how to use the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.EntryPoint" /> field, see <format type="text/html"><a href="D1247F08-0965-416A-B978-E0B50652DFE3">Specifying an Entry Point</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the name or ordinal of the DLL entry point to be called.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="ExactSpelling">
       <MemberSignature Language="ILASM" Value=".field public bool ExactSpelling" />
       <MemberSignature Language="C#" Value="public bool ExactSpelling;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool ExactSpelling" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If false, the entry point name appended with the letter A is invoked when the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> field is set to CharSet.Ansi, and the entry-point name appended with the letter W is invoked when the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> field is set to the CharSet.Unicode. Typically, managed compilers set this field.</para>
+          <para>The following table shows the relationship between the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> and <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ExactSpelling" /> fields, based on default values imposed by the programming language. You can override the default setting, but do so with caution.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Language </para>
+                </term>
+                <description>
+                  <para>ANSI </para>
+                </description>
+                <description>
+                  <para>Unicode </para>
+                </description>
+                <description>
+                  <para>Auto </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Visual Basic </para>
+              </term>
+              <description>
+                <para>ExactSpelling:=True </para>
+              </description>
+              <description>
+                <para>ExactSpelling:=True </para>
+              </description>
+              <description>
+                <para>ExactSpelling:=False </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>C# </para>
+              </term>
+              <description>
+                <para>ExactSpelling=false </para>
+              </description>
+              <description>
+                <para>ExactSpelling=false </para>
+              </description>
+              <description>
+                <para>ExactSpelling=false </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>C++ </para>
+              </term>
+              <description>
+                <para>ExactSpelling=false </para>
+              </description>
+              <description>
+                <para>ExactSpelling=false </para>
+              </description>
+              <description>
+                <para>ExactSpelling=false </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
         <summary>
-          <para>A <see cref="T:System.Boolean" />
-value indicating whether the name of the
-entry point in the unmanaged library is modified to correspond to the <see cref="T:System.Runtime.InteropServices.CharSet" /> value specified in
-the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> field.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Controls whether the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> field causes the common language runtime to search an unmanaged DLL for entry-point names other than the one specified.</para>
         </summary>
-        <remarks />
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PreserveSig">
       <MemberSignature Language="C#" Value="public bool PreserveSig;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool PreserveSig" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.PreserveSig" /> field to true to directly translate unmanaged signatures with HRESULT or retval values; set it to false to automatically convert HRESULT or retval values to exceptions. By default, the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.PreserveSig" /> field is true.</para>
+          <para>When true, the resulting method signature returns an integer value that contains the HRESULT value.  In this case, you must manually inspect the return value and respond accordingly in your application.  </para>
+          <para>When you set the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.PreserveSig" /> field to false, the resulting method signature contains a void return type instead of an integer (HRESULT) return type.  When the unmanaged method produces an HRESULT, the runtime automatically ignores a return value of S_OK (or 0) and does not throw an exception.  For HRESULTs other than S_OK, the runtime automatically throws an exception that corresponds to the HRESULT.  Note that the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" /> attribute only performs this conversion to methods that return an HRESULT.</para>
+          <para>You might decide to change the default error reporting behavior from HRESULTs to exceptions in cases where exceptions better fit the error reporting structure of your application.</para>
+          <para>This field is similar to the <see cref="T:System.Runtime.InteropServices.PreserveSigAttribute" />; however, in contrast to the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.PreserveSig" /> field, the default value for the attribute is false.</para>
+          <para>In some cases, Visual Basic developers use the <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />, instead of using the Declare statement, to define a DLL function in managed code. Setting the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.PreserveSig" /> field is one of those cases.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether unmanaged methods that have HRESULT or retval return values are directly translated or whether HRESULT or retval return values are automatically converted to exceptions.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SetLastError">
       <MemberSignature Language="C#" Value="public bool SetLastError;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool SetLastError" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to indicate that the callee will call SetLastError; otherwise, false. The default is false.</para>
+          <para>The runtime marshaler calls GetLastError and caches the value returned to prevent it from being overwritten by other API calls. You can retrieve the error code by calling <see cref="M:System.Runtime.InteropServices.Marshal.GetLastWin32Error" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the callee calls the SetLastError Win32 API function before returning from the attributed method.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ThrowOnUnmappableChar">
       <MemberSignature Language="C#" Value="public bool ThrowOnUnmappableChar;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool ThrowOnUnmappableChar" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to indicate that an exception is thrown each time the interop marshaler converts an unmappable character; false to indicate that the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ThrowOnUnmappableChar" /> field is disabled. This field is false by default.</para>
+          <para>The common language runtime converts to ANSI characters any managed Unicode characters passed to an unmanaged method executing on Windows 98 or Windows Me. Best-fit mapping enables the interop marshaler to provide a close-matching character when no exact match exists. For example, the marshaler converts the Unicode copyright character to 'c' for unmanaged methods that accept ANSI characters. Some characters lack a best-fit representation; these characters are called unmappable. Unmappable characters are usually converted to the default '?' ANSI character.</para>
+          <block subset="none" type="note">
+            <para>Certain Unicode characters are converted to dangerous characters, such as the backslash '\' character, which can inadvertently change a path. By setting the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ThrowOnUnmappableChar" /> field to true, you can signal the presence of an unmappable character to the caller by throwing an exception.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>You cannot change the default values provided by the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.BestFitMapping" /> and <see cref="F:System.Runtime.InteropServices.DllImportAttribute.ThrowOnUnmappableChar" /> fields when passing a managed array whose elements are ANSI Chars or LPSTRs to an unmanaged safe array. Best-fit mapping is always enabled and no exception is thrown. Be aware that this combination can compromise your security model.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables or disables the throwing of an exception on an unmappable Unicode character that is converted to an ANSI "?" character.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="ILASM" Value=".property string Value { public hidebysig specialname instance string get_Value() }" />
       <MemberSignature Language="C#" Value="public string Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the name of the shared library file with the entry point.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the name of the shared library file from which a function implementation
    is imported.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can provide a full or relative path. If you provide no path, the DLL must be in the current path at run time, unless the DLL is loaded by some other means. Be aware, however, that using a fully qualified path can introduce inaccuracy if the DLL is moved.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the DLL file that contains the entry point.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

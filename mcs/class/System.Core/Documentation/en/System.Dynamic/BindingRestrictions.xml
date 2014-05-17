@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="BindingRestrictions" FullName="System.Dynamic.BindingRestrictions">
+  <TypeSignature Language="C#" Value="public abstract class BindingRestrictions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit BindingRestrictions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerDisplay("{DebugView}")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerTypeProxy(typeof(System.Dynamic.BindingRestrictions/BindingRestrictionsProxy))</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of binding restrictions on the <see cref="T:System.Dynamic.DynamicMetaObject" /> under which the dynamic binding is valid.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Combine">
+      <MemberSignature Language="C#" Value="public static System.Dynamic.BindingRestrictions Combine (System.Collections.Generic.IList&lt;System.Dynamic.DynamicMetaObject&gt; contributingObjects);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Dynamic.BindingRestrictions Combine(class System.Collections.Generic.IList`1&lt;class System.Dynamic.DynamicMetaObject&gt; contributingObjects) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.BindingRestrictions</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contributingObjects" Type="System.Collections.Generic.IList&lt;System.Dynamic.DynamicMetaObject&gt;" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines binding restrictions from the list of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances into one set of restrictions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new set of binding restrictions.</para>
+        </returns>
+        <param name="contributingObjects">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances from which to combine restrictions.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Empty">
+      <MemberSignature Language="C#" Value="public static readonly System.Dynamic.BindingRestrictions Empty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Dynamic.BindingRestrictions Empty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.BindingRestrictions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an empty set of binding restrictions. This field is read only.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExpressionRestriction">
+      <MemberSignature Language="C#" Value="public static System.Dynamic.BindingRestrictions GetExpressionRestriction (System.Linq.Expressions.Expression expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Dynamic.BindingRestrictions GetExpressionRestriction(class System.Linq.Expressions.Expression expression) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.BindingRestrictions</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By convention, the general restrictions created by this method must only test immutable object properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the binding restriction that checks the expression for arbitrary immutable properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new binding restrictions.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression representing the restrictions.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetInstanceRestriction">
+      <MemberSignature Language="C#" Value="public static System.Dynamic.BindingRestrictions GetInstanceRestriction (System.Linq.Expressions.Expression expression, object instance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Dynamic.BindingRestrictions GetInstanceRestriction(class System.Linq.Expressions.Expression expression, object instance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.BindingRestrictions</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
+        <Parameter Name="instance" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the binding restriction that checks the expression for object instance identity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new binding restrictions.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to test.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exact object instance to test.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTypeRestriction">
+      <MemberSignature Language="C#" Value="public static System.Dynamic.BindingRestrictions GetTypeRestriction (System.Linq.Expressions.Expression expression, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Dynamic.BindingRestrictions GetTypeRestriction(class System.Linq.Expressions.Expression expression, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.BindingRestrictions</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the binding restriction that check the expression for runtime type identity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new binding restrictions.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to test.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exact type to test.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Merge">
+      <MemberSignature Language="C#" Value="public System.Dynamic.BindingRestrictions Merge (System.Dynamic.BindingRestrictions restrictions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Dynamic.BindingRestrictions Merge(class System.Dynamic.BindingRestrictions restrictions) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.BindingRestrictions</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="restrictions" Type="System.Dynamic.BindingRestrictions" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Merges the set of binding restrictions with the current binding restrictions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new set of binding restrictions.</para>
+        </returns>
+        <param name="restrictions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The set of restrictions with which to merge the current binding restrictions.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToExpression">
+      <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression ToExpression ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Linq.Expressions.Expression ToExpression() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the <see cref="T:System.Linq.Expressions.Expression" /> representing the binding restrictions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The expression tree representing the restrictions.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

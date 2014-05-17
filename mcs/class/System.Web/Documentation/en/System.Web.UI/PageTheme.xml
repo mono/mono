@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PageTheme" FullName="System.Web.UI.PageTheme">
   <TypeSignature Language="C#" Value="public abstract class PageTheme" />
   <AssemblyInfo>
@@ -14,9 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Page and control developers do not use the <see cref="T:System.Web.UI.ControlSkinDelegate" />, <see cref="T:System.Web.UI.ControlSkin" />, or <see cref="T:System.Web.UI.PageTheme" /> classes directly. These classes are used by the ASP.NET parser and runtime to apply style sheet elements that are defined in ASP.NET themes and control skins files to pages and specific types of controls.</para>
+      <para>Page developers enable (or disable) page themes using the <see cref="P:System.Web.UI.Page.Theme" /> and <see cref="P:System.Web.UI.Control.EnableTheming" /> properties. For more information about page themes, see <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">Introduction to ASP.NET Themes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the base class for a page theme, which is a collection of resources that are used to define a consistent look across pages and controls in a Web site. The page theme can be set through configuration or the page directive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +32,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PageTheme" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +50,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageTheme.AppRelativeTemplateSourceDirectory" /> property is abstract. When compiled, a theme will generate code that overrides the <see cref="P:System.Web.UI.PageTheme.AppRelativeTemplateSourceDirectory" /> property. The <see cref="M:System.Web.UI.Control.ResolveUrl(System.String)" /> method uses the <see cref="P:System.Web.UI.PageTheme.AppRelativeTemplateSourceDirectory" /> property to resolves a relative URL to an absolute URL. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden a derived class, gets the relative URL of the directory for the <see cref="T:System.Web.UI.PageTheme" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +72,16 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageTheme.ControlSkins" /> property is abstract. When compiled, a theme will generate code that overrides this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets an <see cref="T:System.Collections.IDictionary" /> interface of the names of all default skins that are available for the current page theme, indexed by control type.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,12 +98,20 @@
         <Parameter Name="skinID" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="controlType">To be added.</param>
-        <param name="skinID">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a lookup key object for a particular control type and skin ID. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can be used as a lookup key in a dictionary-style collection, which contains the control type and skin ID information.</para>
+        </returns>
+        <param name="controlType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of control to which a control skin applies, which is passed typically from the <see cref="P:System.Web.UI.ControlBuilder.ControlType" />.</param>
+        <param name="skinID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the control skin for which to create a key. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,11 +127,21 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.UI.PageTheme.Eval" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the data item container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses the <see cref="M:System.Web.UI.DataBinder.Eval(System.Object,System.String)" /> method of the <see cref="P:System.Web.UI.PageTheme.Page" /> property that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with to evaluate a data-binding expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding expression.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the container to the public property value. For details, see <see cref="T:System.Web.UI.DataBinder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,12 +158,23 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.UI.PageTheme.Eval" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the data item container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses the <see cref="M:System.Web.UI.DataBinder.Eval(System.Object,System.String,System.String)" /> method of the <see cref="P:System.Web.UI.PageTheme.Page" /> property that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with to evaluate a data-binding expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the container to the public property value. For details, see <see cref="T:System.Web.UI.DataBinder" />.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string. For details, see <see cref="T:System.Web.UI.DataBinder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +187,16 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageTheme.LinkedStyleSheets" /> property is abstract and must be implemented in a derived class. When compiled, a theme will generate code that overrides this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets an array of style sheets that are linked to this page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,10 +209,16 @@
         <ReturnType>System.Web.UI.Page</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.PageTheme.Page" /> property is read-only and is assigned internally when an instance of the <see cref="T:System.Web.UI.PageTheme" /> class is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.Page" /> object that is associated with the instance of the <see cref="T:System.Web.UI.PageTheme" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,11 +234,18 @@
         <Parameter Name="deviceFilterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="deviceFilterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether a device filter applies to the <see cref="T:System.Web.UI.Page" /> control that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="deviceFilterName" /> applies to the page; otherwise; false.</para>
+        </returns>
+        <param name="deviceFilterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string name of the device filter to check. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -190,11 +261,21 @@
         <Parameter Name="xPathExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xPathExpression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageTheme.XPath(System.String)" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an XPath data-binding expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding <paramref name="xPathExpression" />.</para>
+        </returns>
+        <param name="xPathExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -211,12 +292,23 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xPathExpression">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageTheme.XPath(System.String,System.String)" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an XPath data-binding expression using the specified format string to display the result.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
+        <param name="xPathExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string to apply to the result. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -233,12 +325,23 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="xPathExpression">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageTheme.XPath(System.String,System.Xml.IXmlNamespaceResolver)" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an XPath data-binding expression using the specified prefix and namespace mappings for namespace resolution. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding <paramref name="xPathExpression" />.</para>
+        </returns>
+        <param name="xPathExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />. </param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of prefix and namespace mappings used for namespace resolution.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -256,13 +359,25 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="xPathExpression">To be added.</param>
-        <param name="format">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageTheme.XPath(System.String,System.String,System.Xml.IXmlNamespaceResolver)" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses the <see cref="M:System.Web.UI.TemplateControl.XPath(System.String,System.String,System.Xml.IXmlNamespaceResolver)" /> method of the <see cref="P:System.Web.UI.PageTheme.Page" /> control that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with to evaluate an XPath data-binding expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
+        <param name="xPathExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string to apply to the result. </param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of prefix and namespace mappings used for namespace resolution.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -278,11 +393,21 @@
         <Parameter Name="xPathExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xPathExpression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageTheme.XPathSelect(System.String)" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an XPath data-binding expression and returns a node collection that implements the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of nodes.</para>
+        </returns>
+        <param name="xPathExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -299,12 +424,23 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="xPathExpression">To be added.</param>
-        <param name="resolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.PageTheme.XPathSelect(System.String,System.Xml.IXmlNamespaceResolver)" /> method uses the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates an XPath data-binding expression using the specified prefix and namespace mappings for namespace resolution and returns a node collection that implements the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of nodes. </para>
+        </returns>
+        <param name="xPathExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />. </param>
+        <param name="resolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of prefix and namespace mappings used to for namespace resolution. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

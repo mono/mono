@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WaitOrTimerCallback" FullName="System.Threading.WaitOrTimerCallback">
   <TypeSignature Maintainer="auto" Language="C#" Value="public delegate void WaitOrTimerCallback(object state, bool timedOut);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WaitOrTimerCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,13 +13,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="state">To be added.</param>
-    <param name="timedOut">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="state" Type="System.Object" />
     <Parameter Name="timedOut" Type="System.Boolean" />
@@ -25,9 +25,25 @@
   <ReturnValue>
     <ReturnType>System.Void</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="state">To be added.</param>
+    <param name="timedOut">To be added.</param>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Threading.WaitOrTimerCallback" /> represents a callback method that you want to execute when a registered wait handle times out or is signaled. Create the delegate by passing your callback method to the <see cref="T:System.Threading.WaitOrTimerCallback" /> constructor. Your method must have the signature shown here.</para>
+      <para>Create the registered wait handle by passing the <see cref="T:System.Threading.WaitOrTimerCallback" /> delegate and a <see cref="T:System.Threading.WaitHandle" /> to <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" />. Your callback method executes each time the <see cref="T:System.Threading.WaitHandle" /> times out or is signaled.</para>
+      <para>[Visual Basic]</para>
+      <block subset="none" type="note">
+        <para>Visual Basic users can omit the <see cref="T:System.Threading.WaitOrTimerCallback" /> constructor, and simply use the AddressOf operator when passing the callback method to <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" />. Visual Basic automatically calls the correct delegate constructor.</para>
+      </block>
+      <para>If you want to pass information to your callback method, create an object that contains the necessary information and pass it to <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" /> when you create the registered wait handle. Each time your callback method executes, the <paramref name="state" /> parameter contains this object.</para>
+      <para>For more information about using callback methods to synchronize thread pool threads, see <format type="text/html"><a href="2BE05B06-A42E-4C9D-A739-96C21D673927">[&lt;topic://cpconthreadpooling&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a method to be called when a <see cref="T:System.Threading.WaitHandle" /> is signaled or times out.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

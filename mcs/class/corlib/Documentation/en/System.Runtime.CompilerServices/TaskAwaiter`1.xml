@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TaskAwaiter&lt;TResult&gt;" FullName="System.Runtime.CompilerServices.TaskAwaiter&lt;TResult&gt;">
+  <TypeSignature Language="C#" Value="public struct TaskAwaiter&lt;TResult&gt; : System.Runtime.CompilerServices.ICriticalNotifyCompletion" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit TaskAwaiter`1&lt;TResult&gt; extends System.ValueType implements class System.Runtime.CompilerServices.ICriticalNotifyCompletion, class System.Runtime.CompilerServices.INotifyCompletion" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TResult" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.CompilerServices.ICriticalNotifyCompletion</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="TResult">To be added.</typeparam>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type and its members are intended for use by the compiler.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an object that waits for the completion of an asynchronous task and provides a parameter for the result.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="GetResult">
+      <MemberSignature Language="C#" Value="public TResult GetResult ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !TResult GetResult() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>TResult</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This type and its members are intended for use by the compiler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the wait for the completion of the asynchronous task.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the completed task.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="IsCompleted">
+      <MemberSignature Language="C#" Value="public bool IsCompleted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCompleted" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This type and its members are intended for use by the compiler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the asynchronous task has completed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnCompleted">
+      <MemberSignature Language="C#" Value="public void OnCompleted (Action continuation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void OnCompleted(class System.Action continuation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="continuation" Type="System.Action" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This type and its members are intended for use by the compiler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the action to perform when the <see cref="T:System.Runtime.CompilerServices.TaskAwaiter`1" /> object stops waiting for the asynchronous task to complete.</para>
+        </summary>
+        <param name="continuation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action to perform when the wait operation completes.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="UnsafeOnCompleted">
+      <MemberSignature Language="C#" Value="public void UnsafeOnCompleted (Action continuation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void UnsafeOnCompleted(class System.Action continuation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="continuation" Type="System.Action" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Schedules the continuation action for the asynchronous task associated with this awaiter.</para>
+        </summary>
+        <param name="continuation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action to invoke when the await operation completes.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

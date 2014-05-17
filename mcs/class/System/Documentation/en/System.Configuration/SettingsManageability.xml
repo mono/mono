@@ -1,31 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsManageability" FullName="System.Configuration.SettingsManageability">
   <TypeSignature Language="C#" Value="public enum SettingsManageability" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SettingsManageability extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Configuration.SettingsManageabilityAttribute" /> is used to apply individual application settings properties and property groups to indicate that special, predefined services are to be provided for them. The <see cref="T:System.Configuration.SettingsManageability" /> enumeration lists the services that are available. Most of these services will be provided by the Windows operating system.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides values to indicate which services should be made available to application settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Roaming">
       <MemberSignature Language="C#" Value="Roaming" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Configuration.SettingsManageability Roaming = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Configuration.SettingsManageability</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables application settings to be stored in roaming user profiles. For more information about roaming user profiles, see <format type="text/html"><a href="d3cca593-4521-408d-b323-ea398d226de3">Isolated Storage and Roaming</a></format>.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

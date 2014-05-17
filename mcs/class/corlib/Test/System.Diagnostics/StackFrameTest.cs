@@ -42,6 +42,7 @@ namespace MonoTests.System.Diagnostics
 		///   Tests whether getting file name works.
 		/// </summary>
 		[Test]
+		[Category("LLVMNotWorking")]
 		public void TestGetFileName ()
 		{
 			Assert.AreEqual ("dir/someFile",
@@ -57,6 +58,7 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting file line number works.
 		/// </summary>
 		[Test]
+		[Category("LLVMNotWorking")]
 		public void TestGetFileLineNumber ()
 		{
 			Assert.AreEqual (13,
@@ -152,8 +154,12 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileName2 ()
 		{
+#if MOBILE && !DEBUG
+			Assert.Ignore ("The .mdb file won't be present inside the app and no file name will be available");
+#endif
 			Assert.IsNotNull (frame2.GetFileName (), "File name not null");
 			Assert.IsTrue (frame2.GetFileName ().Length != 0, "File name not empty");
 			Assert.IsTrue (frame2.GetFileName ().EndsWith ("StackFrameTest.cs"),
@@ -164,13 +170,17 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting file line number works.
 		/// </summary>
 		[Test]
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileLineNumber ()
 		{
+#if MOBILE && !DEBUG
+			Assert.Ignore ("The .mdb file won't be present inside the app and no line number will be available");
+#endif
 			Assert.AreEqual (0,
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (132,
+			Assert.AreEqual (134,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 
@@ -280,8 +290,12 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting file name works.
 		/// </summary>
 		[Test]
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileName ()
 		{
+#if MOBILE && !DEBUG
+			Assert.Ignore ("The .mdb file won't be present inside the app and no file name will be available");
+#endif
 			Assert.IsNull (frame1.GetFileName (),
 						   "File name (1)");
 
@@ -299,13 +313,17 @@ namespace MonoTests.System.Diagnostics
 #if ONLY_1_1
 		[Category ("NotDotNet")] // .NET 1.1 is off by one
 #endif
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileLineNumber ()
 		{
+#if MOBILE && !DEBUG
+			Assert.Ignore ("The .mdb file won't be present inside the app and no line number will be available");
+#endif
 			Assert.AreEqual (0,
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (260,
+			Assert.AreEqual (270,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 		}

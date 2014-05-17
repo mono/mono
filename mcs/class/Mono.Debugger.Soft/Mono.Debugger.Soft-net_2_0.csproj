@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5B419D3D-3435-4FCB-8C86-5645AE0250FA}</ProjectGuid>
+    <ProjectGuid>{08AD7FD1-889B-4ADC-8AAA-05459828C75F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Mono.Debugger.Soft-net_2_0</OutputPath>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -75,6 +75,7 @@
     <Compile Include="Mono.Debugger.Soft\IInvokeAsyncResult.cs" />
     <Compile Include="Mono.Debugger.Soft\ILExceptionHandler.cs" />
     <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
+    <Compile Include="Mono.Debugger.Soft\ILInterpreter.cs" />
     <Compile Include="Mono.Debugger.Soft\IMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\InvalidStackFrameException.cs" />
@@ -130,25 +131,28 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil-net_2_0.csproj">
-      <Project>{2F1D61B7-0586-4587-8ECE-926A065F6276}</Project>
+      <Project>{EED155FA-9877-4A62-889B-365D5DED03DB}</Project>
       <Name>Mono.Cecil\Mono.Cecil-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
+      <Project>{FBEC45AD-4493-41EA-9BCC-F3F29A08EB9E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -156,3 +160,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

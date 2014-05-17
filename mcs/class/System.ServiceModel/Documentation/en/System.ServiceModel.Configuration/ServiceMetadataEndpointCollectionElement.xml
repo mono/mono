@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceMetadataEndpointCollectionElement" FullName="System.ServiceModel.Configuration.ServiceMetadataEndpointCollectionElement">
+  <TypeSignature Language="C#" Value="public class ServiceMetadataEndpointCollectionElement : System.ServiceModel.Configuration.StandardEndpointCollectionElement&lt;System.ServiceModel.Description.ServiceMetadataEndpoint,System.ServiceModel.Configuration.ServiceMetadataEndpointElement&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceMetadataEndpointCollectionElement extends System.ServiceModel.Configuration.StandardEndpointCollectionElement`2&lt;class System.ServiceModel.Description.ServiceMetadataEndpoint, class System.ServiceModel.Configuration.ServiceMetadataEndpointElement&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.StandardEndpointCollectionElement&lt;System.ServiceModel.Description.ServiceMetadataEndpoint,System.ServiceModel.Configuration.ServiceMetadataEndpointElement&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="TStandardEndpoint">System.ServiceModel.Description.ServiceMetadataEndpoint</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="TEndpointConfiguration">System.ServiceModel.Configuration.ServiceMetadataEndpointElement</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection element in a service configuration file that contains <see cref="T:System.ServiceModel.Description.ServiceMetadataEndpoint" /> objects.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceMetadataEndpointCollectionElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the<see cref="T:System.ServiceModel.Configuration.ServiceMetadataEndpointCollectionElement" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

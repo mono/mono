@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConditionalAttribute" FullName="System.Diagnostics.ConditionalAttribute" FullNameSP="System_Diagnostics_ConditionalAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ConditionalAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class ConditionalAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit ConditionalAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,49 +25,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Indicates to compilers that a method is callable if and only if a specified
-      pre-processing identifier has been defined on the method.</para>
-    </summary>
-    <remarks>
-      <block subset="none" type="note">
-        <para>A <see cref="T:System.Diagnostics.ConditionalAttribute" />, which has an
-      associated condition <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" />, can be attached to the
-      definition of a method, creating a <paramref name="conditional" /><paramref name="method" />
-   . Thereafter, when a compiler encounters
-   a call to that method, it might choose to ignore the call unless a compilation
-   variable is defined at the site of the call, with a value that matches
-   in a case-sensitive manner the <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" /> supplied to the <see cref="T:System.Diagnostics.ConditionalAttribute" />
-   
-   .</para>
-        <para>Note that compilers might provide several techniques to define such compilation variables, such
-   as:</para>
-        <list type="bullet">
-          <item>
-            <term>
-              <para>compiler command-line switches (for
-         example, <c>/define:DEBUG</c> )</para>
-            </term>
-          </item>
-          <item>
-            <term>
-              <para>environment variables in the operating system shell
-            (for example, <c>SET
-            DEBUG=1</c>)</para>
-            </term>
-          </item>
-          <item>
-            <term>
-              <para>as pragmas in the source code (for example, <c>#define DEBUG</c>, to define the
-            compilation variable, or <c>#undef DEBUG</c> to
-         undefine it)</para>
-            </term>
-          </item>
-        </list>
-        <para> CLS-Compliant compilers are permitted to ignore uses of the <see cref="T:System.Diagnostics.ConditionalAttribute" />
-.</para>
-      </block>
-    </remarks>
     <example>
       <para> The following example demonstrates the use of
    <see cref="T:System.Diagnostics.ConditionalAttribute" /> with a
@@ -116,61 +75,99 @@ How was this compiled?</para>
    </para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute to methods and classes. However, its use on classes is valid only for types that are derived from <see cref="T:System.Attribute" />. <see cref="T:System.Diagnostics.ConditionalAttribute" /> either will be ignored or will produce a compiler warning or error message if you apply it to any other type.</para>
+      <para>Applying <see cref="T:System.Diagnostics.ConditionalAttribute" /> to a method indicates to compilers that a call to the method should not be compiled into Microsoft intermediate language (MSIL) unless the conditional compilation symbol that is associated with <see cref="T:System.Diagnostics.ConditionalAttribute" /> is defined. You will get a compilation error in Visual Studio if you apply this attribute to a method that does not return void. Applying <see cref="T:System.Diagnostics.ConditionalAttribute" /> to an attribute indicates that the attribute should not be emitted to metadata unless the conditional compilation symbol is defined. Any arguments passed to the method or attribute are still type-checked by the compiler.</para>
+      <para>You can use the following techniques to define conditional compilation symbols: </para>
+      <list type="bullet">
+        <item>
+          <para>Use compiler command-line options; for example, <system>/define:DEBUG</system>.</para>
+        </item>
+        <item>
+          <para>Use environment variables in the operating system shell; for example, <system>set DEBUG=1</system>.</para>
+        </item>
+        <item>
+          <para>Use pragmas in the source code; for example, define the compilation variable as follows: </para>
+          <code>#define DEBUG</code>
+          <code>#Const DEBUG=True</code>
+          <para>To undefine the variable, use the following: </para>
+          <code>#Undef DEBUG</code>
+          <code>#Const DEBUG=False</code>
+        </item>
+      </list>
+      <para>Compilers that comply with the Common Language Specification (CLS) are permitted to ignore <see cref="T:System.Diagnostics.ConditionalAttribute" />. The C#, Visual Basic, and C++ compilers support <see cref="T:System.Diagnostics.ConditionalAttribute" />; the JScript compiler does not support the attribute.</para>
+      <block subset="none" type="note">
+        <para>In Visual Basic, the AddressOf operator is not affected by this attribute. For example, Call CType(AddressOf delegate, Action) always invokes delegate, although Call delegate() might not.</para>
+      </block>
+      <para>
+        <see cref="T:System.Diagnostics.ConditionalAttribute" /> is applied to the methods that are defined in the <see cref="T:System.Diagnostics.Debug" /> and <see cref="T:System.Diagnostics.Trace" /> classes. </para>
+      <para>For more information about how to use attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates to compilers that a method call or attribute should be ignored unless a specified conditional compilation symbol is defined.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string conditionString)" />
       <MemberSignature Language="C#" Value="public ConditionalAttribute (string conditionString);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string conditionString) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="conditionString" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="conditionString">A <see cref="T:System.String" /> that contains the pre-processing identifier that makes callable the target method of the current instance.</param>
-        <summary>
-          <para> Constructs and initializes a new instance of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor initializes the <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" /> property of the current instance using 
-<paramref name="conditionString" />.</para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="conditionString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <para>This constructor initializes the <see cref="P:System.Diagnostics.ConditionalAttribute.ConditionString" /> property of the current instance using 
+<paramref name="conditionString" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> class.</para>
+        </summary>
+        <param name="conditionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the case-sensitive conditional compilation symbol that is associated with the attribute. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="ConditionString">
       <MemberSignature Language="ILASM" Value=".property string ConditionString { public hidebysig specialname instance string get_ConditionString() }" />
       <MemberSignature Language="C#" Value="public string ConditionString { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConditionString" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the <see cref="T:System.String" /> that contains
-   the pre-processing identifier that makes callable the target method of the current instance.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" />
 that contains the pre-processing identifier that makes callable the target
 method of the current instance.</para>
         </value>
         <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the conditional compilation symbol that is associated with the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

@@ -3,7 +3,6 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Xml.dll
-LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 lib_file := $(wildcard ../lib/$(PROFILE)/System.Xml.dll)
 ifndef lib_file
@@ -14,33 +13,23 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
+PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac, $(PROFILE))
+
 LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642
-ifeq (net_1_1_java, $(PROFILE))
-LIB_MCS_FLAGS += \
-	-r:System.Xml.dll		\
-	-r:rt.dll			\
-	-r:J2SE.Helpers.dll		\
-	-r:unresolved.dll		\
-	/lib:../../class/lib/$(PROFILE)
-endif
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK
 endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
-ifeq (2.0, $(FRAMEWORK_VERSION))
-# Happens on net_2_0_bootstrap and net_2_0 profiles
-CONFIGURATION_DEP := System.Configuration.dll
-CONFIGURATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CONFIGURATION_DEP))
-CYCLIC_DEPS += $(CONFIGURATION_DEP)
-CYCLIC_DEP_FILES += $(CONFIGURATION_DEP_FILE)
-TEST_MCS_FLAGS += -r:System.Configuration
+ifndef PROFILE_ANY_MOBILE
+FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
 endif
 
-ifdef CONFIGURATION_DEP_FILE
-LIB_MCS_FLAGS += -define:CONFIGURATION_DEP -r:$(CONFIGURATION_DEP)
-$(the_lib): $(CONFIGURATION_DEP_FILE)
+ifneq (bare/,$(intermediate))
+LIB_MCS_FLAGS += $(FINAL_MCS_FLAGS)
 endif
+
+LIB_MCS_FLAGS += -lib:$(bare_libdir)
 
 nist_dom_files = \
 	ChangeLog ITest.cs readme.txt util.cs \
@@ -79,26 +68,56 @@ EXTRA_DISTFILES = \
 System.Xml.XPath/Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	(cd System.Xml.XPath; $(topdir)/../jay/jay -ct < $(topdir)/../jay/skeleton.cs Parser.jay >> Parser.cs)
 
-Mono.Xml.Xsl/PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
+Mono.Xml.Xsl/$(PROFILE)_PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	sed "s/\%start Expr/\%start Pattern/" $< >$@
 
-Mono.Xml.Xsl/PatternParser.cs: Mono.Xml.Xsl/PatternParser.jay $(topdir)/jay/skeleton.cs
+Mono.Xml.Xsl/$(PROFILE)_PatternParser.cs: Mono.Xml.Xsl/$(PROFILE)_PatternParser.jay $(topdir)/jay/skeleton.cs
 	echo "#define XSLT_PATTERN" > $@
-	(cd Mono.Xml.Xsl; $(topdir)/../jay/jay -ct PatternParser.jay < $(topdir)/../jay/skeleton.cs >> PatternParser.cs)
+	(cd Mono.Xml.Xsl; $(topdir)/../jay/jay -ct $(PROFILE)_PatternParser.jay < $(topdir)/../jay/skeleton.cs >> $(PROFILE)_PatternParser.cs)
 
-Mono.Xml.Xsl/PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
+Mono.Xml.Xsl/$(PROFILE)_PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
 	echo "#define XSLT_PATTERN" > $@
 	cat $< >>$@
 
 ifneq (moonlight_raw, $(PROFILE))
 BUILT_SOURCES = System.Xml.XPath/Parser.cs \
-	Mono.Xml.Xsl/PatternParser.cs \
-	Mono.Xml.Xsl/PatternTokenizer.cs
+	Mono.Xml.Xsl/$(PROFILE)_PatternParser.cs \
+	Mono.Xml.Xsl/$(PROFILE)_PatternTokenizer.cs
 
 CLEAN_FILES = Test/XmlFiles/xsl/result.xml \
 	System.Xml.XPath/Parser.cs \
-	Mono.Xml.Xsl/PatternParser.cs \
-	Mono.Xml.Xsl/PatternTokenizer.cs
+	Mono.Xml.Xsl/$(PROFILE)_PatternParser.cs \
+	Mono.Xml.Xsl/$(PROFILE)_PatternTokenizer.cs
 endif
 
 include ../../build/library.make
+
+ifeq (bare/,$(intermediate))
+build-bare:
+else
+$(bare_libdir)/System.Xml.dll:
+	$(MAKE) intermediate=bare/ $(bare_libdir)/System.Xml.dll
+endif
+
+system_xml_library_deps := 				\
+	$(bare_libdir)/System.dll			\
+	$(bare_libdir)/System.Xml.dll
+
+ifndef PROFILE_ANY_MOBILE
+system_xml_library_deps += $(the_libdir_base)System.Configuration.dll
+endif
+
+artifacts = $(system_xml_library_deps)	\
+	$(the_libdir_base)System.Configuration.dll
+
+.NOTPARALLEL: $(artifacts)
+
+CLEAN_FILES = $(bare_libdir)/System.Xml.dll $(bare_libdir)/System.Xml.dll.pdb
+$(the_libdir_base)System.Xml.dll: $(system_xml_library_deps) 
+$(bare_libdir)/System.dll:
+	(cd ../System; $(MAKE) $@)
+$(bare_libdir)/System.Xml.dll: $(bare_libdir)/System.dll 
+
+$(the_libdir_base)System.Configuration.dll:
+	(cd ../System.Configuration; $(MAKE) $@)
+

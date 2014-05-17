@@ -1,37 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UriParser" FullName="System.UriParser">
   <TypeSignature Language="C#" Value="public abstract class UriParser" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit UriParser extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The UriParser class enables you to create parsers for new URI schemes. You can write these parsers in their entirety, or the parsers can be derived from well-known schemes (HTTP, FTP, and other schemes based on network protocols). If you want to create a completely new parser, inherit from <see cref="T:System.GenericUriParser" />. If you want to create a parser that extends a well-known URI scheme, inherit from <see cref="T:System.FtpStyleUriParser" />, <see cref="T:System.HttpStyleUriParser" />, <see cref="T:System.FileStyleUriParser" />, <see cref="T:System.GopherStyleUriParser" />, or <see cref="T:System.LdapStyleUriParser" />.</para>
+      <para>Microsoft strongly recommends that you use a parser shipped with the .NET Framework. Building your own parser increases the complexity of your application, and will not perform as well as the shipped parsers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Parses a new URI scheme. This is an abstract class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected UriParser ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a default URI parser.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetComponents">
       <MemberSignature Language="C#" Value="protected virtual string GetComponents (Uri uri, UriComponents components, UriFormat format);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance string GetComponents(class System.Uri uri, valuetype System.UriComponents components, valuetype System.UriFormat format) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -42,19 +59,34 @@
         <Parameter Name="format" Type="System.UriFormat" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <param name="components">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.UriParser.GetComponents(System.Uri,System.UriComponents,System.UriFormat)" /> method to determine the value of various parts of the URI, such as the <see cref="F:System.UriComponents.Scheme" />, <see cref="F:System.UriComponents.Host" />, or <see cref="F:System.UriComponents.Port" />.</para>
+          <para>The components are returned in the order that they appear in the URI. For example, if <see cref="F:System.UriComponents.Scheme" /> is specified, it appears first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the components from a URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the components.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI to parse.</param>
+        <param name="components">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.UriComponents" /> to retrieve from <paramref name="uri" />.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.UriFormat" /> values that controls how special characters are escaped.</param>
       </Docs>
     </Member>
     <Member MemberName="InitializeAndValidate">
       <MemberSignature Language="C#" Value="protected virtual void InitializeAndValidate (Uri uri, out UriFormatException parsingError);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void InitializeAndValidate(class System.Uri uri, class System.UriFormatException parsingError) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -72,9 +104,11 @@
     </Member>
     <Member MemberName="IsBaseOf">
       <MemberSignature Language="C#" Value="protected virtual bool IsBaseOf (Uri baseUri, Uri relativeUri);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool IsBaseOf(class System.Uri baseUri, class System.Uri relativeUri) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -84,16 +118,29 @@
         <Parameter Name="relativeUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="baseUri">To be added.</param>
-        <param name="relativeUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether <paramref name="baseUri" /> is a base URI for <paramref name="relativeUri" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="baseUri" /> is a base URI for <paramref name="relativeUri" />; otherwise, false.</para>
+        </returns>
+        <param name="baseUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI.</param>
+        <param name="relativeUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI to test.</param>
       </Docs>
     </Member>
     <Member MemberName="IsKnownScheme">
       <MemberSignature Language="C#" Value="public static bool IsKnownScheme (string schemeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsKnownScheme(string schemeName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -101,21 +148,27 @@
         <Parameter Name="schemeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="schemeName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parser for a scheme is registered.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="schemeName" /> has been registered; otherwise, false.</para>
+        </returns>
+        <param name="schemeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scheme name to check.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsWellFormedOriginalString">
       <MemberSignature Language="C#" Value="protected virtual bool IsWellFormedOriginalString (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool IsWellFormedOriginalString(class System.Uri uri) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -124,31 +177,76 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.UriParser.IsWellFormedOriginalString(System.Uri)" /> method will return false if:</para>
+          <list type="bullet">
+            <item>
+              <para>The string is not correctly escaped per RFC 2396.</para>
+            </item>
+            <item>
+              <para>The string represents an absolute URI that references an implicit file URI.</para>
+            </item>
+            <item>
+              <para>The string represents an absolute URI that is missing a forward slash before the path component.</para>
+            </item>
+            <item>
+              <para>The string contains unescaped backslashes, even if they will be treated as forward slashes.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a URI is well-formed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="uri" /> is well-formed; otherwise, false.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI to check.</param>
       </Docs>
     </Member>
     <Member MemberName="OnNewUri">
       <MemberSignature Language="C#" Value="protected virtual UriParser OnNewUri ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.UriParser OnNewUri() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriParser</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation returns the same <see cref="T:System.UriParser" /> instance. You may need to override this method and return a different <see cref="T:System.UriParser" /> for each invocation if you are operating in a multithreaded environment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked by a <see cref="T:System.Uri" /> constructor to get a <see cref="T:System.UriParser" /> instance</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.UriParser" /> for the constructed <see cref="T:System.Uri" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnRegister">
       <MemberSignature Language="C#" Value="protected virtual void OnRegister (string schemeName, int defaultPort);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnRegister(string schemeName, int32 defaultPort) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -157,19 +255,26 @@
         <Parameter Name="defaultPort" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="schemeName">To be added.</param>
-        <param name="defaultPort">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invoked by the Framework when a <see cref="T:System.UriParser" /> method is registered.</para>
+        </summary>
+        <param name="schemeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scheme that is associated with this <see cref="T:System.UriParser" />.</param>
+        <param name="defaultPort">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port number of the scheme.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Register">
       <MemberSignature Language="C#" Value="public static void Register (UriParser uriParser, string schemeName, int defaultPort);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Register(class System.UriParser uriParser, string schemeName, int32 defaultPort) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -179,23 +284,36 @@
         <Parameter Name="defaultPort" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="uriParser">To be added.</param>
-        <param name="schemeName">To be added.</param>
-        <param name="defaultPort">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="defaultPort" /> parameter is set to -1, the <see cref="M:System.UriParser.Register(System.UriParser,System.String,System.Int32)" /> method registers no default value for the port number.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates a scheme and port number with a <see cref="T:System.UriParser" />.</para>
+        </summary>
+        <param name="uriParser">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI parser to register.</param>
+        <param name="schemeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the scheme that is associated with this parser.</param>
+        <param name="defaultPort">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default port number for the specified scheme.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Resolve">
       <MemberSignature Language="C#" Value="protected virtual string Resolve (Uri baseUri, Uri relativeUri, out UriFormatException parsingError);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance string Resolve(class System.Uri baseUri, class System.Uri relativeUri, class System.UriFormatException parsingError) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>

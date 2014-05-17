@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewDataErrorEventArgs" FullName="System.Windows.Forms.DataGridViewDataErrorEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewDataErrorEventArgs : System.Windows.Forms.DataGridViewCellCancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handling the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event lets you handle exceptions thrown by code outside your control (for example, by an external data source). Use the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.Context" /> property to determine the state of the <see cref="T:System.Windows.Forms.DataGridView" /> at the time of the exception. Use the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.Exception" /> property to retrieve the exception data. If you want to handle the exception by additional event handlers, set the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.ThrowException" /> property to true.</para>
+      <para>The <see cref="P:System.Windows.Forms.DataGridViewCellCancelEventArgs.ColumnIndex" /> and <see cref="P:System.Windows.Forms.DataGridViewCellCancelEventArgs.RowIndex" /> properties normally indicate the cell in which the data error occurred. When the error occurs in an external data source, however, the data source may not provide the column in which the error occurred. In this case, the <see cref="P:System.Windows.Forms.DataGridViewCellCancelEventArgs.ColumnIndex" /> property typically indicates the column of the current cell at the time of the error. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,13 +32,20 @@
         <Parameter Name="context" Type="System.Windows.Forms.DataGridViewDataErrorContexts" />
       </Parameters>
       <Docs>
-        <param name="exception">To be added.</param>
-        <param name="columnIndex">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewDataErrorEventArgs" /> class.</para>
+        </summary>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that occurred.</param>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column index of the cell that raised the <see cref="E:System.Windows.Forms.DataGridView.DataError" />.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell that raised the <see cref="E:System.Windows.Forms.DataGridView.DataError" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewDataErrorContexts" /> values indicating the context in which the error occurred. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +58,16 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Members of the <see cref="T:System.Windows.Forms.DataGridViewDataErrorContexts" /> enumeration may be combined using the bitwise OR operator to represent the state of a data-bound <see cref="T:System.Windows.Forms.DataGridView" /> when a data error occurred. For example, if a user enters an invalid cell value (such as entering a name in a cell that requires a date) and then selects a different cell, the <see cref="T:System.Windows.Forms.DataGridView" /> will try to commit the invalid cell value. When the commit fails, the <see cref="T:System.Windows.Forms.DataGridView" /> will raise a <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event whose <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.Context" /> property will have a value of <see cref="F:System.Windows.Forms.DataGridViewDataErrorContexts.Commit" /> and <see cref="F:System.Windows.Forms.DataGridViewDataErrorContexts.CurrentCellChange" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets details about the state of the <see cref="T:System.Windows.Forms.DataGridView" /> when the error occurred.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +80,16 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To handle the exception by more than one <see cref="T:System.Windows.Forms.DataGridViewDataErrorEventHandler" />, throw the exception again at the end of a handler by setting the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.ThrowException" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception that represents the error.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +102,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to false if the <see cref="T:System.Windows.Forms.DataGridViewDataErrorEventHandler" /> has dealt with the exception represented by the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.Exception" /> property, and you do not want to propagate the exception to another <see cref="T:System.Windows.Forms.DataGridViewDataErrorEventHandler" /> that may handle the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event.</para>
+          <para>For debugging purposes, it can be useful to propagate the exception and inspect the stack trace for information regarding the context of the error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to throw the exception after the <see cref="T:System.Windows.Forms.DataGridViewDataErrorEventHandler" /> delegate is finished with it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DecoderReplacementFallbackBuffer" FullName="System.Text.DecoderReplacementFallbackBuffer">
   <TypeSignature Language="C#" Value="public sealed class DecoderReplacementFallbackBuffer : System.Text.DecoderFallbackBuffer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DecoderReplacementFallbackBuffer extends System.Text.DecoderFallbackBuffer" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,31 +12,48 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>It might not be possible to convert an encoded byte sequence to an equivalent character if no suitable decoding exists. A common reason for a decoding to fail is that the conversion operation uses a code page that cannot represent the character to decode. </para>
+      <para>If the input byte sequence cannot be converted to an output character, a <see cref="T:System.Text.DecoderReplacementFallback" /> object provides a replacement string that is substituted for the output character. The replacement string initializes the value of the <see cref="T:System.Text.DecoderReplacementFallback" /> object, and the value of the <see cref="T:System.Text.DecoderReplacementFallback" /> object initializes the value of a <see cref="T:System.Text.DecoderReplacementFallbackBuffer" /> object. The value of a <see cref="T:System.Text.DecoderReplacementFallbackBuffer" /> object is called the replacement fallback buffer. The conversion operation uses the replacement fallback buffer to emit a replacement string instead of a decoded character, then continues to process the remainder of the input. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a substitute output string that is emitted when the original input byte sequence cannot be decoded. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DecoderReplacementFallbackBuffer (System.Text.DecoderReplacementFallback fallback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Text.DecoderReplacementFallback fallback) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="fallback" Type="System.Text.DecoderReplacementFallback" />
-      </Parameters>
-      <Docs>
-        <param name="fallback">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="fallback" Type="System.Text.DecoderReplacementFallback" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.DecoderReplacementFallbackBuffer" /> class using the value of a <see cref="T:System.Text.DecoderReplacementFallback" /> object.</para>
+        </summary>
+        <param name="fallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Text.DecoderReplacementFallback" /> object that contains a replacement string. </param>
+      </Docs>
     </Member>
     <Member MemberName="Fallback">
       <MemberSignature Language="C#" Value="public override bool Fallback (byte[] bytesUnknown, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Fallback(unsigned int8[] bytesUnknown, int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -43,87 +62,125 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytesUnknown">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Text.Encoding.GetBytes" /> and <see cref="Overload:System.Text.Encoder.Convert" /> methods call <see cref="M:System.Text.DecoderReplacementFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> if they encounter an unknown input byte sequence that cannot be decoded. If the return value of <see cref="M:System.Text.DecoderReplacementFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> is true, the calling method can invoke the <see cref="M:System.Text.DecoderReplacementFallbackBuffer.GetNextChar" /> method to obtain each character of the fallback buffer. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares the replacement fallback buffer to use the current replacement string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the replacement string is not empty; false if the replacement string is empty.</para>
+        </returns>
+        <param name="bytesUnknown">
+          <attribution license="cc4" from="Microsoft" modified="false" />An input byte sequence. This parameter is ignored unless an exception is thrown.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index position of the byte in <paramref name="bytesUnknown" />. This parameter is ignored in this operation.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetNextChar">
+      <MemberSignature Language="C#" Value="public override char GetNextChar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance char GetNextChar() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetNextChar">
-      <MemberSignature Language="C#" Value="public override char GetNextChar ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Text.Encoding.GetBytes(System.Char[])" /> and <see cref="M:System.Text.Decoder.Convert(System.Byte*,System.Int32,System.Char*,System.Int32,System.Boolean,System.Int32@,System.Int32@,System.Boolean@)" /> methods call <see cref="M:System.Text.DecoderReplacementFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> if they encounter an unknown surrogate pair or character in their input. If the return value of <see cref="M:System.Text.DecoderReplacementFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> is true, the calling method can invoke <see cref="M:System.Text.DecoderReplacementFallbackBuffer.GetNextChar" /> to obtain each character of the replacement fallback buffer. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the next character in the replacement fallback buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character in the replacement fallback buffer.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="MovePrevious">
+      <MemberSignature Language="C#" Value="public override bool MovePrevious ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool MovePrevious() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MovePrevious">
-      <MemberSignature Language="C#" Value="public override bool MovePrevious ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the next call to <see cref="M:System.Text.DecoderReplacementFallbackBuffer.GetNextChar" /> to access the character position in the replacement fallback buffer prior to the current character position.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="M:System.Text.DecoderReplacementFallbackBuffer.MovePrevious" /> operation was successful; otherwise, false.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Remaining">
+      <MemberSignature Language="C#" Value="public override int Remaining { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Remaining" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remaining">
-      <MemberSignature Language="C#" Value="public override int Remaining { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Text.DecoderReplacementFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method returns true if the <see cref="P:System.Text.DecoderReplacementFallbackBuffer.Remaining" /> property is nonzero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of characters in the replacement fallback buffer that remain to be processed.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public override void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public override void Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Text.DecoderReplacementFallbackBuffer.Reset" /> method discards any persisted state information and data that govern the emitting of a replacement string. Unpredictable results occur if the decoding operation continues after the <see cref="M:System.Text.DecoderReplacementFallbackBuffer.Reset" /> method is invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes all internal state information and data in the <see cref="T:System.Text.DecoderReplacementFallbackBuffer" /> object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

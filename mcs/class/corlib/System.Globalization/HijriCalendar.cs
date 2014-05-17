@@ -956,6 +956,14 @@ public class HijriCalendar : Calendar {
 		get { throw new NotImplementedException (); }
 		set { throw new NotImplementedException (); }
 	}
+
+#if NET_4_5
+	protected override int DaysInYearBeforeMinSupportedYear {
+		get{
+			return 354;
+		}
+	}
+#endif
 } // class HijriCalendar
 	
 } // namespace System.Globalization

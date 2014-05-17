@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IList" FullName="System.Collections.IList" FullNameSP="System_Collections_IList" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IList implements System.Collections.ICollection, System.Collections.IEnumerable" />
   <TypeSignature Language="C#" Value="public interface IList : System.Collections.ICollection" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IList implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -9,32 +11,39 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.ICollection</InterfaceName>
+    </Interface>
+  </Interfaces>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Implemented by
- classes that support a collection of objects that can be individually indexed.</para>
-    </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>
-        <block subset="none" type="note">
-          <see cref="T:System.Collections.IList" /> implementations fall into three categories:
- read-only, fixed-size, variable-size. A read-only list cannot be modified. A
- fixed-size list allows the modification of existing elements, but does not
- allow the addition or removal of elements. A variable-size list allows the modification, addition, and
- removal of elements.</block>
-      </para>
+        <see cref="T:System.Collections.IList" /> is a descendant of the <see cref="T:System.Collections.ICollection" /> interface and is the base interface of all non-generic lists. <see cref="T:System.Collections.IList" /> implementations fall into three categories: read-only, fixed-size, and variable-size. A read-only <see cref="T:System.Collections.IList" /> cannot be modified. A fixed-size <see cref="T:System.Collections.IList" /> does not allow the addition or removal of elements, but it allows the modification of existing elements. A variable-size <see cref="T:System.Collections.IList" /> allows the addition, removal, and modification of elements.</para>
+      <para>For the generic version of this interface, see <see cref="T:System.Collections.Generic.IList`1" />.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a non-generic collection of objects that can be individually accessed by index.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 Add(object value)" />
       <MemberSignature Language="C#" Value="public int Add (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Add(object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -42,13 +51,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.Object" /> to add to the current instance.</param>
-        <summary>
-          <para> Adds an item to the current instance.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the index of the current instance into which the new element was inserted.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors">As described above.</block>
@@ -63,56 +65,58 @@
         <exception cref="T:System.NotSupportedException">
           <para>The current instance is read-only or has a fixed size.</para>
         </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an item to the <see cref="T:System.Collections.IList" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted, or -1 to indicate that the item was not inserted into the collection.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the <see cref="T:System.Collections.IList" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Clear()" />
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clear">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Clear()" />
-      <MemberSignature Language="C#" Value="public void Clear ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Removes all items from the current instance.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Implementations 
-      of this method can vary in how a call to this method affects the capacity of a list. Typically, the count
-      is set to zero. The capacity can be set to zero, some default, or remain
-      unchanged.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to
-      delete all values from the current instance.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">
           <para>The current instance is read-only. </para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementations of this method can vary in how they handle the <see cref="P:System.Collections.ICollection.Count" /> and the capacity of a collection. Typically, the count is set to zero, and references to other objects from elements of the collection are also released. The capacity can be set to zero or a default value, or it can remain unchanged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all items from the <see cref="T:System.Collections.IList" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool Contains(object value)" />
+      <MemberSignature Language="C#" Value="public bool Contains (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Contains(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Contains">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool Contains(object value)" />
-      <MemberSignature Language="C#" Value="public bool Contains (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -120,35 +124,33 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.Object" /> to locate in the current instance.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starting with the .NET Framework 2.0, this method uses the collection’s objects’ <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods on <paramref name="item" /> to determine whether item exists. In the earlier versions of the .NET Framework, this determination was made by using the <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods of the <paramref name="item" /> parameter on the objects in the collection.</para>
+        </remarks>
         <summary>
-          <para> Determines whether the current instance contains a specific value.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Collections.IList" /> contains a specific value.</para>
         </summary>
         <returns>
-          <para>
-            <see langword="true" /> if the <see cref="T:System.Object" /> is found in the current instance; otherwise, <see langword="false" />.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Object" /> is found in the <see cref="T:System.Collections.IList" />; otherwise, false.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use the <see cref="M:System.Collections.IList.Contains(System.Object)" /> method to determine if a particular <see cref="T:System.Object" /> is an element of the current
-   instance.</block>
-          </para>
-        </remarks>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the <see cref="T:System.Collections.IList" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 IndexOf(object value)" />
+      <MemberSignature Language="C#" Value="public int IndexOf (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 IndexOf(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 IndexOf(object value)" />
-      <MemberSignature Language="C#" Value="public int IndexOf (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -156,41 +158,33 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.Object" /> to locate in the current instance.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starting with the .NET Framework 2.0, this method uses the collection’s objects’ <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods on <paramref name="item" /> to determine whether item exists. In the earlier versions of the .NET Framework, this determination was made by using the <see cref="M:System.Object.Equals(System.Object)" /> and <see cref="M:System.IComparable.CompareTo(System.Object)" /> methods of the <paramref name="item" /> parameter on the objects in the collection.</para>
+        </remarks>
         <summary>
-          <para> Determines the index of a specific item in the current
-      instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of a specific item in the <see cref="T:System.Collections.IList" />.</para>
         </summary>
         <returns>
-          <para>The index of <paramref name="value" /> if found
-   in the current instance; otherwise, -1.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if found in the list; otherwise, -1.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">The default
-      implementations of this method use <see cref="M:System.Object.Equals(System.Object)" /> to search for value in the
-      current instance.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use <see cref="M:System.Collections.IList.IndexOf(System.Object)" /> to determine if a <see cref="T:System.Object" /> is contained in the current instance and, if it is
-contained, its index in the current instance.</block>
-          </para>
-        </remarks>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the <see cref="T:System.Collections.IList" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Insert(int32 index, object value)" />
+      <MemberSignature Language="C#" Value="public void Insert (int index, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Insert(int32 index, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Insert(int32 index, object value)" />
-      <MemberSignature Language="C#" Value="public void Insert (int index, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -199,51 +193,42 @@ contained, its index in the current instance.</block>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index at which <paramref name="value" /> is inserted.</param>
-        <param name="value">The <see cref="T:System.Object" /> to insert into the current instance.</param>
-        <summary>
-          <para> Inserts an item to the current instance at the
-      specified position.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors"> If <paramref name="index" /> equals the number
-   of items in the <see cref="T:System.Collections.IList" />, then <paramref name="value" /> is
-   required to be appended
-   to the end of the current instance.
-   
-</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use <see cref="M:System.Collections.IList.Insert(System.Int32,System.Object)" />
-to place a new element into a specific position in the current instance.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid index in the current instance (i.e. is greater than the number of elements in the current instance).</exception>
         <exception cref="T:System.NotSupportedException">
           <para>The current instance is read-only or has a fixed size.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="index" /> equals the number of items in the <see cref="T:System.Collections.IList" />, then <paramref name="value" /> is appended to the end.</para>
+          <para>In collections of contiguous elements, such as lists, the elements that follow the insertion point move down to accommodate the new element. If the collection is indexed, the indexes of the elements that are moved are also updated. This behavior does not apply to collections where elements are conceptually grouped into buckets, such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an item to the <see cref="T:System.Collections.IList" /> at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to insert into the <see cref="T:System.Collections.IList" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsFixedSize">
+      <MemberSignature Language="ILASM" Value=".property bool IsFixedSize { public hidebysig virtual abstract specialname bool get_IsFixedSize() }" />
+      <MemberSignature Language="C#" Value="public bool IsFixedSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFixedSize" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsFixedSize">
-      <MemberSignature Language="ILASM" Value=".property bool IsFixedSize { public hidebysig virtual abstract specialname bool get_IsFixedSize() }" />
-      <MemberSignature Language="C#" Value="public bool IsFixedSize { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets a <see cref="T:System.Boolean" /> value indicating whether the current instance has a fixed size.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> if the
@@ -251,56 +236,31 @@ to place a new element into a specific position in the current instance.</block>
 <see langword="false" />. </para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="note">A collection with a fixed size does not
-      allow the addition or removal of elements, but it allows the modification of
-      existing elements.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">Any method that adds or removes an
-      element of a collection is required to check the value of this property for
-      the particular collection before adding or removing elements. If the
-      value of this property is <see langword="false" />, any
-      attempt to add or remove an element
-      of the current instance is required to throw a <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The default of this property is <see langword="false" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override this property, setting the
-   value to <see langword="true" />, in order to prevent the addition or removal of
-   elements in the current instance.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use
-<see cref="P:System.Collections.IList.IsFixedSize" /> to secure
-   the current instance from
-   modification from methods, such as <see cref="M:System.Collections.IList.Add(System.Object)" /> and <see cref="M:System.Collections.IList.Remove(System.Object)" />, which add or remove elements from a
-   list.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection with a fixed size does not allow the addition or removal of elements after the collection is created, but it allows the modification of existing elements.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Collections.IList" /> has a fixed size.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig virtual abstract specialname bool get_IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig virtual abstract specialname bool get_IsReadOnly() }" />
-      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets a value indicating whether the current instance is read-only.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> if the
@@ -308,50 +268,26 @@ to place a new element into a specific position in the current instance.</block>
 <see langword="false" />.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="note">A collection that is read-only does not
-      allow the modification, addition, or removal of elements.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">Any method that modifies,
-      adds, or removes an element of a collection is required to check the
-      value of this property for the particular collection before
-      executing. If the value of this property is <see langword="false" />, any
-      attempt to
-      modify, add, or remove an element of the current instance is required to throw
-      a <see cref="T:System.NotSupportedException" />.
-      </block>
-          </para>
-          <para>
-            <block subset="none" type="default">The default of this property is
-      <see langword="false" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override this property, setting the
-      value to <see langword="true" />, in order to prevent the
-      modification, addition, or removal of elements in the current
-      instance.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use <see cref="P:System.Collections.IList.IsReadOnly" /> to
-   secure the current instance from
-   modification from methods, such as <see cref="M:System.Collections.IList.Add(System.Object)" /> and <see cref="M:System.Collections.IList.Remove(System.Object)" />, which modify, add, or remove elements
-   from a list.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that is read-only does not allow the addition, removal, or modification of elements after the collection is created.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Collections.IList" /> is read-only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="ILASM" Value=".property object Item[int32 index] { public hidebysig virtual abstract specialname object get_Item(int32 index) public hidebysig virtual abstract specialname void set_Item(int32 index, object value) }" />
+      <MemberSignature Language="C#" Value="public object this[int index] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Item(int32)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Item">
-      <MemberSignature Language="ILASM" Value=".property object Item[int32 index] { public hidebysig virtual abstract specialname object get_Item(int32 index) public hidebysig virtual abstract specialname void set_Item(int32 index, object value) }" />
-      <MemberSignature Language="C#" Value="public object this[int index] { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -382,16 +318,17 @@ to place a new element into a specific position in the current instance.</block>
         <exception cref="T:System.NotSupportedException">The property is being set and the current instance is read-only.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Remove(object value)" />
+      <MemberSignature Language="C#" Value="public void Remove (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Remove(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remove">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Remove(object value)" />
-      <MemberSignature Language="C#" Value="public void Remove (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -399,43 +336,32 @@ to place a new element into a specific position in the current instance.</block>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">The <see cref="T:System.Object" /> to remove from the current instance.</param>
-        <summary>
-          <para> Removes the first occurrence of a specified <see cref="T:System.Object" /> from
-   the current instance.</para>
-        </summary>
-        <remarks>
-          <block subset="none" type="behaviors">
-            <para>As described above.</para>
-            <para>In addition, if <paramref name="value" />
-   is <see langword="null" /> or is not found in the current instance, it is required that no
-   exception be thrown and the current instance remain unchanged.</para>
-          </block>
-          <para>
-            <block subset="none" type="overrides">The default implementations
-   of this method use <see cref="M:System.Object.Equals(System.Object)" /> to search for value
-   in the current instance.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use <see cref="M:System.Collections.IList.Remove(System.Object)" />
-to delete a specified <see cref="T:System.Object" /> from the current instance.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">
           <para>The current instance is read-only or has a fixed size.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In collections of contiguous elements, such as lists, the elements that follow the removed element move up to occupy the vacated spot. If the collection is indexed, the indexes of the elements that are moved are also updated. This behavior does not apply to collections where elements are conceptually grouped into buckets, such as a hash table. If <paramref name="value" /> is not found in the <see cref="T:System.Collections.IList" />, the <see cref="T:System.Collections.IList" /> remains unchanged and no exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of a specific object from the <see cref="T:System.Collections.IList" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to remove from the <see cref="T:System.Collections.IList" />. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="RemoveAt">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void RemoveAt(int32 index)" />
+      <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveAt(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveAt">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void RemoveAt(int32 index)" />
-      <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -443,37 +369,24 @@ to delete a specified <see cref="T:System.Object" /> from the current instance.<
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">A <see cref="T:System.Int32" /> that specifies the zero-based index of the item to remove.</param>
-        <summary>
-          <para> Removes the item at the specified
-      index of the current instance.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" /> to delete a specified <see cref="T:System.Object" /> from the current instance.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid index in current instance.</exception>
         <exception cref="T:System.NotSupportedException">
           <para>The current instance is read-only or has a fixed size.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In collections of contiguous elements, such as lists, the elements that follow the removed element move up to occupy the vacated spot. If the collection is indexed, the indexes of the elements that are moved are also updated. This behavior does not apply to collections where elements are conceptually grouped into buckets, such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Collections.IList" /> item at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Interfaces>
-    <Interface>
-      <InterfaceName>System.Collections.ICollection</InterfaceName>
-    </Interface>
-  </Interfaces>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConsoleKey" FullName="System.ConsoleKey">
   <TypeSignature Language="C#" Value="public enum ConsoleKey" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ConsoleKey extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,2170 +11,2752 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ConsoleKey" /> enumeration is typically used in the <see cref="T:System.ConsoleKeyInfo" /> structure, which is returned by the <see cref="M:System.Console.ReadKey" /> method to indicate which key on the console has been pressed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the standard keys on a console.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="A">
       <MemberSignature Language="C#" Value="A" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey A = int32(65)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The A key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="Add" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Add = int32(107)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Add key (the addition key on the numeric keypad).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Applications">
       <MemberSignature Language="C#" Value="Applications" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Applications = int32(93)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Application key (Microsoft Natural Keyboard).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Attention">
       <MemberSignature Language="C#" Value="Attention" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Attention = int32(246)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ATTN key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="B">
       <MemberSignature Language="C#" Value="B" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey B = int32(66)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The B key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Backspace">
       <MemberSignature Language="C#" Value="Backspace" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Backspace = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The BACKSPACE key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BrowserBack">
       <MemberSignature Language="C#" Value="BrowserBack" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey BrowserBack = int32(166)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Back key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BrowserFavorites">
       <MemberSignature Language="C#" Value="BrowserFavorites" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey BrowserFavorites = int32(171)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Favorites key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BrowserForward">
       <MemberSignature Language="C#" Value="BrowserForward" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey BrowserForward = int32(167)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Forward key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BrowserHome">
       <MemberSignature Language="C#" Value="BrowserHome" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey BrowserHome = int32(172)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Home key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BrowserRefresh">
       <MemberSignature Language="C#" Value="BrowserRefresh" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey BrowserRefresh = int32(168)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Refresh key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BrowserSearch">
       <MemberSignature Language="C#" Value="BrowserSearch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey BrowserSearch = int32(170)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Search key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="BrowserStop">
       <MemberSignature Language="C#" Value="BrowserStop" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey BrowserStop = int32(169)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Stop key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="C">
       <MemberSignature Language="C#" Value="C" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey C = int32(67)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The C key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="Clear" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Clear = int32(12)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The CLEAR key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CrSel">
       <MemberSignature Language="C#" Value="CrSel" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey CrSel = int32(247)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The CRSEL (CURSOR SELECT) key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D">
       <MemberSignature Language="C#" Value="D" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D = int32(68)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The D key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D0">
       <MemberSignature Language="C#" Value="D0" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D0 = int32(48)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 0 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D1">
       <MemberSignature Language="C#" Value="D1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D1 = int32(49)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 1 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D2">
       <MemberSignature Language="C#" Value="D2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D2 = int32(50)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 2 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D3">
       <MemberSignature Language="C#" Value="D3" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D3 = int32(51)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 3 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D4">
       <MemberSignature Language="C#" Value="D4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D4 = int32(52)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 4 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D5">
       <MemberSignature Language="C#" Value="D5" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D5 = int32(53)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 5 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D6">
       <MemberSignature Language="C#" Value="D6" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D6 = int32(54)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 6 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D7">
       <MemberSignature Language="C#" Value="D7" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D7 = int32(55)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 7 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D8">
       <MemberSignature Language="C#" Value="D8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D8 = int32(56)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="D9">
       <MemberSignature Language="C#" Value="D9" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey D9 = int32(57)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 9 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Decimal">
       <MemberSignature Language="C#" Value="Decimal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Decimal = int32(110)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Decimal key (the decimal key on the numeric keypad). </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="Delete" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Delete = int32(46)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DEL (DELETE) key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Divide">
       <MemberSignature Language="C#" Value="Divide" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Divide = int32(111)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Divide key (the division key on the numeric keypad). </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DownArrow">
       <MemberSignature Language="C#" Value="DownArrow" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey DownArrow = int32(40)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DOWN ARROW key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="E">
       <MemberSignature Language="C#" Value="E" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey E = int32(69)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The E key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="End">
       <MemberSignature Language="C#" Value="End" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey End = int32(35)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The END key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Enter">
       <MemberSignature Language="C#" Value="Enter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Enter = int32(13)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ENTER key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="EraseEndOfFile">
       <MemberSignature Language="C#" Value="EraseEndOfFile" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey EraseEndOfFile = int32(249)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ERASE EOF key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Escape">
       <MemberSignature Language="C#" Value="Escape" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Escape = int32(27)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ESC (ESCAPE) key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Execute">
       <MemberSignature Language="C#" Value="Execute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Execute = int32(43)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The EXECUTE key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ExSel">
       <MemberSignature Language="C#" Value="ExSel" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey ExSel = int32(248)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The EXSEL (EXTEND SELECTION) key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F">
       <MemberSignature Language="C#" Value="F" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F = int32(70)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F1">
       <MemberSignature Language="C#" Value="F1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F1 = int32(112)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F1 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F10">
       <MemberSignature Language="C#" Value="F10" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F10 = int32(121)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F10 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F11">
       <MemberSignature Language="C#" Value="F11" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F11 = int32(122)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F11 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F12">
       <MemberSignature Language="C#" Value="F12" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F12 = int32(123)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F12 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F13">
       <MemberSignature Language="C#" Value="F13" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F13 = int32(124)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F13 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F14">
       <MemberSignature Language="C#" Value="F14" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F14 = int32(125)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F14 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F15">
       <MemberSignature Language="C#" Value="F15" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F15 = int32(126)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F15 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F16">
       <MemberSignature Language="C#" Value="F16" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F16 = int32(127)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F16 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F17">
       <MemberSignature Language="C#" Value="F17" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F17 = int32(128)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F17 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F18">
       <MemberSignature Language="C#" Value="F18" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F18 = int32(129)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F18 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F19">
       <MemberSignature Language="C#" Value="F19" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F19 = int32(130)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F19 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F2">
       <MemberSignature Language="C#" Value="F2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F2 = int32(113)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F2 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F20">
       <MemberSignature Language="C#" Value="F20" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F20 = int32(131)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F20 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F21">
       <MemberSignature Language="C#" Value="F21" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F21 = int32(132)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F21 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F22">
       <MemberSignature Language="C#" Value="F22" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F22 = int32(133)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F22 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F23">
       <MemberSignature Language="C#" Value="F23" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F23 = int32(134)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F23 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F24">
       <MemberSignature Language="C#" Value="F24" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F24 = int32(135)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F24 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F3">
       <MemberSignature Language="C#" Value="F3" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F3 = int32(114)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F3 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F4">
       <MemberSignature Language="C#" Value="F4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F4 = int32(115)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F4 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F5">
       <MemberSignature Language="C#" Value="F5" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F5 = int32(116)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F5 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F6">
       <MemberSignature Language="C#" Value="F6" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F6 = int32(117)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F6 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F7">
       <MemberSignature Language="C#" Value="F7" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F7 = int32(118)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F7 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F8">
       <MemberSignature Language="C#" Value="F8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F8 = int32(119)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F8 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="F9">
       <MemberSignature Language="C#" Value="F9" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey F9 = int32(120)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F9 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="G">
       <MemberSignature Language="C#" Value="G" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey G = int32(71)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The G key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="H">
       <MemberSignature Language="C#" Value="H" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey H = int32(72)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The H key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Help">
       <MemberSignature Language="C#" Value="Help" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Help = int32(47)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HELP key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Home">
       <MemberSignature Language="C#" Value="Home" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Home = int32(36)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HOME key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="I">
       <MemberSignature Language="C#" Value="I" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey I = int32(73)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The I key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Insert">
       <MemberSignature Language="C#" Value="Insert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Insert = int32(45)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The INS (INSERT) key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="J">
       <MemberSignature Language="C#" Value="J" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey J = int32(74)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The J key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="K">
       <MemberSignature Language="C#" Value="K" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey K = int32(75)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The K key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="L">
       <MemberSignature Language="C#" Value="L" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey L = int32(76)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The L key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LaunchApp1">
       <MemberSignature Language="C#" Value="LaunchApp1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey LaunchApp1 = int32(182)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Start Application 1 key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LaunchApp2">
       <MemberSignature Language="C#" Value="LaunchApp2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey LaunchApp2 = int32(183)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Start Application 2 key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LaunchMail">
       <MemberSignature Language="C#" Value="LaunchMail" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey LaunchMail = int32(180)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Start Mail key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LaunchMediaSelect">
       <MemberSignature Language="C#" Value="LaunchMediaSelect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey LaunchMediaSelect = int32(181)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Select Media key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LeftArrow">
       <MemberSignature Language="C#" Value="LeftArrow" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey LeftArrow = int32(37)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The LEFT ARROW key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LeftWindows">
       <MemberSignature Language="C#" Value="LeftWindows" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey LeftWindows = int32(91)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The left Windows logo key (Microsoft Natural Keyboard).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="M">
       <MemberSignature Language="C#" Value="M" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey M = int32(77)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The M key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MediaNext">
       <MemberSignature Language="C#" Value="MediaNext" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey MediaNext = int32(176)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Next Track key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MediaPlay">
       <MemberSignature Language="C#" Value="MediaPlay" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey MediaPlay = int32(179)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Play/Pause key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MediaPrevious">
       <MemberSignature Language="C#" Value="MediaPrevious" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey MediaPrevious = int32(177)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Previous Track key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="MediaStop">
       <MemberSignature Language="C#" Value="MediaStop" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey MediaStop = int32(178)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Stop key (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Multiply">
       <MemberSignature Language="C#" Value="Multiply" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Multiply = int32(106)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Multiply key (the multiplication key on the numeric keypad).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="N">
       <MemberSignature Language="C#" Value="N" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey N = int32(78)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The N key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NoName">
       <MemberSignature Language="C#" Value="NoName" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NoName = int32(252)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant reserved for future use.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad0">
       <MemberSignature Language="C#" Value="NumPad0" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad0 = int32(96)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 0 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad1">
       <MemberSignature Language="C#" Value="NumPad1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad1 = int32(97)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 1 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad2">
       <MemberSignature Language="C#" Value="NumPad2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad2 = int32(98)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 2 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad3">
       <MemberSignature Language="C#" Value="NumPad3" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad3 = int32(99)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 3 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad4">
       <MemberSignature Language="C#" Value="NumPad4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad4 = int32(100)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 4 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad5">
       <MemberSignature Language="C#" Value="NumPad5" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad5 = int32(101)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 5 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad6">
       <MemberSignature Language="C#" Value="NumPad6" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad6 = int32(102)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 6 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad7">
       <MemberSignature Language="C#" Value="NumPad7" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad7 = int32(103)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 7 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad8">
       <MemberSignature Language="C#" Value="NumPad8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad8 = int32(104)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NumPad9">
       <MemberSignature Language="C#" Value="NumPad9" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey NumPad9 = int32(105)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 9 key on the numeric keypad.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="O">
       <MemberSignature Language="C#" Value="O" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey O = int32(79)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The O key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem1">
       <MemberSignature Language="C#" Value="Oem1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem1 = int32(186)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 1 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem102">
       <MemberSignature Language="C#" Value="Oem102" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem102 = int32(226)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 102 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem2">
       <MemberSignature Language="C#" Value="Oem2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem2 = int32(191)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 2 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem3">
       <MemberSignature Language="C#" Value="Oem3" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem3 = int32(192)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 3 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem4">
       <MemberSignature Language="C#" Value="Oem4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem4 = int32(219)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 4 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem5">
       <MemberSignature Language="C#" Value="Oem5" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem5 = int32(220)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 5 (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem6">
       <MemberSignature Language="C#" Value="Oem6" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem6 = int32(221)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 6 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem7">
       <MemberSignature Language="C#" Value="Oem7" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem7 = int32(222)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 7 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Oem8">
       <MemberSignature Language="C#" Value="Oem8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Oem8 = int32(223)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 8 key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OemClear">
       <MemberSignature Language="C#" Value="OemClear" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey OemClear = int32(254)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The CLEAR key (OEM specific).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OemComma">
       <MemberSignature Language="C#" Value="OemComma" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey OemComma = int32(188)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Comma key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OemMinus">
       <MemberSignature Language="C#" Value="OemMinus" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey OemMinus = int32(189)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Minus key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OemPeriod">
       <MemberSignature Language="C#" Value="OemPeriod" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey OemPeriod = int32(190)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Period key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OemPlus">
       <MemberSignature Language="C#" Value="OemPlus" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey OemPlus = int32(187)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Plus key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="P">
       <MemberSignature Language="C#" Value="P" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey P = int32(80)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The P key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Pa1">
       <MemberSignature Language="C#" Value="Pa1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Pa1 = int32(253)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PA1 key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Packet">
       <MemberSignature Language="C#" Value="Packet" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Packet = int32(231)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PACKET key (used to pass Unicode characters with keystrokes).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PageDown">
       <MemberSignature Language="C#" Value="PageDown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey PageDown = int32(34)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PAGE DOWN key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PageUp">
       <MemberSignature Language="C#" Value="PageUp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey PageUp = int32(33)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PAGE UP key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Pause">
       <MemberSignature Language="C#" Value="Pause" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Pause = int32(19)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PAUSE key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Play">
       <MemberSignature Language="C#" Value="Play" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Play = int32(250)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PLAY key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Print">
       <MemberSignature Language="C#" Value="Print" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Print = int32(42)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PRINT key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PrintScreen">
       <MemberSignature Language="C#" Value="PrintScreen" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey PrintScreen = int32(44)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PRINT SCREEN key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="Process" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Process = int32(229)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The IME PROCESS key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Q">
       <MemberSignature Language="C#" Value="Q" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Q = int32(81)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Q key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="R">
       <MemberSignature Language="C#" Value="R" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey R = int32(82)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The R key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RightArrow">
       <MemberSignature Language="C#" Value="RightArrow" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey RightArrow = int32(39)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RIGHT ARROW key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RightWindows">
       <MemberSignature Language="C#" Value="RightWindows" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey RightWindows = int32(92)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right Windows logo key (Microsoft Natural Keyboard).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="S">
       <MemberSignature Language="C#" Value="S" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey S = int32(83)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The S key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Select">
       <MemberSignature Language="C#" Value="Select" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Select = int32(41)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SELECT key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Separator">
       <MemberSignature Language="C#" Value="Separator" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Separator = int32(108)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Separator key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Sleep">
       <MemberSignature Language="C#" Value="Sleep" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Sleep = int32(95)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Computer Sleep key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Spacebar">
       <MemberSignature Language="C#" Value="Spacebar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Spacebar = int32(32)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SPACEBAR key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Subtract">
       <MemberSignature Language="C#" Value="Subtract" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Subtract = int32(109)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Subtract key (the subtraction key on the numeric keypad).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="T">
       <MemberSignature Language="C#" Value="T" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey T = int32(84)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The T key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Tab">
       <MemberSignature Language="C#" Value="Tab" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Tab = int32(9)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The TAB key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="U">
       <MemberSignature Language="C#" Value="U" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey U = int32(85)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The U key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="UpArrow">
       <MemberSignature Language="C#" Value="UpArrow" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey UpArrow = int32(38)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The UP ARROW key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="V">
       <MemberSignature Language="C#" Value="V" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey V = int32(86)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The V key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="VolumeDown">
       <MemberSignature Language="C#" Value="VolumeDown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey VolumeDown = int32(174)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Volume Down key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="VolumeMute">
       <MemberSignature Language="C#" Value="VolumeMute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey VolumeMute = int32(173)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Volume Mute key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="VolumeUp">
       <MemberSignature Language="C#" Value="VolumeUp" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey VolumeUp = int32(175)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Volume Up key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="W">
       <MemberSignature Language="C#" Value="W" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey W = int32(87)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The W key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="X">
       <MemberSignature Language="C#" Value="X" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey X = int32(88)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The X key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Y">
       <MemberSignature Language="C#" Value="Y" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Y = int32(89)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Y key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Z">
       <MemberSignature Language="C#" Value="Z" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Z = int32(90)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Z key.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Zoom">
       <MemberSignature Language="C#" Value="Zoom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ConsoleKey Zoom = int32(251)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.ConsoleKey</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleKey</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ZOOM key.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

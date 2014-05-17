@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IInteractiveChannelInitializer" FullName="System.ServiceModel.Dispatcher.IInteractiveChannelInitializer">
+  <TypeSignature Language="C#" Value="public interface IInteractiveChannelInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IInteractiveChannelInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" /> interface to enable a client application to display a user interface that enables the user of the application to create or select the credentials prior to opening a channel. </para>
+      <para>To implement <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />, perform the following steps in <see cref="M:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer.BeginDisplayInitializationUI(System.ServiceModel.IClientChannel,System.AsyncCallback,System.Object)" />:</para>
+      <list type="ordered">
+        <item>
+          <para>Prompt the user and obtain an appropriate <see cref="T:System.Net.NetworkCredential" />. </para>
+        </item>
+        <item>
+          <para>Add a custom channel parameter object to the collection returned by the <see cref="M:System.ServiceModel.Channels.IChannel.GetProperty``1" /> method on the <see cref="T:System.ServiceModel.IClientChannel" /> object with a type parameter of <see cref="T:System.ServiceModel.Channels.ChannelParameterCollection" />. This channel parameter object is used by the custom <see cref="T:System.ServiceModel.ClientCredentialsSecurityTokenManager" /> to establish the security tokens for the channel.</para>
+        </item>
+        <item>
+          <para>Return. </para>
+        </item>
+      </list>
+      <para>To insert <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />:</para>
+      <list type="ordered">
+        <item>
+          <para>Override the <see cref="M:System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint,System.ServiceModel.Dispatcher.ClientRuntime)" /> method on the <see cref="T:System.ServiceModel.Description.ClientCredentials" /> class. </para>
+        </item>
+        <item>
+          <para>In that method, determine whether the endpoint requires an <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" /> and if so, add the <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" /> to the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.InteractiveChannelInitializers" /> collection. </para>
+        </item>
+      </list>
+      <para>There are two ways application developers can make use of an inserted <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />. The client application can call either <see cref="M:System.ServiceModel.ClientBase`1.DisplayInitializationUI" /> or <see cref="M:System.ServiceModel.IClientChannel.DisplayInitializationUI" /> (or an asynchronous version) prior to opening the channel (the <newTerm>explicit</newTerm> approach) or simply call the first operation (the <newTerm>implicit</newTerm> approach).</para>
+      <para>If using the implicit approach, the application must call the first operation on an <see cref="T:System.ServiceModel.ClientBase`1" /> or <see cref="T:System.ServiceModel.IClientChannel" /> extension. If it calls anything other than the first operation, an exception is thrown.</para>
+      <para>If using the explicit approach, the application must perform the following steps in order:</para>
+      <list type="ordered">
+        <item>
+          <para>Call either <see cref="M:System.ServiceModel.ClientBase`1.DisplayInitializationUI" /> or <see cref="M:System.ServiceModel.IClientChannel.DisplayInitializationUI" /> (or an asynchronous version). </para>
+        </item>
+        <item>
+          <para>When the initializers have returned, call either the <see cref="M:System.ServiceModel.ICommunicationObject.Open" /> method on the <see cref="T:System.ServiceModel.IClientChannel" /> object or on the <see cref="T:System.ServiceModel.IClientChannel" /> object returned from the <see cref="P:System.ServiceModel.ClientBase`1.InnerChannel" /> property. </para>
+        </item>
+        <item>
+          <para>Call operations. </para>
+        </item>
+      </list>
+      <para>It is recommended that production-quality applications control of the user-interface process by adopting the explicit approach.</para>
+      <para>Applications that use the implicit approach invoke the user-interface initializers, but if the user of the application fails to respond within the send timeout period of the binding, an exception is thrown when the user interface returns. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the methods that enable a client application to display a user interface to collect identity information prior to creating the channel.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="BeginDisplayInitializationUI">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginDisplayInitializationUI (System.ServiceModel.IClientChannel channel, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginDisplayInitializationUI(class System.ServiceModel.IClientChannel channel, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="channel" Type="System.ServiceModel.IClientChannel" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To implement <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />, perform the following steps in <see cref="M:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer.BeginDisplayInitializationUI(System.ServiceModel.IClientChannel,System.AsyncCallback,System.Object)" />:</para>
+          <list type="ordered">
+            <item>
+              <para>Prompt the user in what way you see fit and obtain an appropriate <see cref="T:System.Net.NetworkCredential" />. </para>
+            </item>
+            <item>
+              <para>Add a custom channel parameter object to the collection returned by the <see cref="M:System.ServiceModel.Channels.IChannel.GetProperty``1" /> method on the <see cref="T:System.ServiceModel.IClientChannel" /> object with a type parameter of <see cref="T:System.ServiceModel.Channels.ChannelParameterCollection" />. This channel parameter object is used by the custom <see cref="T:System.ServiceModel.ClientCredentialsSecurityTokenManager" /> to establish the security tokens for the channel.</para>
+            </item>
+            <item>
+              <para>Return. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An asynchronous call to begin using a user interface to obtain credential information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> to use to call back when processing has completed.</para>
+        </returns>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The client channel.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The callback object.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any state data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndDisplayInitializationUI">
+      <MemberSignature Language="C#" Value="public void EndDisplayInitializationUI (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndDisplayInitializationUI(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the <see cref="M:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer.BeginDisplayInitializationUI(System.ServiceModel.IClientChannel,System.AsyncCallback,System.Object)" /> has finished.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" />.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

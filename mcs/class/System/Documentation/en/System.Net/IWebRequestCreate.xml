@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebRequestCreate" FullName="System.Net.IWebRequestCreate" FullNameSP="System_Net_IWebRequestCreate" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IWebRequestCreate" />
   <TypeSignature Language="C#" Value="public interface IWebRequestCreate" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IWebRequestCreate" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,34 +10,31 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Provides a mechanism for creating new <see cref="T:System.Net.WebRequest" />
-instances.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para> The <see cref="M:System.Net.IWebRequestCreate.Create(System.Uri)" /> method is implemented by types that derive from
-   <see cref="T:System.Net.WebRequest" />. The 
-   <see cref="M:System.Net.IWebRequestCreate.Create(System.Uri)" /> method is invoked via the 
-   <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" qualify="true" />
-   
-   method.</para>
-        <para> Types that implement the <see cref="T:System.Net.IWebRequestCreate" /> interface are associated with a specific URI
-scheme and registered with the <see cref="T:System.Net.WebRequest" /> class. When an application requests a
-<see langword="WebRequest" /> 
-object for a specific URI, <see cref="T:System.Net.WebRequest" /> calls the <see cref="M:System.Net.IWebRequestCreate.Create(System.Uri)" /> method of the type associated
-with the requested URI.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.IWebRequestCreate" /> interface defines the method that <see cref="T:System.Net.WebRequest" /> descendants must use to register with the <see cref="M:System.Net.WebRequest.Create(System.String)" /> method.</para>
+      <para>Classes that implement the <see cref="T:System.Net.IWebRequestCreate" /> interface can be registered with the <see cref="T:System.Net.WebRequest" /> class and associated with a specific URI scheme so that the <see cref="T:System.Net.WebRequest" /> calls the class's <see cref="M:System.Net.IWebRequestCreate.Create(System.Uri)" /> method when a URI that matches that scheme is requested.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base interface for creating <see cref="T:System.Net.WebRequest" /> instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Create">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Net.WebRequest Create(class System.Uri uri)" />
       <MemberSignature Language="C#" Value="public System.Net.WebRequest Create (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Net.WebRequest Create(class System.Uri uri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebRequest</ReturnType>
       </ReturnValue>
@@ -43,34 +42,22 @@ with the requested URI.</para>
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="uri">The <see cref="T:System.Uri" /> to be associated with the new instance.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.IWebRequestCreate.Create(System.Uri)" /> method must return an initialized instance of the <see cref="T:System.Net.WebRequest" /> descendant that is capable of performing a standard request/response transaction for the protocol without needing any protocol-specific fields modified.</para>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.Net.WebRequest" />
-instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Net.WebRequest" /> instance.</para>
         </summary>
         <returns>
-          <para>A new <see cref="T:System.Net.WebRequest" />
-instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> instance.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">This
-      method returns a new instance of a type that derives from
-   <see cref="T:System.Net.WebRequest" />
-   .</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">This method is
-   used by the <see cref="T:System.Net.WebRequest" />
-   class.</block>
-          </para>
-        </remarks>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The uniform resource identifier (URI) of the Web resource. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

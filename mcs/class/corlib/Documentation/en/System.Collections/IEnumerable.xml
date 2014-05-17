@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IEnumerable" FullName="System.Collections.IEnumerable" FullNameSP="System_Collections_IEnumerable" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IEnumerable" />
   <TypeSignature Language="C#" Value="public interface IEnumerable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEnumerable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -9,6 +11,7 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
@@ -18,50 +21,23 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Implemented by classes that support a simple iteration over instances of the collection.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>
-          <see cref="T:System.Collections.IEnumerable" /> contains the <see cref="M:System.Collections.IEnumerable.GetEnumerator" />
-   method. The consumer of an object should call this method to obtain an
-   enumerator for simple iteration over an instance of a collection.</para>
-        <para>Implement this interface to support the 
-<see langword="foreach" /> semantics of C#.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Collections.IEnumerable" /> is the base interface for all non-generic collections that can be enumerated. For the generic version of this interface see <see cref="T:System.Collections.Generic.IEnumerable`1" />. <see cref="T:System.Collections.IEnumerable" /> contains a single method, <see cref="M:System.Collections.IEnumerable.GetEnumerator" />, which returns an <see cref="T:System.Collections.IEnumerator" />. <see cref="T:System.Collections.IEnumerator" /> provides the ability to iterate through the collection by exposing a <see cref="P:System.Collections.IEnumerator.Current" /> property and <see cref="M:System.Collections.IEnumerator.MoveNext" /> and <see cref="M:System.Collections.IEnumerator.Reset" /> methods. </para>
+      <para>It is a best practice to implement <see cref="T:System.Collections.IEnumerable" /> and <see cref="T:System.Collections.IEnumerator" /> on your collection classes to enable the foreach (For Each in Visual Basic) syntax, however implementing <see cref="T:System.Collections.IEnumerable" /> is not required. If your collection does not implement <see cref="T:System.Collections.IEnumerable" />, you must still follow the iterator pattern to support this syntax by providing a GetEnumerator method that returns an interface, class or struct. When using Visual Basic, you must provide an <see cref="T:System.Collections.IEnumerator" /> implementation, which is returned by GetEnumerator. When developing with C# you must provide a class that contains a Current property, and MoveNext and Reset methods as described by <see cref="T:System.Collections.IEnumerator" />, but the class does not have to implement <see cref="T:System.Collections.IEnumerator" />.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes an enumerator, which supports a simple iteration over a non-generic collection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Collections.IEnumerator GetEnumerator()" />
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IEnumerator</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Returns a <see cref="T:System.Collections.IEnumerator" /> that
-   can be used for simple iteration over a collection.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Collections.IEnumerator" />
-that can be used for simple iteration over a collection.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">For a detailed description regarding the use of an
-      enumerator, see <see cref="T:System.Collections.IEnumerator" />.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,8 +48,33 @@ that can be used for simple iteration over a collection.</para>
           <AttributeName>System.Runtime.InteropServices.DispId(-4)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The foreach statement of the C# language (For Each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
+          <para>Enumerators can be used to read the data in the collection, but they cannot be used to modify the underlying collection.</para>
+          <para>Initially, the enumerator is positioned before the first element in the collection. The <see cref="M:System.Collections.IEnumerator.Reset" /> method also brings the enumerator back to this position.  At this position, the <see cref="P:System.Collections.IEnumerator.Current" /> property is undefined. Therefore, you must call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to advance the enumerator to the first element of the collection before reading the value of <see cref="P:System.Collections.IEnumerator.Current" />.</para>
+          <para>
+            <see cref="P:System.Collections.IEnumerator.Current" /> returns the same object until either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called. <see cref="M:System.Collections.IEnumerator.MoveNext" /> sets <see cref="P:System.Collections.IEnumerator.Current" /> to the next element.</para>
+          <para>If <see cref="M:System.Collections.IEnumerator.MoveNext" /> passes the end of the collection, the enumerator is positioned after the last element in the collection and <see cref="M:System.Collections.IEnumerator.MoveNext" /> returns false. When the enumerator is at this position, subsequent calls to <see cref="M:System.Collections.IEnumerator.MoveNext" /> also return false. If the last call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> returns false, <see cref="P:System.Collections.IEnumerator.Current" /> is undefined. To set <see cref="P:System.Collections.IEnumerator.Current" /> to the first element of the collection again, you can call <see cref="M:System.Collections.IEnumerator.Reset" /> followed by <see cref="M:System.Collections.IEnumerator.MoveNext" />.</para>
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator is irrecoverably invalidated and its behavior is undefined.</para>
+          <para>The enumerator does not have exclusive access to the collection; therefore, enumerating through a collection is intrinsically not a thread-safe procedure.  To guarantee thread safety during enumeration, you can lock the collection during the entire enumeration.  To allow the collection to be accessed by multiple threads for reading and writing, you must implement your own synchronization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Interfaces />
 </Type>

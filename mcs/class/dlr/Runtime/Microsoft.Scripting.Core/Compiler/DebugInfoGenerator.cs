@@ -24,7 +24,9 @@ using System.Linq.Expressions.Compiler;
 using System;
 using System.Collections.Generic;
 using System.Text;
+#if FEATURE_REFEMIT
 using System.Reflection.Emit;
+#endif
 using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
 using System.Reflection;
@@ -55,6 +57,7 @@ namespace System.Runtime.CompilerServices {
         /// <param name="sequencePoint">Debug informaton corresponding to the sequence point.</param>
         public abstract void MarkSequencePoint(LambdaExpression method, int ilOffset, DebugInfoExpression sequencePoint);
 
+#if FEATURE_REFEMIT
         internal virtual void MarkSequencePoint(LambdaExpression method, MethodBase methodBase, ILGenerator ilg, DebugInfoExpression sequencePoint) {
             MarkSequencePoint(method, ilg.ILOffset, sequencePoint);
         }
@@ -62,5 +65,6 @@ namespace System.Runtime.CompilerServices {
         internal virtual void SetLocalName(LocalBuilder localBuilder, string name) {
             // nop
         }
+#endif
     }
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TransactionFlowOption" FullName="System.ServiceModel.TransactionFlowOption">
+  <TypeSignature Language="C#" Value="public enum TransactionFlowOption" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TransactionFlowOption extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used to instantiate an instance of the <see cref="T:System.ServiceModel.TransactionFlowAttribute" /> class, which is used to mark a service contract method to indicate its transaction flow policy.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An enumeration that is used with the <see cref="T:System.ServiceModel.TransactionFlowAttribute" /> to specify the transaction flow policy for a service operation.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Allowed">
+      <MemberSignature Language="C#" Value="Allowed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.TransactionFlowOption Allowed = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TransactionFlowOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transaction may be flowed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Mandatory">
+      <MemberSignature Language="C#" Value="Mandatory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.TransactionFlowOption Mandatory = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TransactionFlowOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transaction must be flowed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotAllowed">
+      <MemberSignature Language="C#" Value="NotAllowed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.TransactionFlowOption NotAllowed = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TransactionFlowOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A transaction should not be flowed. This is the default value.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,10 +1,12 @@
 //
-// Comparer
+// EqualityComparer.cs
 //
 // Authors:
 //	Ben Maurer (bmaurer@ximian.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,14 +37,26 @@ namespace System.Collections.Generic {
 		
 		static EqualityComparer ()
 		{
-			if (typeof (T) == typeof (string)){
+			var t = typeof (T);
+			if (t == typeof (string)) {
 				_default = (EqualityComparer<T>) (object) new InternalStringComparer ();
 				return;
 			}
-			if (typeof (IEquatable <T>).IsAssignableFrom (typeof (T)))
-				_default = (EqualityComparer <T>) Activator.CreateInstance (typeof (GenericEqualityComparer <>).MakeGenericType (typeof (T)));
+
+			if (t == typeof (int)) {
+				_default = (EqualityComparer<T>) (object) new IntEqualityComparer ();
+				return;
+			}
+
+			if (t.IsEnum && Enum.GetUnderlyingType (t) == typeof (int)) {
+				_default = new EnumIntEqualityComparer<T> ();
+				return;
+			}
+
+			if (typeof (IEquatable <T>).IsAssignableFrom (t))
+				_default = (EqualityComparer <T>) Activator.CreateInstance (typeof (GenericEqualityComparer <>).MakeGenericType (t));
 			else
-				_default = new DefaultComparer ();
+				_default = new DefaultComparer<T> ();
 		}
 		
 		public abstract int GetHashCode (T obj);
@@ -82,26 +96,36 @@ namespace System.Collections.Generic {
 			return Equals ((T)x, (T)y);
 		}
 		
-		[Serializable]
-		sealed class DefaultComparer : EqualityComparer<T> {
-	
-			public override int GetHashCode (T obj)
-			{
-				if (obj == null)
-					return 0;
-				return obj.GetHashCode ();
+		internal virtual int IndexOf (T[] array, T value, int startIndex, int endIndex)
+		{
+			for (int i = startIndex; i < endIndex; ++i) {
+				if (Equals (Array.UnsafeLoad (array, i), value))
+					return i;
 			}
-	
-			public override bool Equals (T x, T y)
-			{
-				if (x == null)
-					return y == null;
 
-				return x.Equals (y);
-			}
+			return -1;
 		}
 	}
+
+	[Serializable]
+	sealed class DefaultComparer<T> : EqualityComparer<T> {
 	
+		public override int GetHashCode (T obj)
+		{
+			if (obj == null)
+				return 0;
+			return obj.GetHashCode ();
+		}
+	
+		public override bool Equals (T x, T y)
+		{
+			if (x == null)
+				return y == null;
+
+			return x.Equals (y);
+		}
+	}
+
 	[Serializable]
 	sealed class InternalStringComparer : EqualityComparer<string> {
 	
@@ -121,6 +145,66 @@ namespace System.Collections.Generic {
 				return true;
 				
 			return x.Equals (y);
+		}
+
+		internal override int IndexOf (string[] array, string value, int startIndex, int endIndex)
+		{
+			for (int i = startIndex; i < endIndex; ++i) {
+				if (Array.UnsafeLoad (array, i) == value)
+					return i;
+			}
+
+			return -1;
+		}
+	}
+
+	[Serializable]
+	sealed class IntEqualityComparer : EqualityComparer<int>
+	{
+		public override int GetHashCode (int obj)
+		{
+			return obj;
+		}
+
+		public override bool Equals (int x, int y)
+		{
+			return x == y;
+		}
+
+		internal override int IndexOf (int[] array, int value, int startIndex, int endIndex)
+		{
+			for (int i = startIndex; i < endIndex; ++i) {
+				if (Array.UnsafeLoad (array, i) == value)
+					return i;
+			}
+
+			return -1;
+		}
+	}
+
+	[Serializable]
+	sealed class EnumIntEqualityComparer<T> : EqualityComparer<T>
+	{
+		public override int GetHashCode (T obj)
+		{
+			return Array.UnsafeMov<T, int> (obj);
+		}
+
+		public override bool Equals (T x, T y)
+		{
+			return Array.UnsafeMov<T, int> (x) == Array.UnsafeMov<T, int> (y);
+		}
+
+		internal override int IndexOf (T[] array, T value, int startIndex, int endIndex)
+		{
+			int v = Array.UnsafeMov<T, int> (value);
+			var a = Array.UnsafeMov<T[], int[]> (array);
+			for (int i = startIndex; i < endIndex; ++i) {
+				if (Array.UnsafeLoad (a, i) == v)
+					return i;
+			}
+
+			return -1;
 		}
 	}
 

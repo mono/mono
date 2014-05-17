@@ -1,22 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesignerOptionService" FullName="System.ComponentModel.Design.IDesignerOptionService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDesignerOptionService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesignerOptionService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.IDesignerOptionService" /> provides an interface that can be used to retrieve and update the values of the Windows Forms Designer options, which are listed within the dialog displayed by the <ui>Options</ui> command of the <ui>Tools</ui> menu of the Visual Studio development environment. The <see cref="M:System.ComponentModel.Design.IDesignerOptionService.GetOptionValue(System.String,System.String)" /> method retrieves the value of a specified option. The <see cref="M:System.ComponentModel.Design.IDesignerOptionService.SetOptionValue(System.String,System.String,System.Object)" /> method sets a specified value for a specified option.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the designer options located on the <ui>Tools</ui> menu under the <ui>Options</ui> command in the Visual Studio development environment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetOptionValue">
       <MemberSignature Language="C#" Value="public object GetOptionValue (string pageName, string valueName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetOptionValue(string pageName, string valueName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -25,20 +41,162 @@
         <Parameter Name="valueName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="pageName">To be added: an object of type 'string'</param>
-        <param name="valueName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="pageName" /> parameter should consist of "WindowsFormsDesigner\CategoryName", where CategoryName is an options category name without any white space characters. The category name is typically "General". Therefore, you can access the "General" designer options category with the English page name "WindowsFormsDesigner\General".</para>
+          <block subset="none" type="note">
+            <para>The page and value names are always expected in English. Therefore, the following table is provided to help you access the options you want.</para>
+          </block>
+          <para>The following table indicates the English value names, their data format, and a description of each: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value Name </para>
+                </term>
+                <description>
+                  <para>Value Format </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>GridSize </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Drawing.Size" /> </para>
+              </description>
+              <description>
+                <para>The size of each grid square. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GridSize.Width </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int32" /> </para>
+              </description>
+              <description>
+                <para>The width of each grid square. This nested property is read-only when accessed through the designer option service. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GridSize.Height </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int32" /> </para>
+              </description>
+              <description>
+                <para>The height of each grid square. This nested property is read-only when accessed through the designer option service. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ShowGrid </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" /> </para>
+              </description>
+              <description>
+                <para>true if the grid should be shown; false if the grid should not be shown. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SnapToGrid </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" /> </para>
+              </description>
+              <description>
+                <para>true if the positions of the components should be aligned to the grid; false if the positions should not necessarily be aligned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>LayoutMode</para>
+              </term>
+              <description>
+                <para>Microsoft.VisualStudio.Windows.Forms.LayoutMode</para>
+              </description>
+              <description>
+                <para>SnapLines to use snaplines, or SnapToGrid to align controls to the grid,</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ObjectBoundSmartTagAutoShow</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" />
+                </para>
+              </description>
+              <description>
+                <para>true to allow a component's smart tag panel to open automatically upon creation; otherwise, false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AutoToolboxPopulate</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" />
+                </para>
+              </description>
+              <description>
+                <para>true to automatically add a solution's custom controls and components to the <ui>Toolbox</ui>; otherwise, false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UseOptimizedCodeGeneration</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" />
+                </para>
+              </description>
+              <description>
+                <para>true if the component cache is enabled; otherwise, false. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified Windows Forms Designer option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified option.</para>
+        </returns>
+        <param name="pageName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the page that defines the option. </param>
+        <param name="valueName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the option property. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetOptionValue">
       <MemberSignature Language="C#" Value="public void SetOptionValue (string pageName, string valueName, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetOptionValue(string pageName, string valueName, object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -48,16 +206,150 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="pageName">To be added: an object of type 'string'</param>
-        <param name="valueName">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="pageName" /> parameter should consist of "WindowsFormsDesigner\CategoryName", where CategoryName is an options category name without any white space characters. The category name is typically "General". Therefore, you can access the "General" designer options category with the English page name "WindowsFormsDesigner\General".</para>
+          <block subset="none" type="note">
+            <para>The page and value names are always expected in English. Therefore, the following table is provided to help you access the options you want.</para>
+          </block>
+          <para>The following table indicates the English value names, their data format, and a description of each: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value Name </para>
+                </term>
+                <description>
+                  <para>Value Format </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>GridSize </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Drawing.Size" /> </para>
+              </description>
+              <description>
+                <para>The size of each grid square. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GridSize.Width </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int32" /> </para>
+              </description>
+              <description>
+                <para>The width of each grid square. This nested property is read-only when accessed through the designer option service. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>GridSize.Height </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int32" /> </para>
+              </description>
+              <description>
+                <para>The height of each grid square. This nested property is read-only when accessed through the designer option service. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ShowGrid </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" /> </para>
+              </description>
+              <description>
+                <para>true if the grid should be shown; false if the grid should not be shown. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SnapToGrid </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" /> </para>
+              </description>
+              <description>
+                <para>true if the positions of the components should be aligned to the grid; false if the positions should not necessarily be aligned. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>LayoutMode</para>
+              </term>
+              <description>
+                <para>Microsoft.VisualStudio.Windows.Forms.LayoutMode</para>
+              </description>
+              <description>
+                <para>SnapLines to use snaplines, or SnapToGrid to align controls to the grid,</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ObjectBoundSmartTagAutoShow</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" />
+                </para>
+              </description>
+              <description>
+                <para>true to allow a component's smart tag panel to open automatically upon creation; otherwise, false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AutoToolboxPopulate</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" />
+                </para>
+              </description>
+              <description>
+                <para>true to automatically add a solution's custom controls and components to the <ui>Toolbox</ui>; otherwise, false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UseOptimizedCodeGeneration</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" />
+                </para>
+              </description>
+              <description>
+                <para>true if the component cache is enabled; otherwise, false. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the specified Windows Forms Designer option.</para>
+        </summary>
+        <param name="pageName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the page that defines the option. </param>
+        <param name="valueName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the option property. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

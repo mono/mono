@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceListener" FullName="System.Diagnostics.TraceListener">
   <TypeSignature Language="C#" Maintainer="auto" Value="public abstract class TraceListener : MarshalByRefObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TraceListener extends System.MarshalByRefObject implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -17,135 +20,207 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>Diagnostic message handler.</summary>
     <remarks>
-      <para>Instances of the TraceListener class are used by the <see cref="T:System.Diagnostics.Debug" /> and <see cref="T:System.Diagnostics.Trace" /> classes for handling diagnostic (trace) messages.</para>
-      <para>TraceListeners can be managed either through application code, or through the application .config file, by using the (XPath) <c>/configuration/system.diagnostics/trace/listeners</c> and related elements.</para>
-      <para>To manage TraceListeners in the .config file:</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For examples of how to implement a <see cref="T:System.Diagnostics.TraceListener" />, see the <see cref="T:System.Diagnostics.DefaultTraceListener" />, <see cref="T:System.Diagnostics.TextWriterTraceListener" /> and the <see cref="T:System.Diagnostics.EventLogTraceListener" /> classes.</para>
+      <para>You must enable tracing or debugging to use a trace listener. The following syntax is compiler specific. If you use compilers other than C# or Visual Basic, refer to the documentation for your compiler.</para>
       <list type="bullet">
         <item>
-          <term>To add a TraceListener, use the (XPath) <c>/configuration/system.diagnostics/trace/listeners/add</c> element, setting the <c>name</c>, <c>type</c>, and (optional) <c>initializeData</c> attributes.  The <c>name</c> attribute sets the <see cref="P:System.Diagnostics.TraceListener.Name" /> property, and allows the TraceListener to be removed by-name.  The <c>type</c> attribute is the type to instantiate, through <see cref="M:System.Activator.CreateInstance" />.  The <c>initializeData</c> attribute is a <see cref="T:System.String" /> to pass to the type's constructor; it's meaning is dependent upon the type instantiated.</term>
+          <para>To enable debugging in C#, add the /d:DEBUG flag to the compiler command line when you compile your code, or you can add #define DEBUG to the top of your file. In Visual Basic, add the /d:DEBUG=True flag to the compiler command line.</para>
         </item>
         <item>
-          <term>To remove a TraceListener, use the (XPath) <c>/configuration/system.diagnostics/trace/listeners/remove</c> element, setting the <c>name</c> attribute to the name of the TraceListener to remove.</term>
-        </item>
-        <item>
-          <term>To remove all TraceListeners, use the (XPath) <c>/configuration/system.diagnostics/trace/listeners/clear</c> element.</term>
+          <para>To enable tracing in C#, add the /d:TRACE flag to the compiler command line when you compile your code, or add #define TRACE to the top of your file. In Visual Basic, add the /d:TRACE=True flag to the compiler command line.</para>
         </item>
       </list>
-      <para>The application .config file can also be used to set the default values of the <see cref="P:System.Diagnostics.Trace.AutoFlush" /> and <see cref="P:System.Diagnostics.Trace.IndentSize" /> properties on the <see cref="T:System.Diagnostics.Debug" /> and <see cref="T:System.Diagnostics.Trace" /> classes, by setting the <c>autoflush</c> and <c>indentsize</c> attributes on the (XPath) <c>/configuration/system.diagnostics/trace</c> element.</para>
-      <para>A sample .config file setting all of these elements:</para>
-      <example>
-        <code lang="Application .config file">
-&lt;configuration&gt;
+      <para>To add a trace listener, edit the configuration file that corresponds to the name of your application. Within this file, you can add a listener, set its type and set its parameter, remove a listener, or clear all the listeners previously set by the application. The configuration file should be formatted similar to the following example. </para>
+      <code>&lt;configuration&gt;
   &lt;system.diagnostics&gt;
-    &lt;!-- Turns off System.Diagnostics.Trace.AutoFlush and 
-        sets System.Diagnostics.Trace.TraceListener.IndentSize to 8. --&gt;
-    &lt;trace autoflush="false" indentsize="8"&gt;
+    &lt;trace autoflush="false" indentsize="4"&gt;
       &lt;listeners&gt;
-        &lt;!-- Add the "foo" TraceListener --&gt;
-        &lt;add name="foo" 
-          type="System.Diagnostics.TextWriterTraceListener, System"
-          initializeData="some-file.txt"/&gt;
-        &lt;!-- Remove the TraceListener we just added --&gt;
-        &lt;remove name="foo"/&gt;
-        &lt;!-- Remove all TraceListeners.  This also removes the DefaultTraceListener --&gt;
-        &lt;clear/&gt;
-        &lt;!-- Add the DefaultTraceListener back. --&gt;
-        &lt;add name="Default"
-          type="System.Diagnostics.DefaultTraceListener, System"/&gt;
+        &lt;add name="myListener" type="System.Diagnostics.TextWriterTraceListener" initializeData="TextWriterOutput.log" /&gt;
+        &lt;remove name="Default" /&gt;
       &lt;/listeners&gt;
     &lt;/trace&gt;
   &lt;/system.diagnostics&gt;
 &lt;/configuration&gt;</code>
-      </example>
-      <para>
-        <block subset="none" type="note">The string specified in the <c>type</c> attribute will need to be a fully-qualified class name to operate properly with shared assemblies.  More specifically, "<c>System.Diagnostics.TextWriterTraceListener, System</c>" will not work on .NET, as that is the fully-qualified class name for a private assembly, not the public/shared assemby part of .NET.  Instead, .NET requires "<c>System.Diagnostics.TextWriterTraceListener, System, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</c>".</block>
-      </para>
+      <para>For more information on using configuration files for tracing, see <format type="text/html"><a href="3f348f42-fa72-4ff2-aa1c-bb9eecad4bb2">&lt;system.diagnostics&gt; Element</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the abstract base class for the listeners who monitor trace and debug output.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TraceListener ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Diagnostics.TraceListener" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Default Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Name </para>
+              </term>
+              <description>
+                <para>The empty string (""). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Indent </para>
+              </term>
+              <description>
+                <para>Zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IndentSize </para>
+              </term>
+              <description>
+                <para>Four spaces. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.TraceListener" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TraceListener (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.TraceListener" /> class using the specified name as the listener.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Diagnostics.TraceListener" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Attributes">
       <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringDictionary Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringDictionary Attributes" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that inherit from the <see cref="T:System.Diagnostics.TraceListener" /> class can add custom attributes by overriding the <see cref="M:System.Diagnostics.TraceListener.GetSupportedAttributes" /> method and returning a string array of custom attribute names. The <see cref="P:System.Diagnostics.TraceListener.Attributes" /> property identifies the custom attributes that are referenced in the application's configuration file. For example, in the following configuration file excerpt the <see cref="T:System.Diagnostics.DelimitedListTraceListener" /> custom attribute "delimiter" is referenced. In this case, the <see cref="P:System.Diagnostics.TraceListener.Attributes" /> property returns a <see cref="T:System.Collections.Specialized.StringDictionary" /> containing the string "delimiter".</para>
+          <code>&lt;listeners&gt;
+  &lt;add name="delimitedListener" 
+    type="System.Diagnostics.DelimitedListTraceListener" 
+    delimiter=":" 
+    initializeData="delimitedOutput.txt" 
+    traceOutputOptions="ProcessId, DateTime" /&gt;
+  &lt;remove name="Default" /&gt;
+&lt;/listeners&gt;</code>
+          <para>Unreferenced custom attributes are not enumerated.  For more information, see the <see cref="M:System.Diagnostics.TraceListener.GetSupportedAttributes" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom trace listener attributes defined in the application configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when the output is going to a file, such as to the <see cref="T:System.Diagnostics.TextWriterTraceListener" />. After a call to this method, you must reinitialize the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, closes the output stream so it no longer receives tracing or debugging output.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Diagnostics.TraceListener.Dispose" /> allows the resources used by the <see cref="T:System.Diagnostics.TraceListener" /> to be reallocated for other purposes. For more information about <see cref="M:System.Diagnostics.TraceListener.Dispose" />, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">[&lt;topic://cpconCleaningUpUnmanagedResources&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Diagnostics.TraceListener" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -153,18 +228,28 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public <see cref="M:System.Diagnostics.TraceListener.Dispose" /> method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected <see cref="M:System.Diagnostics.TraceListener.Dispose" /> method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Diagnostics.TraceListener" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Diagnostics.TraceListener" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fail">
       <MemberSignature Language="C#" Value="public virtual void Fail (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Fail(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -172,18 +257,27 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default behavior is to display the specified message in a message box when the application is running in a user-interface mode, and to the <see cref="T:System.Diagnostics.TraceListener" /> instances in a <see cref="T:System.Diagnostics.TraceListenerCollection" /> collection. By default, the <see cref="T:System.Diagnostics.TraceListenerCollection" /> collection has an instance of a <see cref="T:System.Diagnostics.DefaultTraceListener" />. You can customize this behavior by adding a <see cref="T:System.Diagnostics.TraceListener" /> to or removing one from the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits an error message to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to emit. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fail">
       <MemberSignature Language="C#" Value="public virtual void Fail (string message, string detailMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Fail(string message, string detailMessage) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -192,21 +286,27 @@
         <Parameter Name="detailMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="detailMessage">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default behavior is to display the message and detailed message in a message box when the application is running in a user-interface mode, and to the <see cref="T:System.Diagnostics.TraceListener" /> instances in a <see cref="T:System.Diagnostics.TraceListenerCollection" /> collection. By default, the <see cref="T:System.Diagnostics.TraceListenerCollection" /> collection has an instance of a <see cref="T:System.Diagnostics.DefaultTraceListener" />. You can customize this behavior by adding a <see cref="T:System.Diagnostics.TraceListener" /> to or removing one from the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits an error message and a detailed error message to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to emit. </param>
+        <param name="detailMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />A detailed message to emit. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Filter">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.TraceFilter Filter { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.TraceFilter Filter { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Diagnostics.TraceFilter Filter" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -217,133 +317,202 @@
         <ReturnType>System.Diagnostics.TraceFilter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A trace filter can be added to a trace listener to provide a layer of screening beyond that provided to the trace source by switches. For example, the <see cref="T:System.Diagnostics.EventTypeFilter" /> can be added to a trace listener to control the event types that are output by the listener.  Listeners that are called because the switch criteria are met can query their filter, if present, to determine if a trace is to be sent to output.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the trace filter for the trace listener.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Flush">
       <MemberSignature Language="C#" Value="public virtual void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Flush() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, flushes the output buffer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetSupportedAttributes">
       <MemberSignature Language="C#" Value="protected virtual string[] GetSupportedAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance string[] GetSupportedAttributes() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation for <see cref="M:System.Diagnostics.TraceListener.GetSupportedAttributes" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom attributes supported by the trace listener.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array naming the custom attributes supported by the trace listener, or null if there are no custom attributes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndentLevel">
-      <MemberSignature Language="C#" Value="public int IndentLevel { set; get; }" />
+      <MemberSignature Language="C#" Value="public int IndentLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 IndentLevel" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.TraceListener.IndentLevel" /> property represents the number of times that the indent specified by the <see cref="P:System.Diagnostics.TraceListener.IndentSize" /> property is applied. This property is stored on per-thread/per-request basis.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the indent level.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndentSize">
-      <MemberSignature Language="C#" Value="public int IndentSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public int IndentSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 IndentSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property is stored on per-thread/per-request basis.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of spaces in an indent.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsThreadSafe">
       <MemberSignature Language="C#" Value="public virtual bool IsThreadSafe { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsThreadSafe" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoLimitation("This property exists but is never considered.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <see cref="P:System.Diagnostics.TraceListener.IsThreadSafe" /> is used to determine whether to use a global lock when writing to the listener. If the value of <see cref="P:System.Diagnostics.TraceListener.IsThreadSafe" /> is false, the global lock is used regardless of the value of <see cref="P:System.Diagnostics.Trace.UseGlobalLock" />. The global lock is not used only if the value of <see cref="P:System.Diagnostics.TraceListener.IsThreadSafe" /> is true and the value of <see cref="P:System.Diagnostics.Trace.UseGlobalLock" /> is false. The default behavior is to use the global lock whenever writing to the listener.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the trace listener is thread safe. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public virtual string Name { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name can be used to organize and access listeners in a <see cref="T:System.Diagnostics.TraceListenerCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a name for this <see cref="T:System.Diagnostics.TraceListener" />.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="NeedIndent">
+      <MemberSignature Language="C#" Value="protected bool NeedIndent { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool NeedIndent" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NeedIndent">
-      <MemberSignature Language="C#" Value="protected bool NeedIndent { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note   The <see cref="M:System.Diagnostics.TraceListener.WriteIndent" /> method, called by the <see cref="T:System.Diagnostics.DefaultTraceListener" /> and <see cref="T:System.Diagnostics.TextWriterTraceListener" /> classes, sets the <see cref="P:System.Diagnostics.TraceListener.NeedIndent" /> property value to false to prevent later, unnecessary indents. You must set the <see cref="P:System.Diagnostics.TraceListener.NeedIndent" /> property to true each time you wish to indent trace output. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to indent the output.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TraceData">
       <MemberSignature Language="C#" Value="public virtual void TraceData (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void TraceData(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, object data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -361,20 +530,36 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is not intended to be called directly by application code but by members of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data to output.</para>
+          </block>
+          <para>The default implementation writes the <paramref name="eventCache" />, <paramref name="source" />, <paramref name="eventType" /> and <paramref name="id" /> parameters in the header and footer of the trace. The <paramref name="data" /> parameter is written as the body of the trace message. The ToString method of the data object is used to convert the object to a <see cref="T:System.String" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, a data object and event information to the listener specific output.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The trace data to emit.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceData">
       <MemberSignature Language="C#" Value="public virtual void TraceData (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void TraceData(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, object[] data) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -398,20 +583,36 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is not intended to be called directly by application code but by members of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data to output.</para>
+          </block>
+          <para>The default implementation writes the values of the <paramref name="source" />, <paramref name="eventType" /> and <paramref name="id" /> parameters as a header. The data objects are converted to strings using the ToString method of each object. The <paramref name="eventCache" /> data is written as a footer, the nature of the output data being dependent on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, an array of data objects and event information to the listener specific output.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of objects to emit as data.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public virtual void TraceEvent (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void TraceEvent(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -428,19 +629,34 @@
         <Parameter Name="id" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is not intended to be called directly by application code but by members of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data to output.</para>
+          </block>
+          <para>The default implementation writes the values of the <paramref name="source" />, <paramref name="eventType" /> and <paramref name="id" /> parameters as a header. The <paramref name="eventCache" /> data is written as a footer, the nature of the output data being dependent on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace and event information to the listener specific output.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public virtual void TraceEvent (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void TraceEvent(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string message) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -458,20 +674,36 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is not intended to be called directly by application code but by members of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data to output.</para>
+          </block>
+          <para>The default implementation writes the values of the <paramref name="source" />, <paramref name="eventType" /> and <paramref name="id" /> parameters as a header, followed by the <paramref name="message" /> data. The <paramref name="eventCache" /> data is written as a footer, the nature of the output data being dependent on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, a message, and event information to the listener specific output.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
       <MemberSignature Language="C#" Value="public virtual void TraceEvent (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void TraceEvent(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string format, object[] args) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -496,21 +728,38 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="eventType">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="format">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is not intended to be called directly by application code but by members of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data to output.</para>
+          </block>
+          <para>The default implementation writes the values of the <paramref name="source" />, <paramref name="eventType" /> and <paramref name="id" /> parameters as a header. The <paramref name="args" /> object array is converted to a string using the <see cref="M:System.String.Format(System.String,System.Object[])" /> method, passing the <paramref name="format" /> string and <paramref name="args" /> array to format the string as the message portion of the trace. The <paramref name="eventCache" /> data is written as a footer, the nature of the output data being dependent on the value of the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, a formatted array of objects and event information to the listener specific output.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values specifying the type of event that has caused the trace.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A format string that contains zero or more format items, which correspond to objects in the <paramref name="args" /> array.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object array containing zero or more objects to format.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceOutputOptions">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.TraceOptions TraceOutputOptions { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.TraceOptions TraceOutputOptions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.TraceOptions TraceOutputOptions" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -521,16 +770,36 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property determines the optional content of trace output. The property can be set in the configuration file or programmatically during execution to include additional data specifically for a section of code. For example, you can set the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property for the console trace listener to <see cref="F:System.Diagnostics.TraceOptions.Callstack" /> to add call stack information to the trace output. </para>
+          <para>The <see cref="T:System.Diagnostics.TraceOptions" /> enumeration is not used by the following classes and methods:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="T:System.Diagnostics.EventLogTraceListener" /> class, because it can cause a large volume of data to be written to the log. </para>
+            </item>
+            <item>
+              <para>The Write and WriteLine methods of the <see cref="T:System.Diagnostics.ConsoleTraceListener" />, <see cref="T:System.Diagnostics.DefaultTraceListener" />, and <see cref="T:System.Diagnostics.TextWriterTraceListener" /> classes.</para>
+            </item>
+            <item>
+              <para>The <see cref="Overload:System.Diagnostics.TraceListener.Write" /> and <see cref="Overload:System.Diagnostics.TraceListener.WriteLine" /> methods of the <see cref="T:System.Diagnostics.TraceListener" /> class when they are not overridden in a derived class.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the trace output options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TraceTransfer">
       <MemberSignature Language="C#" Value="public virtual void TraceTransfer (System.Diagnostics.TraceEventCache eventCache, string source, int id, string message, Guid relatedActivityId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void TraceTransfer(class System.Diagnostics.TraceEventCache eventCache, string source, int32 id, string message, valuetype System.Guid relatedActivityId) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -548,18 +817,38 @@
         <Parameter Name="relatedActivityId" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="relatedActivityId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is not intended to be called directly by application code but by members of the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" />, and <see cref="T:System.Diagnostics.TraceSource" /> classes to write trace data to output.</para>
+          </block>
+          <para>The <see cref="M:System.Diagnostics.XmlWriterTraceListener.TraceTransfer(System.Diagnostics.TraceEventCache,System.String,System.Int32,System.String,System.Guid)" /> method is used for the correlation of related traces. The <see cref="M:System.Diagnostics.TraceListener.TraceTransfer(System.Diagnostics.TraceEventCache,System.String,System.Int32,System.String,System.Guid)" /> method calls the <see cref="M:System.Diagnostics.TraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String)" />  method to process the call, with the eventType level set to <see cref="F:System.Diagnostics.TraceEventType.Transfer" /> and the <paramref name="relatedActivityId" /> <see cref="T:System.Guid" /> as a string appended to the message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes trace information, a message, a related activity identity and event information to the listener specific output.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> object that contains the current process ID, thread ID, and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name used to identify the output, typically the name of the application that generated the trace event.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write.</param>
+        <param name="relatedActivityId">
+          <attribution license="cc4" from="Microsoft" modified="false" /> A <see cref="T:System.Guid" />  object identifying a related activity.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public virtual void Write (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(object o) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -567,18 +856,24 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the value of the object's <see cref="M:System.Object.ToString" /> method to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose fully qualified class name you want to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public abstract void Write (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -586,18 +881,24 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, writes the specified message to the listener you create in the derived class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public virtual void Write (object o, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(object o, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -606,19 +907,26 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="o">To be added: an object of type 'object'</param>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and the value of the object's <see cref="M:System.Object.ToString" /> method to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose fully qualified class name you want to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="C#" Value="public virtual void Write (string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(string message, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -627,35 +935,50 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and a message to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteIndent">
       <MemberSignature Language="C#" Value="protected virtual void WriteIndent ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void WriteIndent() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method writes the indent and resets the <see cref="P:System.Diagnostics.TraceListener.NeedIndent" /> property to false. Call this method if <see cref="P:System.Diagnostics.TraceListener.NeedIndent" /> is true when you are overriding the <see cref="M:System.Diagnostics.TraceListener.Write(System.String)" /> and <see cref="M:System.Diagnostics.TraceListener.WriteLine(System.String)" /> methods. By default, this method uses blank spaces for indentation. The size of the indent is determined by the values of the <see cref="P:System.Diagnostics.TraceListener.IndentSize" /> and <see cref="P:System.Diagnostics.TraceListener.IndentLevel" /> properties. The <see cref="P:System.Diagnostics.TraceListener.IndentLevel" /> property represents the number of times the indent of the size specified by the <see cref="P:System.Diagnostics.TraceListener.IndentSize" /> property is applied. This method is called by the <see cref="T:System.Diagnostics.DefaultTraceListener" /> and <see cref="T:System.Diagnostics.TextWriterTraceListener" /> classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the indent to the listener you create when you implement this class, and resets the <see cref="P:System.Diagnostics.TraceListener.NeedIndent" /> property to false.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public virtual void WriteLine (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(object o) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -663,18 +986,27 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typical line terminator you might implement is a carriage return followed by a line feed (\r\n).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the value of the object's <see cref="M:System.Object.ToString" /> method to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class, followed by a line terminator.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose fully qualified class name you want to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public abstract void WriteLine (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -682,18 +1014,27 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typical line terminator you might implement is a carriage return followed by a line feed (\r\n).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, writes a message to the listener you create in the derived class, followed by a line terminator.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public virtual void WriteLine (object o, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(object o, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -702,19 +1043,29 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="o">To be added: an object of type 'object'</param>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typical line terminator you might implement is a carriage return followed by a line feed (\r\n).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and the value of the object's <see cref="M:System.Object.ToString" /> method to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class, followed by a line terminator.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> whose fully qualified class name you want to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteLine">
       <MemberSignature Language="C#" Value="public virtual void WriteLine (string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(string message, string category) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -723,15 +1074,19 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typical line terminator you might implement is a carriage return followed by a line feed (\r\n).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and a message to the listener you create when you implement the <see cref="T:System.Diagnostics.TraceListener" /> class, followed by a line terminator.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

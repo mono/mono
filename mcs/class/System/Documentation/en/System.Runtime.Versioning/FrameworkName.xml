@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="FrameworkName" FullName="System.Runtime.Versioning.FrameworkName">
+  <TypeSignature Language="C#" Value="public sealed class FrameworkName : IEquatable&lt;System.Runtime.Versioning.FrameworkName&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit FrameworkName extends System.Object implements class System.IEquatable`1&lt;class System.Runtime.Versioning.FrameworkName&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Runtime.Versioning.FrameworkName&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the name of a version of the .NET Framework.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FrameworkName (string frameworkName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string frameworkName) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="frameworkName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Versioning.FrameworkName.#ctor(System.String)" /> constructor parses a string in the following format. </para>
+          <para>identifier, Version=versionNumber[, Profile=profileName]</para>
+          <para>Components in square brackets are optional. The following table describes each component. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Component</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>identifier</para>
+              </term>
+              <description>
+                <para>An arbitrary string that identifies this <see cref="T:System.Runtime.Versioning.FrameworkName" /> instance.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>versionNumber</para>
+              </term>
+              <description>
+                <para>A string that represents the version of the .NET Framework, in the form [v]major.minor[.build.revision], where "v" can be either uppercase or lowercase, and the brackets denote optional elements of a version number.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>profileName</para>
+              </term>
+              <description>
+                <para>An arbitrary string that represents the profile of the .NET Framework version. Typically, it is used to denote some subset of the .NET Framework, such as the .NET Compact Framework or Silverlight.</para>
+              </description>
+            </item>
+          </list>
+          <para>If both versionNumber and profileName are present, they can appear in any order after identifier. These strings are defined by the "Version" and "Profile" keywords, which are not case-sensitive. </para>
+          <para>The values of the identifier, versionNumber, and profileName components define the values of this <see cref="T:System.Runtime.Versioning.FrameworkName" /> object's properties as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>Any leading or trailing white space in the identifier component is removed and the resulting string is assigned to the <see cref="P:System.Runtime.Versioning.FrameworkName.Identifier" /> property.</para>
+            </item>
+            <item>
+              <para>Any leading or trailing white space and the initial "v" or "V", if present, are removed from the <paramref name="versionNumber" />. The returned string is then passed to the <see cref="M:System.Version.#ctor(System.String)" /> constructor, and the resulting <see cref="T:System.Version" /> object is assigned to the <see cref="P:System.Runtime.Versioning.FrameworkName.Version" /> property.</para>
+            </item>
+            <item>
+              <para>Any leading or trailing white space in the <paramref name="profileName" /> component is removed and the resulting string is assigned to the <see cref="P:System.Runtime.Versioning.FrameworkName.Profile" /> property.</para>
+            </item>
+          </list>
+          <para>The following are examples of valid strings that can be passed to the <see cref="M:System.Runtime.Versioning.FrameworkName.#ctor(System.String)" /> constructor: </para>
+          <list type="bullet">
+            <item>
+              <para>.NET Framework, Version=4.0</para>
+            </item>
+            <item>
+              <para>.NETFramework, Version=4.0</para>
+            </item>
+            <item>
+              <para>.NET Framework, Version=2.0, Profile=Compact</para>
+            </item>
+            <item>
+              <para>.NET Framework, Version=v4.0, Profile=Compact</para>
+            </item>
+            <item>
+              <para>.NET Framework, Profile=Full, Version=2.0.0</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Versioning.FrameworkName" /> class from a string that contains information about a version of the .NET Framework.</para>
+        </summary>
+        <param name="frameworkName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains .NET Framework version information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FrameworkName (string identifier, Version version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string identifier, class System.Version version) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="identifier" Type="System.String" />
+        <Parameter Name="version" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Versioning.FrameworkName" /> class requires that a <see cref="P:System.Runtime.Versioning.FrameworkName.Version" /> object include at least a major and minor version number. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Versioning.FrameworkName" /> class from a string and a <see cref="T:System.Version" /> object that identify a .NET Framework version.</para>
+        </summary>
+        <param name="identifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that identifies a .NET Framework version. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains .NET Framework version information.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FrameworkName (string identifier, Version version, string profile);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string identifier, class System.Version version, string profile) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="identifier" Type="System.String" />
+        <Parameter Name="version" Type="System.Version" />
+        <Parameter Name="profile" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Versioning.FrameworkName" /> class requires that a <see cref="P:System.Runtime.Versioning.FrameworkName.Version" /> object include at least a major and minor version number.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Versioning.FrameworkName" /> class from a string, a <see cref="T:System.Version" /> object that identifies a .NET Framework version, and a profile name.</para>
+        </summary>
+        <param name="identifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that identifies a .NET Framework version.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains .NET Framework version information.</param>
+        <param name="profile">
+          <attribution license="cc4" from="Microsoft" modified="false" />A profile name.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method converts <paramref name="obj" /> to a <see cref="T:System.Runtime.Versioning.FrameworkName" /> object and calls the <see cref="M:System.Runtime.Versioning.FrameworkName.Equals(System.Runtime.Versioning.FrameworkName)" /> overload to test for equality. If the conversion does not succeed or if <paramref name="obj" /> is null, the method returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this <see cref="T:System.Runtime.Versioning.FrameworkName" /> instance represents the same .NET Framework version as a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if every component of the current <see cref="T:System.Runtime.Versioning.FrameworkName" /> object matches the corresponding component of <paramref name="obj" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current instance.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (System.Runtime.Versioning.FrameworkName other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(class System.Runtime.Versioning.FrameworkName other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Runtime.Versioning.FrameworkName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method tests for equality by returning the result of the following comparisons:</para>
+          <list type="bullet">
+            <item>
+              <para>An ordinal comparison of the <see cref="P:System.Runtime.Versioning.FrameworkName.Identifier" /> property values of the current instance and <paramref name="other" />.</para>
+            </item>
+            <item>
+              <para>An ordinal comparison of the <see cref="P:System.Runtime.Versioning.FrameworkName.Profile" /> property values of the current instance and <paramref name="other" />.</para>
+            </item>
+            <item>
+              <para>A comparison of the version properties by calling the <see cref="M:System.Version.Equals(System.Version)" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this <see cref="T:System.Runtime.Versioning.FrameworkName" /> instance represents the same .NET Framework version as a specified <see cref="T:System.Runtime.Versioning.FrameworkName" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if every component of the current <see cref="T:System.Runtime.Versioning.FrameworkName" /> object matches the corresponding component of <paramref name="other" />; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current instance.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FullName">
+      <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by the <see cref="P:System.Runtime.Versioning.FrameworkName.FullName" /> property has the following format:</para>
+          <para>identifier, Version=version[, Profile=profile]</para>
+          <para>where identifier corresponds to the <see cref="P:System.Runtime.Versioning.FrameworkName.Identifier" /> property, <paramref name="version" /> is equivalent to calling <see cref="M:System.Version.ToString" /> on the value of the <see cref="P:System.Runtime.Versioning.FrameworkName.Version" /> property, and <paramref name="profile" /> corresponds to the <see cref="P:System.Runtime.Versioning.FrameworkName.Profile" /> property. If a profile has not been assigned to the <see cref="T:System.Runtime.Versioning.FrameworkName" /> object, the profile component is not included in the string.</para>
+          <para>The value of the <see cref="P:System.Runtime.Versioning.FrameworkName.FullName" /> property is identical to the string returned by the <see cref="M:System.Runtime.Versioning.FrameworkName.ToString" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full name of this <see cref="T:System.Runtime.Versioning.FrameworkName" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the <see cref="T:System.Runtime.Versioning.FrameworkName" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that represents the hash code of this instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Identifier">
+      <MemberSignature Language="C#" Value="public string Identifier { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Identifier" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the read-only <see cref="P:System.Runtime.Versioning.FrameworkName.Identifier" /> property is set in the <see cref="Overload:System.Runtime.Versioning.FrameworkName.#ctor" /> class constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identifier of this <see cref="T:System.Runtime.Versioning.FrameworkName" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (System.Runtime.Versioning.FrameworkName left, System.Runtime.Versioning.FrameworkName right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(class System.Runtime.Versioning.FrameworkName left, class System.Runtime.Versioning.FrameworkName right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Runtime.Versioning.FrameworkName" />
+        <Parameter Name="right" Type="System.Runtime.Versioning.FrameworkName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Versioning.FrameworkName.op_Equality(System.Runtime.Versioning.FrameworkName,System.Runtime.Versioning.FrameworkName)" /> method defines the operation of the equality operator for <see cref="T:System.Runtime.Versioning.FrameworkName" /> objects. </para>
+          <para>Languages that do not support custom operators can call the <see cref="M:System.Runtime.Versioning.FrameworkName.Equals(System.Runtime.Versioning.FrameworkName)" /> method instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether two <see cref="T:System.Runtime.Versioning.FrameworkName" /> objects represent the same .NET Framework version.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters represent the same .NET Framework version; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Runtime.Versioning.FrameworkName left, System.Runtime.Versioning.FrameworkName right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(class System.Runtime.Versioning.FrameworkName left, class System.Runtime.Versioning.FrameworkName right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Runtime.Versioning.FrameworkName" />
+        <Parameter Name="right" Type="System.Runtime.Versioning.FrameworkName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Versioning.FrameworkName.op_Inequality(System.Runtime.Versioning.FrameworkName,System.Runtime.Versioning.FrameworkName)" /> method defines the operation of the inequality operator for <see cref="T:System.Runtime.Versioning.FrameworkName" /> objects. </para>
+          <para>Languages that do not support custom operators can test for inequality by calling the <see cref="M:System.Runtime.Versioning.FrameworkName.Equals(System.Runtime.Versioning.FrameworkName)" /> method and reversing its value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether two <see cref="T:System.Runtime.Versioning.FrameworkName" /> objects represent different .NET Framework versions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters represent different .NET Framework versions; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Profile">
+      <MemberSignature Language="C#" Value="public string Profile { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Profile" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the read-only <see cref="P:System.Runtime.Versioning.FrameworkName.Profile" /> property is set in the <see cref="Overload:System.Runtime.Versioning.FrameworkName.#ctor" /> class constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the profile name of this <see cref="T:System.Runtime.Versioning.FrameworkName" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by the <see cref="M:System.Runtime.Versioning.FrameworkName.ToString" /> method has the following format:</para>
+          <para>identifier, Version=version[, Profile=profile]</para>
+          <para>where identifier corresponds to the <see cref="P:System.Runtime.Versioning.FrameworkName.Identifier" /> property, <paramref name="version" /> is equivalent to calling <see cref="M:System.Version.ToString" /> on the value of the <see cref="P:System.Runtime.Versioning.FrameworkName.Version" /> property, and <paramref name="profile" /> corresponds to the <see cref="P:System.Runtime.Versioning.FrameworkName.Profile" /> property. If a profile has not been assigned to the <see cref="T:System.Runtime.Versioning.FrameworkName" /> object, the profile component is not included in the returned string.</para>
+          <para>The value returned by the <see cref="M:System.Runtime.Versioning.FrameworkName.ToString" /> method is identical to the value of the <see cref="P:System.Runtime.Versioning.FrameworkName.FullName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the string representation of this <see cref="T:System.Runtime.Versioning.FrameworkName" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Runtime.Versioning.FrameworkName" /> object.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="C#" Value="public Version Version { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Version Version" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the read-only <see cref="P:System.Runtime.Versioning.FrameworkName.Version" /> property is set in the <see cref="Overload:System.Runtime.Versioning.FrameworkName.#ctor" /> class constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of this <see cref="T:System.Runtime.Versioning.FrameworkName" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MonthCalendar" FullName="System.Windows.Forms.MonthCalendar">
   <TypeSignature Language="C#" Value="public class MonthCalendar : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -30,8 +31,24 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.MonthCalendar" /> control allows the user to select a date using a visual display. You can limit the date and times that can be selected by setting the <see cref="P:System.Windows.Forms.MonthCalendar.MinDate" /> and <see cref="P:System.Windows.Forms.MonthCalendar.MaxDate" /> properties.</para>
+      <para>You can change the look of the calendar portion of the control by setting the <see cref="P:System.Windows.Forms.Control.ForeColor" />, <see cref="P:System.Windows.Forms.Control.Font" />, <see cref="P:System.Windows.Forms.MonthCalendar.TitleBackColor" />, <see cref="P:System.Windows.Forms.MonthCalendar.TitleForeColor" />, <see cref="P:System.Windows.Forms.MonthCalendar.TrailingForeColor" />, and <see cref="P:System.Windows.Forms.Control.BackColor" /> properties.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.DateTimePicker" /> control only supports Gregorian calendars.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.DateTimePicker" /> control only supports Gregorian calendars.</para>
+      </block>
+      <para>The <see cref="T:System.Windows.Forms.MonthCalendar" /> control is drawn by the operating system, so the <see cref="E:System.Windows.Forms.MonthCalendar.Paint" /> event is never raised. If you need to provide a customized look to the <see cref="T:System.Windows.Forms.MonthCalendar" /> control, you should override the <see cref="M:System.Windows.Forms.Control.OnPrint(System.Windows.Forms.PaintEventArgs)" /> method, call the base implementation of <see cref="M:System.Windows.Forms.Control.OnPrint(System.Windows.Forms.PaintEventArgs)" />, and then perform custom painting.</para>
+      <para>If you need custom date formatting and a selection limited to just one date, you might consider using a <see cref="T:System.Windows.Forms.DateTimePicker" /> control instead of a <see cref="T:System.Windows.Forms.MonthCalendar" />. Using the <see cref="T:System.Windows.Forms.DateTimePicker" /> eliminates much of the need for validating date/time values.</para>
+      <para>For more information on month calendar controls, see <see cref="http://go.microsoft.com/fwlink/?LinkId=178863">Month Calendar Control Reference</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows control that enables the user to select a date using a visual monthly calendar display.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +56,45 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.#ctor" /> constructor creates a new <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Windows.Forms.MonthCalendar" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Item </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> </para>
+              </term>
+              <description>
+                <para>Today's date. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> </para>
+              </term>
+              <description>
+                <para>Today's date. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.MonthCalendar" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +111,17 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method afterward to update the display.</para>
+          <para>To add multiple dates in a single assignment, you can assign an array of <see cref="T:System.DateTime" /> objects to the <see cref="P:System.Windows.Forms.MonthCalendar.AnnuallyBoldedDates" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a day that is displayed in bold on an annual basis in the month calendar.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date to be displayed in bold. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +138,17 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method afterward to update the display.</para>
+          <para>To add multiple dates in a single assignment, you can assign an array of <see cref="T:System.DateTime" /> objects to the <see cref="P:System.Windows.Forms.MonthCalendar.BoldedDates" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a day to be displayed in bold in the month calendar.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date to be displayed in bold. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +165,17 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method afterward to update the display.</para>
+          <para>To add multiple dates in a single assignment, you can assign an array of <see cref="T:System.DateTime" /> objects to the <see cref="P:System.Windows.Forms.MonthCalendar.MonthlyBoldedDates" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a day that is displayed in bold on a monthly basis in the month calendar.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date to be displayed in bold. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +194,15 @@
         <ReturnType>System.DateTime[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using this property, you can assign an array of annual bold dates. When you assign an array of dates, the existing dates are first cleared.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the array of <see cref="T:System.DateTime" /> objects that determines which annual days are displayed in bold.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,9 +216,17 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Control.BackColor" /> property does not support transparent colors unless the SupportsTransparentBackColor value of <see cref="T:System.Windows.Forms.ControlStyles" /> is set to true.</para>
+          <para>The <see cref="P:System.Windows.Forms.Control.BackColor" /> property is an ambient property. An ambient property is a control property that, if not set, is retrieved from the parent control. For example, a <see cref="T:System.Windows.Forms.Button" /> will have the same <see cref="P:System.Windows.Forms.Control.BackColor" /> as its parent <see cref="T:System.Windows.Forms.Form" /> by default. For more information about ambient properties, see the <see cref="T:System.Windows.Forms.AmbientProperties" /> class or the <see cref="T:System.Windows.Forms.Control" /> class overview. </para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,9 +248,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background image for the <see cref="T:System.Windows.Forms.MonthCalendar" /> </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,8 +278,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.MonthCalendar.BackgroundImage" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -206,9 +307,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the layout for the <see cref="P:System.Windows.Forms.MonthCalendar.BackgroundImage" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -229,8 +336,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.MonthCalendar.BackgroundImageLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BoldedDates">
@@ -245,9 +355,15 @@
         <ReturnType>System.DateTime[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using this property, you can assign an array of bold dates. When you assign an array of dates, the existing dates are first cleared.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the array of <see cref="T:System.DateTime" /> objects that determines which nonrecurring dates are displayed in bold.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -266,9 +382,15 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only one calendar year is displayed at a time, and the maximum number of months that can be displayed is 12. Valid combinations of columns and rows make a maximum product of 12; for values greater than 12, the display is modified on a best-fit basis.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of columns and rows of months displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -290,8 +412,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MonthCalendar" /> control sets the <see cref="F:System.Windows.Forms.ControlStyles.StandardClick" /> bit flag to false, so the <see cref="T:System.Windows.Forms.MonthCalendar" /> will not raise the <see cref="E:System.Windows.Forms.MonthCalendar.Click" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -306,8 +434,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="M:System.Windows.Forms.Control.CreateHandle" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -321,9 +452,15 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MonthCalendar.CreateParams" /> property is called when a window is created. Inheriting classes can override this property to add extra functionality, but you should first call base.getCreateParams() to make sure the control continues to work correctly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Windows.Forms.CreateParams" /> for creating a <see cref="T:System.Windows.Forms.MonthCalendar" /> control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -337,8 +474,15 @@
         <ReturnType>System.Windows.Forms.DateRangeEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.MonthCalendar.DateChanged" /> event occurs during any date selection, whether by mouse, keyboard, or code. The <see cref="E:System.Windows.Forms.MonthCalendar.DateSelected" /> event is similar, but it occurs only at the end of a date selection made using the mouse.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the date selected in the <see cref="T:System.Windows.Forms.MonthCalendar" /> changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -352,8 +496,15 @@
         <ReturnType>System.Windows.Forms.DateRangeEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is similar to the <see cref="E:System.Windows.Forms.MonthCalendar.DateChanged" /> event, but it occurs at the end of a date selection made using the mouse. The <see cref="E:System.Windows.Forms.MonthCalendar.DateChanged" /> event occurs during any date selection, whether by mouse, keyboard, or code.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user makes an explicit date selection using the mouse.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -367,9 +518,12 @@
         <ReturnType>System.Windows.Forms.ImeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the input method editor for the <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -383,10 +537,13 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default margin settings for the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -399,9 +556,15 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MonthCalendar.DefaultSize" /> property includes the area necessary to display the "Today:" date at the bottom of the calendar.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the calendar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -419,8 +582,15 @@
       </Parameters>
       <Docs>
         <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.MonthCalendar" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Windows.Forms.MonthCalendar" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -439,10 +609,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.MonthCalendar.DoubleBuffered" /> property has no effect on the appearance of the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control should redraw its surface using a secondary buffer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -463,8 +639,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MonthCalendar" /> control sets the <see cref="F:System.Windows.Forms.ControlStyles.StandardClick" /> bit flag to false, so the <see cref="T:System.Windows.Forms.MonthCalendar" /> will not raise the <see cref="E:System.Windows.Forms.MonthCalendar.DoubleClick" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user double-clicks the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -486,9 +668,12 @@
         <ReturnType>System.Windows.Forms.Day</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the first day of the week as displayed in the month calendar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -502,9 +687,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Control.ForeColor" /> property is an ambient property. An ambient property is a control property that, if not set, is retrieved from the parent control. For example, a <see cref="T:System.Windows.Forms.Button" /> will have the same <see cref="P:System.Windows.Forms.Control.BackColor" /> as its parent <see cref="T:System.Windows.Forms.Form" /> by default. For more information about ambient properties, see the <see cref="T:System.Windows.Forms.AmbientProperties" /> class or the <see cref="T:System.Windows.Forms.Control" /> class overview. </para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -521,10 +713,20 @@
         <Parameter Name="visible" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="visible">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.GetDisplayRange(System.Boolean)" /> method returns a <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> that contains the begin and end dates displayed in the current view of the control. You can modify the returned range based on the value you specify for the <paramref name="visible" /> parameter. By specifying false, you can retrieve all dates displayed on the control; specifying true retrieves only those dates that are part of fully displayed months.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves date information that represents the low and high limits of the displayed dates of the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The begin and end dates of the displayed calendar.</para>
+        </returns>
+        <param name="visible">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to retrieve only the dates that are fully contained in displayed months; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -541,10 +743,17 @@
         <Parameter Name="point" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="point">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object with information on which portion of a month calendar control is at a location specified by a <see cref="T:System.Drawing.Point" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.MonthCalendar.HitTestInfo" /> that contains information about the specified point on the <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+        </returns>
+        <param name="point">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> containing the <see cref="P:System.Drawing.Point.X" /> and <see cref="P:System.Drawing.Point.Y" /> coordinates of the point to be hit tested. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -562,11 +771,19 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Windows.Forms.MonthCalendar.HitTestInfo" /> with information on which portion of a month calendar control is at a specified x- and y-coordinate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.MonthCalendar.HitTestInfo" /> that contains information about the specified point on the <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Point.X" /> coordinate of the point to be hit tested. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Point.Y" /> coordinate of the point to be hit tested. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -588,9 +805,15 @@
         <ReturnType>System.Windows.Forms.ImeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Input Method Editor (IME) mode supported by this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -612,8 +835,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.MonthCalendar.ImeMode" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -647,9 +873,12 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum allowable date.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -668,9 +897,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property does not effect the current selection range.</para>
+          <para>It is important to remember that the <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> property represents the number of days in the selection, not the difference between <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> and <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" />. For example, if <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> is 7 (the default), <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> and <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> can be no more than six days apart.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of days that can be selected in a month calendar control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -684,9 +920,12 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum allowable date.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -705,9 +944,15 @@
         <ReturnType>System.DateTime[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using this property, you assign an array of monthly bold dates. When you assign an array of dates, any preexisting dates are cleared.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the array of <see cref="T:System.DateTime" /> objects that determine which monthly days to bold.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -732,8 +977,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the <see cref="T:System.Windows.Forms.MonthCalendar" /> control with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseDoubleClick">
@@ -754,8 +1002,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user double-clicks the <see cref="T:System.Windows.Forms.MonthCalendar" /> control with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBackColorChanged">
@@ -787,9 +1038,17 @@
         <Parameter Name="drevent" Type="System.Windows.Forms.DateRangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="drevent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.OnDateChanged(System.Windows.Forms.DateRangeEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.MonthCalendar.DateChanged" /> event.</para>
+        </summary>
+        <param name="drevent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DateRangeEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -806,9 +1065,17 @@
         <Parameter Name="drevent" Type="System.Windows.Forms.DateRangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="drevent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.OnDateSelected(System.Windows.Forms.DateRangeEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.MonthCalendar.DateSelected" /> event.</para>
+        </summary>
+        <param name="drevent">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DateRangeEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -825,9 +1092,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.OnFontChanged(System.EventArgs)" /> method resizes the control based on the new font size. This can cause the calendar to overlap other controls on the form if the potential sizing issues have not been taken into account.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.OnFontChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -864,8 +1140,11 @@
       </Parameters>
       <Docs>
         <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="M:System.Windows.Forms.Control.OnHandleCreated(System.EventArgs)" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -885,9 +1164,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.OnHandleDestroyed(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleDestroyed" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnRightToLeftLayoutChanged">
@@ -908,9 +1195,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MonthCalendar.OnRightToLeftLayoutChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.MonthCalendar.RightToLeftLayoutChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Padding">
@@ -931,10 +1226,16 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.MonthCalendar.Padding" /> property will have no effect on the appearance of the <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the space between the edges of a <see cref="T:System.Windows.Forms.MonthCalendar" /> control and its contents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -958,8 +1259,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+          <para>Example</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.MonthCalendar.Padding" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -977,8 +1285,14 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MonthCalendar" /> control sets the <see cref="F:System.Windows.Forms.ControlStyles.UserPaint" /> bit flag to false, so the <see cref="T:System.Windows.Forms.MonthCalendar" /> will not raise the <see cref="E:System.Windows.Forms.MonthCalendar.Paint" /> event. To provide a custom look to the <see cref="T:System.Windows.Forms.MonthCalendar" /> control, you should override the <see cref="M:System.Windows.Forms.Control.OnPrint(System.Windows.Forms.PaintEventArgs)" /> method, call the base implementation of <see cref="M:System.Windows.Forms.Control.OnPrint(System.Windows.Forms.PaintEventArgs)" />, and then perform custom painting.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is redrawn.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -993,8 +1307,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method clears all dates from the <see cref="P:System.Windows.Forms.MonthCalendar.AnnuallyBoldedDates" /> array. To remove a single date from the bold dates, use the <see cref="M:System.Windows.Forms.MonthCalendar.RemoveAnnuallyBoldedDate(System.DateTime)" /> method.</para>
+          <para>You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method to ensure that the display is updated to reflect the removal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the annually bold dates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1009,8 +1330,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method clears the <see cref="P:System.Windows.Forms.MonthCalendar.BoldedDates" /> array. To remove a single date from the bold dates, use the <see cref="M:System.Windows.Forms.MonthCalendar.RemoveBoldedDate(System.DateTime)" /> method.</para>
+          <para>You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method to ensure that the display is updated to reflect the removal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the nonrecurring bold dates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1025,8 +1353,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method clears the <see cref="P:System.Windows.Forms.MonthCalendar.MonthlyBoldedDates" /> array. To remove a single date from the bold dates, use the <see cref="M:System.Windows.Forms.MonthCalendar.RemoveMonthlyBoldedDate(System.DateTime)" /> method.</para>
+          <para>You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method to ensure that the display is updated to reflect the removal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the monthly bold dates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1043,9 +1378,16 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified date occurs more than once in the date list, only the first date is removed. When comparing dates, only the day and month are used. You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method to ensure that the display is updated to reflect the removal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified date from the list of annually bold dates.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date to remove from the date list. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1062,9 +1404,16 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified date occurs more than once in the date list, only the first date is removed. You must call the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method to ensure that the display is updated to reflect the removal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified date from the list of nonrecurring bold dates.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date to remove from the date list. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1081,9 +1430,16 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified date occurs more than once in the date list, only the first date is removed. When comparing dates, only the day and month are used. You must call <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> to ensure that the display is updated to reflect the removal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified date from the list of monthly bolded dates.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date to remove from the date list. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1108,9 +1464,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MonthCalendar.RightToLeftLayout" /> property is useful for international applications where the language is written from right to left. When the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> and <see cref="P:System.Windows.Forms.MonthCalendar.RightToLeftLayout" /> properties are both true,</para>
+          <para>Mirroring will be turned on for the form, and control placement and text will be from right to left.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control is laid out from right to left.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftLayoutChanged">
@@ -1123,8 +1486,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.MonthCalendar.RightToLeftLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScrollChange">
@@ -1139,9 +1508,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The scroll rate is the number of months that the control moves its display when the user clicks a scroll arrow. If this value is 0, the number of months is reset to the default, which is the number of months displayed in the control. The maximum value is 20,000.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the scroll rate for a month calendar control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1163,9 +1538,23 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you set the value of the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> property to a date that is earlier than the current value of the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> property, <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> is automatically set equal to <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" />.</para>
+          <para>If you set a date in <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> that causes the selection to exceed the number of days specified by the <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> property, the value of <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> is adjusted; <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> is automatically set so that the number of days selected is equal to <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" />.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> represents the number of days in the selection, not the difference between <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> and <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" />. For example, if <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> is 7 (the default), then <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> and <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> can be no more than six days apart.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> for a <see cref="T:System.Windows.Forms.MonthCalendar" /> control that has visual styles enabled will result in the selection range not painting correctly on the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the end date of the selected range of dates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1179,9 +1568,22 @@
         <ReturnType>System.Windows.Forms.SelectionRange</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property is functionally equivalent to using the <see cref="M:System.Windows.Forms.MonthCalendar.SetSelectionRange(System.DateTime,System.DateTime)" /> method. You can set the start and end dates separately by setting either the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> or <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> properties. You cannot change the start and end dates by setting the <see cref="P:System.Windows.Forms.SelectionRange.Start" /> or <see cref="P:System.Windows.Forms.SelectionRange.End" /> property values of the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> property. You should use <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" />, <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" />, or <see cref="M:System.Windows.Forms.MonthCalendar.SetSelectionRange(System.DateTime,System.DateTime)" />.</para>
+          <para>If the <see cref="P:System.Windows.Forms.SelectionRange.Start" /> property value of the <see cref="T:System.Windows.Forms.SelectionRange" /> is greater than its <see cref="P:System.Windows.Forms.SelectionRange.End" /> property value, the dates are swapped; the <see cref="P:System.Windows.Forms.SelectionRange.End" /> property value becomes the starting date, and <see cref="P:System.Windows.Forms.SelectionRange.Start" /> property value becomes the end date.</para>
+          <block subset="none" type="note">
+            <para>Scrolling through the calendar display with the navigation buttons when a range is selected can cause unexpected results (for example, the date range is not preserved). If you have a single month displayed with a range of 04/01/2001 to 04/10/2001, scrolling the calendar to March changes the selected range as follows: 03/01/2001 to 03/10/2001. If you have multiple months displayed, such as March and April with a selected range of 04/01/2001 to 04/10/2001, scrolling the calendar back to January and February changes the selected range as follows: 01/01/2001 to 01/10/2001.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> for a <see cref="T:System.Windows.Forms.MonthCalendar" /> control that has visual styles enabled will result in the selection range not painting correctly on the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the selected range of dates for a month calendar control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1208,9 +1610,23 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you set the value of the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> property to a date that is later than the current value of the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> property, <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> is automatically set equal to <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" />.</para>
+          <para>If you set a date in <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> that causes the selection to exceed the number of days specified by the <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> property, the value of <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> is adjusted; <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> is automatically set so that the number of days selected is equal to <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" />.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> represents the number of days in the selection, not the difference between <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> and <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" />. For example, if <see cref="P:System.Windows.Forms.MonthCalendar.MaxSelectionCount" /> is 7 (the default), then <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> and <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> can be no more than six days apart.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> for a <see cref="T:System.Windows.Forms.MonthCalendar" /> control that has visual styles enabled will result in the selection range not painting correctly on the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the start date of the selected range of dates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1231,13 +1647,21 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="M:System.Windows.Forms.Control.SetBoundsCore(System.Int32,System.Int32,System.Int32,System.Int32,System.Windows.Forms.BoundsSpecified)" /> method.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Left" /> property value of the control.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Right" /> property value of the control.</param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Width" /> property value of the control.</param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Height" /> property value of the control.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.BoundsSpecified" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1255,10 +1679,18 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of months that you can display is 12, restricted to one calendar year. The product of the <paramref name="x" /> and <paramref name="y" /> parameters should be 12 or less. For values of <paramref name="x" /> and <paramref name="y" /> that have a product of more than 12, the greater of the <paramref name="x" /> and <paramref name="y" /> values will be iteratively reduced until the product is 12 or less.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the number of columns and rows of months to display.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of columns. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of rows. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1275,9 +1707,16 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sets the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> and the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> properties to the specified date. This method is the functional equivalent of setting the selection range to a single day through the <see cref="M:System.Windows.Forms.MonthCalendar.SetSelectionRange(System.DateTime,System.DateTime)" /> method or the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a date as the currently selected date.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date to be selected. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1295,10 +1734,25 @@
         <Parameter Name="date2" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date1">To be added.</param>
-        <param name="date2">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using this method is functionally equivalent to setting the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> property. You can set the start and end dates separately by setting either the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionStart" /> or <see cref="P:System.Windows.Forms.MonthCalendar.SelectionEnd" /> property.</para>
+          <para>If you set the <paramref name="date1" /> parameter greater than the <paramref name="date2" /> parameter, both dates are set to the <paramref name="date1" /> value.</para>
+          <block subset="none" type="note">
+            <para>Scrolling through the calendar display with the navigation buttons when a range is selected can cause unexpected results (for example, the date range is not preserved). If you have a single month displayed with a range of 04/01/2001 to 04/10/2001, scrolling the calendar back changes the selected range as follows: 03/01/2001 to 03/10/2001. If you have multiple months displayed, such as March and April with a selected range of 04/01/2001 to 04/10/2001, scrolling the calendar back to January and February changes the selected range as follows: 01/01/2001 to 01/10/2001.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> for a <see cref="T:System.Windows.Forms.MonthCalendar" /> control that has visual styles enabled will result in the selection range not painting correctly on the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the selected dates in a month calendar control to the specified date range.</para>
+        </summary>
+        <param name="date1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The beginning date of the selection range. </param>
+        <param name="date2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end date of the selection range. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1317,9 +1771,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date is displayed in the format specified by the system settings for the short date format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the date represented by the <see cref="P:System.Windows.Forms.MonthCalendar.TodayDate" /> property is displayed at the bottom of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1338,9 +1798,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Windows.Forms.MonthCalendar.ShowTodayCircle" /> is true, and visual styles are enabled and supported on the computer running the application, today's date will be enclosed in a square, otherwise today's date will be circled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether today's date is identified with a circle or a square.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1362,9 +1828,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the month calendar control displays week numbers (1-52) to the left of each row of days.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1386,9 +1855,15 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size information is presented in the form of the <see cref="P:System.Drawing.Size.Width" /> and <see cref="P:System.Drawing.Size.Height" /> members, representing the minimum width and height required to display one month in the control. The minimum required window size for a month calendar control depends on the currently selected font.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minimum size to display one month of the calendar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1410,10 +1885,13 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1441,9 +1919,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to display on the <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1465,8 +1949,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.MonthCalendar.Text" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1480,9 +1967,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The font color of the days-of-the-week text depends on the <see cref="P:System.Windows.Forms.MonthCalendar.TitleBackColor" /> property. Setting the <see cref="P:System.Windows.Forms.MonthCalendar.TitleBackColor" /> equal to the <see cref="P:System.Windows.Forms.Control.BackColor" /> for the main display area of the calendar causes the days-of-the-week text to become unreadable. </para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the background color of the title area of the calendar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1496,9 +1990,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the foreground color of the title area of the calendar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1512,9 +2012,15 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.Windows.Forms.MonthCalendar.TodayDate" /> property returns the current system date, and the <see cref="P:System.Windows.Forms.MonthCalendar.TodayDateSet" /> property is false. Setting the <see cref="P:System.Windows.Forms.MonthCalendar.TodayDate" /> property sets the <see cref="P:System.Windows.Forms.MonthCalendar.TodayDateSet" /> property to true and, from that point, the value returned by the <see cref="P:System.Windows.Forms.MonthCalendar.TodayDate" /> property is the one the user sets.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value that is used by <see cref="T:System.Windows.Forms.MonthCalendar" /> as today's date.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1536,9 +2042,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.MonthCalendar.TodayDate" /> property has been explicitly set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1553,9 +2062,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string includes the type and the string returned by the <see cref="M:System.Windows.Forms.SelectionRange.ToString" /> method of the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.MonthCalendar" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1569,9 +2087,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the calendar is displayed, some dates precede and some follow the months that are fully displayed. Using the <see cref="P:System.Windows.Forms.MonthCalendar.TrailingForeColor" /> property, you can modify the color of the text for those dates. </para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the color of days in months that are not fully displayed in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1586,8 +2111,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.MonthCalendar.UpdateBoldedDates" /> method to reflect changes made to <see cref="P:System.Windows.Forms.MonthCalendar.AnnuallyBoldedDates" />, <see cref="P:System.Windows.Forms.MonthCalendar.MonthlyBoldedDates" />, or <see cref="P:System.Windows.Forms.MonthCalendar.BoldedDates" /> properties, either directly by modifying elements of the array or by using the add or remove methods provided to modify the date lists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Repaints the bold dates to reflect the dates set in the lists of bold dates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

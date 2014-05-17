@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBoundControl" FullName="System.Web.UI.WebControls.DataBoundControl">
   <TypeSignature Language="C#" Value="public abstract class DataBoundControl : System.Web.UI.WebControls.BaseDataBoundControl" />
   <AssemblyInfo>
@@ -14,9 +15,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class is the base class used for ASP.NET controls that retrieve tabular or list-style data from an ASP.NET data source control and bind user-interface (UI) elements of the control to that data for display. Composite data-bound controls such as <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, and <see cref="T:System.Web.UI.WebControls.FormView" />; list-style data-bound controls such as <see cref="T:System.Web.UI.WebControls.BulletedList" /> and <see cref="T:System.Web.UI.WebControls.CheckBoxList" />; and other controls such as <see cref="T:System.Web.UI.WebControls.AdRotator" /> derive from <see cref="T:System.Web.UI.WebControls.DataBoundControl" />. </para>
+      <para>Page developers do not use the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class directly; instead, they use controls that derive from this class.</para>
+      <para>Control developers extend this class to create data-bound controls that work with classes that implement the <see cref="T:System.Web.UI.IDataSource" /> interface and classes that derive from the <see cref="T:System.Web.UI.DataSourceControl" /> and <see cref="T:System.Web.UI.DataSourceView" /> classes. When deriving a class from the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class, override the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformDataBinding(System.Collections.IEnumerable)" /> method to bind the UI elements of your control to data retrieved by the <see cref="M:System.Web.UI.WebControls.DataBoundControl.GetData" /> method. In most cases, the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformDataBinding(System.Collections.IEnumerable)" /> method is the only method you will override in your derived class. </para>
+      <para>For ASP.NET 2.0 data-bound controls, the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformSelect" /> method is the equivalent of the DataBind method, and is called to bind data at run time. The <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformSelect" /> method calls the <see cref="M:System.Web.UI.WebControls.DataBoundControl.GetData" /> and <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformDataBinding(System.Collections.IEnumerable)" /> methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the base class for all ASP.NET version 2.0 data-bound controls that display their data in list or tabular form.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +34,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class for use by an inherited class instance. This constructor can only be called by an inherited class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,10 +53,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.CreateDataSourceSelectArguments" /> method is used by the <see cref="P:System.Web.UI.WebControls.DataBoundControl.SelectArguments" /> property to initialize a default arguments object, and by the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class's implementation of the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformSelect" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a default <see cref="T:System.Web.UI.DataSourceSelectArguments" /> object used by the data-bound control if no arguments are specified.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> initialized to <see cref="P:System.Web.UI.DataSourceSelectArguments.Empty" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,10 +86,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataMember" /> property is stored in view state.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the list of data that the data-bound control binds to, in cases where the data source contains more than one distinct list of data items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +114,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ID of the control from which the data-bound control retrieves its list of data items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -102,10 +134,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.GetData" /> method retrieves a <see cref="T:System.Web.UI.DataSourceView" /> object from the associated data source control by calling the <see cref="M:System.Web.UI.WebControls.DataBoundControl.GetDataSource" /> method. If the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property is used to identify a data source, a default <see cref="T:System.Web.UI.DataSourceView" /> object is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Web.UI.DataSourceView" /> object that the data-bound control uses to perform data operations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.DataSourceView" /> that the data-bound control uses to perform data operations. If the <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataMember" /> property is set, a specific, named <see cref="T:System.Web.UI.DataSourceView" /> is returned; otherwise, the default <see cref="T:System.Web.UI.DataSourceView" /> is returned.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -119,10 +160,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.GetData" /> method calls the <see cref="M:System.Web.UI.WebControls.DataBoundControl.GetDataSource" /> method internally. A valid <see cref="T:System.Web.UI.IDataSource" /> instance is retrieved by these two methods and is cached by the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> object until the <see cref="M:System.Web.UI.WebControls.DataBoundControl.OnDataPropertyChanged" /> method signals that the data source has changed. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.Web.UI.IDataSource" /> interface that the data-bound control is associated with, if any.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IDataSource" /> that represents the data source identified by <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataSourceID" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -154,9 +204,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data-bound control maintains a value in view state that indicates whether it is currently bound to data. The <see cref="M:System.Web.UI.WebControls.DataBoundControl.MarkAsDataBound" /> method sets the value to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the state of the control in view state as successfully bound to data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,9 +226,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rebinds the data-bound control to its data after one of the base data source identification properties changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -189,11 +248,22 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.OnDataSourceViewChanged(System.Object,System.EventArgs)" /> method notifies a data-bound control that the underlying data source has changed and that the control should rebind and any necessary work should be performed. Typically, the <see cref="M:System.Web.UI.WebControls.DataBoundControl.OnDataSourceViewChanged(System.Object,System.EventArgs)" /> method is called when a property of the data source view has changed.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class sets the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.RequiresDataBinding" /> property to true when it raises the <see cref="E:System.Web.UI.DataSourceView.DataSourceViewChanged" /> event.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.OnDataSourceViewChanged(System.Object,System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.DataSourceView.DataSourceViewChanged" /> event.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event, the <see cref="T:System.Web.UI.DataSourceView" />.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -212,9 +282,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class calls the <see cref="M:System.Web.UI.WebControls.BaseDataBoundControl.ConfirmInitState" /> method to set the initialized state of the data-bound control and sets the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.RequiresDataBinding" /> property to true if the HTTP request is not a postback.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handles the <see cref="E:System.Web.UI.Control.Load" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPagePreLoad">
@@ -228,11 +305,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.OnPagePreLoad(System.Object,System.EventArgs)" /> method is overridden by the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class to set the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.RequiresDataBinding" /> property to true in cases where the HTTP request is a postback and view state is enabled but the data-bound control has not yet been bound. This scenario is common with controls such as <see cref="T:System.Web.UI.WebControls.Wizard" /> and <see cref="T:System.Web.UI.WebControls.MultiView" />, where the visibility of the control is changed at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the initialized state of the data-bound control before the control is loaded.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Page" /> that raised the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -251,9 +336,17 @@
         <Parameter Name="data" Type="System.Collections.IEnumerable" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement this method instead of the <see cref="M:System.Web.UI.WebControls.BaseDataBoundControl.DataBind" /> method when you derive a data-bound control from the <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class. Placing your control's data-binding logic in <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformDataBinding(System.Collections.IEnumerable)" /> enables you to avoid the <see cref="E:System.Web.UI.Control.DataBinding" /> and <see cref="E:System.Web.UI.WebControls.BaseDataBoundControl.DataBound" /> events being raised in the wrong order.</para>
+          <para>While the base <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class provides no specific implementation for this method, the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformDataBinding(System.Collections.IEnumerable)" /> method is called by the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformSelect" /> method to bind the values of any user interface (UI) controls to the data that is retrieved by the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformSelect" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, binds data from the data source to the control. </para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEnumerable" /> list of data returned from a <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformSelect" /> method call.</param>
       </Docs>
     </Member>
     <Member MemberName="PerformSelect">
@@ -264,9 +357,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformDataBinding(System.Collections.IEnumerable)" /> method is called after data is retrieved to bind data to elements of the data-bound control. Derived types override this method to retrieve data only if the default implementation is not adequate. Typically, it is sufficient to provide a <see cref="T:System.Web.UI.DataSourceViewSelectCallback" /> delegate that performs any custom data work, rather than implementing the <see cref="M:System.Web.UI.WebControls.DataBoundControl.PerformDataBinding(System.Collections.IEnumerable)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves data from the associated data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -279,10 +378,16 @@
         <ReturnType>System.Web.UI.DataSourceSelectArguments</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.DataBoundControl.SelectArguments" /> property calls the <see cref="M:System.Web.UI.WebControls.DataBoundControl.CreateDataSourceSelectArguments" /> method to create a default <see cref="T:System.Web.UI.DataSourceSelectArguments" /> object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.DataSourceSelectArguments" /> object that the data-bound control uses when retrieving data from a data source control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -298,10 +403,17 @@
         <Parameter Name="dataSource" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataBoundControl.ValidateDataSource(System.Object)" /> method is only called in the <see cref="T:System.Web.UI.WebControls.BaseDataBoundControl" /> class's mutator (set accessor) for the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property. The <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class checks the type of the object that is set for the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property to ensure that it is an instance of the <see cref="T:System.Web.UI.IDataSource" />, <see cref="T:System.ComponentModel.IListSource" />, or <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies that the object a data-bound control binds to is one it can work with.</para>
+        </summary>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object set to the <see cref="P:System.Web.UI.WebControls.BaseDataBoundControl.DataSource" /> property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

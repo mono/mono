@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapProtocolImporter" FullName="System.Web.Services.Description.SoapProtocolImporter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class SoapProtocolImporter : System.Web.Services.Description.ProtocolImporter" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class generates client proxy code or abstract server code according to the SOAP protocol. The class generates a class for each supported binding defined in a Web Services Description Language (WSDL) document.</para>
+      <para>Typically, instead of invoking <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> directly, a developer uses the class indirectly through the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Generates classes for Web services that use the SOAP protocol.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +50,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.CodeDom.CodeTypeDeclaration" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During generation of a class for a given binding, the <see cref="M:System.Web.Services.Description.SoapProtocolImporter.BeginClass" /> method executes before the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class generates methods that correspond to operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the generation of a binding class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A binding class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,8 +76,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During code generation, the <see cref="M:System.Web.Services.Description.SoapProtocolImporter.BeginNamespace" /> method executes before the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class generates classes that represent bindings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs initialization for an entire code namespace during code generation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,8 +98,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During generation of a class for a given binding, the <see cref="M:System.Web.Services.Description.SoapProtocolImporter.EndClass" /> method executes after the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class generates methods that correspond to operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a binding class after the generation of methods.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,8 +120,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During code generation, the <see cref="M:System.Web.Services.Description.SoapProtocolImporter.EndNamespace" /> method executes after the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class generates classes that represent bindings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs processing for an entire code namespace after binding class generation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,9 +142,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.CodeDom.CodeMemberMethod" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>During generation of a class for a given binding, the <see cref="M:System.Web.Services.Description.SoapProtocolImporter.GenerateMethod" /> method executes for each binding class method that represents an operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates method code for a binding class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method code for a binding class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,9 +168,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Description.SoapProtocolImporter.IsBindingSupported" /> method determines whether to generate a class for the current binding, as represented by the <see cref="P:System.Web.Services.Description.SoapProtocolImporter.Binding" /> property. The method checks whether the <see cref="P:System.Web.Services.Description.SoapProtocolImporter.Binding" /> property's <see cref="P:System.Web.Services.Description.Binding.Extensions" /> property contains a <see cref="T:System.Web.Services.Description.SoapBinding" /> instance. In addition, the transport mechanism obtained through the <see cref="P:System.Web.Services.Description.SoapBinding.Transport" /> property must be supported by the current Web services configuration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a class can be generated for the current binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the class can be generated for the current binding; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,10 +196,21 @@
         <Parameter Name="flow" Type="System.Web.Services.Description.OperationFlow" />
       </Parameters>
       <Docs>
-        <param name="flow">a <see cref="T:System.Web.Services.Description.OperationFlow" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Description.SoapProtocolImporter.IsOperationFlowSupported(System.Web.Services.Description.OperationFlow)" /> method determines whether to generate a method for the current operation, as represented by the <see cref="T:System.Web.Services.Description.Operation" /> property. This evaluation takes place for each operation in a binding for which a class is being generated. If a false value is returned, the <see cref="M:System.Web.Services.Description.SoapProtocolImporter.UnsupportedOperationWarning(System.String)" /> method executes. A true value is returned only if the input value is <see cref="F:System.Web.Services.Description.OperationFlow.OneWay" /> or <see cref="F:System.Web.Services.Description.OperationFlow.RequestResponse" />.</para>
+          <para>For more information, see the <see cref="P:System.Web.Services.Description.OperationMessageCollection.Flow" /> property. The <see cref="P:System.Web.Services.Description.Operation.Messages" /> property is of type <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current operation's operation flow is supported.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current operation's operation flow is supported; otherwise false.</para>
+        </returns>
+        <param name="flow">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.Services.Description.OperationFlow" /> enumeration value that represents a transmission pattern.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -164,10 +231,17 @@
         <Parameter Name="uriList" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uriList">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for the presence of "http://schemas.xmlsoap.org/soap/encoding/" in a string that represents a list of Uniform Resource Indicators (URIs).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true it the string contains <see cref="http://schemas.xmlsoap.org/soap/encoding/">http://schemas.xmlsoap.org/soap/encoding/</see>; otherwise false.</para>
+        </returns>
+        <param name="uriList">
+          <attribution license="cc4" from="Microsoft" modified="false" />A space-delimited list of URIs.</param>
       </Docs>
     </Member>
     <Member MemberName="ProtocolName">
@@ -178,9 +252,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value of "Soap".</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +271,12 @@
         <ReturnType>System.Web.Services.Description.SoapBinding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapBinding'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Services.Description.SoapBinding" /> instance obtained through the <see cref="P:System.Web.Services.Description.SoapProtocolImporter.SoapBinding" /> property's <see cref="P:System.Web.Services.Description.Binding.Extensions" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -211,9 +291,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.SoapCodeExporter" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class uses a <see cref="T:System.Xml.Serialization.SoapCodeExporter" /> object to create code from .NET Framework type mappings for XML schema elements and data types that enable SOAP encoding, as opposed to literal XML Schema usage. SOAP encoding is specified in section 5 of the SOAP 1.1 specification. SOAP encoding uses the namespace "http://schemas.xmlsoap.org/soap/encoding/".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object of type <see cref="T:System.Xml.Serialization.SoapCodeExporter" /> used internally by the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class to generate code from mappings between SOAP-encoded XML schema content and .NET Framework types.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -228,9 +314,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class uses a <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /> object to create .NET Framework type mappings for XML schema elements and data types that enable SOAP encoding, as opposed to literal XML Schema usage. SOAP encoding is specified in section 5 of the SOAP 1.1 specification. SOAP encoding uses the namespace "http://schemas.xmlsoap.org/soap/encoding/".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object of type <see cref="T:System.Xml.Serialization.SoapSchemaImporter" /> used internally by the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class to generate mappings between SOAP-encoded XML schema content and .NET Framework types.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,9 +337,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlCodeExporter" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class uses an <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> object to create .NET Framework type mappings for XML schema elements and data types that require literal XML Schema usage, as opposed to SOAP encoding. SOAP encoding is specified in section 5 of the SOAP 1.1 specification.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object of type <see cref="T:System.Xml.Serialization.XmlCodeExporter" /> used internally by the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class to generate code from mappings between literal XML schema content and .NET Framework types.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -262,9 +360,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class uses an <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> object to create code from .NET Framework type mappings for XML schema elements and data types that require literal XML Schema usage, as opposed to SOAP encoding. SOAP encoding is specified in section 5 of the SOAP 1.1 specification.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object of type <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> used internally by the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> class to generate mappings between literal XML schema content and .NET Framework types.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

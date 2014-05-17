@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProviderConnectionPoint" FullName="System.Web.UI.WebControls.WebParts.ProviderConnectionPoint">
   <TypeSignature Language="C#" Value="public class ProviderConnectionPoint : System.Web.UI.WebControls.WebParts.ConnectionPoint" />
   <AssemblyInfo>
@@ -9,9 +10,32 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In every Web Parts connection between two server controls, each control must have (among other requirements) an associated connection point object that enables it to connect to the other control and to either provide or consume data, depending on whether the control is designated as the provider or consumer for the connection. A <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> object in general contains the details for how a control can connect to another control and the type of data it can share. For a control acting as the provider in a connection, its connection point must be a <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object. For details on Web Parts connections and connection points, see the topics listed in the See Also section below.</para>
+      <para>To create a <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object, several steps are required:</para>
+      <list type="ordered">
+        <item>
+          <para>Create an interface. When a provider shares data with a consumer, it does so by getting an instance of an interface, and returning that instance to a consumer.</para>
+        </item>
+        <item>
+          <para>Implement the interface in a provider. A <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> or other server control (any type of server control in a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZoneBase" /> zone can be used) that will be the provider must implement the interface created in the first step.</para>
+        </item>
+        <item>
+          <para>Identify a callback method. A method in the provider must be identified as the callback method to establish a connection. This method returns an instance of the implemented interface to a consumer. The Web Parts approach for identifying a callback method in the provider is to add a ConnectionProvider metadata attribute (defined by the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionProviderAttribute" /> class) to the method that returns the interface instance. When the attribute is added, the only required parameter is a display name to use for the provider connection point. Optional parameters can also be added, such as an ID for the connection point.</para>
+        </item>
+      </list>
+      <para>After a control has been equipped to act as a provider, the control can participate in connections (assuming that a consumer control is similarly equipped and available). To create a static, declarative connection in the markup of a Web page, developers can use the &lt;asp:webpartconnection&gt; element. If the ConnectionProvider attribute in the provider source code that identifies the callback method specifies an ID for the connection point, then that value must be assigned to the ProviderConnectionPointID attribute in the &lt;asp:webpartconnection&gt; element on a page. One reason that a developer might specify an ID for a provider connection point is if there are multiple connection points in the provider control. If an ID is not specified for the provider connection point in the provider control, a value does not have to be assigned to the ProviderConnectionPointID attribute in the page either, because the connection will be created using a default value obtained from the <see cref="F:System.Web.UI.WebControls.WebParts.ConnectionPoint.DefaultID" /> field. </para>
+      <para>To create a connection in code, developers must create a new <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object by calling the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.GetProviderConnectionPoints(System.Web.UI.WebControls.WebParts.WebPart)" /> method and passing to it the ID of the provider control, along with the ID or index of the defined <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object in the provider control. The returned <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object, along with a reference to the provider control, a reference to the consumer control, and a corresponding <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object, are all passed to the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.ConnectWebParts(System.Web.UI.WebControls.WebParts.WebPart,System.Web.UI.WebControls.WebParts.ProviderConnectionPoint,System.Web.UI.WebControls.WebParts.WebPart,System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint)" /> method to create a new <see cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" /> object. </para>
+      <para>Although developers can use provider connection points as part of establishing connections either declaratively or programmatically, users can also interact with provider connection points to establish connections through the user interface (UI). If developers declare a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionsZone" /> control on a Web page, it provides a run-time UI for users to create connections. If users choose the consumer control as the starting point for establishing the connection by clicking its connect verb (they could also choose the provider; there is no difference in the resulting connection), in the UI they will see a drop-down list control with the display name of the available provider connection point (or points if there are multiple ones). Users must select a provider connection point to create a connection. </para>
+      <para>A <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object associates directly with a specific provider control, and stores details about a connection in the properties it inherits from the base <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class. For example, in the inherited <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" /> property, a provider connection point keeps the type of interface returned by the provider. If the provider and consumer in a connection both work with the same interface type, the controls are compatible and capable of forming a direct connection. If the provider and consumer cannot work with the same interface type, they are incompatible and must use a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object to translate the provider connection point's <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" /> value into a type that the consumer can work with. Another important inherited property is the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.DisplayName" /> property, which provides a friendly name to display in the UI for users to choose a provider connection point when creating connections. The display name is the required parameter when developers add a ConnectionProvider attribute to the callback method in a provider control. The inherited <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.ID" /> property is also useful, as indicated above, because it provides a unique identifier for a provider connection point in the event that a provider has multiple connection points. A provider can have multiple <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> objects defined in it, and in this case, when developers add the ConnectionProvider attribute to a method, they should specify an ID value to distinguish each connection point. One other notable inherited property is the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.AllowsMultipleConnections" /> property, which indicates whether a provider connection point can connect simultaneously to multiple consumers. This property value is true by default for provider connection points (whereas it defaults to false for consumer connection points). </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> class adds several unique methods to the members it inherits from the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class. The <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetObject(System.Web.UI.Control)" /> method retrieves an instance of the interface that the callback method will return to consumers. The <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetSecondaryInterfaces(System.Web.UI.Control)" /> method retrieves additional consumer interfaces that are part of an existing connection, but are not the interfaces used to establish the connection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a connection point object that enables a server control acting as a provider to form a connection with a consumer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,11 +54,20 @@
         <param name="interFace">To be added.</param>
         <param name="control">To be added.</param>
         <param name="name">To be added.</param>
-        <param name="id">To be added.</param>
         <param name="allowsMultiConnections">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.#ctor(System.Reflection.MethodInfo,System.Type,System.Type,System.String,System.String,System.Boolean)" /> constructor for the <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> class simply calls the base constructor, passing to it the various parameters and initializing the base class.</para>
+          <para>The base class constructor checks a number of the parameters for a connection point and can throw several exceptions. For a list of possible exceptions, see the Exceptions section. </para>
+          <para>You can call the <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.#ctor(System.Reflection.MethodInfo,System.Type,System.Type,System.String,System.String,System.Boolean)" /> constructor to create your own instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> class. However, in cases where you are simply establishing a connection and not extending the class, you should call the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.GetProviderConnectionPoints(System.Web.UI.WebControls.WebParts.WebPart)" /> method to return an existing connection point object from a provider. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> class.</para>
+        </summary>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique identifier for the provider connection point.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,11 +83,23 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns an object from the provider control that is an instance of the interface used to establish a connection. The type of the object will be the type of the implemented interface. For example, two interfaces that are implemented for connections in the Web Parts control set are <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartField" /> and <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartRow" />. When the <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetObject(System.Web.UI.Control)" /> method is called on a <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object, if the associated provider implements one of these interfaces, the returned object will be of the same type.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetObject(System.Web.UI.Control)" /> method is called by <see cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" /> objects when a connection is being activated. This is a critical step that actually initiates a connection and begins the process that enables two controls to share data.</para>
+          <para>The consumer control in a connection must be able to work with the same type of interface as the provider. If it does not, the controls are incompatible and a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object must be used to establish a connection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the callback method in a provider control that gets an interface instance to return to consumers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that is an instance of the interface a provider returns to consumers to establish a connection. </para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control acting as the provider in a Web Parts connection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -70,11 +115,22 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A provider connection point object always has a default interface that is used to establish a connection with consumers. An instance of the default interface is retrieved by calling the <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetObject(System.Web.UI.Control)" /> method on a <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object. </para>
+          <para>However, some provider controls will implement multiple interfaces to provide to consumers as part of a connection. These interfaces, which are not the default ones used to establish a connection, are called secondary interfaces. The <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetSecondaryInterfaces(System.Web.UI.Control)" /> method provides a way to return a collection of references to the secondary interfaces, just as the <see cref="M:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.GetObject(System.Web.UI.Control)" /> method returns a reference to the default interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an optional collection of secondary interfaces that can be supported by a provider connection point.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> of additional interfaces provided by the control acting as a provider.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control acting as the provider in a Web Parts connection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

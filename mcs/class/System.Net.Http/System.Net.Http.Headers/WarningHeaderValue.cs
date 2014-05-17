@@ -27,6 +27,7 @@
 //
 
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace System.Net.Http.Headers
 {
@@ -100,13 +101,28 @@ namespace System.Net.Http.Headers
 
 			throw new FormatException (input);
 		}
-		
+
 		public static bool TryParse (string input, out WarningHeaderValue parsedValue)
+		{
+			var lexer = new Lexer (input);
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<WarningHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
+		}
+
+		static bool TryParseElement (Lexer lexer, out WarningHeaderValue parsedValue, out Token t)	
 		{
 			parsedValue = null;
 
-			var lexer = new Lexer (input);
-			var t = lexer.Scan ();
+			t = lexer.Scan ();
 
 			if (t != Token.Type.Token)
 				return false;
@@ -147,9 +163,6 @@ namespace System.Net.Http.Headers
 				value.Date = date;
 				t = lexer.Scan ();
 			}
-
-			if (t != Token.Type.End)
-				return false;
 
 			parsedValue = value;
 			return true;

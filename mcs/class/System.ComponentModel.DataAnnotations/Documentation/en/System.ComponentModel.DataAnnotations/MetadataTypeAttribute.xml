@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MetadataTypeAttribute" FullName="System.ComponentModel.DataAnnotations.MetadataTypeAttribute">
+  <TypeSignature Language="C#" Value="public sealed class MetadataTypeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MetadataTypeAttribute extends System.Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute" /> attribute enables you to associate a class with a data-model partial class. In this associated class you provide additional metadata information that is not in the data model.</para>
+      <para>For example, in the associated class you can apply the <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute to a data field. This enforces that a value is provided for the field even if this constraint is not required by the database schema.</para>
+      <para>You use the <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute" /> attribute as follows:</para>
+      <list type="bullet">
+        <item>
+          <para>In your application, create a file in which you create the data-model partial class that you want to modify. </para>
+        </item>
+        <item>
+          <para>Create the associated metadata class. </para>
+        </item>
+        <item>
+          <para>Apply the <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute" /> attribute to the partial entity class, specifying the associated class. </para>
+        </item>
+      </list>
+      <para>When you apply this attribute, you must adhere to the following usage constraints:</para>
+      <list type="bullet">
+        <item>
+          <para>The attribute can only be applied to a class.</para>
+        </item>
+        <item>
+          <para>The attribute cannot be inherited by derived classes.</para>
+        </item>
+        <item>
+          <para>The attribute can be applied only one time.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the metadata class to associate with a data model class.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MetadataTypeAttribute (Type metadataClassType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type metadataClassType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="metadataClassType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.MetadataTypeAttribute" /> class.</para>
+        </summary>
+        <param name="metadataClassType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata class to reference.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="MetadataClassType">
+      <MemberSignature Language="C#" Value="public Type MetadataClassType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type MetadataClassType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the metadata class that is associated with a data-model partial class.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

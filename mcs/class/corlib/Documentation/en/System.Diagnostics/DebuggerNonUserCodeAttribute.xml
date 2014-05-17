@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DebuggerNonUserCodeAttribute" FullName="System.Diagnostics.DebuggerNonUserCodeAttribute">
   <TypeSignature Language="C#" Value="public sealed class DebuggerNonUserCodeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit DebuggerNonUserCodeAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,24 +20,41 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Designer provided types and members that are not part of the code specifically created by the user can complicate the debugging experience. This attribute suppresses the display of these adjunct types and members in the debugger window and automatically steps through, rather than into, designer provided code.  When the debugger encounters this attribute when stepping through user code, the user experience is to not see the designer provided code and to step to the next user-supplied code statement.</para>
+      <block subset="none" type="note">
+        <para>The common language runtime attaches no semantics to this attribute. It is provided for use by source code debuggers. For example, in vsprvslong, the debugger does not display an element with this attribute in the debugger window, does not stop in a method with this attribute, and does not allow a breakpoint to be set in the method.</para>
+      </block>
+      <para>The debugger behavior when the <see cref="T:System.Diagnostics.DebuggerNonUserCodeAttribute" /> is present is similar to using a combination of the <see cref="T:System.Diagnostics.DebuggerHiddenAttribute" /> attribute, which hides the code from the debugger, and the <see cref="T:System.Diagnostics.DebuggerStepThroughAttribute" /> attribute, which tells the debugger to step through, rather than into, the code it is applied to.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a type or member that is not part of the user code for an application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DebuggerNonUserCodeAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of the function of this constructor and an example of its use, see the <see cref="T:System.Diagnostics.DebuggerNonUserCodeAttribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DebuggerNonUserCodeAttribute" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

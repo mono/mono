@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CipherMode" FullName="System.Security.Cryptography.CipherMode">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum CipherMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CipherMode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,103 +13,127 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>Cryptographic Mode of Operation for Symmetric Block Ciphers.</summary>
-    <remarks>
-      <para>Cipher mode of operation are only applicable to block ciphers. Stream ciphers, like RC4(tm), do not use them.</para>
-      <para>Some modes (OFB and CTS) are defined but are not implemented for any of the algorithms present in the .NET framework.</para>
-    </remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="CBC">
-      <MemberSignature Language="C#" Value="CBC" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Cipher Block Chaining (CBC). The first plain text data block is XORed with the initialization vector (IV) before being encrypted by the selected algorithm. Subsequent blocks are XORed with the previous cipher text block before being encrypted. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="CFB">
-      <MemberSignature Language="C#" Value="CFB" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Cipher Feedback (CFB). The first plain text data block is encrypted then XORed with the initialization vector (IV). Subsequent blocks are encrypted and then XORed with the previous plain text block. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="CTS">
-      <MemberSignature Language="C#" Value="CTS" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Cipher Text Stealing (CTS). This cipher mode is defined but is not implemented for any of the algorithms present in the .NET framework. More details are available in Applied Cryptography (Schneier, Bruce, "Applied Cryptography", Second Edition, John Wiley and Sons, New York, 1996).</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ECB">
-      <MemberSignature Language="C#" Value="ECB" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Electronic Codebook (ECB). This is the most basic mode of operation where a plain text data block is encrypted by the selected algorithm. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="OFB">
-      <MemberSignature Language="C#" Value="OFB" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Output Feedback (OFB). This cipher mode is defined but is not implemented for any of the algorithms present in the .NET framework. More details are available in NIST FIPS 81 <see cref="http://www.itl.nist.gov/fipspubs/fip81.htm" />.</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Block cipher algorithms encrypt data in block units, rather than a single byte at a time. The most common block size is 8 bytes. Because each block is heavily processed, block ciphers provide a higher level of security than stream ciphers. However, block cipher algorithms tend to execute more slowly than stream ciphers.</para>
+      <para>Block ciphers use the same encryption algorithm for each block. Because of this, a block of plain text will always return the same cipher text when encrypted with the same key and algorithm. Because this behavior can be used to crack a cipher, cipher modes are introduced that modify the encryption process based on feedback from earlier block encryptions. The resulting encryption provides a higher level of security than a simple block encryption.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the block cipher mode to use for encryption.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="CBC">
+      <MemberSignature Language="C#" Value="CBC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.CipherMode CBC = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Cipher Block Chaining (CBC) mode introduces feedback. Before each plain text block is encrypted, it is combined with the cipher text of the previous block by a bitwise exclusive OR operation. This ensures that even if the plain text contains many identical blocks, they will each encrypt to a different cipher text block. The initialization vector is combined with the first plain text block by a bitwise exclusive OR operation before the block is encrypted. If a single bit of the cipher text block is mangled, the corresponding plain text block will also be mangled. In addition, a bit in the subsequent block, in the same position as the original mangled bit, will be mangled.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CFB">
+      <MemberSignature Language="C#" Value="CFB" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.CipherMode CFB = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Cipher Feedback (CFB) mode processes small increments of plain text into cipher text, instead of processing an entire block at a time. This mode uses a shift register that is one block in length and is divided into sections. For example, if the block size is 8 bytes, with one byte processed at a time, the shift register is divided into eight sections. If a bit in the cipher text is mangled, one plain text bit is mangled and the shift register is corrupted. This results in the next several plain text increments being mangled until the bad bit is shifted out of the shift register. The default feedback size can vary by algorithm, but is typically either 8 bits or the number of bits of the block size. You can alter the number of feedback bits by using the <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.FeedbackSize" /> property. Algorithms that support CFB use this property to set the feedback.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CTS">
+      <MemberSignature Language="C#" Value="CTS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.CipherMode CTS = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Cipher Text Stealing (CTS) mode handles any length of plain text and produces cipher text whose length matches the plain text length. This mode behaves like the CBC mode for all but the last two blocks of the plain text.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ECB">
+      <MemberSignature Language="C#" Value="ECB" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.CipherMode ECB = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Electronic Codebook (ECB) mode encrypts each block individually. Any blocks of plain text that are identical and in the same message, or that are in a different message encrypted with the same key, will be transformed into identical cipher text blocks. Important:  This mode is not recommended because it opens the door for multiple security exploits. If the plain text to be encrypted contains substantial repetition, it is feasible for the cipher text to be broken one block at a time. It is also possible to use block analysis to determine the encryption key. Also, an active adversary can substitute and exchange individual blocks without detection, which allows blocks to be saved and inserted into the stream at other points without detection.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OFB">
+      <MemberSignature Language="C#" Value="OFB" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Cryptography.CipherMode OFB = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.CipherMode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Output Feedback (OFB) mode processes small increments of plain text into cipher text instead of processing an entire block at a time. This mode is similar to CFB; the only difference between the two modes is the way that the shift register is filled. If a bit in the cipher text is mangled, the corresponding bit of plain text will be mangled. However, if there are extra or missing bits from the cipher text, the plain text will be mangled from that point on.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

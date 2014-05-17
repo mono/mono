@@ -120,9 +120,9 @@ alloc_degraded (MonoVTable *vtable, size_t size, gboolean for_mature)
 		if (last_major_gc_warned < stat_major_gcs) {
 			++num_degraded;
 			if (num_degraded == 1 || num_degraded == 3)
-				fprintf (stderr, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.\n");
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.");
 			else if (num_degraded == 10)
-				fprintf (stderr, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.\n");
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.");
 			last_major_gc_warned = stat_major_gcs;
 		}
 		InterlockedExchangeAdd (&degraded_mode, size);
@@ -143,6 +143,34 @@ alloc_degraded (MonoVTable *vtable, size_t size, gboolean for_mature)
 	}
 
 	return p;
+}
+
+static void
+zero_tlab_if_necessary (void *p, size_t size)
+{
+	if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION) {
+		memset (p, 0, size);
+	} else {
+		/*
+		 * This function is called for all allocations in
+		 * TLABs.  TLABs originate from fragments, which are
+		 * initialized to be faux arrays.  The remainder of
+		 * the fragments are zeroed out at initialization for
+		 * CLEAR_AT_GC, so here we just need to make sure that
+		 * the array header is zeroed.  Since we don't know
+		 * whether we're called for the start of a fragment or
+		 * for somewhere in between, we zero in any case, just
+		 * to make sure.
+		 */
+
+		if (size >= sizeof (MonoArray))
+			memset (p, 0, sizeof (MonoArray));
+		else {
+			static guint8 zeros [sizeof (MonoArray)];
+
+			SGEN_ASSERT (0, !memcmp (p, zeros, size), "TLAB segment must be zeroed out.");
+		}
+	}
 }
 
 /*
@@ -273,9 +301,7 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 					g_assert (0);
 				}
 
-				if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION) {
-					memset (p, 0, size);
-				}
+				zero_tlab_if_necessary (p, size);
 			} else {
 				size_t alloc_size = 0;
 				if (TLAB_START)
@@ -304,9 +330,7 @@ mono_gc_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 				TLAB_REAL_END = TLAB_START + alloc_size;
 				TLAB_TEMP_END = TLAB_START + MIN (SGEN_SCAN_START_SIZE, alloc_size);
 
-				if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION) {
-					memset (TLAB_START, 0, alloc_size);
-				}
+				zero_tlab_if_necessary (TLAB_START, alloc_size);
 
 				/* Allocate from the TLAB */
 				p = (void*)TLAB_NEXT;
@@ -361,8 +385,7 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 		sgen_set_nursery_scan_start ((char*)p);
 
 		/*FIXME we should use weak memory ops here. Should help specially on x86. */
-		if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION)
-			memset (p, 0, size);
+		zero_tlab_if_necessary (p, size);
 	} else {
 		int available_in_tlab;
 		char *real_end;
@@ -391,8 +414,7 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 			if (!p)
 				return NULL;
 
-			if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION)
-				memset (p, 0, size);			
+			zero_tlab_if_necessary (p, size);
 		} else {
 			size_t alloc_size = 0;
 
@@ -408,8 +430,7 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 			TLAB_TEMP_END = new_next + MIN (SGEN_SCAN_START_SIZE, alloc_size);
 			sgen_set_nursery_scan_start ((char*)p);
 
-			if (nursery_clear_policy == CLEAR_AT_TLAB_CREATION)
-				memset (new_next, 0, alloc_size);
+			zero_tlab_if_necessary (new_next, alloc_size);
 
 			MONO_GC_NURSERY_TLAB_ALLOC ((mword)new_next, alloc_size);
 		}
@@ -433,6 +454,10 @@ void*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	void *res;
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return NULL;
+
 #ifndef DISABLE_CRITICAL_REGION
 	TLAB_ACCESS_INIT;
 
@@ -473,6 +498,10 @@ void*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *arr;
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return NULL;
+
 #ifndef DISABLE_CRITICAL_REGION
 	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
@@ -506,6 +535,9 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 {
 	MonoArray *arr;
 	MonoArrayBounds *bounds;
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return NULL;
 
 #ifndef DISABLE_CRITICAL_REGION
 	TLAB_ACCESS_INIT;
@@ -545,6 +577,10 @@ void*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *str;
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return NULL;
+
 #ifndef DISABLE_CRITICAL_REGION
 	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
@@ -581,7 +617,11 @@ void*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
 	void **p;
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return NULL;
 	size = ALIGN_UP (size);
+
 	LOCK_GC;
 
 	if (size > SGEN_MAX_SMALL_OBJ_SIZE) {
@@ -607,7 +647,12 @@ void*
 mono_gc_alloc_mature (MonoVTable *vtable)
 {
 	void **res;
-	size_t size = ALIGN_UP (vtable->klass->instance_size);
+	size_t size = vtable->klass->instance_size;
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return NULL;
+	size = ALIGN_UP (size);
+
 	LOCK_GC;
 	res = alloc_degraded (vtable, size, TRUE);
 	UNLOCK_GC;
@@ -704,6 +749,9 @@ create_allocator (int atype)
 	MONO_THREAD_VAR_OFFSET (tlab_next_addr, tlab_next_addr_offset);
 	MONO_THREAD_VAR_OFFSET (tlab_temp_end, tlab_temp_end_offset);
 
+	mono_tls_key_set_offset (TLS_KEY_SGEN_TLAB_NEXT_ADDR, tlab_next_addr_offset);
+	mono_tls_key_set_offset (TLS_KEY_SGEN_TLAB_TEMP_END, tlab_temp_end_offset);
+
 	g_assert (tlab_next_addr_offset != -1);
 	g_assert (tlab_temp_end_offset != -1);
 #endif
@@ -745,7 +793,7 @@ create_allocator (int atype)
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_ALLOC);
 
 #ifndef DISABLE_JIT
-	size_var = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
+	size_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	if (atype == ATYPE_NORMAL || atype == ATYPE_SMALL) {
 		/* size = vtable->klass->instance_size; */
 		mono_mb_emit_ldarg (mb, 0);
@@ -756,18 +804,35 @@ create_allocator (int atype)
 		mono_mb_emit_byte (mb, CEE_ADD);
 		/* FIXME: assert instance_size stays a 4 byte integer */
 		mono_mb_emit_byte (mb, CEE_LDIND_U4);
+		mono_mb_emit_byte (mb, CEE_CONV_I);
 		mono_mb_emit_stloc (mb, size_var);
 	} else if (atype == ATYPE_VECTOR) {
 		MonoExceptionClause *clause;
-		int pos, pos_leave;
+		int pos, pos_leave, pos_error;
 		MonoClass *oom_exc_class;
 		MonoMethod *ctor;
 
-		/* n > 	MONO_ARRAY_MAX_INDEX -> OverflowException */
+		/*
+		 * n > MONO_ARRAY_MAX_INDEX => OutOfMemoryException
+		 * n < 0                    => OverflowException
+		 *
+		 * We can do an unsigned comparison to catch both cases, then in the error
+		 * case compare signed to distinguish between them.
+		 */
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icon (mb, MONO_ARRAY_MAX_INDEX);
+		mono_mb_emit_byte (mb, CEE_CONV_U);
 		pos = mono_mb_emit_short_branch (mb, CEE_BLE_UN_S);
+
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
+		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_icon (mb, 0);
+		pos_error = mono_mb_emit_short_branch (mb, CEE_BLT_S);
+		mono_mb_emit_exception (mb, "OutOfMemoryException", NULL);
+		mono_mb_patch_short_branch (mb, pos_error);
 		mono_mb_emit_exception (mb, "OverflowException", NULL);
+
 		mono_mb_patch_short_branch (mb, pos);
 
 		clause = mono_image_alloc0 (mono_defaults.corlib, sizeof (MonoExceptionClause));
@@ -781,6 +846,7 @@ create_allocator (int atype)
 		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (MonoClass, sizes.element_size));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_U4);
+		mono_mb_emit_byte (mb, CEE_CONV_I);
 
 		/* * n */
 		mono_mb_emit_ldarg (mb, 1);
@@ -815,8 +881,31 @@ create_allocator (int atype)
 		mono_mb_patch_branch (mb, pos_leave);
 		/* end catch */
 	} else if (atype == ATYPE_STRING) {
-		/* a string allocator method takes the args: (vtable, len) */
-		/* bytes = (sizeof (MonoString) + ((len + 1) * 2)); */
+		int pos;
+
+		/*
+		 * a string allocator method takes the args: (vtable, len)
+		 *
+		 * bytes = sizeof (MonoString) + ((len + 1) * 2)
+		 *
+		 * condition:
+		 *
+		 * bytes <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
+		 *
+		 * therefore:
+		 *
+		 * sizeof (MonoString) + ((len + 1) * 2) <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
+		 * len <= (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - sizeof (MonoString)) / 2 - 1
+		 */
+		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_icon (mb, (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - sizeof (MonoString)) / 2 - 1);
+		pos = mono_mb_emit_short_branch (mb, MONO_CEE_BLE_UN_S);
+
+		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+		mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
+		mono_mb_emit_exception (mb, "OutOfMemoryException", NULL);
+		mono_mb_patch_short_branch (mb, pos);
+
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icon (mb, 1);
 		mono_mb_emit_byte (mb, MONO_CEE_SHL);
@@ -851,7 +940,7 @@ create_allocator (int atype)
 
 	/* tlab_next_addr (local) = tlab_next_addr (TLS var) */
 	tlab_next_addr_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	EMIT_TLS_ACCESS (mb, tlab_next_addr, tlab_next_addr_offset);
+	EMIT_TLS_ACCESS (mb, tlab_next_addr, TLS_KEY_SGEN_TLAB_NEXT_ADDR);
 	mono_mb_emit_stloc (mb, tlab_next_addr_var);
 
 	/* p = (void**)tlab_next; */
@@ -870,7 +959,7 @@ create_allocator (int atype)
 
 	/* if (G_LIKELY (new_next < tlab_temp_end)) */
 	mono_mb_emit_ldloc (mb, new_next_var);
-	EMIT_TLS_ACCESS (mb, tlab_temp_end, tlab_temp_end_offset);
+	EMIT_TLS_ACCESS (mb, tlab_temp_end, TLS_KEY_SGEN_TLAB_TEMP_END);
 	slowpath_branch = mono_mb_emit_short_branch (mb, MONO_CEE_BLT_UN_S);
 
 	/* Slowpath */
@@ -1057,11 +1146,21 @@ mono_gc_get_managed_allocator_by_type (int atype)
 	if (!mono_runtime_has_tls_get ())
 		return NULL;
 
-	mono_loader_lock ();
 	res = alloc_method_cache [atype];
-	if (!res)
-		res = alloc_method_cache [atype] = create_allocator (atype);
-	mono_loader_unlock ();
+	if (res)
+		return res;
+
+	res = create_allocator (atype);
+	LOCK_GC;
+	if (alloc_method_cache [atype]) {
+		mono_free_method (res);
+		res = alloc_method_cache [atype];
+	} else {
+		mono_memory_barrier ();
+		alloc_method_cache [atype] = res;
+	}
+	UNLOCK_GC;
+
 	return res;
 #else
 	return NULL;

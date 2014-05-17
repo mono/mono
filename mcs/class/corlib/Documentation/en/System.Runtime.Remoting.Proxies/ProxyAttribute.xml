@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProxyAttribute" FullName="System.Runtime.Remoting.Proxies.ProxyAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ProxyAttribute : Attribute, System.Runtime.Remoting.Contexts.IContextAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ProxyAttribute extends System.Attribute implements class System.Runtime.Remoting.Contexts.IContextAttribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -25,28 +27,47 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Apply the current attribute to types that need custom proxies. You can use the ProxyAttribute class to intercept the new (New in Visual Basic) statement by deriving from the ProxyAttribute and placing the attribute on a child of ContextBoundObject. (Placing the proxy attribute on a child of MarshalByRefObject is not supported.) </para>
+      <block subset="none" type="note">
+        <para>This class makes a link demand and an inheritance demand at the class level. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have infrastructure permission. For details about security demands, see <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> and <format type="text/html"><a href="28B9ADBB-8F08-4F10-B856-DBF59EB932D9">[&lt;topic://cpconInheritanceDemands&gt;]</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that an object type requires a custom proxy.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ProxyAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Proxies.ProxyAttribute" /> class with default values.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public virtual MarshalByRefObject CreateInstance (Type serverType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.MarshalByRefObject CreateInstance(class System.Type serverType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.MarshalByRefObject</ReturnType>
       </ReturnValue>
@@ -54,20 +75,28 @@
         <Parameter Name="serverType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serverType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MarshalByRefObject'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates either an uninitialized <see cref="T:System.MarshalByRefObject" /> or a transparent proxy, depending on whether the specified type can exist in the current context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An uninitialized <see cref="T:System.MarshalByRefObject" /> or a transparent proxy.</para>
+        </returns>
+        <param name="serverType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object type to create an instance of. </param>
       </Docs>
+    </Member>
+    <Member MemberName="CreateProxy">
+      <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.Proxies.RealProxy CreateProxy (System.Runtime.Remoting.ObjRef objRef, Type serverType, object serverObject, System.Runtime.Remoting.Contexts.Context serverContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Runtime.Remoting.Proxies.RealProxy CreateProxy(class System.Runtime.Remoting.ObjRef objRef, class System.Type serverType, object serverObject, class System.Runtime.Remoting.Contexts.Context serverContext) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateProxy">
-      <MemberSignature Language="C#" Value="public virtual System.Runtime.Remoting.Proxies.RealProxy CreateProxy (System.Runtime.Remoting.ObjRef objRef, Type serverType, object serverObject, System.Runtime.Remoting.Contexts.Context serverContext);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Proxies.RealProxy</ReturnType>
       </ReturnValue>
@@ -78,34 +107,34 @@
         <Parameter Name="serverContext" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <param name="objRef">To be added.</param>
-        <param name="serverType">To be added: an object of type 'Type'</param>
-        <param name="serverObject">To be added: an object of type 'object'</param>
-        <param name="serverContext">To be added: an object of type 'Runtime.Remoting.Contexts.Context'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'RealProxy'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The current method is called when a proxy is created out of a<see cref="T:System.Runtime.Remoting.ObjRef" /> instance that references a class that is marked with the <see cref="T:System.Runtime.Remoting.Proxies.ProxyAttribute" /> attribute. Therefore, the method is used only when a <see cref="T:System.Runtime.Remoting.ObjRef" /> is received from a return or parameter on a call, or during the activation of a client-activated object. The <see cref="T:System.Runtime.Remoting.Proxies.ProxyAttribute" /> is not used for well-known object types.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a remoting proxy for a remote object described by the specified <see cref="T:System.Runtime.Remoting.ObjRef" />, and located on the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance of remoting proxy for the remote object that is described in the specified <see cref="T:System.Runtime.Remoting.ObjRef" />.</para>
+        </returns>
+        <param name="objRef">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object reference to the remote object for which to create a proxy. </param>
+        <param name="serverType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the server where the remote object is located. </param>
+        <param name="serverObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server object. </param>
+        <param name="serverContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context in which the server object is located. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPropertiesForNewContext">
       <MemberSignature Language="C#" Value="public void GetPropertiesForNewContext (System.Runtime.Remoting.Activation.IConstructionCallMessage msg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetPropertiesForNewContext(class System.Runtime.Remoting.Activation.IConstructionCallMessage msg) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
-      </Parameters>
-      <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionCallMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +145,36 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets properties for a new context.</para>
+        </summary>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message for which the context is to be retrieved.</param>
+      </Docs>
     </Member>
     <Member MemberName="IsContextOK">
       <MemberSignature Language="C#" Value="public bool IsContextOK (System.Runtime.Remoting.Contexts.Context ctx, System.Runtime.Remoting.Activation.IConstructionCallMessage msg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsContextOK(class System.Runtime.Remoting.Contexts.Context ctx, class System.Runtime.Remoting.Activation.IConstructionCallMessage msg) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -128,22 +183,20 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <param name="ctx">To be added: an object of type 'Runtime.Remoting.Contexts.Context'</param>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Activation.IConstructionCallMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks the specified context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified context.</para>
+        </returns>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context to be verified.</param>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message for the remote call.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
 </Type>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceContractGenerationOptions" FullName="System.ServiceModel.Description.ServiceContractGenerationOptions">
+  <TypeSignature Language="C#" Value="public enum ServiceContractGenerationOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ServiceContractGenerationOptions extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.ServiceContractGenerationOptions" /> enumeration with the <see cref="P:System.ServiceModel.Description.ServiceContractGenerator.Options" /> property to control the generated contract code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the contract generation options available using the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" />.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AsynchronousMethods">
+      <MemberSignature Language="C#" Value="AsynchronousMethods" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.ServiceContractGenerationOptions AsynchronousMethods = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates asynchronous methods for operations in addition to synchronous versions.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ChannelInterface">
+      <MemberSignature Language="C#" Value="ChannelInterface" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.ServiceContractGenerationOptions ChannelInterface = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates an interface that derives from the contract interface and <see cref="T:System.ServiceModel.IClientChannel" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientClass">
+      <MemberSignature Language="C#" Value="ClientClass" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.ServiceContractGenerationOptions ClientClass = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a indigo1 client class that extends <see cref="T:System.ServiceModel.ClientBase`1" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EventBasedAsynchronousMethods">
+      <MemberSignature Language="C#" Value="EventBasedAsynchronousMethods" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.ServiceContractGenerationOptions EventBasedAsynchronousMethods = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates event-based asynchronous methods for operations in addition to synchronous versions.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InternalTypes">
+      <MemberSignature Language="C#" Value="InternalTypes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.ServiceContractGenerationOptions InternalTypes = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes all types to be marked internal.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.ServiceContractGenerationOptions None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No options specified.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TypedMessages">
+      <MemberSignature Language="C#" Value="TypedMessages" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Description.ServiceContractGenerationOptions TypedMessages = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generate message contracts.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

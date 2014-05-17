@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProtocolImporter" FullName="System.Web.Services.Description.ProtocolImporter">
   <TypeSignature Language="C#" Value="public abstract class ProtocolImporter" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The abstract <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class and its concrete derived classes generate client proxy code or abstract server code according to a specified communication protocol. <see cref="T:System.Web.Services.Description.ProtocolImporter" /> provides common functionality regardless of the protocol. Within a given protocol, a concrete derived class generates a class for each supported binding defined in a Web Services Description Language (WSDL) document. Typically, instead of directly invoking classes derived from <see cref="T:System.Web.Services.Description.ProtocolImporter" />, a developer uses these classes indirectly through the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides common functionality across communication protocols for generating classes for Web services. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +49,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSchemas" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the abstract XML schemas used by the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,10 +72,18 @@
         <Parameter Name="extensions" Type="System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />
       </Parameters>
       <Docs>
-        <param name="comments">a <see cref="T:System.CodeDom.CodeCommentStatementCollection" /></param>
-        <param name="extensions">a <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method also adds the warning messages to a collection of code comments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For each unhandled extension or XML element in the input extensions collection, turns on a <see cref="F:System.Web.Services.Description.ServiceDescriptionImportWarnings.RequiredExtensionsIgnored" /> or <see cref="F:System.Web.Services.Description.ServiceDescriptionImportWarnings.OptionalExtensionsIgnored" /> warning for each unhandled extension or XML element in the input extensions collection. </para>
+        </summary>
+        <param name="comments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCommentStatementCollection" /> that specifies the collection of code comments to which each warning message is added.</param>
+        <param name="extensions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" /> that specifies the extensions or XML elements for which warnings should be generated if they are not handled.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +98,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.CodeDom.CodeTypeDeclaration" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When generating a class for a given binding, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls the <see cref="M:System.Web.Services.Description.ProtocolImporter.BeginClass" /> method before generating methods that correspond to operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, initializes the generation of a binding class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The generated class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,8 +124,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When generating code, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls the <see cref="M:System.Web.Services.Description.ProtocolImporter.BeginNamespace" /> method before generating classes that represent bindings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs namespace-wide initialization during code generation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,9 +145,12 @@
         <ReturnType>System.Web.Services.Description.Binding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Binding'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) binding that the protocol importer is currently processing to generate a class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -125,9 +164,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the binding class that is currently being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,9 +184,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.CodeIdentifiers" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.CodeIdentifiers" /> object that generates a unique name for the binding class that is currently being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,9 +204,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.CodeDom.CodeNamespace" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a representation of the .NET Framework namespace of the binding classes that are being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -176,9 +224,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.CodeDom.CodeTypeDeclaration" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a representation of the binding class that is currently being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -193,9 +244,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSchemas" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the concrete XML schemas used by the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,8 +264,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When generating a class for a given binding, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls the <see cref="M:System.Web.Services.Description.ProtocolImporter.EndClass" /> method after generating methods that correspond to operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, processes a binding class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -226,8 +286,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When generating code, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls the <see cref="M:System.Web.Services.Description.ProtocolImporter.EndNamespace" /> method after generating classes that represent bindings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs processing for an entire namespace.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,9 +308,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.CodeDom.CodeMemberMethod" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When generating code, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls the <see cref="M:System.Web.Services.Description.ProtocolImporter.GenerateMethod" /> method for each binding class method that represents an operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, generates method code for binding classes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The generated method.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -258,9 +333,12 @@
         <ReturnType>System.Web.Services.Description.Message</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Message'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) input message for the abstract operation that the protocol importer is currently processing to generate a method in a binding class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -275,9 +353,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When generating code, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls the <see cref="M:System.Web.Services.Description.ProtocolImporter.IsBindingSupported" /> method to determine whether to generate a class for the current binding, as represented by the <see cref="P:System.Web.Services.Description.ProtocolImporter.Binding" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, determines whether a class can be generated for the current binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the binding is supported; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -294,10 +381,21 @@
         <Parameter Name="flow" Type="System.Web.Services.Description.OperationFlow" />
       </Parameters>
       <Docs>
-        <param name="flow">To be added: an object of type 'OperationFlow'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When generating code, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls the <see cref="M:System.Web.Services.Description.ProtocolImporter.IsOperationFlowSupported(System.Web.Services.Description.OperationFlow)" /> method to determine whether to generate a method for the current operation, as represented by the <see cref="P:System.Web.Services.Description.ProtocolImporter.Operation" /> property. This evaluation takes place for each operation in a binding for which a class is being generated. If a false value is returned, the <see cref="T:System.Web.Services.Description.ProtocolImporter" /> class calls its <see cref="M:System.Web.Services.Description.ProtocolImporter.UnsupportedOperationWarning(System.String)" /> method.</para>
+          <para>For more information, see the <see cref="P:System.Web.Services.Description.OperationMessageCollection.Flow" /> property. The <see cref="P:System.Web.Services.Description.Operation.Messages" /> property is of type <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, determines whether the current operation's operation flow is supported.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the current operation's operation flow is supported.</para>
+        </returns>
+        <param name="flow">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.Services.Description.OperationFlow" />  enumeration value that represents a transmission pattern.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -311,9 +409,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the binding class method which that the protocol importer is currently generating.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -327,9 +428,15 @@
         <ReturnType>System.Web.Services.Description.Operation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Operation'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operation appears as a child of the <see cref="P:System.Web.Services.Description.ProtocolImporter.PortType" /> element in a WSDL document. The method is generated with a <see cref="T:System.Web.Services.WebMethodAttribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the abstract Web Services Description Language (WSDL) operation that the protocol importer is currently processing to generate a method in a binding class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -343,9 +450,15 @@
         <ReturnType>System.Web.Services.Description.OperationBinding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OperationBinding'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method is generated with a <see cref="T:System.Web.Services.WebMethodAttribute" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) operation binding that the protocol importer is currently processing to generate a method in a binding class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -362,10 +475,17 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Exception'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces an Exception indicating that the current <see cref="P:System.Web.Services.Description.ProtocolImporter.OperationBinding" /> instance for which a binding class is being generated is invalid within the target namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Exception indicating that the current <see cref="P:System.Web.Services.Description.ProtocolImporter.OperationBinding" /> instance for which a binding class is being generated is invalid within the target namespace.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Annotation to be added to the exception message, which already indicates that the operation binding syntax is invalid.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -382,10 +502,17 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Exception'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces an Exception indicating that the current <see cref="P:System.Web.Services.Description.ProtocolImporter.Operation" /> instance for which a binding class is being generated is invalid within the target namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Exception indicating that the current <see cref="P:System.Web.Services.Description.ProtocolImporter.Operation" /> instance for which a binding class is being generated is invalid within the target namespace.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Annotation to be added to the exception message, which already indicates that the operation syntax is invalid.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -399,9 +526,12 @@
         <ReturnType>System.Web.Services.Description.Message</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Message'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) output message for the abstract operation that the protocol importer is currently processing to generate a method in a binding class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -415,9 +545,12 @@
         <ReturnType>System.Web.Services.Description.Port</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Port'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Web Services Description Language (WSDL) port that contains a reference to the binding that the protocol importer is currently processing to generate a binding class. If more than one port refers to the current binding, the current port is the one in which the binding has most recently been found.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -431,9 +564,12 @@
         <ReturnType>System.Web.Services.Description.PortType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PortType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) <see cref="P:System.Web.Services.Description.ProtocolImporter.PortType" /> that is implemented by the binding that the protocol importer is currently processing to generate a binding class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -447,9 +583,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Abstract property that concrete derived classes must implement to get the name of the protocol being used.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -464,9 +603,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSchemas" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the XML schemas, both abstract and concrete, used by the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -480,9 +622,12 @@
         <ReturnType>System.Web.Services.Description.Service</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Service'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) service that contains a reference to the binding that the protocol importer is currently processing to generate a binding class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -496,9 +641,12 @@
         <ReturnType>System.Web.Services.Description.ServiceDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> objects that belong to the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> instance that are searched for bindings from which to generate binding classes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -512,9 +660,12 @@
         <ReturnType>System.Web.Services.Description.ServiceDescriptionImportStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionImportStyle'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an enumeration value that indicates whether a client proxy class or an abstract server class is being generated. The values are Client and Server. The value is that of the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> instance's <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -531,9 +682,13 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Turns on an <see cref="F:System.Web.Services.Description.ServiceDescriptionImportWarnings.UnsupportedBindingsIgnored" /> warning in the <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /> enumeration obtained through the <see cref="P:System.Web.Services.Description.ProtocolImporter.Warnings" /> property. This method also adds a warning message to the comments for the class that is being generated.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Annotation to be added to the warning message, which already indicates that the binding has been ignored.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -550,9 +705,13 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Turns on an <see cref="F:System.Web.Services.Description.ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored" /> warning in the <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /> enumeration obtained through the <see cref="P:System.Web.Services.Description.ProtocolImporter.Warnings" /> property. This method also adds a warning message to the comments for the class that is being generated.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Annotation to be added to the warning message, which already indicates that the operation binding has been ignored.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -569,9 +728,13 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Turns on an <see cref="F:System.Web.Services.Description.ServiceDescriptionImportWarnings.UnsupportedOperationsIgnored" /> warning in the <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /> enumeration obtained through the <see cref="P:System.Web.Services.Description.ProtocolImporter.Warnings" /> property. This method also adds a warning message to the comments for the class that is being generated.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Annotation to be added to the warning message, which already indicates that the operation binding has been ignored.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -586,9 +749,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionImportWarnings'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /> enumeration value that indicates the types of warnings, if any, issued by the protocol importer while generating binding classes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

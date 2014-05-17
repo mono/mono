@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IServerFormatterSinkProvider" FullName="System.Runtime.Remoting.Channels.IServerFormatterSinkProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IServerFormatterSinkProvider : System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IServerFormatterSinkProvider implements class System.Runtime.Remoting.Channels.IServerChannelSinkProvider" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,11 +10,6 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
   <Interfaces>
     <Interface>
       <InterfaceName>System.Runtime.Remoting.Channels.IServerChannelSinkProvider</InterfaceName>
@@ -23,4 +20,17 @@
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Runtime.Remoting.Channels.IServerFormatterSinkProvider" /> creates server formatter sinks for the server channel through which remoting messages flow.</para>
+      <para>To use a &lt;formatter&gt; tag instead of a &lt;provider&gt; tag within a configuration file, the server channel sink provider must implement the <see cref="T:System.Runtime.Remoting.Channels.IClientFormatterSinkProvider" /> interface instead of <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" />. For additional information about remoting configuration, see <format type="text/html"><a href="226ECF74-EBBD-4EA0-A701-DCF4441DEEFE">[&lt;topic://cpconchannelformatterconfigurationproperties&gt;]</a></format> and <format type="text/html"><a href="DC2D1E62-9AF7-4CA1-99FD-98B93BB4DB9E">[&lt;topic://gnconremotingsettingsschema&gt;]</a></format>.</para>
+      <para>Some formatter sink implementations use run-time formatters (<see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" /> and <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />). Other implementations can use their own means to transform the channel message into the stream. On the return journey, the formatter sink will transform the message stream back into the channel message elements (return message).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks a server channel sink provider as a server formatter sink provider.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ClientOperation" FullName="System.ServiceModel.Dispatcher.ClientOperation">
+  <TypeSignature Language="C#" Value="public sealed class ClientOperation" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ClientOperation extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> class is the location for client run-time modifications and insertion point for custom extensions that are scoped to only one service operation. (To modify client run-time behavior for all messages in a contract, use the <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> class. ) </para>
+      <para>Install <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> modifications using a custom client behavior object, either of type <see cref="T:System.ServiceModel.Description.IContractBehavior" /> (to find a particular operation to modify) or of type <see cref="T:System.ServiceModel.Description.IOperationBehavior" /> (which can then be applied by creating a custom attribute). </para>
+      <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.Operations" /> property to locate the <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> object that represents a particular service operation. </para>
+      <para>For more information about clients and the client architecture, see <format type="text/html"><a href="c8329832-bf66-4064-9034-bf39f153fc2d">Consuming Services Using a Client</a></format> and <format type="text/html"><a href="02624403-0d77-41cb-9a86-ab55e98c7966">Client Architecture</a></format>. For more information about customizing the client runtime, see <format type="text/html"><a href="1328c61c-06e5-455f-9ebd-ceefb59d3867">Extending Clients</a></format>. For more information about using behaviors, see <format type="text/html"><a href="149b99b6-6eb6-4f45-be22-c967279677d9">Attaching Extensions Using Behaviors</a></format>. </para>
+      <para>The following properties enable you to insert custom objects or modify the client execution behavior:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.Formatter" /> property to insert a custom <see cref="T:System.ServiceModel.Dispatcher.IClientMessageFormatter" /> implementation for an operation or modify the current formatter.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.ParameterInspectors" /> property to insert a custom <see cref="T:System.ServiceModel.Dispatcher.IParameterInspector" /> implementation or to modify the current one.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.SerializeRequest" /> property to control who serializes an outbound message.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.DeserializeReply" /> property to control who deserializes an inbound message.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.Action" /> property to access the WS-Addressing action of the request message and the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.ReplyAction" /> property to access the response message action.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.BeginMethod" /> and <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.EndMethod" /> to specify which client methods are associated with an asynchronous operation.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.FaultContractInfos" /> property to get a collection of specified types that can appear in SOAP faults as the detail type.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.IsInitiating" /> and <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.IsTerminating" /> properties to control whether a session is initiated or is torn down, respectively, when the operation is called.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.IsOneWay" /> property to control whether the client waits for a response before completing the invocation.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.Parent" /> property to obtain the containing <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> object.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.Name" /> property to get the name of the operation.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.SyncMethod" /> property to control which method is mapped to the operation. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used to modify or extend the execution behavior of a specific contract operation in a client object or client channel object. This class cannot be inherited. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ClientOperation (System.ServiceModel.Dispatcher.ClientRuntime parent, string name, string action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Dispatcher.ClientRuntime parent, string name, string action) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="parent" Type="System.ServiceModel.Dispatcher.ClientRuntime" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="action" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> class using the specified <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" />, name, and action values. </para>
+        </summary>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The containing <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> object.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the operation.</param>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action of the operation.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ClientOperation (System.ServiceModel.Dispatcher.ClientRuntime parent, string name, string action, string replyAction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Dispatcher.ClientRuntime parent, string name, string action, string replyAction) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="parent" Type="System.ServiceModel.Dispatcher.ClientRuntime" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="action" Type="System.String" />
+        <Parameter Name="replyAction" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.ClientOperation" /> class using the specified <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" />, name, action, and reply action values. </para>
+        </summary>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The containing <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> object.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the operation.</param>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action of the operation.</param>
+        <param name="replyAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action of the reply message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public string Action { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Action" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default this value corresponds to the value of <see cref="P:System.ServiceModel.OperationContractAttribute.Action" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the action of the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo BeginMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo BeginMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the method associated with an asynchronous operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientParameterInspectors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.IParameterInspector&gt; ClientParameterInspectors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.ICollection`1&lt;class System.ServiceModel.Dispatcher.IParameterInspector&gt; ClientParameterInspectors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.IParameterInspector&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ClientParameterInspectors is a thread-safe collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of parameter inspector objects used to view or modify parameters prior to or subsequent to a client call.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeserializeReply">
+      <MemberSignature Language="C#" Value="public bool DeserializeReply { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DeserializeReply" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.DeserializeReply" /> property to control whether the formatter deserializes the return value from an inbound message or whether the inbound message is returned directly as the return value.</para>
+          <list type="bullet">
+            <item>
+              <para>Note   If false, the return type must be of type <see cref="T:System.ServiceModel.Channels.Message" /> and there can be no out parameters or an <see cref="T:System.InvalidCastException" /> is thrown at run-time. If the message is null, a <see cref="T:System.InvalidOperationException" /> is thrown at run-time.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.Formatter" /> property value is used to deserialize the reply message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo EndMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo EndMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the method that implements the asynchronous end method for the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="FaultContractInfos">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.FaultContractInfo&gt; FaultContractInfos { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.FaultContractInfo&gt; FaultContractInfos" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.FaultContractInfo&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.FaultContractInfos" /> property to get a collection of all contractually specified SOAP faults.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Dispatcher.FaultContractInfo" /> objects that represent the specified SOAP faults for this operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Formatter">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.IClientMessageFormatter Formatter { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.IClientMessageFormatter Formatter" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.IClientMessageFormatter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.Formatter" /> property to insert a custom <see cref="T:System.ServiceModel.Dispatcher.IClientMessageFormatter" /> implementation for an operation or modify the current formatter. The use of the formatter can be controlled by the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.SerializeRequest" /> and <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.DeserializeReply" /> properties.</para>
+          <para>The <see cref="T:System.ServiceModel.Dispatcher.IClientMessageFormatter" /> interface defines the  <see cref="M:System.ServiceModel.Dispatcher.IClientMessageFormatter.SerializeRequest(System.ServiceModel.Channels.MessageVersion,System.Object[])" /> and <see cref="M:System.ServiceModel.Dispatcher.IClientMessageFormatter.DeserializeReply(System.ServiceModel.Channels.Message,System.Object[])" /> methods, which are used to convert a set of object parameters to a message and from a message to a set of return values, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the formatter that serializes objects into messages and deserializes messages into objects.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsInitiating">
+      <MemberSignature Language="C#" Value="public bool IsInitiating { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInitiating" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default this value corresponds to the value of <see cref="P:System.ServiceModel.OperationContractAttribute.IsInitiating" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether a session can be started by a message to this operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsOneWay">
+      <MemberSignature Language="C#" Value="public bool IsOneWay { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsOneWay" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default this value corresponds to the value of <see cref="P:System.ServiceModel.OperationContractAttribute.IsOneWay" />. For issues related to one-way operations, see <format type="text/html"><a href="19053a36-4492-45a3-bfe6-0365ee0205a3">One-Way Services</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates if the operation is a one-way operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsTerminating">
+      <MemberSignature Language="C#" Value="public bool IsTerminating { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsTerminating" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default this value corresponds to the value of <see cref="P:System.ServiceModel.OperationContractAttribute.isTerminating" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates if this operation is the last one in a session.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default this value corresponds to the value of <see cref="P:System.ServiceModel.OperationContractAttribute.Name" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ParameterInspectors">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IParameterInspector&gt; ParameterInspectors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.SynchronizedCollection`1&lt;class System.ServiceModel.Dispatcher.IParameterInspector&gt; ParameterInspectors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.SynchronizedCollection&lt;System.ServiceModel.Dispatcher.IParameterInspector&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.ParameterInspectors" /> property to insert a custom <see cref="T:System.ServiceModel.Dispatcher.IParameterInspector" /> implementation or to modify the current one. Parameter inspectors are invoked in the order in which they are added to the collection for requests and in the reverse order for replies. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of <see cref="T:System.ServiceModel.Dispatcher.IParameterInspector" /> objects that can inspect and modify inbound and outbound objects for a particular client method.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Parent">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Dispatcher.ClientRuntime Parent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Dispatcher.ClientRuntime Parent" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Dispatcher.ClientRuntime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the containing <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" /> object.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplyAction">
+      <MemberSignature Language="C#" Value="public string ReplyAction { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ReplyAction" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default this value corresponds to the value of <see cref="P:System.ServiceModel.OperationContractAttribute.ReplyAction" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the action of the reply message for this operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SerializeRequest">
+      <MemberSignature Language="C#" Value="public bool SerializeRequest { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SerializeRequest" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.SerializeRequest" /> property to indicate whether the formatter serializes operation parameters into a reply message or to determine if the first parameter is sent as the outbound message. </para>
+          <block subset="none" type="note">
+            <para>If set to false, the operation must have exactly one parameter of type <see cref="T:System.ServiceModel.Channels.Message" /> or an exception is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the <see cref="P:System.ServiceModel.Dispatcher.ClientOperation.Formatter" /> object serializes an outbound message.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SyncMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo SyncMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo SyncMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the method that is associated with this operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TaskMethod">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo TaskMethod { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo TaskMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the method associated with a task.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TaskTResult">
+      <MemberSignature Language="C#" Value="public Type TaskTResult { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type TaskTResult" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the result of the method that is associated with a task.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DigitShapes" FullName="System.Globalization.DigitShapes">
   <TypeSignature Language="C#" Value="public enum DigitShapes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed DigitShapes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,55 +16,75 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Globalization.DigitShapes" /> value specifies that no digit shape is substituted for the Unicode input, a digit shape is substituted based on context, or a native national digit shape is substituted for the input.</para>
+      <para>The Arabic, Indic, and Thai languages have classical shapes for numbers that are different from the digits 0 through 9 (Unicode U+0030 through U+0039), which are most often used on computers. The application uses the <see cref="T:System.Globalization.DigitShapes" /> enumeration with the <see cref="P:System.Globalization.NumberFormatInfo.DigitSubstitution" /> property to specify how to display digits U+0030 through U+0039 in the absence of other formatting information. </para>
+      <para>The <see cref="T:System.Globalization.DigitShapes" /> enumeration is primarily used by applications intended for cultures that use bidirectional scripts. For example, the reading order of Arabic and Indic scripts is bidirectional.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the culture-specific display of digits.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Context">
       <MemberSignature Language="C#" Value="Context" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DigitShapes Context = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.DigitShapes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DigitShapes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digit shape depends on the previous text in the same output. European digits follow Latin scripts; Arabic-Indic digits follow Arabic text; and Thai digits follow Thai text.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NativeNational">
       <MemberSignature Language="C#" Value="NativeNational" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DigitShapes NativeNational = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.DigitShapes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DigitShapes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digit shape is the native equivalent of the digits from 0 through 9. ASCII digits from 0 through 9 are replaced by equivalent native national digits.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DigitShapes None = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.DigitShapes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DigitShapes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digit shape is not changed. Full Unicode compatibility is maintained.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

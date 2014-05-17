@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractFailedEventArgs" FullName="System.Diagnostics.Contracts.ContractFailedEventArgs">
   <TypeSignature Language="C#" Value="public sealed class ContractFailedEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractFailedEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,19 +11,26 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Contains event data for the Contract.ContractFailed event.</summary>
-    <remarks />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Diagnostics.Contracts.ContractFailedEventArgs" /> object is passed to the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event when a contract fails. The <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event enables a managed application environment such as an interactive interpreter, a Web browser host, a test harness, or a logging infrastructure to be notified of contract failures. The event requires full trust. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods and data for the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractFailedEventArgs (System.Diagnostics.Contracts.ContractFailureKind failureKind, string message, string condition, Exception originalException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Diagnostics.Contracts.ContractFailureKind failureKind, string message, string condition, class System.Exception originalException) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <Parameters>
@@ -31,16 +40,24 @@
         <Parameter Name="originalException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="failureKind">The kind of contract failure.</param>
-        <param name="message">The message associated with this contract failure.</param>
-        <param name="condition">The condition that caused the contract failure.</param>
-        <param name="originalException">The original exception that caused this contract failure, if any.</param>
-        <summary>Construct a ContractFailedEventArgs.</summary>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides data for the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event.</para>
+        </summary>
+        <param name="failureKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the contract that failed.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message for the event.</param>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The condition for the event.</param>
+        <param name="originalException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that caused the event.</param>
       </Docs>
     </Member>
     <Member MemberName="Condition">
       <MemberSignature Language="C#" Value="public string Condition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Condition" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -49,13 +66,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets the condition that caused the contract failure.</summary>
         <value>The condition that caused the contract failure.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the condition for the failure of the contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FailureKind">
       <MemberSignature Language="C#" Value="public System.Diagnostics.Contracts.ContractFailureKind FailureKind { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.Contracts.ContractFailureKind FailureKind" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -64,13 +85,17 @@
         <ReturnType>System.Diagnostics.Contracts.ContractFailureKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets the kind of contract failure.</summary>
         <value>The kind of contract failure.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of contract that failed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Handled">
       <MemberSignature Language="C#" Value="public bool Handled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Handled" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -79,13 +104,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets whether the contract failure has been handled.</summary>
         <value>Whether the contract failure has been handled.</value>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event has not been handled, the debugger is notified. If no debugger is attached, an <ui>Assert</ui> dialog box is displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event has been handled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Message">
       <MemberSignature Language="C#" Value="public string Message { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Message" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -94,13 +126,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets the message associated with this contract failure.</summary>
         <value>The message associated with this contract failure.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message that describes the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OriginalException">
       <MemberSignature Language="C#" Value="public Exception OriginalException { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Exception OriginalException" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -109,13 +145,17 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets the original exception that caused this contract failure, if any.</summary>
         <value>The original exception that caused this contract failure, if any.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the original exception that caused the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetHandled">
       <MemberSignature Language="C#" Value="public void SetHandled ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetHandled() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -125,12 +165,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Mark this contract failure as having been handled.</summary>
-        <remarks>Marking the contract failure as having been handled suppresses the default contract failure behaviour. </remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.Contracts.ContractFailedEventArgs.SetHandled" /> method provides a way for the runtime analysis checker to indicate that a contract exception has been handled. See the <see cref="P:System.Diagnostics.Contracts.ContractFailedEventArgs.Handled" /> property for more information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="P:System.Diagnostics.Contracts.ContractFailedEventArgs.Handled" /> property to true.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetUnwind">
       <MemberSignature Language="C#" Value="public void SetUnwind ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetUnwind() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -140,13 +187,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Request that this contract failure unwind the stack by throwing an exception.</summary>
-        <remarks>Marking the contract failure as having been handled suppresses the default contract failure behaviour.
-Requesting the contract failure unwind the stack suppresses the default contract failure behaviour, and throws a <see cref="T:System.Diagnostics.Contracts.ContractException" /> instead.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.Contracts.ContractFailedEventArgs.SetUnwind" /> method provides a way to indicate that the escalation policy for the code contract should be applied. See the <see cref="P:System.Diagnostics.Contracts.ContractFailedEventArgs.Unwind" /> property for more information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="P:System.Diagnostics.Contracts.ContractFailedEventArgs.Unwind" /> property to true.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unwind">
       <MemberSignature Language="C#" Value="public bool Unwind { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Unwind" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -155,9 +208,18 @@ Requesting the contract failure unwind the stack suppresses the default contract
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Gets whether the contract failure should unwind the stack.</summary>
         <value>Whether the contract failure should unwind the stack.</value>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the return value is true, the escalation policy is to notify the attached debugger about a contract failure or to display an <ui>Assert</ui> dialog box if a debugger is not attached.</para>
+          <block subset="none" type="note">
+            <para>This value should be set to false for analysis tools that run on a server (for example, ASP.NET).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the code contract escalation policy should be applied.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

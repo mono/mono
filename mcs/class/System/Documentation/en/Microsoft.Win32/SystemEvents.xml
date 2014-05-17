@@ -1,22 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SystemEvents" FullName="Microsoft.Win32.SystemEvents">
   <TypeSignature Language="C#" Value="public sealed class SystemEvents" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SystemEvents extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:Microsoft.Win32.SystemEvents" /> class provides the ability to respond to specific types of system events.</para>
+      <para>When a system event is raised, any delegates attached to the event are called using the thread that monitors for system events. Therefore, you should make any calls from your event handlers thread-safe. If you need to call a system event that is not exposed as a member of this class, you can use the <see cref="M:Microsoft.Win32.SystemEvents.InvokeOnEventsThread(System.Delegate)" /> method.</para>
+      <block subset="none" type="note">
+        <para>Do not perform time-consuming processing on the thread that raises a system event handler because it might prevent other applications from functioning.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>Some system events might not be raised on windowsver. Be sure to verify that your application works as expected on windowsver.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to system event notifications. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateTimer">
       <MemberSignature Language="C#" Value="public static IntPtr CreateTimer (int interval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int CreateTimer(int32 interval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -24,79 +46,154 @@
         <Parameter Name="interval" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="interval">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new window timer associated with the system events window.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ID of the new timer.</para>
+        </returns>
+        <param name="interval">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval between timer notifications, in milliseconds.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisplaySettingsChanged">
       <MemberSignature Language="C#" Value="public static event EventHandler DisplaySettingsChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler DisplaySettingsChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user changes the display settings.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisplaySettingsChanging">
       <MemberSignature Language="C#" Value="public static event EventHandler DisplaySettingsChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler DisplaySettingsChanging" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the display settings are changing.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EventsThreadShutdown">
       <MemberSignature Language="C#" Value="public static event EventHandler EventsThreadShutdown;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler EventsThreadShutdown" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised as the thread that listens for system events is about to be terminated. System event delegates are invoked using the thread that listens for system events.</para>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the thread that listens for system events is terminated.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InstalledFontsChanged">
       <MemberSignature Language="C#" Value="public static event EventHandler InstalledFontsChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler InstalledFontsChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user adds fonts to or removes fonts from the system.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InvokeOnEventsThread">
       <MemberSignature Language="C#" Value="public static void InvokeOnEventsThread (Delegate method);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void InvokeOnEventsThread(class System.Delegate method) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -104,18 +201,28 @@
         <Parameter Name="method" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="method">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method any time that you need to handle a system event that is not exposed otherwise by the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          <para>When you call this method, the specified delegate will be invoked by the thread that your application is using to process system events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the specified delegate using the thread that listens for system events.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate to invoke using the thread that listens for system events. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KillTimer">
       <MemberSignature Language="C#" Value="public static void KillTimer (IntPtr timerId);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void KillTimer(native int timerId) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -123,175 +230,415 @@
         <Parameter Name="timerId" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="timerId">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates the timer specified by the given id.</para>
+        </summary>
+        <param name="timerId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the timer to terminate. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LowMemory">
       <MemberSignature Language="C#" Value="public static event EventHandler LowMemory;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler LowMemory" />
       <MemberType>Event</MemberType>
-      <ReturnValue>
-        <ReturnType>System.EventHandler</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Obsolete("")</AttributeName>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="PaletteChanged">
-      <MemberSignature Language="C#" Value="public static event EventHandler PaletteChanged;" />
-      <MemberType>Event</MemberType>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event wraps the WM_COMPACTING message. This message is sent to all top-level windows when the system detects more than 12.5 percent of system time over a 30- to 60-second interval is being spent compacting memory. This indicates that system memory is low.</para>
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the system is running out of available RAM.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="PaletteChanged">
+      <MemberSignature Language="C#" Value="public static event EventHandler PaletteChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler PaletteChanged" />
+      <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user switches to an application that uses a different palette.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="PowerModeChanged">
       <MemberSignature Language="C#" Value="public static event Microsoft.Win32.PowerModeChangedEventHandler PowerModeChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.PowerModeChangedEventHandler PowerModeChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.PowerModeChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user suspends or resumes the system.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SessionEnded">
       <MemberSignature Language="C#" Value="public static event Microsoft.Win32.SessionEndedEventHandler SessionEnded;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.SessionEndedEventHandler SessionEnded" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.SessionEndedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user is logging off or shutting down the system.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SessionEnding">
       <MemberSignature Language="C#" Value="public static event Microsoft.Win32.SessionEndingEventHandler SessionEnding;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.SessionEndingEventHandler SessionEnding" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.SessionEndingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a cancelable event. Setting the <see cref="P:Microsoft.Win32.SessionEndingEventArgs.Cancel" /> property to true will request that the session continues to run. It provides no guarantee that the session will not end.</para>
+          <para>If you are using <see cref="E:Microsoft.Win32.SystemEvents.SessionEnding" /> in a Windows form to detect a system logoff or reboot, there is no deterministic way to decide whether the <see cref="E:System.Windows.Forms.Form.Closing" /> event will fire before this event.</para>
+          <para>If you want to perform some special tasks before <see cref="E:System.Windows.Forms.Form.Closing" /> is fired, you need to ensure that <see cref="E:Microsoft.Win32.SystemEvents.SessionEnding" /> fires before <see cref="E:System.Windows.Forms.Form.Closing" />. To do this, you need to trap the WM_QUERYENDSESSION in the form by overriding the WndProc function.  This example demonstrates how to do this.</para>
+          <code>Private Shared WM_QUERYENDSESSION As Integer = &amp;H11
+ Private Shared systemShutdown As Boolean = False
+ Protected Overrides Sub WndProc(ByRef m As System.Windows.Forms.Message)
+     If m.Msg = WM_QUERYENDSESSION Then
+         MessageBox.Show("queryendsession: this is a logoff, shutdown, or reboot")
+         systemShutdown = True
+     End If
+     ' If this is WM_QUERYENDSESSION, the closing event should be raised in the base WndProc.
+     MyBase.WndProc(m)
+ End Sub 'WndProc 
+ Private Sub Form1_Closing(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles MyBase.Closing
+     If (systemShutdown) Then
+     ' Reset the variable because the user might cancel the shutdown.
+         systemShutdown = False
+         If (System.Windows.Forms.DialogResult.Yes = _
+                 MessageBox.Show("My application", "Do you want to save your work before logging off?", MessageBoxButtons.YesNo)) Then
+                 e.Cancel = True
+         Else
+                 e.Cancel = False
+         End If
+     End If
+ End Sub
+</code>
+          <code>private static int WM_QUERYENDSESSION = 0x11;
+private static bool systemShutdown = false;
+protected override void WndProc(ref System.Windows.Forms.Message m)
+{
+    if (m.Msg==WM_QUERYENDSESSION)
+    {
+        MessageBox.Show("queryendsession: this is a logoff, shutdown, or reboot");
+        systemShutdown = true;
+    }
+
+    // If this is WM_QUERYENDSESSION, the closing event should be
+    // raised in the base WndProc.
+    base.WndProc(ref m);
+
+} //WndProc 
+
+private void Form1_Closing(
+    System.Object sender, 
+    System.ComponentModel.CancelEventArgs e)
+{
+    if (systemShutdown)
+        // Reset the variable because the user might cancel the 
+        // shutdown.
+    {
+        systemShutdown = false;
+        if (DialogResult.Yes==MessageBox.Show("My application", 
+            "Do you want to save your work before logging off?", 
+            MessageBoxButtons.YesNo))
+        {
+            e.Cancel = true;
+        }
+        else
+        {
+            e.Cancel = false;
+        }
+    }
+}</code>
+          <block subset="none" type="note">
+            <para>Console applications do not raise the <see cref="E:Microsoft.Win32.SystemEvents.SessionEnding" /> event. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user is trying to log off or shut down the system.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SessionSwitch">
       <MemberSignature Language="C#" Value="public static event Microsoft.Win32.SessionSwitchEventHandler SessionSwitch;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.SessionSwitchEventHandler SessionSwitch" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.SessionSwitchEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the currently logged-in user has changed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TimeChanged">
       <MemberSignature Language="C#" Value="public static event EventHandler TimeChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler TimeChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user changes the time on the system clock.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TimerElapsed">
       <MemberSignature Language="C#" Value="public static event Microsoft.Win32.TimerElapsedEventHandler TimerElapsed;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.TimerElapsedEventHandler TimerElapsed" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.TimerElapsedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a windows timer interval has expired.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserPreferenceChanged">
       <MemberSignature Language="C#" Value="public static event Microsoft.Win32.UserPreferenceChangedEventHandler UserPreferenceChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.UserPreferenceChangedEventHandler UserPreferenceChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.UserPreferenceChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a user preference has changed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserPreferenceChanging">
       <MemberSignature Language="C#" Value="public static event Microsoft.Win32.UserPreferenceChangingEventHandler UserPreferenceChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.UserPreferenceChangingEventHandler UserPreferenceChanging" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Microsoft.Win32.UserPreferenceChangingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This event is only raised if the message pump is running. In a Windows service, unless a hidden form is used or the message pump has been started manually, this event will not be raised. For a code example that shows how to handle system events by using a hidden form in a Windows service, see the <see cref="T:Microsoft.Win32.SystemEvents" /> class.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this is a static event, you must detach your event handlers when your application is disposed, or memory leaks will result.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a user preference is changing.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

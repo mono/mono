@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TransportBindingElement" FullName="System.ServiceModel.Channels.TransportBindingElement">
+  <TypeSignature Language="C#" Value="public abstract class TransportBindingElement : System.ServiceModel.Channels.BindingElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TransportBindingElement extends System.ServiceModel.Channels.BindingElement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.BindingElement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class factors out properties that are common to all of the transport binding elements provided by the indigo1. It handles the translation of the base transport settings into run-time manifestations. It delegates the translation of transport-specific settings (for example, HttpProxySettings for HTTP) logic in its concrete derived class transport bindings, which include the following classes:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.PeerTransportBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.HttpTransportBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.HttpsTransportBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.TcpTransportBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.NamedPipeTransportBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.MsmqTransportBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationBindingElement" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement" />
+          </para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Custom transport binding element developers must inherit from this class, which derives from the <see cref="T:System.ServiceModel.Channels.BindingElement" /> class.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract base class that represents a transport binding element.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected TransportBindingElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of this class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected TransportBindingElement (System.ServiceModel.Channels.TransportBindingElement other);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.TransportBindingElement other) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="other" Type="System.ServiceModel.Channels.TransportBindingElement" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of this class from an existing instance.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProperty&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public override T GetProperty&lt;T&gt; (System.ServiceModel.Channels.BindingContext context) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance !!T GetProperty&lt;class T&gt;(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method receives a binding context as an input parameter, which represents the stack of binding elements. This method gets the specified object directly, delegates the inquiry to the next lower binding element in the stack, or a combination of the two. It can modify the context if it delegates the inquiry. Each binding element in the stack can repeat this process, if it has been delegated to, until the bottom of the stack is reached. The object returned is usually a collection of properties.</para>
+          <para>If the type of <paramref name="T" /> is <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" />, <see cref="T:System.Xml.XmlDictionaryReaderQuotas" />, or <see cref="T:System.ServiceModel.Channels.MessageVersion" /> then an instance of this class is returned. If the type of <paramref name="T" /> matches the type of an instance in <see cref="P:System.ServiceModel.Channels.BindingContext.BindingParameters" />, that instance is returned.</para>
+          <para>This method is implemented by binding elements as well as by the run-time objects such as <see cref="T:System.ServiceModel.Channels.IChannelFactory" />, <see cref="T:System.ServiceModel.Channels.IChannelListener" />, and <see cref="T:System.ServiceModel.Channels.IChannel" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a property from the specified <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property from the specified <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property to get.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="ManualAddressing">
+      <MemberSignature Language="C#" Value="public bool ManualAddressing { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ManualAddressing" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is usually used in router scenarios, where the application determines which one of several destinations to send a message to. </para>
+          <para>If this property is set to true, the channel assumes the message has already been addressed and does not add any additional information.</para>
+          <para>If false, the sending channel applies the <see cref="T:System.ServiceModel.EndpointAddress" /> configured as the To addressee on the channel to outgoing messages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether manual addressing of the message is required.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxBufferPoolSize">
+      <MemberSignature Language="C#" Value="public virtual long MaxBufferPoolSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 MaxBufferPoolSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Many parts of WCF use buffers. Creating and destroying buffers each time they are used is expensive, and garbage collection for buffers is also expensive. </para>
+          <para>With buffer pools, you can take a buffer from the pool, use it, and return it to the pool once you are done. Thus the overhead in creating and destroying buffers is avoided. The downside is that there is an increase in memory usage because your buffers are not getting garbage collected. If the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxBufferPoolSize" /> is set to 0, no buffers are returned to the pool, and instead garbage collection begins.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size, in bytes, of any buffer pools used by the transport. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxReceivedMessageSize">
+      <MemberSignature Language="C#" Value="public virtual long MaxReceivedMessageSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 MaxReceivedMessageSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can counter a hacker scenario where a message is sent with a very large or infinite specified length, or where data is sent continuously to a connected Named Pipe.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the maximum allowable message size, in bytes, that can be received.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Scheme">
+      <MemberSignature Language="C#" Value="public abstract string Scheme { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Scheme" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is overridden by each concrete transport implementation and is provided to validate bindings against base addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI scheme for the transport.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecurityTokenInclusionMode" FullName="System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode">
+  <TypeSignature Language="C#" Value="public enum SecurityTokenInclusionMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SecurityTokenInclusionMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instances of this class are used as parameters in many of the methods of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> class and in its derived classes when creating binding elements and certificates.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A list of token inclusion requirements for messages.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AlwaysToInitiator">
+      <MemberSignature Language="C#" Value="AlwaysToInitiator" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode AlwaysToInitiator = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Token is always included in messages to the initiator and never to the recipient.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AlwaysToRecipient">
+      <MemberSignature Language="C#" Value="AlwaysToRecipient" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode AlwaysToRecipient = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Token is always included in messages to the recipient and never to the initiator.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Never">
+      <MemberSignature Language="C#" Value="Never" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode Never = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token is never included in messages but is referenced. The token must be known to the recipient out of band. The option does not work out of the box. You need to include custom credentials for this to work.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Once">
+      <MemberSignature Language="C#" Value="Once" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode Once = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The token must be included in only one message sent from the initiator to the recipient. References to the token may use an internal reference mechanism. Subsequent related messages sent between the recipient and the initiator may refer to the token using an external reference mechanism.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Token is included once.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

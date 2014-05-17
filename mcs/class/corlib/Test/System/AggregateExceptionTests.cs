@@ -34,7 +34,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System
 {
-	[TestFixture()]
+	[TestFixture]
 	public class AggregateExceptionTest
 	{
 		AggregateException e;
@@ -106,6 +106,25 @@ namespace MonoTests.System
 			} catch (AggregateException e) {
 				Assert.AreEqual (1, e.InnerExceptions.Count);
 			}
+		}
+
+		[Test]
+		public void GetBaseWithInner ()
+		{
+			var ae = new AggregateException ("x", new [] { new ArgumentException (), new ArgumentNullException () });
+			Assert.AreEqual (ae, ae.GetBaseException (), "#1");
+
+			var expected = new ArgumentException ();
+			var ae2 = new AggregateException ("x", new AggregateException (expected, new Exception ()));
+			Assert.AreEqual (expected, ae2.GetBaseException ().InnerException, "#2");
+		}
+
+		[Test]
+		public void GetBaseException_stops_at_first_inner_exception_that_is_not_AggregateException()
+		{
+			var inner = new ArgumentNullException ();
+			var outer = new InvalidOperationException ("x", inner);
+			Assert.AreEqual (outer, new AggregateException (outer).GetBaseException ());
 		}
 
 		static void Throws (Type t, Action action)

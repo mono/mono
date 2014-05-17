@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Contract" FullName="System.Diagnostics.Contracts.Contract">
   <TypeSignature Language="C#" Value="public static class Contract" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Contract extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,25 +11,36 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Contains methods that allow various contracts to be specified in code.</summary>
-    <remarks />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Code contract classes let you specify preconditions, postconditions, and object invariants in your code. Preconditions are requirements that must be met when entering a method or property. Postconditions describe expectations at the time the method or property code exits. Object invariants describe the expected state for a class that has no condition problems. For more information about preconditions, postconditions, and object invariants, see <format type="text/html"><a href="84526045-496f-489d-8517-a258cf76f040">Code Contracts</a></format>.</para>
+      <para>For tools and detailed instructions for using code contracts, see <see cref="http://go.microsoft.com/fwlink/?LinkId=152461">Code Contracts</see> on the MSDN DevLabs Web site.</para>
+      <block subset="none" type="note">
+        <para>You must use a binary rewriter to insert run-time enforcement of contracts. Otherwise, contracts such as the <see cref="Overload:System.Diagnostics.Contracts.Contract.Ensures" /> method can only be tested statically and will not throw exceptions during run time if a contract is violated. You can download the binary rewriter CCRewrite from <see cref="http://go.microsoft.com/fwlink/?LinkId=152461">Code Contracts</see> on the MSDN DevLabs Web site. CCRewrite comes with a Visual Studio add-in that enables you to activate run-time contract enforcement from the project <ui>Properties</ui> page. The binary rewriter and the Visual Studio add-in do not ship with vs_dev10_long or the Windows SDK.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains static methods for representing program contracts such as preconditions, postconditions, and object invariants.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Assert">
       <MemberSignature Language="C#" Value="public static void Assert (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -37,13 +50,21 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">The condition to verify.</param>
-        <summary>Trigger a contract failure if condition is false.</summary>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default escalation policy is to notify the attached debugger about a contract failure or to display an <ui>Assert</ui> dialog box if a debugger is not attached. Optionally, the analyzer can be instructed to throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for a condition; if the condition is false, follows the escalation policy set for the analyzer.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
       </Docs>
     </Member>
     <Member MemberName="Assert">
       <MemberSignature Language="C#" Value="public static void Assert (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -56,7 +77,7 @@
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -67,14 +88,23 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">The condition to verify.</param>
-        <param name="userMessage">Message to display if condition is false.</param>
-        <summary>Trigger a contract failure if condition is false.</summary>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default escalation policy is to notify the attached debugger about a contract failure or to display an <ui>Assert</ui> dialog box if a debugger is not attached. Optionally, the analyzer can be instructed to throw an exception. The <paramref name="userMessage" /> parameter is passed to the debugger output. If <paramref name="userMessage" /> is not a constant string literal, tools may not be able to read it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for a condition; if the condition is false, follows the escalation policy set by the analyzer and displays the specified message.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to display if the condition is not met.</param>
       </Docs>
     </Member>
     <Member MemberName="Assume">
       <MemberSignature Language="C#" Value="public static void Assume (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assume(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -87,7 +117,7 @@
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -97,26 +127,34 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">The condition that is assumed to be true.</param>
-        <summary>Forces the condition specified to be considered true by the code contract tools.</summary>
-        <remarks>If the code contracts are included at runtime, this acts like a <see cref="m:System.Diagnostics.Contracts.Contract.Assert()" />.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At run time, using this method is equivalent to using the <see cref="M:System.Diagnostics.Contracts.Contract.Assert(System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs code analysis tools to assume that the specified condition is true, even if it cannot be statically proven to always be true.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to assume true.</param>
       </Docs>
     </Member>
     <Member MemberName="Assume">
       <MemberSignature Language="C#" Value="public static void Assume (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assume(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -127,14 +165,24 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">The condition that is assumed to be true.</param>
-        <param name="userMessage">Message to display if condition is false.</param>
-        <summary>Forces the condition specified to be considered true by the code contract tools.</summary>
-        <remarks>If the code contracts are included at runtime, this acts like a <see cref="m:System.Diagnostics.Contracts.Contract.Assert()" />.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="userMessage" /> is not a constant string literal, the contract may not be understood by tools.</para>
+          <para>At run time, using this method is equivalent to using the <see cref="M:System.Diagnostics.Contracts.Contract.Assert(System.Boolean,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs code analysis tools to assume that a condition is true, even if it cannot be statically proven to always be true, and displays a message if the assumption fails.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to assume true.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to post if the assumption fails.</param>
       </Docs>
     </Member>
     <Member MemberName="ContractFailed">
       <MemberSignature Language="C#" Value="public static event EventHandler&lt;System.Diagnostics.Contracts.ContractFailedEventArgs&gt; ContractFailed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Diagnostics.Contracts.ContractFailedEventArgs&gt; ContractFailed" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -143,17 +191,20 @@
         <ReturnType>System.EventHandler&lt;System.Diagnostics.Contracts.ContractFailedEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Called on any contract failure.</summary>
-        <remarks><para>
-Event handlers can mark the contract failure as having been handling by calling <see cref="m:System.Diagnostics.Contracts.ContractFailedEventArgs.SetHandled()" />.
-</para>
-<para>
-Event handlers can this current contract failure unwind the stack by calling <see cref="m:System.Diagnostics.Contracts.ContractFailedEventArgs.SetUnwind()" />. This causes a <see cref="T:System.Diagnostics.Contracts.ContractException" /> to be thrown.
-</para></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event information for this event is supplied by the <see cref="T:System.Diagnostics.Contracts.ContractFailedEventArgs" /> object that is passed to the event handler. This event notifies a managed application environment such as an interactive interpreter or a Web browser host that a contract has failed. Before doing so, it will raise an event that an application can handle as it sees fit. For example, if code is being run in a testing framework, you can log a test failure and then end the test. </para>
+          <para>The default implementation of the <see cref="M:System.Diagnostics.Contracts.Internal.ContractHelper.RaiseContractFailedEvent(System.Diagnostics.Contracts.ContractFailureKind,System.String,System.String,System.Exception)" /> method in the .NET Framework class library is to call each handler that is registered with the <see cref="E:System.Diagnostics.Contracts.Contract.ContractFailed" /> event. Exceptions thrown by handlers are ignored, but each handler can indicate whether the failure is handled by calling the <see cref="M:System.Diagnostics.Contracts.ContractFailedEventArgs.SetHandled" /> method for the event arguments. If any handler sets the failure as handled, the method returns null and no further action is taken. Alternatively, handlers can call the <see cref="M:System.Diagnostics.Contracts.ContractFailedEventArgs.SetUnwind" /> method to instruct the code to unwind. In that case, an exception is thrown after all handlers have executed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a contract fails.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndContractBlock">
       <MemberSignature Language="C#" Value="public static void EndContractBlock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EndContractBlock() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -171,21 +222,20 @@ Event handlers can this current contract failure unwind the stack by calling <se
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Marker method to mark the end of the legacy requires code block.</summary>
-        <remarks>Legacy requires are preconditions that perform tests and throw exceptions. This is the only form of legacy require allowed.
-
-<example>
-  <code lang="C#">
-if (parameter &lt; 0) {
-	throw new ArgumentException();
-}
-Contracts.EndContractBlock();
-  </code>
-</example></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Most code already contains some parameter validation in the form of if-then-throw code. The contract tools recognize if-then-throw statements as preconditions when the statements appear first inside a method, and the entire set of such statements is followed by an explicit <see cref="T:System.Diagnostics.Contracts.Contract" /> method call, such as a <see cref="Overload:System.Diagnostics.Contracts.Contract.Requires" />, <see cref="Overload:System.Diagnostics.Contracts.Contract.Ensures" />, <see cref="Overload:System.Diagnostics.Contracts.Contract.EnsuresOnThrow" />, or <see cref="M:System.Diagnostics.Contracts.Contract.EndContractBlock" />.</para>
+          <para>When if-then-throw statements appear in this form, the contract tools recognize them as legacy-require statements. The <see cref="M:System.Diagnostics.Contracts.Contract.EndContractBlock" /> form is used only if no other contracts follow the if-then-throw sequences, but they should still be tagged as legacy-requires.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the end of the contract section when a method's contracts contain only preconditions in the if-then-throw form.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ensures">
       <MemberSignature Language="C#" Value="public static void Ensures (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Ensures(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -195,7 +245,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -205,13 +255,29 @@ Contracts.EndContractBlock();
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">The postcondition to verify.</param>
-        <summary>Specifies a postconditon contract for normal return.</summary>
-        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property returns normally.</para>
+          <list type="bullet">
+            <item>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>You must use the binary rewriter (available at <see cref="http://go.microsoft.com/fwlink/?LinkId=152461">Code Contracts</see> on the MSDN DevLabs Web site) for run-time enforcement of this postcondition. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a postcondition contract for the enclosing method or property.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test. The expression may include <see cref="M:System.Diagnostics.Contracts.Contract.OldValue``1(``0)" />, <see cref="M:System.Diagnostics.Contracts.Contract.ValueAtReturn``1(``0@)" />, and <see cref="M:System.Diagnostics.Contracts.Contract.Result``1" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="Ensures">
       <MemberSignature Language="C#" Value="public static void Ensures (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Ensures(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -221,7 +287,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -232,14 +298,37 @@ Contracts.EndContractBlock();
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">The postcondition to verify.</param>
-        <param name="userMessage">Message to display on contract failure.</param>
-        <summary>Specifies a postconditon contract for normal return.</summary>
-        <remarks>ll code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property returns normally. </para>
+          <list type="bullet">
+            <item>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>This contract is exposed to clients; therefore, it must only reference members that are at least as visible as the enclosing method.</para>
+            </item>
+            <item>
+              <para>You must use the binary rewriter (available at <see cref="http://go.microsoft.com/fwlink/?LinkId=152461">Code Contracts</see> on the MSDN DevLabs Web site) for run-time enforcement of this postcondition.</para>
+            </item>
+            <item>
+              <para>If <paramref name="userMessage" /> is not a constant string literal, the contract may not be understood by tools.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a postcondition contract for a provided exit condition and a message to display if the condition is false.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test. The expression may include <see cref="M:System.Diagnostics.Contracts.Contract.OldValue``1(``0)" /> and <see cref="M:System.Diagnostics.Contracts.Contract.Result``1" /> values. </param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the expression is not true.</param>
       </Docs>
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
       <MemberSignature Language="C#" Value="public static void EnsuresOnThrow&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EnsuresOnThrow&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -249,7 +338,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -266,14 +355,34 @@ Contracts.EndContractBlock();
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
-        <param name="condition">The postcondition to verify.</param>
-        <summary>Specifies a postcondition contract for when an exception is thrown.</summary>
-        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property terminates abnormally and an exception of type <paramref name="TException" /> is thrown.</para>
+          <list type="bullet">
+            <item>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>This contract is exposed to clients; therefore, it must only reference members that are at least as visible as the enclosing method.</para>
+            </item>
+            <item>
+              <para>You must use the binary rewriter for run-time enforcement of this postcondition.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a postcondition contract for the enclosing method or property, based on the provided exception and condition.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of exception that invokes the postcondition check.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
       <MemberSignature Language="C#" Value="public static void EnsuresOnThrow&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EnsuresOnThrow&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -283,7 +392,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -301,22 +410,46 @@ Contracts.EndContractBlock();
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
-        <param name="condition">The postcondition to verify.</param>
-        <param name="userMessage">Message to display on contract failure.</param>
-        <summary>Specifies a postcondition contract for when an exception is thrown.</summary>
-        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property terminates abnormally and an exception of type <paramref name="TException" /> is thrown. The <paramref name="message" /> parameter specifies a message to display if the condition is false.</para>
+          <list type="bullet">
+            <item>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>This contract is exposed to clients; therefore, it must only reference members that are at least as visible as the enclosing method.</para>
+            </item>
+            <item>
+              <para>You must use the binary rewriter for run-time enforcement of this postcondition.</para>
+            </item>
+            <item>
+              <para>If <paramref name="userMessage" /> is not a constant string literal, the contract may not be understood by tools.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a postcondition contract and a message to display if the condition is false for the enclosing method or property, based on the provided exception and condition.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the expression is false.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of exception that invokes the postcondition check.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="C#" Value="public static bool Exists (int fromInclusive, int toExclusive, Predicate&lt;int&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists(int32 fromInclusive, int32 toExclusive, class System.Predicate`1&lt;int32&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -328,23 +461,37 @@ Contracts.EndContractBlock();
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">The inclusive start of the range.</param>
-        <param name="toExclusive">The exclusive end of the range.</param>
-        <param name="predicate">TThe predicate to apply to each value within the range.</param>
-        <summary>Determines that at least one value in the range satisfies the predicate.</summary>
-        <returns>Whether at least one value in the range satisfies the predicate.</returns>
-        <remarks>This method can be used within a contract condition to allow contracts to be applied to integer ranges.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="toExclusive" /> parameter is one more than the last integer to facilitate using the length of a range of integers starting at 0. For example, it would be set to 5 for integers 0 through 4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a specified test is true for any integer within a range of integers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="predicate" /> returns true for any integer starting from <paramref name="fromInclusive" /> to <paramref name="toExclusive" /> - 1.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first integer to pass to <paramref name="predicate" />.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />One more than the last integer to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for any value of the integer in the specified range.</param>
       </Docs>
     </Member>
     <Member MemberName="Exists&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static bool Exists&lt;T&gt; (System.Collections.Generic.IEnumerable&lt;T&gt; collection, Predicate&lt;T&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; collection, class System.Predicate`1&lt;!!T&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -358,23 +505,34 @@ Contracts.EndContractBlock();
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">The type of elements in the collection.</typeparam>
-        <param name="collection">The collection to check.</param>
-        <param name="predicate">The predicate to apply to each element of the collection.</param>
-        <summary>Determines that at least one element in the collection satisfies the predicate.</summary>
-        <returns>Whether at least one element in the collection satisfies the predicate.</returns>
         <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an element within a collection of elements exists within a function.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if and only if <paramref name="predicate" /> returns true for any element of type <paramref name="T" /> in <paramref name="collection" />.</para>
+        </returns>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection from which elements of type <paramref name="T" /> will be drawn to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for an element in <paramref name="collection" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that is contained in <paramref name="collection" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForAll">
       <MemberSignature Language="C#" Value="public static bool ForAll (int fromInclusive, int toExclusive, Predicate&lt;int&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ForAll(int32 fromInclusive, int32 toExclusive, class System.Predicate`1&lt;int32&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -386,23 +544,37 @@ Contracts.EndContractBlock();
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">The inclusive start of the range.</param>
-        <param name="toExclusive">The exclusive end of the range.</param>
-        <param name="predicate">The predicate to apply to each value within the range.</param>
-        <summary>Determines that all values in the range satisfy the predicate.</summary>
-        <returns>Whether all values in the range satisfy the predicate.</returns>
-        <remarks>This method can be used within a contract condition to allow contracts to be applied to integer ranges.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="toExclusive" /> parameter is one more than the last integer to facilitate using the length of a range of integers starting at 0. For example, it would be set to 5 for integers 0 through 4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a particular condition is valid for all integers in a specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if <paramref name="predicate" /> returns true for all integers starting from <paramref name="fromInclusive" /> to <paramref name="toExclusive" /> - 1.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first integer to pass to <paramref name="predicate" />.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />One more than the last integer to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for the existence of the integers in the specified range.</param>
       </Docs>
     </Member>
     <Member MemberName="ForAll&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static bool ForAll&lt;T&gt; (System.Collections.Generic.IEnumerable&lt;T&gt; collection, Predicate&lt;T&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ForAll&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; collection, class System.Predicate`1&lt;!!T&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -416,16 +588,27 @@ Contracts.EndContractBlock();
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">The type of elements in the collection.</typeparam>
-        <param name="collection">The collection to check.</param>
-        <param name="predicate">The predicate to apply to each element of the collection.</param>
-        <summary>Determines that all elements in the collection satisfy the predicate.</summary>
-        <returns>Whether all elements in the collection satisfy the predicate.</returns>
         <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether all the elements in a collection exist within a function.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                            true if and only if <paramref name="predicate" /> returns true for all elements of type <paramref name="T" /> in <paramref name="collection" />.</para>
+        </returns>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection from which elements of type <paramref name="T" /> will be drawn to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for the existence of all the elements in <paramref name="collection" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that is contained in <paramref name="collection" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Invariant">
       <MemberSignature Language="C#" Value="public static void Invariant (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Invariant(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -435,7 +618,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -445,13 +628,39 @@ Contracts.EndContractBlock();
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">The invariant condition to verify.</param>
-        <summary>Specifies an invariant class-level condition.</summary>
-        <remarks>Invariant conditions can only be used in a method marked with the <see cref="T:System.Diagnostics.Contracts.ContractInvariantMethodAttribute" /> attribute. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                                <see cref="M:System.Diagnostics.Contracts.Contract.Invariant(System.Boolean)" /> contracts are contained within a method that is identified by the <see cref="T:System.Diagnostics.Contracts.ContractInvariantMethodAttribute" /> attribute; typically, the method is named ObjectInvariant.</para>
+          <list type="bullet">
+            <item>
+              <para>This contract can be specified only in a dedicated invariant method that is declared on a class. If the method is not sealed, it should refer only to protected members, not private members, so that subclasses can be sure to maintain the invariants.</para>
+            </item>
+            <item>
+              <para>This contract is not exposed to clients; therefore, it may reference members that are less visible than the enclosing method.</para>
+            </item>
+            <item>
+              <para>You must use the binary rewriter for run-time enforcement of this invariant.</para>
+            </item>
+          </list>
+          <para>Invariants are conditionally defined based on the presence of the CONTRACTS FULL symbol. During run-time checking, invariants are checked at the end of each public method. If an invariant mentions a public method in the same class, the invariant check that would normally happen at the end of that public method is disabled and checked only at the end of the outermost method call to that class. This also happens if the class is re-entered because of a call to a method on another class. </para>
+          <list type="bullet">
+            <item>
+              <para />
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an invariant contract for the enclosing method or property. </para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
       </Docs>
     </Member>
     <Member MemberName="Invariant">
       <MemberSignature Language="C#" Value="public static void Invariant (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Invariant(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -461,7 +670,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -472,14 +681,38 @@ Contracts.EndContractBlock();
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">The invariant condition to verify.</param>
-        <param name="userMessage">Message to display on contract failure.</param>
-        <summary>Specifies an invariant class-level condition.</summary>
-        <remarks>Invariant conditions can only be used in a method marked with the <see cref="T:System.Diagnostics.Contracts.ContractInvariantMethodAttribute" /> attribute. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                                <see cref="M:System.Diagnostics.Contracts.Contract.Invariant(System.Boolean,System.String)" /> contracts are contained within a method that is identified by the <see cref="T:System.Diagnostics.Contracts.ContractInvariantMethodAttribute" /> attribute; typically, the method is named ObjectInvariant.</para>
+          <list type="bullet">
+            <item>
+              <para>This contract can be specified only in a dedicated invariant method that is declared on a class.</para>
+            </item>
+            <item>
+              <para>This contract is not exposed to clients; therefore, it may reference members that are less visible than the enclosing method.</para>
+            </item>
+            <item>
+              <para>You must use the binary rewriter for run-time enforcement of this invariant.</para>
+            </item>
+            <item>
+              <para>Invariants are conditionally defined on the CONTRACTS FULL symbol. During run-time checking, invariants are checked at the end of each public method. If an invariant mentions a public method in the same class, the invariant check that would normally happen at the end of that public method is disabled and checked only at the end of the outermost method call to that class. This also happens if the class is re-entered because of a call to a method on another class.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an invariant contract for the enclosing method or property, and displays a message if the condition for the contract fails.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the condition is false.</param>
       </Docs>
     </Member>
     <Member MemberName="OldValue&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T OldValue&lt;T&gt; (T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T OldValue&lt;T&gt;(!!T value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -508,6 +741,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Requires">
       <MemberSignature Language="C#" Value="public static void Requires (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -517,7 +751,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -527,13 +761,31 @@ Contracts.EndContractBlock();
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="condition">The precondition to verify.</param>
-        <summary>Specifies a precondition contract for normal return.</summary>
-        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <list type="bullet">
+            <item>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>This contract is exposed to clients; therefore, it must only reference members that are at least as visible as the enclosing method.</para>
+            </item>
+            <item>
+              <para>Use this method instead of the <see cref="M:System.Diagnostics.Contracts.Contract.Requires``1(System.Boolean)" /> method when backward compatibility does not force you to throw a particular exception.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a precondition contract for the enclosing method or property.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
       </Docs>
     </Member>
     <Member MemberName="Requires">
       <MemberSignature Language="C#" Value="public static void Requires (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -543,7 +795,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -554,10 +806,81 @@ Contracts.EndContractBlock();
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">The precondition to verify.</param>
-        <param name="userMessage">Message to display on contract failure.</param>
-        <summary>Specifies a precondition contract for normal return.</summary>
-        <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <list type="bullet">
+            <item>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>This contract is exposed to clients; therefore, it must only reference members that are at least as visible as the enclosing method.</para>
+            </item>
+            <item>
+              <para>Use this method instead of the <see cref="M:System.Diagnostics.Contracts.Contract.Requires``1(System.Boolean,System.String)" /> method when backward compatibility does not force you to throw a particular exception.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a precondition contract for the enclosing method or property, and displays a message if the condition for the contract fails.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the condition is false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>You must turn on run-time checking to use the <see cref="M:System.Diagnostics.Contracts.Contract.Requires``1(System.Boolean)" /> method. If run-time checking is turned off, the process will be terminated. To obtain the tools for runtime checking, see <see cref="http://go.microsoft.com/fwlink/?LinkId=152461">Code Contracts</see> on the MSDN DevLabs Web site. </para>
+          </block>
+          <list type="bullet">
+            <item>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>This contract is exposed to clients; therefore, it must only reference members that are at least as visible as the enclosing method.</para>
+            </item>
+            <item>
+              <para>Use this method instead of the <see cref="M:System.Diagnostics.Contracts.Contract.Requires(System.Boolean)" /> method when you want to throw an exception if the precondition fails. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a precondition contract for the enclosing method or property, and throws an exception if the condition for the contract fails.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw if the condition is false.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -589,6 +912,160 @@ Contracts.EndContractBlock();
         <param name="condition">The precondition to verify.</param>
         <summary>Specifies a precondition contract for when an exception is thrown.</summary>
         <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="userMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <list type="bullet">
+            <item>
+              <block subset="none" type="note">
+                <para>You must turn on run-time checking to use the <see cref="M:System.Diagnostics.Contracts.Contract.Requires``1(System.Boolean,System.String)" /> method. If run-time checking is turned off, the process will be terminated. To obtain the tools for runtime checking, see <see cref="http://go.microsoft.com/fwlink/?LinkId=152461">Code Contracts</see> on the MSDN DevLabs Web site.</para>
+              </block>
+              <para>This method call must be at the beginning of a method or property, before any other code.</para>
+            </item>
+            <item>
+              <para>This contract is exposed to clients; therefore, it must only reference members that are at least as visible as the enclosing method.</para>
+            </item>
+            <item>
+              <para>Use this method instead of the <see cref="M:System.Diagnostics.Contracts.Contract.Requires(System.Boolean,System.String)" /> method when you want to throw an exception if the precondition fails. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a precondition contract for the enclosing method or property, and throws an exception with the provided message if the condition for the contract fails.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <param name="userMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the condition is false.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw if the condition is false.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="userMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <param name="userMessage">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -624,8 +1101,43 @@ Contracts.EndContractBlock();
         <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="userMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <param name="userMessage">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Result&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T Result&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T Result&lt;T&gt;() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -643,14 +1155,25 @@ Contracts.EndContractBlock();
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">The type of the return value.</typeparam>
-        <summary>Used within a postcondition to represent the return value.</summary>
-        <returns>The return value.</returns>
-        <remarks>The code contract rewriter tool must be used for this method to be effective. Otherwise the default value for the type is returned.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used only in the conditional expression for the <see cref="Overload:System.Diagnostics.Contracts.Contract.Ensures" /> contract.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the return value of a method or property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return value of the enclosing method or property.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of return value of the enclosing method or property.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ValueAtReturn&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T ValueAtReturn&lt;T&gt; (out T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T ValueAtReturn&lt;T&gt;(!!T value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

@@ -1,27 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MatchEvaluator" FullName="System.Text.RegularExpressions.MatchEvaluator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate string MatchEvaluator(Match match);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed MatchEvaluator extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="match">To be added.</param>
-    <summary>To be added</summary>
-    <value>To be added.</value>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
   <Parameters>
     <Parameter Name="match" Type="System.Text.RegularExpressions.Match" />
   </Parameters>
   <ReturnValue>
     <ReturnType>System.String</ReturnType>
   </ReturnValue>
+  <Docs>
+    <param name="match">To be added.</param>
+    <returns>To be added.</returns>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use a <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate method to perform a custom verification or manipulation operation for each match found by a replacement method such as <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.Text.RegularExpressions.MatchEvaluator)" />. For each matched string, the <see cref="Overload:System.Text.RegularExpressions.Regex.Replace" /> method calls the <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate method with a <see cref="T:System.Text.RegularExpressions.Match" /> object that represents the match. The delegate method performs whatever processing you prefer and returns a string that the <see cref="Overload:System.Text.RegularExpressions.Regex.Replace" /> method substitutes for the matched string.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that is called each time a regular expression match is found during a <see cref="Overload:System.Text.RegularExpressions.Regex.Replace" /> method operation.</para>
+    </summary>
+  </Docs>
+  <Members />
 </Type>

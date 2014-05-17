@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegularExpressionValidator" FullName="System.Web.UI.WebControls.RegularExpressionValidator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class RegularExpressionValidator : System.Web.UI.WebControls.BaseValidator" />
   <AssemblyInfo>
@@ -19,8 +20,27 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.RegularExpressionValidator" /> control checks whether the value of an input control matches a pattern defined by a regular expression. This type of validation allows you to check for predictable sequences of characters, such as those in e-mail addresses, telephone numbers, and postal codes.</para>
+      <block subset="none" type="note">
+        <para>Validation succeeds if the input control is empty. If a value is required for the associated input control, use a <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> control in addition to the <see cref="T:System.Web.UI.WebControls.RegularExpressionValidator" /> control.</para>
+      </block>
+      <para>Both server-side and client-side validation are performed unless the browser does not support client-side validation or client-side validation is explicitly disabled (by setting the <see cref="P:System.Web.UI.WebControls.BaseValidator.EnableClientScript" /> property to false).</para>
+      <para>The regular-expression validation implementation is slightly different on the client than on the server. On the client, JScript regular-expression syntax is used. On the server, <see cref="T:System.Text.RegularExpressions.Regex" /> syntax is used. Since JScript regular expression syntax is a subset of <see cref="T:System.Text.RegularExpressions.Regex" /> syntax, it is recommended that JScript regular-expression syntax be used in order to yield the same results on both the client and the server.</para>
+      <block subset="none" type="note">
+        <para>When you use the <see cref="T:System.Web.UI.WebControls.RegularExpressionValidator" /> control inside an <see cref="T:System.Web.UI.UpdatePanel" /> control, make sure that the validator control and the control it is associated with are in the same panel. For more information about using the <see cref="T:System.Web.UI.UpdatePanel" /> control for partial-page updates, see <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>.</para>
+      </block>
+      <para>For additional information about validation controls, see <see cref="T:System.Web.UI.WebControls.BaseValidator" />. For more information on regular expressions, see <format type="text/html"><a href="521b3f6d-f869-42e1-93e5-158c54a6895d">.NET Framework Regular Expressions</a></format>.</para>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Validates whether the value of an associated input control matches the pattern specified by a regular expression.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +49,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.RegularExpressionValidator" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,8 +71,11 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object the HTML attributes and styles that need to be rendered for the control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,9 +90,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the value in the input control is valid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value in the input control is valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +113,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the pattern used to check for predictable sequences of characters, such as those in social security numbers, e-mail addresses, telephone numbers, and postal codes.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.RegularExpressionValidator" /> does not perform validation on an empty string. If the string you are testing might be empty, use the <see cref="T:System.Web.UI.WebControls.RequiredFieldValidator" /> as well as the <see cref="T:System.Web.UI.WebControls.RegularExpressionValidator" />.</para>
+          <para>For more information on regular expressions, see <format type="text/html"><a href="521b3f6d-f869-42e1-93e5-158c54a6895d">.NET Framework Regular Expressions</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If you experience problems with pattern matching constructs, try wrapping the expression with "^(" and ")$". For example, "a|ab" becomes "^(a|ab)$".</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the regular expression that determines the pattern used to validate a field.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

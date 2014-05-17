@@ -16,6 +16,7 @@ LIB_MCS_FLAGS = \
 		-r:System.Reactive.Experimental.dll \
 		-r:System.Reactive.Windows.Forms.dll \
 		-r:System.Reactive.Windows.Threading.dll \
+		-r:System.Reactive.Observable.Aliases.dll \
 		-r:System.Windows.Forms.dll \
 		-r:WindowsBase.dll \
 		-r:nunit.framework.dll \

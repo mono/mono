@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="OperationContractGenerationContext" FullName="System.ServiceModel.Description.OperationContractGenerationContext">
+  <TypeSignature Language="C#" Value="public class OperationContractGenerationContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit OperationContractGenerationContext extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.OperationContractGenerationContext" /> object passed to the <see cref="M:System.ServiceModel.Description.IOperationContractGenerationExtension.GenerateOperation(System.ServiceModel.Description.OperationContractGenerationContext)" /> method to modify the code document object model prior to the generation of code. Typically, the <see cref="T:System.ServiceModel.Description.IOperationContractGenerationExtension" /> interface is implemented on a custom <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> implementation that is used to import custom WSDL elements or otherwise modify the code at the service or operation level. To modify the code at the service level, see <see cref="T:System.ServiceModel.Description.IServiceContractGenerationExtension" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Passed to the <see cref="M:System.ServiceModel.Description.IOperationContractGenerationExtension.GenerateOperation(System.ServiceModel.Description.OperationContractGenerationContext)" /> method to enable the modification of an operation contract and its context prior to generating code.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OperationContractGenerationContext (System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, System.ServiceModel.Description.ServiceContractGenerationContext contract, System.ServiceModel.Description.OperationDescription operation, System.CodeDom.CodeTypeDeclaration declaringType, System.CodeDom.CodeMemberMethod method);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, class System.ServiceModel.Description.ServiceContractGenerationContext contract, class System.ServiceModel.Description.OperationDescription operation, class System.CodeDom.CodeTypeDeclaration declaringType, class System.CodeDom.CodeMemberMethod method) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="serviceContractGenerator" Type="System.ServiceModel.Description.ServiceContractGenerator" />
+        <Parameter Name="contract" Type="System.ServiceModel.Description.ServiceContractGenerationContext" />
+        <Parameter Name="operation" Type="System.ServiceModel.Description.OperationDescription" />
+        <Parameter Name="declaringType" Type="System.CodeDom.CodeTypeDeclaration" />
+        <Parameter Name="method" Type="System.CodeDom.CodeMemberMethod" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.OperationContractGenerationContext" /> class using the specified contract generator, contract context, operation description, code type declaration, synchronization method and task method.</para>
+        </summary>
+        <param name="serviceContractGenerator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service contract generator that generates the code.</param>
+        <param name="contract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract and its generation context.</param>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The operation description for the operation to be generated.</param>
+        <param name="declaringType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The declaring code type.</param>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to be generated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OperationContractGenerationContext (System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, System.ServiceModel.Description.ServiceContractGenerationContext contract, System.ServiceModel.Description.OperationDescription operation, System.CodeDom.CodeTypeDeclaration declaringType, System.CodeDom.CodeMemberMethod method, System.CodeDom.CodeMemberMethod beginMethod, System.CodeDom.CodeMemberMethod endMethod);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, class System.ServiceModel.Description.ServiceContractGenerationContext contract, class System.ServiceModel.Description.OperationDescription operation, class System.CodeDom.CodeTypeDeclaration declaringType, class System.CodeDom.CodeMemberMethod method, class System.CodeDom.CodeMemberMethod beginMethod, class System.CodeDom.CodeMemberMethod endMethod) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="serviceContractGenerator" Type="System.ServiceModel.Description.ServiceContractGenerator" />
+        <Parameter Name="contract" Type="System.ServiceModel.Description.ServiceContractGenerationContext" />
+        <Parameter Name="operation" Type="System.ServiceModel.Description.OperationDescription" />
+        <Parameter Name="declaringType" Type="System.CodeDom.CodeTypeDeclaration" />
+        <Parameter Name="method" Type="System.CodeDom.CodeMemberMethod" />
+        <Parameter Name="beginMethod" Type="System.CodeDom.CodeMemberMethod" />
+        <Parameter Name="endMethod" Type="System.CodeDom.CodeMemberMethod" />
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.OperationContractGenerationContext" /> class.</para>
+        </summary>
+        <param name="serviceContractGenerator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service contract generator that generates the code.</param>
+        <param name="contract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract and its generation context.</param>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The operation description for the operation to be generated.</param>
+        <param name="declaringType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The declaring code type.</param>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous begin method.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous end method.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginMethod">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeMemberMethod BeginMethod { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeMemberMethod BeginMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeMemberMethod</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationContractGenerationContext.BeginMethod" /> to examine or modify the asynchronous begin method that represents the operation to be generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.CodeDom.CodeMemberMethod" /> for the asynchronous begin operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Contract">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceContractGenerationContext Contract { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.ServiceContractGenerationContext Contract" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerationContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationContractGenerationContext.Contract" /> property to obtain the contract generation context for the service contract that contains the operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the code generation context for the service contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclaringType">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeDeclaration DeclaringType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeTypeDeclaration DeclaringType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeTypeDeclaration</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationContractGenerationContext.DeclaringType" /> property to examine or modify the code type declaration for the current operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the declaring type for the current operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EndMethod">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeMemberMethod EndMethod { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeMemberMethod EndMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeMemberMethod</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationContractGenerationContext.EndMethod" /> property to examine or modify the asynchronous end method that models an asynchronous operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the asynchronous end operation declaration.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsAsync">
+      <MemberSignature Language="C#" Value="public bool IsAsync { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAsync" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether asynchronous methods are generated for the current operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Operation">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.OperationDescription Operation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.OperationDescription Operation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.OperationDescription</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationContractGenerationContext.Operation" /> property to examine operation information prior to generating code for that operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Description.OperationDescription" /> for the current operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceContractGenerator">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceContractGenerator ServiceContractGenerator { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.ServiceContractGenerator ServiceContractGenerator" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerator</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationContractGenerationContext.ServiceContractGenerator" /> property to examine or modify the object that generates code for the current operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> that generates the current operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SyncMethod">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeMemberMethod SyncMethod { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeMemberMethod SyncMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeMemberMethod</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.OperationContractGenerationContext.SyncMethod" /> property to examine or modify the synchronous operation before it is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.CodeDom.CodeMemberMethod" /> for the synchronous operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

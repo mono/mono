@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebFormsRootDesigner" FullName="System.Web.UI.Design.WebFormsRootDesigner">
   <TypeSignature Language="C#" Value="public abstract class WebFormsRootDesigner : System.ComponentModel.Design.IDesignerFilter, System.ComponentModel.Design.IRootDesigner" />
   <AssemblyInfo>
@@ -16,8 +17,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A design host, such as vsprvslong, must provide its own derived version of the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> class to control designers through the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> property of the designer. Control designers use the <see cref="P:System.Web.UI.Design.ControlDesigner.RootDesigner" /> property to access and manipulate the containing Web Forms page at design time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for the design-time functionality of a Web Forms page and allows access to and manipulation of components and controls that are contained within the Web Forms page at design time. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddClientScriptToDocument">
@@ -45,9 +55,13 @@
         <Parameter Name="scriptItem" Type="System.Web.UI.Design.ClientScriptItem" />
       </Parameters>
       <Docs>
-        <param name="scriptItem">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, adds a client script element to the current Web Forms page.</para>
+        </summary>
+        <param name="scriptItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.ClientScriptItem" /> to add to the Web Forms page.</param>
       </Docs>
     </Member>
     <Member MemberName="AddControlToDocument">
@@ -65,12 +79,24 @@
         <Parameter Name="location" Type="System.Web.UI.Design.ControlLocation" />
       </Parameters>
       <Docs>
-        <param name="newControl">To be added.</param>
-        <param name="referenceControl">To be added.</param>
-        <param name="location">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although a control might already have an ID assigned to it, if there is already a control in the Web Forms page with the same ID, a new ID is assigned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, adds a Web server control to the Web Forms page.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ID of the control that was added.</para>
+        </returns>
+        <param name="newControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to add to the Web Forms page.</param>
+        <param name="referenceControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control relative to which <paramref name="newControl" /> is added.</param>
+        <param name="location">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.ControlLocation" /> value that indicates the location for <paramref name="newControl" /> relative to <paramref name="referenceControl" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Component">
@@ -83,9 +109,15 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.Component" /> property is set by the <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.Initialize(System.ComponentModel.IComponent)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the component that this designer is designing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignerActionService">
@@ -101,10 +133,20 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.CreateDesignerActionService(System.IServiceProvider)" /> method is called by a control designer and provides a way for action items for the control designer to be implemented in the Web Forms page through a design host, such as vsprvslong.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a design-time <see cref="T:System.ComponentModel.Design.DesignerActionService" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A design-time designer action service object.</para>
+        </returns>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A design host, such as vsprvslong, cast as an <see cref="T:System.IServiceProvider" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateUrlResolutionService">
@@ -118,9 +160,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Web.UI.IUrlResolutionService" /> that resolves relative URLs.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that resolves relative URLs.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CurrentCulture">
@@ -133,9 +181,12 @@
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the culture information for the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -151,9 +202,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources that are used by the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="DocumentUrl">
@@ -166,9 +221,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the URL at which the Web Forms page is located. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -182,8 +240,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees the resources of the current <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> object before it is reclaimed by the garbage collector.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateEmptyDesignTimeHtml">
@@ -199,10 +260,20 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.GenerateEmptyDesignTimeHtml(System.Web.UI.Control)" /> method enables a consistent display of empty controls at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates empty HTML markup for a control at design time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML markup for an empty control.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to generate HTML markup for.</param>
       </Docs>
     </Member>
     <Member MemberName="GenerateErrorDesignTimeHtml">
@@ -220,12 +291,21 @@
         <Parameter Name="errorMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="e">To be added.</param>
-        <param name="errorMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates HTML markup that is used to display an error message at design time by using the specified control, exception, and message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML markup for a control and exception information.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control that raised the exception.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception. </param>
+        <param name="errorMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to add to the exception message.</param>
       </Docs>
     </Member>
     <Member MemberName="GetClientScriptsInDocument">
@@ -239,9 +319,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" />  object that contains all client script items that are on the page.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains all client script items that are on the page.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetControlViewAndTag">
@@ -279,10 +365,17 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the requested service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service; otherwise, null, if the service cannot be resolved.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetView">
@@ -298,10 +391,17 @@
         <Parameter Name="viewTechnology" Type="System.ComponentModel.Design.ViewTechnology" />
       </Parameters>
       <Docs>
-        <param name="viewTechnology">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a view object that is determined by the provided <see cref="T:System.ComponentModel.Design.ViewTechnology" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the current view of the component.</para>
+        </returns>
+        <param name="viewTechnology">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.ViewTechnology" /> obtained from the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.SupportedTechnologies" /> property.</param>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -317,9 +417,13 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> object using the specified component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that this designer is designing.</param>
       </Docs>
     </Member>
     <Member MemberName="IsDesignerViewLocked">
@@ -332,9 +436,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether the designer view is locked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLoading">
@@ -347,9 +454,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether the Web Forms page is still loading.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadComplete">
@@ -362,8 +472,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the designer completes loading the Web Forms page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnLoadComplete">
@@ -379,9 +492,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Design.WebFormsRootDesigner.LoadComplete" /> event when the Web Forms page is completely loaded.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" />.</param>
       </Docs>
     </Member>
     <Member MemberName="PostFilterAttributes">
@@ -397,9 +514,13 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to change or remove items from the set of attributes that the designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" /> object.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="PostFilterEvents">
@@ -415,9 +536,13 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to change or remove items from the set of events that the designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" /> object.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="PostFilterProperties">
@@ -433,9 +558,13 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to change or remove items from the set of properties that the designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" /> object.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The properties for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="PreFilterAttributes">
@@ -451,9 +580,13 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to add to the set of attributes that the designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" /> object.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="PreFilterEvents">
@@ -469,9 +602,13 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to add items to the set of events that the designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" /> object.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="PreFilterProperties">
@@ -487,9 +624,13 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to add items to the set of properties that the designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" /> object.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The properties for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="ReferenceManager">
@@ -502,9 +643,12 @@
         <ReturnType>System.Web.UI.Design.WebFormsReferenceManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a <see cref="T:System.Web.UI.Design.WebFormsReferenceManager" /> object that has information about the current Web Forms page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveClientScriptFromDocument">
@@ -520,9 +664,13 @@
         <Parameter Name="clientScriptId" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="clientScriptId">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified client script from the document at design time.</para>
+        </summary>
+        <param name="clientScriptId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the previously registered client script.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveControlFromDocument">
@@ -538,9 +686,13 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, removes the specified control from the Web Forms page.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to remove from the Web Forms page.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveUrl">
@@ -556,10 +708,17 @@
         <Parameter Name="relativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relativeUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a relative URL into a fully qualified URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A fully qualified URL resolved from <paramref name="relativeUrl" />.</para>
+        </returns>
+        <param name="relativeUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />A relative URL for a resource on the site.</param>
       </Docs>
     </Member>
     <Member MemberName="SetControlID">
@@ -576,10 +735,15 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the ID property of the specified control with the specified string.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control on which to set the ID.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to set as the ID for the control.</param>
       </Docs>
     </Member>
     <Member MemberName="SupportedTechnologies">
@@ -592,9 +756,12 @@
         <ReturnType>System.ComponentModel.Design.ViewTechnology[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of technologies that the designer component can support for its display.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesigner.DoDefaultAction">
@@ -608,8 +775,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.IDesigner.DoDefaultAction" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesigner.Verbs">
@@ -622,9 +795,15 @@
         <ReturnType>System.ComponentModel.Design.DesignerVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the design-time verbs that are supported by the designer. For a description of this member, see <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PostFilterAttributes">
@@ -640,9 +819,16 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.IDesignerFilter.PostFilterAttributes(System.Collections.IDictionary)" />.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute objects for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PostFilterEvents">
@@ -658,9 +844,16 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.IDesignerFilter.PostFilterEvents(System.Collections.IDictionary)" />.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event descriptor objects that represent the events of the class of the component. The keys in the dictionary of events are event names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PostFilterProperties">
@@ -676,9 +869,16 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.IDesignerFilter.PostFilterProperties(System.Collections.IDictionary)" />.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property descriptor objects that represent the properties of the class of the component. The keys in the dictionary of properties are property names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PreFilterAttributes">
@@ -694,9 +894,16 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.IDesignerFilter.PreFilterAttributes(System.Collections.IDictionary)" />.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute objects for the class of the component.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PreFilterEvents">
@@ -712,9 +919,16 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.IDesignerFilter.PreFilterEvents(System.Collections.IDictionary)" />.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event descriptor objects that represent the events of the class of the component. The keys in the dictionary of events are event names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PreFilterProperties">
@@ -730,9 +944,16 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.IDesignerFilter.PreFilterProperties(System.Collections.IDictionary)" />.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property descriptor objects that represent the properties of the class of the component. The keys in the dictionary of properties are property names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IRootDesigner.GetView">
@@ -748,10 +969,20 @@
         <Parameter Name="viewTechnology" Type="System.ComponentModel.Design.ViewTechnology" />
       </Parameters>
       <Docs>
-        <param name="viewTechnology">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a view object for the specified view technology. For a description of this member, see <see cref="M:System.ComponentModel.Design.IRootDesigner.GetView(System.ComponentModel.Design.ViewTechnology)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The view object for the specified view technology.</para>
+        </returns>
+        <param name="viewTechnology">
+          <attribution license="cc4" from="Microsoft" modified="false" /> The view technology.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IRootDesigner.SupportedTechnologies">
@@ -764,9 +995,15 @@
         <ReturnType>System.ComponentModel.Design.ViewTechnology[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of technologies that the designer component can support for its display. For a description of this member, see <see cref="P:System.ComponentModel.Design.IRootDesigner.SupportedTechnologies" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
@@ -780,8 +1017,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.IDisposable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.IDisposable.Dispose" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Verbs">
@@ -794,9 +1037,17 @@
         <ReturnType>System.ComponentModel.Design.DesignerVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Typically, a design-time environment provides a <ui>Properties</ui> command on a shortcut menu for a component. Therefore, do not include a similar entry in the collection of designer-specified verbs.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design-time verbs that are supported by the designer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

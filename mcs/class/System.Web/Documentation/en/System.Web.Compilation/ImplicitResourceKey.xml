@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImplicitResourceKey" FullName="System.Web.Compilation.ImplicitResourceKey">
   <TypeSignature Language="C#" Value="public sealed class ImplicitResourceKey" />
   <AssemblyInfo>
@@ -9,9 +10,26 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.ImplicitResourceKey" /> class contains fields that identify an implicit resource key. </para>
+      <para>An implicit resource is assigned to a control in the following form:</para>
+      <code>    &lt;asp:label runat="server" id="label1" meta:resourcekey="Welcome"
+        text="Welcome" 
+          ie:text="Welcome Internet Explorer User"  
+        forecolor="blue"/&gt;  </code>
+      <para>During page parsing, an implicit resource is converted into explicit keys in the form [filter:]prefix.property[.subproperty]. Any resource values with the specified prefix (in the preceding example, a prefix of Welcome) are assigned to the matching control properties. For example, suppose values exist in the resource file or source code for the following keys:</para>
+      <para>    Welcome.Text</para>
+      <para>    Ie:Welcome.Text</para>
+      <para>    Welcome.Forecolor</para>
+      <para>These values are assigned to their respective control properties.</para>
+      <para>Implicit resource keys can reference only local resources.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains fields that identify an implicit resource key.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +37,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ImplicitResourceKey" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,12 +57,18 @@
         <Parameter Name="property" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filter">To be added.</param>
-        <param name="keyPrefix">To be added.</param>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ImplicitResourceKey" /> class with the specified values for the <see cref="P:System.Web.Compilation.ImplicitResourceKey.Filter" />, <see cref="P:System.Web.Compilation.ImplicitResourceKey.KeyPrefix" /> and <see cref="P:System.Web.Compilation.ImplicitResourceKey.Property" /> properties.</para>
+        </summary>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filter value of an implicit resource key.</param>
+        <param name="keyPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix for identifying a group of properties.</param>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />A property and subproperty, if provided, for an implicit resource key.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +81,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Compilation.ImplicitResourceKey.Filter" /> property refers to the value before the colon (:) in an expression. For example, suppose you had an implicit resource in the following form:</para>
+          <code>&lt;asp:label runat="server" id="label1" meta:resourcekey="Welcome"
+        text="Welcome" 
+        ie:text="Welcome Internet Explorer User"  
+        forecolor="blue"/&gt;  </code>
+          <para>This resource contains three keys that potentially have localized resource values to retrieve from the resource file or source code. One of these keys is Ie:Welcome.Text, in which "Ie" is the <see cref="P:System.Web.Compilation.ImplicitResourceKey.Filter" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the filter value of an implicit resource key.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -70,10 +108,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Compilation.ImplicitResourceKey.KeyPrefix" /> property ties together a collection of properties that can be assigned to a control. The <see cref="P:System.Web.Compilation.ImplicitResourceKey.KeyPrefix" /> property refers to the value after the colon (:) in an expression, if present, and before the first period (.). For example, suppose you had an implicit resource in the following form:</para>
+          <code>&lt;asp:label runat="server" id="label1" meta:resourcekey="Welcome"
+        text="Welcome" 
+        ie:text="Welcome Internet Explorer User"  
+        forecolor="blue"/&gt;  </code>
+          <para>This resource contains three keys, Welcome.Text, Ie:Welcome.Text, and Welcome.Forecolor, that potentially have localized resource values to retrieve from the resource file or source code. Each key has "Welcome" as the <see cref="P:System.Web.Compilation.ImplicitResourceKey.KeyPrefix" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the prefix for identifying a group of properties.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -86,10 +135,21 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Compilation.ImplicitResourceKey.Property" /> property specifies the control property to be localized. The <see cref="P:System.Web.Compilation.ImplicitResourceKey.Property" /> property refers to the value after the first period (.) in an expression. For example, suppose you had an implicit resource in the following form:</para>
+          <code>&lt;asp:label runat="server" id="label1" meta:resourcekey="Welcome"
+        text="Welcome" 
+        ie:text="Welcome Internet Explorer User"  
+        forecolor="blue"/&gt;  </code>
+          <para>This resource contains three keys, Welcome.Text, Ie:Welcome.Text, and Welcome.Forecolor, that potentially have localized resource values to retrieve from the resource file or source code. Those keys have <see cref="P:System.Web.Compilation.ImplicitResourceKey.Property" /> values of "Text", "Text", and "Forecolor", respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a property and subproperty, if provided, for an implicit resource key.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

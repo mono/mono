@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComponentDesigner" FullName="System.ComponentModel.Design.ComponentDesigner">
   <TypeSignature Language="C#" Value="public class ComponentDesigner : System.ComponentModel.Design.IComponentInitializer, System.ComponentModel.Design.IDesignerFilter, System.ComponentModel.Design.ITreeDesigner" />
   <AssemblyInfo>
@@ -20,8 +21,27 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> base designer class provides a simple designer that can extend the behavior of an associated component in design mode.</para>
+      <para>
+        <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> provides an empty <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface implementation, whose methods can be overridden to adjust the attributes, properties and events of the associated component at design time.</para>
+      <para>You can associate a designer with a type using a <see cref="T:System.ComponentModel.DesignerAttribute" />. For an overview of customizing design-time behavior, see <format type="text/html"><a href="d6ac8a6a-42fd-4bc8-bf33-b212811297e2">Extending Design-Time Support</a></format>.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> class implements a special behavior for the property descriptors of inherited components. An internal type named InheritedPropertyDescriptor is used by the default <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> implementation to stand in for properties that are inherited from a base class. There are two cases in which these property descriptors are added.</para>
+      <list type="ordered">
+        <item>
+          <para>To the root object itself, which is returned by the <see cref="P:System.ComponentModel.Design.IDesignerHost.RootComponent" /> property, because you are inheriting from its base class.</para>
+        </item>
+        <item>
+          <para>To fields found in the base class of the root object. Public and protected fields from the base class are added to the designer so that they can be manipulated by the user.</para>
+        </item>
+      </list>
+      <para>The InheritedPropertyDescriptor class modifies the default value of a property, so that the default value is the current value at object instantiation. This is because the property is inherited from another instance. The designer defines resetting the property value as setting it to the value that was set by the inherited class. This value may differ from the default value stored in metadata.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extends the design mode behavior of a component.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +49,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +70,12 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionListCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design-time action lists supported by the component associated with the designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssociatedComponents">
@@ -59,9 +85,17 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates any components to copy or move along with the component managed by the designer during a copy, drag, or move operation.</para>
+          <para>If this collection contains references to other components in the current design mode document, those components will be copied along with the component managed by the designer during a copy operation.</para>
+          <para>When the component managed by the designer is selected, this collection is filled with any nested controls. This collection can also include other components, such as the buttons of a toolbar.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of components associated with the component managed by the designer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,9 +109,18 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.ComponentDesigner.Initialize(System.ComponentModel.IComponent)" /> method of <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> sets this property.</para>
+          <block subset="none" type="note">
+            <para>When overriding the <see cref="M:System.ComponentModel.Design.ComponentDesigner.Initialize(System.ComponentModel.IComponent)" /> method, be sure to call the base class <see cref="M:System.ComponentModel.Design.ComponentDesigner.Initialize(System.ComponentModel.IComponent)" /> method before using this property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component this designer is designing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,8 +135,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="Overload:System.ComponentModel.Design.ComponentDesigner.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.Design.ComponentDesigner" />. The <see cref="Overload:System.ComponentModel.Design.ComponentDesigner.Dispose" /> method leaves the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> in an unusable state. After calling <see cref="Overload:System.ComponentModel.Design.ComponentDesigner.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="Overload:System.ComponentModel.Design.ComponentDesigner.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.Design.ComponentDesigner" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.ComponentModel.Design.ComponentDesigner" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,9 +162,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,8 +187,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In Windows Forms and Web Forms designers, this method is invoked when a user double-clicks a component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a method signature in the source code file for the default event on the component and navigates the user's cursor to that location.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,8 +209,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.Object.Finalize" /> and cleans up resources by calling Dispose(false). Override Dispose(Boolean) to customize the cleanup.</para>
+          <para>Application code should not call this method; an object's Finalize method is automatically invoked during garbage collection, unless finalization by the garbage collector has been disabled by a call to the <see cref="M:System.GC.SuppressFinalize(System.Object)" /> method.</para>
+          <para>For more information, see <format type="text/html"><a href="fd376774-1643-499b-869e-9546a3aeea70">Finalize Methods and Destructors</a></format>, <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format>, and <format type="text/html"><a href="8026cb68-fe93-43fc-96c1-c09ad7d64cd3">Overriding the Finalize Method</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to free resources by calling Dispose(false) before the object is reclaimed by garbage collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -162,9 +236,18 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of this method requests the service from the site of the component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to retrieve the specified type of service from the design mode site of the designer's component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object implementing the requested service, or null if the service cannot be resolved.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -178,9 +261,12 @@
         <ReturnType>System.ComponentModel.InheritanceAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an attribute that indicates the type of inheritance of the associated component.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +280,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this component is inherited.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,9 +302,16 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The designer host calls this method when it is ready to use the designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares the designer to view, edit, and design the specified component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component for this designer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -235,9 +331,18 @@
         <Parameter Name="defaultValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="defaultValues">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.ComponentDesigner.InitializeExistingComponent(System.Collections.IDictionary)" /> method is called when an existing component is being reinitialized. For example, this may occur after the user drags a component to another container. </para>
+          <para>You may use the <paramref name="defaultValues" /> dictionary to apply recommended defaults to properties; however, you should not modify component properties aside from those stored in the dictionary, because this existing component may already have properties set on it. </para>
+          <para>The default implementation of this method does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes an existing component.</para>
+        </summary>
+        <param name="defaultValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name/value dictionary of default values to apply to properties. May be null if no default values are specified.</param>
       </Docs>
     </Member>
     <Member MemberName="InitializeNewComponent">
@@ -253,9 +358,18 @@
         <Parameter Name="defaultValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="defaultValues">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.ComponentDesigner.InitializeNewComponent(System.Collections.IDictionary)" /> method is called when a component is first initialized, typically after being first added to a design surface. </para>
+          <para>You may perform any necessary initialization of this component, and you may ignore the <paramref name="defaultValues" /> dictionary altogether.</para>
+          <para>The default implementation of this method does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a newly created component.</para>
+        </summary>
+        <param name="defaultValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name/value dictionary of default values to apply to properties. May be null if no default values are specified.</param>
       </Docs>
     </Member>
     <Member MemberName="InitializeNonDefault">
@@ -266,8 +380,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when the designer is associated with a control that is not in its default state, such as a control that you paste or move with a drag-and-drop operation onto the designer. This method provides an opportunity for implementers to modify or shadow the properties of the component rather than initialize the properties for the component to their defaults. This method is called after the other initialization functions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the settings for an imported component that is already initialized to settings other than the defaults.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -289,10 +409,17 @@
         <Parameter Name="toInvoke" Type="System.ComponentModel.Design.ComponentDesigner" />
       </Parameters>
       <Docs>
-        <param name="toInvoke">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.InheritanceAttribute" /> of the specified <see cref="T:System.ComponentModel.Design.ComponentDesigner" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.InheritanceAttribute" /> of the specified designer.</para>
+        </returns>
+        <param name="toInvoke">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> whose inheritance attribute to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -307,8 +434,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ComponentModel.Design.ComponentDesigner.OnSetComponentDefaults" /> is called when the designer is initialized. This allows the designer to provide default values for the base component.</para>
+          <para>This method is called only once: when you first create the component by dragging it from the Toolbox to the design surface. Subsequent initializations of the designer do not invoke this method.</para>
+          <para>The default implementation of this method sets the default property of the component to the name of the component if the default property is a string and the property is not already set. This method can be implemented in a derived class to customize the initialization of the component that this designer is designing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the default properties for the component.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -330,9 +466,15 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides a generic mechanism for discovering parent relationships within designers, and is used by the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> object's <see cref="T:System.ComponentModel.Design.ITreeDesigner" /> interface implementation. This property should only return null when this designer is the root component. The default implementation of this property returns the root component for all components that are not the root component, and it returns null for the root component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent component for this designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostFilterAttributes">
@@ -345,9 +487,17 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides a way to change or remove the items within the dictionary of attributes that are exposed through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+          <para>The keys in the dictionary of attributes are the type identifiers of the attributes, as specified by the value of their <see cref="P:System.Attribute.TypeId" /> property. The objects are of type <see cref="T:System.ComponentModel.PropertyDescriptor" />. This method is called immediately after the <see cref="M:System.ComponentModel.Design.ComponentDesigner.PreFilterAttributes(System.Collections.IDictionary)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to change or remove items from the set of attributes that it exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes for the class of the component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -364,9 +514,17 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides a way to change or remove the items within the dictionary of events that are exposed through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+          <para>The keys in the dictionary of events are the names of the events. The objects are of type <see cref="T:System.ComponentModel.PropertyDescriptor" />. This method is called immediately after the <see cref="M:System.ComponentModel.Design.ComponentDesigner.PreFilterEvents(System.Collections.IDictionary)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to change or remove items from the set of events that it exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events for the class of the component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -383,9 +541,17 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides a way to change or remove the items within the dictionary of properties that are exposed through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+          <para>The keys in the dictionary of properties are the names of the properties. The objects are of type <see cref="T:System.ComponentModel.PropertyDescriptor" />. This method is called immediately after the <see cref="M:System.ComponentModel.Design.ComponentDesigner.PreFilterProperties(System.Collections.IDictionary)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to change or remove items from the set of properties that it exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The properties for the class of the component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -402,9 +568,17 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides a way to add items to the dictionary of attributes that a designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+          <para>The keys in the dictionary of attributes are the type identifiers of the attributes, as specified by the value of their <see cref="P:System.Attribute.TypeId" /> property. The objects are of type <see cref="T:System.ComponentModel.PropertyDescriptor" />. This method is called immediately before the <see cref="M:System.ComponentModel.Design.ComponentDesigner.PostFilterAttributes(System.Collections.IDictionary)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to add to the set of attributes that it exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes for the class of the component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -421,9 +595,17 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides a way to add items to the dictionary of events that a designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+          <para>The keys in the dictionary of events are the names of the events. The objects are of type <see cref="T:System.ComponentModel.PropertyDescriptor" />. This method is called immediately before the <see cref="M:System.ComponentModel.Design.ComponentDesigner.PostFilterEvents(System.Collections.IDictionary)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to add to the set of events that it exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events for the class of the component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -440,9 +622,17 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method provides a way to add items to the dictionary of properties that a designer exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+          <para>The keys in the dictionary of properties are the names of the properties. The objects are of type <see cref="T:System.ComponentModel.PropertyDescriptor" />. This method is called immediately before the <see cref="M:System.ComponentModel.Design.ComponentDesigner.PostFilterProperties(System.Collections.IDictionary)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a designer to add to the set of properties that it exposes through a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The properties for the class of the component. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -461,11 +651,20 @@
         <Parameter Name="newValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="member">To be added.</param>
-        <param name="oldValue">To be added.</param>
-        <param name="newValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method only when you affect component properties directly and not through the accessors provided by <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> that this component has been changed.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.MemberDescriptor" /> that indicates the member that has been changed. </param>
+        <param name="oldValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old value of the member. </param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value of the member. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -482,9 +681,16 @@
         <Parameter Name="member" Type="System.ComponentModel.MemberDescriptor" />
       </Parameters>
       <Docs>
-        <param name="member">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method only when you affect component properties directly and not through accessors provided by <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> that this component is about to be changed.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.MemberDescriptor" /> that indicates the member that is about to be changed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -498,9 +704,12 @@
         <ReturnType>System.ComponentModel.Design.ComponentDesigner+ShadowPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of property values that override user settings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -521,9 +730,16 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.ComponentModel.Design.IDesignerFilter.PostFilterAttributes(System.Collections.IDictionary)" /> method.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Attribute" /> objects for the class of the component. The keys in the dictionary of attributes are the <see cref="P:System.Attribute.TypeId" /> values of the attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PostFilterEvents">
@@ -540,9 +756,16 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.ComponentModel.Design.IDesignerFilter.PostFilterEvents(System.Collections.IDictionary)" /> method.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.EventDescriptor" /> objects that represent the events of the class of the component. The keys in the dictionary of events are event names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PostFilterProperties">
@@ -559,9 +782,16 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.ComponentModel.Design.IDesignerFilter.PostFilterProperties(System.Collections.IDictionary)" /> method.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects that represent the properties of the class of the component. The keys in the dictionary of properties are property names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PreFilterAttributes">
@@ -578,9 +808,16 @@
         <Parameter Name="attributes" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.ComponentModel.Design.IDesignerFilter.PreFilterAttributes(System.Collections.IDictionary)" /> method.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Attribute" /> objects for the class of the component. The keys in the dictionary of attributes are the <see cref="P:System.Attribute.TypeId" /> values of the attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PreFilterEvents">
@@ -597,9 +834,16 @@
         <Parameter Name="events" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="events">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.ComponentModel.Design.IDesignerFilter.PreFilterEvents(System.Collections.IDictionary)" /> method.</para>
+        </summary>
+        <param name="events">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.EventDescriptor" /> objects that represent the events of the class of the component. The keys in the dictionary of events are event names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerFilter.PreFilterProperties">
@@ -616,9 +860,16 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IDesignerFilter" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.ComponentModel.Design.IDesignerFilter.PreFilterProperties(System.Collections.IDictionary)" /> method.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects that represent the properties of the class of the component. The keys in the dictionary of properties are property names.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.ITreeDesigner.Children">
@@ -631,9 +882,15 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.ITreeDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="P:System.ComponentModel.Design.ITreeDesigner.Children" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.ITreeDesigner.Parent">
@@ -646,9 +903,15 @@
         <ReturnType>System.ComponentModel.Design.IDesigner</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.ComponentDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.ITreeDesigner" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="P:System.ComponentModel.Design.ITreeDesigner.Parent" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Verbs">
@@ -658,9 +921,19 @@
         <ReturnType>System.ComponentModel.Design.DesignerVerbCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns null if the component has no design-time verbs.</para>
+          <para>The design-time environment typically displays verbs returned by this method in a shortcut (right-click) menu. When a user selects one of the verbs, the <see cref="M:System.ComponentModel.Design.MenuCommand.Invoke" /> method of the corresponding <see cref="T:System.ComponentModel.Design.DesignerVerb" /> is invoked.</para>
+          <block subset="none" type="note">
+            <para>A design-time environment typically provides a <ui>Properties</ui> command on a component's shortcut menu. Therefore, do not include such an entry in the collection of designer-specified verbs.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design-time verbs supported by the component that is associated with the designer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

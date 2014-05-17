@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LocalDataStoreSlot" FullName="System.LocalDataStoreSlot">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class LocalDataStoreSlot" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit LocalDataStoreSlot extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,14 +14,44 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The .NET Framework provides two mechanisms for using thread local storage (TLS): thread-relative static fields and data slots. </para>
+      <list type="bullet">
+        <item>
+          <para>Thread-relative static fields are static fields (Shared fields in Visual Basic) that are marked with the <see cref="T:System.ThreadStaticAttribute" /> attribute. They provide better performance than data slots, and enable compile-time type checking. </para>
+        </item>
+        <item>
+          <para>Data slots are slower and more awkward to use than thread-relative static fields. Also, data is stored as type <see cref="T:System.Object" />, so you must cast it to the correct type before using it. However, you can use data slots when you have insufficient information at compile time to allocate static fields.</para>
+        </item>
+      </list>
+      <para>For more information about using TLS, see <format type="text/html"><a href="c633a4dc-a790-4ed1-96b5-f72bd968b284">Thread Local Storage: Thread-Relative Static Fields and Data Slots</a></format>. </para>
+      <para>Similarly, the .NET Framework provides two mechanisms for using context local storage: context-relative static fields and data slots. Context-relative static fields are static fields that are marked with the <see cref="T:System.ContextStaticAttribute" /> attribute. The trade-offs between using these two mechanisms are similar to the tradeoffs between using thread-relative static fields and data slots. </para>
+      <para>The <see cref="T:System.LocalDataStoreSlot" /> structure serves as a local store memory mechanism that threads and contexts can use to store thread-specific and context-specific data, respectively. The common language runtime allocates a multi-slot data store array to each process when it is created. The thread or context calls various functions to allocate a data slot in the data store, to store and retrieve a data value in the slot, and to free a data slot for reuse after the thread or context object expires.</para>
+      <para>The data slots are unique per thread or context; their values are not shared between the thread or context objects. Data slots can be allocated by a name or by an index number.</para>
+      <para>For more information about storing local data, see <see cref="T:System.Threading.Thread" /> or <see cref="T:System.Runtime.Remoting.Contexts.Context" />. The <see cref="T:System.LocalDataStoreSlot" /> class is used with methods such as <see cref="M:System.Threading.Thread.AllocateNamedDataSlot(System.String)" />, <see cref="M:System.Runtime.Remoting.Contexts.Context.AllocateNamedDataSlot(System.String)" />, <see cref="M:System.Threading.Thread.GetData(System.LocalDataStoreSlot)" />, and <see cref="M:System.Runtime.Remoting.Contexts.Context.GetData(System.LocalDataStoreSlot)" />; it does not have any methods of its own that you need to use. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a memory slot to store local data. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~LocalDataStoreSlot ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -28,16 +60,6 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,54 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemberBindingType" FullName="System.Linq.Expressions.MemberBindingType">
   <TypeSignature Language="C#" Value="public enum MemberBindingType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MemberBindingType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the binding types that are used in <see cref="T:System.Linq.Expressions.MemberInitExpression" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Assignment">
       <MemberSignature Language="C#" Value="Assignment" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.MemberBindingType Assignment = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.MemberBindingType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A binding that represents initializing a member with the value of an expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListBinding">
       <MemberSignature Language="C#" Value="ListBinding" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.MemberBindingType ListBinding = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.MemberBindingType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A binding that represents initializing a member of type <see cref="T:System.Collections.IList" /> or <see cref="T:System.Collections.Generic.ICollection`1" /> from a list of elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemberBinding">
       <MemberSignature Language="C#" Value="MemberBinding" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.MemberBindingType MemberBinding = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.MemberBindingType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A binding that represents recursively initializing members of a member.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

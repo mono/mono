@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IXmlJsonReaderInitializer" FullName="System.Runtime.Serialization.Json.IXmlJsonReaderInitializer">
+  <TypeSignature Language="C#" Value="public interface IXmlJsonReaderInitializer" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlJsonReaderInitializer" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.XmlDictionaryReader" /> objects created by one of the <see cref="Overload:System.Runtime.Serialization.Json.JsonReaderWriterFactory.CreateJsonReader" /> methods implement this interface and are initialized ready to read JSON-encoded data. But if a user wants to reuse the same <see cref="T:System.Xml.XmlDictionaryReader" /> object to read other JSON-encoded data, then the reader must be initialized to the second dataset to be read by using one of the <see cref="Overload:System.Runtime.Serialization.Json.IXmlJsonReaderInitializer.SetInput" /> methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the interface for initializing a JavaScript Object Notation (JSON) reader when reusing them to read from a particular stream or buffer.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="SetInput">
+      <MemberSignature Language="C#" Value="public void SetInput (System.IO.Stream stream, System.Text.Encoding encoding, System.Xml.XmlDictionaryReaderQuotas quotas, System.Xml.OnXmlDictionaryReaderClose onClose);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetInput(class System.IO.Stream stream, class System.Text.Encoding encoding, class System.Xml.XmlDictionaryReaderQuotas quotas, class System.Xml.OnXmlDictionaryReaderClose onClose) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
+        <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlDictionaryReader" /> object that reads JSON-encoded streams can be reused by calling the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonReaderInitializer.SetInput(System.IO.Stream,System.Text.Encoding,System.Xml.XmlDictionaryReaderQuotas,System.Xml.OnXmlDictionaryReaderClose)" /> method to reinitialize it.</para>
+          <para>The reader can interpret the UTF-8 and the UTF-16 (big- or little-endian) encodings. The reader uses the encoding set at initialization time if one is passed or the encoding is automatically detected if null is passed.</para>
+          <para>The <see cref="P:System.Xml.XmlDictionaryReaderQuotas.MaxBytesPerRead" /> value set as part of the <paramref name="quotas" /> parameter only limits the amount of information being read into memory when the input is being read from a stream with the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonReaderInitializer.SetInput(System.IO.Stream,System.Text.Encoding,System.Xml.XmlDictionaryReaderQuotas,System.Xml.OnXmlDictionaryReaderClose)" /> method and is not enforced when the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonReaderInitializer.SetInput(System.Byte[],System.Int32,System.Int32,System.Text.Encoding,System.Xml.XmlDictionaryReaderQuotas,System.Xml.OnXmlDictionaryReaderClose)" /> method is used to read information from a buffer. The limits on the number of attributes that can be loaded are not relevant to the JSON context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes a JavaScript Object Notation (JSON) enabled reader to a specified stream that contains JSON-encoded data.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.IO.Stream" /> from which to read.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> used by the reader.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to call when the reader is closed.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SetInput">
+      <MemberSignature Language="C#" Value="public void SetInput (byte[] buffer, int offset, int count, System.Text.Encoding encoding, System.Xml.XmlDictionaryReaderQuotas quotas, System.Xml.OnXmlDictionaryReaderClose onClose);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetInput(unsigned int8[] buffer, int32 offset, int32 count, class System.Text.Encoding encoding, class System.Xml.XmlDictionaryReaderQuotas quotas, class System.Xml.OnXmlDictionaryReaderClose onClose) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="encoding" Type="System.Text.Encoding" />
+        <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
+        <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlDictionaryReader" /> object that reads a JSON-encoded buffered <see cref="T:System.Byte" /> can be reused by calling the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonReaderInitializer.SetInput(System.Byte[],System.Int32,System.Int32,System.Text.Encoding,System.Xml.XmlDictionaryReaderQuotas,System.Xml.OnXmlDictionaryReaderClose)" /> method to reinitialize it.</para>
+          <para>The reader can interpret the UTF-8 and the UTF-16 (big- or little-endian) encodings. The reader uses the encoding set at initialization time if one is passed or the encoding is automatically detected if null is passed.</para>
+          <para>The <see cref="P:System.Xml.XmlDictionaryReaderQuotas.MaxBytesPerRead" /> value set as part of the <paramref name="quotas" /> parameter only limits the amount of information being read into memory when the input is being read from a stream with the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonReaderInitializer.SetInput(System.IO.Stream,System.Text.Encoding,System.Xml.XmlDictionaryReaderQuotas,System.Xml.OnXmlDictionaryReaderClose)" /> method and is not enforced when the <see cref="M:System.Runtime.Serialization.Json.IXmlJsonReaderInitializer.SetInput(System.Byte[],System.Int32,System.Int32,System.Text.Encoding,System.Xml.XmlDictionaryReaderQuotas,System.Xml.OnXmlDictionaryReaderClose)" /> method is used to read information from a buffer. The limits on the number of attributes that can be loaded are not relevant to the JSON context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes a JavaScript Object Notation (JSON) enabled reader to a specified buffer that contains JSON-encoded data.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.Byte" /> buffer array from which to read. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> used by the reader.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.OnXmlDictionaryReaderClose" /> delegate to call when the reader is closed.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnobservedTaskExceptionEventArgs" FullName="System.Threading.Tasks.UnobservedTaskExceptionEventArgs">
   <TypeSignature Language="C#" Value="public class UnobservedTaskExceptionEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UnobservedTaskExceptionEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -9,12 +11,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Exception property is used to examine the exception without marking it as observed, whereas the <see cref="M:System.Threading.Tasks.UnobservedTaskExceptionEventArgs.SetObserved" /> method is used to mark the exception as observed. Marking the exception as observed prevents it from triggering exception escalation policy which, by default, terminates the process.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the event that is raised when a faulted <see cref="T:System.Threading.Tasks.Task" />'s exception goes unobserved.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UnobservedTaskExceptionEventArgs (AggregateException exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.AggregateException exception) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -23,13 +32,18 @@
         <Parameter Name="exception" Type="System.AggregateException" />
       </Parameters>
       <Docs>
-        <param name="exception">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Tasks.UnobservedTaskExceptionEventArgs" /> class with the unobserved exception.</para>
+        </summary>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Exception that has gone unobserved.</param>
       </Docs>
     </Member>
     <Member MemberName="Exception">
       <MemberSignature Language="C#" Value="public AggregateException Exception { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.AggregateException Exception" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -38,13 +52,17 @@
         <ReturnType>System.AggregateException</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Exception that went unobserved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Observed">
       <MemberSignature Language="C#" Value="public bool Observed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Observed" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -53,13 +71,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether this exception has been marked as "observed."</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetObserved">
       <MemberSignature Language="C#" Value="public void SetObserved ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetObserved() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -69,8 +91,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the <see cref="P:System.Threading.Tasks.UnobservedTaskExceptionEventArgs.Exception" /> as "observed," thus preventing it from triggering exception escalation policy which, by default, terminates the process.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

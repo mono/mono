@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebControlToolboxItem" FullName="System.Web.UI.Design.WebControlToolboxItem">
   <TypeSignature Language="C#" Value="public class WebControlToolboxItem : System.Drawing.Design.ToolboxItem" />
   <AssemblyInfo>
@@ -10,8 +11,29 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.UI.Design.WebControlToolboxItem" /> provides a base class for toolbox items that create Web server controls. This class extends <see cref="T:System.Drawing.Design.ToolboxItem" /> and provides the following additional methods: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.Web.UI.Design.WebControlToolboxItem.GetToolAttributeValue(System.ComponentModel.Design.IDesignerHost,System.Type)" /> gets the value of an attribute of the toolbox item.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Web.UI.Design.WebControlToolboxItem.GetToolHtml(System.ComponentModel.Design.IDesignerHost)" /> gets the HTML that represents the initial state of the control.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Web.UI.Design.WebControlToolboxItem.GetToolType(System.ComponentModel.Design.IDesignerHost)" /> gets the type of the associated runtime component.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for a Web server control <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +41,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Drawing.Design.ToolboxItem.DisplayName" /> is set to a short version of the type name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.WebControlToolboxItem" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +62,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Drawing.Design.ToolboxItem.DisplayName" /> is set to a short version of the type name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.Design.WebControlToolboxItem" /> class using the provided type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the tool for this toolbox item. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,10 +89,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.Design.WebControlToolboxItem" /> class using the provided <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object and <see cref="T:System.Runtime.Serialization.StreamingContext" />.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />A SerializationInfo object containing information needed to instantiate the Web control through deserialization.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A StreamingContext object.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateComponentsCore">
@@ -70,10 +110,21 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.UI.Design.WebControlToolboxItem.CreateComponentsCore(System.ComponentModel.Design.IDesignerHost)" /> always throws an exception, indicating that the method is inherited from <see cref="T:System.Drawing.Design.ToolboxItem" /> and only intended for use with Windows Forms.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates objects from each type contained in this <see cref="T:System.Drawing.Design.ToolboxItem" />, and adds them to the specified designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of created <see cref="T:System.ComponentModel.IComponent" /> objects.</para>
+        </returns>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,10 +142,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the state of the toolbox item from the specified serialization information object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that describes the <see cref="T:System.Web.UI.Design.WebControlToolboxItem" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that indicates the serialization stream characteristics. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -112,11 +168,22 @@
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <param name="attributeType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation will throw an <see cref="T:System.ArgumentException" /> if the <paramref name="attributeType" /> parameter is anything other than a <see cref="T:System.Web.UI.PersistChildrenAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified type of attribute of the toolbox item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified type of attribute.</para>
+        </returns>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to retrieve the value of. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,10 +200,17 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTML for the Web control that the tool creates.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTML for the Web control that the tool creates.</para>
+        </returns>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,10 +227,17 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of this toolbox item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of this toolbox item.</para>
+        </returns>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,9 +254,13 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes this toolbox item.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the Web server control toolbox item. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -193,10 +278,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the state of the toolbox item to the specified serialization information object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> used to save the state of the <see cref="T:System.Web.UI.Design.WebControlToolboxItem" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that indicates the serialization stream characteristics.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

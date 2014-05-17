@@ -1,6 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Data.Sql">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Data.Sql" /> namespace contains classes that support SQL Server-specific functionality.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For information about the functionality that the classes within this namespace support, see <format type="text/html"><a href="ddf1c83c-9d40-45e6-b04d-9828c6cbbfdc">Enumerating Instances of SQL Server</a></format> and <format type="text/html"><a href="0f0ba1a1-3180-4af8-87f7-c795dc8f8f55">Using Query Notifications</a></format>.</para>
+      <block subset="none" type="note">
+        <para>In beta releases of ADO.NET version 2.0, the <see cref="N:System.Data.Sql" /> namespace also contained classes for use with SQL Server common language runtime (CLR) integration. However, those classes have been moved into their own namespace, <see cref="N:Microsoft.SqlServer.Server" />. For more information about using SQL Server CLR integration, see <format type="text/html"><a href="c7a324c4-160d-44c2-b593-641af06eca61">Using SQL Server Common Language Runtime Integration</a></format>. </para>
+      </block>
+    </remarks>
   </Docs>
 </Namespace>

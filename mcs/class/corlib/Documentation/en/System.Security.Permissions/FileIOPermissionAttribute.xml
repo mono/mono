@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileIOPermissionAttribute" FullName="System.Security.Permissions.FileIOPermissionAttribute" FullNameSP="System_Security_Permissions_FileIOPermissionAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable FileIOPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <TypeSignature Language="C#" Value="public sealed class FileIOPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit FileIOPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,28 +25,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Used to declaratively specify security actions to control
-      access to files and directories.</para>
-    </summary>
-    <remarks>
-      <block subset="none" type="note">
-        <para> The level of access to a file or directory is specified using the members of the
-         current instance. For example, to specify read permissions for a file, set the
-      <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.Read" /> property
-         equal to the name of the file.</para>
-        <para> The security information declared by a
-         security attribute is stored in the metadata of the attribute target, and is accessed by
-         the system at run-time. Security attributes are used for
-         declarative security only. For imperative security, use the corresponding
-         permission class, <see cref="T:System.Security.Permissions.FileIOPermission" />.</para>
-        <para>The allowable <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" /> targets are
-      determined by the <see cref="T:System.Security.Permissions.SecurityAction" /> passed to the constructor.</para>
-      </block>
-      <para>Case-sensitivity of file and directory names is
-   platform dependent. The set of characters that are valid for use in file and
-   directory names is determined by the current file system.</para>
-    </remarks>
     <example>
       <para>The following example shows a declarative request for full access to the
       specified file. The <see cref="F:System.Security.Permissions.SecurityAction.RequestMinimum" /> security action
@@ -61,44 +41,52 @@
         <c>[FileIOPermissionAttribute(SecurityAction.Demand, Unrestricted=true)]</c>
       </para>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Files and directories are specified using absolute paths. When accessing files, a security check is performed when the file is created or opened. The security check is not done again unless the file is closed and reopened. Checking permissions when the file is first accessed minimizes the impact of the security check on application performance because opening a file happens only once, while reading and writing can happen multiple times.</para>
+      <para>The scope of the declaration that is allowed depends on the <see cref="T:System.Security.Permissions.SecurityAction" /> that is used.</para>
+      <para>The security information declared by a security attribute is stored in the metadata of the attribute target and is accessed by the system at run time. Security attributes are used only for declarative security. For imperative security, use the corresponding permission class.</para>
+      <block subset="none" type="note">
+        <para>Unrestricted <see cref="T:System.Security.Permissions.FileIOPermission" /> grants permission for all paths within a file system, including multiple pathnames that can be used to access a single given file. To <see cref="M:System.Security.CodeAccessPermission.Deny" /> access to a file, you must Deny all possible paths to the file. For example, if \\server\share is mapped to the network drive X, to Deny access to \\server\share\file, you must Deny \\server\share\file, X:\file and any other path that you can use to access the file.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows security actions for <see cref="T:System.Security.Permissions.FileIOPermission" /> to be applied to code using declarative security. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action)" />
       <MemberSignature Language="C#" Value="public FileIOPermissionAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters>
-        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
-      </Parameters>
-      <Docs>
-        <param name="action">A <see cref="T:System.Security.Permissions.SecurityAction" /> value.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" /> class
- with the specified <see cref="T:System.Security.Permissions.SecurityAction" /> value.</para>
-        </summary>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="All">
-      <MemberSignature Language="C#" Value="public string All { set; get; }" />
+      <MemberSignature Language="C#" Value="public string All { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string All" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,269 +97,311 @@
           <AttributeName>System.Obsolete("use newer properties")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="AllFiles">
-      <MemberSignature Language="C#" Value="public System.Security.Permissions.FileIOPermissionAccess AllFiles { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllLocalFiles">
-      <MemberSignature Language="C#" Value="public System.Security.Permissions.FileIOPermissionAccess AllLocalFiles { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".property string Append { public hidebysig specialname instance string get_Append() public hidebysig specialname instance void set_Append(string value) }" />
-      <MemberSignature Language="C#" Value="public string Append { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
-      <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the name of a file or directory for which append access is secured.</para>
-        </summary>
-        <value>
-          <para> A <see cref="T:System.String" /> containing
-   the absolute path of the file or directory for which append access is secured.</para>
-        </value>
+        <value>To be added.</value>
         <remarks>
-          <para>
-            <block subset="none" type="note">This property sets
-      append access for a single file or directory; use additional
-   <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" />
-   attributes to specify additional files
-   and directories.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property sets access for a single file or directory. Use additional attributes to specify additional files and directories.</para>
         </remarks>
-        <exception cref="T:System.ArgumentException">The path information specified for a set operation contains invalid characters or wild card specifiers.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets full access for the file or directory that is specified by the string value.</para>
+        </summary>
       </Docs>
-      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllFiles">
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.FileIOPermissionAccess AllFiles { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Permissions.FileIOPermissionAccess AllFiles" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets or sets the permitted access to all files on the local computer and network drives.</para>
+          <para>An individual <see cref="T:System.Security.Permissions.FileIOPermissionAccess" /> value can be determined by using a bitwise AND operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the permitted access to all files.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AllLocalFiles">
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.FileIOPermissionAccess AllLocalFiles { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Permissions.FileIOPermissionAccess AllLocalFiles" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Local files are files contained on the local computer. Any files that are not accessed through a network drive are local files.</para>
+          <para>An individual <see cref="T:System.Security.Permissions.FileIOPermissionAccess" /> value can be determined by using a bitwise AND operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the permitted access to all local files.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".property string Append { public hidebysig specialname instance string get_Append() public hidebysig specialname instance void set_Append(string value) }" />
+      <MemberSignature Language="C#" Value="public string Append { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Append" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ChangeAccessControl">
-      <MemberSignature Language="C#" Value="public string ChangeAccessControl { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
+      <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
+        <value>
+          <para> A <see cref="T:System.String" /> containing
+   the absolute path of the file or directory for which append access is secured.</para>
+        </value>
+        <exception cref="T:System.ArgumentException">The path information specified for a set operation contains invalid characters or wild card specifiers.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property sets access for a single file or directory. Use additional attributes to specify additional files and directories.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets append access for the file or directory that is specified by the string value.</para>
+        </summary>
       </Docs>
+      <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ChangeAccessControl">
+      <MemberSignature Language="C#" Value="public string ChangeAccessControl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ChangeAccessControl" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets or sets access for a single file or directory. Use additional <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" /> attributes to specify additional files and directories.</para>
+          <block subset="none" type="note">
+            <para>An access control list (ACL) describes individuals or groups who have, or do not have, rights to specific actions on the given file and its properties.  The ability to change an ACL is an important permission and should be granted with caution.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the file or directory in which access control information can be changed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreatePermission">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Security.IPermission CreatePermission()" />
       <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission CreatePermission() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should be called only by the security system, never by application code.</para>
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. Declarative security data in metadata is created from the permission that this method returns that corresponds to this attribute.</para>
+        </remarks>
         <summary>
-          <para> Returns a new <see cref="T:System.Security.Permissions.FileIOPermission" /> that contains the security
-   information of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Security.Permissions.FileIOPermission" />.</para>
         </summary>
         <returns>
-          <para>A new <see cref="T:System.Security.Permissions.FileIOPermission" /> object with the security
-   information of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.FileIOPermission" /> that corresponds to this attribute.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>Applications typically do not call this method; it is intended for use by the
-         system.</para>
-            <para>The security information declared by a security attribute is stored in the
-         metadata of the attribute target, and is accessed by the system at run-time. The
-         system uses the object returned by this method to convert the security
-         information of the current instance into the form stored in metadata.</para>
-            <para>This method overrides <see cref="M:System.Security.Permissions.SecurityAttribute.CreatePermission" />.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PathDiscovery">
+      <MemberSignature Language="ILASM" Value=".property string PathDiscovery { public hidebysig specialname instance string get_PathDiscovery() public hidebysig specialname instance void set_PathDiscovery(string value) }" />
+      <MemberSignature Language="C#" Value="public string PathDiscovery { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PathDiscovery" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PathDiscovery">
-      <MemberSignature Language="ILASM" Value=".property string PathDiscovery { public hidebysig specialname instance string get_PathDiscovery() public hidebysig specialname instance void set_PathDiscovery(string value) }" />
-      <MemberSignature Language="C#" Value="public string PathDiscovery { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the name of a file or directory for which path discovery
-      access is secured.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing
    the absolute path of the file or directory for which access to the
    contents of the path is secured.</para>
         </value>
-        <remarks>
-          <block subset="none" type="note">
-            <para> This property sets path discovery access for a single
-         file or directory; use additional <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" />
-         attributes to specify additional files and
-         directories.</para>
-            <para>Path discovery controls access to the information in the path itself. This
-         protects sensitive information in the path, such as user names, as well as
-         information about the directory structure revealed in the path. This value does
-         not secure access to files or folders represented by the path.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentException">The path information specified for a set operation contains invalid characters or wild card specifiers.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Path discovery controls access to the information in the path itself. This helps protect sensitive information in the path, such as user names, as well as information about the directory structure revealed in the path. This value does not grant access to files or folders represented by the path.</para>
+          <block subset="none" type="note">
+            <para>For performance reasons, <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.PathDiscovery" /> should be granted only to directories, not to files. For example, <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.PathDiscovery" /> permission should be granted to paths such as C:\test and C:\test\, not to files such as C:\test\example.txt.</para>
+          </block>
+          <para>This property sets access for a single file or directory. Use additional attributes to specify additional files and directories.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the file or directory to which to grant path discovery.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".property string Read { public hidebysig specialname instance string get_Read() public hidebysig specialname instance void set_Read(string value) }" />
+      <MemberSignature Language="C#" Value="public string Read { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Read" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Read">
-      <MemberSignature Language="ILASM" Value=".property string Read { public hidebysig specialname instance string get_Read() public hidebysig specialname instance void set_Read(string value) }" />
-      <MemberSignature Language="C#" Value="public string Read { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the name of a file or directory for which read access is
-      secured.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> containing
    the absolute path of the file or directory for which read access is secured.</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This property sets
-      read access for a single file or directory; use additional
-   <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" />
-   attributes to specify
-   additional files and directories.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentException">The path information specified for a set operation contains invalid characters or wild card specifiers.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property sets access for a single file or directory. Use additional attributes to specify additional files and directories.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets read access for the file or directory specified by the string value.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ViewAccessControl">
+      <MemberSignature Language="C#" Value="public string ViewAccessControl { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ViewAccessControl" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gets or sets access for a single file or directory. Use additional <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" /> attributes to specify additional files and directories.</para>
+          <block subset="none" type="note">
+            <para>An access control list (ACL) describes individuals or groups who have, or do not have, rights to specific actions on the given file and its properties.  The ability to view an ACL is an important permission and should be granted with caution.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the file or directory in which access control information can be viewed.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ViewAndModify">
+      <MemberSignature Language="C#" Value="public string ViewAndModify { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ViewAndModify" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property sets the <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.Append" />, <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.PathDiscovery" />, <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.Read" />, and <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.Write" /> properties for a single file or directory. Use additional <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" /> attributes to specify additional files and directories. The access rights are for file data only; they do not include the access control properties <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.ViewAccessControl" /> and <see cref="P:System.Security.Permissions.FileIOPermissionAttribute.ChangeAccessControl" />.</para>
+          <block subset="none" type="note">
+            <para>The get accessor is provided for C# compiler compatibility. The C# compiler requires attribute properties to be read/write.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the file or directory in which file data can be viewed and modified.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".property string Write { public hidebysig specialname instance string get_Write() public hidebysig specialname instance void set_Write(string value) }" />
+      <MemberSignature Language="C#" Value="public string Write { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Write" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ViewAccessControl">
-      <MemberSignature Language="C#" Value="public string ViewAccessControl { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ViewAndModify">
-      <MemberSignature Language="C#" Value="public string ViewAndModify { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".property string Write { public hidebysig specialname instance string get_Write() public hidebysig specialname instance void set_Write(string value) }" />
-      <MemberSignature Language="C#" Value="public string Write { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the name of a
-      file or directory for which write access is secured.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> containing
    the absolute path of the file or directory for which write access is secured.</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="note">This property sets
-      write access for a single file or directory; use additional <see cref="T:System.Security.Permissions.FileIOPermissionAttribute" />
-      attributes to
-      specify additional files and directories.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentException">The path information specified for a set operation contains invalid characters or wild card specifiers.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property sets access for a single file or directory. Use additional attributes to specify additional files and directories.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets write access for the file or directory specified by the string value.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractInvariantMethodAttribute" FullName="System.Diagnostics.Contracts.ContractInvariantMethodAttribute">
   <TypeSignature Language="C#" Value="public sealed class ContractInvariantMethodAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractInvariantMethodAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -17,20 +19,30 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Specifies that this method contains Contract invariant conditions for this class.</summary>
-    <remarks>There may be multiple methods with this attribute in one class, their effect is accumulated. The method must take no parameters and return void, and may be any visibility.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The invariant method can have any name, but it must return void and take no parameters. A suggested name for the method is ObjectInvariant. The body of the invariant method must consist solely of one or more calls to the <see cref="M:System.Diagnostics.Contracts.Contract.Invariant(System.Boolean)" /> method. A type can have more than one contract invariant method, which can be public or private. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks a method as being the invariant method for a class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractInvariantMethodAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>Construct a ContractInvariantMethodAttribute.</summary>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.ContractInvariantMethodAttribute" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RenamedEventArgs" FullName="System.IO.RenamedEventArgs">
   <TypeSignature Language="C#" Value="public class RenamedEventArgs : System.IO.FileSystemEventArgs" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RenamedEventArgs extends System.IO.FileSystemEventArgs" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,13 +16,25 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class inherits from <see cref="T:System.IO.FileSystemEventArgs" /> and extends it by adding an old name field and an old full path field to specify the previous name and full path of the affected file or directory.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.IO.FileSystemWatcher.Renamed" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public RenamedEventArgs (System.IO.WatcherChangeTypes changeType, string directory, string name, string oldName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.IO.WatcherChangeTypes changeType, string directory, string name, string oldName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="changeType" Type="System.IO.WatcherChangeTypes" />
@@ -28,49 +43,65 @@
         <Parameter Name="oldName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="changeType">To be added: an object of type 'WatcherChangeTypes'</param>
-        <param name="directory">To be added: an object of type 'string'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="oldName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class inherits from the <see cref="T:System.IO.FileSystemEventArgs" /> class and extends it by adding an old name field to specify the previous name of the file or directory affected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.RenamedEventArgs" /> class.</para>
+        </summary>
+        <param name="changeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.IO.WatcherChangeTypes" /> values. </param>
+        <param name="directory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the affected file or directory. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the affected file or directory. </param>
+        <param name="oldName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old name of the affected file or directory. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OldFullPath">
       <MemberSignature Language="C#" Value="public string OldFullPath { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string OldFullPath" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous fully qualified path of the affected file or directory.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OldName">
       <MemberSignature Language="C#" Value="public string OldName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string OldName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the old name of the affected file or directory.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

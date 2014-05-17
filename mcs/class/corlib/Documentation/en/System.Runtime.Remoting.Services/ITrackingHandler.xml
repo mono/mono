@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITrackingHandler" FullName="System.Runtime.Remoting.Services.ITrackingHandler">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ITrackingHandler" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITrackingHandler" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,80 +10,107 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="DisconnectedObject">
-      <MemberSignature Language="C#" Value="public void DisconnectedObject (object obj);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
-      </Parameters>
-      <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="MarshaledObject">
-      <MemberSignature Language="C#" Value="public void MarshaledObject (object obj, System.Runtime.Remoting.ObjRef or);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
-        <Parameter Name="or" Type="System.Runtime.Remoting.ObjRef" />
-      </Parameters>
-      <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="or">To be added: an object of type 'Runtime.Remoting.ObjRef'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="UnmarshaledObject">
-      <MemberSignature Language="C#" Value="public void UnmarshaledObject (object obj, System.Runtime.Remoting.ObjRef or);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
-        <Parameter Name="or" Type="System.Runtime.Remoting.ObjRef" />
-      </Parameters>
-      <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <param name="or">To be added: an object of type 'Runtime.Remoting.ObjRef'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Every object that is registered with <see cref="T:System.Runtime.Remoting.Services.TrackingServices" /> is called by remoting when an object or proxy in the current <see cref="T:System.AppDomain" /> is marshaled, unmarshaled, or disconnected.</para>
+      <para>Note that only objects can be disconnected. An exception is thrown when disconnect is called on a proxy.</para>
+      <block subset="none" type="note">
+        <para>This interface makes a link demand. A SecurityException is thrown if the immediate caller makes the call through a reference to the interface and does not have infrastructure permission. See <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> for more information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the implementing object must be notified of marshaling, unmarshaling, and disconnection of objects and proxies by the remoting infrastructure.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="DisconnectedObject">
+      <MemberSignature Language="C#" Value="public void DisconnectedObject (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DisconnectedObject(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the current instance that an object has been disconnected from its proxy.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The disconnected object. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="MarshaledObject">
+      <MemberSignature Language="C#" Value="public void MarshaledObject (object obj, System.Runtime.Remoting.ObjRef or);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MarshaledObject(object obj, class System.Runtime.Remoting.ObjRef or) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="or" Type="System.Runtime.Remoting.ObjRef" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the current instance that an object has been marshaled.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that has been marshaled. </param>
+        <param name="or">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.ObjRef" /> that results from marshaling and represents the specified object. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="UnmarshaledObject">
+      <MemberSignature Language="C#" Value="public void UnmarshaledObject (object obj, System.Runtime.Remoting.ObjRef or);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void UnmarshaledObject(object obj, class System.Runtime.Remoting.ObjRef or) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="or" Type="System.Runtime.Remoting.ObjRef" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the current instance that an object has been unmarshaled.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unmarshaled object. </param>
+        <param name="or">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.ObjRef" /> that represents the specified object. </param>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

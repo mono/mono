@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DateTimePicker" FullName="System.Windows.Forms.DateTimePicker">
   <TypeSignature Language="C#" Value="public class DateTimePicker : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -30,8 +31,28 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DateTimePicker" /> control is used to allow the user to select a date and time, and to display that date and time in the specified format. The <see cref="T:System.Windows.Forms.DateTimePicker" /> control makes it easy to work with dates and times because it handles a lot of the data validation automatically.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.DateTimePicker" /> control only supports Gregorian calendars.</para>
+      </block>
+      <para>When used to represent a date, the <see cref="T:System.Windows.Forms.DateTimePicker" /> control appears in two parts: a drop-down list with a date represented in text, and a calendar that appears when you click the down-arrow next to the list. The calendar looks like the <see cref="T:System.Windows.Forms.MonthCalendar" /> control, which can be used for selecting multiple dates. For more information about the <see cref="T:System.Windows.Forms.MonthCalendar" /> control, see <format type="text/html"><a href="788C5325-B721-44EC-95BF-9B680BA0F6A2">MonthCalendar Control Overview (Windows Forms)</a></format>.</para>
+      <para>You can change the look of the calendar portion of the control by setting the <see cref="P:System.Windows.Forms.DateTimePicker.CalendarForeColor" />, <see cref="P:System.Windows.Forms.DateTimePicker.CalendarFont" />, <see cref="P:System.Windows.Forms.DateTimePicker.CalendarTitleBackColor" />, <see cref="P:System.Windows.Forms.DateTimePicker.CalendarTitleForeColor" />, <see cref="P:System.Windows.Forms.DateTimePicker.CalendarTrailingForeColor" />, and <see cref="P:System.Windows.Forms.DateTimePicker.CalendarMonthBackground" /> properties.</para>
+      <para>To use a spin button control (also known as an up-down control) to adjust the date/time value, set the <see cref="P:System.Windows.Forms.DateTimePicker.ShowUpDown" /> property to true. The calendar will not drop down when the control is selected. The date and time can be adjusted by selecting each element individually and using the up and down buttons to change the value.</para>
+      <para>The <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property contains the current date and time the control is set to. You can use the <see cref="P:System.Windows.Forms.DateTimePicker.Text" /> property or the appropriate member of <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> to get the date and time value. For more information, see <format type="text/html"><a href="A8A48D68-E4B5-426E-9764-51230FC9ACD2">How to: Set and Return Dates with the Windows Forms DateTimePicker Control</a></format>. You can limit the dates and times that can be selected by setting the <see cref="P:System.Windows.Forms.DateTimePicker.MinDate" /> and <see cref="P:System.Windows.Forms.DateTimePicker.MaxDate" /> properties.</para>
+      <para>The values can be displayed in four formats, which are set by the <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property: <see cref="F:System.Windows.Forms.DateTimePickerFormat.Long" />, <see cref="F:System.Windows.Forms.DateTimePickerFormat.Short" />, <see cref="F:System.Windows.Forms.DateTimePickerFormat.Time" />, or <see cref="F:System.Windows.Forms.DateTimePickerFormat.Custom" />. The default date <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> is <see cref="F:System.Windows.Forms.DateTimePickerFormat.Long" />.</para>
+      <para>If you want the <see cref="T:System.Windows.Forms.DateTimePicker" /> to appear as a control for picking or editing times instead of dates, set the <see cref="P:System.Windows.Forms.DateTimePicker.ShowUpDown" /> property to true and the <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property to <see cref="F:System.Windows.Forms.DateTimePickerFormat.Time" />. For more information, see <format type="text/html"><a href="0c1c8b40-1b50-4301-a90c-39516775ccb1">How to: Display Time with the DateTimePicker Control</a></format>.</para>
+      <para>If the <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property is set to <see cref="F:System.Windows.Forms.DateTimePickerFormat.Custom" />, you can create your own format style by setting the <see cref="P:System.Windows.Forms.DateTimePicker.CustomFormat" /> property and building a custom format string. The custom format string can be a combination of custom field characters and other literal characters. For example, you can display the date as "June 01, 2012 - Friday" by setting the <see cref="P:System.Windows.Forms.DateTimePicker.CustomFormat" /> property to "MMMM dd, yyyy - dddd". For more information, see <format type="text/html"><a href="39767691-2D2B-46B6-A663-B7901E581A6E">How to: Display a Date in a Custom Format with the Windows Forms DateTimePicker Control</a></format> and <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom Date and Time Format Strings</a></format>.</para>
+      <block subset="none" type="note">
+        <para>When a <see cref="T:System.Windows.Forms.DateTimePicker" /> is data-bound and the backing value is changed to null, the value of the <see cref="T:System.Windows.Forms.DateTimePicker" /> will not be updated and the previous value will be retained. In situations where this behavior is not desirable (for example, when using a set of data-bound controls to page through a recordset) use the <see cref="E:System.Windows.Forms.Binding.Format" /> event of the <see cref="T:System.Windows.Forms.Binding" /> class to set the <see cref="T:System.Windows.Forms.DateTimePicker" /> to a value recognizable as a null.</para>
+      </block>
+      <para />
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows control that allows the user to select a date and a time and to display the date and time with a specified format.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +60,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DateTimePicker" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,9 +86,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DateTimePicker.BackColor" /> has no effect on the appearance of the <see cref="T:System.Windows.Forms.DateTimePicker" />. To set the background color for the drop-down calendar of the <see cref="T:System.Windows.Forms.DateTimePicker" />, see the <see cref="P:System.Windows.Forms.DateTimePicker.CalendarMonthBackground" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the background color of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,8 +116,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DateTimePicker.BackColor" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,9 +142,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property/method/event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background image for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,8 +172,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DateTimePicker.BackgroundImage" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,9 +201,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.ProgressBar.BackgroundImageLayout" /> property has no effect on the appearance of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the layout of the background image of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -182,8 +230,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DateTimePicker.BackgroundImageLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CalendarFont">
@@ -201,9 +252,15 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font style applied to the calendar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,9 +274,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DateTimePicker" /> is created, this property is initially set equal to the <see cref="P:System.Windows.Forms.Control.ForeColor" /> property value.</para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the calendar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,9 +297,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DateTimePicker" /> is created, this property is initially set equal to the <see cref="F:System.Windows.Forms.DateTimePicker.DefaultMonthBackColor" /> field value.</para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the calendar month.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -249,9 +320,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DateTimePicker" /> is created, this property is initially set equal to the <see cref="F:System.Windows.Forms.DateTimePicker.DefaultTitleBackColor" /> field value.</para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the calendar title.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -265,9 +343,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DateTimePicker" /> is created, this property is initially set equal to the <see cref="F:System.Windows.Forms.DateTimePicker.DefaultTitleForeColor" /> field value.</para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the calendar title.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -281,9 +366,17 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Windows.Forms.DateTimePicker" /> is created, this property is initially set equal to the <see cref="F:System.Windows.Forms.DateTimePicker.DefaultTrailingForeColor" /> field value.</para>
+          <para>The trailing dates are the ending dates from the previous month or the beginning dates from the next month used to fill the calendar.</para>
+          <para>Starting with Windows Vista and depending on the theme, setting this property might not change the appearance of the calendar. For example, if Windows is set to use the Aero theme, setting this property has no effect. This is because an updated version of the calendar is rendered with an appearance that is derived at run time from the current operating system theme. If you want to use this property and enable the earlier version of the calendar, you can disable visual styles for your application. Disabling visual styles might affect the appearance and behavior of other controls in your application. To disable visual styles in Visual Basic, open the Project Designer and uncheck the <ui>Enable XP visual styles</ui> check box. To disable visual styles in C#, open Program.cs and comment out Application.EnableVisualStyles();. For more information about visual styles, see <format type="text/html"><a href="0a038ade-31cf-4e56-9cfe-7a1e6b83b57f">How to: Enable Windows XP Visual Styles</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the calendar trailing dates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -305,9 +398,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used to obtain the state of the check box that is displayed if the <see cref="P:System.Windows.Forms.DateTimePicker.ShowCheckBox" /> property value is true. If the <see cref="P:System.Windows.Forms.DateTimePicker.Checked" /> property value is true, the <see cref="T:System.Windows.Forms.DateTimePicker" /> control displays the properly formatted <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property value; otherwise, the control displays the last valid date/time value assigned to the <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property or the current date and time (<see cref="P:System.DateTime.Now" />) if no value has ever been assigned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property has been set with a valid date/time value and the displayed value is able to be updated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -332,8 +431,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseUp">
@@ -343,8 +448,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the drop-down calendar is dismissed and disappears.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -359,9 +470,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.DateTimePicker.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
+          <block subset="none" type="note">
+            <para>To get or set the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property, you must add a reference to the Accessibility assembly installed with the .NET Framework.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new accessibility object for the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DateTimePicker.DateTimePickerAccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -376,8 +499,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the physical window handle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -391,9 +517,12 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Windows.Forms.CreateParams" /> used to create this window.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -418,9 +547,200 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To display string literals that contain date and time separators or to format strings, you must use escape characters in the substring. For example, to display the date as "June 15 at 12:00 PM", set the <see cref="P:System.Windows.Forms.DateTimePicker.CustomFormat" /> property to "MMMM dd 'at' t:mm tt". If the "at" substring is not enclosed by escape characters, the result is "June 15 aP 12:00PM" because the "t" character is read as the one-letter A.M./P.M. format string (see the format string table below).</para>
+          <para>The format strings can be combined to format the date and time. For example, to display the date and time as 06/15/2001 12:00 PM, this property should be set to "MM'/'dd'/'yyyy hh':'mm tt". For more information, see <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom Date and Time Format Strings</a></format>.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property must be set to <see cref="F:System.Windows.Forms.DateTimePickerFormat.Custom" /> for this property to affect the formatting of the displayed date and time.</para>
+          </block>
+          <para>The following table lists all the valid format strings and their descriptions.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Format string </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>d </para>
+              </term>
+              <description>
+                <para>The one- or two-digit day. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>dd </para>
+              </term>
+              <description>
+                <para>The two-digit day. Single-digit day values are preceded by a 0. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ddd </para>
+              </term>
+              <description>
+                <para>The three-character day-of-week abbreviation. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>dddd </para>
+              </term>
+              <description>
+                <para>The full day-of-week name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>h </para>
+              </term>
+              <description>
+                <para>The one- or two-digit hour in 12-hour format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hh </para>
+              </term>
+              <description>
+                <para>The two-digit hour in 12-hour format. Single digit values are preceded by a 0. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>H </para>
+              </term>
+              <description>
+                <para>The one- or two-digit hour in 24-hour format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>HH </para>
+              </term>
+              <description>
+                <para>The two-digit hour in 24-hour format. Single digit values are preceded by a 0. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>m </para>
+              </term>
+              <description>
+                <para>The one- or two-digit minute. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>mm </para>
+              </term>
+              <description>
+                <para>The two-digit minute. Single digit values are preceded by a 0. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>M </para>
+              </term>
+              <description>
+                <para>The one- or two-digit month number. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MM </para>
+              </term>
+              <description>
+                <para>The two-digit month number. Single digit values are preceded by a 0. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MMM </para>
+              </term>
+              <description>
+                <para>The three-character month abbreviation. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MMMM </para>
+              </term>
+              <description>
+                <para>The full month name. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>s </para>
+              </term>
+              <description>
+                <para>The one- or two-digit seconds. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ss </para>
+              </term>
+              <description>
+                <para>The two-digit seconds. Single digit values are preceded by a 0. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>t </para>
+              </term>
+              <description>
+                <para>The one-letter A.M./P.M. abbreviation (A.M. is displayed as "A"). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>tt </para>
+              </term>
+              <description>
+                <para>The two-letter A.M./P.M. abbreviation (A.M. is displayed as "AM"). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>y </para>
+              </term>
+              <description>
+                <para>The one-digit year (2001 is displayed as "1"). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>yy </para>
+              </term>
+              <description>
+                <para>The last two digits of the year (2001 is displayed as "01"). </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>yyyy </para>
+              </term>
+              <description>
+                <para>The full year (2001 is displayed as "2001"). </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom date/time format string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -434,8 +754,11 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default month background color of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -465,8 +788,11 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default title back color of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -480,8 +806,11 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default title foreground color of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -495,8 +824,11 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default trailing foreground color of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -511,8 +843,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Destroys the physical window handle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -552,9 +887,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DateTimePicker.DoubleBuffered" /> property has no effect on the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control should redraw its surface using a secondary buffer. Setting this property has no effect on the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DoubleClick">
@@ -575,8 +916,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is double-clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DropDown">
@@ -586,8 +933,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the drop-down calendar is shown.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -609,9 +962,15 @@
         <ReturnType>System.Windows.Forms.LeftRightAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drop-down calendar can be aligned to the left or right of the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alignment of the drop-down calendar on the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -633,9 +992,16 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DateTimePicker.ForeColor" /> property has no effect on the appearance of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+          <para>To set the foreground color for the drop-down calendar of the <see cref="T:System.Windows.Forms.DateTimePicker" />, see the <see cref="P:System.Windows.Forms.DateTimePicker.CalendarForeColor" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -657,8 +1023,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised if the <see cref="P:System.Windows.Forms.DateTimePicker.ForeColor" /> property is changed either by a programmatic modification or through interaction.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DateTimePicker.ForeColor" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -677,9 +1050,19 @@
         <ReturnType>System.Windows.Forms.DateTimePickerFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property determines the date/time format the date is displayed in. The date/time format is based on the user's regional settings in their operating system.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property must be set to <see cref="F:System.Windows.Forms.DateTimePickerFormat.Custom" /> for the <see cref="P:System.Windows.Forms.DateTimePicker.CustomFormat" /> property to affect the formatting of the displayed date and time.</para>
+          </block>
+          <para>To display only time in a <see cref="T:System.Windows.Forms.DateTimePicker" />, set the <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> to <see cref="F:System.Windows.Forms.DateTimePickerFormat.Time" />, and the <see cref="P:System.Windows.Forms.DateTimePicker.ShowUpDown" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the format of the date and time displayed in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -693,8 +1076,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property value has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -711,10 +1100,20 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method during window-message preprocessing to determine whether the specified key is a regular input key that should be sent directly to the control or a special key (such as PAGE UP and PAGE DOWN) that should preprocessed. In the latter case, send the key to the control only if it is not consumed by the preprocessing phase.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is a regular input key or a special key that requires preprocessing.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is a regular input key; otherwise, false.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -728,9 +1127,12 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum date and time that can be selected in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -745,8 +1147,14 @@
       </ReturnValue>
       <MemberValue>12/31/9998 12:00:00 AM</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum date is set to 12/31/9998 23:59:59.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the maximum date value of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -771,9 +1179,15 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum date is set to December 31, 9998.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum date value allowed for the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinDate">
@@ -783,9 +1197,12 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum date and time that can be selected in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -800,8 +1217,14 @@
       </ReturnValue>
       <MemberValue>1/1/1753 12:00:00 AM</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum date is set to 1/1/1753 00:00:00.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minimum date value of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -826,9 +1249,15 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum date is set to January 1, 1753.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minimum date value allowed for the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseClick">
@@ -849,8 +1278,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is clicked with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseDoubleClick">
@@ -871,8 +1306,14 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is double-clicked with the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnCloseUp">
@@ -885,9 +1326,18 @@
         <Parameter Name="eventargs" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="eventargs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.DateTimePicker.CloseUp" /> event occurs when the drop-down calendar is dismissed and disappears.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnCloseUp(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DateTimePicker.CloseUp" /> event.</para>
+        </summary>
+        <param name="eventargs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -904,9 +1354,18 @@
         <Parameter Name="eventargs" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="eventargs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.DateTimePicker.DropDown" /> event occurs when the drop-down calendar is shown.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnDropDown(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DateTimePicker.DropDown" /> event.</para>
+        </summary>
+        <param name="eventargs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -923,9 +1382,21 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnFontChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DateTimePicker" /> control automatically recalculates its height to fit the new font.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -942,9 +1413,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.DateTimePicker.FormatChanged" /> event occurs when the <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property value has changed.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnFormatChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DateTimePicker.FormatChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -964,9 +1444,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnHandleCreated(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleCreated" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnHandleDestroyed">
@@ -982,9 +1470,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnHandleDestroyed(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleDestroyed" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnRightToLeftLayoutChanged">
@@ -1005,9 +1501,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnRightToLeftLayoutChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="P:System.Windows.Forms.DateTimePicker.RightToLeftLayout" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnSystemColorsChanged">
@@ -1020,9 +1524,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="M:System.Windows.Forms.Control.OnSystemColorsChanged(System.EventArgs)" /> method.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1039,9 +1547,18 @@
         <Parameter Name="eventargs" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="eventargs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.DateTimePicker.ValueChanged" /> event occurs when the value for the control changes.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.DateTimePicker.OnValueChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.DateTimePicker.ValueChanged" /> event.</para>
+        </summary>
+        <param name="eventargs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1069,9 +1586,15 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.DateTimePicker.Padding" /> property has no effect on the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the spacing between the contents of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control and its edges.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingChanged">
@@ -1092,8 +1615,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DateTimePicker.Padding" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -1111,8 +1640,11 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is redrawn.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1134,9 +1666,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The preferred height is the minimum height needed to accommodate the displayed text with the assigned <see cref="T:System.Drawing.Font" /> applied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the preferred height of the <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1161,9 +1699,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DateTimePicker.RightToLeftLayout" /> property is used for international applications where the language is written from right to left, such as Hebrew or Arabic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the contents of the <see cref="T:System.Windows.Forms.DateTimePicker" /> are laid out from right to left.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftLayoutChanged">
@@ -1176,8 +1720,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DateTimePicker.RightToLeftLayout" /> property changes. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetBoundsCore">
@@ -1218,9 +1768,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DateTimePicker.ShowCheckBox" /> property is set to true, a check box is displayed to the left of the date in the control. When the check box is selected, the date/time value can be updated. When the check box is cleared, the date/time value is unable to be changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a check box is displayed to the left of the selected date.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1239,9 +1795,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DateTimePicker.ShowUpDown" /> property is set to true, a spin button control (also known as an up-down control), rather than a drop-down calendar, is used to adjust time values. The date and time can be adjusted by selecting each element individually and using the up and down buttons to change the value.</para>
+          <para>To display only time in a <see cref="T:System.Windows.Forms.DateTimePicker" />, set the <see cref="P:System.Windows.Forms.DateTimePicker.Format" /> property to <see cref="F:System.Windows.Forms.DateTimePickerFormat.Time" />, and the <see cref="P:System.Windows.Forms.DateTimePicker.ShowUpDown" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a spin button control (also known as an up-down control) is used to adjust the date/time value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1266,9 +1829,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string returned by this property is equivalent to the <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property with the appropriate formatting or custom formatting applied. For example, if the <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property is set to 06/01/2001 12:00:00 AM while the <see cref="P:System.Windows.Forms.DateTimePicker.CustomFormat" /> property is set to "dddd, MMMM dd, yyyy", the <see cref="P:System.Windows.Forms.DateTimePicker.Text" /> property value is "Friday, June 01, 2001".</para>
+          <para>When setting this property, the string must be convertible to an instance of the <see cref="T:System.DateTime" /> class. It is possible to define a custom format that results in a string that cannot be converted to a valid <see cref="T:System.DateTime" /> value. Because of this, the string returned from the <see cref="P:System.Windows.Forms.DateTimePicker.Text" /> property might cause an error if it is passed back to the <see cref="P:System.Windows.Forms.DateTimePicker.Text" /> property. If the string cannot be converted to a date/time value, the <see cref="T:System.DateTime" /> class throws a <see cref="T:System.FormatException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text associated with this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1290,8 +1860,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.DateTimePicker.Text" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1306,9 +1879,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Windows.Forms.DateTimePicker" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.DateTimePicker" />. The string includes the type and the <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property of the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1330,9 +1909,15 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property has not been changed in code or by the user, it is set to the current date and time (<see cref="P:System.DateTime.Now" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the date/time value assigned to the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1346,8 +1931,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>User input is validated before this event is raised. This event is not raised when the entered date is earlier than <see cref="F:System.Windows.Forms.DateTimePicker.MinDateTime" /> or later than <see cref="F:System.Windows.Forms.DateTimePicker.MaxDateTime" />.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.DateTimePicker.Value" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

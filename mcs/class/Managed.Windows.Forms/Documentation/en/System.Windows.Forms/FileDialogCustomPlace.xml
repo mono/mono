@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileDialogCustomPlace" FullName="System.Windows.Forms.FileDialogCustomPlace">
   <TypeSignature Language="C#" Value="public class FileDialogCustomPlace" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The default open and save dialog boxes on wiprlhext have an area on the left side of the dialog box titled <ui>Favorite Links</ui>. This area is called custom places. This class represents a custom place.</para>
+      <para>On winxp or winxpsvr, this class does not have any effect.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an entry in a <see cref="T:System.Windows.Forms.FileDialog" /> custom place collection for wiprlhext.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +31,16 @@
         <Parameter Name="knownFolderGuid" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="knownFolderGuid">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of the available wiprlhext Known Folders, see <format type="text/html"><a href="d8d8b544-8b4d-4da5-ba3a-b05e93244778">Known Folder Guids for File Dialog Custom Places</a></format> or the KnownFolders.h file in the winSDK.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.FileDialogCustomPlace" /> class with a custom place identified by a wiprlhext Known Folder GUID.</para>
+        </summary>
+        <param name="knownFolderGuid">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Guid" /> that represents a wiprlhext Known Folder. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +53,13 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.FileDialogCustomPlace" /> class. with a specified folder path to a custom place.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />A folder path to the custom place.</param>
       </Docs>
     </Member>
     <Member MemberName="KnownFolderGuid">
@@ -53,9 +72,12 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the wiprlhext Known Folder GUID for the custom place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Path">
@@ -68,9 +90,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the folder path to the custom place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -84,9 +109,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents this <see cref="T:System.Windows.Forms.FileDialogCustomPlace" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Windows.Forms.FileDialogCustomPlace" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

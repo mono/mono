@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XPathNodeIterator" FullName="System.Xml.XPath.XPathNodeIterator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XPathNodeIterator : ICloneable, System.Collections.IEnumerable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XPathNodeIterator extends System.Object implements class System.Collections.IEnumerable, class System.ICloneable" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>All dynamic members are not designed to be thread safe.</ThreadSafetyStatement>
   <Base>
@@ -19,158 +22,243 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>Iterates through a set of XPathNavigators.</summary>
-    <remarks>XPath allows the application to execute the query by walking through the canidate nodes. As you advance the iterator, the engine evaluates successive nodes, until it reaches one that satisfies the query. At this point, control returns to the application.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object returned by the <see cref="T:System.Xml.XPath.XPathNavigator" /> class is not positioned on the first node in a selected set of nodes. A call to the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method of the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> class must be made to position the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object on the first node in the selected set of nodes.</para>
+      <para>When using the <see cref="T:System.Xml.XPath.XPathNodeIterator" />, if you edit the current node or any of its ancestors, your current position is lost. If you want to edit a number of nodes that you have selected, create a <see cref="T:System.Xml.XPath.XPathNavigator" /> array, copy all of the nodes from the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> into the array, then iterate through the array and modify the nodes.</para>
+      <para>There are two ways to iterate over an <see cref="T:System.Xml.XPath.XPathNavigator" /> collection by using the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> class.</para>
+      <para>One way is to use the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method and then call <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> to get the current <see cref="T:System.Xml.XPath.XPathNavigator" /> instance, as in the following example:</para>
+      <para>code reference: XPathNavigatorMethods#55</para>
+      <para>Another way is to use a foreach loop to call the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method and use the returned <see cref="T:System.Collections.IEnumerator" /> interface to enumerate the nodes, as in the following example:</para>
+      <para>code reference: XPathNavigatorMethods#56</para>
+      <para>You should either use <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> and <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> or use <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" />. Combining these two approaches can cause unexpected results. For example, if the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method is called first, and then the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method is called in the foreach loop, the foreach loop will not start enumerating the results from the beginning of the collection, but from the position after the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an iterator over a selected set of nodes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected XPathNodeIterator ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>The constructor.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by derived class constructors to initialize state in this type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public abstract System.Xml.XPath.XPathNodeIterator Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XPath.XPathNodeIterator Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XPathNodeIterator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Clones this iterator.</summary>
-        <returns>Returns a new XPathNodeIterator copy of this instance.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object is positioned at the same node in the node set if calls have been made to the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method. The cloned <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object is not affected by subsequent changes to this <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a clone of this <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object clone of this <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public virtual int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns the total cound of this node iterator.</summary>
         <value>An integer value that represents the total count of the nodes.</value>
         <remarks>
-		Since this class does not hold all the nodes but just holds current node information and the way to get following nodes in this iterator, to count the total number of the nodes it have to clone itself and count all the nodes up in the clone. Thus, reference to this property might lead to heavy performance loss.
-		</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.XPath.XPathNodeIterator.Count" /> property does not affect the position of the <see cref="T:System.Xml.XPath.XPathNodeIterator" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the last node in the selected set of nodes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Current">
       <MemberSignature Language="C#" Value="public abstract System.Xml.XPath.XPathNavigator Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XPath.XPathNavigator Current" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Represents the current node in shape of <see cref="T:System.Xml.XPath.XPathNavigator" /></summary>
         <value>An <see cref="T:System.Xml.XPath.XPathNavigator" /> instance that represents the current node.</value>
         <remarks>
-          <para>
-		This XPathNavigator is safe to move until the next time <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> was called.
-		</para>
-          <para>
-		To use this property, <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> must be called in prior. This property might return inconsistent value before the first call to that method. The behavior depends on each derived class of this class.
-		</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the properties of the returned <see cref="T:System.Xml.XPath.XPathNavigator" /> object to obtain information on the current node. However, the returned <see cref="T:System.Xml.XPath.XPathNavigator" /> object should not be modified. The returned <see cref="T:System.Xml.XPath.XPathNavigator" /> object cannot be moved away from the selected node set.</para>
+          <para>Alternatively, you can clone the <see cref="T:System.Xml.XPath.XPathNavigator" /> object using the <see cref="M:System.Xml.XPath.XPathNavigator.Clone" /> method of the <see cref="T:System.Xml.XPath.XPathNavigator" /> class. The cloned <see cref="T:System.Xml.XPath.XPathNavigator" /> object can then be moved away from the selected node set. This method of cloning the <see cref="T:System.Xml.XPath.XPathNavigator" /> object might affect the performance of the XPath query.</para>
+          <para>If the <see cref="Overload:System.Xml.XPath.XPathNavigator.SelectAncestors" />, <see cref="Overload:System.Xml.XPath.XPathNavigator.SelectDescendants" />, and <see cref="Overload:System.Xml.XPath.XPathNavigator.SelectChildren" /> methods result in no nodes being selected, the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> property might not be pointing to the context node.</para>
+          <para>To test whether nodes have been selected, use the <see cref="P:System.Xml.XPath.XPathNodeIterator.Count" /> property as shown in the following example.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the <see cref="T:System.Xml.XPath.XPathNavigator" /> object for this <see cref="T:System.Xml.XPath.XPathNodeIterator" />, positioned on the current context node.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CurrentPosition">
       <MemberSignature Language="C#" Value="public abstract int CurrentPosition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CurrentPosition" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Represents the position in the current iterator.</summary>
         <value>an integer value that represents the position.</value>
         <remarks>
-          <para>This property is typically used to evaluate equality in XPath predicate evaluation.
-		</para>
-          <para>Note: This property never means the position in the tree, but just means the position in this node iterator.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index is 1-based. Therefore, the first node has an index of 1. An index of 0 indicates there are no selected nodes. This property always returns a positive integer.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the index of the current position in the selected set of nodes.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public virtual System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerator is positioned on the current position of the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object.</para>
+          <para>There are two ways to iterate over an <see cref="T:System.Xml.XPath.XPathNavigator" /> collection by using the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> class.</para>
+          <para>One way is to use the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method and then call <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> to get the current <see cref="T:System.Xml.XPath.XPathNavigator" /> instance, as in the following example:</para>
+          <para>code reference: XPathNavigatorMethods#55</para>
+          <para>Another way is to use a foreach loop to call the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method and use the returned <see cref="T:System.Collections.IEnumerator" /> interface to enumerate the nodes, as in the following example:</para>
+          <para>code reference: XPathNavigatorMethods#56</para>
+          <para>You should either use the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method and <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> or use the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method. Combining these two approaches can cause unexpected results. For example, if the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method is called first, and then the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method is called in the foreach loop, the foreach loop will not start enumerating the results from the beginning of the collection, but from the position after the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> object to iterate through the selected node set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object to iterate through the selected node set.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveNext">
       <MemberSignature Language="C#" Value="public abstract bool MoveNext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MoveNext() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Moves to the next node.</summary>
-        <returns>True if it could iterate to the next node; False if it didn't have more nodes to be iterated.</returns>
         <remarks>
-          <para>
-		To start iteration, first this method must be called to get current node represented by <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> property.
-		</para>
-          <para>Unlike XPathNavigator, this class does not have such methods like MovePrevious or something. XPathNodeIterator is not designed to hold all the nodes in the class itself and thus this class saves heavy memory usage.
-		</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object is positioned on the first node in the selected node set only after the initial call to the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method. The node set is created in document order. Therefore, calling the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method moves to the next node in document order.</para>
+          <para>There are two ways to iterate over an <see cref="T:System.Xml.XPath.XPathNavigator" /> collection by using the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> class.</para>
+          <para>One way is to use the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method and then call <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> to get the current <see cref="T:System.Xml.XPath.XPathNavigator" /> instance, as in the following example:</para>
+          <para>code reference: XPathNavigatorMethods#55</para>
+          <para>Another way is to use a foreach loop to call the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method and use the returned <see cref="T:System.Collections.IEnumerator" /> interface to enumerate the nodes, as in the following example:</para>
+          <para>code reference: XPathNavigatorMethods#56</para>
+          <para>You should either use the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method and <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> or use the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method. Combining these two approaches can cause unexpected results. For example, if the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method is called first, and then the <see cref="M:System.Xml.XPath.XPathNodeIterator.GetEnumerator" /> method is called in the foreach loop, the foreach loop will not start enumerating the results from the beginning of the collection, but from the position after the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> method.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> object returned by the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> property to the next node in the selected node set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> object moved to the next node; false if there are no more selected nodes.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
       <MemberSignature Language="C#" Value="object ICloneable.Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.ICloneable.Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new object that is a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is a copy of this instance.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

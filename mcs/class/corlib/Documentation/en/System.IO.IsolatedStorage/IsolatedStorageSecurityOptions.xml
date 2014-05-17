@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsolatedStorageSecurityOptions" FullName="System.IO.IsolatedStorage.IsolatedStorageSecurityOptions">
   <TypeSignature Language="C#" Value="public enum IsolatedStorageSecurityOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed IsolatedStorageSecurityOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,12 +10,20 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.IO.IsolatedStorage.IsolatedStorageSecurityState.Options" /> property gets this enumeration to determine which operations can be performed in isolated storage.</para>
+      <para>A host application can override the <see cref="M:System.AppDomainManager.CheckSecuritySettings(System.Security.SecurityState)" /> method to perform policy decisions based on a <see cref="T:System.IO.IsolatedStorage.IsolatedStorageSecurityState" /> object, and then allow or prevent the increase in the quota size for isolated storage. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies options that affect security in isolated storage.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IncreaseQuotaForApplication">
       <MemberSignature Language="C#" Value="IncreaseQuotaForApplication" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.IsolatedStorage.IsolatedStorageSecurityOptions IncreaseQuotaForApplication = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -22,7 +32,10 @@
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageSecurityOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The quota can be increased for isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

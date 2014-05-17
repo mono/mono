@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CommonAce" FullName="System.Security.AccessControl.CommonAce">
   <TypeSignature Language="C#" Value="public sealed class CommonAce : System.Security.AccessControl.QualifiedAce" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CommonAce extends System.Security.AccessControl.QualifiedAce" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,14 +12,37 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.AccessControl.CommonAce" /> class represents the eight most common ACE types:</para>
+      <para>
+        <dynamicLink>
+          <keyword>F:System.Security.AccessControl.AceType.AccessAllowed</keyword>
+          <keyword>F:System.Security.AccessControl.AceType.AccessAllowedCallback</keyword>
+          <keyword>F:System.Security.AccessControl.AceType.AccessDenied</keyword>
+          <keyword>F:System.Security.AccessControl.AceType.AccessDeniedCallback</keyword>
+          <keyword>F:System.Security.AccessControl.AceType.SystemAudit</keyword>
+          <keyword>F:System.Security.AccessControl.AceType. SystemAuditCallback</keyword>
+          <keyword>F:System.Security.AccessControl.AceType.SystemAlarm</keyword>
+          <keyword>F:System.Security.AccessControl.AceType. SystemAlarmCallback</keyword>
+        </dynamicLink>
+      </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an access control entry (ACE).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CommonAce (System.Security.AccessControl.AceFlags flags, System.Security.AccessControl.AceQualifier qualifier, int accessMask, System.Security.Principal.SecurityIdentifier sid, bool isCallback, byte[] opaque);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.AccessControl.AceFlags flags, valuetype System.Security.AccessControl.AceQualifier qualifier, int32 accessMask, class System.Security.Principal.SecurityIdentifier sid, bool isCallback, unsigned int8[] opaque) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="flags" Type="System.Security.AccessControl.AceFlags" />
         <Parameter Name="qualifier" Type="System.Security.AccessControl.AceQualifier" />
@@ -27,41 +52,55 @@
         <Parameter Name="opaque" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="qualifier">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="isCallback">To be added.</param>
-        <param name="opaque">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.CommonAce" /> class.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify information about the inheritance, inheritance propagation, and auditing conditions for the new access control entry (ACE).</param>
+        <param name="qualifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />The use of the new ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask for the ACE.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> associated with the new ACE.</param>
+        <param name="isCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the new ACE is a callback type ACE.</param>
+        <param name="opaque">
+          <attribution license="cc4" from="Microsoft" modified="false" />Opaque data associated with the new ACE. Opaque data is allowed only for callback ACE types. The length of this array must not be greater than the return value of the <see cref="M:System.Security.AccessControl.CommonAce.MaxOpaqueLength(System.Boolean)" /> method.</param>
       </Docs>
+    </Member>
+    <Member MemberName="BinaryLength">
+      <MemberSignature Language="C#" Value="public override int BinaryLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BinaryLength" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BinaryLength">
-      <MemberSignature Language="C#" Value="public override int BinaryLength { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length, in bytes, of the binary representation of the current <see cref="T:System.Security.AccessControl.CommonAce" /> object. Use this length with the <see cref="M:System.Security.AccessControl.CommonAce.GetBinaryForm(System.Byte[],System.Int32)" /> method before marshaling the ACL into a binary array.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetBinaryForm">
+      <MemberSignature Language="C#" Value="public override void GetBinaryForm (byte[] binaryForm, int offset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetBinaryForm(unsigned int8[] binaryForm, int32 offset) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBinaryForm">
-      <MemberSignature Language="C#" Value="public override void GetBinaryForm (byte[] binaryForm, int offset);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -70,20 +109,26 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="binaryForm">To be added.</param>
-        <param name="offset">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marshals the contents of the <see cref="T:System.Security.AccessControl.CommonAce" /> object into the specified byte array beginning at the specified offset.</para>
+        </summary>
+        <param name="binaryForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array into which the contents of the <see cref="T:System.Security.AccessControl.CommonAce" /> object is marshaled.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset at which to start marshaling.</param>
       </Docs>
+    </Member>
+    <Member MemberName="MaxOpaqueLength">
+      <MemberSignature Language="C#" Value="public static int MaxOpaqueLength (bool isCallback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 MaxOpaqueLength(bool isCallback) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxOpaqueLength">
-      <MemberSignature Language="C#" Value="public static int MaxOpaqueLength (bool isCallback);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -91,16 +136,19 @@
         <Parameter Name="isCallback" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isCallback">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum allowed length of an opaque data BLOB for callback access control entries (ACEs).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allowed length of an opaque data BLOB.</para>
+        </returns>
+        <param name="isCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the <see cref="T:System.Security.AccessControl.CommonAce" /> object is a callback ACE type.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataGridEditingService" FullName="System.Windows.Forms.IDataGridEditingService">
   <TypeSignature Language="C#" Value="public interface IDataGridEditingService" />
   <AssemblyInfo>
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents methods that process editing requests.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BeginEdit">
@@ -22,11 +26,19 @@
         <Parameter Name="rowNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="gridColumn">To be added.</param>
-        <param name="rowNumber">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an edit operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation can be performed; otherwise false.</para>
+        </returns>
+        <param name="gridColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> to edit. </param>
+        <param name="rowNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row to edit </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,12 +57,24 @@
         <Parameter Name="shouldAbort" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="gridColumn">To be added.</param>
-        <param name="rowNumber">To be added.</param>
-        <param name="shouldAbort">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value cannot be committed, the <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> remains editable. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the edit operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if value is commited; otherwise false.</para>
+        </returns>
+        <param name="gridColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> to edit. </param>
+        <param name="rowNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row to edit </param>
+        <param name="shouldAbort">
+          <attribution license="cc4" from="Microsoft" modified="false" />True if an abort operation is requested </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

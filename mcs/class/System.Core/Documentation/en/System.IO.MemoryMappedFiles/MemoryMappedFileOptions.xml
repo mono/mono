@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MemoryMappedFileOptions" FullName="System.IO.MemoryMappedFiles.MemoryMappedFileOptions">
+  <TypeSignature Language="C#" Value="public enum MemoryMappedFileOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MemoryMappedFileOptions extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides memory allocation options for memory-mapped files.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="DelayAllocatePages">
+      <MemberSignature Language="C#" Value="DelayAllocatePages" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileOptions DelayAllocatePages = int32(67108864)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Memory allocation is delayed until a view is created with either the <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateViewAccessor" /> or <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateViewStream" /> method.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.MemoryMappedFiles.MemoryMappedFileOptions None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No memory allocation options are applied.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

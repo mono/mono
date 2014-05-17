@@ -1,31 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsContext" FullName="System.Configuration.SettingsContext">
   <TypeSignature Language="C#" Value="public class SettingsContext : System.Collections.Hashtable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit SettingsContext extends System.Collections.Hashtable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Collections.Hashtable</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Configuration.SettingsContext" /> class is the base class used by applications to provide contextual information to the settings provider. Although the class is not abstract, an application can choose to create a specialized class that inherits from <see cref="T:System.Configuration.SettingsContext" /> class and provides additional information to specific types of providers. The provider can then examine contextual settings when writing properties.</para>
+      <para>The primary purpose of the <see cref="T:System.Configuration.SettingsContext" /> class is to provide features that use the <see cref="T:System.Configuration.SettingsBase" /> class and related infrastructure. The <see cref="T:System.Configuration.SettingsContext" /> class provides additional feature-specific contextual information about the property data being stored by the <see cref="T:System.Configuration.SettingsBase" /> instance. Therefore, it is very simple to store additional information in a <see cref="T:System.Configuration.SettingsContext" /> class without deriving from it (or from other Settings* classes) in order to support additional feature-specific context information. </para>
+      <para>For example, ASP.NET uses the <see cref="T:System.Configuration.SettingsContext" /> class to pass along the username associated with the data managed by a <see cref="T:System.Configuration.SettingsBase" /> instance, as well as a property indicating whether the user is considered authenticated. In this way, ASP.NET uses the <see cref="T:System.Configuration.SettingsContext" /> class to identify authenticated versus anonymous Profile data.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides contextual information that the provider can use when persisting settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SettingsContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SettingsContext" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

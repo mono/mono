@@ -29,6 +29,7 @@
 //
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Globalization
 {
@@ -39,24 +40,24 @@ namespace System.Globalization
 	{
 		static RegionInfo currentRegion;
 
-		// This property is not synchronized with CurrentCulture, so
-		// we need to use bootstrap CurrentCulture LCID.
 		public static RegionInfo CurrentRegion {
 			get {
-				if (currentRegion == null) {
-					// make sure to fill BootstrapCultureID.
+				var region = currentRegion;
+				if (region == null) {
 					CultureInfo ci = CultureInfo.CurrentCulture;
-					// If current culture is invariant then region is not available.
-					if (ci != null && CultureInfo.BootstrapCultureID != 0x7F)
-						currentRegion = new RegionInfo (CultureInfo.BootstrapCultureID);
-					else
+					if (ci != null) {
+						region = new RegionInfo (ci);
+					} else {
 #if MONOTOUCH
-						currentRegion = CreateFromNSLocale ();
-#else
-						currentRegion = null;
+						region = CreateFromNSLocale ();
 #endif
+					}
+
+					if (Interlocked.CompareExchange (ref currentRegion, region, null) != null)
+						region = currentRegion;
 				}
-				return currentRegion;
+
+				return region;
 			}
 		}
 		
@@ -92,6 +93,26 @@ namespace System.Globalization
 			}
 			if (!GetByTerritory (CultureInfo.GetCultureInfo (name)))
 				throw new ArgumentException (String.Format ("Region name {0} is not supported.", name), "name");
+		}
+
+		RegionInfo (CultureInfo ci)
+		{
+			if (ci.LCID == CultureInfo.InvariantCultureId) {
+				regionId = 244;
+				iso2Name = "IV";
+				iso3Name = "ivc";
+				win3Name = "IVC";
+				nativeName = englishName = "Invariant Country";
+				currencySymbol = "\u00A4";
+				isoCurrencySymbol ="XDR";
+				currencyEnglishName = currencyNativeName = "International Monetary Fund";
+				return;
+			}
+
+			if (ci.Territory == null)
+				throw new NotImplementedException ("Neutral region info");
+
+			construct_internal_region_from_name (ci.Territory.ToUpperInvariant ());
 		}
 
 		bool GetByTerritory (CultureInfo ci)
@@ -186,6 +207,11 @@ namespace System.Globalization
 		public override string ToString ()
 		{
 			return Name;
+		}
+
+		internal static void ClearCachedData ()
+		{
+			currentRegion = null;
 		}
 	}
 }

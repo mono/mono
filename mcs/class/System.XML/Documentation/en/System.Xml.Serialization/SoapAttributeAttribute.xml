@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapAttributeAttribute" FullName="System.Xml.Serialization.SoapAttributeAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapAttributeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SoapAttributeAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -13,95 +16,561 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue | System.AttributeTargets.All)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> class belongs to a family of attributes that controls how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes, or deserializes, an object as encoded SOAP XML. The resulting XML conforms to section 5 of the World Wide Web Consortium (www.w3.org) document, "Simple Object Access Protocol (SOAP) 1.1". For a complete list of similar attributes, see <format type="text/html"><a href="93ee258c-9c0f-4a08-897c-c10db7a00f91">Attributes That Control Encoded SOAP Serialization</a></format>.</para>
+      <para>To serialize an object as an encoded SOAP message, you must construct the <see cref="T:System.Xml.Serialization.XmlSerializer" /> using an <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> created with the <see cref="M:System.Xml.Serialization.SoapReflectionImporter.ImportTypeMapping(System.Type)" /> method of the <see cref="T:System.Xml.Serialization.SoapReflectionImporter" /> class.</para>
+      <para>Apply the <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> to a public field to specify that the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes the field as an XML attribute. You can specify an alternative name of the attribute by setting the <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.AttributeName" /> property. Set the <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.DataType" /> if the attribute must be given a specific XML Schema definition language (XSD) data type. If the attribute belongs to a specific XML namespace, set the <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.Namespace" /> property.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format></para>
+      <block subset="none" type="note">
+        <para>You can use the word SoapAttribute in your code instead of the longer <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that the <see cref="T:System.Xml.Serialization.XmlSerializer" /> must serialize the class member as an encoded SOAP attribute.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoapAttributeAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> when you override the serialization of a class member. Create the <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" />, set its properties, and set the object to the <see cref="P:System.Xml.Serialization.SoapAttributes.SoapAttribute" /> property of a <see cref="T:System.Xml.Serialization.SoapAttributes" /> object. For more details, see the <see cref="T:System.Xml.Serialization.SoapAttributeOverrides" /> class overview.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SoapAttributeAttribute (string attrName);" />
+      <MemberSignature Language="C#" Value="public SoapAttributeAttribute (string attributeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string attributeName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
-        <Parameter Name="attrName" Type="System.String" />
+        <Parameter Name="attributeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="attrName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> class using the specified value as the name of the XML attribute.</para>
+        </summary>
+        <param name="attributeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the XML attribute. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AttributeName">
-      <MemberSignature Language="C#" Value="public string AttributeName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string AttributeName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AttributeName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.AttributeName" /> property to specify an XML attribute name when the default value cannot be used. For example, if the XML attribute name is invalid as a member identifier, use a valid name for the identifier while setting the <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.AttributeName" /> to an invalid name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the XML attribute generated by the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DataType">
-      <MemberSignature Language="C#" Value="public string DataType { set; get; }" />
+      <MemberSignature Language="C#" Value="public string DataType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DataType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table lists the XML Schema simple data types with their.NET equivalents.</para>
+          <para>For the XML Schema base64Binary and hexBinary data types, use an array of <see cref="T:System.Byte" /> structures, and apply a <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> with the <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.DataType" /> set to "base64Binary" or "hexBinary", as appropriate. For the XML Schema time and date data types, use the <see cref="T:System.DateTime" /> type and apply the <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> with the <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.DataType" /> set to "date" or "time".</para>
+          <para>For every XML Schema data type that is mapped to a string, apply the <see cref="T:System.Xml.Serialization.SoapAttributeAttribute" /> with its <see cref="P:System.Xml.Serialization.SoapAttributeAttribute.DataType" /> property set to the XML Schema data type. Note that this does not change the serialization format, only the schema for the member.</para>
+          <block subset="none" type="note">
+            <para>The property is case-sensitive, so you must set it exactly to one of the XML Schema data types.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Passing binary data as an XML element is more efficient then passing it as an XML attribute.</para>
+          </block>
+          <para>For more information about XML Schema data types, see the World Wide Consortium (www.w3.org) document named "XML Schema Part 2: Datatypes".</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>XSD data type </para>
+                </term>
+                <description>
+                  <para>.NET data type </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>anyURI </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>base64Binary </para>
+              </term>
+              <description>
+                <para>Array of <see cref="T:System.Byte" /> objects </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>boolean </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Boolean" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>byte </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.SByte" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>date </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.DateTime" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>dateTime </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.DateTime" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>decimal </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Decimal" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>double </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Double" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ENTITY </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ENTITIES </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>float </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Single" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gDay </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gMonth </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gMonthDay </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gYear </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>gYearMonth </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hexBinary </para>
+              </term>
+              <description>
+                <para>Array of <see cref="T:System.Byte" /> objects </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ID </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IDREF </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IDREFS </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>int </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int32" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>integer </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>language </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>long </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int64" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Name </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NCName </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>negativeInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NMTOKEN </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NMTOKENS </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>normalizedString </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>nonNegativeInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>nonPositiveInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NOTATION </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>positiveInteger </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>QName </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Xml.XmlQualifiedName" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>duration </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>string </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>short </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Int16" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>time </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.DateTime" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>token </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.String" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedByte </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.Byte" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedInt </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.UInt32" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedLong </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.UInt64" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>unsignedShort </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.UInt16" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML Schema definition language (XSD) data type of the SOAP attribute generated by the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Namespace">
-      <MemberSignature Language="C#" Value="public string Namespace { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Namespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Namespace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributeAttribute.Namespace" /> property conforms to the World Wide Web Consortium (www.w3.org) specification "Namespaces in XML".</para>
+          <para>To create namespaces that are associated with prefixes, you must create an <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> that contains the namespaces and prefixes used in the XML document. The namespace you set for each <see cref="T:System.Xml.Serialization.XmlAttributeAttribute" /> must match one of the namespaces in the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" />. When the <see cref="T:System.Xml.Serialization.XmlSerializer" /> generates the XML code, it correctly prefixes each attribute name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML namespace of the XML attribute.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

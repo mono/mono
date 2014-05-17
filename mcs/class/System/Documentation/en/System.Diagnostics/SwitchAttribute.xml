@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SwitchAttribute" FullName="System.Diagnostics.SwitchAttribute">
   <TypeSignature Language="C#" Value="public sealed class SwitchAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SwitchAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -10,36 +13,58 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Event)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Event | System.AttributeTargets.All)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.MonoLimitation("This attribute is not considered in trace support.")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Diagnostics.SwitchAttribute" /> attribute can be used on an assembly, class, constructor, method, property, or event.</para>
+      <para>The <see cref="T:System.Diagnostics.SwitchAttribute" /> attribute can be used by tools that inspect an assembly for configuration settings. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a switch used in an assembly, class, or member.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SwitchAttribute (string switchName, Type switchType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string switchName, class System.Type switchType) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="switchName" Type="System.String" />
         <Parameter Name="switchType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="switchName">To be added.</param>
-        <param name="switchType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="switchName" /> parameter should match the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property of the switch.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SwitchAttribute" /> class, specifying the name and the type of the switch. </para>
+        </summary>
+        <param name="switchName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The display name of the switch.</param>
+        <param name="switchType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the switch.</param>
       </Docs>
     </Member>
     <Member MemberName="GetAll">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.SwitchAttribute[] GetAll (System.Reflection.Assembly assembly);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.SwitchAttribute[] GetAll(class System.Reflection.Assembly assembly) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SwitchAttribute[]</ReturnType>
@@ -48,55 +73,83 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all switch attributes for the specified assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the switch attributes for the assembly.</para>
+        </returns>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to check for switch attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="SwitchDescription">
-      <MemberSignature Language="C#" Value="public string SwitchDescription { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SwitchDescription { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SwitchDescription" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.SwitchAttribute.SwitchDescription" /> property typically indicates the function of the switch. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the description of the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SwitchName">
-      <MemberSignature Language="C#" Value="public string SwitchName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SwitchName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SwitchName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.SwitchAttribute.SwitchName" /> property should match the <see cref="P:System.Diagnostics.Switch.DisplayName" /> property of the switch.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display name of the switch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SwitchType">
-      <MemberSignature Language="C#" Value="public Type SwitchType { set; get; }" />
+      <MemberSignature Language="C#" Value="public Type SwitchType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type SwitchType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the switch.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

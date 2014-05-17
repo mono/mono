@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComSourceInterfacesAttribute" FullName="System.Runtime.InteropServices.ComSourceInterfacesAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ComSourceInterfacesAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ComSourceInterfacesAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -14,76 +16,114 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple=false, Inherited=true)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class, Inherited=true)</AttributeName>
     </Attribute>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to classes.</para>
+      <para>You apply this attribute to a managed class to identify the event interfaces that the class exposes as COM connection points. An event interface contains methods that map to the event members of the class. The class event name and the interface method name must be the same. This attribute can accommodate up to four source interfaces for a class by passing the type of the source interface to the appropriate constructor, which take between one and four type arguments. For classes that want to expose more than four source interfaces, the string version of the constructor can be used. For additional information about exposing.NET events to COM clients, see <format type="text/html"><a href="7C9944B2-E951-4C3E-A0A1-59B2AE37D7FD">[&lt;topic://cpconraisingeventshandledbycomsink&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a list of interfaces that are exposed as COM event sources for the attributed class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (string sourceInterfaces);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string sourceInterfaces) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="sourceInterfaces" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceInterfaces">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to expose more than four event source interfaces to COM clients.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComSourceInterfacesAttribute" /> class with the name of the event source interface.</para>
+        </summary>
+        <param name="sourceInterfaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />A null-delimited list of fully qualified event source interface names. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type sourceInterface) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="sourceInterface" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="sourceInterface">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to expose a single event source interface to COM clients.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComSourceInterfacesAttribute" /> class with the type to use as a source interface.</para>
+        </summary>
+        <param name="sourceInterface">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the source interface. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type sourceInterface1, class System.Type sourceInterface2) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="sourceInterface1" Type="System.Type" />
         <Parameter Name="sourceInterface2" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="sourceInterface1">To be added: an object of type 'Type'</param>
-        <param name="sourceInterface2">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to expose two event source interfaces to COM clients.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComSourceInterfacesAttribute" /> class with the types to use as source interfaces.</para>
+        </summary>
+        <param name="sourceInterface1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the default source interface. </param>
+        <param name="sourceInterface2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of a source interface. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2, Type sourceInterface3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type sourceInterface1, class System.Type sourceInterface2, class System.Type sourceInterface3) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2, Type sourceInterface3);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="sourceInterface1" Type="System.Type" />
@@ -91,21 +131,31 @@
         <Parameter Name="sourceInterface3" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="sourceInterface1">To be added: an object of type 'Type'</param>
-        <param name="sourceInterface2">To be added: an object of type 'Type'</param>
-        <param name="sourceInterface3">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to expose three event source interfaces to COM clients.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the ComSourceInterfacesAttribute class with the types to use as source interfaces.</para>
+        </summary>
+        <param name="sourceInterface1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the default source interface. </param>
+        <param name="sourceInterface2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of a source interface. </param>
+        <param name="sourceInterface3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of a source interface. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2, Type sourceInterface3, Type sourceInterface4);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type sourceInterface1, class System.Type sourceInterface2, class System.Type sourceInterface3, class System.Type sourceInterface4) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ComSourceInterfacesAttribute (Type sourceInterface1, Type sourceInterface2, Type sourceInterface3, Type sourceInterface4);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="sourceInterface1" Type="System.Type" />
@@ -114,35 +164,47 @@
         <Parameter Name="sourceInterface4" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="sourceInterface1">To be added: an object of type 'Type'</param>
-        <param name="sourceInterface2">To be added: an object of type 'Type'</param>
-        <param name="sourceInterface3">To be added: an object of type 'Type'</param>
-        <param name="sourceInterface4">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to expose four event source interfaces to COM clients.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComSourceInterfacesAttribute" /> class with the types to use as source interfaces.</para>
+        </summary>
+        <param name="sourceInterface1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the default source interface. </param>
+        <param name="sourceInterface2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of a source interface. </param>
+        <param name="sourceInterface3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of a source interface. </param>
+        <param name="sourceInterface4">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of a source interface. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public string Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public string Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you specify more than one source interface, the value returned is a null-delimited list of fully qualified event source interface names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified name of the event source interface.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

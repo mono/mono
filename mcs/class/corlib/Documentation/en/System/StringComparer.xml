@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StringComparer" FullName="System.StringComparer">
   <TypeSignature Language="C#" Value="public abstract class StringComparer : System.Collections.Generic.IComparer&lt;string&gt;, System.Collections.Generic.IEqualityComparer&lt;string&gt;, System.Collections.IComparer, System.Collections.IEqualityComparer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit StringComparer extends System.Object implements class System.Collections.Generic.IComparer`1&lt;string&gt;, class System.Collections.Generic.IEqualityComparer`1&lt;string&gt;, class System.Collections.IComparer, class System.Collections.IEqualityComparer" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -28,28 +30,49 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An object derived from the <see cref="T:System.StringComparer" /> class embodies string-based comparison, equality, and hash code operations that take into account both case and culture-specific comparison rules. You can use the <see cref="T:System.StringComparer" /> class to create a type-specific comparison to sort the elements in a generic collection. Classes such as <see cref="T:System.Collections.Hashtable" />, <see cref="T:System.Collections.Generic.Dictionary`2" />, <see cref="T:System.Collections.SortedList" />, and <see cref="T:System.Collections.Generic.SortedList`2" /> use the <see cref="T:System.StringComparer" /> class for sorting purposes. </para>
+      <para>A comparison operation that is represented by the <see cref="T:System.StringComparer" /> class is defined to be either case-sensitive or case-insensitive, and use either word (culture-sensitive) or ordinal (culture-insensitive) comparison rules. For more information about word and ordinal comparison rules, see <see cref="T:System.Globalization.CompareOptions" />.</para>
+      <format type="text/html">
+        <h2>Implemented Properties</h2>
+      </format>
+      <para>You might be confused about how to use the <see cref="T:System.StringComparer" /> class properties because of a seeming contradiction. The <see cref="T:System.StringComparer" /> class is declared abstract (MustInherit in Visual Basic), which means its members can be invoked only on an object of a class derived from the <see cref="T:System.StringComparer" /> class. The contradiction is that each property of the <see cref="T:System.StringComparer" /> class is declared static (Shared in Visual Basic), which means the property can be invoked without first creating a derived class. </para>
+      <para>You can call a <see cref="T:System.StringComparer" /> property directly because each property actually returns an instance of an anonymous class that is derived from the <see cref="T:System.StringComparer" /> class. Consequently, the type of each property value is <see cref="T:System.StringComparer" />, which is the base class of the anonymous class, not the type of the anonymous class itself. Each <see cref="T:System.StringComparer" /> class property returns a <see cref="T:System.StringComparer" /> object that supports predefined case and comparison rules.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a string comparison operation that uses specific case and culture-based or ordinal comparison rules.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected StringComparer ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.StringComparer" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public int Compare (object x, object y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Compare(object x, object y) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -58,21 +81,78 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.StringComparer.Compare(System.String,System.String)" /> method is more efficient than the <see cref="M:System.StringComparer.Compare(System.Object,System.Object)" /> method because the <paramref name="x" /> and <paramref name="y" /> parameters do not have to be unboxed to perform the comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, compares two objects and returns an indication of their relative sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="x" /> and <paramref name="y" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is less than <paramref name="y" />. </para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="x" /> is null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is equal to <paramref name="y" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is greater than <paramref name="y" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="y" /> is null.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to <paramref name="y" />.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to <paramref name="x" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public abstract int Compare (string x, string y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Compare(string x, string y) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Compare">
-      <MemberSignature Language="C#" Value="public abstract int Compare (string x, string y);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -81,21 +161,78 @@
         <Parameter Name="y" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.StringComparer.Compare(System.String,System.String)" /> method is more efficient than the <see cref="M:System.StringComparer.Compare(System.Object,System.Object)" /> method because the <paramref name="x" /> and <paramref name="y" /> parameters do not have to be unboxed to perform the comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, compares two strings and returns an indication of their relative sort order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="x" /> and <paramref name="y" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is less than <paramref name="y" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="x" /> is null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is equal to <paramref name="y" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is greater than <paramref name="y" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="y" /> is null.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to compare to <paramref name="y" />.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to compare to <paramref name="x" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static StringComparer Create (System.Globalization.CultureInfo culture, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.StringComparer Create(class System.Globalization.CultureInfo culture, bool ignoreCase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static StringComparer Create (System.Globalization.CultureInfo culture, bool ignoreCase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.StringComparer</ReturnType>
       </ReturnValue>
@@ -104,55 +241,88 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="culture">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.StringComparer" /> object that compares strings according to the rules of a specified culture.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.StringComparer" /> object that performs string comparisons according to the comparison rules used by the <paramref name="culture" /> parameter and the case rule specified by the <paramref name="ignoreCase" /> parameter.</para>
+        </returns>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A culture whose linguistic rules are used to perform a string comparison.</param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that comparison operations be case-insensitive; false to specify that comparison operations be case-sensitive.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CurrentCulture">
       <MemberSignature Language="C#" Value="public static StringComparer CurrentCulture { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.StringComparer CurrentCulture" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.StringComparer" /> returned by the <see cref="P:System.StringComparer.CurrentCulture" /> property can be used when strings are linguistically relevant. For example, if strings are displayed to the user, or if strings are the result of user interaction, culture-sensitive string comparison should be used to order the string data.</para>
+          <para>The current culture is the <see cref="T:System.Globalization.CultureInfo" /> object associated with the current thread.</para>
+          <para>The <see cref="P:System.StringComparer.CurrentCulture" /> property actually returns an instance of an anonymous class derived from the <see cref="T:System.StringComparer" /> class.</para>
+          <para>Each call to the <see cref="P:System.StringComparer.CurrentCulture" /> property get accessor returns a new <see cref="T:System.StringComparer" /> object, as the following code shows.</para>
+          <para>code reference: System.StringComparer.CurrentCulture#1</para>
+          <para>To improve performance, you can store the <see cref="T:System.StringComparer" /> object in a local variable rather than retrieve the value of the <see cref="P:System.StringComparer.CurrentCulture" /> property multiple times. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.StringComparer" /> object that performs a case-sensitive string comparison using the word comparison rules of the current culture.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CurrentCultureIgnoreCase">
       <MemberSignature Language="C#" Value="public static StringComparer CurrentCultureIgnoreCase { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.StringComparer CurrentCultureIgnoreCase" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current culture is the <see cref="T:System.Globalization.CultureInfo" /> object associated with the current thread.</para>
+          <para>The <see cref="T:System.StringComparer" /> returned by the <see cref="P:System.StringComparer.CurrentCultureIgnoreCase" /> property can be used when strings are linguistically relevant but their case is not. For example, if strings are displayed to the user but case is unimportant, culture-sensitive, case-insensitive string comparison should be used to order the string data.</para>
+          <para>The <see cref="P:System.StringComparer.CurrentCultureIgnoreCase" /> property actually returns an instance of an anonymous class derived from the <see cref="T:System.StringComparer" /> class.</para>
+          <para>Each call to the <see cref="P:System.StringComparer.CurrentCultureIgnoreCase" /> property get accessor returns a new <see cref="T:System.StringComparer" /> object, as the following code shows.</para>
+          <para>code reference: System.StringComparer.CurrentCulture#2</para>
+          <para>To improve performance, you can store the <see cref="T:System.StringComparer" /> object in a local variable rather than retrieve the value of the <see cref="P:System.StringComparer.CurrentCultureIgnoreCase" /> property multiple times. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.StringComparer" /> object that performs case-insensitive string comparisons using the word comparison rules of the current culture.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (object x, object y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(object x, object y) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -161,21 +331,33 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.StringComparer.Equals(System.String,System.String)" /> method is more efficient than the <see cref="M:System.StringComparer.Equals(System.Object,System.Object)" /> method because the <paramref name="x" /> and <paramref name="y" /> parameters do not have to be unboxed to perform the comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, indicates whether two objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="x" /> and <paramref name="y" /> refer to the same object, or <paramref name="x" /> and <paramref name="y" /> are both the same type of object and those objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to <paramref name="y" />.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to <paramref name="x" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public abstract bool Equals (string x, string y);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(string x, string y) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public abstract bool Equals (string x, string y);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -184,21 +366,33 @@
         <Parameter Name="y" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.StringComparer.Equals(System.String,System.String)" /> method is more efficient than the <see cref="M:System.StringComparer.Equals(System.Object,System.Object)" /> method because the <paramref name="x" /> and <paramref name="y" /> parameters do not have to be unboxed to perform the comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, indicates whether two strings are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="x" /> and <paramref name="y" /> refer to the same object, or <paramref name="x" /> and <paramref name="y" /> are equal; otherwise, false.</para>
+        </returns>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to compare to <paramref name="y" />.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to compare to <paramref name="x" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public int GetHashCode (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode(object obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public int GetHashCode (object obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -206,20 +400,32 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.StringComparer.GetHashCode(System.String)" /> method is more efficient than the <see cref="M:System.StringComparer.GetHashCode(System.Object)" /> method because the <paramref name="obj" /> parameter does not have to be unboxed to perform the operation.</para>
+          <para>The <see cref="M:System.StringComparer.GetHashCode(System.Object)" /> method allocates an amount of memory that is proportional to the size of <paramref name="obj" /> to calculate the hash code of <paramref name="obj" />. In the case of large strings, trying to retrieve the hash code can throw an <see cref="T:System.ArgumentException" />. Instead, you can use an alternate algorithm that allocates a fixed amount of memory when calculating hash codes. To use this algorithm, add the <format type="text/html"><a href="3a5f38d1-ebc8-44de-aaeb-2929f6e6b48f">&lt;NetFx45_CultureAwareComparerGetHashCode_LongStrings&gt;</a></format> element to the <format type="text/html"><a href="1eb2fae3-de4b-45b6-852f-517c39b751bd">&lt;runtime&gt;</a></format> section of your application's configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the hash code for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed hash code calculated from the value of the <paramref name="obj" /> parameter.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object.</param>
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public abstract int GetHashCode (string obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode(string obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public abstract int GetHashCode (string obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -227,84 +433,125 @@
         <Parameter Name="obj" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.StringComparer.GetHashCode(System.String)" /> method is more efficient than the <see cref="M:System.StringComparer.GetHashCode(System.Object)" /> method because the <paramref name="obj" /> parameter does not have to be unboxed to perform the operation.</para>
+          <para>The <see cref="M:System.StringComparer.GetHashCode(System.String)" /> method allocates an amount of memory that is proportional to the size of <paramref name="obj" /> to calculate the hash code of <paramref name="obj" />. In the case of large strings, trying to retrieve the hash code can throw an <see cref="T:System.ArgumentException" />. Instead, you can use an alternate algorithm that allocates a fixed amount of memory when calculating hash codes. To use this algorithm, add the <format type="text/html"><a href="3a5f38d1-ebc8-44de-aaeb-2929f6e6b48f">&lt;NetFx45_CultureAwareComparerGetHashCode_LongStrings&gt;</a></format> element to the <format type="text/html"><a href="1eb2fae3-de4b-45b6-852f-517c39b751bd">&lt;runtime&gt;</a></format> section of your application's configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the hash code for the specified string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed hash code calculated from the value of the <paramref name="obj" /> parameter.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="InvariantCulture">
       <MemberSignature Language="C#" Value="public static StringComparer InvariantCulture { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.StringComparer InvariantCulture" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.StringComparer" /> returned by the <see cref="P:System.StringComparer.InvariantCulture" /> property compares strings in a linguistically relevant manner, but it is not suitable for display in any particular culture. Its major application is to order strings in a way that will be identical across cultures. </para>
+          <para>The invariant culture is the <see cref="T:System.Globalization.CultureInfo" /> object returned by the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property.</para>
+          <para>The <see cref="P:System.StringComparer.InvariantCulture" /> property actually returns an instance of an anonymous class derived from the <see cref="T:System.StringComparer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.StringComparer" /> object that performs a case-sensitive string comparison using the word comparison rules of the invariant culture.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="InvariantCultureIgnoreCase">
       <MemberSignature Language="C#" Value="public static StringComparer InvariantCultureIgnoreCase { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.StringComparer InvariantCultureIgnoreCase" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.StringComparer" /> returned by the <see cref="P:System.StringComparer.InvariantCultureIgnoreCase" /> property compares strings in a linguistically relevant manner that ignores case, but it is not suitable for display in any particular culture. Its major application is to order strings in a way that will be identical across cultures. </para>
+          <para>The invariant culture is the <see cref="T:System.Globalization.CultureInfo" /> object returned by the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property.</para>
+          <para>The <see cref="P:System.StringComparer.InvariantCultureIgnoreCase" /> property actually returns an instance of an anonymous class derived from the <see cref="T:System.StringComparer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.StringComparer" /> object that performs a case-insensitive string comparison using the word comparison rules of the invariant culture.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Ordinal">
       <MemberSignature Language="C#" Value="public static StringComparer Ordinal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.StringComparer Ordinal" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.StringComparer" /> returned by the <see cref="P:System.StringComparer.Ordinal" /> property performs a simple byte comparison that is independent of language. This is most appropriate when comparing strings that are generated programmatically or when comparing case-sensitive resources such as passwords. </para>
+          <para>The <see cref="P:System.StringComparer.Ordinal" /> property actually returns an instance of an anonymous class derived from the <see cref="T:System.StringComparer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.StringComparer" /> object that performs a case-sensitive ordinal string comparison.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="OrdinalIgnoreCase">
       <MemberSignature Language="C#" Value="public static StringComparer OrdinalIgnoreCase { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.StringComparer OrdinalIgnoreCase" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.StringComparer</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.StringComparer</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.StringComparer" /> returned by the <see cref="P:System.StringComparer.OrdinalIgnoreCase" /> property treats the characters in the strings to compare as if they were converted to uppercase using the conventions of the invariant culture, and then performs a simple byte comparison that is independent of language. This is most appropriate when comparing strings that are generated programmatically or when comparing case-insensitive resources such as paths and filenames. </para>
+          <para>The <see cref="P:System.StringComparer.OrdinalIgnoreCase" /> property actually returns an instance of an anonymous class derived from the <see cref="T:System.StringComparer" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.StringComparer" /> object that performs a case-insensitive ordinal string comparison.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -189,7 +189,7 @@ namespace Mono.Linker.Steps {
 				MarkCustomAttribute (ca);
 		}
 
-		void MarkCustomAttribute (CustomAttribute ca)
+		protected virtual void MarkCustomAttribute (CustomAttribute ca)
 		{
 			MarkMethod (ca.Constructor);
 
@@ -296,7 +296,7 @@ namespace Mono.Linker.Steps {
 				MarkCustomAttributes (module);
 		}
 
-		void MarkField (FieldReference reference)
+		protected void MarkField (FieldReference reference)
 		{
 //			if (IgnoreScope (reference.DeclaringType.Scope))
 //				return;
@@ -346,10 +346,7 @@ namespace Mono.Linker.Steps {
 
 		protected virtual void MarkSerializable (TypeDefinition type)
 		{
-			if (!type.HasMethods)
-				return;
-
-			MarkMethodsIf (type.Methods, IsDefaultConstructorPredicate);
+			MarkDefaultConstructor (type);
 			MarkMethodsIf (type.Methods, IsSpecialSerializationConstructorPredicate);
 		}
 
@@ -580,6 +577,14 @@ namespace Mono.Linker.Steps {
 		static bool IsConstructor (MethodDefinition method)
 		{
 			return method.IsConstructor && !method.IsStatic;
+		}
+
+		protected void MarkDefaultConstructor (TypeDefinition type)
+		{
+			if ((type == null) || !type.HasMethods)
+				return;
+
+			MarkMethodsIf (type.Methods, IsDefaultConstructorPredicate);
 		}
 
 		static MethodPredicate IsStaticConstructorPredicate = new MethodPredicate (IsStaticConstructor);
@@ -868,7 +873,7 @@ namespace Mono.Linker.Steps {
 				(Annotations.GetAction (assembly) == AssemblyAction.Link && Annotations.GetAction (method) == MethodAction.Parse));
 		}
 
-		static bool IsPropertyMethod (MethodDefinition md)
+		static internal bool IsPropertyMethod (MethodDefinition md)
 		{
 			return (md.SemanticsAttributes & MethodSemanticsAttributes.Getter) != 0 ||
 				(md.SemanticsAttributes & MethodSemanticsAttributes.Setter) != 0;
@@ -881,7 +886,7 @@ namespace Mono.Linker.Steps {
 				(md.SemanticsAttributes & MethodSemanticsAttributes.RemoveOn) != 0;
 		}
 
-		static PropertyDefinition GetProperty (MethodDefinition md)
+		static internal PropertyDefinition GetProperty (MethodDefinition md)
 		{
 			TypeDefinition declaringType = (TypeDefinition) md.DeclaringType;
 			foreach (PropertyDefinition prop in declaringType.Properties)
@@ -901,12 +906,12 @@ namespace Mono.Linker.Steps {
 			return null;
 		}
 
-		void MarkProperty (PropertyDefinition prop)
+		protected void MarkProperty (PropertyDefinition prop)
 		{
 			MarkCustomAttributes (prop);
 		}
 
-		void MarkEvent (EventDefinition evt)
+		protected void MarkEvent (EventDefinition evt)
 		{
 			MarkCustomAttributes (evt);
 			MarkMethodIfNotNull (evt.AddMethod);

@@ -147,16 +147,13 @@ namespace Mono.CSharp
 				}
 
 				// FIXME: it could be done with XmlReader
-				var ds_target = mc as TypeContainer;
-				if (ds_target == null)
-					ds_target = mc.Parent;
 
 				foreach (XmlElement see in n.SelectNodes (".//see"))
-					HandleSee (mc, ds_target, see);
+					HandleSee (mc, see);
 				foreach (XmlElement seealso in n.SelectNodes (".//seealso"))
-					HandleSeeAlso (mc, ds_target, seealso);
+					HandleSeeAlso (mc, seealso);
 				foreach (XmlElement see in n.SelectNodes (".//exception"))
-					HandleException (mc, ds_target, see);
+					HandleException (mc, see);
 				foreach (XmlElement node in n.SelectNodes (".//typeparam"))
 					HandleTypeParam (mc, node);
 				foreach (XmlElement node in n.SelectNodes (".//typeparamref"))
@@ -228,25 +225,25 @@ namespace Mono.CSharp
 		//
 		// Handles <see> elements.
 		//
-		void HandleSee (MemberCore mc, TypeContainer ds, XmlElement see)
+		void HandleSee (MemberCore mc, XmlElement see)
 		{
-			HandleXrefCommon (mc, ds, see);
+			HandleXrefCommon (mc, see);
 		}
 
 		//
 		// Handles <seealso> elements.
 		//
-		void HandleSeeAlso (MemberCore mc, TypeContainer ds, XmlElement seealso)
+		void HandleSeeAlso (MemberCore mc, XmlElement seealso)
 		{
-			HandleXrefCommon (mc, ds, seealso);
+			HandleXrefCommon (mc, seealso);
 		}
 
 		//
 		// Handles <exception> elements.
 		//
-		void HandleException (MemberCore mc, TypeContainer ds, XmlElement seealso)
+		void HandleException (MemberCore mc, XmlElement seealso)
 		{
-			HandleXrefCommon (mc, ds, seealso);
+			HandleXrefCommon (mc, seealso);
 		}
 
 		//
@@ -300,13 +297,13 @@ namespace Mono.CSharp
 				return context.LookupNamespaceOrType (mn.Name, mn.Arity, LookupMode.Probing, Location.Null);
 
 			var left = ResolveMemberName (context, mn.Left);
-			var ns = left as Namespace;
+			var ns = left as NamespaceExpression;
 			if (ns != null)
 				return ns.LookupTypeOrNamespace (context, mn.Name, mn.Arity, LookupMode.Probing, Location.Null);
 
 			TypeExpr texpr = left as TypeExpr;
 			if (texpr != null) {
-				var found = MemberCache.FindNestedType (texpr.Type, ParsedName.Name, ParsedName.Arity);
+				var found = MemberCache.FindNestedType (texpr.Type, mn.Name, mn.Arity);
 				if (found != null)
 					return new TypeExpression (found, Location.Null);
 
@@ -319,7 +316,7 @@ namespace Mono.CSharp
 		//
 		// Processes "see" or "seealso" elements from cref attribute.
 		//
-		void HandleXrefCommon (MemberCore mc, TypeContainer ds, XmlElement xref)
+		void HandleXrefCommon (MemberCore mc, XmlElement xref)
 		{
 			string cref = xref.GetAttribute ("cref");
 			// when, XmlReader, "if (cref == null)"
@@ -340,7 +337,7 @@ namespace Mono.CSharp
 			var report = new Report (doc_module.Compiler, new NullReportPrinter ());
 
 			if (session == null)
-				session = new ParserSession () {
+				session = new ParserSession {
 					UseJayGlobalArrays = true
 				};
 
@@ -386,7 +383,7 @@ namespace Mono.CSharp
 					} else if (ParsedName.Left != null) {
 						fne = ResolveMemberName (mc, ParsedName.Left);
 						if (fne != null) {
-							var ns = fne as Namespace;
+							var ns = fne as NamespaceExpression;
 							if (ns != null) {
 								fne = ns.LookupTypeOrNamespace (mc, ParsedName.Name, ParsedName.Arity, LookupMode.Probing, Location.Null);
 								if (fne != null) {

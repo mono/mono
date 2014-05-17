@@ -630,9 +630,6 @@ class Tests
 		return f == PositiveInfinity ? 0 : 1;
 	}
 
-	/* 
-	   Disabled until they can be fixed to run on amd64
-
 	static double VALUE = 0.19975845134874831D;
 
 	public static int test_0_float_conversion_reduces_double_precision () {
@@ -643,7 +640,8 @@ class Tests
 		return 0;
 	}
 
-
+	/* This doesn't work with llvm */
+	/*
     public static int test_0_long_to_double_conversion ()
     {
 		long l = 9223372036854775807L;
@@ -653,6 +651,7 @@ class Tests
 
 		return 0;
     }
+	*/
 
 	public static int INT_VAL = 0x13456799;
 
@@ -664,6 +663,14 @@ class Tests
 			return 1;
 		return 0;
 	}
-	*/
+
+	public static int test_0_int8_to_float_convertion ()
+    {
+		double d = (double)(float)(long)INT_VAL;
+
+		if (d != 323315616)
+			return 1;
+		return 0;
+	}
 }
 

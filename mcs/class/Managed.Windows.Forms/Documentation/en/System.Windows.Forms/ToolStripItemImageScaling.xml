@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripItemImageScaling" FullName="System.Windows.Forms.ToolStripItemImageScaling">
   <TypeSignature Language="C#" Value="public enum ToolStripItemImageScaling" />
   <AssemblyInfo>
@@ -8,9 +9,31 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Windows.Forms.ToolStripItem.Image" />, <see cref="P:System.Windows.Forms.ToolStripItem.ImageAlign" />, <see cref="P:System.Windows.Forms.ToolStripItem.ImageIndex" />, <see cref="P:System.Windows.Forms.ToolStripItem.ImageKey" />, and <see cref="P:System.Windows.Forms.ToolStripItem.ImageScaling" /> properties pertain to various aspects of image handling. Use images in <see cref="T:System.Windows.Forms.ToolStrip" /> controls by setting these properties directly or by setting the run-time–only <see cref="P:System.Windows.Forms.ToolStrip.ImageList" /> property.</para>
+      <para>Image scaling is determined by the interaction of properties in both <see cref="T:System.Windows.Forms.ToolStrip" /> and <see cref="T:System.Windows.Forms.ToolStripItem" />, as follows:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.Windows.Forms.ToolStrip.ImageScalingSize" /> is the scale of the final image as determined by the combination of the image's <see cref="P:System.Windows.Forms.ToolStripItem.ImageScaling" /> setting and the container's <see cref="P:System.Windows.Forms.ToolStrip.AutoSize" /> setting.</para>
+          <list type="bullet">
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.ToolStrip.AutoSize" /> is true (the default) and <see cref="T:System.Windows.Forms.ToolStripItemImageScaling" /> is <see cref="F:System.Windows.Forms.ToolStripItemImageScaling.SizeToFit" />, no image scaling occurs, and the <see cref="T:System.Windows.Forms.ToolStrip" /> size is that of the largest item, or a prescribed minimum size.</para>
+            </item>
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.ToolStrip.AutoSize" /> is false and <see cref="T:System.Windows.Forms.ToolStripItemImageScaling" /> is <see cref="F:System.Windows.Forms.ToolStripItemImageScaling.None" />, neither image nor <see cref="T:System.Windows.Forms.ToolStrip" /> scaling occurs.</para>
+            </item>
+          </list>
+        </item>
+      </list>
+      <para>To control the image size, use the <see cref="P:System.Windows.Forms.ToolStrip.ImageScalingSize" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether the size of the image on a <see cref="T:System.Windows.Forms.ToolStripItem" /> is automatically adjusted to fit on a <see cref="T:System.Windows.Forms.ToolStrip" /> while retaining the original image proportions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -20,8 +43,11 @@
         <ReturnType>System.Windows.Forms.ToolStripItemImageScaling</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the size of the image on a <see cref="T:System.Windows.Forms.ToolStripItem" /> is not automatically adjusted to fit on a <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +60,11 @@
         <ReturnType>System.Windows.Forms.ToolStripItemImageScaling</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the size of the image on a <see cref="T:System.Windows.Forms.ToolStripItem" /> is automatically adjusted to fit on a <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

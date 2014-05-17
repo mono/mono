@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="PeerResolver" FullName="System.ServiceModel.PeerResolver">
+  <TypeSignature Language="C#" Value="public abstract class PeerResolver" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit PeerResolver extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is the base class for the implementation of custom peer name resolvers. A peer name resolver is a discovery service used by peer channels to find peer nodes participating in a peer mesh. It is also used to "register" a node with a peer mesh, the mechanism by which the peer node becomes known and available from the peer mesh.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a base type used to define the contract for the registration and resolution of a peer mesh ID to the endpoint addresses of nodes participating in the mesh.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected PeerResolver ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.PeerResolver" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CanShareReferrals">
+      <MemberSignature Language="C#" Value="public abstract bool CanShareReferrals { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanShareReferrals" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the peer name resolver can share referrals.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public virtual void Initialize (System.ServiceModel.EndpointAddress address, System.ServiceModel.Channels.Binding binding, System.ServiceModel.Description.ClientCredentials credentials, System.ServiceModel.PeerResolvers.PeerReferralPolicy referralPolicy);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Initialize(class System.ServiceModel.EndpointAddress address, class System.ServiceModel.Channels.Binding binding, class System.ServiceModel.Description.ClientCredentials credentials, valuetype System.ServiceModel.PeerResolvers.PeerReferralPolicy referralPolicy) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="credentials" Type="System.ServiceModel.Description.ClientCredentials" />
+        <Parameter Name="referralPolicy" Type="System.ServiceModel.PeerResolvers.PeerReferralPolicy" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method simply initializes the existing peer resolver instance; it does not create a new one. To create a new peer resolver, call the CreatePeerResolver method on the corresponding binding element (for example, <see cref="T:System.ServiceModel.Channels.PnrpPeerResolverBindingElement" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the current peer resolver instance with the new supplied endpoint address and settings.</para>
+        </summary>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.EndpointAddress" /> that contains the new endpoint address of this peer resolver instance.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.Channels.Binding" /> that specifies the new network binding for this peer resolver.</param>
+        <param name="credentials">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.Description.ClientCredentials" /> that specifies the new client credentials for this peer resolver.</param>
+        <param name="referralPolicy">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.ServiceModel.PeerResolvers.PeerReferralPolicy" /> that specifies the new referral policy for this peer resolver.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public abstract object Register (string meshId, System.ServiceModel.PeerNodeAddress nodeAddress, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Register(string meshId, class System.ServiceModel.PeerNodeAddress nodeAddress, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meshId" Type="System.String" />
+        <Parameter Name="nodeAddress" Type="System.ServiceModel.PeerNodeAddress" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a <see cref="T:System.ServiceModel.PeerNodeAddress" /> for a specific peer mesh.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the registration ID. This registration ID object is passed to the <see cref="M:System.ServiceModel.PeerResolver.Update(System.Object,System.ServiceModel.PeerNodeAddress,System.TimeSpan)" /> and <see cref="M:System.ServiceModel.PeerResolver.Unregister(System.Object,System.TimeSpan)" /> methods. </para>
+        </returns>
+        <param name="meshId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the peer mesh in which the peer node is to be registered.</param>
+        <param name="nodeAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.PeerNodeAddress" /> to be registered with the peer mesh. </param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of time to wait for success before aborting the attempt to register with the peer mesh. If the attempt fails, <see cref="T:System.TimeoutException" /> is raised on the peer.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public abstract System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ServiceModel.PeerNodeAddress&gt; Resolve (string meshId, int maxAddresses, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.ServiceModel.PeerNodeAddress&gt; Resolve(string meshId, int32 maxAddresses, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ServiceModel.PeerNodeAddress&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meshId" Type="System.String" />
+        <Parameter Name="maxAddresses" Type="System.Int32" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves the supplied mesh ID to zero or more endpoint addresses of nodes participating in the peer mesh.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> that contains <see cref="T:System.ServiceModel.PeerNodeAddress" /> objects representing nodes participating in the peer mesh.</para>
+        </returns>
+        <param name="meshId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mesh ID of the peer mesh within which the <see cref="T:System.ServiceModel.PeerNodeAddress" /> objects representing participating nodes are to be obtained.</param>
+        <param name="maxAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of endpoint addresses to return.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of time to wait for success before aborting the attempt to resolve endpoint addresses within the peer mesh. If the attempt fails, <see cref="T:System.TimeoutException" /> is raised on the peer.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Unregister">
+      <MemberSignature Language="C#" Value="public abstract void Unregister (object registrationId, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Unregister(object registrationId, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="registrationId" Type="System.Object" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A registration ID is a peer resolver token, that, at the very minimum, represents the tuple of a peer node ID and the mesh ID. This ID value must have been obtained in a previous call to <see cref="M:System.ServiceModel.PeerResolver.Register(System.String,System.ServiceModel.PeerNodeAddress,System.TimeSpan)" />. </para>
+          <para>
+            <see cref="M:System.ServiceModel.PeerResolver.Unregister(System.Object,System.TimeSpan)" /> is called in two specific cases:</para>
+          <list type="bullet">
+            <item>
+              <para>When the <see cref="T:System.ServiceModel.PeerNode" /> is leaving the peer mesh (usually as the result of closing the last peer channel or service host that is associated with it).</para>
+            </item>
+            <item>
+              <para>When the <see cref="T:System.ServiceModel.PeerNode" /> can find no available endpoint addresses of other nodes participating in the peer mesh. As a result, the <see cref="T:System.ServiceModel.PeerNode" /> is no longer reachable, and it will attempt to call <see cref="M:System.ServiceModel.PeerResolver.Unregister(System.Object,System.TimeSpan)" /> to unregister itself from the <see cref="T:System.ServiceModel.PeerResolver" />. If other peer nodes within the mesh become available subsequent to unregistration, the node can re-register itself by calling <see cref="M:System.ServiceModel.PeerResolver.Register(System.String,System.ServiceModel.PeerNodeAddress,System.TimeSpan)" /> and obtaining a new registration ID.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the registration entry for a node from a peer mesh.</para>
+        </summary>
+        <param name="registrationId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A registration ID for the node obtained by a previous call to <see cref="M:System.ServiceModel.PeerResolver.Register(System.String,System.ServiceModel.PeerNodeAddress,System.TimeSpan)" />.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of time to wait for a successful removal of the registration from the peer mesh. If the attempt fails, <see cref="T:System.TimeoutException" /> is raised on the peer.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public abstract void Update (object registrationId, System.ServiceModel.PeerNodeAddress updatedNodeAddress, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Update(object registrationId, class System.ServiceModel.PeerNodeAddress updatedNodeAddress, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="registrationId" Type="System.Object" />
+        <Parameter Name="updatedNodeAddress" Type="System.ServiceModel.PeerNodeAddress" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ServiceModel.PeerResolver.Update(System.Object,System.ServiceModel.PeerNodeAddress,System.TimeSpan)" /> is called when the address of the <see cref="T:System.ServiceModel.PeerNode" /> changes on the local machine.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the <see cref="T:System.ServiceModel.PeerNodeAddress" /> for a node registered with a specific peer mesh.</para>
+        </summary>
+        <param name="registrationId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A registration ID token for the node, obtained by a previous call to <see cref="M:System.ServiceModel.PeerResolver.Register(System.String,System.ServiceModel.PeerNodeAddress,System.TimeSpan)" /></param>
+        <param name="updatedNodeAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The updated endpoint address (and other multihoming IP addresses). </param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of time to wait for success before aborting the attempt to update the node's registration within the peer mesh. If the attempt fails, <see cref="T:System.TimeoutException" /> is raised on the peer.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

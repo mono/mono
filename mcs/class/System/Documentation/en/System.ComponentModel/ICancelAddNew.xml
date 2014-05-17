@@ -1,20 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICancelAddNew" FullName="System.ComponentModel.ICancelAddNew">
   <TypeSignature Language="C#" Value="public interface ICancelAddNew" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICancelAddNew" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.ICancelAddNew" /> interface enables a collection to add a new item in an extensible way. The new item subsequently can be committed or rolled back. The <see cref="M:System.ComponentModel.IBindingList.AddNew" /> method of the collection is used to tentatively add the item, which is subsequently transacted through the following operations:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.ComponentModel.ICancelAddNew.EndNew(System.Int32)" /> method will explicitly commit the pending addition.</para>
+        </item>
+        <item>
+          <para>Performing another collection operation, such as an insertion, removal, or move will implicitly commit the pending addition.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ComponentModel.ICancelAddNew.CancelNew(System.Int32)" /> method will roll back the pending addition if it has not already been committed.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>In some scenarios, such as Windows Forms complex data binding, the collection may receive <see cref="M:System.ComponentModel.ICancelAddNew.CancelNew(System.Int32)" /> or <see cref="M:System.ComponentModel.ICancelAddNew.EndNew(System.Int32)" /> calls for items other than the newly added item. (Each item is typically a row in a data view.) Ignore these calls; cancel or commit the new item only when that item's index is specified.</para>
+      </block>
+      <para>There are two models that allow transactional addition of an item to a data-bound collection:</para>
+      <list type="bullet">
+        <item>
+          <para>The older model relies directly on a collection that implements the <see cref="T:System.ComponentModel.IBindingList" /> interface and is data-bound directly using the <see cref="T:System.Windows.Forms.CurrencyManager" /> class. The <see cref="M:System.Windows.Forms.CurrencyManager.AddNew" />, <see cref="M:System.Windows.Forms.CurrencyManager.EndCurrentEdit" />, and <see cref="M:System.Windows.Forms.CurrencyManager.CancelCurrentEdit" /> methods of the <see cref="T:System.Windows.Forms.CurrencyManager" /> class are responsible for transactional support for adding new items. However, this functionality depends upon the items supporting transactional behavior through the <see cref="T:System.ComponentModel.IEditableObject" /> interface. If the items do not support this interface, the item will always be added to the list, regardless of subsequent calls to <see cref="M:System.Windows.Forms.CurrencyManager.CancelCurrentEdit" />.</para>
+        </item>
+        <item>
+          <para>The newer model supports a more robust data-binding scenario through the generic <see cref="T:System.ComponentModel.BindingList`1" /> class, which implements the <see cref="T:System.ComponentModel.IBindingList" /> and <see cref="T:System.ComponentModel.ICancelAddNew" /> interfaces. In this case, the transactional support is managed by the <see cref="T:System.ComponentModel.BindingList`1" /> collection directly. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Adds transactional capability when adding a new item to a collection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CancelNew">
       <MemberSignature Language="C#" Value="public void CancelNew (int itemIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CancelNew(int32 itemIndex) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -23,16 +57,25 @@
         <Parameter Name="itemIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="itemIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.ICancelAddNew.CancelNew(System.Int32)" /> method rolls back a pending addition (<see cref="M:System.ComponentModel.IBindingList.AddNew" />) of an item previously added to the collection at position <paramref name="itemIndex" />. The index parameter is necessary because several new items can be simultaneously pending. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards a pending new item from the collection.</para>
+        </summary>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item that was previously added to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="EndNew">
       <MemberSignature Language="C#" Value="public void EndNew (int itemIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndNew(int32 itemIndex) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -41,9 +84,16 @@
         <Parameter Name="itemIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="itemIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.ICancelAddNew.EndNew(System.Int32)" /> commits a pending addition (<see cref="M:System.ComponentModel.IBindingList.AddNew" />) of an item previously added to the collection at position <paramref name="itemIndex" />. The index parameter is necessary because several new items can be simultaneously pending. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits a pending new item to the collection.</para>
+        </summary>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item that was previously added to the collection. </param>
       </Docs>
     </Member>
   </Members>

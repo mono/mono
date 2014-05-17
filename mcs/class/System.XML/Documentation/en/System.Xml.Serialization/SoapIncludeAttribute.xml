@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapIncludeAttribute" FullName="System.Xml.Serialization.SoapIncludeAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapIncludeAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SoapIncludeAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -13,47 +16,75 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Method | System.AttributeTargets.Interface, AllowMultiple=true)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Method | System.AttributeTargets.Interface | System.AttributeTargets.All, AllowMultiple=true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.SoapIncludeAttribute" /> class belongs to a family of attributes that controls how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes, or deserializes, an object as encoded SOAP XML. The resulting XML conforms to section 5 of the World Wide Web Consortium (www.w3.org) document, "Simple Object Access Protocol (SOAP) 1.1". For a complete list of similar attributes, see <format type="text/html"><a href="93EE258C-9C0F-4A08-897C-C10DB7A00F91">[&lt;topic://cpconAttributesThatControlSOAPEncodedSerialization&gt;]</a></format>.</para>
+      <para>To serialize an object as an encoded SOAP message, you must construct the <see cref="T:System.Xml.Serialization.XmlSerializer" /> using an <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> created with the <see cref="M:System.Xml.Serialization.SoapReflectionImporter.ImportTypeMapping(System.Type)" /> method of the <see cref="T:System.Xml.Serialization.SoapReflectionImporter" /> class.</para>
+      <para>When applying the <see cref="T:System.Xml.Serialization.SoapIncludeAttribute" />, specify the <see cref="T:System.Type" /> of the derived class. When the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes objects that include both the base and the derived classes, it can then recognize both object types.</para>
+      <para>You can use the <see cref="T:System.Xml.Serialization.SoapIncludeAttribute" /> to include derived classes in service description documents that are written in the Web Services Description Language (WSDL). For example, if a method returns an <see cref="T:System.Object" />, apply the <see cref="T:System.Xml.Serialization.SoapIncludeAttribute" /> to the method and specify the actual types that should be returned.</para>
+      <para>For more information about WSDL, see World Wide Web Consortium (www.w3.org) specification, "Web Services Description Language (WSDL) 1.1".</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1E00-4602-9EBF-526B271A8B87">[&lt;topic://cpconExtendingMetadataUsingAttributes&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to recognize a type when it serializes or deserializes an object as encoded SOAP XML.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoapIncludeAttribute (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'System.Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Apply multiple instances of the <see cref="T:System.Xml.Serialization.SoapIncludeAttribute" /> to a field or property that returns either an array of objects, an <see cref="T:System.Collections.ArrayList" /> that contains a collection of objects, or an object that can return multiple types. Set the <see cref="P:System.Xml.Serialization.SoapIncludeAttribute.Type" /> property for each type that you want the field or property to contain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.SoapIncludeAttribute" /> class using the specified type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to include. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public Type Type { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public Type Type { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Apply multiple instances of the <see cref="T:System.Xml.Serialization.SoapIncludeAttribute" /> to a field or property that returns either an array of objects, an <see cref="T:System.Collections.ArrayList" /> that contains a collection of objects, or an object that can return multiple types. Set the <see cref="P:System.Xml.Serialization.SoapIncludeAttribute.Type" /> property for each type that you want the field or property to contain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the object to use when serializing or deserializing an object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

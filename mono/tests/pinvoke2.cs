@@ -84,6 +84,15 @@ public class Tests {
 		public int x;
 		public double y;
 	}
+	
+	[StructLayout (LayoutKind.Sequential)]
+	public struct TinyStruct {
+		public TinyStruct (int i)
+		{
+			this.i = i;
+		}
+		public int i;
+	}
 
 	[StructLayout (LayoutKind.Sequential)]
 	public class SimpleClass {
@@ -1311,6 +1320,26 @@ public class Tests {
 		return string_marshal_test3 (null);
 	}
 
+#if FALSE
+	[DllImport ("libtest", EntryPoint="mono_test_stdcall_mismatch_1", CallingConvention=CallingConvention.StdCall)]
+	public static extern int mono_test_stdcall_mismatch_1 (int a, int b, int c);
+
+	/* Test mismatched called conventions, the native function is cdecl */
+	public static int test_0_stdcall_mismatch_1 () {
+		mono_test_stdcall_mismatch_1 (0, 1, 2);
+		return 0;
+	}
+
+	[DllImport ("libtest", EntryPoint="mono_test_stdcall_mismatch_2", CallingConvention=CallingConvention.Cdecl)]
+	public static extern int mono_test_stdcall_mismatch_2 (int a, int b, int c);
+
+	/* Test mismatched called conventions, the native function is stdcall */
+	public static int test_0_stdcall_mismatch_2 () {
+		mono_test_stdcall_mismatch_2 (0, 1, 2);
+		return 0;
+	}
+#endif
+
 	[DllImport ("libtest", EntryPoint="mono_test_stdcall_name_mangling", CallingConvention=CallingConvention.StdCall)]
 	public static extern int mono_test_stdcall_name_mangling (int a, int b, int c);
 
@@ -1725,5 +1754,51 @@ public class Tests {
 		return 1;
 	}
 
+	[DllImport ("libtest", EntryPoint="mono_test_has_thiscall")]
+	public static extern int mono_test_has_thiscall ();
+
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall1", CallingConvention=CallingConvention.ThisCall)]
+	public static extern int mono_test_native_thiscall (int a);
+
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall2", CallingConvention=CallingConvention.ThisCall)]
+	public static extern int mono_test_native_thiscall (int a, int b);
+
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall3", CallingConvention=CallingConvention.ThisCall)]
+	public static extern int mono_test_native_thiscall (int a, int b, int c);
+
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall1", CallingConvention=CallingConvention.ThisCall)]
+	public static extern int mono_test_native_thiscall (TinyStruct a);
+
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall2", CallingConvention=CallingConvention.ThisCall)]
+	public static extern int mono_test_native_thiscall (TinyStruct a, int b);
+
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall3", CallingConvention=CallingConvention.ThisCall)]
+	public static extern int mono_test_native_thiscall (TinyStruct a, int b, int c);
+
+	public static int test_0_native_thiscall ()
+	{
+		if (mono_test_has_thiscall () == 0)
+			return 0;
+
+		if (mono_test_native_thiscall (1968329802) != 1968329802)
+			return 1;
+
+		if (mono_test_native_thiscall (268894549, 1212675791) != 1481570339)
+			return 2;
+
+		if (mono_test_native_thiscall (1288082683, -421187449, -1733670329) != -866775098)
+			return 3;
+
+		if (mono_test_native_thiscall (new TinyStruct(1968329802)) != 1968329802)
+			return 4;
+
+		if (mono_test_native_thiscall (new TinyStruct(268894549), 1212675791) != 1481570339)
+			return 5;
+
+		if (mono_test_native_thiscall (new TinyStruct(1288082683), -421187449, -1733670329) != -866775098)
+			return 6;
+
+		return 0;
+	}
 }
 

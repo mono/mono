@@ -141,6 +141,8 @@ namespace MonoTests.System
 			get { return 1; }
 			set { }
 		}
+
+		public event EventHandler E;
 	}
 
 	class Derived1 : Base1
@@ -156,6 +158,8 @@ namespace MonoTests.System
 			get { return 1; }
 			set { }
 		}
+
+		public event Action E;
 	}
 
 	public class Foo<T>
@@ -397,6 +401,14 @@ namespace MonoTests.System
 
 			// Test overriding of properties when only the set accessor is overriden
 			Assert.AreEqual (1, typeof (Derived1).GetProperties ().Length, "#03");
+		}
+
+		[Test]
+		public void GetEvents ()
+		{
+			// Test hide-by-name
+			Assert.AreEqual (1, typeof (Derived2).GetEvents ().Length);
+			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetEvents ()[0].DeclaringType);
 		}
 
 		[Test]
@@ -4023,6 +4035,25 @@ PublicKeyToken=b77a5c561934e089"));
             Console.WriteLine(typeof(IEnumerable<int?>).IsAssignableFrom(typeof(IEnumerable<int>)));
 		}
 #endif
+
+		[Test]
+		public void GetTypeParseGenericCorrectly () { //Bug #15124
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1"), typeof (Foo<>), "#1");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32]"), typeof (Foo<int>), "#2");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[[System.Int32]]"), typeof (Foo<int>), "#3");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][]"), typeof (Foo<int>[]), "#4");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[][System.Int32]"), null, "#5");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][,]"), typeof (Foo<int>[,]), "#6");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[]"), typeof (Foo<>).MakeArrayType(), "#7");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[,]"), typeof (Foo<>).MakeArrayType (2), "#8");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[][]"), typeof (Foo<>).MakeArrayType ().MakeArrayType (), "#9");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1["), null, "#10");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[["), null, "#11");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[[]"), null, "#12");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[,"), null, "#13");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[*"), null, "#14");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32"), null, "#15");
+		}
 
 		public abstract class Stream : IDisposable
 		{

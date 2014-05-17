@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeGenerator" FullName="System.CodeDom.Compiler.CodeGenerator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public abstract class CodeGenerator : System.CodeDom.Compiler.ICodeGenerator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CodeGenerator extends System.Object implements class System.CodeDom.Compiler.ICodeGenerator" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -17,27 +20,47 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is a useful base class for code generators to derive from. Code generators are capable of rendering source code in a specific language according to the structure of a Code Document Object Model (CodeDOM) graph. This class provides many functions and methods to generate specific types of code from a CodeDOM graph.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an example implementation of the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> interface. This class is abstract.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected CodeGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CodeGenerator" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ContinueOnNewLine">
       <MemberSignature Language="C#" Value="protected virtual void ContinueOnNewLine (string st);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void ContinueOnNewLine(string st) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -45,18 +68,24 @@
         <Parameter Name="st" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="st">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a line-continuation character and outputs the specified string on a new line.</para>
+        </summary>
+        <param name="st">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write on the new line. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateEscapedIdentifier">
       <MemberSignature Language="C#" Value="protected abstract string CreateEscapedIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance string CreateEscapedIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -64,19 +93,35 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.CodeDom.Compiler.CodeGenerator.CreateEscapedIdentifier(System.String)" /> tests whether the identifier conflicts with reserved or language keywords, and if so, returns an equivalent name with language-specific escape code formatting. The returned name is referred to an escaped identifier. The escaped identifier contains the same <paramref name="value" /> but includes escape code formatting to differentiate it from conflicting keywords. For example, <paramref name="value" /> could be preceded by an at sign ("@") or delimited by square brackets ("[" and "]") to create an escaped identifier. </para>
+          <block subset="none" type="note">
+            <para>The default implementation of this method does nothing.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an escaped identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to create an escaped identifier for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateValidIdentifier">
       <MemberSignature Language="C#" Value="protected abstract string CreateValidIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance string CreateValidIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -84,82 +129,118 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.CodeDom.Compiler.CodeGenerator.CreateValidIdentifier(System.String)" /> tests whether the identifier conflicts with reserved or language keywords, and if so, returns a valid identifier name that does not conflict. The returned identifier contains the same <paramref name="value" /> but includes escape code formatting to differentiate it from conflicting keywords. Typically, if the value requires modification, it is preceded by an underscore "_". </para>
+          <block subset="none" type="note">
+            <para>The default implementation of this method does nothing.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a valid identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to create a valid identifier for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CurrentClass">
       <MemberSignature Language="C#" Value="protected System.CodeDom.CodeTypeDeclaration CurrentClass { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeTypeDeclaration CurrentClass" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeTypeDeclaration</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the code type declaration for the current class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentMember">
       <MemberSignature Language="C#" Value="protected System.CodeDom.CodeTypeMember CurrentMember { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeTypeMember CurrentMember" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeTypeMember</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeDom.CodeTypeMember'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current member of the class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CurrentMemberName">
       <MemberSignature Language="C#" Value="protected string CurrentMemberName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CurrentMemberName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current member name.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CurrentTypeName">
       <MemberSignature Language="C#" Value="protected string CurrentTypeName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CurrentTypeName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current class name.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateArgumentReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateArgumentReferenceExpression (System.CodeDom.CodeArgumentReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateArgumentReferenceExpression(class System.CodeDom.CodeArgumentReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -167,18 +248,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeArgumentReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeArgumentReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified argument reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeArgumentReferenceExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateArrayCreateExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateArrayCreateExpression (System.CodeDom.CodeArrayCreateExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateArrayCreateExpression(class System.CodeDom.CodeArrayCreateExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -186,18 +273,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeArrayCreateExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeArrayCreateExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified array creation expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeArrayCreateExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateArrayIndexerExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateArrayIndexerExpression (System.CodeDom.CodeArrayIndexerExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateArrayIndexerExpression(class System.CodeDom.CodeArrayIndexerExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -205,18 +298,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeArrayIndexerExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeArrayIndexerExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified array indexer expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeArrayIndexerExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateAssignStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateAssignStatement (System.CodeDom.CodeAssignStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateAssignStatement(class System.CodeDom.CodeAssignStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -225,17 +324,22 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeAssignStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified assignment statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateAttachEventStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateAttachEventStatement (System.CodeDom.CodeAttachEventStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateAttachEventStatement(class System.CodeDom.CodeAttachEventStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -244,17 +348,22 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeAttachEventStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attach event statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateAttributeDeclarationsEnd">
       <MemberSignature Language="C#" Value="protected abstract void GenerateAttributeDeclarationsEnd (System.CodeDom.CodeAttributeDeclarationCollection attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateAttributeDeclarationsEnd(class System.CodeDom.CodeAttributeDeclarationCollection attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -262,18 +371,24 @@
         <Parameter Name="attributes" Type="System.CodeDom.CodeAttributeDeclarationCollection" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.CodeAttributeDeclarationCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attribute block end.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeAttributeDeclarationCollection" /> that indicates the end of the attribute block to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateAttributeDeclarationsStart">
       <MemberSignature Language="C#" Value="protected abstract void GenerateAttributeDeclarationsStart (System.CodeDom.CodeAttributeDeclarationCollection attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateAttributeDeclarationsStart(class System.CodeDom.CodeAttributeDeclarationCollection attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -281,18 +396,24 @@
         <Parameter Name="attributes" Type="System.CodeDom.CodeAttributeDeclarationCollection" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.CodeAttributeDeclarationCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attribute block start.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeAttributeDeclarationCollection" /> that indicates the start of the attribute block to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateBaseReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateBaseReferenceExpression (System.CodeDom.CodeBaseReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateBaseReferenceExpression(class System.CodeDom.CodeBaseReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -300,18 +421,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeBaseReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeBaseReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified base reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeBaseReferenceExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateBinaryOperatorExpression">
       <MemberSignature Language="C#" Value="protected virtual void GenerateBinaryOperatorExpression (System.CodeDom.CodeBinaryOperatorExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateBinaryOperatorExpression(class System.CodeDom.CodeBinaryOperatorExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -319,18 +446,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeBinaryOperatorExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeBinaryOperatorExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified binary operator expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeBinaryOperatorExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCastExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateCastExpression (System.CodeDom.CodeCastExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateCastExpression(class System.CodeDom.CodeCastExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -338,21 +471,28 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCastExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeCastExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified cast expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCastExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCodeFromMember">
       <MemberSignature Language="C#" Value="public virtual void GenerateCodeFromMember (System.CodeDom.CodeTypeMember member, System.IO.TextWriter writer, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GenerateCodeFromMember(class System.CodeDom.CodeTypeMember member, class System.IO.TextWriter writer, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -362,16 +502,31 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="member">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Code for members is generated differently depending on the context. For example, code for methods on an interface or fields on an enumeration is generated differently from code for the same member on a class. This implementation assumes that the member is being generated for the class context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified class member using the specified text writer and code generator options.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The class member to generate code for.</param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text writer to output code to.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The options to use when generating the code. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateComment">
       <MemberSignature Language="C#" Value="protected abstract void GenerateComment (System.CodeDom.CodeComment comment);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateComment(class System.CodeDom.CodeComment comment) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -380,17 +535,22 @@
       </Parameters>
       <Docs>
         <param name="comment">To be added: an object of type 'CodeDom.CodeComment'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified comment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCommentStatement">
       <MemberSignature Language="C#" Value="protected virtual void GenerateCommentStatement (System.CodeDom.CodeCommentStatement statement);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateCommentStatement(class System.CodeDom.CodeCommentStatement statement) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -399,17 +559,22 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeCommentStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified comment statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCommentStatements">
       <MemberSignature Language="C#" Value="protected virtual void GenerateCommentStatements (System.CodeDom.CodeCommentStatementCollection statements);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateCommentStatements(class System.CodeDom.CodeCommentStatementCollection statements) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -418,17 +583,22 @@
       </Parameters>
       <Docs>
         <param name="statements">To be added: an object of type 'CodeDom.CodeCommentStatementCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified comment statements.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCompileUnit">
       <MemberSignature Language="C#" Value="protected virtual void GenerateCompileUnit (System.CodeDom.CodeCompileUnit compileUnit);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateCompileUnit(class System.CodeDom.CodeCompileUnit compileUnit) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -437,17 +607,22 @@
       </Parameters>
       <Docs>
         <param name="compileUnit">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified compile unit.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCompileUnitEnd">
       <MemberSignature Language="C#" Value="protected virtual void GenerateCompileUnitEnd (System.CodeDom.CodeCompileUnit compileUnit);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateCompileUnitEnd(class System.CodeDom.CodeCompileUnit compileUnit) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -456,17 +631,22 @@
       </Parameters>
       <Docs>
         <param name="compileUnit">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the end of a compile unit.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateCompileUnitStart">
       <MemberSignature Language="C#" Value="protected virtual void GenerateCompileUnitStart (System.CodeDom.CodeCompileUnit compileUnit);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateCompileUnitStart(class System.CodeDom.CodeCompileUnit compileUnit) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -475,17 +655,22 @@
       </Parameters>
       <Docs>
         <param name="compileUnit">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the start of a compile unit.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateConditionStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateConditionStatement (System.CodeDom.CodeConditionStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateConditionStatement(class System.CodeDom.CodeConditionStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -494,17 +679,25 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeConditionStatement'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most languages, this method will generate code for an if statement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified conditional statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateConstructor">
       <MemberSignature Language="C#" Value="protected abstract void GenerateConstructor (System.CodeDom.CodeConstructor x, System.CodeDom.CodeTypeDeclaration d);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateConstructor(class System.CodeDom.CodeConstructor x, class System.CodeDom.CodeTypeDeclaration d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -515,17 +708,22 @@
       <Docs>
         <param name="x">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified constructor.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateDecimalValue">
       <MemberSignature Language="C#" Value="protected virtual void GenerateDecimalValue (decimal d);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateDecimalValue(valuetype System.Decimal d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -533,21 +731,28 @@
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="d">To be added: an object of type 'decimal'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified decimal value.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The decimal value to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateDefaultValueExpression">
       <MemberSignature Language="C#" Value="protected virtual void GenerateDefaultValueExpression (System.CodeDom.CodeDefaultValueExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateDefaultValueExpression(class System.CodeDom.CodeDefaultValueExpression e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -555,14 +760,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDefaultValueExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified reference to a default value.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference to generate code for.</param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDelegateCreateExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateDelegateCreateExpression (System.CodeDom.CodeDelegateCreateExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateDelegateCreateExpression(class System.CodeDom.CodeDelegateCreateExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -570,18 +785,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDelegateCreateExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeDelegateCreateExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified delegate creation expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateDelegateInvokeExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateDelegateInvokeExpression (System.CodeDom.CodeDelegateInvokeExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateDelegateInvokeExpression(class System.CodeDom.CodeDelegateInvokeExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -589,18 +810,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDelegateInvokeExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeDelegateInvokeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified delegate invoke expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateDirectionExpression">
       <MemberSignature Language="C#" Value="protected virtual void GenerateDirectionExpression (System.CodeDom.CodeDirectionExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateDirectionExpression(class System.CodeDom.CodeDirectionExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -608,20 +835,22 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDirectionExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeDirectionExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified direction expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateDirectives">
       <MemberSignature Language="C#" Value="protected virtual void GenerateDirectives (System.CodeDom.CodeDirectiveCollection directives);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateDirectives(class System.CodeDom.CodeDirectiveCollection directives) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -630,14 +859,24 @@
         <Parameter Name="directives" Type="System.CodeDom.CodeDirectiveCollection" />
       </Parameters>
       <Docs>
-        <param name="directives">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified code directives.</para>
+        </summary>
+        <param name="directives">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code directives to generate code for.</param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDoubleValue">
       <MemberSignature Language="C#" Value="protected virtual void GenerateDoubleValue (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateDoubleValue(float64 d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -645,18 +884,24 @@
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="d">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for a double-precision floating point number.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateEntryPointMethod">
       <MemberSignature Language="C#" Value="protected abstract void GenerateEntryPointMethod (System.CodeDom.CodeEntryPointMethod m, System.CodeDom.CodeTypeDeclaration d);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateEntryPointMethod(class System.CodeDom.CodeEntryPointMethod m, class System.CodeDom.CodeTypeDeclaration d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -667,17 +912,22 @@
       <Docs>
         <param name="m">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified entry point method.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateEvent">
       <MemberSignature Language="C#" Value="protected abstract void GenerateEvent (System.CodeDom.CodeMemberEvent ev, System.CodeDom.CodeTypeDeclaration d);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateEvent(class System.CodeDom.CodeMemberEvent ev, class System.CodeDom.CodeTypeDeclaration d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -688,17 +938,22 @@
       <Docs>
         <param name="ev">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified event.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateEventReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateEventReferenceExpression (System.CodeDom.CodeEventReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateEventReferenceExpression(class System.CodeDom.CodeEventReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -706,18 +961,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeEventReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeEventReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified event reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateExpression">
       <MemberSignature Language="C#" Value="protected void GenerateExpression (System.CodeDom.CodeExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void GenerateExpression(class System.CodeDom.CodeExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -725,18 +986,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified code expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateExpressionStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateExpressionStatement (System.CodeDom.CodeExpressionStatement statement);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateExpressionStatement(class System.CodeDom.CodeExpressionStatement statement) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -745,17 +1012,22 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeExpressionStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified expression statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateField">
       <MemberSignature Language="C#" Value="protected abstract void GenerateField (System.CodeDom.CodeMemberField f);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateField(class System.CodeDom.CodeMemberField f) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -764,17 +1036,22 @@
       </Parameters>
       <Docs>
         <param name="f">To be added: an object of type 'CodeDom.CodeMemberField'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified member field.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateFieldReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateFieldReferenceExpression (System.CodeDom.CodeFieldReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateFieldReferenceExpression(class System.CodeDom.CodeFieldReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -782,18 +1059,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeFieldReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeFieldReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified field reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateGotoStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateGotoStatement (System.CodeDom.CodeGotoStatement statement);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateGotoStatement(class System.CodeDom.CodeGotoStatement statement) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -802,17 +1085,22 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeGotoStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified goto statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateIndexerExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateIndexerExpression (System.CodeDom.CodeIndexerExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateIndexerExpression(class System.CodeDom.CodeIndexerExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -820,18 +1108,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeIndexerExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeIndexerExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified indexer expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateIterationStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateIterationStatement (System.CodeDom.CodeIterationStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateIterationStatement(class System.CodeDom.CodeIterationStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -840,17 +1134,25 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeIterationStatement'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most languages, this method will generate code for a for loop or a while loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified iteration statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateLabeledStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateLabeledStatement (System.CodeDom.CodeLabeledStatement statement);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateLabeledStatement(class System.CodeDom.CodeLabeledStatement statement) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -859,17 +1161,22 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeLabeledStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified labeled statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateLinePragmaEnd">
       <MemberSignature Language="C#" Value="protected abstract void GenerateLinePragmaEnd (System.CodeDom.CodeLinePragma p);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateLinePragmaEnd(class System.CodeDom.CodeLinePragma p) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -878,17 +1185,22 @@
       </Parameters>
       <Docs>
         <param name="p">To be added: an object of type 'CodeDom.CodeLinePragma'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified line pragma end.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateLinePragmaStart">
       <MemberSignature Language="C#" Value="protected abstract void GenerateLinePragmaStart (System.CodeDom.CodeLinePragma p);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateLinePragmaStart(class System.CodeDom.CodeLinePragma p) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -897,17 +1209,22 @@
       </Parameters>
       <Docs>
         <param name="p">To be added: an object of type 'CodeDom.CodeLinePragma'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified line pragma start.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateMethod">
       <MemberSignature Language="C#" Value="protected abstract void GenerateMethod (System.CodeDom.CodeMemberMethod m, System.CodeDom.CodeTypeDeclaration d);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateMethod(class System.CodeDom.CodeMemberMethod m, class System.CodeDom.CodeTypeDeclaration d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -918,17 +1235,22 @@
       <Docs>
         <param name="m">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateMethodInvokeExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateMethodInvokeExpression (System.CodeDom.CodeMethodInvokeExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateMethodInvokeExpression(class System.CodeDom.CodeMethodInvokeExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -936,18 +1258,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeMethodInvokeExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeMethodInvokeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method invoke expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateMethodReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateMethodReferenceExpression (System.CodeDom.CodeMethodReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateMethodReferenceExpression(class System.CodeDom.CodeMethodReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -955,18 +1283,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeMethodReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeMethodReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateMethodReturnStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateMethodReturnStatement (System.CodeDom.CodeMethodReturnStatement e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateMethodReturnStatement(class System.CodeDom.CodeMethodReturnStatement e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -974,18 +1308,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeMethodReturnStatement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeMethodReturnStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method return statement.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The statement to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateNamespace">
       <MemberSignature Language="C#" Value="protected virtual void GenerateNamespace (System.CodeDom.CodeNamespace ns);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateNamespace(class System.CodeDom.CodeNamespace ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -994,17 +1334,22 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateNamespaceEnd">
       <MemberSignature Language="C#" Value="protected abstract void GenerateNamespaceEnd (System.CodeDom.CodeNamespace ns);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateNamespaceEnd(class System.CodeDom.CodeNamespace ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1013,17 +1358,22 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the end of a namespace.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateNamespaceImport">
       <MemberSignature Language="C#" Value="protected abstract void GenerateNamespaceImport (System.CodeDom.CodeNamespaceImport i);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateNamespaceImport(class System.CodeDom.CodeNamespaceImport i) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1032,17 +1382,22 @@
       </Parameters>
       <Docs>
         <param name="i">To be added: an object of type 'CodeDom.CodeNamespaceImport'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace import.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateNamespaceImports">
       <MemberSignature Language="C#" Value="protected void GenerateNamespaceImports (System.CodeDom.CodeNamespace e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void GenerateNamespaceImports(class System.CodeDom.CodeNamespace e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1050,18 +1405,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeNamespace" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace import.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace import to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateNamespaces">
       <MemberSignature Language="C#" Value="protected void GenerateNamespaces (System.CodeDom.CodeCompileUnit e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void GenerateNamespaces(class System.CodeDom.CodeCompileUnit e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1069,18 +1430,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the namespaces in the specified compile unit.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The compile unit to generate namespaces for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateNamespaceStart">
       <MemberSignature Language="C#" Value="protected abstract void GenerateNamespaceStart (System.CodeDom.CodeNamespace ns);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateNamespaceStart(class System.CodeDom.CodeNamespace ns) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1089,17 +1456,22 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the start of a namespace.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateObjectCreateExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateObjectCreateExpression (System.CodeDom.CodeObjectCreateExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateObjectCreateExpression(class System.CodeDom.CodeObjectCreateExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1107,18 +1479,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeObjectCreateExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeObjectCreateExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified object creation expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateParameterDeclarationExpression">
       <MemberSignature Language="C#" Value="protected virtual void GenerateParameterDeclarationExpression (System.CodeDom.CodeParameterDeclarationExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateParameterDeclarationExpression(class System.CodeDom.CodeParameterDeclarationExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1126,18 +1504,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeParameterDeclarationExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeParameterDeclarationExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified parameter declaration expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GeneratePrimitiveExpression">
       <MemberSignature Language="C#" Value="protected virtual void GeneratePrimitiveExpression (System.CodeDom.CodePrimitiveExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GeneratePrimitiveExpression(class System.CodeDom.CodePrimitiveExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1145,18 +1529,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodePrimitiveExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodePrimitiveExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified primitive expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateProperty">
       <MemberSignature Language="C#" Value="protected abstract void GenerateProperty (System.CodeDom.CodeMemberProperty p, System.CodeDom.CodeTypeDeclaration d);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateProperty(class System.CodeDom.CodeMemberProperty p, class System.CodeDom.CodeTypeDeclaration d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1167,17 +1557,22 @@
       <Docs>
         <param name="p">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified property.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GeneratePropertyReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GeneratePropertyReferenceExpression (System.CodeDom.CodePropertyReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GeneratePropertyReferenceExpression(class System.CodeDom.CodePropertyReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1185,18 +1580,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodePropertyReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodePropertyReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified property reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GeneratePropertySetValueReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GeneratePropertySetValueReferenceExpression (System.CodeDom.CodePropertySetValueReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GeneratePropertySetValueReferenceExpression(class System.CodeDom.CodePropertySetValueReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1204,18 +1605,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodePropertySetValueReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodePropertySetValueReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified property set value reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateRemoveEventStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateRemoveEventStatement (System.CodeDom.CodeRemoveEventStatement statement);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateRemoveEventStatement(class System.CodeDom.CodeRemoveEventStatement statement) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1224,17 +1631,22 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeRemoveEventStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified remove event statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateSingleFloatValue">
       <MemberSignature Language="C#" Value="protected virtual void GenerateSingleFloatValue (float s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateSingleFloatValue(float32 s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1242,18 +1654,24 @@
         <Parameter Name="s" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for a single-precision floating point number.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateSnippetCompileUnit">
       <MemberSignature Language="C#" Value="protected virtual void GenerateSnippetCompileUnit (System.CodeDom.CodeSnippetCompileUnit e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateSnippetCompileUnit(class System.CodeDom.CodeSnippetCompileUnit e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1261,18 +1679,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeSnippetCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeSnippetCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment compile unit.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The literal code fragment compile unit to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateSnippetExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateSnippetExpression (System.CodeDom.CodeSnippetExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateSnippetExpression(class System.CodeDom.CodeSnippetExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1280,18 +1704,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeSnippetExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeSnippetExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateSnippetMember">
       <MemberSignature Language="C#" Value="protected abstract void GenerateSnippetMember (System.CodeDom.CodeSnippetTypeMember m);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateSnippetMember(class System.CodeDom.CodeSnippetTypeMember m) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1300,17 +1730,22 @@
       </Parameters>
       <Docs>
         <param name="m">To be added: an object of type 'CodeDom.CodeSnippetTypeMember'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment class member.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateSnippetStatement">
       <MemberSignature Language="C#" Value="protected virtual void GenerateSnippetStatement (System.CodeDom.CodeSnippetStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateSnippetStatement(class System.CodeDom.CodeSnippetStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1319,17 +1754,22 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeSnippetStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateStatement">
       <MemberSignature Language="C#" Value="protected void GenerateStatement (System.CodeDom.CodeStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void GenerateStatement(class System.CodeDom.CodeStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1338,17 +1778,22 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateStatements">
       <MemberSignature Language="C#" Value="protected void GenerateStatements (System.CodeDom.CodeStatementCollection c);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void GenerateStatements(class System.CodeDom.CodeStatementCollection c) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1357,17 +1802,22 @@
       </Parameters>
       <Docs>
         <param name="c">To be added: an object of type 'CodeDom.CodeStatementCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified statement collection.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateThisReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateThisReferenceExpression (System.CodeDom.CodeThisReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateThisReferenceExpression(class System.CodeDom.CodeThisReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1375,18 +1825,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeThisReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeThisReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified this reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateThrowExceptionStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateThrowExceptionStatement (System.CodeDom.CodeThrowExceptionStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateThrowExceptionStatement(class System.CodeDom.CodeThrowExceptionStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1395,17 +1851,22 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeThrowExceptionStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified throw exception statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateTryCatchFinallyStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateTryCatchFinallyStatement (System.CodeDom.CodeTryCatchFinallyStatement s);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateTryCatchFinallyStatement(class System.CodeDom.CodeTryCatchFinallyStatement s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1414,17 +1875,22 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeTryCatchFinallyStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified try...catch...finally statement.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateTypeConstructor">
       <MemberSignature Language="C#" Value="protected abstract void GenerateTypeConstructor (System.CodeDom.CodeTypeConstructor constructor);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateTypeConstructor(class System.CodeDom.CodeTypeConstructor constructor) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1433,17 +1899,22 @@
       </Parameters>
       <Docs>
         <param name="constructor">To be added: an object of type 'CodeDom.CodeTypeConstructor'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified class constructor.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateTypeEnd">
       <MemberSignature Language="C#" Value="protected abstract void GenerateTypeEnd (System.CodeDom.CodeTypeDeclaration declaration);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateTypeEnd(class System.CodeDom.CodeTypeDeclaration declaration) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1452,17 +1923,22 @@
       </Parameters>
       <Docs>
         <param name="declaration">To be added: an object of type 'CodeDom.CodeTypeDeclaration'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified end of the class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateTypeOfExpression">
       <MemberSignature Language="C#" Value="protected virtual void GenerateTypeOfExpression (System.CodeDom.CodeTypeOfExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateTypeOfExpression(class System.CodeDom.CodeTypeOfExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1470,18 +1946,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeTypeOfExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeTypeOfExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type of expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateTypeReferenceExpression">
       <MemberSignature Language="C#" Value="protected virtual void GenerateTypeReferenceExpression (System.CodeDom.CodeTypeReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateTypeReferenceExpression(class System.CodeDom.CodeTypeReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1489,18 +1971,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeTypeReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeTypeReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateTypes">
       <MemberSignature Language="C#" Value="protected void GenerateTypes (System.CodeDom.CodeNamespace e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void GenerateTypes(class System.CodeDom.CodeNamespace e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1508,18 +1996,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeNamespace" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace and the classes it contains.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to generate classes for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateTypeStart">
       <MemberSignature Language="C#" Value="protected abstract void GenerateTypeStart (System.CodeDom.CodeTypeDeclaration declaration);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateTypeStart(class System.CodeDom.CodeTypeDeclaration declaration) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1528,17 +2022,22 @@
       </Parameters>
       <Docs>
         <param name="declaration">To be added: an object of type 'CodeDom.CodeTypeDeclaration'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified start of the class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateVariableDeclarationStatement">
       <MemberSignature Language="C#" Value="protected abstract void GenerateVariableDeclarationStatement (System.CodeDom.CodeVariableDeclarationStatement e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateVariableDeclarationStatement(class System.CodeDom.CodeVariableDeclarationStatement e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1546,18 +2045,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeVariableDeclarationStatement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeVariableDeclarationStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified variable declaration statement.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The statement to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateVariableReferenceExpression">
       <MemberSignature Language="C#" Value="protected abstract void GenerateVariableReferenceExpression (System.CodeDom.CodeVariableReferenceExpression e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GenerateVariableReferenceExpression(class System.CodeDom.CodeVariableReferenceExpression e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1565,18 +2070,24 @@
         <Parameter Name="e" Type="System.CodeDom.CodeVariableReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeVariableReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified variable reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetTypeOutput">
       <MemberSignature Language="C#" Value="protected abstract string GetTypeOutput (System.CodeDom.CodeTypeReference type);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance string GetTypeOutput(class System.CodeDom.CodeTypeReference type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1585,114 +2096,155 @@
       </Parameters>
       <Docs>
         <param name="type">To be added: an object of type 'CodeDom.CodeTypeReference'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified data type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the data type reference.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Indent">
+      <MemberSignature Language="C#" Value="protected int Indent { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Indent" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Indent">
-      <MemberSignature Language="C#" Value="protected int Indent { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Segments of code are commonly indented for ease of recognition.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of spaces to indent each indentation level.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCurrentClass">
       <MemberSignature Language="C#" Value="protected bool IsCurrentClass { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCurrentClass" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is a class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCurrentDelegate">
       <MemberSignature Language="C#" Value="protected bool IsCurrentDelegate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCurrentDelegate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is a delegate.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCurrentEnum">
       <MemberSignature Language="C#" Value="protected bool IsCurrentEnum { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCurrentEnum" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is an enumeration.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCurrentInterface">
       <MemberSignature Language="C#" Value="protected bool IsCurrentInterface { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCurrentInterface" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is an interface.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCurrentStruct">
       <MemberSignature Language="C#" Value="protected bool IsCurrentStruct { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCurrentStruct" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is a value type or struct.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidIdentifier">
       <MemberSignature Language="C#" Value="protected abstract bool IsValidIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool IsValidIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1700,19 +2252,28 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified value is a valid identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value is a valid identifier; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to test for conflicts with valid identifiers. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidLanguageIndependentIdentifier">
       <MemberSignature Language="C#" Value="public static bool IsValidLanguageIndependentIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidLanguageIndependentIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1720,67 +2281,94 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method checks the specified string to ensure that it does not contain certain characters that can be used to escape an identifier field. The <see cref="M:System.CodeDom.Compiler.CodeGenerator.ValidateIdentifiers(System.CodeDom.CodeObject)" /> method calls this method to perform string validation. Calling the <see cref="M:System.CodeDom.Compiler.CodeGenerator.ValidateIdentifiers(System.CodeDom.CodeObject)" /> method and passing a <see cref="T:System.CodeDom.CodeCompileUnit" /> before generating code from it can prevent the use of certain character sequences to include hidden code within an identifier field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified string is a valid identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified string is a valid identifier; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to test for validity. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NullToken">
       <MemberSignature Language="C#" Value="protected abstract string NullToken { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NullToken" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the token that represents null.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Options">
       <MemberSignature Language="C#" Value="protected System.CodeDom.Compiler.CodeGeneratorOptions Options { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.Compiler.CodeGeneratorOptions Options" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.CodeGeneratorOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeGeneratorOptions'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the options to be used by the code generator.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Output">
       <MemberSignature Language="C#" Value="protected System.IO.TextWriter Output { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.TextWriter Output" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.TextWriter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IO.TextWriter'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text writer to use for output.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputAttributeArgument">
       <MemberSignature Language="C#" Value="protected virtual void OutputAttributeArgument (System.CodeDom.CodeAttributeArgument argument);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputAttributeArgument(class System.CodeDom.CodeAttributeArgument argument) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1789,17 +2377,22 @@
       </Parameters>
       <Docs>
         <param name="argument">To be added: an object of type 'CodeDom.CodeAttributeArgument'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs an argument in an attribute block.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputAttributeDeclarations">
       <MemberSignature Language="C#" Value="protected virtual void OutputAttributeDeclarations (System.CodeDom.CodeAttributeDeclarationCollection attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputAttributeDeclarations(class System.CodeDom.CodeAttributeDeclarationCollection attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1807,18 +2400,24 @@
         <Parameter Name="attributes" Type="System.CodeDom.CodeAttributeDeclarationCollection" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.CodeAttributeDeclarationCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attribute declaration collection.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputDirection">
       <MemberSignature Language="C#" Value="protected virtual void OutputDirection (System.CodeDom.FieldDirection direction);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputDirection(valuetype System.CodeDom.FieldDirection direction) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1827,17 +2426,22 @@
       </Parameters>
       <Docs>
         <param name="direction">To be added: an object of type 'CodeDom.FieldDirection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified <see cref="T:System.CodeDom.FieldDirection" />.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputExpressionList">
       <MemberSignature Language="C#" Value="protected virtual void OutputExpressionList (System.CodeDom.CodeExpressionCollection expressions);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputExpressionList(class System.CodeDom.CodeExpressionCollection expressions) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1845,18 +2449,24 @@
         <Parameter Name="expressions" Type="System.CodeDom.CodeExpressionCollection" />
       </Parameters>
       <Docs>
-        <param name="expressions">To be added: an object of type 'CodeDom.CodeExpressionCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified expression list.</para>
+        </summary>
+        <param name="expressions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expressions to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputExpressionList">
       <MemberSignature Language="C#" Value="protected virtual void OutputExpressionList (System.CodeDom.CodeExpressionCollection expressions, bool newLineBetweenItems);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputExpressionList(class System.CodeDom.CodeExpressionCollection expressions, bool newLineBetweenItems) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1865,19 +2475,25 @@
         <Parameter Name="newLineBetweenItems" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="expressions">To be added: an object of type 'CodeDom.CodeExpressionCollection'</param>
         <param name="newLineBetweenItems">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified expression list.</para>
+        </summary>
+        <param name="expressions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expressions to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputFieldScopeModifier">
       <MemberSignature Language="C#" Value="protected virtual void OutputFieldScopeModifier (System.CodeDom.MemberAttributes attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputFieldScopeModifier(valuetype System.CodeDom.MemberAttributes attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1885,18 +2501,24 @@
         <Parameter Name="attributes" Type="System.CodeDom.MemberAttributes" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.MemberAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs a field scope modifier that corresponds to the specified attributes.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the attributes. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputIdentifier">
       <MemberSignature Language="C#" Value="protected virtual void OutputIdentifier (string ident);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputIdentifier(string ident) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1904,18 +2526,24 @@
         <Parameter Name="ident" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ident">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the specified identifier.</para>
+        </summary>
+        <param name="ident">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier to output. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputMemberAccessModifier">
       <MemberSignature Language="C#" Value="protected virtual void OutputMemberAccessModifier (System.CodeDom.MemberAttributes attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputMemberAccessModifier(valuetype System.CodeDom.MemberAttributes attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1923,18 +2551,24 @@
         <Parameter Name="attributes" Type="System.CodeDom.MemberAttributes" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.MemberAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified member access modifier.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the member access modifier to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputMemberScopeModifier">
       <MemberSignature Language="C#" Value="protected virtual void OutputMemberScopeModifier (System.CodeDom.MemberAttributes attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputMemberScopeModifier(valuetype System.CodeDom.MemberAttributes attributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1942,18 +2576,24 @@
         <Parameter Name="attributes" Type="System.CodeDom.MemberAttributes" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.MemberAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified member scope modifier.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the member scope modifier to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputOperator">
       <MemberSignature Language="C#" Value="protected virtual void OutputOperator (System.CodeDom.CodeBinaryOperatorType op);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputOperator(valuetype System.CodeDom.CodeBinaryOperatorType op) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1961,18 +2601,24 @@
         <Parameter Name="op" Type="System.CodeDom.CodeBinaryOperatorType" />
       </Parameters>
       <Docs>
-        <param name="op">To be added: an object of type 'CodeDom.CodeBinaryOperatorType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified operator.</para>
+        </summary>
+        <param name="op">
+          <attribution license="cc4" from="Microsoft" modified="false" />The operator to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputParameters">
       <MemberSignature Language="C#" Value="protected virtual void OutputParameters (System.CodeDom.CodeParameterDeclarationExpressionCollection parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputParameters(class System.CodeDom.CodeParameterDeclarationExpressionCollection parameters) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1980,18 +2626,24 @@
         <Parameter Name="parameters" Type="System.CodeDom.CodeParameterDeclarationExpressionCollection" />
       </Parameters>
       <Docs>
-        <param name="parameters">To be added: an object of type 'CodeDom.CodeParameterDeclarationExpressionCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified parameters.</para>
+        </summary>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter declaration expressions to generate code for. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputType">
       <MemberSignature Language="C#" Value="protected abstract void OutputType (System.CodeDom.CodeTypeReference t);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputType(class System.CodeDom.CodeTypeReference t) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2000,17 +2652,22 @@
       </Parameters>
       <Docs>
         <param name="t">To be added: an object of type 'CodeDom.CodeTypeReference'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputTypeAttributes">
       <MemberSignature Language="C#" Value="protected virtual void OutputTypeAttributes (System.Reflection.TypeAttributes attributes, bool isStruct, bool isEnum);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputTypeAttributes(valuetype System.Reflection.TypeAttributes attributes, bool isStruct, bool isEnum) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2020,20 +2677,28 @@
         <Parameter Name="isEnum" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="isStruct">To be added: an object of type 'bool'</param>
-        <param name="isEnum">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type attributes.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the type attributes to generate code for. </param>
+        <param name="isStruct">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the type is a struct; otherwise, false. </param>
+        <param name="isEnum">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the type is an enum; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OutputTypeNamePair">
       <MemberSignature Language="C#" Value="protected virtual void OutputTypeNamePair (System.CodeDom.CodeTypeReference type, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OutputTypeNamePair(class System.CodeDom.CodeTypeReference type, string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2043,18 +2708,24 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified object type and name pair.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name for the object. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="QuoteSnippetString">
       <MemberSignature Language="C#" Value="protected abstract string QuoteSnippetString (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance string QuoteSnippetString(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2062,19 +2733,31 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a modified version of the specified string that has been formatted with escape code characters. For example, /" might be used to represent ". These escape codes are used to replace elements of the specified string that might otherwise conflict with language syntax.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string by formatting it with escape codes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted string.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Supports">
       <MemberSignature Language="C#" Value="protected abstract bool Supports (System.CodeDom.Compiler.GeneratorSupport supports);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool Supports(valuetype System.CodeDom.Compiler.GeneratorSupport supports) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2083,21 +2766,25 @@
       </Parameters>
       <Docs>
         <param name="supports">To be added: an object of type 'GeneratorSupport'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified code generation support is provided.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code generation support is provided; otherwise, false.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.CreateEscapedIdentifier">
       <MemberSignature Language="C#" Value="string ICodeGenerator.CreateEscapedIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance string System.CodeDom.Compiler.ICodeGenerator.CreateEscapedIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -2106,18 +2793,27 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an escaped identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to create an escaped identifier for.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.CreateValidIdentifier">
       <MemberSignature Language="C#" Value="string ICodeGenerator.CreateValidIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance string System.CodeDom.Compiler.ICodeGenerator.CreateValidIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -2126,18 +2822,27 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a valid identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the specified value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to generate a valid identifier for.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromCompileUnit">
       <MemberSignature Language="C#" Value="void ICodeGenerator.GenerateCodeFromCompileUnit (System.CodeDom.CodeCompileUnit compileUnit, System.IO.TextWriter output, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromCompileUnit(class System.CodeDom.CodeCompileUnit compileUnit, class System.IO.TextWriter output, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2151,16 +2856,21 @@
         <param name="compileUnit">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) compilation unit and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromExpression">
       <MemberSignature Language="C#" Value="void ICodeGenerator.GenerateCodeFromExpression (System.CodeDom.CodeExpression expression, System.IO.TextWriter output, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromExpression(class System.CodeDom.CodeExpression expression, class System.IO.TextWriter output, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2174,16 +2884,21 @@
         <param name="expression">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) expression and outputs it to the specified text writer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromNamespace">
       <MemberSignature Language="C#" Value="void ICodeGenerator.GenerateCodeFromNamespace (System.CodeDom.CodeNamespace ns, System.IO.TextWriter output, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromNamespace(class System.CodeDom.CodeNamespace ns, class System.IO.TextWriter output, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2197,16 +2912,21 @@
         <param name="ns">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) namespace and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromStatement">
       <MemberSignature Language="C#" Value="void ICodeGenerator.GenerateCodeFromStatement (System.CodeDom.CodeStatement statement, System.IO.TextWriter output, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromStatement(class System.CodeDom.CodeStatement statement, class System.IO.TextWriter output, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2220,16 +2940,21 @@
         <param name="statement">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) statement and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromType">
       <MemberSignature Language="C#" Value="void ICodeGenerator.GenerateCodeFromType (System.CodeDom.CodeTypeDeclaration type, System.IO.TextWriter output, System.CodeDom.Compiler.CodeGeneratorOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromType(class System.CodeDom.CodeTypeDeclaration type, class System.IO.TextWriter output, class System.CodeDom.Compiler.CodeGeneratorOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2243,16 +2968,21 @@
         <param name="type">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) type declaration and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GetTypeOutput">
       <MemberSignature Language="C#" Value="string ICodeGenerator.GetTypeOutput (System.CodeDom.CodeTypeReference type);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance string System.CodeDom.Compiler.ICodeGenerator.GetTypeOutput(class System.CodeDom.CodeTypeReference type) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -2261,18 +2991,27 @@
         <Parameter Name="type" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type indicated by the specified <see cref="T:System.CodeDom.CodeTypeReference" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the data type reference.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to return.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.IsValidIdentifier">
       <MemberSignature Language="C#" Value="bool ICodeGenerator.IsValidIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.CodeDom.Compiler.ICodeGenerator.IsValidIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2281,18 +3020,27 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the specified value is a valid identifier for the current language.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid identifier; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to test.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.Supports">
       <MemberSignature Language="C#" Value="bool ICodeGenerator.Supports (System.CodeDom.Compiler.GeneratorSupport value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.CodeDom.Compiler.ICodeGenerator.Supports(valuetype System.CodeDom.Compiler.GeneratorSupport value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2302,17 +3050,25 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the generator provides support for the language features represented by the specified <see cref="T:System.CodeDom.Compiler.GeneratorSupport" />  object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified capabilities are supported; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.ValidateIdentifier">
       <MemberSignature Language="C#" Value="void ICodeGenerator.ValidateIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.CodeDom.Compiler.ICodeGenerator.ValidateIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2321,14 +3077,24 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the specified value is not a valid identifier.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="ValidateIdentifier">
       <MemberSignature Language="C#" Value="protected virtual void ValidateIdentifier (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void ValidateIdentifier(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2336,18 +3102,29 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the specified string is not a valid identifier.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier to test for validity as an identifier. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ValidateIdentifiers">
       <MemberSignature Language="C#" Value="public static void ValidateIdentifiers (System.CodeDom.CodeObject e);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ValidateIdentifiers(class System.CodeDom.CodeObject e) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2355,14 +3132,19 @@
         <Parameter Name="e" Type="System.CodeDom.CodeObject" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is possible for the identifier fields of <see cref="T:System.CodeDom.CodeObject" /> objects to contain field escape characters and hidden code which can allow security violations. This method checks the literal fields of each <see cref="T:System.CodeDom.CodeObject" /> in a <see cref="N:System.CodeDom" /> tree for characters which could be used to hide code, and throws an exception if an identifier field contains an invalid character.</para>
+          <para>This method calls the <see cref="M:System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(System.String)" /> method to validate each identifier in the specified <see cref="T:System.CodeDom.CodeObject" /> or <see cref="N:System.CodeDom" /> tree, and throws an exception if an identifier is invalid or contains invalid characters.</para>
+          <para>Call this method and pass it the <see cref="T:System.CodeDom.CodeCompileUnit" /> containing the code graph to generate before generating code to block the use of certain character sequences that can be used to include hidden code within an identifier field. This method is not called automatically by any generate code methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to validate each identifier field contained in the specified <see cref="T:System.CodeDom.CodeObject" /> or <see cref="N:System.CodeDom" /> tree.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to test for invalid identifiers. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

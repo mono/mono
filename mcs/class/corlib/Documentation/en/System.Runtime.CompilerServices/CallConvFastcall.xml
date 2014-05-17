@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CallConvFastcall" FullName="System.Runtime.CompilerServices.CallConvFastcall">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CallConvFastcall" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CallConvFastcall extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,30 +14,57 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CallConvFastcall ();" />
-      <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The __fastcall calling convention specifies that arguments to functions be passed in registers, when possible.</para>
+      <para>The classes in <see cref="N:System.Runtime.CompilerServices" /> are for compiler writers' use only.</para>
+      <para>Compilers emit custom modifiers within metadata to change the way that the just-in-time (JIT) compiler handles values when the default behavior is not appropriate.  When the JIT compiler encounters a custom modifier, it handles the value in the way that the modifier specifies.  Compilers can apply custom modifiers to methods, parameters, and return values.  The JIT compiler must respond to required modifiers but can ignore optional modifiers.  A C++ compiler could emit a custom modifier to describe how a byte should be treated in cases where the JIT compiler treats bytes in manner that is not compatible with C++ by default. </para>
+      <para>You can emit custom modifiers into metadata using one of the following techniques:</para>
+      <list type="bullet">
+        <item>
+          <para>Using methods in the <see cref="T:System.Reflection.Emit.TypeBuilder" /> class like <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineMethod" />, <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineField" />, <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineConstructor" />, and <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineProperty" />.</para>
+        </item>
+        <item>
+          <para>Generating a Microsoft intermediate language (MSIL) instruction file that contains calls to modopt and modreq, and assembling the file with the <format type="text/html"><a href="4ca3a4f0-4400-47ce-8936-8e219961c76f">MSIL Assembler (Ilasm.exe)</a></format>.</para>
+        </item>
+        <item>
+          <para>Using the unmanaged reflection API.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This calling convention is not supported in this version of the .NET Framework.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CallConvFastcall ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The classes in <see cref="N:System.Runtime.CompilerServices" /> are for compiler writers' use only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.CallConvFastcall" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

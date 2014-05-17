@@ -25,11 +25,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.ServiceModel;
+
+#if !HAS_ACTIVATION
 
 namespace System.ServiceModel.Activation
 {
+#if NET_4_0
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
+#endif
 	public class ServiceHostFactory : ServiceHostFactoryBase
 	{
 		[MonoTODO]
@@ -47,3 +50,5 @@ namespace System.ServiceModel.Activation
 		}
 	}
 }
+
+#endif

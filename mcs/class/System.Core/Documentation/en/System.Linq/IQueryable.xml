@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IQueryable" FullName="System.Linq.IQueryable">
   <TypeSignature Language="C#" Value="public interface IQueryable : System.Collections.IEnumerable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IQueryable implements class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -10,53 +13,85 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Linq.IQueryable" /> interface is intended for implementation by query providers. It is only supposed to be implemented by providers that also implement <see cref="T:System.Linq.IQueryable`1" />. If the provider does not also implement <see cref="T:System.Linq.IQueryable`1" />, the standard query operators cannot be used on the provider's data source.</para>
+      <para>The <see cref="T:System.Linq.IQueryable" /> interface inherits the <see cref="T:System.Collections.IEnumerable" /> interface so that if it represents a query, the results of that query can be enumerated. Enumeration causes the expression tree associated with an <see cref="T:System.Linq.IQueryable" /> object to be executed. The definition of "executing an expression tree" is specific to a query provider. For example, it may involve translating the expression tree to an appropriate query language for the underlying data source. Queries that do not return enumerable results are executed when the <see cref="M:System.Linq.IQueryProvider.Execute(System.Linq.Expressions.Expression)" /> method is called.</para>
+      <para>For more information about how to create your own LINQ provider, see <see cref="http://go.microsoft.com/fwlink/?LinkID=112370">LINQ: Building an IQueryable Provider</see> on MSDN Blogs.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality to evaluate queries against a specific data source wherein the type of the data is not specified.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ElementType">
       <MemberSignature Language="C#" Value="public Type ElementType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ElementType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Linq.IQueryable.ElementType" /> property represents the "T" in IQueryable&lt;T&gt; or IQueryable(Of T).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the element(s) that are returned when the expression tree associated with this instance of <see cref="T:System.Linq.IQueryable" /> is executed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Expression">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression Expression { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.Expressions.Expression Expression" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an instance of <see cref="T:System.Linq.IQueryable" /> represents a vbteclinq query against a data source, the associated expression tree represents that query.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the expression tree that is associated with the instance of <see cref="T:System.Linq.IQueryable" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Provider">
       <MemberSignature Language="C#" Value="public System.Linq.IQueryProvider Provider { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.IQueryProvider Provider" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an instance of <see cref="T:System.Linq.IQueryable" /> represents a vbteclinq query against a data source, the associated query provider is the provider that created the <see cref="T:System.Linq.IQueryable" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the query provider that is associated with this data source.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

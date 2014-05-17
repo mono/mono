@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsByValue" FullName="System.Runtime.CompilerServices.IsByValue">
   <TypeSignature Language="C#" Value="public static class IsByValue" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit IsByValue extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,9 +12,28 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.CompilerServices.IsByValue" /> class is used by the Microsoft C++ compiler to denote method parameters and return values whose semantics follow the C++ rules for objects passed by value.  </para>
+      <para>Compilers emit custom modifiers within metadata to change the way that the just-in-time (JIT) compiler handles values when the default behavior is not appropriate.  When the JIT compiler encounters a custom modifier, it handles the value in the way that the modifier specifies.  Compilers can apply custom modifiers to methods, parameters, and return values.  The JIT compiler must respond to required modifiers but can ignore optional modifiers.  </para>
+      <para>You can emit custom modifiers into metadata using one of the following techniques:</para>
+      <list type="bullet">
+        <item>
+          <para>Using methods in the <see cref="T:System.Reflection.Emit.TypeBuilder" /> class such as <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineMethod" />, <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineField" />, <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineConstructor" />, and <see cref="Overload:System.Reflection.Emit.TypeBuilder.DefineProperty" />.</para>
+        </item>
+        <item>
+          <para>Generating a Microsoft intermediate language (MSIL) instruction file that contains calls to modopt and modreq, and assembling the file with the <format type="text/html"><a href="4ca3a4f0-4400-47ce-8936-8e219961c76f">MSIL Assembler (Ilasm.exe)</a></format>.</para>
+        </item>
+        <item>
+          <para>Using the unmanaged reflection API.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a modified method argument should be interpreted as having object passed-by-value semantics. This modifier is applied to reference types.  This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

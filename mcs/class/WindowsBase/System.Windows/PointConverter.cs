@@ -44,7 +44,7 @@ namespace System.Windows {
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if (!(value is string))
-				throw new NotSupportedException ("RectConverter only supports converting from strings");
+				throw new NotSupportedException ("PointConverter only supports converting from strings");
 
 			return Point.Parse ((string)value);
 		}

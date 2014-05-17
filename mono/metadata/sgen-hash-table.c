@@ -27,6 +27,13 @@
 
 #include <mono/metadata/sgen-gc.h>
 #include <mono/metadata/sgen-hash-table.h>
+#include <mono/utils/mono-counters.h>
+
+#ifdef HEAVY_STATISTICS
+static long long stat_lookups;
+static long long stat_lookup_iterations;
+static long long stat_lookup_max_iterations;
+#endif
 
 static void
 rehash (SgenHashTable *hash_table)
@@ -64,6 +71,8 @@ rehash_if_necessary (SgenHashTable *hash_table)
 {
 	if (hash_table->num_entries >= hash_table->size * 2)
 		rehash (hash_table);
+
+	SGEN_ASSERT (1, hash_table->size, "rehash guarantees size > 0");
 }
 
 static SgenHashTableEntry*
@@ -72,6 +81,10 @@ lookup (SgenHashTable *hash_table, gpointer key, guint *_hash)
 	SgenHashTableEntry *entry;
 	guint hash;
 	GEqualFunc equal = hash_table->equal_func;
+#ifdef HEAVY_STATISTICS
+	long long iterations = 0;
+	++stat_lookups;
+#endif
 
 	if (!hash_table->size)
 		return NULL;
@@ -81,6 +94,12 @@ lookup (SgenHashTable *hash_table, gpointer key, guint *_hash)
 		*_hash = hash;
 
 	for (entry = hash_table->table [hash]; entry; entry = entry->next) {
+#ifdef HEAVY_STATISTICS
+		++stat_lookup_iterations;
+		++iterations;
+		if (iterations > stat_lookup_max_iterations)
+			stat_lookup_max_iterations = iterations;
+#endif
 		if ((equal && equal (entry->key, key)) || (!equal && entry->key == key))
 			return entry;
 	}
@@ -197,8 +216,8 @@ sgen_hash_table_clean (SgenHashTable *hash_table)
 	guint i;
 
 	if (!hash_table->size) {
-		g_assert (!hash_table->table);
-		g_assert (!hash_table->num_entries);
+		SGEN_ASSERT (1, !hash_table->table, "clean should reset hash_table->table");
+		SGEN_ASSERT (1, !hash_table->num_entries, "clean should reset hash_table->num_entries");
 		return;
 	}
 
@@ -216,6 +235,16 @@ sgen_hash_table_clean (SgenHashTable *hash_table)
 	hash_table->table = NULL;
 	hash_table->size = 0;
 	hash_table->num_entries = 0;
+}
+
+void
+sgen_init_hash_table (void)
+{
+#ifdef HEAVY_STATISTICS
+	mono_counters_register ("Hash table lookups", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_lookups);
+	mono_counters_register ("Hash table lookup iterations", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_lookup_iterations);
+	mono_counters_register ("Hash table lookup max iterations", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_lookup_max_iterations);
+#endif
 }
 
 #endif

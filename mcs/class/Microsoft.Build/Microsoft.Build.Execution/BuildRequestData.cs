@@ -3,8 +3,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,50 +28,71 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Microsoft.Build.Execution
 {
-        public class BuildRequestData
-        {
-                public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild)
-                        : this (projectInstance, targetsToBuild, null, BuildRequestDataFlags.None)
-                {
-                }
+	public class BuildRequestData
+	{
+		public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild)
+        	: this (projectInstance, targetsToBuild, null, BuildRequestDataFlags.None)
+		{
+		}
 
-                public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild, HostServices hostServices)
-                        : this (projectInstance, targetsToBuild, hostServices, BuildRequestDataFlags.None)
-                {
-                }
+		public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild, HostServices hostServices)
+        	: this (projectInstance, targetsToBuild, hostServices, BuildRequestDataFlags.None)
+		{
+		}
 
-                public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild, HostServices hostServices,
-                                BuildRequestDataFlags flags)
-                {
-                        throw new NotImplementedException ();
-                }
+		public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild, HostServices hostServices,
+				BuildRequestDataFlags flags)
+		{
+			if (targetsToBuild == null)
+				throw new ArgumentNullException ("targetsToBuild");
+			ProjectInstance = projectInstance;
+			TargetNames = targetsToBuild;
+			HostServices = hostServices;
+			Flags = flags;
+		}
 
-                public BuildRequestData (string projectFullPath, IDictionary<string, string> globalProperties,
-                                string toolsVersion, string[] targetsToBuild, HostServices hostServices)
-                        : this (projectFullPath, globalProperties, toolsVersion, targetsToBuild, hostServices, BuildRequestDataFlags.None)
-                {
-                }
+		public BuildRequestData (string projectFullPath, IDictionary<string, string> globalProperties,
+				string toolsVersion, string[] targetsToBuild, HostServices hostServices)
+			: this (projectFullPath, globalProperties, toolsVersion, targetsToBuild, hostServices, BuildRequestDataFlags.None)
+		{
+		}
 
-                public BuildRequestData (string projectFullPath, IDictionary<string, string> globalProperties,
-                                string toolsVersion, string[] targetsToBuild, HostServices hostServices, BuildRequestDataFlags flags)
-                {
-                        throw new NotImplementedException ();
-                }
+		public BuildRequestData (string projectFullPath, IDictionary<string, string> globalProperties,
+				string toolsVersion, string[] targetsToBuild, HostServices hostServices, BuildRequestDataFlags flags)
+			: this (new ProjectInstance (projectFullPath, globalProperties, toolsVersion), targetsToBuild, hostServices, flags)
+		{
+			ExplicitlySpecifiedToolsVersion = toolsVersion;
+		}
 
-                public string ExplicitlySpecifiedToolsVersion { get; private set; }
-                public BuildRequestDataFlags Flags { get; private set; }
-                public HostServices HostServices { get; private set; }
-                public string ProjectFullPath { get; private set; }
-                public ProjectInstance ProjectInstance { get; private set; }
-                public ICollection<string> TargetNames { get; private set; }
+		public string ExplicitlySpecifiedToolsVersion { get; private set; }
 
-                ICollection<ProjectPropertyInstance> GlobalProperties {
-                        get { throw new NotImplementedException (); }
-                }
-        }
+		[MonoTODO ("unused")]
+		public BuildRequestDataFlags Flags { get; private set; }
+
+		[MonoTODO ("unused")]
+		public HostServices HostServices { get; private set; }
+
+		public string ProjectFullPath {
+			get { return ProjectInstance.FullPath; }
+		}
+
+		[MonoTODO ("unused")]
+		public ProjectInstance ProjectInstance { get; private set; }
+		
+		[MonoTODO]
+		public IEnumerable<string> PropertiesToTransfer { get; private set; }
+
+		[MonoTODO]
+		public ICollection<string> TargetNames { get; private set; }
+
+		ICollection<ProjectPropertyInstance> GlobalProperties {
+			get { return ProjectInstance.Properties.Where (p => ProjectInstance.GlobalProperties.Any (i => i.Key == p.Name)).ToArray (); } // we can use == as it should be identical match there.
+		}
+	}
 }
 

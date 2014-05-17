@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LazyThreadSafetyMode" FullName="System.Threading.LazyThreadSafetyMode">
   <TypeSignature Language="C#" Value="public enum LazyThreadSafetyMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed LazyThreadSafetyMode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,12 +10,76 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this enumeration to specify the <paramref name="mode" /> parameter of <see cref="T:System.Lazy`1" /> constructors. The effects of all constructors on thread synchronization can be described in terms of this enumeration, whether or not they have <paramref name="mode" /> parameters.</para>
+      <para>A <see cref="T:System.Lazy`1" /> instance is initialized either by a user-specified initialization method or by the default constructor for <paramref name="T" />. The initialization method is specified by the <paramref name="valueFactory" /> parameter of a <see cref="T:System.Lazy`1" /> constructor. The method returns an instance of <paramref name="T" />, which is the type that is lazily instantiated by the instance of <see cref="T:System.Lazy`1" />. If a constructor does not have a <paramref name="valueFactory" /> parameter, the default constructor for <paramref name="T" /> is used to initialize the <see cref="T:System.Lazy`1" /> instance. In either case, initialization occurs the first time you call the <see cref="P:System.Lazy`1.Value" /> property.</para>
+      <para>In addition to specifying the thread safety of a <see cref="T:System.Lazy`1" /> instance, this enumeration affects exception caching. When exceptions are cached for a <see cref="T:System.Lazy`1" /> instance, you get only one chance to initialize the instance. If an exception is thrown the first time you call the <see cref="P:System.Lazy`1.Value" /> property, that exception is cached and rethrown on all subsequent calls to the <see cref="P:System.Lazy`1.Value" /> property. The advantage of caching exceptions is that any two threads always get the same result, even when errors occur.</para>
+      <para>When you specify the <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" /> mode, exceptions are never cached. When you specify <see cref="F:System.Threading.LazyThreadSafetyMode.None" /> or <see cref="F:System.Threading.LazyThreadSafetyMode.ExecutionAndPublication" />, caching depends on whether you specify an initialization method or allow the default constructor for <paramref name="T" /> to be used. Specifying an initialization method enables exception caching for these two modes. The initialization method can be very simple. For example, it might call the default constructor for <paramref name="T" />: new Lazy&lt;Contents&gt;(() =&gt; new Contents(), mode) in C#, or New Lazy(Of Contents)(Function() New Contents()) in Visual Basic. If you use a constructor that does not specify an initialization method, exceptions that are thrown by the default constructor for <paramref name="T" /> are not cached. The following table summarizes exception caching behavior.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Mode</para>
+            </term>
+            <description>
+              <para>Using initialization method</para>
+            </description>
+            <description>
+              <para>Using default constructor for <paramref name="T" /></para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Threading.LazyThreadSafetyMode.None" />
+            </para>
+          </term>
+          <description>
+            <para>Cached</para>
+          </description>
+          <description>
+            <para>Not cached</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Threading.LazyThreadSafetyMode.PublicationOnly" />
+            </para>
+          </term>
+          <description>
+            <para>Not cached</para>
+          </description>
+          <description>
+            <para>Not cached</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Threading.LazyThreadSafetyMode.ExecutionAndPublication" />
+            </para>
+          </term>
+          <description>
+            <para>Cached</para>
+          </description>
+          <description>
+            <para>Not cached</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how a <see cref="T:System.Lazy`1" /> instance synchronizes access among multiple threads.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ExecutionAndPublication">
       <MemberSignature Language="C#" Value="ExecutionAndPublication" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.LazyThreadSafetyMode ExecutionAndPublication = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -22,11 +88,15 @@
         <ReturnType>System.Threading.LazyThreadSafetyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locks are used to ensure that only a single thread can initialize a <see cref="T:System.Lazy`1" /> instance in a thread-safe manner. If the initialization method (or the default constructor, if there is no initialization method) uses locks internally, deadlocks can occur. If you use a <see cref="T:System.Lazy`1" /> constructor that specifies an initialization method (<paramref name="valueFactory" /> parameter), and if that initialization method throws an exception (or fails to handle an exception) the first time you call the <see cref="P:System.Lazy`1.Value" /> property, then the exception is cached and thrown again on subsequent calls to the <see cref="P:System.Lazy`1.Value" /> property. If you use a <see cref="T:System.Lazy`1" /> constructor that does not specify an initialization method, exceptions that are thrown by the default constructor for <paramref name="T" /> are not cached. In that case, a subsequent call to the <see cref="P:System.Lazy`1.Value" /> property might successfully initialize the <see cref="T:System.Lazy`1" /> instance. If the initialization method recursively accesses the <see cref="P:System.Lazy`1.Value" /> property of the <see cref="T:System.Lazy`1" /> instance, an <see cref="T:System.InvalidOperationException" /> is thrown. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.LazyThreadSafetyMode None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,11 +105,15 @@
         <ReturnType>System.Threading.LazyThreadSafetyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Lazy`1" /> instance is not thread safe; if the instance is accessed from multiple threads, its behavior is undefined. Use this mode only when high performance is crucial and the <see cref="T:System.Lazy`1" /> instance is guaranteed never to be initialized from more than one thread. If you use a <see cref="T:System.Lazy`1" /> constructor that specifies an initialization method (<paramref name="valueFactory" /> parameter), and if that initialization method throws an exception (or fails to handle an exception) the first time you call the <see cref="P:System.Lazy`1.Value" /> property, then the exception is cached and thrown again on subsequent calls to the <see cref="P:System.Lazy`1.Value" /> property. If you use a <see cref="T:System.Lazy`1" /> constructor that does not specify an initialization method, exceptions that are thrown by the default constructor for <paramref name="T" /> are not cached. In that case, a subsequent call to the <see cref="P:System.Lazy`1.Value" /> property might successfully initialize the <see cref="T:System.Lazy`1" /> instance. If the initialization method recursively accesses the <see cref="P:System.Lazy`1.Value" /> property of the <see cref="T:System.Lazy`1" /> instance, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PublicationOnly">
       <MemberSignature Language="C#" Value="PublicationOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.LazyThreadSafetyMode PublicationOnly = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -48,7 +122,10 @@
         <ReturnType>System.Threading.LazyThreadSafetyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When multiple threads try to initialize a <see cref="T:System.Lazy`1" /> instance simultaneously, all threads are allowed to run the initialization method (or the default constructor, if there is no initialization method). The first thread to complete initialization sets the value of the <see cref="T:System.Lazy`1" /> instance. That value is returned to any other threads that were simultaneously running the initialization method, unless the initialization method throws exceptions on those threads. Any instances of <paramref name="T" /> that were created by the competing threads are discarded. If the initialization method throws an exception on any thread, the exception is propagated out of the <see cref="P:System.Lazy`1.Value" /> property on that thread. The exception is not cached. The value of the <see cref="P:System.Lazy`1.IsValueCreated" /> property remains false, and subsequent calls to the <see cref="P:System.Lazy`1.Value" /> property, either by the thread where the exception was thrown or by other threads, cause the initialization method to run again. If the initialization method recursively accesses the <see cref="P:System.Lazy`1.Value" /> property of the <see cref="T:System.Lazy`1" /> instance, no exception is thrown.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,17 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IStructuralEquatable" FullName="System.Collections.IStructuralEquatable">
   <TypeSignature Language="C#" Value="public interface IStructuralEquatable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IStructuralEquatable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Structural equality means that two objects are equal because they have equal values. It differs from reference equality, which indicates that two object references are equal because they reference the same physical object. The <see cref="T:System.Collections.IStructuralEquatable" /> interface enables you to implement customized comparisons to check for the structural equality of collection objects. That is, you can create your own definition of structural equality and specify that this definition be used with a collection type that accepts the <see cref="T:System.Collections.IStructuralEquatable" /> interface. The interface has two members: <see cref="M:System.Collections.IStructuralEquatable.Equals(System.Object,System.Collections.IEqualityComparer)" />, which tests for equality by using a specified <see cref="T:System.Collections.IEqualityComparer" /> implementation, and <see cref="M:System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer)" />, which returns identical hash codes for objects that are equal.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Collections.IStructuralEquatable" /> interface supports only custom comparisons for structural equality. The <see cref="T:System.Collections.IStructuralComparable" /> interface supports custom structural comparisons for sorting and ordering. </para>
+      </block>
+      <para>The .NET Framework also provides default equality comparers, which are returned by the <see cref="P:System.Collections.Generic.EqualityComparer`1.Default" /> and <see cref="P:System.Collections.StructuralComparisons.StructuralEqualityComparer" /> properties. For more information, see the example. </para>
+      <para>The generic tuple classes (<see cref="T:System.Tuple`1" />, <see cref="T:System.Tuple`2" />, <see cref="T:System.Tuple`3" />, and so on) and the <see cref="T:System.Array" /> class provide explicit implementations of the <see cref="T:System.Collections.IStructuralEquatable" /> interface. By casting (in C#) or converting (in Visual Basic) the current instance of an array or tuple to an <see cref="T:System.Collections.IStructuralEquatable" /> interface value and providing your <see cref="T:System.Collections.IEqualityComparer" /> implementation as an argument to the <see cref="M:System.Collections.IStructuralEquatable.Equals(System.Object,System.Collections.IEqualityComparer)" /> method, you can define a custom equality comparison for the array or collection. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods to support the comparison of objects for structural equality. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (object other, System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(object other, class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -24,15 +38,27 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Collections.IStructuralEquatable.Equals(System.Object,System.Collections.IEqualityComparer)" /> method supports custom structural comparison of array and tuple objects. This method in turn calls the <paramref name="comparer" /> object's <see cref="M:System.Collections.IEqualityComparer.Equals(System.Object,System.Object)" /> method to compare individual array elements or tuple components, starting with the first element or component. The individual calls to <see cref="M:System.Collections.IEqualityComparer.Equals(System.Object,System.Object)" /> end and the <see cref="M:System.Collections.IStructuralEquatable.Equals(System.Object,System.Collections.IEqualityComparer)" /> method returns a value either when a method call returns false or after all array elements or tuple components have been compared. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an object is structurally equal to the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that determines whether the current instance and <paramref name="other" /> are equal. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public int GetHashCode (System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode(class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -44,10 +70,20 @@
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <param name="comparer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implement this method to return customized hash codes for collection objects that correspond to the customized comparison for structural equality provided by the <see cref="M:System.Collections.IStructuralEquatable.Equals(System.Object,System.Collections.IEqualityComparer)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current instance.</para>
+        </returns>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that computes the hash code of the current object.</param>
       </Docs>
     </Member>
   </Members>

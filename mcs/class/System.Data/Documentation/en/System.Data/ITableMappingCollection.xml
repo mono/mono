@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITableMappingCollection" FullName="System.Data.ITableMappingCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ITableMappingCollection : System.Collections.IList" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.ITableMappingCollection" /> interface allows an inheriting class to implement a TableMapping collection. For more information, see <format type="text/html"><a href="D023260A-A66A-4C39-B8F4-090CD130E730">[&lt;topic://cpconsettingupdatatabledatacolumnmappings&gt;]</a></format>.</para>
+      <para>An application does not create an instance of the <see cref="T:System.Data.ITableMappingCollection" /> interface directly, but creates an instance of a class that inherits <see cref="T:System.Data.ITableMappingCollection" />.</para>
+      <para>Classes that inherit <see cref="T:System.Data.ITableMappingCollection" /> must implement the inherited members, and typically define additional members to add provider-specific functionality. For example, the <see cref="T:System.Data.ITableMappingCollection" /> interface defines one implementation of the <see cref="M:System.Data.ITableMappingCollection.RemoveAt(System.String)" /> method. In turn, the <see cref="T:System.Data.Common.DataTableMappingCollection" /> class inherits this method, and defines two additional overloads of <see cref="M:System.Data.Common.DataTableMappingCollection.RemoveAt(System.Int32)" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a collection of TableMapping objects, and is implemented by the <see cref="T:System.Data.Common.DataTableMappingCollection" />, which is used in common by .NET Framework data providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -29,11 +38,19 @@
         <Parameter Name="dataSetTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceTableName">To be added: an object of type 'string'</param>
-        <param name="dataSetTableName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ITableMapping'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a table mapping to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly-mapped <see cref="T:System.Data.ITableMapping" /> object.</para>
+        </returns>
+        <param name="sourceTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source table. </param>
+        <param name="dataSetTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Data.DataSet" /> table. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,10 +67,17 @@
         <Parameter Name="sourceTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceTableName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection contains a table mapping with the specified source table name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a table mapping with the specified source table name exists, otherwise false.</para>
+        </returns>
+        <param name="sourceTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source table. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,10 +94,17 @@
         <Parameter Name="dataSetTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataSetTableName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ITableMapping'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the TableMapping object with the specified <see cref="T:System.Data.DataSet" /> table name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The TableMapping object with the specified DataSet table name.</para>
+        </returns>
+        <param name="dataSetTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the DataSet table within the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,10 +121,17 @@
         <Parameter Name="sourceTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceTableName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location of the <see cref="T:System.Data.ITableMapping" /> object within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the <see cref="T:System.Data.ITableMapping" /> object within the collection.</para>
+        </returns>
+        <param name="sourceTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source table. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,9 +168,13 @@
         <Parameter Name="sourceTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceTableName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Data.ITableMapping" /> object with the specified <see cref="P:System.Data.ITableMapping.SourceTable" /> name from the collection.</para>
+        </summary>
+        <param name="sourceTableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the SourceTable. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

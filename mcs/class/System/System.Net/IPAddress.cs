@@ -333,6 +333,16 @@ namespace System.Net {
 			}
 		}
 
+#if NET_4_0
+		public bool IsIPv6Teredo {
+			get {
+				return m_Family != AddressFamily.InterNetwork &&
+					NetworkToHostOrder ((short) m_Numbers [0]) == 0x2001 &&
+					m_Numbers[1] == 0;
+			}
+		}
+#endif
+
 		public long ScopeId {
 			get {
 				if (m_Family != AddressFamily.InterNetworkV6)

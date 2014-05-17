@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="HostNameComparisonMode" FullName="System.ServiceModel.HostNameComparisonMode">
+  <TypeSignature Language="C#" Value="public enum HostNameComparisonMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HostNameComparisonMode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The value is used to specify the URI matching rules used by transports such as HTTP, Net.Tcp, and Net.Pipe when dispatching incoming messages. Configure the value of the <see cref="T:System.ServiceModel.HostNameComparisonMode" /> for a standard binding using one of the preceding transports, such as <see cref="T:System.ServiceModel.BasicHttpBinding" />, using the corresponding <see cref="P:System.ServiceModel.BasicHttpBinding.HostNameComparisonMode" /> property. Configure the value of the <see cref="T:System.ServiceModel.HostNameComparisonMode" /> for a binding element using one of the preceding transports, such as <see cref="T:System.ServiceModel.Channels.HttpTransportBindingElement" />, using the corresponding <see cref="P:System.ServiceModel.Channels.HttpTransportBindingElement.HostNameComparisonMode" /> property.</para>
+      <para>Each value of the <see cref="T:System.ServiceModel.HostNameComparisonMode" /> corresponds to a specific type of matching rule. The sequence of matching rules attempted is always ordered as follows:</para>
+      <list type="ordered">
+        <item>
+          <para>
+            <see cref="F:System.ServiceModel.HostnameComparisonMode.StrongWildcard" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.ServiceModel.HostnameComparisonMode.Exact" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="F:System.ServiceModel.HostnameComparisonMode.WeakWildcard" />
+          </para>
+        </item>
+      </list>
+      <para>The first value, <see cref="F:System.ServiceModel.HostnameComparisonMode.StrongWildcard" />, ignores the host name when matching and it takes the highest precedence of the three different matching modes. It is the default value for a indigo2 system-provided binding or binding element. This indicates that a service endpoint can be reached using any valid host name. For example, if MyService is hosted using http://localhost/MyService, it is still reachable using http://www.adatum.com/MyService because the (presumably valid) host name, "adatum.com", is ignored. Note that the port is a wildcard here as well.</para>
+      <para>The second value, <see cref="F:System.ServiceModel.HostnameComparisonMode.Exact" />, requires that an exact match is found with the URI specified, including the hostname, if no strong match is found. This mode, for example, does not perform equivalence between short hostnames and fully-qualified domain names. This allows hostnames to be used as match criteria in the scenarios where multiple hosts are assigned a single IP address and it enables different services to be hosted on the same machine with distinct endpoints. Note that the port is a wildcard here as well.</para>
+      <para>The third value, <see cref="F:System.ServiceModel.HostnameComparisonMode.WeakWildcard" />, matches by ignoring the hostname if no strong or exact match was found. The behavior is the same as for <see cref="F:System.ServiceModel.HostNameComparisonMode.StrongWildcard" /> other than the order of matching: it runs after the strong and exact bindings have been tried.</para>
+      <block subset="none" type="note">
+        <para>These values have no effect when used inside of the Internet Information Services (IIS) or Windows Process Activation Service (WAS) hosting environment. In those cases, indigo2 uses whatever hostname comparison mode is provided by the IIS Web Site hosting the indigo2 services.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how the host name should be used in URI comparisons when dispatching an incoming message to a service endpoint.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Exact">
+      <MemberSignature Language="C#" Value="Exact" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.HostNameComparisonMode Exact = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.HostNameComparisonMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses the hostname when dispatching incoming messages to this endpoint, if no strong match was found.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StrongWildcard">
+      <MemberSignature Language="C#" Value="StrongWildcard" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.HostNameComparisonMode StrongWildcard = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.HostNameComparisonMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignores the hostname when dispatching incoming messages to this endpoint. This is the default value.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WeakWildcard">
+      <MemberSignature Language="C#" Value="WeakWildcard" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.HostNameComparisonMode WeakWildcard = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.HostNameComparisonMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no strong or exact match was found, ignores the hostname when matching.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

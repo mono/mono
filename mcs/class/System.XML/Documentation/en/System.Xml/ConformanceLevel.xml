@@ -1,59 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConformanceLevel" FullName="System.Xml.ConformanceLevel">
   <TypeSignature Language="C#" Value="public enum ConformanceLevel" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ConformanceLevel extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a reader or writer instance, you can use the <see cref="T:System.Xml.XmlReaderSettings" /> or <see cref="T:System.Xml.XmlWriterSettings" /> class to specify the features that you want the new instance to support. One of the features that you can configure is the level of conformance you wish to enforce on the XML data.</para>
+      <para>Creating a compliant reader or writer guarantees that the XML data being processed complies with the specified conformance level. If the stream being read or written does not comply with the conformance level, an exception is thrown.</para>
+      <para>For more information, see <format type="text/html"><a href="64F382A0-4649-45A9-9635-89165D4182D6">Data Conformance Checking with XmlReader</a></format> and <format type="text/html"><a href="f84d078c-bcc3-460b-8763-ebb889794ca7">Data Conformance and the XmlWriter</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the amount of input or output checking that the created <see cref="T:System.Xml.XmlReader" /> and <see cref="T:System.Xml.XmlWriter" /> objects perform.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Auto">
       <MemberSignature Language="C#" Value="Auto" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.ConformanceLevel Auto = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.ConformanceLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlReader" /> or <see cref="T:System.Xml.XmlWriter" /> object automatically detects whether document or fragment checking should be performed, and does the appropriate checking. In the case where you are wrapping another <see cref="T:System.Xml.XmlReader" /> or <see cref="T:System.Xml.XmlWriter" /> object, the outer object does not do any additional conformance checking. Conformance checking is left up to the underlying object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Document">
       <MemberSignature Language="C#" Value="Document" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.ConformanceLevel Document = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.ConformanceLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This level of checking ensures that the stream being read or written can be consumed by any processor as an XML 1.0 document (http://www.w3.org/TR/REC-xml#NT-document).</para>
+          <para>In addition to the ConformanceLevel.Fragment checks, the ConformanceLevel.Document level of checks also ensures the following:</para>
+          <list type="bullet">
+            <item>
+              <para>The top-level item must not have any nodes other than XML Declaration, DTD, element, comment, white space, or processing instruction.</para>
+            </item>
+            <item>
+              <para>The XML data must have one, and only one, top-level element node.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML data is in conformance to the rules for a well-formed XML 1.0 document.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fragment">
       <MemberSignature Language="C#" Value="Fragment" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.ConformanceLevel Fragment = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.ConformanceLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conformance level represents an XML document which does not necessarily have a root element, but is otherwise well-formed. This level of checking ensures that the stream being read or written can be consumed by any processor as an XML 1.0 external parsed entity (http://www.w3.org/TR/REC-xml#NT-extParsedEnt).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML data is a well-formed XML fragment.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

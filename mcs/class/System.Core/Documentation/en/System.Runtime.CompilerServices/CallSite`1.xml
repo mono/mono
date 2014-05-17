@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="CallSite&lt;T&gt;" FullName="System.Runtime.CompilerServices.CallSite&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public class CallSite&lt;T&gt; : System.Runtime.CompilerServices.CallSite where T : class" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CallSite`1&lt;class T&gt; extends System.Runtime.CompilerServices.CallSite" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Runtime.CompilerServices.CallSite</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Dynamic site type.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Runtime.CompilerServices.CallSite&lt;T&gt; Create (System.Runtime.CompilerServices.CallSiteBinder binder);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.CompilerServices.CallSite`1&lt;!T&gt; Create(class System.Runtime.CompilerServices.CallSiteBinder binder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.CompilerServices.CallSite&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Runtime.CompilerServices.CallSiteBinder" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the dynamic call site, initialized with the binder responsible for the runtime binding of the dynamic operations at this call site.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance of dynamic call site.</para>
+        </returns>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binder responsible for the runtime binding of the dynamic operations at this call site.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Target">
+      <MemberSignature Language="C#" Value="public T Target;" />
+      <MemberSignature Language="ILAsm" Value=".field public !T Target" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Level 0 cache - a delegate specialized based on the site history.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public T Update { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T Update" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The update delegate. Called when the dynamic site experiences cache miss.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

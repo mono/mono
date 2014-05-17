@@ -1,5 +1,6 @@
 <Type Name="VARDESC+DESCUNION" FullName="System.Runtime.InteropServices.ComTypes.VARDESC+DESCUNION">
   <TypeSignature Language="C#" Value="public struct VARDESC.DESCUNION" />
+  <TypeSignature Language="ILAsm" Value=".class nested public sealed beforefieldinit VARDESC/DESCUNION extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName="lpvarValue">
       <MemberSignature Language="C#" Value="public IntPtr lpvarValue;" />
+      <MemberSignature Language="ILAsm" Value=".field public native int lpvarValue" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -26,14 +32,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="oInst">
+      <MemberSignature Language="C#" Value="public int oInst;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 oInst" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="oInst">
-      <MemberSignature Language="C#" Value="public int oInst;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -42,10 +49,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,34 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UploadFileCompletedEventArgs" FullName="System.Net.UploadFileCompletedEventArgs">
   <TypeSignature Language="C#" Value="public class UploadFileCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UploadFileCompletedEventArgs extends System.ComponentModel.AsyncCompletedEventArgs" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.AsyncCompletedEventArgs</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instances of this class are passed to the <see cref="T:System.Net.UploadFileCompletedEventHandler" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Net.WebClient.UploadFileCompleted" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Result">
       <MemberSignature Language="C#" Value="public byte[] Result { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Result" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should check the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> and <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> properties to determine whether the upload completed. If the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> property's value is an <see cref="T:System.Exception" /> object or the <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Cancelled" /> property's value is true, the asynchronous operation did not complete correctly and the <see cref="P:System.Net.UploadFileCompletedEventArgs.Result" /> property's value will not be valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the server reply to a data upload operation that is started by calling an <see cref="Overload:System.Net.WebClient.UploadFileAsync" /> method.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

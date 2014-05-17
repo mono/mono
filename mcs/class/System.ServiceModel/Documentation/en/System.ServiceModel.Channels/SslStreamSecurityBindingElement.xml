@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SslStreamSecurityBindingElement" FullName="System.ServiceModel.Channels.SslStreamSecurityBindingElement">
+  <TypeSignature Language="C#" Value="public class SslStreamSecurityBindingElement : System.ServiceModel.Channels.BindingElement, System.ServiceModel.Channels.ITransportTokenAssertionProvider, System.ServiceModel.Description.IPolicyExportExtension" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SslStreamSecurityBindingElement extends System.ServiceModel.Channels.BindingElement implements class System.ServiceModel.Channels.ITransportTokenAssertionProvider, class System.ServiceModel.Description.IPolicyExportExtension" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.BindingElement</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.ITransportTokenAssertionProvider</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Description.IPolicyExportExtension</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Transports that use a stream-oriented protocol such as TCP and named pipes support stream-based transport upgrades. Specifically, indigo1 provides security upgrades. The configuration of this transport security is encapsulated by this class as well as by <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" />, which can be configured and added to a custom binding. In addition, a third party can write their own custom StreamSecurityBindingElement. These binding elements extend the <see cref="T:System.ServiceModel.Channels.StreamUpgradeBindingElement" /> class that is called to build the client and server stream upgrade providers.</para>
+      <para>A custom binding contains a collection of binding elements arranged in a specific order: the element that represents the top of the binding stack is added first, the next element down in the binding stack is added second, and so on.</para>
+      <procedure>
+        <format type="text/html">
+          <h2>To add this class to a binding</h2>
+        </format>
+        <steps>
+          <step>
+            <para>Create a <see cref="T:System.ServiceModel.Channels.BindingElementCollection" />.</para>
+          </step>
+          <step>
+            <para>Create custom binding elements that are above this binding element in the binding stack, such as the optional <see cref="T:System.ServiceModel.Channels.TransactionFlowBindingElement" /> and <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" />.</para>
+          </step>
+          <step>
+            <para>Add the created elements in the order described previously to the <see cref="T:System.ServiceModel.Channels.BindingElementCollection" /> using the <see cref="M:System.ServiceModel.Channels.BindingElementCollection.InsertItem(System.Int32,System.ServiceModel.Channels.BindingElement)" /> method.</para>
+          </step>
+          <step>
+            <para>Create an instance of <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> and add it to the collection.</para>
+          </step>
+          <step>
+            <para>Add any additional custom binding elements to the collection, such as <see cref="T:System.ServiceModel.Channels.TcpTransportBindingElement" />.</para>
+          </step>
+        </steps>
+      </procedure>
+      <para>There are three scenarios in which you must either manually specify the correct UPN/SPN on the client endpoint after importing the WSDL, or specify a custom <see cref="T:System.ServiceModel.Security.IdentityVerifier" /> on the client’s <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" />.</para>
+      <list type="ordered">
+        <item>
+          <para>No service identity is published in WSDL. <see cref="F:System.ServiceModel.Configuration.AuthenticationMode.SspiNegotiatedOverTransport" /> and HTTPS are used (for example, a <see cref="T:System.ServiceModel.WSHttpBinding" /> with SecurityMode = <see cref="F:System.ServiceModel.SecurityMode.TransportWithMessageCredential" />). If the service is not running with the machine identity, you must manually specify the correct UPN/SPN on the client endpoint after importing the WSDL.</para>
+        </item>
+        <item>
+          <para>DNSservice identity is published in WSDL. <see cref="F:System.ServiceModel.Configuration.AuthenticationMode.SspiNegotiatedOverTransport" /> and <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> are used (for example, <see cref="T:System.ServiceModel.NetTcpBinding" /> with SecurityMode = <see cref="F:System.ServiceModel.SecurityMode.TransportWithMessageCredential" />) instead of a UPN/SPN. If the service is not running with the machine identity, or the DNS identity is not the machine's identity, you must manually specify the correct UPN/SPN on the client endpoint after importing the WSDL.</para>
+        </item>
+        <item>
+          <para> DNS identity is published in WSDL. If <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> is overridden on the client, you must specify a custom <see cref="T:System.ServiceModel.Security.IdentityVerifier" /> on the client's <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" />.</para>
+        </item>
+      </list>
+      <para>The following code shows how to manually specify the correct UPN/SPN on the client endpoint, as well as how to specify a custom <see cref="T:System.ServiceModel.Security.IdentityVerifier" /> on the client's <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" />.</para>
+      <code>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.IdentityModel.Claims;
+using System.IdentityModel.Policy;
+using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
+using System.ServiceModel.Security;
+using System.Xml;
+
+namespace ServiceNamespace
+{
+    [ServiceContract]
+    interface IService
+    {
+        [OperationContract]
+        void DoSomething();
+    }
+
+    class DnsIdentityVerifier : IdentityVerifier
+    {
+        DnsEndpointIdentity _expectedIdentity;
+
+        public DnsIdentityVerifier(EndpointAddress serviceEndpoint)
+        {
+            _expectedIdentity = new DnsEndpointIdentity(serviceEndpoint.Uri.DnsSafeHost);
+        }
+
+        public override bool CheckAccess(EndpointIdentity identity, AuthorizationContext authContext)
+        {
+            Claim dnsClaim = authContext.Claims().Single(claim =&gt; claim.ClaimType == ClaimTypes.Dns);
+            return String.Equals(_expectedIdentity.IdentityClaim.Resource, dnsClaim.Resource);
+        }
+
+        public override bool TryGetIdentity(EndpointAddress reference, out EndpointIdentity identity)
+        {
+            identity = _expectedIdentity;
+            return true;
+        }
+    }
+
+    static class LinqExtensionForClaims
+    {
+        public static IEnumerable&lt;Claim&gt; Claims(this AuthorizationContext authContext)
+        {
+            if (null != authContext.ClaimSets)
+            {
+                foreach (ClaimSet claimSet in authContext.ClaimSets)
+                {
+                    if (null != claimSet)
+                    {
+                        foreach (Claim claim in claimSet)
+                        {
+                            yield return claim;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    class Service : IService
+    {
+        public void DoSomething()
+        {
+            Console.WriteLine("Service called.");
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string hostname = Dns.GetHostEntry(String.Empty).HostName;
+            NetTcpBinding serviceBinding = new NetTcpBinding(SecurityMode.TransportWithMessageCredential);
+
+            ServiceHost serviceHost = new ServiceHost(typeof(Service), new Uri(String.Format("net.tcp://{0}:8080/Service", hostname)));
+            serviceHost.Credentials.ServiceCertificate.SetCertificate(StoreLocation.LocalMachine, StoreName.My, X509FindType.FindByThumbprint, "8a 42 1b eb cf 8a 14 b1 de 83 d9 a5 70 88 0a 62 f9 bf 69 06");
+            ServiceEndpoint serviceEndpoint = serviceHost.AddServiceEndpoint(typeof(IService), serviceBinding, "Endpoint");
+            serviceHost.Open();
+
+            CustomBinding clientBinding = new CustomBinding(serviceBinding.CreateBindingElements());
+            SslStreamSecurityBindingElement sslStream = clientBinding.Elements.Find&lt;SslStreamSecurityBindingElement&gt;();
+            sslStream.IdentityVerifier = new DnsIdentityVerifier(serviceEndpoint.Address);
+
+            ChannelFactory&lt;IService&gt; channelFactory = new ChannelFactory&lt;IService&gt;(clientBinding, new EndpointAddress(serviceEndpoint.Address.Uri, UpnEndpointIdentity.CreateUpnIdentity("username@domain")));
+            channelFactory.Credentials.Windows.AllowNtlm = false;
+            IService channel = channelFactory.CreateChannel();
+            channel.DoSomething();
+        }
+    }
+
+</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a custom binding element that supports channel security using an SSL stream.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SslStreamSecurityBindingElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelFactory&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public override System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt; BuildChannelFactory&lt;TChannel&gt; (System.ServiceModel.Channels.BindingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ServiceModel.Channels.IChannelFactory`1&lt;!!TChannel&gt; BuildChannelFactory&lt;TChannel&gt;(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelFactory&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a channel factory, which is used to create a channel that processes outgoing messages for this binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a channel factory of a specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.serviceModel.Channels.IChannelFactory" /> object that represents the channel factory of type <paramref name="TChannel" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.serviceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel factory.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public override System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt; BuildChannelListener&lt;TChannel&gt; (System.ServiceModel.Channels.BindingContext context) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ServiceModel.Channels.IChannelListener`1&lt;!!TChannel&gt; BuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.IChannelListener&lt;TChannel&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a channel listener, which is used to create a channel that processes incoming messages for this binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a channel listener of a specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.serviceModel.Channels.IChannelListener" /> object that represents a channel listener of type <paramref name="TChannel" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.serviceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel listener.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildClientStreamUpgradeProvider">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.StreamUpgradeProvider BuildClientStreamUpgradeProvider (System.ServiceModel.Channels.BindingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.StreamUpgradeProvider BuildClientStreamUpgradeProvider(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.StreamUpgradeProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when opening the client channel factory and provides a custom implementation of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> abstract class.</para>
+          <para>The <see cref="T:System.ServiceModel.Channels.BindingContext" /> parameter enables reacting to other elements in the channel stack.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance on the client of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />. </para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BuildServerStreamUpgradeProvider">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.StreamUpgradeProvider BuildServerStreamUpgradeProvider (System.ServiceModel.Channels.BindingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.StreamUpgradeProvider BuildServerStreamUpgradeProvider(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.StreamUpgradeProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when opening the service and provides a custom implementation of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> abstract class.</para>
+          <para>The <see cref="T:System.ServiceModel.Channels.BindingContext" /> parameter enables reacting to other elements in the channel stack.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance on the server of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> based on the channel context provided.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the entire channel stack.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CanBuildChannelFactory&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public override bool CanBuildChannelFactory&lt;TChannel&gt; (System.ServiceModel.Channels.BindingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool CanBuildChannelFactory&lt;TChannel&gt;(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should call this method before trying to create a channel factory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a channel factory of the specified type can be built.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel factory of the specified type can be built; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel factory.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="CanBuildChannelListener&lt;TChannel&gt;">
+      <MemberSignature Language="C#" Value="public override bool CanBuildChannelListener&lt;TChannel&gt; (System.ServiceModel.Channels.BindingContext context) where TChannel : class, System.ServiceModel.Channels.IChannel;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool CanBuildChannelListener&lt;class (class System.ServiceModel.Channels.IChannel) TChannel&gt;(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TChannel">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+            <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should call this method before trying to create a channel listener.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a channel listener of the specified type can be built.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel listener of the specified type can be built; otherwise, false.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.serviceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of channel listener.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public override System.ServiceModel.Channels.BindingElement Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.ServiceModel.Channels.BindingElement Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.BindingElement</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance that is a copy of the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SslStreamSecurityBindingElement" /> instance that is a copy of the current instance.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProperty&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public override T GetProperty&lt;T&gt; (System.ServiceModel.Channels.BindingContext context) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance !!T GetProperty&lt;class T&gt;(class System.ServiceModel.Channels.BindingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method gets the specified object from the base class or from one of that class's ancestors. The object returned is usually a collection of properties, for example, an object that implements <see cref="T:System.ServiceModel.Channels.ISecurityCapabilities" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The  object of type <paramref name="T" />from the <see cref="T:System.ServiceModel.Channels.BindingContext" />, or null if the object is not found.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to get.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTransportTokenAssertion">
+      <MemberSignature Language="C#" Value="public System.Xml.XmlElement GetTransportTokenAssertion ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlElement GetTransportTokenAssertion() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.XmlElement</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to generate WSDL for the associated service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlElement" /> that represents the transport token used in the security binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> that represents the transport token used in the security binding.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="IdentityVerifier">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Security.IdentityVerifier IdentityVerifier { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Security.IdentityVerifier IdentityVerifier" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.IdentityVerifier</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the identity verifier for this binding. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RequireClientCertificate">
+      <MemberSignature Language="C#" Value="public bool RequireClientCertificate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RequireClientCertificate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether a client certificate is required for this binding.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy">
+      <MemberSignature Language="C#" Value="void IPolicyExportExtension.ExportPolicy (System.ServiceModel.Description.MetadataExporter exporter, System.ServiceModel.Description.PolicyConversionContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(class System.ServiceModel.Description.MetadataExporter exporter, class System.ServiceModel.Description.PolicyConversionContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exporter" Type="System.ServiceModel.Description.MetadataExporter" />
+        <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method writes binding-related statements into the WSDL information exposed by a particular contract and is used by indigo2 to communicate to clients the existence of this custom binding element in the binding stack.</para>
+          <para>This method takes two parameters: the <see cref="T:System.ServiceModel.Description.MetadataExporter" /> and <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> objects. Use the <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" />, <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" />, and <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> methods to obtain collections of policy assertions that have already been exported at various scopes. Then use this method to add your own policy assertions to the appropriate collection.</para>
+          <para>The <see cref="P:System.ServiceModel.Description.PolicyConversionContext.Contract" /> property exposes the <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the endpoint that is being exported. This enables this method to correctly scope their exported policy assertions. For example, security attributes in code can add behaviors to the <see cref="T:System.ServiceModel.Description.ContractDescription" /> that indicate where security policy assertions should be added.</para>
+          <para>Once custom policy assertions are attached to the WSDL information, clients can detect and import the custom binding assertions by implementing an <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports a custom policy assertion about bindings.</para>
+        </summary>
+        <param name="exporter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExporter" /> that you can use to modify the exporting process.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> that you can use to insert your custom policy assertion.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

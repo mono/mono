@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Constant ImplicitConversionRequired (ResolveContext ec, TypeSpec type, Location loc)
+		public Constant ImplicitConversionRequired (ResolveContext ec, TypeSpec type)
 		{
 			Constant c = ConvertImplicitly (type);
 			if (c == null)
@@ -1646,20 +1646,32 @@ namespace Mono.CSharp {
 	}
 
 	public class FloatConstant : Constant {
-		public readonly float Value;
+		//
+		// Store constant value as double because float constant operations
+		// need to work on double value to match JIT
+		//
+		public readonly double DoubleValue;
 
-		public FloatConstant (BuiltinTypes types, float v, Location loc)
+		public FloatConstant (BuiltinTypes types, double v, Location loc)
 			: this (types.Float, v, loc)
 		{
 		}
 
-		public FloatConstant (TypeSpec type, float v, Location loc)
+		public FloatConstant (TypeSpec type, double v, Location loc)
 			: base (loc)
 		{
 			this.type = type;
 			eclass = ExprClass.Value;
 
-			Value = v;
+			DoubleValue = v;
+		}
+
+		public override Constant ConvertImplicitly (TypeSpec type)
+		{
+			if (type.BuiltinType == BuiltinTypeSpec.Type.Double)
+				return new DoubleConstant (type, DoubleValue, loc);
+
+			return base.ConvertImplicitly (type);
 		}
 
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
@@ -1670,6 +1682,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ec.Emit (OpCodes.Ldc_R4, Value);
+		}
+
+		public float Value {
+			get {
+				return (float) DoubleValue;
+			}
 		}
 
 		public override object GetValue ()
@@ -1707,59 +1725,59 @@ namespace Mono.CSharp {
 					if (Value < byte.MinValue || Value > byte.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new ByteConstant (target_type, (byte) Value, Location);
+				return new ByteConstant (target_type, (byte) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.SByte:
 				if (in_checked_context) {
 					if (Value < sbyte.MinValue || Value > sbyte.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new SByteConstant (target_type, (sbyte) Value, Location);
+				return new SByteConstant (target_type, (sbyte) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.Short:
 				if (in_checked_context) {
 					if (Value < short.MinValue || Value > short.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new ShortConstant (target_type, (short) Value, Location);
+				return new ShortConstant (target_type, (short) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.UShort:
 				if (in_checked_context) {
 					if (Value < ushort.MinValue || Value > ushort.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new UShortConstant (target_type, (ushort) Value, Location);
+				return new UShortConstant (target_type, (ushort) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.Int:
 				if (in_checked_context) {
 					if (Value < int.MinValue || Value > int.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new IntConstant (target_type, (int) Value, Location);
+				return new IntConstant (target_type, (int) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.UInt:
 				if (in_checked_context) {
 					if (Value < uint.MinValue || Value > uint.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new UIntConstant (target_type, (uint) Value, Location);
+				return new UIntConstant (target_type, (uint) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.Long:
 				if (in_checked_context) {
 					if (Value < long.MinValue || Value > long.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new LongConstant (target_type, (long) Value, Location);
+				return new LongConstant (target_type, (long) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.ULong:
 				if (in_checked_context) {
 					if (Value < ulong.MinValue || Value > ulong.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new ULongConstant (target_type, (ulong) Value, Location);
+				return new ULongConstant (target_type, (ulong) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.Double:
-				return new DoubleConstant (target_type, (double) Value, Location);
+				return new DoubleConstant (target_type, DoubleValue, Location);
 			case BuiltinTypeSpec.Type.Char:
 				if (in_checked_context) {
 					if (Value < (float) char.MinValue || Value > (float) char.MaxValue || float.IsNaN (Value))
 						throw new OverflowException ();
 				}
-				return new CharConstant (target_type, (char) Value, Location);
+				return new CharConstant (target_type, (char) DoubleValue, Location);
 			case BuiltinTypeSpec.Type.Decimal:
-				return new DecimalConstant (target_type, (decimal) Value, Location);
+				return new DecimalConstant (target_type, (decimal) DoubleValue, Location);
 			}
 
 			return null;

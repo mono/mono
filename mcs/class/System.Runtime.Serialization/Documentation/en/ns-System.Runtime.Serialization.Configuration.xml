@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Namespace Name="System.Runtime.Serialization.Configuration">
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The System.Runtime.Serialization.Configuration namespace contains classes used to read the values found in application configuration under system.xml.serialization section.</para>
+      <para>The classes in this namespace are used by the serialization infrastructure to handle the configuration elements and cannot be used directly. Instead, to configure the DataContractSerializer, create an application configuration file and use the following XML elements. &lt;system.xml.serialization&gt;&lt;dataContractSerializer&gt;&lt;declaredTypes&gt;&lt;add&gt; element for &lt;declaredTypes&gt;&lt;knownType&gt; element</para>
+    </summary>
+  </Docs>
+</Namespace>

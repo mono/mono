@@ -370,7 +370,7 @@ namespace Mono.CSharp
 	public class FixedField : FieldBase
 	{
 		public const string FixedElementName = "FixedElementField";
-		static int GlobalCounter = 0;
+		static int GlobalCounter;
 
 		TypeBuilder fixed_buffer_type;
 
@@ -400,7 +400,7 @@ namespace Mono.CSharp
 
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
 		{
-			return expr.ImplicitConversionRequired (rc, rc.BuiltinTypes.Int, Location);
+			return expr.ImplicitConversionRequired (rc, rc.BuiltinTypes.Int);
 		}
 
 		public override bool Define ()
@@ -687,6 +687,41 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+	}
+
+	class PrimaryConstructorField : Field
+	{
+		//
+		// Proxy resolved parameter type expression to avoid type double resolve
+		// and problems with correct resolve context on partial classes
+		//
+		sealed class TypeExpressionFromParameter : TypeExpr
+		{
+			Parameter parameter;
+
+			public TypeExpressionFromParameter (Parameter parameter)
+			{
+				this.parameter = parameter;
+				eclass = ExprClass.Type;
+				loc = parameter.Location;
+			}
+
+			public override TypeSpec ResolveAsType (IMemberContext mc)
+			{
+				return parameter.Type;
+			}
+		}
+
+		public PrimaryConstructorField (TypeDefinition parent, Parameter parameter)
+			: base (parent, new TypeExpressionFromParameter (parameter), Modifiers.PRIVATE, new MemberName (parameter.Name, parameter.Location), null)
+		{
+			caching_flags |= Flags.IsUsed | Flags.IsAssigned;
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return MemberName.Name;
 		}
 	}
 }

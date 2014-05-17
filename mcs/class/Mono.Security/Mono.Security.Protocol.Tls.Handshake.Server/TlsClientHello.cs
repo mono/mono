@@ -106,15 +106,16 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		private void processProtocol(short protocol)
 		{
-			SecurityProtocolType clientProtocol = this.Context.DecodeProtocolCode(protocol);
+			// a server MUST reply with the hight version supported (`true` for fallback)
+			// so a TLS 1.2 client (like Google Chrome) will be returned that the server uses TLS 1.0
+			// instead of an alert about the protocol
+			SecurityProtocolType clientProtocol = Context.DecodeProtocolCode (protocol, true);
 
 			if ((clientProtocol & this.Context.SecurityProtocolFlags) == clientProtocol ||
 				(this.Context.SecurityProtocolFlags & SecurityProtocolType.Default) == SecurityProtocolType.Default)
 			{
 				this.Context.SecurityProtocol = clientProtocol;
-				this.Context.SupportedCiphers.Clear();
-				this.Context.SupportedCiphers = null;
-				this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(clientProtocol);
+				this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers (true, clientProtocol);
 			}
 			else
 			{

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPostBackEventHandler" FullName="System.Web.UI.IPostBackEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IPostBackEventHandler" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To create a server control that captures form submission information from the browser, you must implement this interface. For more information on how to use this interface, see <format type="text/html"><a href="765bfc89-33ee-4d0d-bbe6-3b172c06def9">Server Event Handling in ASP.NET Web Pages</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method ASP.NET server controls must implement to handle postback events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="RaisePostBackEvent">
@@ -24,9 +31,17 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page passes the value of the <paramref name="eventArgument" /> parameter to the RaisePostBackEvent method of the control that implements the <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface. This control also renders the HTML element that causes the postback to occur. If the control renders client-side script for postback, the argument from the script is passed in the <paramref name="eventArgument" /> parameter. If the postback is caused by a simple submit operation, the <paramref name="eventArgument" /> parameter is null.</para>
+          <para>This method provides the functionality for many events implemented by HTML and Web server controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a class, enables a server control to process an event raised when a form is posted to the server.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents an optional event argument to be passed to the event handler. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

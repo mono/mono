@@ -1,59 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OverflowAction" FullName="System.Diagnostics.OverflowAction">
   <TypeSignature Language="C#" Value="public enum OverflowAction" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OverflowAction extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Every event log has a maximum size limit and a configurable setting that provides the rule for writing new entries at that limit. When the event log has reached its maximum size, you can specify one of the following rules: </para>
+      <list type="bullet">
+        <item>
+          <para>New entries will be discarded. </para>
+        </item>
+        <item>
+          <para>New entries will overwrite older entries.</para>
+        </item>
+        <item>
+          <para>New entries will either be discarded or will overwrite existing entries depending upon the age of the existing entries.</para>
+        </item>
+      </list>
+      <para>Use the <see cref="M:System.Diagnostics.EventLog.ModifyOverflowPolicy(System.Diagnostics.OverflowAction,System.Int32)" /> method to set the overflow behavior for an <see cref="T:System.Diagnostics.EventLog" />. Check the current configured behavior of an <see cref="T:System.Diagnostics.EventLog" /> through its <see cref="P:System.Diagnostics.EventLog.OverflowAction" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how to handle entries in an event log that has reached its maximum file size.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DoNotOverwrite">
       <MemberSignature Language="C#" Value="DoNotOverwrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.OverflowAction DoNotOverwrite = int32(-1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.OverflowAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that existing entries are retained when the event log is full and new entries are discarded.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OverwriteAsNeeded">
       <MemberSignature Language="C#" Value="OverwriteAsNeeded" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.OverflowAction OverwriteAsNeeded = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.OverflowAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that each new entry overwrites the oldest entry when the event log is full.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OverwriteOlder">
       <MemberSignature Language="C#" Value="OverwriteOlder" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.OverflowAction OverwriteOlder = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.OverflowAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that new events overwrite events older than specified by the <see cref="P:System.Diagnostics.EventLog.MinimumRetentionDays" /> property value when the event log is full. New events are discarded if the event log is full and there are no events older than specified by the <see cref="P:System.Diagnostics.EventLog.MinimumRetentionDays" /> property value.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

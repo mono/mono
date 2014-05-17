@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBinding" FullName="System.Web.UI.DataBinding">
   <TypeSignature Language="C#" Value="public sealed class DataBinding" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each data-binding expression in a server control is represented at design time by an instance of the <see cref="T:System.Web.UI.DataBinding" /> class. Any server control that contains one or more data-binding expressions has a <see cref="T:System.Web.UI.DataBindingCollection" /> object that contains the <see cref="T:System.Web.UI.DataBinding" /> objects. This collection is accessible through the <see cref="T:System.Web.UI.Control" /> class implementing the <see cref="T:System.Web.UI.IDataBindingsAccessor" /> interface. When you create a custom RAD designer, use that implementation to access the collection. Any <see cref="T:System.Web.UI.DataBinding" /> or <see cref="T:System.Web.UI.DataBindingCollection" /> objects associated with a server control exist only at design time. They do not exist at run time and, therefore, are not accessible during run time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information about a single data-binding expression in an ASP.NET server control, which allows rapid-application development (RAD) designers, such as Microsoft Visual Studio, to create data-binding expressions at design time. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,11 +34,17 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added: an object of type 'string'</param>
-        <param name="propertyType">To be added: an object of type 'Type'</param>
-        <param name="expression">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.DataBinding" /> class.</para>
+        </summary>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property to bind data to. </param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The .NET Framework type of the property to bind data to. </param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data-binding expression to be evaluated. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,10 +61,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is the same instance of the <see cref="T:System.Web.UI.DataBinding" /> class as the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data-binding property names match; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare against the current <see cref="T:System.Web.UI.DataBinding" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +86,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data-binding expression to be evaluated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,9 +106,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Int32" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Web.UI.DataBinding" /> objects are placed in a <see cref="T:System.Web.UI.DataBindingCollection" /> object, accessible only at design time. The collection is a hash table that represents the bindings on a control. There can only be one binding per property, so the hash code computation matches the <see cref="M:System.Web.UI.DataBinding.Equals(System.Object)" /> implementation and only takes the property name into account.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the hash code for an instance of the <see cref="T:System.Web.UI.DataBinding" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,9 +132,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the ASP.NET server control property to bind data to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +151,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the .NET Framework type of the data-bound ASP.NET server control property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

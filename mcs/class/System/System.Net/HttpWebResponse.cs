@@ -277,7 +277,7 @@ namespace System.Net
 			CheckDisposed ();
 			if (stream == null)
 				return Stream.Null;  
-			if (0 == String.Compare (method, "HEAD", true)) // see par 4.3 & 9.4
+			if (string.Equals (method, "HEAD", StringComparison.OrdinalIgnoreCase))  // see par 4.3 & 9.4
 				return Stream.Null;  
 
 			return stream;
@@ -319,7 +319,6 @@ namespace System.Net
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
-			GC.SuppressFinalize (this);  
 		}
 		
 #if NET_4_0
@@ -348,22 +347,31 @@ namespace System.Net
 			if (webHeaders == null)
 				return;
 
-			string value = webHeaders.Get ("Set-Cookie");
-			if (value != null) {
-				SetCookie (value);
+			//
+			// Don't terminate response reading on bad cookie value
+			//
+			string value;
+			try {
+				value = webHeaders.Get ("Set-Cookie");
+				if (value != null && SetCookie (value))
+					return;
+			} catch {
 			}
 
-			value = webHeaders.Get ("Set-Cookie2");
-			if (value != null) {
-				SetCookie (value);
+			try {
+				value = webHeaders.Get ("Set-Cookie2");
+				if (value != null)
+					SetCookie (value);
+			} catch {
 			}
 		}
 
-		void SetCookie (string header)
+		bool SetCookie (string header)
 		{
 			if (cookieCollection == null)
 				cookieCollection = new CookieCollection ();
 
+			bool at_least_one_set = false;
 			var parser = new CookieParser (header);
 			foreach (var cookie in parser.Parse ()) {
 				if (cookie.Domain == "") {
@@ -376,9 +384,13 @@ namespace System.Net
 					continue;
 
 				cookieCollection.Add (cookie);
-				if (cookie_container != null)
+				if (cookie_container != null) {
 					cookie_container.Add (uri, cookie);
+					at_least_one_set = true;
+				}
 			}
+
+			return at_least_one_set;
 		}
 	}	
 }

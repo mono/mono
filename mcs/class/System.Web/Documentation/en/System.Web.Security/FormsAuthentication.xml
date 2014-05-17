@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormsAuthentication" FullName="System.Web.Security.FormsAuthentication">
   <TypeSignature Language="C#" Value="public sealed class FormsAuthentication" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,25 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Forms authentication enables user and password validation for Web applications that do not require Windows authentication. With forms authentication, user information is stored in an external data source, such as a <see cref="T:System.Web.Security.Membership" /> database, or in the configuration file for an application. Once a user is authenticated, forms authentication maintains an authentication ticket in a cookie or in the URL so that an authenticated user does not need to supply credentials with each request.</para>
+      <para>Forms authentication is enabled by setting the mode attribute of the <format type="text/html"><a href="27bc0ba9-f23a-45f3-ae42-dbe7916e3ee2">authentication</a></format> configuration element to Forms. You can require that all requests to an application contain a valid user authentication ticket by using the <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> configuration element to deny the request of any unknown user, as shown in the following example.</para>
+      <code>&lt;system.web&gt;
+  &lt;authentication mode="Forms"&gt;
+    &lt;forms loginUrl="login.aspx" /&gt;
+  &lt;/authentication&gt;
+  &lt;authorization&gt;
+    &lt;deny users="?" /&gt;
+  &lt;/authorization&gt;
+&lt;/system.web&gt;</code>
+      <para>In the previous example, any request for an ASP.NET page that is part of the application requires a valid user name that is supplied by forms authentication. If no user name exists, then the request is redirected to the configured <see cref="P:System.Web.Security.FormsAuthentication.LoginUrl" />.</para>
+      <para>The <see cref="T:System.Web.Security.FormsAuthentication" /> class provides access to methods and properties that you can use in an application that authenticates users. The <see cref="Overload:System.Web.Security.FormsAuthentication.RedirectToLoginPage" /> method redirects a browser to the configured <see cref="P:System.Web.Security.FormsAuthentication.LoginUrl" /> for users to log into an application. The <see cref="Overload:System.Web.Security.FormsAuthentication.RedirectFromLoginPage" /> method redirects an authenticated user back to the original protected URL that was requested or to the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" />. There are also methods that enable you to manage forms-authentication tickets, if needed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages forms-authentication services for Web applications. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +41,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be used from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.FormsAuthentication" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,11 +66,23 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="password">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Authenticate method verifies user credentials that are stored in the <format type="text/html"><a href="e5a001f8-fdbe-4c88-80ca-bfe36df23479">credentials</a></format> section of the application configuration file. Alternatively, you can use ASP.NET membership to store user credentials and call the <see cref="M:System.Web.Security.MembershipProvider.ValidateUser(System.String,System.String)" /> to verify the credentials. For more information, see <format type="text/html"><a href="824c3a24-f0af-427c-a652-0d2d1e9397cd">Managing Users By Using ASP.NET Membership</a></format>.</para>
+          <para>For improved security, you can encrypt passwords stored in the configuration file for an application by using the <see cref="M:System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates a user name and password against credentials stored in the configuration file for an application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user name and password are valid; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name.</param>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password for the user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,9 +99,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.CookieDomain" /> property value is set in the configuration file for an ASP.NET application by using the domain attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element. The <see cref="P:System.Web.Security.FormsAuthentication.CookieDomain" /> property value determines the <see cref="P:System.Web.HttpCookie.Domain" /> that the cookie will be used for.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the domain of the forms-authentication cookie.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CookieMode">
@@ -78,9 +120,18 @@
         <ReturnType>System.Web.HttpCookieMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.CookieMode" /> property reflects the value for the cookieless attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element. The <see cref="P:System.Web.Security.FormsAuthentication.CookieMode" /> property determines whether the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> value will be stored in a session cookie in the browser or stored in the <see cref="P:System.Web.HttpRequest.QueryString" /> property.</para>
+          <block subset="none" type="note">
+            <para>When the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> value is stored in the URI, the length of the generated URI may be longer than the maximum length allowed. This is most likely to occur when the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property is set to the application name and the application name is long (40 or more characters), when user names in the application are long, or when long <see cref="P:System.Web.Security.FormsAuthenticationTicket.UserData" /> strings are stored in the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> value. If the generated URI is too long, the Web server will return a 400 - Bad Request error.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the application is configured for cookieless forms authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CookiesSupported">
@@ -93,9 +144,29 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property returns a value based on the <see cref="P:System.Web.Security.FormsAuthentication.CookieMode" /> value and the capabilities of the browser.</para>
+          <list type="bullet">
+            <item>
+              <para>If the <see cref="P:System.Web.Security.FormsAuthentication.CookieMode" /> property is set to <see cref="F:System.Web.HttpCookieMode.UseCookies" />, the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property will return true.</para>
+            </item>
+            <item>
+              <para>If the <see cref="P:System.Web.Security.FormsAuthentication.CookieMode" /> property is set to <see cref="F:System.Web.HttpCookieMode.UseUri" />, the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property will return false.</para>
+            </item>
+            <item>
+              <para>If the <see cref="P:System.Web.Security.FormsAuthentication.CookieMode" /> property is set to <see cref="F:System.Web.HttpCookieMode.AutoDetect" />, the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property will return true if the browser supports cookies and cookies are enabled; otherwise, the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property will return false.</para>
+            </item>
+            <item>
+              <para>If the <see cref="P:System.Web.Security.FormsAuthentication.CookieMode" /> property is set to <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" />, the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property will return true if the <see cref="P:System.Web.HttpRequest.Browser" /> for the current <see cref="P:System.Web.HttpContext.Request" /> supports both cookies and redirecting with cookies; otherwise, the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property will return false.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the application is configured to support cookieless forms authentication.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Decrypt">
@@ -108,10 +179,17 @@
         <Parameter Name="encryptedTicket" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="encryptedTicket">The string to decode, it must have been created with Encrypt.</param>
-        <summary>Decrypts a string into a FormsAuthenticationTickets</summary>
-        <returns>This will return a <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> or if the ticket fails to validate (due to tampering) it will throw an <see cref="T:System.ArgumentException" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object based on the encrypted forms-authentication ticket passed to the method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object. If the <paramref name="encryptedTicket" /> parameter is not a valid ticket, null is returned.</para>
+        </returns>
+        <param name="encryptedTicket">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encrypted authentication ticket. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -128,9 +206,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property value is set in the configuration file for an ASP.NET application by using the defaultUrl attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element. The <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property is used by the <see cref="Overload:System.Web.Security.FormsAuthentication.RedirectFromLoginPage" /> method if no return URL is included in the request. Similarly, the <see cref="M:System.Web.Security.FormsAuthentication.GetRedirectUrl(System.String,System.Boolean)" /> method will return the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> if no return URL is included in the request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URL that the <see cref="T:System.Web.Security.FormsAuthentication" /> class will redirect to if no redirect URL is specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableCrossAppRedirects">
@@ -143,9 +227,22 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property value is set using the enableCrossAppRedirects attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element.</para>
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property is checked within the <see cref="Overload:System.Web.Security.FormsAuthentication.RedirectFromLoginPage" /> method when the redirect URL does not point to a page in the current application. If <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> is true, then the redirect is performed; if <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> is false, the browser is redirected to the page defined in the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property.</para>
+          <block subset="none" type="note">
+            <para>When you redirect pages across applications, you must make sure that specific attributes in the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element are duplicated across the authenticated applications. For more information and an example, see <format type="text/html"><a href="99e2f9e8-5b97-4a4d-a4ed-5f93276053b7">Forms Authentication Across Applications</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>When cross-application redirects are allowed, your site is vulnerable to an exploit that directs users to a malicious Web site but uses the login page for your site. Always verify that the redirect URL that is returned by the <see cref="M:System.Web.Security.FormsAuthentication.GetRedirectUrl(System.String,System.Boolean)" /> method is a URL that you expect so that you can make sure that you allow redirects only to approved Web sites. You must also verify that the redirect URL uses the appropriate protocol (HTTP or HTTPS). To perform these verifications, you can add a postback event handler to your login page, or you can add a handler for the <see cref="E:System.Web.UI.WebControls.Login.LoggedIn" /> event of the <see cref="T:System.Web.UI.WebControls.Login" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether authenticated users can be redirected to URLs in other Web applications.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Encrypt">
@@ -158,15 +255,6 @@
         <Parameter Name="ticket" Type="System.Web.Security.FormsAuthenticationTicket" />
       </Parameters>
       <Docs>
-        <param name="ticket">The ticket to encrypt.q</param>
-        <summary>Encrypts the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> based on the configuration information for the application.</summary>
-        <returns>
-          <para>
-A string representing the ticket. </para>
-          <para>
-The ticket might be just a string representation of the ticket, a string representation with a checksum or string representation with a checksum and encryption.  Depending on the settings.
-</para>
-        </returns>
         <remarks>
           <para>The actual method to encrypt the data depends on the setting in the "mode" attribute in the &lt;authentication&gt; section in the &lt;system.web&gt; section of the application configuration.
 </para>
@@ -197,6 +285,16 @@ The possible values are:
           </list>
           <para>The default mode is "All".</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a string containing an encrypted forms-authentication ticket suitable for use in an HTTP cookie.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing an encrypted forms-authentication ticket.</para>
+        </returns>
+        <param name="ticket">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object with which to create the encrypted forms-authentication ticket. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,9 +308,15 @@ The possible values are:
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.FormsCookieName" /> property value is set in the configuration file for an ASP.NET application by using the name attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element. The <see cref="P:System.Web.Security.FormsAuthentication.FormsCookieName" /> is used to reference the cookie that stores the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the cookie used to store the forms-authentication ticket.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -226,9 +330,15 @@ The possible values are:
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property value is set in the configuration file for an ASP.NET application using the path attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element. The <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> specifies the <see cref="P:System.Web.HttpCookie.Path" /> for the cookie that stores the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the forms-authentication cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -246,11 +356,22 @@ The possible values are:
         <Parameter Name="createPersistentCookie" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="userName">a <see cref="T:System.String" /></param>
-        <param name="createPersistentCookie">a <see cref="T:System.Boolean" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.HttpCookie" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path of the cookie is determined by the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an authentication cookie for a given user name. This does not set the cookie as part of the outgoing response, so that an application can have more control over how the cookie is issued.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.HttpCookie" /> that contains encrypted forms-authentication ticket information. The default value for the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property is used.</para>
+        </returns>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the authenticated user. </param>
+        <param name="createPersistentCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a durable cookie (one that is saved across browser sessions); otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -269,12 +390,21 @@ The possible values are:
         <Parameter Name="strCookiePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="userName">a <see cref="T:System.String" /></param>
-        <param name="createPersistentCookie">a <see cref="T:System.Boolean" /></param>
-        <param name="strCookiePath">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.HttpCookie" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an authentication cookie for a given user name. This does not set the cookie as part of the outgoing response.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.HttpCookie" /> that contains encrypted forms-authentication ticket information.</para>
+        </returns>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the authenticated user. </param>
+        <param name="createPersistentCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a durable cookie (one that is saved across browser sessions); otherwise, false. </param>
+        <param name="strCookiePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.HttpCookie.Path" /> of the authentication cookie. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -292,11 +422,28 @@ The possible values are:
         <Parameter Name="createPersistentCookie" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="userName">To be added: an object of type 'string'</param>
-        <param name="createPersistentCookie">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method when you want to perform the redirect in your application code instead of using the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> method.</para>
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.GetRedirectUrl(System.String,System.Boolean)" /> method returns the URL specified in the query string using the ReturnURL variable name. For example, in the URL http://www.contoso.com/login.aspx?ReturnUrl=caller.aspx, the <see cref="M:System.Web.Security.FormsAuthentication.GetRedirectUrl(System.String,System.Boolean)" /> method returns the return URL caller.aspx. If the ReturnURL variable does not exist, the <see cref="M:System.Web.Security.FormsAuthentication.GetRedirectUrl(System.String,System.Boolean)" /> method returns the URL in the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property.</para>
+          <para>ASP.NET automatically adds the return URL when the browser is redirected to the login page.</para>
+          <para>By default, the ReturnUrl variable must refer to a page within the current application. If ReturnUrl refers to a page in a different application or on a different server, the <see cref="M:System.Web.Security.FormsAuthentication.GetRedirectUrl(System.String,System.Boolean)" /> methods returns the URL in the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property. If you want to allow the return URL to refer to a page outside the current application, you must set the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property to true using the enableCrossAppRedirects attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element.</para>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property to true to allow cross-application redirects is a potential security threat. For more information, see the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the redirect URL for the original request that caused the redirect to the login page.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the redirect URL.</para>
+        </returns>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the authenticated user. </param>
+        <param name="createPersistentCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -314,11 +461,23 @@ The possible values are:
         <Parameter Name="passwordFormat" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="password">The password to hash.</param>
-        <param name="passwordFormat">The hash algorithm to use.</param>
-        <summary>Calculates the hash of a string using the selected algorithm and returns it as a string for storing in a database or configuration file.</summary>
-        <returns>A string that contains the hashed password.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(System.String,System.String)" /> method creates a hashed password value that can be used when storing forms-authentication credentials in the configuration file for an application.</para>
+          <para>Authentication credentials stored in the configuration file for an application are used by the <see cref="M:System.Web.Security.FormsAuthentication.Authenticate(System.String,System.String)" /> method to verify passwords for users of an application. Alternatively, you can use ASP.NET membership to store user credentials. For more information, see <format type="text/html"><a href="824c3a24-f0af-427c-a652-0d2d1e9397cd">Managing Users Using ASP.NET Membership</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a hash password suitable for storing in a configuration file based on the specified password and hash algorithm.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hashed password.</para>
+        </returns>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password to hash. </param>
+        <param name="passwordFormat">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash algorithm to use. <paramref name="passwordFormat" /> is a String that represents one of the <see cref="T:System.Web.Configuration.FormsAuthPasswordFormat" /> enumeration values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -333,8 +492,14 @@ The possible values are:
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.Initialize" /> method is called when the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> creates an instance of the <see cref="T:System.Web.Security.FormsAuthentication" /> class. This method is not intended to be called from your code. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.Security.FormsAuthentication" /> object based on the configuration settings for the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,9 +516,15 @@ The possible values are:
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.LoginUrl" /> property value is set in the configuration file for an ASP.NET application by using the loginUrl attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element. The <see cref="P:System.Web.Security.FormsAuthentication.LoginUrl" /> is used by the <see cref="Overload:System.Web.Security.FormsAuthentication.RedirectToLoginPage" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URL for the login page that the <see cref="T:System.Web.Security.FormsAuthentication" /> class will redirect to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RedirectFromLoginPage">
@@ -367,10 +538,25 @@ The possible values are:
         <Parameter Name="createPersistentCookie" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="userName">To be added: an object of type 'string'</param>
-        <param name="createPersistentCookie">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> method redirects to the URL specified in the query string using the ReturnURL variable name. For example, in the URL http://www.contoso.com/login.aspx?ReturnUrl=caller.aspx, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> method redirects to the return URL caller.aspx. If the ReturnURL variable does not exist, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> method redirects to the URL in the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property.</para>
+          <para>ASP.NET automatically adds the return URL when the browser is redirected to the login page.</para>
+          <para>By default, the ReturnUrl variable must refer to a page within the current application. If ReturnUrl refers to a page in a different application or on a different server, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> methods redirects to the URL in the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property. If you want to allow redirects to a page outside the current application, you must set the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property to true using the enableCrossAppRedirects attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element.</para>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property to true to allow cross-application redirects is a potential security threat. For more information, see the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property.</para>
+          </block>
+          <para>If the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property is true, and either the ReturnUrl variable is within the current application or the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property is true, then the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> method issues an authentication ticket and places it in the default cookie using the <see cref="Overload:System.Web.Security.FormsAuthentication.SetAuthCookie" /> method.</para>
+          <para>If <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> is false and the redirect path is to a URL in the current application, the ticket is issued as part of the redirect URL. If <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> is false, <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> is true, and the redirect URL does not refer to a page within the current application, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean)" /> method issues an authentication ticket and places it in the <see cref="P:System.Web.HttpRequest.QueryString" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Redirects an authenticated user back to the originally requested URL or the default URL.</para>
+        </summary>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The authenticated user name. </param>
+        <param name="createPersistentCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a durable cookie (one that is saved across browser sessions); otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -389,11 +575,27 @@ The possible values are:
         <Parameter Name="strCookiePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="userName">To be added: an object of type 'string'</param>
-        <param name="createPersistentCookie">To be added: an object of type 'bool'</param>
-        <param name="strCookiePath">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean,System.String)" /> method redirects to the return URL specified in the query string using the ReturnURL variable name. For example, in the URL http://www.contoso.com/login.aspx?ReturnUrl=caller.aspx, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean,System.String)" /> method redirects to the return URL caller.aspx. If the ReturnURL variable does not exist, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean,System.String)" /> method redirects to the URL in the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property.</para>
+          <para>ASP.NET automatically adds the return URL when the browser is redirected to the login page.</para>
+          <para>By default, the ReturnUrl variable must refer to a page within the current application. If ReturnUrl refers to a page in a different application or on a different server, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean,System.String)" /> method redirects to the URL in the <see cref="P:System.Web.Security.FormsAuthentication.DefaultUrl" /> property. If you want to allow redirects to a page outside the current application, you must set the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property to true using the enableCrossAppRedirects attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element.</para>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property to true to allow cross-application redirects is a potential security threat. For more information, see the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property.</para>
+          </block>
+          <para>If the <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> property is true, and either the ReturnUrl variable is within the current application or the <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> property is true, then the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean,System.String)" /> method issues an authentication ticket and places it in the cookie specified by the <paramref name="strCookiePath" /> parameter using the <see cref="Overload:System.Web.Security.FormsAuthentication.SetAuthCookie" /> method.</para>
+          <para>If <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> is false and the redirect path is to a URL in the current application, the ticket is issued as part of the redirect URL. If <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> is false, <see cref="P:System.Web.Security.FormsAuthentication.EnableCrossAppRedirects" /> is true, and the redirect URL does not refer to a page within the current application, the <see cref="M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean,System.String)" /> method issues an authentication ticket and places it in the <see cref="P:System.Web.HttpRequest.QueryString" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Redirects an authenticated user back to the originally requested URL or the default URL using the specified cookie path for the forms-authentication cookie.</para>
+        </summary>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The authenticated user name. </param>
+        <param name="createPersistentCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a durable cookie (one that is saved across browser sessions); otherwise, false. </param>
+        <param name="strCookiePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cookie path for the forms-authentication ticket. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -411,8 +613,15 @@ The possible values are:
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.RedirectToLoginPage" /> method redirects the browser to the <see cref="P:System.Web.Security.FormsAuthentication.LoginUrl" />.</para>
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.RedirectToLoginPage" /> method does not clear the forms-authentication cookie. You can use the <see cref="M:System.Web.Security.FormsAuthentication.RedirectToLoginPage" /> method in conjunction with the <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method to log one user out and allow a different user to log in.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Redirects the browser to the login URL.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RedirectToLoginPage">
@@ -428,9 +637,17 @@ The possible values are:
         <Parameter Name="extraQueryString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="extraQueryString">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.RedirectToLoginPage(System.String)" /> method redirects the browser to the <see cref="P:System.Web.Security.FormsAuthentication.LoginUrl" /> and includes the <paramref name="extraQueryString" /> value as the <see cref="P:System.Management.ManagementQuery.QueryString" /> for the redirected URL.</para>
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.RedirectToLoginPage(System.String)" /> method does not clear the forms-authentication cookie. You can use the <see cref="M:System.Web.Security.FormsAuthentication.RedirectToLoginPage(System.String)" /> method in conjunction with the <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method to log one user out and allow a different user to log in.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Redirects the browser to the login URL with the specified query string.</para>
+        </summary>
+        <param name="extraQueryString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The query string to include with the redirect URL.</param>
       </Docs>
     </Member>
     <Member MemberName="RenewTicketIfOld">
@@ -443,10 +660,21 @@ The possible values are:
         <Parameter Name="tOld" Type="System.Web.Security.FormsAuthenticationTicket" />
       </Parameters>
       <Docs>
-        <param name="tOld">To be added: an object of type 'FormsAuthenticationTicket'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FormsAuthenticationTicket'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.RenewTicketIfOld(System.Web.Security.FormsAuthenticationTicket)" /> method updates the expiration date and time of the supplied <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> if the current date and time minus the <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> value is greater than the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> value minus the current date and time.</para>
+          <para>The ticket is updated with the <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> property set to the current date and time and the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> property set to the current date and time plus the original <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> value minus the original <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conditionally updates the issue date and time and expiration date and time for a <see cref="T:System.Web.Security.FormsAuthenticationTicket" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The updated <see cref="T:System.Web.Security.FormsAuthenticationTicket" />.</para>
+        </returns>
+        <param name="tOld">
+          <attribution license="cc4" from="Microsoft" modified="false" />The forms-authentication ticket to update.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -460,9 +688,16 @@ The possible values are:
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.RequireSSL" /> property value is set in the configuration file for an ASP.NET application by using the requireSSL attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element. You can specify in the Web.config file for your ASP.NET application whether SSL (Secure Sockets Layer) is required to return the forms-authentication cookie to the server by setting the requireSSL attribute . For more information, see <see cref="P:System.Web.HttpCookie.Secure" />.</para>
+          <para>It is recommended that if you configure requireSSL as false, you also configure slidingExpiration as false, to reduce the amount of time for which a ticket is valid. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the forms-authentication cookie requires SSL in order to be returned to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -480,10 +715,18 @@ The possible values are:
         <Parameter Name="createPersistentCookie" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="userName">To be added: an object of type 'string'</param>
-        <param name="createPersistentCookie">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.SetAuthCookie(System.String,System.Boolean)" /> method adds a forms-authentication ticket to either the cookies collection, or to the URL if <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> is false. The forms-authentication ticket supplies forms-authentication information to the next request made by the browser. With forms authentication, you can use the <see cref="M:System.Web.Security.FormsAuthentication.SetAuthCookie(System.String,System.Boolean)" /> method when you want to authenticate a user but still retain control of the navigation with redirects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an authentication ticket for the supplied user name and adds it to the cookies collection of the response, or to the URL if you are using cookieless authentication.</para>
+        </summary>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an authenticated user. This does not have to map to a Windows account. </param>
+        <param name="createPersistentCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a persistent cookie (one that is saved across browser sessions); otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -502,11 +745,20 @@ The possible values are:
         <Parameter Name="strCookiePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="userName">To be added: an object of type 'string'</param>
-        <param name="createPersistentCookie">To be added: an object of type 'bool'</param>
-        <param name="strCookiePath">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.SetAuthCookie(System.String,System.Boolean,System.String)" /> method adds a forms-authentication ticket to either the cookies collection or the URL if <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> is false. The forms-authentication ticket supplies forms-authentication information to the next request made by the browser. With forms authentication, you can use the <see cref="M:System.Web.Security.FormsAuthentication.SetAuthCookie(System.String,System.Boolean,System.String)" /> method when you want to authenticate a user but still retain control of the navigation with redirects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an authentication ticket for the supplied user name and adds it to the cookies collection of the response, using the supplied cookie path, or using the URL if you are using cookieless authentication.</para>
+        </summary>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an authenticated user. </param>
+        <param name="createPersistentCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to create a durable cookie (one that is saved across browser sessions); otherwise, false. </param>
+        <param name="strCookiePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cookie path for the forms-authentication ticket.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -521,8 +773,28 @@ The possible values are:
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method removes the forms-authentication ticket information from the cookie or the URL if <see cref="P:System.Web.Security.FormsAuthentication.CookiesSupported" /> is false. You can use the <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method in conjunction with the <see cref="M:System.Web.Security.FormsAuthentication.RedirectToLoginPage" /> method to log one user out and allow a different user to log in.</para>
+          <para>If you run exclusively in cookieless mode, or if you support both authenticated and anonymous users, you should explicitly control the redirect to the login page if you require special business logic to execute as a result of removing the anonymous identifier. </para>
+          <para>When the <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method is called, a redirect to the application's login page is made by calling the <see cref="M:System.Web.HttpResponse.Redirect(System.String)" /> method with the <paramref name="endResponse" /> parameter set to false. The redirect does not take place until the current page has finished executing, so additional code can be run. If the code does not contain an explicit redirect to another page, the user is redirected to the login page configured in the application's configuration file.</para>
+          <para>Calling the <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method only removes the forms authentication cookie. The Web server does not store valid and expired authentication tickets for later comparison. This makes your site vulnerable to a replay attack if a malicious user obtains a valid forms authentication cookie. To improve security when using a forms authentication cookie, you should do the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Use absolute expiration for forms authentication cookies by setting the <see cref="P:System.Web.Security.FormsAuthentication.SlidingExpiration" /> property to false. This limits the window in which a hijacked cookie can be replayed.</para>
+            </item>
+            <item>
+              <para>Only issue and accept authentication cookies over Secure Sockets Layer (SSL), by setting the <see cref="P:System.Web.Security.FormsAuthentication.RequireSSL" /> property to true and by running the entire Web site under SSL. Setting the <see cref="P:System.Web.Security.FormsAuthentication.RequireSSL" /> property to true ensures that ASP.NET will never send an authentication cookie to the browser over a non-SSL connection; however, the client might not honor the secure setting on the cookie. This means the client might send the forms authentication cookie over a non-SSL connection, thus leaving it vulnerable to hijack. You can prevent a client from sending the forms authentication cookie in the clear by running the entire Web site under SSL.</para>
+            </item>
+            <item>
+              <para>Use persistent storage on the server to record when a user logs out of the Web site, and then use an application event such as <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" /> event to determine whether the current user was authenticated with forms authentication. If the user was authenticated with forms authentication, and if the information in persistent storage indicates the user is logged out, immediately clear the authentication cookie and redirect the browser back to the login page. After a successful login, update storage to reflect that the user is logged in. When you use this method, your application must track the logged-in status of the user, and must force idle users to log out.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the forms-authentication ticket from the browser.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -536,9 +808,17 @@ The possible values are:
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthentication.SlidingExpiration" /> property value is set using the slidingExpiration attribute of the <format type="text/html"><a href="8163b8b5-ea6c-46c8-b5a9-c4c3de31c0b3">forms</a></format> configuration element.</para>
+          <para>Sliding expiration resets the expiration time for a valid authentication cookie if a request is made and more than half of the timeout interval has elapsed. If the cookie expires, the user must re-authenticate. Setting the <see cref="P:System.Web.Security.FormsAuthentication.SlidingExpiration" /> property to false can improve the security of an application by limiting the time for which an authentication cookie is valid, based on the configured timeout value.</para>
+          <para>We recommend that if you configure requireSSL as false, you also configure slidingExpiration as false, to reduce the amount of time for which a ticket is valid. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether sliding expiration is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

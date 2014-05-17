@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DecoderFallback" FullName="System.Text.DecoderFallback">
   <TypeSignature Language="C#" Value="public abstract class DecoderFallback" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit DecoderFallback extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,93 +12,154 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An encoding maps a Unicode character to an encoded sequence of bytes. A particular encoding is represented by a type that is derived from the <see cref="T:System.Text.Encoding" /> class. Specifically, a character is encoded to a byte sequence by calling the encoding type's <see cref="M:System.Text.Encoding.GetBytes(System.String)" /> method, and the byte sequence is decoded to a character array or a string by calling the <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" /> or <see cref="M:System.Text.Encoding.GetString(System.Byte[])" /> method. </para>
+      <para>A decoding operation can fail if the input byte sequence cannot be mapped by the encoding. For example, an <see cref="T:System.Text.ASCIIEncoding" /> object cannot decode a byte sequence if that sequence represents a character that has a code point value that is outside the range U+0000 to U+007F. </para>
+      <para>When a decoding conversion cannot be performed, the .NET Framework provides a failure-handling mechanism called a fallback. Your application can use predefined .NET Framework decoder fallbacks, or it can create a custom decoder fallback derived from the <see cref="T:System.Text.DecoderFallback" /> and <see cref="T:System.Text.DecoderFallbackBuffer" /> classes. </para>
+      <para>
+        <see cref="T:System.Text.DecoderFallback" /> and <see cref="T:System.Text.DecoderFallbackBuffer" /> are the base classes for all decoding fallback handlers in the .NET Framework. They support the following three kinds of fallback handling mechanisms:</para>
+      <list type="bullet">
+        <item>
+          <para>Best-fit fallback, which maps valid Unicode characters that cannot be decoded to an approximate equivalent. For example, a best-fit fallback handler for the <see cref="T:System.Text.ASCIIEncoding" /> class might map Æ (U+00C6) to AE (U+0041 + U+0045). A best-fit fallback handler might also be implemented to transliterate one alphabet (such as Cyrillic) to another (such as Latin or Roman). The .NET Framework does not provide any public best-fit fallback implementations.</para>
+        </item>
+        <item>
+          <para>Replacement fallback, which replaces each character that cannot be decoded with a predefined string. The .NET Framework provides a predefined replacement fallback handler. The <see cref="T:System.Text.DecoderReplacementFallback" /> class replaces each byte sequence that cannot be decoded with a question mark character ("?", or U+003F) or a REPLACEMENT CHARACTER (U+FFFD). You can customize the replacement string by specifying a substitute in the call to the <see cref="M:System.Text.DecoderReplacementFallback.#ctor(System.String)" /> constructor. After the substitute string is emitted, the decoding operation continues converting the remainder of the input.</para>
+        </item>
+        <item>
+          <para>Exception fallback, which throws an exception when a byte sequence cannot be decoded. The .NET Framework provides a predefined exception fallback handler. The <see cref="T:System.Text.DecoderExceptionFallback" /> class throws a <see cref="T:System.Text.DecoderFallbackException" /> when an invalid byte sequence is encountered, and the decoding operation terminates.</para>
+        </item>
+      </list>
+      <para>If you choose to implement a custom solution, you must override the following abstract members of the <see cref="T:System.Text.DecoderFallback" /> class:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Text.DecoderFallback.CreateFallbackBuffer" /> method, which returns a class instance derived from <see cref="T:System.Text.DecoderFallbackBuffer" />. Depending on the type of fallback handler that you are developing, the <see cref="T:System.Text.DecoderFallbackBuffer" /> implementation is responsible for performing the mapping or replacement, or for throwing the exception.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Text.DecoderFallback.MaxCharCount" /> property, which returns the maximum number of characters that the fallback implementation can return. For an exception fallback handler, its value should be zero.</para>
+        </item>
+      </list>
+      <para>For more information about encoding, decoding, and fallback strategies, see <format type="text/html"><a href="bf6d9823-4c2d-48af-b280-919c5af66ae9">Character Encoding in the .NET Framework</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a failure-handling mechanism, called a fallback, for an encoded input byte sequence that cannot be converted to an output character. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected DecoderFallback ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Text.DecoderFallback" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="CreateFallbackBuffer">
       <MemberSignature Language="C#" Value="public abstract System.Text.DecoderFallbackBuffer CreateFallbackBuffer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Text.DecoderFallbackBuffer CreateFallbackBuffer() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.DecoderFallbackBuffer</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns an object derived from <see cref="T:System.Text.DecoderFallbackBuffer" /> that is responsible for performing the fallback operation. For example, of the predefined <see cref="T:System.Text.DecoderFallback" /> implementations in the .NET Framework, the <see cref="M:System.Text.DecoderReplacementFallback.CreateFallbackBuffer" /> method returns a <see cref="T:System.Text.DecoderReplacementFallbackBuffer" /> object, and the <see cref="M:System.Text.DecoderExceptionFallback.CreateFallbackBuffer" /> method returns a <see cref="T:System.Text.DecoderExceptionFallbackBuffer" /> object.</para>
+          <para>The <see cref="M:System.Text.DecoderFallback.CreateFallbackBuffer" /> method is called by a decoder when it encounters the first byte that it is unable to decode. The <see cref="T:System.Text.DecoderFallbackBuffer" /> object returned by this method provides the fallback implementation and is responsible for returning the string that replaces the byte or bytes that could not be decoded. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, initializes a new instance of the <see cref="T:System.Text.DecoderFallbackBuffer" /> class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that provides a fallback buffer for a decoder.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="ExceptionFallback">
+      <MemberSignature Language="C#" Value="public static System.Text.DecoderFallback ExceptionFallback { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.DecoderFallback ExceptionFallback" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExceptionFallback">
-      <MemberSignature Language="C#" Value="public static System.Text.DecoderFallback ExceptionFallback { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.DecoderFallback</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that throws an exception when an input byte sequence cannot be decoded.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="MaxCharCount">
+      <MemberSignature Language="C#" Value="public abstract int MaxCharCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxCharCount" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxCharCount">
-      <MemberSignature Language="C#" Value="public abstract int MaxCharCount { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For an exception fallback handler, this property should return zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the maximum number of characters the current <see cref="T:System.Text.DecoderFallback" /> object can return.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ReplacementFallback">
+      <MemberSignature Language="C#" Value="public static System.Text.DecoderFallback ReplacementFallback { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.DecoderFallback ReplacementFallback" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReplacementFallback">
-      <MemberSignature Language="C#" Value="public static System.Text.DecoderFallback ReplacementFallback { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.DecoderFallback</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that outputs a substitute string in place of an input byte sequence that cannot be decoded.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

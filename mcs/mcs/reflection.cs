@@ -219,7 +219,7 @@ namespace Mono.CSharp
 		//
 		public bool Create (AppDomain domain, AssemblyBuilderAccess access)
 		{
-#if STATIC
+#if STATIC || FULL_AOT_RUNTIME
 			throw new NotSupportedException ();
 #else
 			ResolveAssemblySecurityAttributes ();

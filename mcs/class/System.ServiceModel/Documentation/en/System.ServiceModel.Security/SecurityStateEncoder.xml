@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="SecurityStateEncoder" FullName="System.ServiceModel.Security.SecurityStateEncoder">
+  <TypeSignature Language="C#" Value="public abstract class SecurityStateEncoder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SecurityStateEncoder extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used to encode and decode the content of the security context token when a binding with message security that uses a stateful security context token is used. crabout stateful security context tokens, see <format type="text/html"><a href="640676b6-c75a-4ff7-aea4-b1a1524d71b2">How To: Create a Stateful Security Context Token for a Secure Session</a></format> topic.</para>
+      <para>Microsoft’s version of <see cref="T:System.ServiceModel.Security.SecurityStateEncoder" /> is <see cref="T:System.ServiceModel.Security.DataProtectionSecurityStateEncoder" />. It uses Microsoft’s <see cref="http://go.microsoft.com/fwlink/?LinkId=96704">Windows Data Protection (DPAPI)</see> technology to encrypt/decrypt the cookie. You can plug in a different mechanism for encrypting and decrypting cookies by implementing this class. </para>
+      <para>The encoding of the security state must ensure that the state is signed and encrypted for the service. </para>
+      <para>This class is used by the server when sending the security state as a cookie in the SecurityContextToken issued to the client.</para>
+      <para>An example implementation of this class is an X509CertificateSecurityStateEncoder that uses the service's certificate to sign and encrypt the security state.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract class that can be implemented to encode the security state.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SecurityStateEncoder ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SecurityStateEncoder" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DecodeSecurityState">
+      <MemberSignature Language="C#" Value="protected abstract byte[] DecodeSecurityState (byte[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance unsigned int8[] DecodeSecurityState(unsigned int8[] data) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decodes the security state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the security state.</para>
+        </returns>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />Security data.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EncodeSecurityState">
+      <MemberSignature Language="C#" Value="protected abstract byte[] EncodeSecurityState (byte[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance unsigned int8[] EncodeSecurityState(unsigned int8[] data) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes the security state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that results from encoding the security state.</para>
+        </returns>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security state data.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

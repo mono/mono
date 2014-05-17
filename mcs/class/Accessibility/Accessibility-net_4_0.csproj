@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3C0E9135-1458-47F6-9076-17FFB1E3E32F}</ProjectGuid>
+    <ProjectGuid>{0978E130-1E7B-4627-A9CC-7489DB17BFF1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Accessibility-net_4_0</OutputPath>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -59,13 +59,16 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -73,3 +76,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectoryServicesPermissionEntryCollection" FullName="System.DirectoryServices.DirectoryServicesPermissionEntryCollection">
   <TypeSignature Language="C#" Value="public class DirectoryServicesPermissionEntryCollection : System.Collections.CollectionBase, System.Collections.IList, System.Collections.ICollection, System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -83,10 +84,16 @@
         <Parameter Name="entry" Type="System.DirectoryServices.DirectoryServicesPermissionEntry" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="entry">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> object to this collection.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the added <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> object that is appended to this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -99,9 +106,12 @@
         <Parameter Name="entries" Type="System.DirectoryServices.DirectoryServicesPermissionEntry[]" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="entries">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the contents of the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> array to this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -114,9 +124,12 @@
         <Parameter Name="entries" Type="System.DirectoryServices.DirectoryServicesPermissionEntryCollection" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="entries">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the contents of the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntryCollection" /> object to this collection.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -130,10 +143,14 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="copy_to">To be added.</param>
-        <param name="index">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> objects in this collection to the specified array, starting at the specified index in the target array.          </para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in the array where this method starts copying this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -146,10 +163,16 @@
         <Parameter Name="entry" Type="System.DirectoryServices.DirectoryServicesPermissionEntry" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="entry">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> object is in this collection.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> object is in this collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -162,10 +185,16 @@
         <Parameter Name="entry" Type="System.DirectoryServices.DirectoryServicesPermissionEntry" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="entry">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the first occurrence of the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> object in this collection.          </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first matching object.  Returns -1 if no member of this collection is identical to the <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -179,10 +208,13 @@
         <Parameter Name="entry" Type="System.DirectoryServices.DirectoryServicesPermissionEntry" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="pos">To be added.</param>
         <param name="entry">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> into this collection at the specified index.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -195,9 +227,12 @@
         <Parameter Name="entry" Type="System.DirectoryServices.DirectoryServicesPermissionEntry" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="entry">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of an object in this collection that is identical to the specified <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> object.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -218,7 +253,10 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a strongly-typed collection of <see cref="T:System.DirectoryServices.DirectoryServicesPermissionEntry" /> objects.          </para>
+    </summary>
   </Docs>
 </Type>

@@ -41,8 +41,8 @@ namespace System.Collections.Concurrent
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class ConcurrentBag<T> : IProducerConsumerCollection<T>, IEnumerable<T>, IEnumerable
 	{
-		// We store hints in a long
-		long hints;
+		// We store hints in an int
+		int hints;
 
 		int count;
 		// The container area is where bag are added foreach thread
@@ -65,6 +65,7 @@ namespace System.Collections.Concurrent
 			int index;
 			CyclicDeque<T> bag = GetBag (out index);
 			bag.PushBottom (item);
+			staging.TryAdd (index, bag);
 			AddHint (index);
 			Interlocked.Increment (ref count);
 		}
@@ -88,6 +89,7 @@ namespace System.Collections.Concurrent
 			
 			if (bag == null || bag.PopBottom (out result) != PopResult.Succeed) {
 				var self = bag;
+				ret = false;
 				foreach (var other in staging) {
 					// Try to retrieve something based on a hint
 					ret = TryGetHint (out hintIndex) && (bag = container[hintIndex]).PopTop (out result) == PopResult.Succeed;
@@ -129,6 +131,7 @@ namespace System.Collections.Concurrent
 
 			if (bag == null || !bag.PeekBottom (out result)) {
 				var self = bag;
+				ret = false;
 				foreach (var other in staging) {
 					// Try to retrieve something based on a hint
 					ret = TryGetHint (out hintIndex) && container[hintIndex].PeekTop (out result);
@@ -153,19 +156,19 @@ namespace System.Collections.Concurrent
 				return;
 			var hs = hints;
 			// If cas failed then we don't retry
-			Interlocked.CompareExchange (ref hints, (long)(((ulong)hs) << 4 | (uint)index), (long)hs);
+			Interlocked.CompareExchange (ref hints, (int)(((uint)hs) << 4 | (uint)index), (int)hs);
 		}
 
 		bool TryGetHint (out int index)
 		{
-			/* Funny little thing to know, since hints is a long (because CAS has no ulong overload),
+			/* Funny little thing to know, since hints is signed (because CAS has no uint overload),
 			 * a shift-right operation is an arithmetic shift which might set high-order right bits
 			 * to 1 instead of 0 if the number turns negative.
 			 */
 			var hs = hints;
 			index = 0;
 
-			if (Interlocked.CompareExchange (ref hints, (long)(((ulong)hs) >> 4), hs) == hs)
+			if (Interlocked.CompareExchange (ref hints, (int)(((uint)hs) >> 4), hs) == hs)
 				index = (int)(hs & 0xF);
 
 			return index > 0;
@@ -264,10 +267,7 @@ namespace System.Collections.Concurrent
 			if (container.TryGetValue (index, out value))
 				return value;
 
-			var bag = createBag ? container.GetOrAdd (index, new CyclicDeque<T> ()) : null;
-			if (bag != null)
-				staging.TryAdd (index, bag);
-			return bag;
+			return createBag ? container.GetOrAdd (index, new CyclicDeque<T> ()) : null;
 		}
 
 		void TidyBag (int index, CyclicDeque<T> bag)

@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="XName" FullName="System.Xml.Linq.XName">
+  <TypeSignature Language="C#" Value="public sealed class XName : IEquatable&lt;System.Xml.Linq.XName&gt;, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit XName extends System.Object implements class System.IEquatable`1&lt;class System.Xml.Linq.XName&gt;, class System.Runtime.Serialization.ISerializable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Xml.Linq.XName&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XML names include a namespace and a local name. A <newTerm>fully qualified name</newTerm> is the combination of the namespace and local name. </para>
+      <format type="text/html">
+        <h2>Creating an XName Object</h2>
+      </format>
+      <para>
+        <see cref="T:System.Xml.Linq.XName" /> does not contain any public constructors. Instead, this class provides an implicit conversion from <see cref="T:System.String" /> that allows you to create an <see cref="T:System.Xml.Linq.XName" />. The most common place you use this conversion is when constructing an element or attribute: The first argument to the <see cref="T:System.Xml.Linq.XElement" /> constructor is an <see cref="T:System.Xml.Linq.XName" />. By passing a string, you take advantage of the implicit conversion. The following code creates an element with a name that is in no namespace: </para>
+      <code>XElement root = new XElement("ElementName", "content");
+Console.WriteLine(root);</code>
+      <para>In Visual Basic, it is more appropriate to use XML literals:</para>
+      <code>Dim root As XElement = &lt;ElementName&gt;content&lt;/ElementName&gt;
+Console.WriteLine(root)</code>
+      <para>This example produces the following output:</para>
+      <code>&lt;ElementName&gt;content&lt;/ElementName&gt;</code>
+      <para>Assigning a string to an <see cref="T:System.Xml.Linq.XName" /> uses the implicit conversion from <see cref="T:System.String" />.</para>
+      <para>The Visual Basic example creates the <see cref="T:System.Xml.Linq.XElement" /> using XML literals. Even though XML literals are used, an <see cref="T:System.Xml.Linq.XName" /> object is created for the <see cref="T:System.Xml.Linq.XElement" />.</para>
+      <para>In addition, you can call the <see cref="Overload:System.Xml.Linq.XName.Get" /> method for an <see cref="T:System.Xml.Linq.XName" /> object. However, the recommended way is to use the implicit conversion from string.</para>
+      <format type="text/html">
+        <h2>Creating an XName in a Namespace</h2>
+      </format>
+      <para>As with XML, an <see cref="T:System.Xml.Linq.XName" /> can be in a namespace, or it can be in no namespace.</para>
+      <para>For C#, the recommended approach for creating an <see cref="T:System.Xml.Linq.XName" /> in a namespace is to declare the <see cref="T:System.Xml.Linq.XNamespace" /> object, then use the override of the addition operator.</para>
+      <para>For Visual Basic, the recommended approach is to use XML literals and global namespace declarations to create XML that is in a namespace.</para>
+      <code>XNamespace aw = "http://www.adventure-works.com";
+XElement root = new XElement(aw + "ElementName", "content");
+Console.WriteLine(root);</code>
+      <code>Imports &lt;xmlns="http://www.adventure-works.com"&gt;
+
+Module Module1
+    Sub Main()
+        Dim root As XElement = &lt;ElementName&gt;content&lt;/ElementName&gt;
+        Console.WriteLine(root)
+    End Sub
+End Module</code>
+      <para>This example produces the following output:</para>
+      <code>&lt;ElementName xmlns="http://www.adventure-works.com"&gt;content&lt;/ElementName&gt;</code>
+      <format type="text/html">
+        <h2>Creating an XName in no Namespace</h2>
+      </format>
+      <para>The <see cref="P:System.Xml.Linq.XName.Namespace" /> property of an <see cref="T:System.Xml.Linq.XName" /> object is guaranteed to not be null. If the <see cref="T:System.Xml.Linq.XName" /> is in no namespace, then the <see cref="P:System.Xml.Linq.XName.Namespace" /> property will be set to <see cref="P:System.Xml.Linq.XNamespace.None" />. The following code demonstrates this:</para>
+      <code>XElement root = new XElement("ElementName", "content");
+if (root.Name.Namespace == XNamespace.None)
+    Console.WriteLine("The element is in no namespace.");
+else
+    Console.WriteLine("The element is in a namespace.");</code>
+      <code>Dim root As XElement = &lt;ElementName&gt;content&lt;/ElementName&gt;
+If (root.Name.Namespace Is XNamespace.None) Then
+    Console.WriteLine("The element is in no namespace.")
+Else
+    Console.WriteLine("The element is in a namespace.")
+End If</code>
+      <para>This example produces the following output:</para>
+      <code>The element is in no namespace.</code>
+      <format type="text/html">
+        <h2>Using Expanded Names</h2>
+      </format>
+      <para>You can also create an <see cref="T:System.Xml.Linq.XName" /> from a expanded XML name in the form {namespace}localname:</para>
+      <code>XElement root = new XElement("{http://www.adventure-works.com}ElementName", "content");
+Console.WriteLine(root);</code>
+      <code>Dim root As XElement = New XElement("{http://www.adventure-works.com}ElementName", "content")
+Console.WriteLine(root)</code>
+      <para>This example produces the following output:</para>
+      <code>&lt;ElementName xmlns="http://www.adventure-works.com"&gt;content&lt;/ElementName&gt;</code>
+      <para>Be aware that creating an <see cref="T:System.Xml.Linq.XName" /> through an expanded name is less efficient than creating an <see cref="T:System.Xml.Linq.XNamespace" /> object and using the override of the addition operator. It is also less efficient than importing a global namespace and using XML literals in Visual Basic.</para>
+      <para>If you create an <see cref="T:System.Xml.Linq.XName" /> using an expanded name, LINQ to XML must find the atomized instance of a namespace. This work must be repeated for every use of an expanded name. This additional time is likely to be negligible when writing LINQ queries; however, it might be significant when creating a large XML tree.</para>
+      <format type="text/html">
+        <h2>XName Objects are Atomized</h2>
+      </format>
+      <para>
+        <see cref="T:System.Xml.Linq.XName" /> objects are guaranteed to be atomized; that is, if two <see cref="T:System.Xml.Linq.XName" /> objects have exactly the same namespace and exactly the same local name, they will share the same instance. The equality and comparison operators are also provided explicitly for this purpose.</para>
+      <para>Among other benefits, this feature allows for faster execution of queries. When filtering on the name of elements or attributes, the comparisons expressed in predicates use identity comparison, not value comparison. It is much faster to determine that two references actually refer to the same object than to compare two strings.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a name of an XML element or attribute. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For two <see cref="T:System.Xml.Linq.XName" /> objects to be equal, they must have the same expanded name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Xml.Linq.XName" /> is equal to this <see cref="T:System.Xml.Linq.XName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Xml.Linq.XName" /> is equal to the current <see cref="T:System.Xml.Linq.XName" />; otherwise false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to compare to the current <see cref="T:System.Xml.Linq.XName" />.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XName Get (string expandedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XName Get(string expandedName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XName</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expandedName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method contains overloads that allow you to create an <see cref="T:System.Xml.Linq.XName" />. You can create it from a expanded XML name in the form {namespace}localname, or from a namespace and a local name, specified separately.</para>
+          <para>A much more common and easier way to create an <see cref="T:System.Xml.Linq.XName" /> is to use the implicit conversion from string.</para>
+          <para>Because <see cref="T:System.Xml.Linq.XName" /> are atomized, if there is an existing <see cref="T:System.Xml.Linq.XName" /> with exactly the same name, the assigned variable will refer to the existing <see cref="T:System.Xml.Linq.XName" />. If there is no existing <see cref="T:System.Xml.Linq.XName" />, a new one will be created and initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.Linq.XName" /> object from an expanded name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XName" /> object constructed from the expanded name.</para>
+        </returns>
+        <param name="expandedName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an expanded XML name in the format {namespace}localname.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Get">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XName Get (string localName, string namespaceName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xml.Linq.XName Get(string localName, string namespaceName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XName</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="localName" Type="System.String" />
+        <Parameter Name="namespaceName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method contains overloads that allow you to create an <see cref="T:System.Xml.Linq.XName" />. You can create it from an expanded XML name in the form {namespace}localname, or from a namespace and a local name, specified separately.</para>
+          <para>A much more common and easier way to create an <see cref="T:System.Xml.Linq.XName" /> is to use the implicit conversion from string.</para>
+          <para>Because <see cref="T:System.Xml.Linq.XName" /> are atomized, if there is an existing <see cref="T:System.Xml.Linq.XName" /> with exactly the same name, the assigned variable will refer to the existing <see cref="T:System.Xml.Linq.XName" />. If there is no existing <see cref="T:System.Xml.Linq.XName" />, a new one will be created and initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.Linq.XName" /> object from a local name and a namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XName" /> object created from the specified local name and namespace.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A local (unqualified) name.</param>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An XML namespace.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method serves as a hash function for <see cref="T:System.Xml.Linq.XName" />. You can use <see cref="M:System.Xml.Linq.XName.GetHashCode" /> in hashing algorithms, or in data structures such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a hash code for this <see cref="T:System.Xml.Linq.XName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int32" /> that contains the hash code for the <see cref="T:System.Xml.Linq.XName" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="LocalName">
+      <MemberSignature Language="C#" Value="public string LocalName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LocalName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is guaranteed to not be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local (unqualified) part of the name.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Namespace">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XNamespace Namespace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XNamespace Namespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XNamespace</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Linq.XName.Namespace" /> property is guaranteed to not be null. If an <see cref="T:System.Xml.Linq.XName" /> is in no namespace, this property returns <see cref="P:System.Xml.Linq.XNamespace.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace part of the fully qualified name.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NamespaceName">
+      <MemberSignature Language="C#" Value="public string NamespaceName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NamespaceName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a convenience property to get the namespace name from an <see cref="T:System.Xml.Linq.XName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the URI of the <see cref="T:System.Xml.Linq.XNamespace" /> for this <see cref="T:System.Xml.Linq.XName" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (System.Xml.Linq.XName left, System.Xml.Linq.XName right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(class System.Xml.Linq.XName left, class System.Xml.Linq.XName right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Xml.Linq.XName" />
+        <Parameter Name="right" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operator overloads == and != are included to enable comparisons between <see cref="T:System.Xml.Linq.XName" /> and a string, such as element.Name == "SomeElementName". The predefined reference equality operators in C# require one operand to be convertible to the type of the other through reference conversions only. These operators do not consider the implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two instances of <see cref="T:System.Xml.Linq.XName" /> are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XName" /> to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second <see cref="T:System.Xml.Linq.XName" /> to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static System.Xml.Linq.XName op_Implicit (string expandedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname class System.Xml.Linq.XName op_Implicit(string expandedName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XName</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expandedName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="expandedName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Xml.Linq.XName left, System.Xml.Linq.XName right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(class System.Xml.Linq.XName left, class System.Xml.Linq.XName right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Xml.Linq.XName" />
+        <Parameter Name="right" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operator overloads == and != are included to enable comparisons between <see cref="T:System.Xml.Linq.XName" /> and a string, such as element.Name == "SomeElementName". The predefined reference equality operators in C# require one operand to be convertible to the type of the other through reference conversions only. These operators do not consider the implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether two instances of <see cref="T:System.Xml.Linq.XName" /> are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XName" /> to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second <see cref="T:System.Xml.Linq.XName" /> to compare.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="System.IEquatable&lt;System.Xml.Linq.XName&gt;.Equals">
+      <MemberSignature Language="C#" Value="bool IEquatable&lt;XName&gt;.Equals (System.Xml.Linq.XName other);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.IEquatable&lt;System.Xml.Linq.XName&gt;.Equals(class System.Xml.Linq.XName other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <param name="other">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
+      <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.Serialization.ISerializable.GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used internally to serialize object graphs that contain LINQ to XML objects. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data required to serialize the target object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the expanded XML name in the format {namespace}localname.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the expanded XML name in the format {namespace}localname.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

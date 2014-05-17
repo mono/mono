@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ZipArchive" FullName="System.IO.Compression.ZipArchive">
+  <TypeSignature Language="C#" Value="public class ZipArchive : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ZipArchive extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.IO.Compression</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.Compression.ZipArchive" /> class enables you to work with a package of compressed files. The package contains an entry for each compressed file. You can: </para>
+      <list type="bullet">
+        <item>
+          <para>Retrieve an entry by using the <see cref="M:System.IO.Compression.ZipArchive.GetEntry(System.String)" /> method.</para>
+        </item>
+        <item>
+          <para>Retrieve the entire collection of entries by using the <see cref="P:System.IO.Compression.ZipArchive.Entries" /> property.</para>
+        </item>
+        <item>
+          <para>Create a new entry in the package by calling the overloaded <see cref="M:System.IO.Compression.ZipArchive.CreateEntry(System.String)" /> method.</para>
+        </item>
+      </list>
+      <para>For static methods to create a zip archive from a directory or extract a zip archive to a directory, see the <see cref="T:System.IO.Compression.ZipFile" /> class.</para>
+      <para>When you create a new entry, the file is compressed and added to the zip package. The <see cref="M:System.IO.Compression.ZipArchive.CreateEntry(System.String)" /> method enables you to specify a directory hierarchy when adding the entry. You include the relative path of the new entry within the zip package. For example, creating a new entry with a relative path of AddedFolder\NewFile.txt creates a compressed text file in a directory named AddedFolder.</para>
+      <para>If you reference the System.IO.Compression.FileSystem assembly in your project, you can access three extension methods (from the <see cref="T:System.IO.Compression.ZipFileExtensions" /> class) for the <see cref="T:System.IO.Compression.ZipArchive" /> class: <see cref="M:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(System.IO.Compression.ZipArchive,System.String,System.String)" />, <see cref="M:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(System.IO.Compression.ZipArchive,System.String,System.String,System.IO.Compression.CompressionLevel)" />, and <see cref="M:System.IO.Compression.ZipFileExtensions.ExtractToDirectory(System.IO.Compression.ZipArchive,System.String)" />. These extension methods enable you to compress and decompress the contents of the entry to a file. The System.IO.Compression.FileSystem assembly is not available for win8_appname_long apps. In win8_appname_long apps, you can compress and decompress files by using the <see cref="T:System.IO.Compression.DeflateStream" /> or <see cref="T:System.IO.Compression.GZipStream" /> class, or you can use the wrt types <see cref="http://go.microsoft.com/fwlink/p/?LinkID=246357">Compressor</see> and <see cref="http://go.microsoft.com/fwlink/p/?LinkID=246358">Decompressor</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a package of compressed files in the zip archive format.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ZipArchive (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Compression.ZipArchive" /> class from the specified stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the archive to be read.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ZipArchive (System.IO.Stream stream, System.IO.Compression.ZipArchiveMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, valuetype System.IO.Compression.ZipArchiveMode mode) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="mode" Type="System.IO.Compression.ZipArchiveMode" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Read" />, the stream must support reading. If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Create" />, the stream must support writing. If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Update" />, the stream must support reading, writing, and seeking.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Compression.ZipArchive" /> class from the specified stream and with the specified mode.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input or output stream.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates whether the zip archive is used to read, create, or update entries.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ZipArchive (System.IO.Stream stream, System.IO.Compression.ZipArchiveMode mode, bool leaveOpen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, valuetype System.IO.Compression.ZipArchiveMode mode, bool leaveOpen) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="mode" Type="System.IO.Compression.ZipArchiveMode" />
+        <Parameter Name="leaveOpen" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Read" />, the stream must support reading. If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Create" />, the stream must support writing. If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Update" />, the stream must support reading, writing, and seeking.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Compression.ZipArchive" /> class on the specified stream for the specified mode, and optionally leaves the stream open.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input or output stream.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates whether the zip archive is used to read, create, or update entries.</param>
+        <param name="leaveOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to leave the stream open after the <see cref="T:System.IO.Compression.ZipArchive" /> object is disposed; otherwise, false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ZipArchive (System.IO.Stream stream, System.IO.Compression.ZipArchiveMode mode, bool leaveOpen, System.Text.Encoding entryNameEncoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, valuetype System.IO.Compression.ZipArchiveMode mode, bool leaveOpen, class System.Text.Encoding entryNameEncoding) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="mode" Type="System.IO.Compression.ZipArchiveMode" />
+        <Parameter Name="leaveOpen" Type="System.Boolean" />
+        <Parameter Name="entryNameEncoding" Type="System.Text.Encoding" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Read" />, the stream must support reading. If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Create" />, the stream must support writing. If the <paramref name="mode" /> parameter is set to <see cref="F:System.IO.Compression.ZipArchiveMode.Update" />, the stream must support reading, writing, and seeking.</para>
+          <para>When you open a zip archive file for reading and <paramref name="entryNameEncoding" /> is set to null, entry names are decoded according to the following rules:</para>
+          <list type="bullet">
+            <item>
+              <para>When the language encoding flag (in the general-purpose bit flag of the local file header) is not set, the current system default code page is used to decode the entry name.</para>
+            </item>
+            <item>
+              <para>When the language encoding flag is set, UTF-8 is used to decode the entry name.</para>
+            </item>
+          </list>
+          <para>When you open a zip archive file for reading and <paramref name="entryNameEncoding" /> is set to a value other than null, entry names are decoded according to the following rules:</para>
+          <list type="bullet">
+            <item>
+              <para>When the language encoding flag is not set, the specified <paramref name="entryNameEncoding" /> is used to decode the entry name.</para>
+            </item>
+            <item>
+              <para>When the language encoding flag is set, UTF-8 is used to decode the entry name.</para>
+            </item>
+          </list>
+          <para>When you write to archive files and <paramref name="entryNameEncoding" /> is set to null, entry names are encoded according to the following rules:</para>
+          <list type="bullet">
+            <item>
+              <para>For entry names that contain characters outside the ASCII range, the language encoding flag is set, and entry names are encoded by using UTF-8.</para>
+            </item>
+            <item>
+              <para>For entry names that contain only ASCII characters, the language encoding flag is not set, and entry names are encoded by using the current system default code page.</para>
+            </item>
+          </list>
+          <para>When you write to archive files and <paramref name="entryNameEncoding" /> is set to a value other than null, the specified <paramref name="entryNameEncoding" /> is used to encode the entry names into bytes. The language encoding flag (in the general-purpose bit flag of the local file header) is set only when the specified encoding is a UTF-8 encoding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.Compression.ZipArchive" /> class on the specified stream for the specified mode, uses the specified encoding for entry names, and optionally leaves the stream open.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input or output stream.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates whether the zip archive is used to read, create, or update entries.</param>
+        <param name="leaveOpen">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to leave the stream open after the <see cref="T:System.IO.Compression.ZipArchive" /> object is disposed; otherwise, false.</param>
+        <param name="entryNameEncoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding to use when reading or writing entry names in this archive. Specify a value for this parameter only when an encoding is required for interoperability with zip archive tools and libraries that do not support UTF-8 encoding for entry names.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateEntry">
+      <MemberSignature Language="C#" Value="public System.IO.Compression.ZipArchiveEntry CreateEntry (string entryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.Compression.ZipArchiveEntry CreateEntry(string entryName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchiveEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="entryName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="entryName" /> string should reflect the relative path of the entry you want to create within the zip archive. There is no restriction on the string you provide. However, if it is not formatted as a relative path, the entry is created, but you may get an exception when you extract the contents of the zip archive. If an entry with the specified path and name already exists in the archive, a second entry is created with the same path and name.</para>
+          <para>The value of the <see cref="P:System.IO.Compression.ZipArchiveEntry.LastWriteTime" /> property for the new entry is set to the current time. The entry is compressed using the default compression level of the underlying compression algorithm. If you want to specify a different compression level, use the <see cref="M:System.IO.Compression.ZipArchive.CreateEntry(System.String,System.IO.Compression.CompressionLevel)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an empty entry that has the specified path and entry name in the zip archive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty entry in the zip archive.</para>
+        </returns>
+        <param name="entryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A path, relative to the root of the archive, that specifies the name of the entry to be created.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateEntry">
+      <MemberSignature Language="C#" Value="public System.IO.Compression.ZipArchiveEntry CreateEntry (string entryName, System.IO.Compression.CompressionLevel compressionLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.Compression.ZipArchiveEntry CreateEntry(string entryName, valuetype System.IO.Compression.CompressionLevel compressionLevel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchiveEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="entryName" Type="System.String" />
+        <Parameter Name="compressionLevel" Type="System.IO.Compression.CompressionLevel" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="entryName" /> string should reflect the relative path of the entry you want to create within the zip archive. There is no restriction on the string you provide. However, if it is not formatted as a relative path, the entry is created, but you may get an exception when you extract the contents of the zip archive. If an entry with the specified name already exists in the archive, a second entry is created with the same name.</para>
+          <para>The value of the <see cref="P:System.IO.Compression.ZipArchiveEntry.LastWriteTime" /> property for the new entry is set to the current time. Set the <paramref name="compressionLevel" /> parameter to <see cref="F:System.IO.Compression.CompressionLevel.Optimal" /> if you want the file to be compressed as much as possible. Set the <paramref name="compressionLevel" /> parameter to <see cref="F:System.IO.Compression.CompressionLevel.Fastest" /> only if you are concerned that the compression operation will not complete quickly enough for your scenario.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an empty entry that has the specified entry name and compression level in the zip archive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty entry in the zip archive.</para>
+        </returns>
+        <param name="entryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A path, relative to the root of the archive, that specifies the name of the entry to be created.</param>
+        <param name="compressionLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates whether to emphasize speed or compression effectiveness when creating the entry.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method finishes writing the archive and releases all resources used by the <see cref="T:System.IO.Compression.ZipArchive" /> object. Unless you construct the object by using the <see cref="M:System.IO.Compression.ZipArchive.#ctor(System.IO.Stream,System.IO.Compression.ZipArchiveMode,System.Boolean)" /> constructor overload and set its <paramref name="leaveOpen" /> parameter to true, all underlying streams are closed and no longer available for subsequent write operations. </para>
+          <para>When you are finished using this instance of <see cref="T:System.IO.Compression.ZipArchive" />, call <see cref="M:System.IO.Compression.ZipArchive.Dispose" /> to release all resources used by this instance. You should eliminate further references to this <see cref="T:System.IO.Compression.ZipArchive" /> instance so that the garbage collector can reclaim the memory of the instance instead of keeping it alive for finalization.</para>
+          <para>
+            <see cref="M:System.IO.Compression.ZipArchive.Dispose" /> calls the <see cref="M:System.IO.Compression.ZipArchive.Dispose(System.Boolean)" /> method, which contains the code to release managed and unmanaged resources. For more information, see <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the current instance of the <see cref="T:System.IO.Compression.ZipArchive" /> class.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="disposing" /> is set to true, all underlying streams are closed and no longer available for subsequent write operations, unless you construct the object by using the <see cref="M:System.IO.Compression.ZipArchive.#ctor(System.IO.Stream,System.IO.Compression.ZipArchiveMode,System.Boolean)" /> constructor overload and set its <paramref name="leaveOpen" /> parameter to true.</para>
+          <para>This method is called only by the public <see cref="M:System.IO.Compression.ZipArchive.Dispose" /> and <see cref="M:System.Object.Finalize" /> methods; do not call this method directly.</para>
+          <para>When you implement the dispose pattern, the Boolean parameter of the <see cref="M:System.IO.Compression.ZipArchive.Dispose(System.Boolean)" /> method should be used as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="M:System.IO.Compression.ZipArchive.Dispose" /> method of the current object should call <see cref="M:System.IO.Compression.ZipArchive.Dispose(System.Boolean)" /> with the Boolean parameter set to true to release both managed and unmanaged resources.</para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Object.Finalize" /> method of the current object should call <see cref="M:System.IO.Compression.ZipArchive.Dispose(System.Boolean)" /> with the Boolean parameter set to false to release only unmanaged resources.</para>
+            </item>
+          </list>
+          <para>For more information, see <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the <see cref="M:System.IO.Compression.ZipArchive.Dispose" /> and <see cref="M:System.Object.Finalize" /> methods to release the unmanaged resources used by the current instance of the <see cref="T:System.IO.Compression.ZipArchive" /> class, and optionally finishes writing the archive and releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to finish writing the archive and release unmanaged and managed resources; false to release only unmanaged resources.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Entries">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IO.Compression.ZipArchiveEntry&gt; Entries { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IO.Compression.ZipArchiveEntry&gt; Entries" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IO.Compression.ZipArchiveEntry&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.IO.Compression.ZipArchive.Entries" /> property to retrieve the entire collection of entries. Use the <see cref="M:System.IO.Compression.ZipArchive.GetEntry(System.String)" /> method to retrieve a single entry by name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of entries that are currently in the zip archive.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEntry">
+      <MemberSignature Language="C#" Value="public System.IO.Compression.ZipArchiveEntry GetEntry (string entryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.Compression.ZipArchiveEntry GetEntry(string entryName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchiveEntry</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="entryName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If multiple entries that have the specified name exist in the archive, the first one is returned. The name of the entry is compared to <paramref name="entryName" /> using ordinal comparison. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a wrapper for the specified entry in the zip archive.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A wrapper for the specified entry in the archive; null if the entry does not exist in the archive.</para>
+        </returns>
+        <param name="entryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A path, relative to the root of the archive, that identifies the entry to retrieve.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Mode">
+      <MemberSignature Language="C#" Value="public System.IO.Compression.ZipArchiveMode Mode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Compression.ZipArchiveMode Mode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Compression.ZipArchiveMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You specify a value for the <see cref="T:System.IO.Compression.ZipArchive" /> property when you create an instance of the <see cref="T:System.IO.Compression.ZipArchive" /> class. Use the <see cref="M:System.IO.Compression.ZipArchive.#ctor(System.IO.Stream,System.IO.Compression.ZipArchiveMode)" /> or <see cref="M:System.IO.Compression.ZipArchive.#ctor(System.IO.Stream,System.IO.Compression.ZipArchiveMode,System.Boolean)" /> constructor to provide a value for the <see cref="P:System.IO.Compression.ZipArchive.Mode" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that describes the type of action the zip archive can perform on entries.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

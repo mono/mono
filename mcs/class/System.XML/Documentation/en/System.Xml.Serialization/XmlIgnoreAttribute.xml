@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlIgnoreAttribute" FullName="System.Xml.Serialization.XmlIgnoreAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlIgnoreAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlIgnoreAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -13,27 +16,44 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.ReturnValue | System.AttributeTargets.All)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" /> belongs to a family of attributes that controls how the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes or deserializes an object. If you apply the <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" /> to any member of a class, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> ignores the member when serializing or deserializing an instance of the class. For a complete list of similar attributes, see <format type="text/html"><a href="414b820f-a696-4206-b576-2711d85490c7">Attributes That Control XML Serialization</a></format>.</para>
+      <para>You can override the behavior caused by the <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" /> by creating an <see cref="T:System.Xml.Serialization.XmlAttributes" /> object, and setting its <see cref="P:System.Xml.Serialization.XmlAttributes.XmlIgnore" /> property to false. You must <see cref="M:System.Xml.Serialization.XmlAttributeOverrides.Add(System.Type,System.Xml.Serialization.XmlAttributes)" /> the <see cref="T:System.Xml.Serialization.XmlAttributes" /> object to an instance of the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> class. Lastly, you must use the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> object to construct an instance of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class before you call the <see cref="M:System.Xml.Serialization.XmlSerializer.Serialize(System.IO.TextWriter,System.Object)" /> or <see cref="M:System.Xml.Serialization.XmlSerializer.Deserialize(System.IO.Stream)" /> methods.</para>
+      <para>The <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">[XML Schema Definition Tool (Xsd.exe)</a></format> occasionally generates the <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" /> when creating classes from a schema file (.xsd). This behavior occurs because value types cannot be set to null, but all XML data types can be. Therefore, the tool creates two fields when it encounters an XML type that maps to a value type: one to hold the value and another special field that takes the form of <paramref name="fieldnameSpecified" />, where the <paramref name="fieldname" /> is replaced by the name of the field or property. Notice, however, that this special field is generated only when the schema specifies that the element has no minimum occurrence (minOccurs = "0") and that the element has no default value. The <see cref="T:System.Xml.Serialization.XmlSerializer" /> sets and checks this special field to determine whether a value has been set for the field or property. Because the special field must not be serialized, the tool applies the <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" /> to it.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+      <block subset="none" type="note">
+        <para>You can use the word XmlIgnore in your code instead of the longer <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instructs the <see cref="M:System.Xml.Serialization.XmlSerializer.Serialize(System.IO.TextWriter,System.Object)" /> method of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> not to serialize the public field or public read/write property value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlIgnoreAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlIgnoreAttribute" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

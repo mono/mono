@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextureBrush" FullName="System.Drawing.TextureBrush">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class TextureBrush : System.Drawing.Brush" />
   <AssemblyInfo>
@@ -14,8 +15,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each property of the <see cref="T:System.Drawing.TextureBrush" /> class is a <see cref="T:System.Drawing.Brush" /> object that uses an image to fill the interior of a shape. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +30,13 @@
         <Parameter Name="bitmap" Type="System.Drawing.Image" />
       </Parameters>
       <Docs>
-        <param name="bitmap">To be added: an object of type 'Image'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image.</para>
+        </summary>
+        <param name="bitmap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,10 +52,15 @@
         <Parameter Name="wrapMode" Type="System.Drawing.Drawing2D.WrapMode" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="wrapMode">To be added: an object of type 'Drawing2D.WrapMode'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image and wrap mode.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
+        <param name="wrapMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.WrapMode" /> enumeration that specifies how this <see cref="T:System.Drawing.TextureBrush" /> object is tiled. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,10 +76,15 @@
         <Parameter Name="dstRect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="dstRect">To be added: an object of type 'Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image and bounding rectangle.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
+        <param name="dstRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> structure that represents the bounding rectangle for this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,10 +100,15 @@
         <Parameter Name="dstRect" Type="System.Drawing.RectangleF" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="dstRect">To be added: an object of type 'RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image and bounding rectangle.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
+        <param name="dstRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> structure that represents the bounding rectangle for this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -102,11 +125,17 @@
         <Parameter Name="dstRect" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="wrapMode">To be added: an object of type 'Drawing2D.WrapMode'</param>
-        <param name="dstRect">To be added: an object of type 'Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image, wrap mode, and bounding rectangle.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
+        <param name="wrapMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.WrapMode" /> enumeration that specifies how this <see cref="T:System.Drawing.TextureBrush" /> object is tiled. </param>
+        <param name="dstRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> structure that represents the bounding rectangle for this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,11 +152,17 @@
         <Parameter Name="dstRect" Type="System.Drawing.RectangleF" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="wrapMode">To be added: an object of type 'Drawing2D.WrapMode'</param>
-        <param name="dstRect">To be added: an object of type 'RectangleF'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image, wrap mode, and bounding rectangle.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
+        <param name="wrapMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.WrapMode" /> enumeration that specifies how this <see cref="T:System.Drawing.TextureBrush" /> object is tiled. </param>
+        <param name="dstRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> structure that represents the bounding rectangle for this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,11 +179,17 @@
         <Parameter Name="imageAttr" Type="System.Drawing.Imaging.ImageAttributes" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="dstRect">To be added: an object of type 'Rectangle'</param>
-        <param name="imageAttr">To be added: an object of type 'Imaging.ImageAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image, bounding rectangle, and image attributes.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
+        <param name="dstRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> structure that represents the bounding rectangle for this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
+        <param name="imageAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object that contains additional information about the image used by this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,11 +206,17 @@
         <Parameter Name="imageAttr" Type="System.Drawing.Imaging.ImageAttributes" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="dstRect">To be added: an object of type 'RectangleF'</param>
-        <param name="imageAttr">To be added: an object of type 'Imaging.ImageAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Drawing.TextureBrush" /> object that uses the specified image, bounding rectangle, and image attributes.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> object with which this <see cref="T:System.Drawing.TextureBrush" /> object fills interiors. </param>
+        <param name="dstRect">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RectangleF" /> structure that represents the bounding rectangle for this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
+        <param name="imageAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object that contains additional information about the image used by this <see cref="T:System.Drawing.TextureBrush" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,9 +231,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Drawing.TextureBrush" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.TextureBrush" /> object this method creates, cast as an <see cref="T:System.Object" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -200,9 +253,12 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Image'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Image" /> object associated with this <see cref="T:System.Drawing.TextureBrush" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -219,9 +275,20 @@
         <Parameter Name="matrix" Type="System.Drawing.Drawing2D.Matrix" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Drawing2D.Matrix'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformation matrix of a <see cref="T:System.Drawing.TextureBrush" /> object specifies how the image that defines the texture is transformed. For example, if the transformation matrix specifies a rotation of 90 degrees clockwise, the texture image is rotated by 90 degrees clockwise.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiplies the <see cref="T:System.Drawing.Drawing2D.Matrix" /> object that represents the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> object by prepending the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> object by which to multiply the geometric transformation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -239,10 +306,22 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="matrix">To be added: an object of type 'Drawing2D.Matrix'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformation matrix of a <see cref="T:System.Drawing.TextureBrush" /> object specifies how the image that defines the texture is transformed. For example, if the transformation matrix specifies a rotation of 90 degrees clockwise, the texture image is rotated by 90 degrees clockwise.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiplies the <see cref="T:System.Drawing.Drawing2D.Matrix" /> object that represents the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> object in the specified order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="matrix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> object by which to multiply the geometric transformation. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.MatrixOrder" /> enumeration that specifies the order in which to multiply the two matrices. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -257,8 +336,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the Transform property of this <see cref="T:System.Drawing.TextureBrush" /> object to identity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -275,9 +361,17 @@
         <Parameter Name="angle" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="angle">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rotates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amount. This method prepends the rotation to the transformation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="angle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The angle of rotation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -295,10 +389,19 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="angle">To be added: an object of type 'float'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rotates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amount in the specified order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="angle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The angle of rotation. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.MatrixOrder" /> enumeration that specifies whether to append or prepend the rotation matrix. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,10 +419,19 @@
         <Parameter Name="sy" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="sx">To be added: an object of type 'float'</param>
-        <param name="sy">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amounts. This method prepends the scaling matrix to the transformation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="sx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to scale the transformation in the x direction. </param>
+        <param name="sy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to scale the transformation in the y direction. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -338,11 +450,21 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="sx">To be added: an object of type 'float'</param>
-        <param name="sy">To be added: an object of type 'float'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amounts in the specified order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="sx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to scale the transformation in the x direction. </param>
+        <param name="sy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to scale the transformation in the y direction. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Drawing2D.MatrixOrder" /> enumeration that specifies whether to append or prepend the scaling matrix. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -358,9 +480,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.Matrix'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A geometric transformation can be used to translate, scale, rotate, or skew the image that defines the texture of this brush. Because the matrix returned and by the <see cref="P:System.Drawing.TextureBrush.Transform" /> property is a copy of the brush's geometric transform, you should dispose of the matrix when you no longer need it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a copy of the <see cref="T:System.Drawing.Drawing2D.Matrix" /> object that defines a local geometric transformation for the image associated with this <see cref="T:System.Drawing.TextureBrush" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -378,10 +506,19 @@
         <Parameter Name="dy" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="dx">To be added: an object of type 'float'</param>
-        <param name="dy">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified dimensions. This method prepends the translation to the transformation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="dx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dimension by which to translate the transformation in the x direction. </param>
+        <param name="dy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dimension by which to translate the transformation in the y direction. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -400,11 +537,21 @@
         <Parameter Name="order" Type="System.Drawing.Drawing2D.MatrixOrder" />
       </Parameters>
       <Docs>
-        <param name="dx">To be added: an object of type 'float'</param>
-        <param name="dy">To be added: an object of type 'float'</param>
-        <param name="order">To be added: an object of type 'Drawing2D.MatrixOrder'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified dimensions in the specified order.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="dx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dimension by which to translate the transformation in the x direction. </param>
+        <param name="dy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dimension by which to translate the transformation in the y direction. </param>
+        <param name="order">
+          <attribution license="cc4" from="Microsoft" modified="false" />The order (prepend or append) in which to apply the translation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -420,9 +567,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing2D.WrapMode'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Drawing.Drawing2D.WrapMode" /> enumeration that indicates the wrap mode for this <see cref="T:System.Drawing.TextureBrush" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,35 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetSectionGroup" FullName="System.Net.Configuration.NetSectionGroup">
   <TypeSignature Language="C#" Value="public sealed class NetSectionGroup : System.Configuration.ConfigurationSectionGroup" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NetSectionGroup extends System.Configuration.ConfigurationSectionGroup" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Configuration.ConfigurationSectionGroup</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class corresponds to the <format type="text/html"><a href="52de4d6c-b24d-44aa-ba7d-6b5061f1357e">System.Net Element (Network Settings)</a></format> configuration element described in the <format type="text/html"><a href="f1de5a0f-76c5-4833-819f-5222b8146340">Network Settings Schema</a></format> documentation.</para>
+      <para>This section group controls configuration settings for the following namespaces:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="N:System.Net" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="N:System.Net.Cache" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="N:System.Net.Mail" />
+          </para>
+        </item>
+      </list>
+      <para>This class provides programmatic access to information that can be stored in configuration files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Gets the section group information for the networking namespaces. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public NetSectionGroup ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.NetSectionGroup" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="AuthenticationModules">
       <MemberSignature Language="C#" Value="public System.Net.Configuration.AuthenticationModulesSection AuthenticationModules { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Configuration.AuthenticationModulesSection AuthenticationModules" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("authenticationModules")</AttributeName>
@@ -39,18 +85,26 @@
         <ReturnType>System.Net.Configuration.AuthenticationModulesSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The section returned by this property corresponds to the <format type="text/html"><a href="10fcfaad-82ef-4692-871a-0aec9dfbe75e">AuthenticationModules Element (Network Settings)</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration section containing the authentication modules registered for the local computer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConnectionManagement">
       <MemberSignature Language="C#" Value="public System.Net.Configuration.ConnectionManagementSection ConnectionManagement { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Configuration.ConnectionManagementSection ConnectionManagement" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("connectionManagement")</AttributeName>
@@ -60,18 +114,26 @@
         <ReturnType>System.Net.Configuration.ConnectionManagementSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The section returned by this property corresponds to the <format type="text/html"><a href="bedccaab-12a2-4511-8f67-e961f249aec6">ConnectionManagement Element (Network Settings)</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration section containing the connection management settings for the local computer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultProxy">
       <MemberSignature Language="C#" Value="public System.Net.Configuration.DefaultProxySection DefaultProxy { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Configuration.DefaultProxySection DefaultProxy" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("defaultProxy")</AttributeName>
@@ -81,18 +143,31 @@
         <ReturnType>System.Net.Configuration.DefaultProxySection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The section returned by this property corresponds to the <format type="text/html"><a href="9d663c4b-07b4-4f6f-9b12-efbd3630354f">DefaultProxy Element (Network Settings)</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration section containing the default Web proxy server settings for the local computer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetSectionGroup">
       <MemberSignature Language="C#" Value="public static System.Net.Configuration.NetSectionGroup GetSectionGroup (System.Configuration.Configuration config);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.Configuration.NetSectionGroup GetSectionGroup(class System.Configuration.Configuration config) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Net.Configuration.NetSectionGroup</ReturnType>
       </ReturnValue>
@@ -100,35 +175,55 @@
         <Parameter Name="config" Type="System.Configuration.Configuration" />
       </Parameters>
       <Docs>
-        <param name="config">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to extract the network settings from a configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the System.Net configuration section group from the specified configuration file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.Configuration.NetSectionGroup" /> that represents the System.Net settings in <paramref name="config" />.</para>
+        </returns>
+        <param name="config">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.Configuration" /> that represents a configuration file.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MailSettings">
       <MemberSignature Language="C#" Value="public System.Net.Configuration.MailSettingsSectionGroup MailSettings { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Configuration.MailSettingsSectionGroup MailSettings" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Configuration.MailSettingsSectionGroup</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The section returned by this property corresponds to the <format type="text/html"><a href="54f0f153-17e5-4f49-afdc-deadb940c9c1">mailSettings for System.Net</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration section containing the SMTP client e-mail settings for the local computer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RequestCaching">
       <MemberSignature Language="C#" Value="public System.Net.Configuration.RequestCachingSection RequestCaching { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Configuration.RequestCachingSection RequestCaching" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("requestCaching")</AttributeName>
@@ -138,18 +233,26 @@
         <ReturnType>System.Net.Configuration.RequestCachingSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The section returned by this property corresponds to the <format type="text/html"><a href="9962a2fe-cbda-41a6-9377-571811eaea84">RequestCaching Element (Network Settings)</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration section containing the cache configuration settings for the local computer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Settings">
       <MemberSignature Language="C#" Value="public System.Net.Configuration.SettingsSection Settings { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Configuration.SettingsSection Settings" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("settings")</AttributeName>
@@ -159,18 +262,26 @@
         <ReturnType>System.Net.Configuration.SettingsSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The section returned by this property corresponds to the <format type="text/html"><a href="189ce989-c39b-427d-b004-6b82a668b931">Settings Element (Network Settings)</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration section containing the network settings for the local computer.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WebRequestModules">
       <MemberSignature Language="C#" Value="public System.Net.Configuration.WebRequestModulesSection WebRequestModules { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Configuration.WebRequestModulesSection WebRequestModules" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Configuration.ConfigurationProperty("webRequestModules")</AttributeName>
@@ -180,14 +291,17 @@
         <ReturnType>System.Net.Configuration.WebRequestModulesSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The section returned by this property corresponds to the <format type="text/html"><a href="1263de11-3e0a-4f94-97c9-710b2ae53817">WebRequestModules Element (Network Settings)</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration section containing the modules registered for use with the <see cref="T:System.Net.WebRequest" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

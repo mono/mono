@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="EventRegistrationTokenTable&lt;T&gt;" FullName="System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public sealed class EventRegistrationTokenTable&lt;T&gt; where T : class" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EventRegistrationTokenTable`1&lt;class T&gt; extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T">
+      <Constraints>
+        <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this type when you need to manage the addition and removal of events manually. </para>
+      <para>An instance of this table stores the delegates that represent the event handlers that have been added to an event. To raise the event, invoke the delegate that is returned by the <see cref="P:System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable`1.InvocationList" /> property, if it is not null. An instance of this table is required for each event.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores mappings between delegates and event tokens, to support the implementation of a wrt event in managed code.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventRegistrationTokenTable ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable`1" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddEventHandler">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken AddEventHandler (T handler);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken AddEventHandler(!T handler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handler" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="handler">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetOrCreateEventRegistrationTokenTable">
+      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable&lt;T&gt; GetOrCreateEventRegistrationTokenTable (ref System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable&lt;T&gt; refEventTable);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable`1&lt;!T&gt; GetOrCreateEventRegistrationTokenTable(class System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable`1&lt;!T&gt; refEventTable) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="refEventTable" Type="System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable&lt;T&gt;&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="refEventTable">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InvocationList">
+      <MemberSignature Language="C#" Value="public T InvocationList { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T InvocationList" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a delegate of type <paramref name="T" /> whose invocation list includes all the event handler delegates that have been added, and that have not yet been removed. Invoking this delegate invokes all the event handlers. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveEventHandler">
+      <MemberSignature Language="C#" Value="public void RemoveEventHandler (System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveEventHandler(valuetype System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the token is not registered, the table and the invocation list are not modified. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the event handler that is associated with the specified token from the table and the invocation list. </para>
+        </summary>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token that was returned when the event handler was added. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveEventHandler">
+      <MemberSignature Language="C#" Value="public void RemoveEventHandler (T handler);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveEventHandler(!T handler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="handler" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="handler">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

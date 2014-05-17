@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="TransferSession" FullName="System.ServiceModel.Channels.TransferSession">
+  <TypeSignature Language="C#" Value="public enum TransferSession" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TransferSession extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.TransferSession" /> enumerations are typically used in association with a service contract. When a client sends messages to a remote application or service to call operations, <see cref="T:System.ServiceModel.Channels.TransferSession" /> is used to determine if a session is required to interact with the service and whether the messages used to invoke the operations at a service must arrive in the same order in which they were sent.</para>
+      <para>Message delivery between client and service requires a session to preserve the order in which operations are called by the client. If there is no session between endpoints, then the delivery order does not reflect the order in which the messages are sent.</para>
+      <list type="bullet">
+        <item>
+          <para>The value of <see cref="T:System.ServiceModel.Channels.TransferSession" /> that an application uses specifies whether the application requires a specific order in the calling sequence. If <see cref="F:System.ServiceModel.Channels.TransferSession.Ordered" />, then the contract requires that messages must arrive in the order in which they are sent. </para>
+        </item>
+        <item>
+          <para>If <see cref="F:System.ServiceModel.Channels.TransferSession.Unordered" />, then the messages used to invoke public operations can arrive in any order. </para>
+        </item>
+      </list>
+      <para>If <see cref="F:System.ServiceModel.Channels.TransferSession.None" />, there are no sessions.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines if the contract for the transfer of messages from a client to an application requires a session and whether the delivery of messages must preserve the order in which operations are called by the client. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.TransferSession None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.TransferSession</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a session is not required to interact with the services on this contract. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Ordered">
+      <MemberSignature Language="C#" Value="Ordered" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.TransferSession Ordered = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.TransferSession</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a session with ordered message delivery guarantees is required to interact with the services on this contract. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Unordered">
+      <MemberSignature Language="C#" Value="Unordered" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.Channels.TransferSession Unordered = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.TransferSession</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a session with unordered message delivery guarantees is sufficient to interact with the services on this contract. </para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlTextArea" FullName="System.Web.UI.HtmlControls.HtmlTextArea">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HtmlTextArea : System.Web.UI.HtmlControls.HtmlContainerControl, System.Web.UI.IPostBackDataHandler" />
   <AssemblyInfo>
@@ -28,8 +29,23 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control corresponds to the &lt;textarea&gt; HTML element that allows you to create a multiline text box on a Web page. Use this control to programmatically manipulate a &lt;textarea&gt; HTML element.</para>
+      <para>This class allows you to control the height and width of a multiline text box by setting the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Rows" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Cols" /> properties, respectively. You also can assign a name to the control by setting the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Name" /> property. To determine or specify the text in the text box, use the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Value" /> property.</para>
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> class provides a <see cref="E:System.Web.UI.HtmlControls.HtmlTextArea.ServerChange" /> event that allows you to perform a custom set of instructions every time the value of the text box changes between posts to the server. This event is commonly used for data validation.</para>
+      <block subset="none" type="note">
+        <para>If you want to create a single-line text box, use the <see cref="T:System.Web.UI.HtmlControls.HtmlInputText" /> control.</para>
+      </block>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.#ctor" /> constructor.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. For more information, see <format type="text/html"><a href="96D2C59E-693C-4079-9B53-B3FF0D9E9133">[&lt;topic://cpconASPNETSyntaxForValidationControls&gt;]</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows programmatic access to the &lt;textarea&gt; HTML element on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +54,36 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> class.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The "textarea" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,9 +100,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.AddParsedSubObject(System.Object)" /> method adds an object to the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control's <see cref="T:System.Web.UI.ControlCollection" /> if the object is of the type <see cref="T:System.Web.UI.LiteralControl" /> or <see cref="T:System.Web.UI.DataBoundLiteralControl" />; otherwise, an <see cref="T:System.Web.HttpException" /> is thrown.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.AddParsedSubObject(System.Object)" /> method is primarily used by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control that an object was parsed and adds the object to the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control's <see cref="T:System.Web.UI.ControlCollection" /> object. </para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the parsed element. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,9 +125,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Cols" /> property to specify or determine the width (in characters) of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control. If you enter text that is longer than the width of the text box, the text automatically continues on the next line of the control.</para>
+          <para>To control the height of the control, set the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Rows" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width (in characters) of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,11 +163,23 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method checks whether the postback value of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control is different from its previous value, and if so, returns true.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the postback data for the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control's state has changed as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -119,9 +190,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Name" /> property to determine the unique identifier name for the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control. In this implementation of the property, the get accessor returns the value of the <see cref="P:System.Web.UI.Control.UniqueID" /> property. However, the set accessor does not assign a value to this property.</para>
+          <block subset="none" type="note">
+            <para>The set accessor does not assign a value to this property because the <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Name" /> property must have the same value as the <see cref="P:System.Web.UI.Control.UniqueID" /> property for the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control to work properly.</para>
+          </block>
+          <para>Classes that inherit from the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> class may override this implementation, if necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the unique identifier name for the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,9 +227,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.OnPreRender(System.EventArgs)" /> method notifies the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control to perform any necessary steps prior to saving the view state and rendering content.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.OnPreRender(System.EventArgs)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,9 +254,25 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.HtmlControls.HtmlTextArea.ServerChange" /> event is raised when the content of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control changes between posts to the server.</para>
+          <block subset="none" type="note">
+            <para>This event is only raised when the user initiates a post to the server, such as by clicking a submit button. This event does not cause a post to the server to occur.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The control must have viewstate enabled for the <see cref="E:System.Web.UI.HtmlControls.HtmlTextArea.ServerChange" /> event to work correctly.</para>
+          </block>
+          <para>This event is commonly used to perform data validation on the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control when the user updates the text in the control.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.OnServerChange(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.HtmlControls.HtmlTextArea.ServerChange" /> event of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,8 +290,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.RaisePostDataChangedEvent" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calls the <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.OnServerChange(System.EventArgs)" /> method to signal the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control that the state of the control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RenderAttributes">
@@ -199,9 +310,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method renders the <paramref name="name" /> attribute of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control directly to ensure that it has the same value as the <see cref="P:System.Web.UI.Control.UniqueID" /> property. After rendering the attribute, the <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method calls the base class's <see cref="M:System.Web.UI.HtmlControls.HtmlContainerControl.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTextArea.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control's attributes to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> that receives the rendered content.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -216,9 +335,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Rows" /> property to specify or determine the height (in characters) of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control. If you enter text that takes up more lines than the height specified, scroll bars are enabled.</para>
+          <para>To control the width of the control, set the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Cols" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height (in characters) of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -241,8 +367,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.HtmlControls.HtmlTextArea.ServerChange" /> event is raised when the content of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control changes between posts to the server. This event is commonly used to perform data validation on the text box.</para>
+          <block subset="none" type="note">
+            <para>This event is only raised when the user initiates a post to the server, such as clicking a submit button. This event does not cause a post to the server to occur.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The control must have viewstate enabled for the <see cref="E:System.Web.UI.HtmlControls.HtmlTextArea.ServerChange" /> event to work correctly.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the content of the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control changes between posts to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -264,11 +403,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control's state has changed as a result of postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -283,8 +433,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -295,9 +451,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTextArea.Value" /> property to programmatically control the text entered in the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control. This property is commonly used to retrieve the text entered in the text box, but you can also use it to specify the text to display in the control. This is useful if you want to provide a default value or display a message in the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. For more information, see <format type="text/html"><a href="96D2C59E-693C-4079-9B53-B3FF0D9E9133">[&lt;topic://cpconASPNETSyntaxForValidationControls&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text entered in the <see cref="T:System.Web.UI.HtmlControls.HtmlTextArea" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

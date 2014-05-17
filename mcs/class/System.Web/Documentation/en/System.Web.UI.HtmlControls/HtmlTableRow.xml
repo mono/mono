@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlTableRow" FullName="System.Web.UI.HtmlControls.HtmlTableRow">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HtmlTableRow : System.Web.UI.HtmlControls.HtmlContainerControl" />
   <AssemblyInfo>
@@ -19,8 +20,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The &lt;tr&gt; element represents a row in a table. Use the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class to programmatically control the &lt;tr&gt; HTML elements in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class allows you to customize the appearance of a row in a table by specifying the background color, the border color, and the height of the cells in the row. These attributes are set using the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.BgColor" />, <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.BorderColor" />, and <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Height" /> properties.</para>
+      <para>You can control the alignment of the contents in the cells for the entire row by using the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Align" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.VAlign" /> properties. The <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Align" /> property controls the horizontal alignment of the contents of the cells, while the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.VAlign" /> property controls the vertical alignment.</para>
+      <para>By using the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Cells" /> collection of this class, you can programmatically access the individual cells in a row of a table. This allows you to control the properties of each cell, as well as the content.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlTableRow.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the &lt;tr&gt; HTML element in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +40,36 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class. This constructor is used to create an <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> object that represents the &lt;tr&gt; element for a table row.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The "tr" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +84,58 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Align" /> property to specify the horizontal alignment of the content in the cells of a row in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+          <block subset="none" type="note">
+            <para>Setting this property affects all cells in a row of a table represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class. To apply an alignment attribute to a single cell of a row, set the <see cref="P:System.Web.UI.HtmlControls.HtmlTableCell.Align" /> property for that cell.</para>
+          </block>
+          <para>The following table lists the values that can be used for this property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Left </para>
+              </term>
+              <description>
+                <para>Aligns the contents of the cell with the left edge of the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Center </para>
+              </term>
+              <description>
+                <para>Aligns the contents of the cell in the middle of the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Right </para>
+              </term>
+              <description>
+                <para>Aligns the contents of the cell with the right edge of the cell. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>You can also use Justify and Char as values for this property. However, not all browsers support these features.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the horizontal alignment of the content in the cells of a row in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +158,158 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.BgColor" /> property to specify the background color of the row represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class. You can specify a color either by name or by using a hexadecimal value, preceded by the pound character (#), in the form #RRGGBB. RR, GG, and BB represent hexadecimal values from 0 to 255 that indicate the red, green, and blue components of a color, respectively. For example, the value #0000FF represents the color blue. It specifies the minimum value (00) for the red and green components, while specifying the maximum value (FF) for the blue component.</para>
+          <para>The following table shows the sixteen predefined HTML color names and corresponding hexadecimal values that can be used for the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.BgColor" /> property. For more information on HTML colors, see the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C) Web site</see>.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Color name</para>
+                </term>
+                <description>
+                  <para>Hexadecimal value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Aqua</para>
+              </term>
+              <description>
+                <para>#00FFFF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Black</para>
+              </term>
+              <description>
+                <para>#000000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Blue</para>
+              </term>
+              <description>
+                <para>#0000FF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Fuchsia</para>
+              </term>
+              <description>
+                <para>#FF00FF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Gray</para>
+              </term>
+              <description>
+                <para>#808080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Green</para>
+              </term>
+              <description>
+                <para>#008000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Lime</para>
+              </term>
+              <description>
+                <para>#00FF00</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Maroon</para>
+              </term>
+              <description>
+                <para>#800000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Navy</para>
+              </term>
+              <description>
+                <para>#000080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Olive</para>
+              </term>
+              <description>
+                <para>#808000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Purple</para>
+              </term>
+              <description>
+                <para>#800080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Red</para>
+              </term>
+              <description>
+                <para>#FF0000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Silver</para>
+              </term>
+              <description>
+                <para>#C0C0C0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Teal</para>
+              </term>
+              <description>
+                <para>#008080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>White</para>
+              </term>
+              <description>
+                <para>#FFFFFF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Yellow</para>
+              </term>
+              <description>
+                <para>#FFFF00</para>
+              </description>
+            </item>
+          </list>
+          <para>The available colors for use with the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.BgColor" /> property can be determined from the <see cref="T:System.Drawing.KnownColor" /> enumeration. </para>
+          <para>Color names are case-insensitive. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the row represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +332,158 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTableCell.BorderColor" /> property to specify the border color of the row represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class. You can specify a color either by name or by using a hexadecimal value, preceded by the pound character (#), in the form #RRGGBB. RR, GG, and BB represent hexadecimal values from 0 to 255 that indicate the red, green, and blue components of a color, respectively. For example, the value #0000FF represents the color blue. It specifies the minimum value (00) for the red and green components, while specifying the maximum value (FF) for the blue component.</para>
+          <para>The following table shows the sixteen predefined HTML color names and corresponding hexadecimal values that can be used for the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.BorderColor" /> property. For more information on HTML colors, see the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C) Web site</see>.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Color name</para>
+                </term>
+                <description>
+                  <para>Hexadecimal value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Aqua</para>
+              </term>
+              <description>
+                <para>#00FFFF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Black</para>
+              </term>
+              <description>
+                <para>#000000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Blue</para>
+              </term>
+              <description>
+                <para>#0000FF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Fuchsia</para>
+              </term>
+              <description>
+                <para>#FF00FF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Gray</para>
+              </term>
+              <description>
+                <para>#808080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Green</para>
+              </term>
+              <description>
+                <para>#008000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Lime</para>
+              </term>
+              <description>
+                <para>#00FF00</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Maroon</para>
+              </term>
+              <description>
+                <para>#800000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Navy</para>
+              </term>
+              <description>
+                <para>#000080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Olive</para>
+              </term>
+              <description>
+                <para>#808000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Purple</para>
+              </term>
+              <description>
+                <para>#800080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Red</para>
+              </term>
+              <description>
+                <para>#FF0000</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Silver</para>
+              </term>
+              <description>
+                <para>#C0C0C0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Teal</para>
+              </term>
+              <description>
+                <para>#008080</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>White</para>
+              </term>
+              <description>
+                <para>#FFFFFF</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Yellow</para>
+              </term>
+              <description>
+                <para>#FFFF00</para>
+              </description>
+            </item>
+          </list>
+          <para>The available colors for use with the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.BorderColor" /> property can be determined from the <see cref="T:System.Drawing.KnownColor" /> enumeration. </para>
+          <para>Color names are case-insensitive. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border color of the row represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +505,18 @@
         <ReturnType>System.Web.UI.HtmlControls.HtmlTableCellCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HtmlTableCellCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Cells" /> collection to programmatically access the cells of a row in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control. You can programmatically add, remove, and insert cells in the collection.</para>
+          <block subset="none" type="note">
+            <para>If there are no cells defined in a row, an empty <see cref="T:System.Web.UI.HtmlControls.HtmlTableCellCollection" /> object is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Web.UI.HtmlControls.HtmlTableCell" /> objects that represent the cells contained in a row of the <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,9 +539,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.ControlCollection" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTableRow.CreateControlCollection" /> method creates a new <see cref="T:System.Web.UI.ControlCollection" /> collection that is used to hold the row cells.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTableRow.CreateControlCollection" /> method is primarily of interest to control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.UI.ControlCollection" /> object for the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ControlCollection" /> that contains the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control's child server controls.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,9 +566,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.Height" /> property to specify the height (in pixels) of the cell represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class. All cells in the row share the same height.</para>
+          <block subset="none" type="note">
+            <para>If you specify a height that is smaller than is required to display the contents of the cells in the row of a table, this property is ignored.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height (in pixels) of the row represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,9 +600,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The value of this property will be output between the opening and closing tags of the control without converting HTML tags and special characters. This property should not be used on this control.</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Do not read from or assign a value to this property. Otherwise, a <see cref="T:System.NotSupportedException" /> exception is thrown. This property is inherited from the <see cref="T:System.Web.UI.HtmlControls.HtmlContainerControl" /> class and is not applicable to the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the content between the opening and closing tags of the control without automatically converting special characters to their equivalent HTML entities. This property is not supported for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -203,9 +625,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The value of this property is output between the opening and closing tags of the control. Html tags and special characters will be converted. This property should not be used on this control.</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Do not read from or assign a value to this property. Otherwise, a <see cref="T:System.NotSupportedException" /> exception is raised. This property is inherited from the <see cref="T:System.Web.UI.HtmlControls.HtmlContainerControl" /> class and is not applicable to the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the content between the opening and closing tags of the control with automatic conversion of special characters to their equivalent HTML entities. This property is not supported for this control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -222,9 +652,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTableRow.RenderChildren(System.Web.UI.HtmlTextWriter)" /> method provides additional formatting before and after calling the base class's <see cref="M:System.Web.UI.Control.RenderChildren(System.Web.UI.HtmlTextWriter)" /> method. The additional formatting makes the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control's rendered HTML easier to read by adding a line return and indenting before rendering the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control's child objects.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTableRow.RenderChildren(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control's child controls to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the rendered content.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -241,9 +679,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTableRow.RenderEndTag(System.Web.UI.HtmlTextWriter)" /> method provides additional formatting after calling the base class's <see cref="M:System.Web.UI.HtmlControls.HtmlContainerControl.RenderEndTag(System.Web.UI.HtmlTextWriter)" /> method. The added formatting makes the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control's rendered HTML easier to read by adding a line return after the closing &lt;tr&gt; tag.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlTableRow.RenderEndTag(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> control's end tag.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the rendered content.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -258,9 +704,58 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlTableRow.VAlign" /> property to specify the vertical alignment of the content in the cells of a row in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+          <block subset="none" type="note">
+            <para>Setting this property affects all cells in a row of a table represented by an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlTableRow" /> class. To apply an alignment attribute to a single cell of a row, set the <see cref="P:System.Web.UI.HtmlControls.HtmlTableCell.VAlign" /> property for that cell.</para>
+          </block>
+          <para>The following table lists the values that can be used for this property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Top </para>
+              </term>
+              <description>
+                <para>Aligns the contents of a cell with the upper edge of the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Middle </para>
+              </term>
+              <description>
+                <para>Aligns the contents of a cell in the center of the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Bottom </para>
+              </term>
+              <description>
+                <para>Aligns the contents of a cell with the lower edge of the cell. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>You can also use BaseLine as a value for this property. However, not all browsers support this feature.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the vertical alignment of the content in the cells of a row in an <see cref="T:System.Web.UI.HtmlControls.HtmlTable" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
